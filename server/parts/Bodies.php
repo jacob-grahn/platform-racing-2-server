@@ -34,6 +34,12 @@ class Bodies {
 	const VERY_INVISIBLE = 30;
 	const TACO = 31;
 	const SLENDER = 32;
+	const SANTA = 34;
+	const FROST_DJINN = 35;
+	const REINDEER = 36;
+	const CROCODILE = 37;
+	const VALENTINE = 38;
+	const BUNNY = 39;
 	
 }
 
