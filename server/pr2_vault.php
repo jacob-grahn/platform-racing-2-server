@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------
 function start_perk( $slug, $user_id, $guild_id ) {
 	output( "start_perk - slug: $slug, user_id: $user_id, guild_id: $guild_id" );
-	$seconds_duration = 3700;
+	$seconds_duration = 3600; // hour is 3600 seconds, not 3700
 	if( $slug == Perks::GUILD_FRED ) {
 		assign_guild_part( 'body', 29, $user_id, $guild_id, $seconds_duration );
 	}
@@ -116,7 +116,7 @@ function unlock_set_djinn( $socket, $data ) {
 }
 
 
-//--- unlock rented rank tokens --------------------------------------------------
+//--- unlock epic everything --------------------------------------------------
 function unlock_epic_everything( $socket, $data ) {
 	if( $socket->process == true ) {
 		$user_id = $data;
