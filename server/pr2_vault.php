@@ -116,7 +116,7 @@ function unlock_set_djinn( $socket, $data ) {
 }
 
 
-//--- unlock rented rank tokens --------------------------------------------------
+//--- unlock epic everything --------------------------------------------------
 function unlock_epic_everything( $socket, $data ) {
 	if( $socket->process == true ) {
 		$user_id = $data;
