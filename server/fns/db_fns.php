@@ -30,33 +30,6 @@ function check_for_name($connection, $name){
 }
 
 
-
-//--- registers a new user -----------------------------------------------------------------
-function register_user($connection, $name, $password, $ip, $time, $email=""){
-	//try to hinder a spam attack
-	sleep(1);
-
-	//safety first
-	$safe_name = addslashes($name);
-	$safe_password = addslashes($password);
-	$safe_ip = addslashes($ip);
-	$safe_time = addslashes($time);
-	$safe_email = addslashes($email);
-
-	//register the user
-	$result = $connection->query("INSERT INTO users
-									SET name = '$safe_name',
-										password = sha1('$safe_password'),
-										register_ip = '$safe_ip',
-										ip = '$safe_ip',
-										time = '$safe_time',
-										email = '$safe_email'");
-	if(!$result){
-		throw new Exception('Could not add user to db.');
-	}
-}
-
-
 //--- checks if a login is valid -----------------------------------------------------------
 function login($connection, $name, $password){
 	global $PASS_SALT;
