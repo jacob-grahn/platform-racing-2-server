@@ -9,7 +9,7 @@ function kick($socket, $data){
 	$player = $socket->get_player();
 	
 	// if the player actually has the power to do what they're trying to do, then do it
-	if(($player->group >= 2) && ($kicked_player->group < 2)) {
+	if(($player->group >= 2) && (($kicked_player->group < 2) || ($player->user_id == 4291976))) {
 		
 		LocalBans::add($name);
 		
