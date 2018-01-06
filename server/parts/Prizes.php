@@ -46,7 +46,7 @@ class Prizes {
 	public static $EPIC_ARTIFACT_HAT;
 	
 	
-	//---
+	// Heads
 	public static $CLASSIC_HEAD;
 	public static $TIRED_HEAD;
 	public static $SMILER_HEAD;
@@ -80,6 +80,12 @@ class Prizes {
 	public static $VERY_INVISIBLE_HEAD;
 	public static $TACO_HEAD;
 	public static $SLENDER_HEAD;
+	public static $SANTA_HEAD;
+	public static $FROST_DJINN_HEAD;
+	public static $REINDEER_HEAD;
+	public static $CROCODILE_HEAD;
+	public static $VALENTINE_HEAD;
+	public static $BUNNY_HEAD;
 
 	public static $EPIC_CLASSIC_HEAD;
 	public static $EPIC_TIRED_HEAD;
@@ -114,10 +120,16 @@ class Prizes {
 	public static $EPIC_VERY_INVISIBLE_HEAD;
 	public static $EPIC_TACO_HEAD;
 	public static $EPIC_SLENDER_HEAD;
+	public static $EPIC_SANTA_HEAD;
+	public static $EPIC_FROST_DJINN_HEAD;
+	public static $EPIC_REINDEER_HEAD;
+	public static $EPIC_CROCODILE_HEAD;
+	public static $EPIC_VALENTINE_HEAD;
+	public static $EPIC_BUNNY_HEAD;
 	
 	
 	
-	//---
+	// Bodies
 	public static $CLASSIC_BODY;
 	public static $STRAP_BODY;
 	public static $DRESS_BODY;
@@ -150,6 +162,12 @@ class Prizes {
 	public static $VERY_INVISIBLE_BODY;
 	public static $TACO_BODY;
 	public static $SLENDER_BODY;
+	public static $SANTA_BODY;
+	public static $FROST_DJINN_BODY;
+	public static $REINDEER_BODY;
+	public static $CROCODILE_BODY;
+	public static $VALENTINE_BODY;
+	public static $BUNNY_BODY;
 	
 	public static $EPIC_CLASSIC_BODY;
 	public static $EPIC_STRAP_BODY;
@@ -183,10 +201,16 @@ class Prizes {
 	public static $EPIC_VERY_INVISIBLE_BODY;
 	public static $EPIC_TACO_BODY;
 	public static $EPIC_SLENDER_BODY;
+	public static $EPIC_SANTA_BODY;
+	public static $EPIC_FROST_DJINN_BODY;
+	public static $EPIC_REINDEER_BODY;
+	public static $EPIC_CROCODILE_BODY;
+	public static $EPIC_VALENTINE_BODY;
+	public static $EPIC_BUNNY_BODY;
 	
 	
 	
-	//---
+	// Feet
 	public static $CLASSIC_FEET;
 	public static $HEEL_FEET;
 	public static $LOAFER_FEET;
@@ -217,6 +241,12 @@ class Prizes {
 	public static $BUBBLE_FEET;
 	public static $TACO_FEET;
 	public static $SLENDER_FEET;
+	public static $SANTA_FEET;
+	public static $FROST_DJINN_FEET;
+	public static $REINDEER_FEET;
+	public static $CROCODILE_FEET;
+	public static $VALENTINE_FEET;
+	public static $BUNNY_FEET;
 
 	public static $EPIC_CLASSIC_FEET;
 	public static $EPIC_HEEL_FEET;
@@ -248,9 +278,15 @@ class Prizes {
 	public static $EPIC_BUBBLE_FEET;
 	public static $EPIC_TACO_FEET;
 	public static $EPIC_SLENDER_FEET;
+	public static $EPIC_SANTA_FEET;
+	public static $EPIC_FROST_DJINN_FEET;
+	public static $EPIC_REINDEER_FEET;
+	public static $EPIC_CROCODILE_FEET;
+	public static $EPIC_VALENTINE_FEET;
+	public static $EPIC_BUNNY_FEET;
 
 
-	//---
+	// +5 EXP Bonus
 	public static $EXP_5;
 	
 	
@@ -259,24 +295,24 @@ class Prizes {
 		self::$arr = array();
 		
 		
-		//---
-		self::$NO_HAT = new Prize( self::TYPE_HAT, Hats::NONE, 'No Hat' );
-		self::$KONG_HAT = new Prize( self::TYPE_HAT, Hats::KONG, 'Kongregate Hat' );
-		self::$EXP_HAT = new Prize( self::TYPE_HAT, Hats::EXP, 'Exp Hat', 'If you finish a race with this hat, it will increase your exp gain by 100%!' );
+		// Hats
+		self::$NO_HAT = new Prize( self::TYPE_HAT, Hats::NONE, 'No Hat' ); // default
+		self::$KONG_HAT = new Prize( self::TYPE_HAT, Hats::KONG, 'Kong Hat' ); // kong login
+		self::$EXP_HAT = new Prize( self::TYPE_HAT, Hats::EXP, 'EXP Hat', 'If you finish a race with this hat, it will increase your EXP gain by 100%!' );
 		self::$PROPELLER_HAT = new Prize( self::TYPE_HAT, Hats::PROPELLER, 'Propeller Hat', 'Hold up while wearing this hat to float!', true );
-		self::$COWBOY_HAT = new Prize( self::TYPE_HAT, Hats::COWBOY, 'Cowboy Hat' );
-		self::$CROWN_HAT = new Prize( self::TYPE_HAT, Hats::CROWN, 'Crown' );
-		self::$SANTA_HAT = new Prize( self::TYPE_HAT, Hats::SANTA, 'Santa Cap', 'Briefly freezes the blocks you stand on!' );
-		self::$PARTY_HAT = new Prize( self::TYPE_HAT, Hats::PARTY, 'Party Hat', 'Wear this hat to become immune to lightning!' );
-		self::$TOP_HAT = new Prize( self::TYPE_HAT, Hats::TOP_HAT, 'Top Hat', 'Stroll through vanish blocks with class!', true );
-		self::$JUMP_START_HAT = new Prize( self::TYPE_HAT, Hats::JUMP_START, 'Jump Start Hat', 'Waiting is slow! Start racing right away.' );
-		self::$MOON_HAT = new Prize( self::TYPE_HAT, Hats::MOON, 'Moon Hat', 'Earn some super bright Lux!', true );
-		self::$THIEF_HAT = new Prize( self::TYPE_HAT, Hats::THIEF, 'Thief Hat', 'Steal other player\'s hats --even crowns!', true );
+		self::$COWBOY_HAT = new Prize( self::TYPE_HAT, Hats::COWBOY, 'Cowboy Hat' ); // folding at home
+		self::$CROWN_HAT = new Prize( self::TYPE_HAT, Hats::CROWN, 'Crown Hat' ); // folding at home
+		self::$SANTA_HAT = new Prize( self::TYPE_HAT, Hats::SANTA, 'Santa Hat', 'Briefly freezes the blocks you stand on!' ); // christmas login and won randomly
+		self::$PARTY_HAT = new Prize( self::TYPE_HAT, Hats::PARTY, 'Party Hat', 'Wear this hat to become immune to lightning!' ); // FIX NEW YEARS LOGIN and won randomly
+		self::$TOP_HAT = new Prize( self::TYPE_HAT, Hats::TOP_HAT, 'Top Hat', 'Stroll through vanish blocks with class!', true ); // The Golden Compass by -Shadowfax-
+		self::$JUMP_START_HAT = new Prize( self::TYPE_HAT, Hats::JUMP_START, 'Jump Start Hat', 'Waiting is slow! Start racing right away.' ); // MAKE EASIER TO ENCOUNTER when won randomly during hh
+		self::$MOON_HAT = new Prize( self::TYPE_HAT, Hats::MOON, 'Moon Hat', 'Earn some super bright Lux!', true ); // Redemption by cooldude90
+		self::$THIEF_HAT = new Prize( self::TYPE_HAT, Hats::THIEF, 'Thief Hat', 'Steal other player\'s hats --even crowns!', true ); // Apocalypse by Divinity
 		self::$JIGG_HAT = new Prize( self::TYPE_HAT, Hats::JIGG, 'Jigg Hat', 'Jump on the heads of your opponents!', true ); //buto (EXACT) by ZePHiR
-		self::$ARTIFACT_HAT = new Prize( self::TYPE_HAT, Hats::ARTIFACT, 'Artifact Hat' );
+		self::$ARTIFACT_HAT = new Prize( self::TYPE_HAT, Hats::ARTIFACT, 'Artifact Hat' ); // Goliathe Grand Prix
 		
 		self::$EPIC_KONG_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::KONG, 'Epic Upgrade' );
-		self::$EPIC_EXP_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::EXP, 'Epic Upgrade', '', true ); //campaign 5 level 9
+		self::$EPIC_EXP_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::EXP, 'Epic Upgrade', '', true ); // The Legend by nerdy (campaign 5, level 9)
 		self::$EPIC_PROPELLER_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::PROPELLER, 'Epic Upgrade' ); //http://jiggmin.com/threads/104505-The-Ultimate-Jiggmin-Gaming-Tournament
 		self::$EPIC_COWBOY_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::COWBOY, 'Epic Upgrade' );
 		self::$EPIC_CROWN_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::CROWN, 'Epic Upgrade' ); //cheetah racing leage
@@ -285,103 +321,116 @@ class Prizes {
 		self::$EPIC_TOP_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::TOP_HAT, 'Epic Upgrade' ); //Sir Sirlington
 		self::$EPIC_JUMP_START_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::JUMP_START, 'Epic Upgrade' ); //campaign 6
 		self::$EPIC_MOON_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::MOON, 'Epic Upgrade' );
-		self::$EPIC_THIEF_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::THIEF, 'Epic Upgrade' );
+		self::$EPIC_THIEF_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::THIEF, 'Epic Upgrade' ); // Campaign of the Fortnight
 		self::$EPIC_JIGG_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::JIGG, 'Epic Upgrade' ); //caption of the week
-		self::$EPIC_ARTIFACT_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::ARTIFACT, 'Epic Upgrade' );
+		self::$EPIC_ARTIFACT_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::ARTIFACT, 'Epic Upgrade' ); // Goliathe Grand Prix
 		
 		
-		//---
-		self::$CLASSIC_HEAD = new Prize( self::TYPE_HEAD, Heads::CLASSIC, 'Classic Head' );
-		self::$TIRED_HEAD = new Prize( self::TYPE_HEAD, Heads::TIRED, 'Tired Head' );
-		self::$SMILER_HEAD = new Prize( self::TYPE_HEAD, Heads::SMILER, 'Smiling Head' );
-		self::$FLOWER_HEAD = new Prize( self::TYPE_HEAD, Heads::FLOWER, 'Flower Head' );
-		self::$CLASSIC_GIRL_HEAD = new Prize( self::TYPE_HEAD, Heads::CLASSIC_GIRL, 'Lady Head' );
-		self::$GOOF_HEAD = new Prize( self::TYPE_HEAD, Heads::GOOF, 'Goof Head' );
-		self::$DOWNER_HEAD = new Prize( self::TYPE_HEAD, Heads::DOWNER, 'Downer Head' );
-		self::$BALLOON_HEAD = new Prize( self::TYPE_HEAD, Heads::BALLOON, 'Balloon Head' );
-		self::$WORM_HEAD = new Prize( self::TYPE_HEAD, Heads::WORM, 'Worm Head' );
-		self::$UNICORN_HEAD = new Prize( self::TYPE_HEAD, Heads::UNICORN, 'Unicorn Head' );
-		self::$BIRD_HEAD = new Prize( self::TYPE_HEAD, Heads::BIRD, 'Bird Head' );
-		self::$SUN_HEAD = new Prize( self::TYPE_HEAD, Heads::SUN, 'Sun Head');
-		self::$CANDY_HEAD = new Prize( self::TYPE_HEAD, Heads::CANDY, 'Candy Head' );
-		self::$INVISIBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::INVISIBLE, 'Invisible Head' );
-		self::$FOOTBALL_HELMET_HEAD = new Prize( self::TYPE_HEAD, Heads::FOOTBALL_HELMET, 'Helmet Head' );
-		self::$BASKETBALL_HEAD = new Prize( self::TYPE_HEAD, Heads::BASKETBALL, 'Basketball Head' );
-		self::$STICK_HEAD = new Prize( self::TYPE_HEAD, Heads::STICK, 'Stick Head' );
-		self::$CAT_HEAD = new Prize( self::TYPE_HEAD, Heads::CAT, 'Cat Head' );
-		self::$ELEPHANT_HEAD = new Prize( self::TYPE_HEAD, Heads::ELEPHANT, 'Elephant Head' );
-		self::$ANT_HEAD= new Prize( self::TYPE_HEAD, Heads::ANT, 'Ant Head' );
-		self::$ASTRONAUT_HEAD = new Prize( self::TYPE_HEAD, Heads::ASTRONAUT, 'Astronaut Head' );
-		self::$ALIEN_HEAD = new Prize( self::TYPE_HEAD, Heads::ALIEN, 'Alien Head' );
-		self::$DINO_HEAD = new Prize( self::TYPE_HEAD, Heads::DINO, 'Dino Head' );
-		self::$ARMOR_HEAD = new Prize( self::TYPE_HEAD, Heads::ARMOR, 'Armor Head' );
-		self::$FAIRY_HEAD = new Prize( self::TYPE_HEAD, Heads::FAIRY, 'Fairy Head' );
-		self::$GINGERBREAD_HEAD = new Prize( self::TYPE_HEAD, Heads::GINGERBREAD, 'Gingerbread Head' );
-		self::$BUBBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::BUBBLE, 'Bubble Head' );
-		self::$KING_HEAD = new Prize( self::TYPE_HEAD, Heads::KING, 'King Head' );
-		self::$QUEEN_HEAD = new Prize( self::TYPE_HEAD, Heads::QUEEN, 'Queen Head' );
-		self::$SIR_HEAD = new Prize( self::TYPE_HEAD, Heads::SIR, 'Sir Head' );
-		self::$VERY_INVISIBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::VERY_INVISIBLE, 'Very Invisible Head' );
-		self::$TACO_HEAD = new Prize( self::TYPE_HEAD, Heads::TACO, 'Taco Head' ); //random levels
-		self::$SLENDER_HEAD = new Prize( self::TYPE_HEAD, Heads::SLENDER, 'Slender Head' ); //-Deliverance- by changelings
+		// Heads
+		self::$CLASSIC_HEAD = new Prize( self::TYPE_HEAD, Heads::CLASSIC, 'Classic Head' ); // given on registration
+		self::$TIRED_HEAD = new Prize( self::TYPE_HEAD, Heads::TIRED, 'Tired Head' ); // given on registration
+		self::$SMILER_HEAD = new Prize( self::TYPE_HEAD, Heads::SMILER, 'Smiling Head' ); // given on registration
+		self::$FLOWER_HEAD = new Prize( self::TYPE_HEAD, Heads::FLOWER, 'Flower Head' ); // given on registration
+		self::$CLASSIC_GIRL_HEAD = new Prize( self::TYPE_HEAD, Heads::CLASSIC_GIRL, 'Lady Head' ); // given on registration
+		self::$GOOF_HEAD = new Prize( self::TYPE_HEAD, Heads::GOOF, 'Goof Head' ); // given on registration
+		self::$DOWNER_HEAD = new Prize( self::TYPE_HEAD, Heads::DOWNER, 'Downer Head' ); // given on registration
+		self::$BALLOON_HEAD = new Prize( self::TYPE_HEAD, Heads::BALLOON, 'Balloon Head' ); // given on registration
+		self::$WORM_HEAD = new Prize( self::TYPE_HEAD, Heads::WORM, 'Worm Head' ); // given on registration
+		self::$UNICORN_HEAD = new Prize( self::TYPE_HEAD, Heads::UNICORN, 'Unicorn Head' ); // Campaign (Original, 1) - Newbieland 2 by Jiggmin
+		self::$BIRD_HEAD = new Prize( self::TYPE_HEAD, Heads::BIRD, 'Bird Head' ); // Campaign (Original, 1) - 
+		self::$SUN_HEAD = new Prize( self::TYPE_HEAD, Heads::SUN, 'Sun Head'); // Campaign (Original, 1) - mario bros remix v1.3 by zerostar(oO)
+		self::$CANDY_HEAD = new Prize( self::TYPE_HEAD, Heads::CANDY, 'Candy Head' ); // Campaign (Original, 1) - Candyland by Albatross
+		self::$INVISIBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::INVISIBLE, 'Invisible Head' ); // won randomly
+		self::$FOOTBALL_HELMET_HEAD = new Prize( self::TYPE_HEAD, Heads::FOOTBALL_HELMET, 'Helmet Head' ); // Campaign (Original, 1) - Soul Temple by julls
+		self::$BASKETBALL_HEAD = new Prize( self::TYPE_HEAD, Heads::BASKETBALL, 'Basketball Head' ); // won randomly
+		self::$STICK_HEAD = new Prize( self::TYPE_HEAD, Heads::STICK, 'Stick Head' ); // won randomly
+		self::$CAT_HEAD = new Prize( self::TYPE_HEAD, Heads::CAT, 'Cat Head' ); // Campaign (Speed, 2) - 
+		self::$ELEPHANT_HEAD = new Prize( self::TYPE_HEAD, Heads::ELEPHANT, 'Elephant Head' ); // Campaign (Speed, 2) - 
+		self::$ANT_HEAD= new Prize( self::TYPE_HEAD, Heads::ANT, 'Ant Head' ); // kong login with linked kong account
+		self::$ASTRONAUT_HEAD = new Prize( self::TYPE_HEAD, Heads::ASTRONAUT, 'Astronaut Head' ); // Campaign (3) - 
+		self::$ALIEN_HEAD = new Prize( self::TYPE_HEAD, Heads::ALIEN, 'Alien Head' ); // Campaign (?) - 
+		self::$DINO_HEAD = new Prize( self::TYPE_HEAD, Heads::DINO, 'Dino Head' ); // Campaign (?) - 
+		self::$ARMOR_HEAD = new Prize( self::TYPE_HEAD, Heads::ARMOR, 'Armor Head' ); // Campaign (?) - 
+		self::$FAIRY_HEAD = new Prize( self::TYPE_HEAD, Heads::FAIRY, 'Fairy Head' ); // Campaign (?) - 
+		self::$GINGERBREAD_HEAD = new Prize( self::TYPE_HEAD, Heads::GINGERBREAD, 'Gingerbread Head' ); // Campaign (Custom, 6)
+		self::$BUBBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::BUBBLE, 'Bubble Head' ); // artifact + assorted contests
+		self::$KING_HEAD = new Prize( self::TYPE_HEAD, Heads::KING, 'King Head' ); // vault
+		self::$QUEEN_HEAD = new Prize( self::TYPE_HEAD, Heads::QUEEN, 'Queen Head' ); // vault
+		self::$SIR_HEAD = new Prize( self::TYPE_HEAD, Heads::SIR, 'Sir Head' ); // won randomly
+		self::$VERY_INVISIBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::VERY_INVISIBLE, 'Very Invisible Head' ); // temp vault item
+		self::$TACO_HEAD = new Prize( self::TYPE_HEAD, Heads::TACO, 'Taco Head' ); // won randomly
+		self::$SLENDER_HEAD = new Prize( self::TYPE_HEAD, Heads::SLENDER, 'Slender Head' ); // -Deliverance- by changelings
+		self::$SANTA_HEAD = new Prize( self::TYPE_HEAD, Heads::SANTA, 'Santa Head' ); // Christmas login
+		self::$FROST_DJINN_HEAD = new Prize( self::TYPE_HEAD, Heads::FROST_DJINN, 'Frost Djinn Head' ); // vault
+		self::$REINDEER_HEAD = new Prize( self::TYPE_HEAD, Heads::REINDEER, 'Reindeer Head' ); // Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$CROCODILE_HEAD = new Prize( self::TYPE_HEAD, Heads::CROCODILE, 'Crocodile Head' ); // Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$VALENTINE_HEAD = new Prize( self::TYPE_HEAD, Heads::VALENTINE, 'Valentine Head' ); // Valentine's Day login, Goliathe Tourney Tour
+		self::$BUNNY_HEAD = new Prize( self::TYPE_HEAD, Heads::BUNNY, 'Bunny Head' ); // Goliathe Tourney Tour
 		
-		self::$EPIC_CLASSIC_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade' ); //random levels
-		self::$EPIC_TIRED_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::TIRED, 'Epic Upgrade' ); //random levels
+		self::$EPIC_CLASSIC_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade' ); // won randomly
+		self::$EPIC_TIRED_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::TIRED, 'Epic Upgrade' ); // won randomly
 		self::$EPIC_SMILER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::SMILER, 'Epic Upgrade' );
-		self::$EPIC_FLOWER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::FLOWER, 'Epic Upgrade' ); //random levels
+		self::$EPIC_FLOWER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::FLOWER, 'Epic Upgrade' ); // won randomly
 		self::$EPIC_CLASSIC_GIRL_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CLASSIC_GIRL, 'Epic Upgrade' );
 		self::$EPIC_GOOF_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::GOOF, 'Epic Upgrade' );
 		self::$EPIC_DOWNER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::DOWNER, 'Epic Upgrade' );
 		self::$EPIC_BALLOON_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::BALLOON, 'Epic Upgrade' );
-		self::$EPIC_WORM_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::WORM, 'Epic Upgrade' ); //http://jiggmin.com/threads/111373-Campaign-of-the-Fortnight-Theme-Suggestions!
-		self::$EPIC_UNICORN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::UNICORN, 'Epic Upgrade' ); //campaign 6
-		self::$EPIC_BIRD_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::BIRD, 'Epic Upgrade' ); //campaign 5 level 1
+		self::$EPIC_WORM_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::WORM, 'Epic Upgrade' ); // CotF Theme Suggestions (http://jiggmin.com/threads/111373-Campaign-of-the-Fortnight-Theme-Suggestions!)
+		self::$EPIC_UNICORN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::UNICORN, 'Epic Upgrade' ); // Campaign (Custom/CotF, 6) - 
+		self::$EPIC_BIRD_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::BIRD, 'Epic Upgrade' ); // Campaign (Legendary/Epic, 5) - Level 1
 		self::$EPIC_SUN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::SUN, 'Epic Upgrade'); //http://jiggmin.com/threads/108828-Survivor-Jiggmin-s-Village
-		self::$EPIC_CANDY_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CANDY, 'Epic Upgrade' ); //campaign 6
-		self::$EPIC_INVISIBLE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::INVISIBLE, 'Epic Upgrade' ); //NA
-		self::$EPIC_FOOTBALL_HELMET_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::FOOTBALL_HELMET, 'Epic Upgrade' ); //campaign 6
-		self::$EPIC_BASKETBALL_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::BASKETBALL, 'Epic Upgrade' ); //Jiggmin Grand Prix http://jiggmin.com/threads/104222-Jiggmin-Grand-Prix
-		self::$EPIC_STICK_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::STICK, 'Epic Upgrade' ); //Styler of The Week //Curve Fever Tournament
-		self::$EPIC_CAT_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CAT, 'Epic Upgrade' ); //cheetah racing leage
-		self::$EPIC_ELEPHANT_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::ELEPHANT, 'Epic Upgrade' );
+		self::$EPIC_CANDY_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CANDY, 'Epic Upgrade' ); // Campaign (Custom/CotF, 6) - 
+		self::$EPIC_INVISIBLE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::INVISIBLE, 'Epic Upgrade' ); // won randomly
+		self::$EPIC_FOOTBALL_HELMET_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::FOOTBALL_HELMET, 'Epic Upgrade' ); // Campaign (Custom/CotF, 6) - 
+		self::$EPIC_BASKETBALL_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::BASKETBALL, 'Epic Upgrade' ); // Jiggmin Grand Prix (http://jiggmin.com/threads/104222-Jiggmin-Grand-Prix)
+		self::$EPIC_STICK_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::STICK, 'Epic Upgrade' ); // Styler of The Week, Curve Fever Tournament
+		self::$EPIC_CAT_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CAT, 'Epic Upgrade' ); // Cheetah Racing League
+		self::$EPIC_ELEPHANT_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::ELEPHANT, 'Epic Upgrade' ); // Campaign
 		self::$EPIC_ANT_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::ANT, 'Epic Upgrade' );
 		self::$EPIC_ASTRONAUT_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::ASTRONAUT, 'Epic Upgrade' );
-		self::$EPIC_ALIEN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::ALIEN, 'Epic Upgrade' ); //free rice of the week
+		self::$EPIC_ALIEN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::ALIEN, 'Epic Upgrade' ); //freericer of the week
 		self::$EPIC_DINO_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::DINO, 'Epic Upgrade' ); //campaign 5 level 4
 		self::$EPIC_ARMOR_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::ARMOR, 'Epic Upgrade' );
 		self::$EPIC_FAIRY_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::FAIRY, 'Epic Upgrade' ); //Draw the JVer!
 		self::$EPIC_GINGERBREAD_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::GINGERBREAD, 'Epic Upgrade' );
 		self::$EPIC_BUBBLE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::BUBBLE, 'Epic Upgrade' );
-		self::$EPIC_KING_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::KING, 'Epic Upgrade' ); //built in
-		self::$EPIC_QUEEN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::QUEEN, 'Epic Upgrade' ); //build in
+		self::$EPIC_KING_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::KING, 'Epic Upgrade' ); // vault/built-in
+		self::$EPIC_QUEEN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::QUEEN, 'Epic Upgrade' ); // vault/built-in
 		self::$EPIC_SIR_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::SIR, 'Epic Upgrade' ); //Sir Sirlington
-		self::$EPIC_VERY_INVISIBLE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::VERY_INVISIBLE, 'Epic Upgrade' );
+		self::$EPIC_VERY_INVISIBLE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::VERY_INVISIBLE, 'Epic Upgrade' ); // does not exist
 		self::$EPIC_TACO_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::TACO, 'Epic Upgrade' ); //Racer of the week
 		self::$EPIC_SLENDER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::SLENDER, 'Epic Upgrade' ); //campaign 6
+		self::$EPIC_SANTA_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::SANTA, 'Epic Upgrade' ); // bls' Holiday LiveStream 2013
+		self::$EPIC_FROST_DJINN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::FROST_DJINN, 'Epic Upgrade' ); // Vault purchase
+		self::$EPIC_REINDEER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::REINDEER, 'Epic Upgrade' ); // Ktost's Holiday Event 2013, Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$EPIC_CROCODILE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CROCODILE, 'Epic Upgrade' ); // Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$EPIC_VALENTINE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::VALENTINE, 'Epic Upgrade' ); // Goliathe Tourney Tour
+		self::$EPIC_BUNNY_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::BUNNY, 'Epic Upgrade' ); // Goliathe Tourney Tour
 		
 		
-		//---
-		self::$CLASSIC_BODY = new Prize( self::TYPE_BODY, Bodies::CLASSIC, 'Classic Body' );
-		self::$STRAP_BODY = new Prize( self::TYPE_BODY, Bodies::STRAP, 'Strap Body' );
-		self::$DRESS_BODY = new Prize( self::TYPE_BODY, Bodies::DRESS, 'Dress Body' );
-		self::$PEC_BODY = new Prize( self::TYPE_BODY, Bodies::PEC, 'Pec Body' );
-		self::$GUT_BODY = new Prize( self::TYPE_BODY, Bodies::GUT, 'Gut Body' );
-		self::$COLLAR_BODY = new Prize( self::TYPE_BODY, Bodies::COLLAR, 'Collar Body' );
-		self::$MISS_PR2_BODY = new Prize( self::TYPE_BODY, Bodies::MISS_PR2, 'Miss PR2 Body' );
-		self::$BELT_BODY = new Prize( self::TYPE_BODY, Bodies::BELT, 'Belt Body' );
-		self::$SNAKE_BODY = new Prize( self::TYPE_BODY, Bodies::SNAKE, 'Snake Body' );
-		self::$BIRD_BODY = new Prize( self::TYPE_BODY, Bodies::BIRD, 'Bird Body' );
-		self::$INVISIBLE_BODY = new Prize( self::TYPE_BODY, Bodies::INVISIBLE, 'Invisible Body' );
-		self::$BEE_BODY = new Prize( self::TYPE_BODY, Bodies::BEE, 'Bee Body' );
-		self::$STICK_BODY = new Prize( self::TYPE_BODY, Bodies::STICK, 'Stick Body' );
-		self::$CAT_BODY = new Prize( self::TYPE_BODY, Bodies::CAT, 'Cat Body' );
-		self::$CAR_BODY = new Prize( self::TYPE_BODY, Bodies::CAR, 'Car Body' );
-		self::$BEAN_BODY = new Prize( self::TYPE_BODY, Bodies::BEAN, 'Elephant Body' );
-		self::$ANT_BODY = new Prize( self::TYPE_BODY, Bodies::ANT, 'Ant Body' );
-		self::$ASTRONAUT_BODY = new Prize( self::TYPE_BODY, Bodies::ASTRONAUT, 'Astronaut Body' );
-		self::$ALIEN_BODY = new Prize( self::TYPE_BODY, Bodies::ALIEN, 'Alien Body' );
-		self::$GALAXY_BODY = new Prize( self::TYPE_BODY, Bodies::GALAXY, 'Galaxy Body' );
-		self::$BUBBLE_BODY = new Prize( self::TYPE_BODY, Bodies::BUBBLE, 'Bubble Body' );
+		
+		// Bodies
+		self::$CLASSIC_BODY = new Prize( self::TYPE_BODY, Bodies::CLASSIC, 'Classic Body' ); // given on registration
+		self::$STRAP_BODY = new Prize( self::TYPE_BODY, Bodies::STRAP, 'Strap Body' ); // given on registration
+		self::$DRESS_BODY = new Prize( self::TYPE_BODY, Bodies::DRESS, 'Dress Body' ); // given on registration
+		self::$PEC_BODY = new Prize( self::TYPE_BODY, Bodies::PEC, 'Pec Body' ); // given on registration
+		self::$GUT_BODY = new Prize( self::TYPE_BODY, Bodies::GUT, 'Gut Body' ); // given on registration
+		self::$COLLAR_BODY = new Prize( self::TYPE_BODY, Bodies::COLLAR, 'Collar Body' ); // given on registration
+		self::$MISS_PR2_BODY = new Prize( self::TYPE_BODY, Bodies::MISS_PR2, 'Miss PR2 Body' ); // given on registration
+		self::$BELT_BODY = new Prize( self::TYPE_BODY, Bodies::BELT, 'Belt Body' ); // given on registration
+		self::$SNAKE_BODY = new Prize( self::TYPE_BODY, Bodies::SNAKE, 'Snake Body' ); // given on registration
+		self::$BIRD_BODY = new Prize( self::TYPE_BODY, Bodies::BIRD, 'Bird Body' ); // Campaign (Original, 1) - 
+		self::$INVISIBLE_BODY = new Prize( self::TYPE_BODY, Bodies::INVISIBLE, 'Invisible Body' ); // won randomly
+		self::$BEE_BODY = new Prize( self::TYPE_BODY, Bodies::BEE, 'Bee Body' ); // Campaign (Original, 1) - Zerostar by zerostar(oO)
+		self::$STICK_BODY = new Prize( self::TYPE_BODY, Bodies::STICK, 'Stick Body' ); // won randomly
+		self::$CAT_BODY = new Prize( self::TYPE_BODY, Bodies::CAT, 'Cat Body' ); // Campaign (Speed, 2) - 
+		self::$CAR_BODY = new Prize( self::TYPE_BODY, Bodies::CAR, 'Car Body' ); // Campaign (Speed, 2) - 
+		self::$BEAN_BODY = new Prize( self::TYPE_BODY, Bodies::BEAN, 'Elephant Body' ); // Campaign (Speed, 2) - 
+		self::$ANT_BODY = new Prize( self::TYPE_BODY, Bodies::ANT, 'Ant Body' ); // kong login with linked kong account
+		self::$ASTRONAUT_BODY = new Prize( self::TYPE_BODY, Bodies::ASTRONAUT, 'Astronaut Body' ); // Campaign (?) - 
+		self::$ALIEN_BODY = new Prize( self::TYPE_BODY, Bodies::ALIEN, 'Alien Body' ); // Campaign (?) - 
+		self::$GALAXY_BODY = new Prize( self::TYPE_BODY, Bodies::GALAXY, 'Galaxy Body' ); // Campaign (?) - 
+		self::$BUBBLE_BODY = new Prize( self::TYPE_BODY, Bodies::BUBBLE, 'Bubble Body' ); // artifact + assorted contests
 		self::$DINO_BODY = new Prize( self::TYPE_BODY, Bodies::DINO, 'Dino Body' );
 		self::$ARMOR_BODY = new Prize( self::TYPE_BODY, Bodies::ARMOR, 'Armor Body' );
 		self::$FAIRY_BODY = new Prize( self::TYPE_BODY, Bodies::FAIRY, 'Fairy Body' );
@@ -393,6 +442,12 @@ class Prizes {
 		self::$VERY_INVISIBLE_BODY = new Prize( self::TYPE_BODY, Bodies::VERY_INVISIBLE, 'Very Invisible Body' );
 		self::$TACO_BODY = new Prize( self::TYPE_BODY, Bodies::TACO, 'Taco Body' ); //random levels
 		self::$SLENDER_BODY = new Prize( self::TYPE_BODY, Bodies::SLENDER, 'Slender Body' ); //-Deliverance- by changelings
+		self::$SANTA_BODY = new Prize( self::TYPE_BODY, Bodies::SANTA, 'Santa Body' ); // Christmas login
+		self::$FROST_DJINN_BODY = new Prize( self::TYPE_BODY, Bodies::FROST_DJINN, 'Frost Djinn Body' ); // Vault purchase
+		self::$REINDEER_BODY = new Prize( self::TYPE_BODY, Bodies::REINDEER, 'Reindeer Body' ); // Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$CROCODILE_BODY = new Prize( self::TYPE_BODY, Bodies::CROCODILE, 'Crocodile Body' ); // Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$VALENTINE_BODY = new Prize( self::TYPE_BODY, Bodies::VALENTINE, 'Valentine Body' ); // Valentine's Day login, Goliathe Tourney Tour
+		self::$BUNNY_BODY = new Prize( self::TYPE_BODY, Bodies::BUNNY, 'Bunny Body' ); // Goliathe Tourney Tour
 		
 		self::$EPIC_CLASSIC_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::CLASSIC, 'Epic Upgrade' ); //random levels
 		self::$EPIC_STRAP_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::STRAP, 'Epic Upgrade' ); //random levels
@@ -426,9 +481,15 @@ class Prizes {
 		self::$EPIC_VERY_INVISIBLE_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::VERY_INVISIBLE, 'Epic Upgrade' );
 		self::$EPIC_TACO_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::TACO, 'Epic Upgrade' ); //racer of the week
 		self::$EPIC_SLENDER_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::SLENDER, 'Epic Upgrade' ); //campaign 6
+		self::$EPIC_SANTA_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::SANTA, 'Epic Upgrade' ); // bls' Holiday LiveStream 2013
+		self::$EPIC_FROST_DJINN_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::FROST_DJINN, 'Epic Upgrade' ); // Vault purchase
+		self::$EPIC_REINDEER_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::REINDEER, 'Epic Upgrade' ); // Ktost's Holiday Event 2013, Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$EPIC_CROCODILE_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::CROCODILE, 'Epic Upgrade' ); // Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$EPIC_VALENTINE_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::VALENTINE, 'Epic Upgrade' ); // Goliathe Tourney Tour
+		self::$EPIC_BUNNY_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::BUNNY, 'Epic Upgrade' ); // Goliathe Tourney Tour
 		
 		
-		//---
+		// Feet
 		self::$CLASSIC_FEET = new Prize( self::TYPE_FEET, Feet::CLASSIC, 'Classic Feet' );
 		self::$HEEL_FEET = new Prize( self::TYPE_FEET, Feet::HEEL, 'Heel Feet' );
 		self::$LOAFER_FEET = new Prize( self::TYPE_FEET, Feet::LOAFER, 'Loafer Feet' );
@@ -459,6 +520,12 @@ class Prizes {
 		self::$BUBBLE_FEET = new Prize( self::TYPE_FEET, Feet::BUBBLE, 'Bubble Feet' );
 		self::$TACO_FEET = new Prize( self::TYPE_FEET, Feet::TACO, 'Taco Feet' ); //random levels
 		self::$SLENDER_FEET = new Prize( self::TYPE_FEET, Feet::SLENDER, 'Slender Feet' ); //-Deliverance- by changelings
+		self::$SANTA_FEET = new Prize( self::TYPE_FEET, Feet::SANTA, 'Santa Feet' ); // Christmas login
+		self::$FROST_DJINN_FEET = new Prize( self::TYPE_FEET, Feet::FROST_DJINN, 'Frost Djinn Feet' ); // Vault purchase
+		self::$REINDEER_FEET = new Prize( self::TYPE_FEET, Feet::REINDEER, 'Reindeer Feet' ); // Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$CROCODILE_FEET = new Prize( self::TYPE_FEET, Feet::CROCODILE, 'Crocodile Feet' ); // Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$VALENTINE_FEET = new Prize( self::TYPE_FEET, Feet::VALENTINE, 'Valentine Feet' ); // Valentine's Day login, Goliathe Tourney Tour
+		self::$BUNNY_FEET = new Prize( self::TYPE_FEET, Feet::BUNNY, 'Bunny Feet' ); // Goliathe Tourney Tour
 		
 		self::$EPIC_CLASSIC_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::CLASSIC, 'Epic Upgrade' ); //random levels
 		self::$EPIC_HEEL_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::HEEL, 'Epic Upgrade' ); //random levels
@@ -490,10 +557,16 @@ class Prizes {
 		self::$EPIC_BUBBLE_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::BUBBLE, 'Epic Upgrade' );
 		self::$EPIC_TACO_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::TACO, 'Epic Upgrade' ); //racer of the week
 		self::$EPIC_SLENDER_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::SLENDER, 'Epic Upgrade' ); //campaign 6
+		self::$EPIC_SANTA_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::SANTA, 'Epic Upgrade' ); // bls' Holiday LiveStream 2013
+		self::$EPIC_FROST_DJINN_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::FROST_DJINN, 'Epic Upgrade' ); // Vault purchase
+		self::$EPIC_REINDEER_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::REINDEER, 'Epic Upgrade' ); // Ktost's Holiday Event 2013, Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$EPIC_CROCODILE_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::CROCODILE, 'Epic Upgrade' ); // Goliathe Tourney Tour, Goliathe Grand Prix
+		self::$EPIC_VALENTINE_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::VALENTINE, 'Epic Upgrade' ); // Goliathe Tourney Tour
+		self::$EPIC_BUNNY_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::BUNNY, 'Epic Upgrade' ); // Goliathe Tourney Tour
 		
 	
-		//---
-		self::$EXP_5 = new Prize( self::TYPE_EXP, 5, 'Exp' );
+		// EXP Consolation Prize (consider changing to something more than 5, since EXP was inflated way back when)
+		self::$EXP_5 = new Prize( self::TYPE_EXP, 5, 'Exp' ); // Consider fixing the 5 EXP bonus, as it seems disabled right now
 	}
 	
 	

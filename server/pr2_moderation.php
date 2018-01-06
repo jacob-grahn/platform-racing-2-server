@@ -68,18 +68,50 @@ function ban($socket, $data){
 	$ban_player = name_to_player($banned_name);
 	$mod_id = $player->user_id;
 	
-	if($seconds > 60 && $player->temp_mod){
+	// this is not needed anymore, as temp mods don't have the ban buttons
+	/*if($seconds > 60 && $player->temp_mod){
 		$seconds = 60;
+	}*/
+	
+	// set a variable that uses seconds to make friendly times
+	switch ($seconds) {
+		case 60:
+			$disp_time = '1 minute';
+			break;
+		case 3600:
+			$disp_time = '1 hour';
+			break;
+		case 86400:
+			$disp_time = '1 day';
+			break;
+		case 604800:
+			$disp_time = '1 week';
+			break;
+		case 2419200:
+			$disp_time = '1 month';
+			break;
+		case 29030400:
+			$disp_time = '1 year';
+			break;
+		// if all else fails, echo the seconds
+		default:
+			$disp_time = $seconds.' seconds';
+			break;
 	}
-
+	
+	// instead of overwriting the $reason variable, set a new one to be used in a fancy way
 	if($reason == ''){
-		$reason = 'No reason was given.';
+		$disp_reason = 'There was no reason was given';
+	}
+	if($reason != ''){
+		$disp_reason = 'Reason: '.$reason;
 	}
 	
 	if(isset($ban_player) && $player->group > $ban_player->group){
-		if(isset($player->chat_room)) {
+		// if the person banning is in a chatroom and not a temp mod, echo a message to that chatroom
+		if(isset($player->chat_room && !$player->temp_mod)) {
 			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has banned '.$banned_name.' for '.$seconds.' seconds. Reason: '.$reason.'. This ban has been recorded at http://pr2hub.com/bans.', $player->user_id);
+			.' has banned '.$banned_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at http://pr2hub.com/bans.', $player->user_id);
 		}
 		$ban_player->remove();
 	}
@@ -112,9 +144,22 @@ function promote_to_moderator($socket, $data){
 		}
 		
 		if(isset($from_player->chat_room)){
-			$from_player->chat_room->send_chat('systemChat`'.$from_player->name
-			.' has promoted '.$name
-			.' to a '.$type.' moderator! May they reign in 1000 years of peace and prosperity! Make sure you read the moderator guidelines at jiggmin.com/threads/75837-Temporary-Moderator-Guidelines', $from_player->user_id);
+			// switch message based on promotion type
+			if ($type == 'temporary') {
+				$from_player->chat_room->send_chat('systemChat`'.$from_player->name
+				.' has promoted '.$name
+				.' to a '.$type.' moderator! May they reign in hours of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
+			}
+			if ($type == 'trial') {
+				$from_player->chat_room->send_chat('systemChat`'.$from_player->name
+				.' has promoted '.$name
+				.' to a '.$type.' moderator! May they reign in days of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
+			}
+			if ($type == 'permanent') {
+				$from_player->chat_room->send_chat('systemChat`'.$from_player->name
+				.' has promoted '.$name
+				.' to a '.$type.' moderator! May they reign in 1000 years of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
+			}
 		}
 	}
 }
