@@ -170,23 +170,25 @@ function promote_to_moderator($socket, $data){
 			exec("nohup php $import_path/commands/promote_to_moderator.php $port $safe_name $type > /dev/null &");
 		}
 		
+		switch($type) {
+			case 'temporary':
+				$reign_time = 'hours';
+				break;
+			case 'trial':
+				$reign_time = 'days';
+				break;
+			case 'permanent':
+				$reign_time = 'permanent';
+				break;
+			default:
+				$from_player->write('message`Error: Invalid promotion type.');
+				break;
+		}
+		
 		if(isset($from_player->chat_room)){
-			// switch message based on promotion type
-			if ($type == 'temporary') {
-				$from_player->chat_room->send_chat('systemChat`'.$from_player->name
-				.' has promoted '.$name
-				.' to a '.$type.' moderator! May they reign in hours of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
-			}
-			if ($type == 'trial') {
-				$from_player->chat_room->send_chat('systemChat`'.$from_player->name
-				.' has promoted '.$name
-				.' to a '.$type.' moderator! May they reign in days of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
-			}
-			if ($type == 'permanent') {
-				$from_player->chat_room->send_chat('systemChat`'.$from_player->name
-				.' has promoted '.$name
-				.' to a '.$type.' moderator! May they reign in 1000 years of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
-			}
+			$from_player->chat_room->send_chat('systemChat`'.$from_player->name
+			.' has promoted '.$name
+			.' to a '.$type.' moderator! May they reign in '.$reign_time.' of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
 		}
 	}
 	// if they're an admin but trying to promote a guest, tell them
