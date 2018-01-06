@@ -49,47 +49,35 @@ function login($connection, $name, $password){
 		throw new Exception('Your name can not be more than 20 characters long.');
 	}
 
-	if(is_admin_pass($password)){
-		$result = $connection->query("select * from users
-										where name = '$safe_name'");
-		if(!$result){
-			throw new Exception('Could not admin login.');
-		}
+
+	//try to log in
+	$result = $connection->query("select * from users
+					where name = '$safe_name'
+					and password = sha1('$safe_password')
+					limit 0,1");
+	if(!$result){
+		throw new Exception('Could not check login.');
 	}
-
-	else {
-
-
-		//try to log in
+	if($result->num_rows < 1){
 		$result = $connection->query("select * from users
-										where name = '$safe_name'
-										and password = sha1('$safe_password')
-										limit 0,1");
+						where name = '$safe_name'
+						and temp_password = sha1('$safe_password')
+						limit 0,1");
 		if(!$result){
 			throw new Exception('Could not check login.');
 		}
-		if($result->num_rows < 1){
-			$result = $connection->query("select * from users
-										where name = '$safe_name'
-										and temp_password = sha1('$safe_password')
-										limit 0,1");
-			if(!$result){
-				throw new Exception('Could not check login.');
-			}
-			if($result->num_rows < 1) {
-				sleep(1);
-				throw new Exception('That name / password combination was not found.');
-			}
-
-			//set the temp password to their real password
-			$update_result = $connection->query("update users
-													set password = temp_password,
-														temp_password = NULL
-													where name = '$safe_name'
-													and temp_password = sha1('$safe_password')");
-			if(!$update_result){
-				//throw new Exception('Could not update your password.');
-			}
+		if($result->num_rows < 1) {
+			sleep(1);
+			throw new Exception('That name / password combination was not found.');
+		}
+		//set the temp password to their real password
+		$update_result = $connection->query("update users
+							set password = temp_password,
+							temp_password = NULL
+							where name = '$safe_name'
+							and temp_password = sha1('$safe_password')");
+		if(!$update_result){
+			//throw new Exception('Could not update your password.');
 		}
 	}
 
@@ -100,9 +88,9 @@ function login($connection, $name, $password){
 	$safe_ip = addslashes(get_ip());
 	$safe_user_id = addslashes($row->user_id);
 	$connection->query("update users
-							set users.time = '$safe_time',
-								users.ip = '$safe_ip'
-							where users.user_id = '$safe_user_id'");
+				set users.time = '$safe_time',
+				users.ip = '$safe_ip'
+				where users.user_id = '$safe_user_id'");
 
 	return ($row);
 }
