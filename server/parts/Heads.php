@@ -35,7 +35,13 @@ class Heads {
 	const VERY_INVISIBLE = 31;
 	const TACO = 32;
 	const SLENDER = 33;
-	
+	const SANTA = 34;
+	const FROST_DJINN = 35;
+	const REINDEER = 36;
+	const CROCODILE = 37;
+	const VALENTINE = 38;
+	const BUNNY = 39;
+
 }
 
 ?>

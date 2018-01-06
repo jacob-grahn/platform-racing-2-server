@@ -32,6 +32,12 @@ class Feet {
 	const BUBBLE = 28;
 	const TACO = 29;
 	const SLENDER = 30;
+	const SANTA = 34;
+	const FROST_DJINN = 35;
+	const REINDEER = 36;
+	const CROCODILE = 37;
+	const VALENTINE = 38;
+	const BUNNY = 39;
 	
 }
 
