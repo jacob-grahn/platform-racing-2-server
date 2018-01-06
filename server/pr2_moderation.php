@@ -180,9 +180,6 @@ function promote_to_moderator($socket, $data){
 			case 'permanent':
 				$reign_time = 'permanent';
 				break;
-			default:
-				$from_player->write('message`Error: Invalid promotion type.');
-				break;
 		}
 		
 		if(isset($from_player->chat_room)){
