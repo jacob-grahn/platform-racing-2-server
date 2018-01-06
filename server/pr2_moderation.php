@@ -178,7 +178,7 @@ function promote_to_moderator($socket, $data){
 				$reign_time = 'days';
 				break;
 			case 'permanent':
-				$reign_time = 'permanent';
+				$reign_time = '1000 years';
 				break;
 		}
 		
