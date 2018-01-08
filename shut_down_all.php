@@ -2,8 +2,8 @@
 
 <?php
 
-require_once('/home/jiggmin/pr2/server/fns/management_fns.php');
-require_once('/home/jiggmin/pr2/server/fns/all_fns.php');
+require_once('./server/fns/management_fns.php');
+require_once('./server/fns/all_fns.php');
 
 $day = date('w');
 
@@ -23,7 +23,7 @@ $servers = $db->to_array( $db->call( 'servers_select_all', array() ) );
 //--- test all active servers at this address
 foreach( $servers as $server ) {
 	output( $server->server_name );
-	
+
 	if( (($mode == 'inactive' && $server->active == 0) || ($mode == 'active' && $server->active == 1) || ($mode == 'all')) ) {
 		echo "Shutting down $server->server_name ($server->server_id)";
 		try{

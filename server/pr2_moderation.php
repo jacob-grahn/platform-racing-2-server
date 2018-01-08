@@ -6,19 +6,19 @@ function kick($socket, $data){
 	global $guild_owner;
 	$name = $data;
 	$kicked_player = name_to_player($name); // define var before line 12 instead of after line 14 for group check
-	
+
 	$player = $socket->get_player();
-	
+
 	// if the player actually has the power to do what they're trying to do, then do it
 	if(($player->group >= 2) && (($kicked_player->group < 2) || ($player->user_id == $guild_owner))) {
-		
+
 		LocalBans::add($name);
-		
+
 		if( isset($kicked_player) ) {
 			$kicked_player->remove();
 			$player->write('message`'.$name.' has been kicked from this server for 30 minutes.');
 		}
-		
+
 		// let people know that the player kicked someone
 		if(isset($player->chat_room)){
 			$player->chat_room->send_chat('systemChat`'.$player->name
@@ -36,17 +36,17 @@ function kick($socket, $data){
 //--- warn a player -------------------------------------------------------------
 function warn($socket, $data){
 	list($name, $num) = explode("`", $data);
-	
+
 	$player = $socket->get_player();
-	
+
 	// if they're a mod, warn the user
 	if($player->group >= 2){
-	
-		$warned_player = name_to_player($name);	
-		
+
+		$warned_player = name_to_player($name);
+
 		$w_str = '';
 		$time = 0;
-		
+
 		switch($num) {
 			case 1:
 				$w_str = 'warning';
@@ -64,16 +64,16 @@ function warn($socket, $data){
 				$player->write('message`Error: Invalid warning number.');
 				break;
 		}
-	
+
 		if(isset($warned_player) && $warned_player->group < 2){
 			$warned_player->chat_ban = time() + $time;
-		}	
-		
+		}
+
 		if(isset($player->chat_room)){
 			$player->chat_room->send_chat('systemChat`'.$player->name
 			.' has given '.$name.' '.$num.' '.$w_str.'. '
 			.'They have been banned from the chat for '.$time.' seconds.', $player->user_id);
-		}	
+		}
 	}
 	// if they aren't a mod, tell them
 	else {
@@ -87,16 +87,16 @@ function warn($socket, $data){
 //--- ban a player -------------------------------------------------------
 function ban($socket, $data){
 	list($banned_name, $seconds, $reason) = explode("`", $data);
-	
+
 	$player = $socket->get_player();
 	$ban_player = name_to_player($banned_name);
 	$mod_id = $player->user_id;
-	
+
 	// this is not needed anymore, as temp mods don't have the ban buttons
 	/*if($seconds > 60 && $player->temp_mod){
 		$seconds = 60;
 	}*/
-	
+
 	// set a variable that uses seconds to make friendly times
 	switch ($seconds) {
 		case 60:
@@ -122,7 +122,7 @@ function ban($socket, $data){
 			$disp_time = $seconds.' seconds';
 			break;
 	}
-	
+
 	// instead of overwriting the $reason variable, set a new one
 	if($reason == ''){
 		$disp_reason = 'There was no reason was given';
@@ -130,7 +130,7 @@ function ban($socket, $data){
 	if($reason != ''){
 		$disp_reason = 'Reason: '.$reason;
 	}
-	
+
 	if(isset($ban_player) && $player->group > $ban_player->group){
 		if(isset($player->chat_room)) {
 			$player->chat_room->send_chat('systemChat`'.$player->name
@@ -147,7 +147,7 @@ function promote_to_moderator($socket, $data){
 	list($name, $type) = explode("`", $data);
 	$from_player = $socket->get_player();
 	$to_player = name_to_player($name); // define before if
-	
+
 	// if they're an admin and not trying to promote a guest, continue with the promotion
 	if(($from_player->group > 2) && ($to_player->group != 0)){
 					// promoting guests breaks their accounts
@@ -160,17 +160,16 @@ function promote_to_moderator($socket, $data){
 				$to_player->write('setGroup`2');
 			}
 		}
-		
+
 		// give a confirmation message
 		$from_player->write('message`'.$name.' has been promoted to a '.$type.' moderator!');
-		
+
 		if($type == 'permanent' || $type == 'trial') {
 			global $port;
-			global $import_path;
 			$safe_name = escapeshellarg($name);
-			exec("nohup php $import_path/commands/promote_to_moderator.php $port $safe_name $type > /dev/null &");
+			exec("cd commands && nohup php promote_to_moderator.php $port $safe_name $type > /dev/null &");
 		}
-		
+
 		switch($type) {
 			case 'temporary':
 				$reign_time = 'hours';
@@ -182,7 +181,7 @@ function promote_to_moderator($socket, $data){
 				$reign_time = '1000 years';
 				break;
 		}
-		
+
 		if(isset($from_player->chat_room)){
 			$from_player->chat_room->send_chat('systemChat`'.$from_player->name
 			.' has promoted '.$name
@@ -203,7 +202,7 @@ function promote_to_moderator($socket, $data){
 //-- demote a moderator ------------------------------------------------------------------
 function demote_moderator($socket, $name){
 	$from_player = $socket->get_player();
-	
+
 	if($from_player->group == 3){
 		$to_player = name_to_player($name);
 		if(isset($to_player) && $to_player->group == 2) {
@@ -215,9 +214,8 @@ function demote_moderator($socket, $name){
 			$from_player->write('message`Error: '.$name.' is not a moderator.')
 		}
 		global $port;
-		global $import_path;
 		$safe_name = escapeshellarg($name);
-		exec("nohup php $import_path/commands/demod.php $port $safe_name > /dev/null &");
+		exec("cd commands && nohup php demod.php $port $safe_name > /dev/null &");
 	}
 }
 
@@ -225,8 +223,7 @@ function demote_moderator($socket, $name){
 //--- ban yourself ---
 function ban_socket($socket) {
 	$player = $socket->get_player();
-	global $import_path;
-	exec('nohup php '.$import_path.'/commands/ban.php '.escapeshellarg($player->user_id).' '.escapeshellarg($socket->remote_address).' '.escapeshellarg($player->name).' > /dev/null &');
+	exec('cd commands && nohup php ban.php '.escapeshellarg($player->user_id).' '.escapeshellarg($socket->remote_address).' '.escapeshellarg($player->name).' > /dev/null &');
 	$socket->close();
 	$socket->on_disconnect();
 }
