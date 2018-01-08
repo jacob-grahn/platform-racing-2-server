@@ -188,6 +188,10 @@ function promote_to_moderator($socket, $data){
 			.' to a '.$type.' moderator! May they reign in '.$reign_time.' of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
 		}
 	}
+	// if the $to_player isn't online, tell them
+	elseif(is_null($to_player)) {
+		$from_player->write('message`Error: '.$name.' is currently offline or doesn\'t exist.');
+	}
 	// if they're an admin but trying to promote a guest, tell them
 	elseif(($from_player->group > 2) && ($to_player->group == 0)){
 		$from_player->write('message`Error: You can\'t promote guests, silly!');
@@ -208,7 +212,7 @@ function demote_moderator($socket, $name) {
 		if(isset($to_player) && $to_player->group == 2) {
 			$to_player->group = 1;
 			$to_player->write('setGroup`1');
-			$from_player->write('message`'.$to_player.' has been demoted.');
+			$from_player->write('message`'.$name.' has been demoted.');
 		}
 		if(isset($to_player) && $to_player->group < 2) {
 			$from_player->write('message`Error: '.$name.' is not a moderator.');
