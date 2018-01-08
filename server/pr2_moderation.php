@@ -200,7 +200,7 @@ function promote_to_moderator($socket, $data){
 
 
 //-- demote a moderator ------------------------------------------------------------------
-function demote_moderator($socket, $name){
+function demote_moderator($socket, $name) {
 	$from_player = $socket->get_player();
 
 	if($from_player->group == 3){
@@ -211,7 +211,7 @@ function demote_moderator($socket, $name){
 			$from_player->write('message`'.$to_player.' has been demoted.');
 		}
 		if(isset($to_player) && $to_player->group < 2) {
-			$from_player->write('message`Error: '.$name.' is not a moderator.')
+			$from_player->write('message`Error: '.$name.' is not a moderator.');
 		}
 		global $port;
 		$safe_name = escapeshellarg($name);
