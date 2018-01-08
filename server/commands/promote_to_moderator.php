@@ -6,14 +6,14 @@ require_once(__DIR__ . '/../fns/db_fns.php');
 $port = $argv[1];
 $name = $argv[2];
 $type = $argv[3];
-$admin = $argv[4]; // argument passed as a player for use with error/confirmation messages
+$admin = $argv[4]; // player passed as argument for use with error/confirmation messages
 $caught_exception = false;
 
 // if the user isn't an admin, kill the script
 if($admin->group != 3) {
 	echo $admin->name." lacks the power to promote. Quitting...";
 	$admin->write("message`Error: You lack the power to promote $name to a $type moderator.");
-	exit();
+	exit;
 }
 
 try {
@@ -109,12 +109,12 @@ catch(Exception $e){
 	$caught_exception = true;
 	echo $e->getMessage();
 	$admin->write('message`Error: '.$e->getMessage());
+	exit;
 }
 
 if (!$caught_exception) {
 	$admin->write("message`$name has been promoted to a $type moderator!");
+	exit;
 }
-
-exit();
 
 ?>
