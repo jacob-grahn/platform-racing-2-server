@@ -3,6 +3,7 @@
 
 //--- kick a player -------------------------------------------------------------
 function kick($socket, $data){
+	global $guild_owner;
 	$name = $data;
 	$kicked_player = name_to_player($name); // define var before line 12 instead of after line 14 for group check
 	
