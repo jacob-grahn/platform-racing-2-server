@@ -2,8 +2,8 @@
 
 <?php
 
-require_once('./server/fns/management_fns.php');
-require_once('./server/fns/all_fns.php');
+require_once(__DIR__ . '/server/fns/management_fns.php');
+require_once(__DIR__ . '/server/fns/all_fns.php');
 
 $day = date('w');
 

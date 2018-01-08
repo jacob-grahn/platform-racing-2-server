@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-require_once('../fns/all_fns.php');
+require_once(__DIR__ . '/../fns/all_fns.php');
 
 $port = $argv[1];
 $user_id = $argv[2];

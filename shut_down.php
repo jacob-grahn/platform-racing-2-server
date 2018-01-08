@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-require_once('./server/fns/DB.php');
-require_once('./server/fns/db_fns.php');
-require_once('./server/fns/management_fns.php');
+require_once(__DIR__ . '/server/fns/DB.php');
+require_once(__DIR__ . '/server/fns/db_fns.php');
+require_once(__DIR__ . '/server/fns/management_fns.php');
 
 $db = new DB();
 
