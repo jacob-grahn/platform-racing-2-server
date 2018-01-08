@@ -189,7 +189,7 @@ function promote_to_moderator($socket, $data){
 		}
 	}
 	// if the $to_player isn't online, tell them
-	elseif(is_null($to_player)) {
+	elseif(($from_player->group > 2) && is_null($to_player)) {
 		$from_player->write('message`Error: '.$name.' is currently offline or doesn\'t exist.');
 	}
 	// if they're an admin but trying to promote a guest, tell them
