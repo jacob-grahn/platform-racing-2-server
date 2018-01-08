@@ -207,17 +207,14 @@ function demote_moderator($socket, $name) {
 
 	if($from_player->group == 3){
 		$to_player = name_to_player($name);
-		if(isset($to_player) && $to_player->group < 2) {
-			$from_player->write('message`Error: '.$name.' is not a moderator.');
-		}
-		elseif(isset($to_player) && $to_player->group == 2) {
+		if(isset($to_player) && $to_player->group == 2) {
 			$to_player->group = 1;
 			$to_player->write('setGroup`1');
-			$from_player->write('message`'.$name.' has been demoted.');
 		}
 		global $port;
+		$safe_admin = escapeshellarg($from_player);
 		$safe_name = escapeshellarg($name);
-		exec("nohup php ".__DIR__."/commands/demod.php $port $safe_name > /dev/null &");
+		exec("nohup php ".__DIR__."/commands/demod.php $port $safe_name $safe_admin > /dev/null &");
 	}
 }
 
