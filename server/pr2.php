@@ -7,6 +7,7 @@ error_reporting(E_ALL | E_STRICT);
 @ob_end_flush();
 set_time_limit(0);
 
+require_once('../env.php');
 require_once('./fns/DB.php');
 require_once('./fns/db_fns.php');
 require_once('./fns/data_fns.php');

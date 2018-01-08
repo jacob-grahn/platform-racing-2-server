@@ -1,6 +1,6 @@
 <?php
 
-
+require_once('../../env.php');
 
 function user_connect(){
 	global $DB_PASS, $DB_ADDRESS, $DB_USER, $DB_NAME, $DB_PORT;
