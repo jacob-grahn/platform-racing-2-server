@@ -149,9 +149,9 @@ function promote_to_moderator($socket, $data){
 	$to_player = name_to_player($name); // define before if
 
 	// if they're an admin and not trying to promote a guest, continue with the promotion
-	if(($from_player->group > 2) && ($to_player->group != 0)){
+	if($from_player->group > 2){
 					// promoting guests breaks their accounts
-		if(isset($to_player)){
+		if(isset($to_player) && $to_player->group != 0){
 			if($type == 'temporary') {
 				$to_player->become_temp_mod();
 			}
@@ -161,13 +161,11 @@ function promote_to_moderator($socket, $data){
 			}
 		}
 
-		// give a confirmation message
-		$from_player->write('message`'.$name.' has been promoted to a '.$type.' moderator!');
-
 		if($type == 'permanent' || $type == 'trial') {
 			global $port;
+			$safe_admin = escapeshellarg($from_player);
 			$safe_name = escapeshellarg($name);
-			exec("nohup php ".__DIR__."/promote_to_moderator.php $port $safe_name $type > /dev/null &");
+			exec("nohup php ".__DIR__."/commands/promote_to_moderator.php $port $safe_name $type $safe_admin > /dev/null &");
 		}
 
 		switch($type) {
@@ -219,7 +217,7 @@ function demote_moderator($socket, $name) {
 		}
 		global $port;
 		$safe_name = escapeshellarg($name);
-		exec("nohup php ".__DIR__."/demod.php $port $safe_name > /dev/null &");
+		exec("nohup php ".__DIR__."/commands/demod.php $port $safe_name > /dev/null &");
 	}
 }
 
@@ -227,7 +225,7 @@ function demote_moderator($socket, $name) {
 //--- ban yourself ---
 function ban_socket($socket) {
 	$player = $socket->get_player();
-	exec('nohup php '.__DIR__.'/ban.php '.escapeshellarg($player->user_id).' '.escapeshellarg($socket->remote_address).' '.escapeshellarg($player->name).' > /dev/null &');
+	exec('nohup php '.__DIR__.'/commands/ban.php '.escapeshellarg($player->user_id).' '.escapeshellarg($socket->remote_address).' '.escapeshellarg($player->name).' > /dev/null &');
 	$socket->close();
 	$socket->on_disconnect();
 }
