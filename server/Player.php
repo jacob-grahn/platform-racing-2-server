@@ -254,7 +254,7 @@ class Player {
 			$this->write('systemChat`Sorries, guests can\'t send chat messages.');
 		}
 		else if($this->chat_ban > time()) {
-			$this->write('systemChat`You have been temporarially banned from the chat. '
+			$this->write('systemChat`You have been temporarily banned from the chat. '
 				.'The ban will be lifted in '.($this->chat_ban - time()).' seconds.');
 		}
 		else if($this->get_chat_count() > 6) {
@@ -264,7 +264,7 @@ class Player {
 		else if($this->active_rank < 3) {
 			$this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
 		}
-		else if( strpos($chat_message, '/tournament') === 0 || strpos($chat_message, '/t') === 0 ) {
+		else if( strpos($chat_message, '/tournament ') === 0 || strpos($chat_message, '/t ') === 0 || $chat_message == '/t' ) {
 			global $guild_owner;
 			if( $this->user_id == $guild_owner ) {
 				issue_tournament( $chat_message );
@@ -527,6 +527,7 @@ class Player {
 		
 		$this->verify_parts();
 		$this->verify_stats();
+		$this->save_info();
 	}
 	
 	
