@@ -209,13 +209,13 @@ function demote_moderator($socket, $name) {
 
 	if($from_player->group == 3){
 		$to_player = name_to_player($name);
+		if(isset($to_player) && $to_player->group < 2) {
+			$from_player->write('message`Error: '.$name.' is not a moderator.');
+		}
 		if(isset($to_player) && $to_player->group == 2) {
 			$to_player->group = 1;
 			$to_player->write('setGroup`1');
 			$from_player->write('message`'.$name.' has been demoted.');
-		}
-		if(isset($to_player) && $to_player->group < 2) {
-			$from_player->write('message`Error: '.$name.' is not a moderator.');
 		}
 		global $port;
 		$safe_name = escapeshellarg($name);
