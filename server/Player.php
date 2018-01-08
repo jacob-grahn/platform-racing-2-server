@@ -722,7 +722,7 @@ class Player {
 			$jumping = 50;
 		}
 
-		$update_str = 'cd commands && nohup php update_pr2_user.php '.$port.' '.$user_id
+		$update_str = 'nohup php '.__DIR__.'/commands/update_pr2_user.php '.$port.' '.$user_id
 		.' '.$name.' '.$rank.' '.$exp_points.' '.$group
 		.' '.$hat_color.' '.$head_color.' '.$body_color.' '.$feet_color
 		.' '.$hat.' '.$head.' '.$body.' '.$feet

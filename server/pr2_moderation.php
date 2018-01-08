@@ -167,7 +167,7 @@ function promote_to_moderator($socket, $data){
 		if($type == 'permanent' || $type == 'trial') {
 			global $port;
 			$safe_name = escapeshellarg($name);
-			exec("cd commands && nohup php promote_to_moderator.php $port $safe_name $type > /dev/null &");
+			exec("nohup php ".__DIR__."/promote_to_moderator.php $port $safe_name $type > /dev/null &");
 		}
 
 		switch($type) {
@@ -215,7 +215,7 @@ function demote_moderator($socket, $name) {
 		}
 		global $port;
 		$safe_name = escapeshellarg($name);
-		exec("cd commands && nohup php demod.php $port $safe_name > /dev/null &");
+		exec("nohup php ".__DIR__."/demod.php $port $safe_name > /dev/null &");
 	}
 }
 
@@ -223,7 +223,7 @@ function demote_moderator($socket, $name) {
 //--- ban yourself ---
 function ban_socket($socket) {
 	$player = $socket->get_player();
-	exec('cd commands && nohup php ban.php '.escapeshellarg($player->user_id).' '.escapeshellarg($socket->remote_address).' '.escapeshellarg($player->name).' > /dev/null &');
+	exec('nohup php '.__DIR__.'/ban.php '.escapeshellarg($player->user_id).' '.escapeshellarg($socket->remote_address).' '.escapeshellarg($player->name).' > /dev/null &');
 	$socket->close();
 	$socket->on_disconnect();
 }
