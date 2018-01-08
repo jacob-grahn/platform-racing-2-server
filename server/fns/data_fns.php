@@ -99,19 +99,6 @@ function check_login($connection, $user_name, $user_pass, $force_new_login=false
 }
 
 
-
-//---
-function is_admin_pass($str){
-	global $ADMIN_PASS;
-	if($str == $ADMIN_PASS){
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
-
 //---
 function remove_resource( $_target ) {
 
