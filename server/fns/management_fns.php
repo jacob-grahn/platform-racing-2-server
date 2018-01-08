@@ -165,7 +165,7 @@ function talk_to_server( $address, $port, $key, $message, $receive ) {
 
 //--- connects to the farm server and calls a function -------------------------------------
 function call_socket_function($port, $server_function, $server='jiggmin2.com', $recieve=false) {
-  global $COMM_PASS $PROCESS_PASS;
+  global $COMM_PASS, $PROCESS_PASS;
 	$end = chr(0x04);
 	$send_num = 1;
 	$data = $PROCESS_PASS;
