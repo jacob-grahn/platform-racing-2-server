@@ -212,7 +212,7 @@ function demote_moderator($socket, $name) {
 		if(isset($to_player) && $to_player->group < 2) {
 			$from_player->write('message`Error: '.$name.' is not a moderator.');
 		}
-		if(isset($to_player) && $to_player->group == 2) {
+		elseif(isset($to_player) && $to_player->group == 2) {
 			$to_player->group = 1;
 			$to_player->write('setGroup`1');
 			$from_player->write('message`'.$name.' has been demoted.');
