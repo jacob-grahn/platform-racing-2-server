@@ -53,17 +53,6 @@ function is_obsene($str){
 
 
 
-
-//--- checks if an email address is valid --------------------------------------------------------
-function valid_email($address){
-  if (ereg('^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$', $address))
-    return true;
-  else
-    return false;
-}
-
-
-
 //--- returns a random string made up of chars 1-9 and a-z -----------------------------------------------
 function get_random_string($length){
 	$char_array = array('1','2','3','4','5','6','7','8','9',
