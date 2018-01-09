@@ -30,7 +30,7 @@ function set_chat_room($socket, $data){
 		$player->write('message`You lack the power to enter this room.');
 	}
 	
-	if(is_obsene($data)){
+	if(is_obscene($data)){
 		$data = 'none';
 		$player->write('message`Keep the room names clean, pretty please. :)');
 	}
