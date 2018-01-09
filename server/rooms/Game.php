@@ -141,11 +141,11 @@ class Game extends Room {
 	
 	
 	
-	// Sir Sirlington (Epic Sir Parts + Epic Top Hat Upgrades)
-	private function is_sir_sirlington_here() {
+	// Clint the Cowboy (Epic Cowboy Upgrade)
+	private function is_clint_cowboy_here() {
 		$ret = false;
 		foreach($this->player_array as $player) {
-			if($player->user_id == 5321458) {
+			if($player->user_id == 5451130) {
 				$ret = true;
 			}
 		}
@@ -154,11 +154,11 @@ class Game extends Room {
 	
 	
 	
-	// Clint the Cowboy (Epic Cowboy Upgrade)
-	private function is_clint_cowboy_here() {
+	// Sir Sirlington (Epic Sir Parts + Epic Top Hat Upgrades)
+	private function is_sir_sirlington_here() {
 		$ret = false;
 		foreach($this->player_array as $player) {
-			if($player->user_id == 5451130) {
+			if($player->user_id == 5321458) {
 				$ret = true;
 			}
 		}
