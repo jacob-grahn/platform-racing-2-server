@@ -1,5 +1,9 @@
 <?php
 
+// call pro/demotion functions
+require_once(__DIR__ . '/../commands/promote_to_moderator.php');
+require_once(__DIR__ . '/../commands/demod.php');
+
 
 //--- kick a player -------------------------------------------------------------
 function kick($socket, $data){
@@ -92,11 +96,6 @@ function ban($socket, $data){
 	$ban_player = name_to_player($banned_name);
 	$mod_id = $player->user_id;
 
-	// this is not needed anymore, as temp mods don't have the ban buttons
-	/*if($seconds > 60 && $player->temp_mod){
-		$seconds = 60;
-	}*/
-
 	// set a variable that uses seconds to make friendly times
 	switch ($seconds) {
 		case 60:
@@ -131,12 +130,14 @@ function ban($socket, $data){
 		$disp_reason = 'Reason: '.$reason;
 	}
 
-	if(isset($ban_player) && $player->group > $ban_player->group){
+	if($player->group >= 2){
 		if(isset($player->chat_room)) {
 			$player->chat_room->send_chat('systemChat`'.$player->name
 			.' has banned '.$banned_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at http://pr2hub.com/bans.', $player->user_id);
 		}
-		$ban_player->remove();
+		if(isset($ban_player) && $ban_player->group < 2) {
+			$ban_player->remove();
+		}
 	}
 }
 
@@ -148,25 +149,11 @@ function promote_to_moderator($socket, $data){
 	$from_player = $socket->get_player();
 	$to_player = name_to_player($name); // define before if
 
-	// if they're an admin and not trying to promote a guest, continue with the promotion
+	// if they're an admin, continue with the promotion (1st line of defense)
 	if($from_player->group > 2){
-					// promoting guests breaks their accounts
-		if(isset($to_player) && $to_player->group != 0){
-			if($type == 'temporary') {
-				$to_player->become_temp_mod();
-			}
-			else {
-				$to_player->group = 2;
-				$to_player->write('setGroup`2');
-			}
-		}
 
-		if($type == 'permanent' || $type == 'trial') {
-			global $port;
-			$safe_admin = escapeshellarg($from_player);
-			$safe_name = escapeshellarg($name);
-			exec("nohup php ".__DIR__."/commands/promote_to_moderator.php $port $safe_name $type $safe_admin > /dev/null &");
-		}
+		global $port;
+		promote_mod($port, $name, $type, $from_player, $to_player);
 
 		switch($type) {
 			case 'temporary':
@@ -186,14 +173,6 @@ function promote_to_moderator($socket, $data){
 			.' to a '.$type.' moderator! May they reign in '.$reign_time.' of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
 		}
 	}
-	// if the $to_player isn't online, tell them
-	elseif(($from_player->group > 2) && is_null($to_player)) {
-		$from_player->write('message`Error: '.$name.' is currently offline or doesn\'t exist.');
-	}
-	// if they're an admin but trying to promote a guest, tell them
-	elseif(($from_player->group > 2) && ($to_player->group == 0)){
-		$from_player->write('message`Error: You can\'t promote guests, silly!');
-	}
 	// if they're not an admin, tell them
 	else {
 		$from_player->write('message`Error: You lack the power to promote '.$name.' to a '.$type.' moderator.');
@@ -205,16 +184,12 @@ function promote_to_moderator($socket, $data){
 function demote_moderator($socket, $name) {
 	$from_player = $socket->get_player();
 
+	// if they're an admin, continue with the demotion (1st line of defense)
 	if($from_player->group == 3){
-		$to_player = name_to_player($name);
-		if(isset($to_player) && $to_player->group == 2) {
-			$to_player->group = 1;
-			$to_player->write('setGroup`1');
-		}
 		global $port;
-		$safe_admin = escapeshellarg($from_player);
-		$safe_name = escapeshellarg($name);
-		exec("nohup php ".__DIR__."/commands/demod.php $port $safe_name $safe_admin > /dev/null &");
+		$to_player = name_to_player($name);
+		
+		demote_mod($port, $name, $from_player, $to_player);
 	}
 }
 
