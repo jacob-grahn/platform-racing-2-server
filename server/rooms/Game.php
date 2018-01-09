@@ -554,7 +554,7 @@ class Game extends Room {
 				$player->write( 'award`Artifact Found!`+ ' . number_format( $artifact_bonus ) );
 
 				global $port;
-				exec( 'nohup php '.__DIR__.'/get_artifact.php '.$port.' '.$player->user_id.' > /dev/null &');
+				exec( 'nohup php '.__DIR__.'/../commands/get_artifact.php '.$port.' '.$player->user_id.' > /dev/null &');
 			}
 
 			//--- mark humans as robots at certain exp milestones
