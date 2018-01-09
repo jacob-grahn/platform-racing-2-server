@@ -3,7 +3,7 @@
 
 require_once(__DIR__ . '/../fns/db_fns.php');
 
-function promote_to_moderator($port, $name, $type, $admin) {
+function promote_mod($port, $name, $type, $admin) {
 	
 	// boolean var for use in if statement @end
 	$caught_exception = false;
@@ -11,7 +11,7 @@ function promote_to_moderator($port, $name, $type, $admin) {
 	// if the user isn't an admin on the server, kill the function (2nd line of defense)
 	if($admin->group != 3) {
 		$caught_exception = true;
-		echo $admin->name." lacks the power to promote $name to a $type moderator.";
+		echo $admin->name." lacks the power to promote. Quitting...";
 		$admin->write("message`Error: You lack the power to promote $name to a $type moderator.");
 		return false;
 	}
