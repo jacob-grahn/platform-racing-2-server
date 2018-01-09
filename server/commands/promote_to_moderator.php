@@ -11,7 +11,7 @@ function promote_mod($port, $name, $type, $admin) {
 	// if the user isn't an admin on the server, kill the function (2nd line of defense)
 	if($admin->group != 3) {
 		$caught_exception = true;
-		echo $admin->name." lacks the power to promote. Quitting...";
+		echo $admin->name." lacks the server power to promote $name to a $type moderator.";
 		$admin->write("message`Error: You lack the power to promote $name to a $type moderator.");
 		return false;
 	}
