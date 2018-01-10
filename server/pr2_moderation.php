@@ -152,29 +152,29 @@ function promote_to_moderator($socket, $data){
 	// if they're an admin, continue with the promotion (1st line of defense)
 	if($from_player->group > 2){
     
-	global $port;
-	promote_mod($port, $name, $type, $from_player, $to_player);
-
-	switch($type) {
-		case 'temporary':
-			$reign_time = 'hours';
-			break;
-		case 'trial':
-			$reign_time = 'days';
-			break;
-		case 'permanent':
-			$reign_time = '1000 years';
-			break;
+		global $port;
+		promote_mod($port, $name, $type, $from_player, $to_player);
+	
+		switch($type) {
+			case 'temporary':
+				$reign_time = 'hours';
+				break;
+			case 'trial':
+				$reign_time = 'days';
+				break;
+			case 'permanent':
+				$reign_time = '1000 years';
+				break;
+		}
+	
+		if(isset($from_player->chat_room)){
+			$from_player->chat_room->send_chat('systemChat`'.$from_player->name
+			.' has promoted '.$name
+			.' to a '.$type.' moderator! May they reign in '.$reign_time.' of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
+		}
 	}
-
-	if(isset($from_player->chat_room)){
-		$from_player->chat_room->send_chat('systemChat`'.$from_player->name
-		.' has promoted '.$name
-		.' to a '.$type.' moderator! May they reign in '.$reign_time.' of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
-	}
-}
-// if they're not an admin, tell them
-else {
+	// if they're not an admin, tell them
+	else {
 		$from_player->write('message`Error: You lack the power to promote '.$name.' to a '.$type.' moderator.');
 	}
 }
