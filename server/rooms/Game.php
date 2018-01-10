@@ -141,6 +141,20 @@ class Game extends Room {
 	
 	
 	
+	// Clint the Cowboy (Epic Cowboy Upgrade)
+	private function is_clint_cowboy_here() {
+		$ret = false;
+		foreach($this->player_array as $player) {
+			if($player->user_id == 5451130) {
+				$ret = true;
+			}
+		}
+		return($ret);
+	}
+	
+	
+	
+	// Sir Sirlington (Epic Sir Parts + Epic Top Hat Upgrades)
 	private function is_sir_sirlington_here() {
 		$ret = false;
 		foreach($this->player_array as $player) {
@@ -166,6 +180,10 @@ class Game extends Room {
 			if( $player_count >= 4 || (isset($campaign_prize) && $campaign_prize->is_universal()) ) {
 				$this->prize = $campaign_prize;
 			}
+		}
+		
+		if( $this->is_clint_cowboy_here() ) {
+			$this->prize = Prizes::$EPIC_COWBOY_HAT;
 		}
 		
 		if( $this->is_sir_sirlington_here() ) {
@@ -213,16 +231,16 @@ class Game extends Room {
 		}
 		
 		if( !isset($this->prize) && $player_count > 2){
-			if(rand(0, 50) == 50){
+			if(rand(0, 40) == 40){
 				$this->prize = Prizes::$EXP_HAT;
 			}
-			if(rand(0, 50) == 50){
+			if(rand(0, 45) == 45){
 				$this->prize = Prizes::$SANTA_HAT;
 			}
 			if(rand(0, 50) == 50){
 				$this->prize = Prizes::$PARTY_HAT;
 			}
-			if( rand(0, 50) == 50 && pr2_server::$happy_hour ) {
+			if( rand(0, 45) == 45 && pr2_server::$happy_hour ) {
 				$this->prize = Prizes::$JUMP_START_HAT;
 			}
 		}
