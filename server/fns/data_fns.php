@@ -37,29 +37,18 @@ function get_ip(){
 
 
 
-//--- tests to see if a string contains obsene words ---------------------------------------
-function is_obsene($str){
+//--- tests to see if a string contains obscene words ---------------------------------------
+function is_obscene($str){
 	$str = strtolower($str);
 	$bad_array = array('fuck', 'shit', 'nigger', 'nigga', 'whore', 'bitch', 'slut', 'cunt', 'cock', 'dick', 'penis', 'damn', 'spic');
-	$obsene = false;
+	$obscene = false;
 	foreach($bad_array as $bad){
 		if(strpos($str, $bad) !== false){
-			$obsene = true;
+			$obscene = true;
 			break;
 		}
 	}
-	return $obsene;
-}
-
-
-
-
-//--- checks if an email address is valid --------------------------------------------------------
-function valid_email($address){
-  if (ereg('^[a-zA-Z0-9_\.\-]+@[a-zA-Z0-9\-]+\.[a-zA-Z0-9\-\.]+$', $address))
-    return true;
-  else
-    return false;
+	return $obscene;
 }
 
 
