@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__ . '/../commands/update_pr2_user.php');
+
 class Player {
 
 	public $socket;
@@ -254,7 +256,7 @@ class Player {
 			$this->write('systemChat`Sorries, guests can\'t send chat messages.');
 		}
 		else if($this->chat_ban > time()) {
-			$this->write('systemChat`You have been temporarially banned from the chat. '
+			$this->write('systemChat`You have been temporarily banned from the chat. '
 				.'The ban will be lifted in '.($this->chat_ban - time()).' seconds.');
 		}
 		else if($this->get_chat_count() > 6) {
@@ -264,7 +266,7 @@ class Player {
 		else if($this->active_rank < 3) {
 			$this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
 		}
-		else if( strpos($chat_message, '/tournament') === 0 || strpos($chat_message, '/t') === 0 ) {
+		else if( strpos($chat_message, '/tournament ') === 0 || strpos($chat_message, '/t ') === 0 || $chat_message == '/t' ) {
 			global $guild_owner;
 			if( $this->user_id == $guild_owner ) {
 				issue_tournament( $chat_message );
@@ -527,6 +529,7 @@ class Player {
 
 		$this->verify_parts();
 		$this->verify_stats();
+		$this->save_info();
 	}
 
 
@@ -655,51 +658,51 @@ class Player {
 			array_splice($this->hat_array, $index, 1);
 		}
 
-		$user_id = escapeshellarg($this->user_id);
+		$user_id = $this->user_id;
 
-		$name = escapeshellarg($this->name);
-		$rank = escapeshellarg($this->rank);
-		$exp_points = escapeshellarg($this->exp_points);
-		$group = escapeshellarg($this->group);
+		$name = $this->name;
+		$rank = $this->rank;
+		$exp_points = $this->exp_points;
+		$group = $this->group;
 
-		$hat_color = escapeshellarg($this->hat_color);
-		$head_color = escapeshellarg($this->head_color);
-		$body_color = escapeshellarg($this->body_color);
-		$feet_color = escapeshellarg($this->feet_color);
+		$hat_color = $this->hat_color;
+		$head_color = $this->head_color;
+		$body_color = $this->body_color;
+		$feet_color = $this->feet_color;
 
-		$hat_color_2 = escapeshellarg($this->hat_color_2);
-		$head_color_2 = escapeshellarg($this->head_color_2);
-		$body_color_2 = escapeshellarg($this->body_color_2);
-		$feet_color_2 = escapeshellarg($this->feet_color_2);
+		$hat_color_2 = $this->hat_color_2;
+		$head_color_2 = $this->head_color_2;
+		$body_color_2 = $this->body_color_2;
+		$feet_color_2 = $this->feet_color_2;
 
-		$hat = escapeshellarg($this->hat);
-		$head = escapeshellarg($this->head);
-		$body = escapeshellarg($this->body);
-		$feet = escapeshellarg($this->feet);
+		$hat = $this->hat;
+		$head = $this->head;
+		$body = $this->body;
+		$feet = $this->feet;
 
-		$hat_array = escapeshellarg(join(',', $this->hat_array));
-		$head_array = escapeshellarg(join(',', $this->head_array));
-		$body_array = escapeshellarg(join(',', $this->body_array));
-		$feet_array = escapeshellarg(join(',', $this->feet_array));
+		$hat_array = join(',', $this->hat_array);
+		$head_array = join(',', $this->head_array);
+		$body_array = join(',', $this->body_array);
+		$feet_array = join(',', $this->feet_array);
 
-		$epic_hat_array = escapeshellarg(join(',', $this->epic_hat_array));
-		$epic_head_array = escapeshellarg(join(',', $this->epic_head_array));
-		$epic_body_array = escapeshellarg(join(',', $this->epic_body_array));
-		$epic_feet_array = escapeshellarg(join(',', $this->epic_feet_array));
+		$epic_hat_array = join(',', $this->epic_hat_array);
+		$epic_head_array = join(',', $this->epic_head_array);
+		$epic_body_array = join(',', $this->epic_body_array);
+		$epic_feet_array = join(',', $this->epic_feet_array);
 
-		$speed = escapeshellarg($this->speed);
-		$acceleration = escapeshellarg($this->acceleration);
-		$jumping = escapeshellarg($this->jumping);
+		$speed = $this->speed;
+		$acceleration = $this->acceleration;
+		$jumping = $this->jumping;
 
-		$status = escapeshellarg( $this->status );
-		$e_server_id = escapeshellarg( $server_id );
+		$status = $this->status;
+		$e_server_id = $server_id;
 
-		$lux = escapeshellarg($this->lux);
+		$lux = $this->lux;
 		$this->lux = 0;
 
-		$rt_used = escapeshellarg($this->rt_used);
-		$ip = escapeshellarg($this->ip);
-		$tot_exp_gained = escapeshellarg($this->exp_today - $this->start_exp_today);
+		$rt_used = $this->rt_used;
+		$ip = $this->ip;
+		$tot_exp_gained = $this->exp_today - $this->start_exp_today;
 
 		if($this->group == 0){
 			$rank = 0;
@@ -722,23 +725,7 @@ class Player {
 			$jumping = 50;
 		}
 
-		$update_str = 'nohup php '.__DIR__.'/commands/update_pr2_user.php '.$port.' '.$user_id
-		.' '.$name.' '.$rank.' '.$exp_points.' '.$group
-		.' '.$hat_color.' '.$head_color.' '.$body_color.' '.$feet_color
-		.' '.$hat.' '.$head.' '.$body.' '.$feet
-		.' '.$hat_array.' '.$head_array.' '.$body_array.' '.$feet_array
-		.' '.$speed.' '.$acceleration.' '.$jumping
-		.' '.$status
-		.' '.$lux
-		.' '.$rt_used
-		.' '.$ip
-		.' '.$tot_exp_gained
-		.' '.$e_server_id
-		.' '.$hat_color_2.' '.$head_color_2.' '.$body_color_2.' '.$feet_color_2
-		.' '.$epic_hat_array.' '.$epic_head_array.' '.$epic_body_array.' '.$epic_feet_array
-		.' > /dev/null &';
-
-		exec($update_str);
+		actually_save_info($port, $name, $rank, $exp_points, $group, $hat_color, $head_color, $body_color, $feet_color, $hat, $head, $body, $feet, $hat_array, $head_array, $body_array, $feet_array, $speed, $acceleration, $jumping, $status, $lux, $rt_used, $ip, $tot_exp_gained, $e_server_id, $hat_color_2, $head_color_2, $body_color_2, $feet_color_2, $epic_hat_array, $epic_head_array, $epic_body_array, $epic_feet_array);
 	}
 
 
