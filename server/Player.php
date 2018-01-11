@@ -252,7 +252,9 @@ class Player {
 
 
 	public function send_chat($chat_message) {
-		$chat_message = htmlspecialchars($chat_message);
+		global $guild_owner;
+		global $player_array;
+		$chat_message = htmlspecialchars($chat_message); // html killer
 		
 		switch($chat_message) {
 			case '/b':
@@ -311,6 +313,25 @@ class Player {
 			else {
 				$this->write('systemChat`Such powers are reserved for owners of private servers and the PR2 staff team.');
 			}
+		}
+		else if(strpos($chat_message, '/a ')) {
+			$announcement = trim(substr($chat_message, 3));
+			$announce_length = strlen($announcement);
+			
+			if ($this->group >= 2 || $this->user_id == $guild_owner) {
+				if($announce_length >= 1) {
+					$this->chat_room->send_chat('systemChat`' . $announcement, $this->user_id);
+				}
+				else {
+					$this->write('systemChat`Your announcement must be at least 1 character.');
+				}
+			}
+			else {
+				$this->write('systemChat`Only owners of private servers and the PR2 staff team may make chatroom announcements.');
+			}
+		}
+		else if($chat_message == '/pop' || $chat_message == '/population') {
+			$this->write('systemChat`There are currently '.count($player_array).' people on this server.');
 		}
 		else {
 			$message = 'chat`'.$this->name.'`'.$this->group.'`'.$chat_message;
