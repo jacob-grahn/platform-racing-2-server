@@ -194,13 +194,4 @@ function demote_moderator($socket, $name) {
 }
 
 
-//--- ban yourself ---
-function ban_socket($socket) {
-	$player = $socket->get_player();
-	exec('nohup php '.__DIR__.'/commands/ban.php '.escapeshellarg($player->user_id).' '.escapeshellarg($socket->remote_address).' '.escapeshellarg($player->name).' > /dev/null &');
-	$socket->close();
-	$socket->on_disconnect();
-}
-
-
 ?>
