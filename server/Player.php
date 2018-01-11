@@ -252,6 +252,31 @@ class Player {
 
 
 	public function send_chat($chat_message) {
+		$chat_message = htmlspecialchars($chat_message);
+		
+		switch($chat_message) {
+			case '/b':
+				$chat_effect = 'bold';
+				$chat_effect_tag = '<b>';
+				break;
+			case '/i':
+				$chat_effect = 'italicized';
+				$chat_effect_tag = '<i>';
+				break;
+			case '/u':
+				$chat_effect = 'underlined';
+				$chat_effect_tag = '<u>';
+				break;
+			case '/li':
+				$chat_effect = 'bulleted';
+				$chat_effect_tag = '<li>';
+				break;
+			default:
+				$chat_effect = NULL;
+				$chat_effect_tag = NULL;
+				break;
+		}
+		
 		if($this->group <= 0) {
 			$this->write('systemChat`Sorries, guests can\'t send chat messages.');
 		}
@@ -276,6 +301,15 @@ class Player {
 			}
 			else {
 				$this->write('systemChat`Such powers are reserved for owners of private servers.');
+			}
+		}
+		else if(!is_null($chat_effect)) {
+			if ( $this->group >= 2 ) {
+				$this->chat_room->send_chat('systemChat`' . $chat_effect_tag . $this->name .
+							    ' has temporarily activated ' . $chat_effect . ' chat!');
+			}
+			else {
+				$this->write('systemChat`Such powers are reserved for owners of private servers and the PR2 staff team.');
 			}
 		}
 		else {
