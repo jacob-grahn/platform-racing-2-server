@@ -32,7 +32,7 @@ function artifact_first_check($port, $player) {
 	
 	if(!$caught_exception) {
 		echo "Awarded bubble set to $user_name for finding the artifact first.";
-		$player->write('The most humble of congratulations to you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.\n\nThanks for playing Platform Racing 2!\n- Jiggmin');
+		$player->write('message`The most humble of congratulations to you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.\n\nThanks for playing Platform Racing 2!\n- Jiggmin');
 		return true;
 	}
 	
