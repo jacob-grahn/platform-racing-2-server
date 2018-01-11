@@ -9,7 +9,8 @@ require_once(__DIR__ . '/../commands/demod.php');
 function kick($socket, $data){
 	global $guild_owner;
 	$name = $data;
-	$kicked_player = name_to_player($name); // define var before line 12 instead of after line 14 for group check
+	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
+	$kicked_player = name_to_player($name);
 
 	$player = $socket->get_player();
 
@@ -20,26 +21,26 @@ function kick($socket, $data){
 
 		if( isset($kicked_player) ) {
 			$kicked_player->remove();
-			$player->write('message`'.$name.' has been kicked from this server for 30 minutes.');
+			$player->write('message`'.$safe_name.' has been kicked from this server for 30 minutes.');
 		}
 
 		// let people know that the player kicked someone
 		if(isset($player->chat_room)){
 			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has kicked '.$name.' from this server for 30 minutes.', $player->user_id);
+			.' has kicked '.$safe_name.' from this server for 30 minutes.', $player->user_id);
 		}
 	}
 	// if they don't have the power to do that, tell them
 	else {
-		$player->write('message`Error: You lack the power to kick '.$name.'.');
+		$player->write('message`Error: You lack the power to kick '.$safe_name.'.');
 	}
 }
-
 
 
 //--- warn a player -------------------------------------------------------------
 function warn($socket, $data){
 	list($name, $num) = explode("`", $data);
+	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
 
 	$player = $socket->get_player();
 
@@ -75,13 +76,13 @@ function warn($socket, $data){
 
 		if(isset($player->chat_room)){
 			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has given '.$name.' '.$num.' '.$w_str.'. '
+			.' has given '.$safe_name.' '.$num.' '.$w_str.'. '
 			.'They have been banned from the chat for '.$time.' seconds.', $player->user_id);
 		}
 	}
 	// if they aren't a mod, tell them
 	else {
-		$player->write('message`Error: You lack the power to warn '.$name.'.');
+		$player->write('message`Error: You lack the power to warn '.$safe_name.'.');
 	}
 }
 
@@ -94,6 +95,7 @@ function ban($socket, $data){
 
 	$player = $socket->get_player();
 	$ban_player = name_to_player($banned_name);
+	$safe_name = htmlspecialchars($banned_name); // convert name to htmlspecialchars for html exploit patch
 	$mod_id = $player->user_id;
 
 	// set a variable that uses seconds to make friendly times
@@ -133,7 +135,7 @@ function ban($socket, $data){
 	if($player->group >= 2){
 		if(isset($player->chat_room)) {
 			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has banned '.$banned_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at http://pr2hub.com/bans.', $player->user_id);
+			.' has banned '.$safe_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at http://pr2hub.com/bans.', $player->user_id);
 		}
 		if(isset($ban_player) && $ban_player->group < 2) {
 			$ban_player->remove();
@@ -148,13 +150,14 @@ function promote_to_moderator($socket, $data){
 	list($name, $type) = explode("`", $data);
 	$from_player = $socket->get_player();
 	$to_player = name_to_player($name); // define before if
+	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
 
 	// if they're an admin, continue with the promotion (1st line of defense)
 	if($from_player->group > 2){
-    
+
 		global $port;
 		promote_mod($port, $name, $type, $from_player, $to_player);
-	
+
 		switch($type) {
 			case 'temporary':
 				$reign_time = 'hours';
@@ -166,16 +169,16 @@ function promote_to_moderator($socket, $data){
 				$reign_time = '1000 years';
 				break;
 		}
-	
+
 		if(isset($from_player->chat_room)){
 			$from_player->chat_room->send_chat('systemChat`'.$from_player->name
-			.' has promoted '.$name
+			.' has promoted '.$safe_name
 			.' to a '.$type.' moderator! May they reign in '.$reign_time.' of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
 		}
 	}
 	// if they're not an admin, tell them
 	else {
-		$from_player->write('message`Error: You lack the power to promote '.$name.' to a '.$type.' moderator.');
+		$from_player->write('message`Error: You lack the power to promote '.$safe_name.' to a '.$type.' moderator.');
 	}
 }
 
@@ -184,7 +187,6 @@ function promote_to_moderator($socket, $data){
 function demote_moderator($socket, $name) {
 	$from_player = $socket->get_player();
 
-	// if they're an admin, continue with the demotion (1st line of defense)
 	if($from_player->group == 3){
 		global $port;
 		$to_player = name_to_player($name);
