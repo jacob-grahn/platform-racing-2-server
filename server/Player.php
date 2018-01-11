@@ -306,7 +306,7 @@ class Player {
 		else if(!is_null($chat_effect)) {
 			if ( $this->group >= 2 ) {
 				$this->chat_room->send_chat('systemChat`' . $chat_effect_tag . $this->name .
-							    ' has temporarily activated ' . $chat_effect . ' chat!');
+							    ' has temporarily activated ' . $chat_effect . ' chat!', $this->user_id);
 			}
 			else {
 				$this->write('systemChat`Such powers are reserved for owners of private servers and the PR2 staff team.');
