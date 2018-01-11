@@ -96,6 +96,7 @@ function ban($socket, $data){
 	$player = $socket->get_player();
 	$ban_player = name_to_player($banned_name);
 	$safe_name = htmlspecialchars($banned_name); // convert name to htmlspecialchars for html exploit patch
+	$safe_reason = htmlspecialchars($reason);
 	$mod_id = $player->user_id;
 
 	// set a variable that uses seconds to make friendly times
@@ -129,7 +130,7 @@ function ban($socket, $data){
 		$disp_reason = 'There was no reason was given';
 	}
 	if($reason != ''){
-		$disp_reason = 'Reason: '.$reason;
+		$disp_reason = 'Reason: '.$safe_reason;
 	}
 
 	if($player->group >= 2){
