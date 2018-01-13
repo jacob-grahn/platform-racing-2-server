@@ -1,7 +1,6 @@
 <?php
 
 require_once(__DIR__ . '/../../env.php');
-require_once(__DIR__ . '/deprecated_password_verify.php');
 
 function user_connect(){
 	global $DB_PASS, $DB_ADDRESS, $DB_USER, $DB_NAME, $DB_PORT;
@@ -32,8 +31,6 @@ function check_for_name($connection, $name){
 
 //--- checks if a login is valid -----------------------------------------------------------
 function login ($connection, $name, $pass) {
-	global $PASS_SALT;
-
 	// safety first
 	$safe_name = addslashes($name);
 
@@ -60,8 +57,7 @@ function login ($connection, $name, $pass) {
 	$row = $result->fetch_object();
 
 	// check password
-	$pass_intermediate = sha1($pass . $PASS_SALT);
-	if (!deprecated_password_verify($pass, $row->password) && !password_verify($pass_intermediate, $row->pass_hash)) {
+	if (!password_verify(sha1($pass), $row->pass_hash)) {
 		sleep(1);
 		throw new Exception('Invalid password');
 	}
