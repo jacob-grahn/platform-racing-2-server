@@ -1,40 +1,41 @@
 #!/usr/bin/php
 <?php
 
-<<<<<<< HEAD
-require_once('/home/jiggmin/pr2/server/fns/all_fns.php');
-require_once('/home/jiggmin/pr2/server/fns/query_fns.php');
-=======
 require_once(__DIR__ . '/../fns/all_fns.php');
 require_once(__DIR__ . '/../fns/query_fns.php');
->>>>>>> shell-fix-prodemote
 
-$port = $argv[1];
-$user_id = $argv[2];
+function artifact_first_check($port, $player) {
 
-try {
-	$db = new DB();
-	$first_finder = $db->grab( 'first_finder', 'artifact_find', array($user_id) );
-<<<<<<< HEAD
+	$caught_exception = false;
+	$user_id = $player->user_id;
+	$user_name = $player->name;
 	
-=======
-
->>>>>>> shell-fix-prodemote
-	if( $first_finder == $user_id ) {
-		award_part( $db, $user_id, 'head', 27 );
-		award_part( $db, $user_id, 'body', 21 );
-		award_part( $db, $user_id, 'feet', 28 );
+	try {
+	
+		$db = new DB();
+		$first_finder = $db->grab( 'first_finder', 'artifact_find', array($user_id) );
+	
+		if( $first_finder == $user_id ) {
+			award_part( $db, $user_id, 'head', 27 );
+			award_part( $db, $user_id, 'body', 21 );
+			award_part( $db, $user_id, 'feet', 28 );
+		}
+	
 	}
+	
+	catch(Exception $e) {
+		$caught_exception = true;
+		$message = $e->getMessage();
+		echo "Error: ".$message;
+		return false;
+	}
+	
+	if(!$caught_exception) {
+		echo "Awarded bubble set to $user_name for finding the artifact first.";
+		$player->write('message`The most humble of congratulations to you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.\n\nThanks for playing Platform Racing 2!\n- Jiggmin');
+		return true;
+	}
+	
 }
 
-catch(Exception $e) {
-	$message = $e->getMessage();
-	echo $message;
-	exit;
-}
-
-<<<<<<< HEAD
 ?>
-=======
-?>
->>>>>>> shell-fix-prodemote

@@ -17,7 +17,6 @@ function user_connect(){
 
 
 
-
 //--- check if a name is taken -------------------------------------------------------------
 function check_for_name($connection, $name){
 	$safe_name = addslashes($name);
@@ -35,57 +34,37 @@ function check_for_name($connection, $name){
 
 
 //--- checks if a login is valid -----------------------------------------------------------
-function login($connection, $name, $password){
-	global $PASS_SALT;
-
-	//safety first
+function login ($connection, $name, $pass) {
+	// safety first
 	$safe_name = addslashes($name);
-	$safe_password = addslashes($password . $PASS_SALT);
 
-	//error check
-	if(empty($name) || empty($password)){
+	// error check
+	if (empty($name) || empty($pass)) {
 		throw new Exception('You must enter a name and a password.');
 	}
-	if(strlen($name) < 2){
+	if (strlen($name) < 2) {
 		throw new Exception('Your name must be at least 2 characters long.');
 	}
-	if(strlen($name) > 20){
+	if (strlen($name) > 20) {
 		throw new Exception('Your name can not be more than 20 characters long.');
 	}
 
-
-	//try to log in
-	$result = $connection->query("select * from users
-					where name = '$safe_name'
-					and password = sha1('$safe_password')
-					limit 0,1");
-	if(!$result){
+	// fetch user row
+	$result = $connection->query("SELECT user_id, name, password, pass_hash
+		FROM users
+		WHERE name = '$safe_name'
+		LIMIT 0,1
+	");
+	if (!$result) {
 		throw new Exception('Could not check login.');
 	}
-	if($result->num_rows < 1){
-		$result = $connection->query("select * from users
-						where name = '$safe_name'
-						and temp_password = sha1('$safe_password')
-						limit 0,1");
-		if(!$result){
-			throw new Exception('Could not check login.');
-		}
-		if($result->num_rows < 1) {
-			sleep(1);
-			throw new Exception('That name / password combination was not found.');
-		}
-		//set the temp password to their real password
-		$update_result = $connection->query("update users
-							set password = temp_password,
-							temp_password = NULL
-							where name = '$safe_name'
-							and temp_password = sha1('$safe_password')");
-		if(!$update_result){
-			//throw new Exception('Could not update your password.');
-		}
-	}
-
 	$row = $result->fetch_object();
+
+	// check password
+	if (!password_verify(sha1($pass), $row->pass_hash)) {
+		sleep(1);
+		throw new Exception('Invalid password');
+	}
 
 	//record this login
 	$safe_time = addslashes(time());

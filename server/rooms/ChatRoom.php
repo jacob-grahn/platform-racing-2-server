@@ -9,10 +9,10 @@ class ChatRoom extends Room {
 	
 	
 	public function __construct($chat_room_name){
-		$this->chat_room_name = $chat_room_name;
+		$this->chat_room_name = htmlspecialchars($chat_room_name);
 		
 		global $chat_room_array;
-		$chat_room_array[$chat_room_name] = $this;
+		$chat_room_array[htmlspecialchars($chat_room_name)] = $this;
 		
 		$this->chat_array = array_fill(0, 18, '');
 	}
@@ -48,25 +48,6 @@ class ChatRoom extends Room {
 	
 	
 	public function send_chat($message, $user_id) {
-<<<<<<< HEAD
-		if (strpos($message, '`') === false) {
-			$chat_message = new ChatMessage($user_id, $message);
-			
-			array_push($this->chat_array, $chat_message);
-			
-			$this->chat_array[0] = NULL;
-			array_shift($this->chat_array);
-			
-			foreach($this->player_array as $player){
-				if(!$player->is_ignored_id($user_id)){
-					$player->socket->write($message);
-				}
-			}
-		}
-		else {
-			$player->write('message`Error: Illegal character in message.');
-		}
-=======
 		$chat_message = new ChatMessage($user_id, $message);
 		
 		array_push($this->chat_array, $chat_message);
@@ -79,7 +60,6 @@ class ChatRoom extends Room {
 				$player->socket->write($message);
 			}
 		}
->>>>>>> shell-fix-prodemote
 	}
 	
 	
@@ -105,8 +85,4 @@ class ChatRoom extends Room {
 		
 		parent::remove();
 	}
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> shell-fix-prodemote
