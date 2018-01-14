@@ -7,50 +7,6 @@ error_reporting(E_ALL | E_STRICT);
 @ob_end_flush();
 set_time_limit(0);
 
-<<<<<<< HEAD
-$import_path = '/home/jiggmin/pr2/server';
-
-require_once($import_path.'/fns/DB.php');
-require_once($import_path.'/fns/db_fns.php');
-require_once($import_path.'/fns/data_fns.php');
-require_once($import_path.'/socket/socket.php');
-require_once('pr2_admin.php');
-require_once('pr2_ingame.php');
-require_once('pr2_loadup.php');
-require_once('pr2_lobby.php');
-require_once('pr2_moderation.php');
-require_once('pr2_server.php');
-require_once('pr2_server_owner.php');
-require_once('pr2_utils.php');
-require_once('pr2_vault.php');
-require_once('Player.php');
-require_once('CourseBox.php');
-require_once('ChatMessage.php');
-require_once('RaceStats.php');
-require_once('Hat.php');
-require_once('SimDetector.php');
-require_once('LocalBans.php');
-require_once('LoiterDetector.php');
-require_once('GuildPoints.php');
-require_once('TemporaryItems.php');
-require_once('Perks.php');
-require_once('Robots.php');
-require_once('RankupCalculator.php');
-require_once($import_path.'/parts/Bodies.php');
-require_once($import_path.'/parts/Feet.php');
-require_once($import_path.'/parts/Hats.php');
-require_once($import_path.'/parts/Heads.php');
-require_once($import_path.'/parts/Prize.php');
-require_once($import_path.'/parts/Prizes.php');
-require_once($import_path.'/rooms/Room.php');
-require_once($import_path.'/rooms/LevelListRoom.php');
-require_once($import_path.'/rooms/ChatRoom.php');
-require_once($import_path.'/rooms/Game.php');
-require_once($import_path.'/rooms/modes/deathmatch.php');
-require_once($import_path.'/rooms/modes/eggs.php');
-require_once($import_path.'/rooms/modes/objective.php');
-require_once($import_path.'/rooms/modes/race.php');
-=======
 require_once(__DIR__ . '/../env.php');
 require_once(__DIR__ . '/fns/DB.php');
 require_once(__DIR__ . '/fns/db_fns.php');
@@ -92,7 +48,6 @@ require_once(__DIR__ . '/rooms/modes/deathmatch.php');
 require_once(__DIR__ . '/rooms/modes/eggs.php');
 require_once(__DIR__ . '/rooms/modes/objective.php');
 require_once(__DIR__ . '/rooms/modes/race.php');
->>>>>>> shell-fix-prodemote
 
 Prizes::init();
 RankupCalculator::init();
@@ -211,8 +166,4 @@ function shutdown_server() {
 
 
 
-<<<<<<< HEAD
 ?>
-=======
-?>
->>>>>>> shell-fix-prodemote

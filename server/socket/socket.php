@@ -19,17 +19,10 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-<<<<<<< HEAD
-require_once('socketClient.php');
-require_once('socketServer.php');
-require_once('socketServerClient.php');
-require_once('socketDaemon.php');
-=======
 require_once(__DIR__ . '/socketClient.php');
 require_once(__DIR__ . '/socketServer.php');
 require_once(__DIR__ . '/socketServerClient.php');
 require_once(__DIR__ . '/socketDaemon.php');
->>>>>>> shell-fix-prodemote
 
 class socketException extends Exception {}
 
