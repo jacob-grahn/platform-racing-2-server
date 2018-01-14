@@ -9,10 +9,10 @@ class ChatRoom extends Room {
 	
 	
 	public function __construct($chat_room_name){
-		$this->chat_room_name = $chat_room_name;
+		$this->chat_room_name = htmlspecialchars($chat_room_name);
 		
 		global $chat_room_array;
-		$chat_room_array[$chat_room_name] = $this;
+		$chat_room_array[htmlspecialchars($chat_room_name)] = $this;
 		
 		$this->chat_array = array_fill(0, 18, '');
 	}
