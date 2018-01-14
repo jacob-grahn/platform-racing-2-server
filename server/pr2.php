@@ -7,6 +7,7 @@ error_reporting(E_ALL | E_STRICT);
 @ob_end_flush();
 set_time_limit(0);
 
+<<<<<<< HEAD
 $import_path = '/home/jiggmin/pr2/server';
 
 require_once($import_path.'/fns/DB.php');
@@ -49,6 +50,49 @@ require_once($import_path.'/rooms/modes/deathmatch.php');
 require_once($import_path.'/rooms/modes/eggs.php');
 require_once($import_path.'/rooms/modes/objective.php');
 require_once($import_path.'/rooms/modes/race.php');
+=======
+require_once(__DIR__ . '/../env.php');
+require_once(__DIR__ . '/fns/DB.php');
+require_once(__DIR__ . '/fns/db_fns.php');
+require_once(__DIR__ . '/fns/data_fns.php');
+require_once(__DIR__ . '/socket/socket.php');
+require_once(__DIR__ . '/pr2_admin.php');
+require_once(__DIR__ . '/pr2_ingame.php');
+require_once(__DIR__ . '/pr2_loadup.php');
+require_once(__DIR__ . '/pr2_lobby.php');
+require_once(__DIR__ . '/pr2_moderation.php');
+require_once(__DIR__ . '/pr2_server.php');
+require_once(__DIR__ . '/pr2_server_owner.php');
+require_once(__DIR__ . '/pr2_utils.php');
+require_once(__DIR__ . '/pr2_vault.php');
+require_once(__DIR__ . '/Player.php');
+require_once(__DIR__ . '/CourseBox.php');
+require_once(__DIR__ . '/ChatMessage.php');
+require_once(__DIR__ . '/RaceStats.php');
+require_once(__DIR__ . '/Hat.php');
+require_once(__DIR__ . '/SimDetector.php');
+require_once(__DIR__ . '/LocalBans.php');
+require_once(__DIR__ . '/LoiterDetector.php');
+require_once(__DIR__ . '/GuildPoints.php');
+require_once(__DIR__ . '/TemporaryItems.php');
+require_once(__DIR__ . '/Perks.php');
+require_once(__DIR__ . '/Robots.php');
+require_once(__DIR__ . '/RankupCalculator.php');
+require_once(__DIR__ . '/parts/Bodies.php');
+require_once(__DIR__ . '/parts/Feet.php');
+require_once(__DIR__ . '/parts/Hats.php');
+require_once(__DIR__ . '/parts/Heads.php');
+require_once(__DIR__ . '/parts/Prize.php');
+require_once(__DIR__ . '/parts/Prizes.php');
+require_once(__DIR__ . '/rooms/Room.php');
+require_once(__DIR__ . '/rooms/LevelListRoom.php');
+require_once(__DIR__ . '/rooms/ChatRoom.php');
+require_once(__DIR__ . '/rooms/Game.php');
+require_once(__DIR__ . '/rooms/modes/deathmatch.php');
+require_once(__DIR__ . '/rooms/modes/eggs.php');
+require_once(__DIR__ . '/rooms/modes/objective.php');
+require_once(__DIR__ . '/rooms/modes/race.php');
+>>>>>>> shell-fix-prodemote
 
 Prizes::init();
 RankupCalculator::init();
@@ -167,4 +211,8 @@ function shutdown_server() {
 
 
 
+<<<<<<< HEAD
 ?>
+=======
+?>
+>>>>>>> shell-fix-prodemote

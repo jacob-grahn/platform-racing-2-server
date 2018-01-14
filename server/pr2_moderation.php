@@ -1,5 +1,6 @@
 <?php
 
+<<<<<<< HEAD
 
 //--- kick a player -------------------------------------------------------------
 function kick($socket, $data){
@@ -13,11 +14,35 @@ function kick($socket, $data){
 		
 		LocalBans::add($name);
 		
+=======
+// call pro/demotion functions
+require_once(__DIR__ . '/../commands/promote_to_moderator.php');
+require_once(__DIR__ . '/../commands/demod.php');
+
+
+//--- kick a player -------------------------------------------------------------
+function kick($socket, $data){
+	global $guild_owner;
+	$name = $data;
+	$kicked_player = name_to_player($name); // define var before line 12 instead of after line 14 for group check
+
+	$player = $socket->get_player();
+
+	// if the player actually has the power to do what they're trying to do, then do it
+	if(($player->group >= 2) && (($kicked_player->group < 2) || ($player->user_id == $guild_owner))) {
+
+		LocalBans::add($name);
+
+>>>>>>> shell-fix-prodemote
 		if( isset($kicked_player) ) {
 			$kicked_player->remove();
 			$player->write('message`'.$name.' has been kicked from this server for 30 minutes.');
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		// let people know that the player kicked someone
 		if(isset($player->chat_room)){
 			$player->chat_room->send_chat('systemChat`'.$player->name
@@ -35,6 +60,7 @@ function kick($socket, $data){
 //--- warn a player -------------------------------------------------------------
 function warn($socket, $data){
 	list($name, $num) = explode("`", $data);
+<<<<<<< HEAD
 	
 	$player = $socket->get_player();
 	
@@ -46,6 +72,19 @@ function warn($socket, $data){
 		$w_str = '';
 		$time = 0;
 		
+=======
+
+	$player = $socket->get_player();
+
+	// if they're a mod, warn the user
+	if($player->group >= 2){
+
+		$warned_player = name_to_player($name);
+
+		$w_str = '';
+		$time = 0;
+
+>>>>>>> shell-fix-prodemote
 		switch($num) {
 			case 1:
 				$w_str = 'warning';
@@ -63,16 +102,28 @@ function warn($socket, $data){
 				$player->write('message`Error: Invalid warning number.');
 				break;
 		}
+<<<<<<< HEAD
 	
 		if(isset($warned_player) && $warned_player->group < 2){
 			$warned_player->chat_ban = time() + $time;
 		}	
 		
+=======
+
+		if(isset($warned_player) && $warned_player->group < 2){
+			$warned_player->chat_ban = time() + $time;
+		}
+
+>>>>>>> shell-fix-prodemote
 		if(isset($player->chat_room)){
 			$player->chat_room->send_chat('systemChat`'.$player->name
 			.' has given '.$name.' '.$num.' '.$w_str.'. '
 			.'They have been banned from the chat for '.$time.' seconds.', $player->user_id);
+<<<<<<< HEAD
 		}	
+=======
+		}
+>>>>>>> shell-fix-prodemote
 	}
 	// if they aren't a mod, tell them
 	else {
@@ -86,6 +137,7 @@ function warn($socket, $data){
 //--- ban a player -------------------------------------------------------
 function ban($socket, $data){
 	list($banned_name, $seconds, $reason) = explode("`", $data);
+<<<<<<< HEAD
 	
 	$player = $socket->get_player();
 	$ban_player = name_to_player($banned_name);
@@ -96,6 +148,13 @@ function ban($socket, $data){
 		$seconds = 60;
 	}*/
 	
+=======
+
+	$player = $socket->get_player();
+	$ban_player = name_to_player($banned_name);
+	$mod_id = $player->user_id;
+
+>>>>>>> shell-fix-prodemote
 	// set a variable that uses seconds to make friendly times
 	switch ($seconds) {
 		case 60:
@@ -121,7 +180,11 @@ function ban($socket, $data){
 			$disp_time = $seconds.' seconds';
 			break;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> shell-fix-prodemote
 	// instead of overwriting the $reason variable, set a new one
 	if($reason == ''){
 		$disp_reason = 'There was no reason was given';
@@ -129,13 +192,24 @@ function ban($socket, $data){
 	if($reason != ''){
 		$disp_reason = 'Reason: '.$reason;
 	}
+<<<<<<< HEAD
 	
 	if(isset($ban_player) && $player->group > $ban_player->group){
+=======
+
+	if($player->group >= 2){
+>>>>>>> shell-fix-prodemote
 		if(isset($player->chat_room)) {
 			$player->chat_room->send_chat('systemChat`'.$player->name
 			.' has banned '.$banned_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at http://pr2hub.com/bans.', $player->user_id);
 		}
+<<<<<<< HEAD
 		$ban_player->remove();
+=======
+		if(isset($ban_player) && $ban_player->group < 2) {
+			$ban_player->remove();
+		}
+>>>>>>> shell-fix-prodemote
 	}
 }
 
@@ -146,6 +220,7 @@ function promote_to_moderator($socket, $data){
 	list($name, $type) = explode("`", $data);
 	$from_player = $socket->get_player();
 	$to_player = name_to_player($name); // define before if
+<<<<<<< HEAD
 	
 	// if they're an admin and not trying to promote a guest, continue with the promotion
 	if(($from_player->group > 2) && ($to_player->group != 0)){
@@ -170,6 +245,15 @@ function promote_to_moderator($socket, $data){
 			exec("nohup php $import_path/commands/promote_to_moderator.php $port $safe_name $type > /dev/null &");
 		}
 		
+=======
+
+	// if they're an admin, continue with the promotion (1st line of defense)
+	if($from_player->group > 2){
+
+		global $port;
+		promote_mod($port, $name, $type, $from_player, $to_player);
+
+>>>>>>> shell-fix-prodemote
 		switch($type) {
 			case 'temporary':
 				$reign_time = 'hours';
@@ -181,17 +265,24 @@ function promote_to_moderator($socket, $data){
 				$reign_time = '1000 years';
 				break;
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		if(isset($from_player->chat_room)){
 			$from_player->chat_room->send_chat('systemChat`'.$from_player->name
 			.' has promoted '.$name
 			.' to a '.$type.' moderator! May they reign in '.$reign_time.' of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
 		}
 	}
+<<<<<<< HEAD
 	// if they're an admin but trying to promote a guest, tell them
 	elseif(($from_player->group > 2) && ($to_player->group == 0)){
 		$from_player->write('message`Error: You can\'t promote guests, silly!');
 	}
+=======
+>>>>>>> shell-fix-prodemote
 	// if they're not an admin, tell them
 	else {
 		$from_player->write('message`Error: You lack the power to promote '.$name.' to a '.$type.' moderator.');
@@ -200,6 +291,7 @@ function promote_to_moderator($socket, $data){
 
 
 //-- demote a moderator ------------------------------------------------------------------
+<<<<<<< HEAD
 function demote_moderator($socket, $name){
 	$from_player = $socket->get_player();
 	
@@ -217,6 +309,17 @@ function demote_moderator($socket, $name){
 		global $import_path;
 		$safe_name = escapeshellarg($name);
 		exec("nohup php $import_path/commands/demod.php $port $safe_name > /dev/null &");
+=======
+function demote_moderator($socket, $name) {
+	$from_player = $socket->get_player();
+
+	// if they're an admin, continue with the demotion (1st line of defense)
+	if($from_player->group == 3){
+		global $port;
+		$to_player = name_to_player($name);
+		
+		demote_mod($port, $name, $from_player, $to_player);
+>>>>>>> shell-fix-prodemote
 	}
 }
 
@@ -224,8 +327,12 @@ function demote_moderator($socket, $name){
 //--- ban yourself ---
 function ban_socket($socket) {
 	$player = $socket->get_player();
+<<<<<<< HEAD
 	global $import_path;
 	exec('nohup php '.$import_path.'/commands/ban.php '.escapeshellarg($player->user_id).' '.escapeshellarg($socket->remote_address).' '.escapeshellarg($player->name).' > /dev/null &');
+=======
+	exec('nohup php '.__DIR__.'/commands/ban.php '.escapeshellarg($player->user_id).' '.escapeshellarg($socket->remote_address).' '.escapeshellarg($player->name).' > /dev/null &');
+>>>>>>> shell-fix-prodemote
 	$socket->close();
 	$socket->on_disconnect();
 }

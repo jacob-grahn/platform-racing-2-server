@@ -99,6 +99,7 @@ function check_login($connection, $user_name, $user_pass, $force_new_login=false
 }
 
 
+<<<<<<< HEAD
 
 //---
 function is_admin_pass($str){
@@ -112,6 +113,8 @@ function is_admin_pass($str){
 }
 
 
+=======
+>>>>>>> shell-fix-prodemote
 //---
 function remove_resource( $_target ) {
 

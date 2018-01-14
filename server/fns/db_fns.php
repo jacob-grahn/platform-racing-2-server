@@ -1,6 +1,10 @@
 <?php
 
+<<<<<<< HEAD
 
+=======
+require_once(__DIR__ . '/../../env.php');
+>>>>>>> shell-fix-prodemote
 
 function user_connect(){
 	global $DB_PASS, $DB_ADDRESS, $DB_USER, $DB_NAME, $DB_PORT;

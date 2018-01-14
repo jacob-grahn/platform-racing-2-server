@@ -1,20 +1,35 @@
 <?php
 
 class Game extends Room {
+<<<<<<< HEAD
 	
 	const LEVEL_BUTO = 1738847; //for jigg hat
 	const LEVEL_DELIVERANCE = 1896157; //for slender set
 	
+=======
+
+	const LEVEL_BUTO = 1738847; //for jigg hat
+	const LEVEL_DELIVERANCE = 1896157; //for slender set
+
+>>>>>>> shell-fix-prodemote
 	const MODE_RACE = 'race';
 	const MODE_DEATHMATCH = 'deathmatch';
 	const MODE_EGG = 'egg';
 	const MODE_OBJECTIVE = 'objective';
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> shell-fix-prodemote
 	public static $artifact_level_id = 0;
 	public static $artifact_x = 0;
 	public static $artifact_y = 0;
 	public static $artifact_updated_time = 0;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> shell-fix-prodemote
 	private $finish_array = array();
 	private $course_id;
 	private $start_time;
@@ -23,7 +38,11 @@ class Game extends Room {
 	private $next_hat_id = 0;
 	private $prize;
 	private $campaign;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> shell-fix-prodemote
 	private $mode = self::MODE_RACE;
 	private $level_hash = '';
 	private $ending_egg = false;
@@ -32,18 +51,31 @@ class Game extends Room {
 	private $cowboy_chance = '';
 	private $cowboy_mode = false;
 	private $tournament = false;
+<<<<<<< HEAD
 	
 	protected $room_name = 'game_room';
 	protected $temp_id = 0;
 	
 	
+=======
+
+	protected $room_name = 'game_room';
+	protected $temp_id = 0;
+
+
+>>>>>>> shell-fix-prodemote
 	public function __construct($course_id){
 		$this->course_id = $course_id;
 		$this->tournament = pr2_server::$tournament;
 		$this->start_time = microtime(true);
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	public function add_player($player){
 		if(count($this->finish_array) < 4) {
 			Room::add_player($player);
@@ -66,6 +98,7 @@ class Game extends Room {
 			$player->race_stats = $race_stats;
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
@@ -75,21 +108,41 @@ class Game extends Room {
 		$this->finish_drawing($player);
 		$player->race_stats->still_here = false;
 		
+=======
+
+
+
+	public function remove_player($player){
+		Room::remove_player($player);
+
+		$this->finish_drawing($player);
+		$player->race_stats->still_here = false;
+
+>>>>>>> shell-fix-prodemote
 		if(!isset($player->race_stats->finish_time)){
 			$this->set_finish_time($player, 'forfeit');
 		}
 		else {
 			$this->broadcast_finish_times();
 		}
+<<<<<<< HEAD
 		
 		$player->race_stats = NULL;
 		$player->temp_id = NULL;
 		unset($player->temp_id);
 		
+=======
+
+		$player->race_stats = NULL;
+		$player->temp_id = NULL;
+		unset($player->temp_id);
+
+>>>>>>> shell-fix-prodemote
 		if(count($this->player_array) <= 0){
 			$this->remove();
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
@@ -98,13 +151,27 @@ class Game extends Room {
 		$this->record_plays();
 		$this->determine_prize();
 		
+=======
+
+
+
+	public function init(){
+
+		$this->record_plays();
+		$this->determine_prize();
+
+>>>>>>> shell-fix-prodemote
 		//send character info
 		foreach($this->player_array as $player){
 			$player->finished_race = false;
 			$player->socket->write($player->get_local_info());
 			$this->send_to_room($player->get_remote_info(), $player->user_id);
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		//super booster
 		if( !$this->tournament ) {
 			foreach($this->player_array as $player){
@@ -114,20 +181,34 @@ class Game extends Room {
 				}
 			}
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		//happy hour
 		if(pr2_server::$happy_hour) {
 			$this->send_to_all('happyHour`');
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		//tournament
 		if( $this->tournament ) {
 			announce_tournament($this);
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function record_plays() {
 		global $play_count_array;
 		$player_count = count($this->player_array);
@@ -138,6 +219,7 @@ class Game extends Room {
 			$play_count_array[$this->course_id] = $player_count;
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
@@ -155,6 +237,11 @@ class Game extends Room {
 	
 	
 	// Sir Sirlington (Epic Sir Parts + Epic Top Hat Upgrades)
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function is_sir_sirlington_here() {
 		$ret = false;
 		foreach($this->player_array as $player) {
@@ -164,38 +251,63 @@ class Game extends Room {
 		}
 		return($ret);
 	}
+<<<<<<< HEAD
 	
 	
 	
 	private function determine_prize() {
 		$player_count = count($this->player_array);
 		
+=======
+
+
+
+	private function determine_prize() {
+		$player_count = count($this->player_array);
+
+>>>>>>> shell-fix-prodemote
 		global $campaign_array;
 		if( isset($campaign_array[$this->course_id]) ) {
 			$this->campaign = $campaign_array[$this->course_id];
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		if( isset($this->campaign) ) {
 			$campaign_prize = Prizes::find( $this->campaign->prize_type, $this->campaign->prize_id );
 			if( $player_count >= 4 || (isset($campaign_prize) && $campaign_prize->is_universal()) ) {
 				$this->prize = $campaign_prize;
 			}
 		}
+<<<<<<< HEAD
 		
 		if( $this->is_clint_cowboy_here() ) {
 			$this->prize = Prizes::$EPIC_COWBOY_HAT;
 		}
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		if( $this->is_sir_sirlington_here() ) {
 			$sir_prizes = array( Prizes::$EPIC_TOP_HAT, Prizes::$EPIC_SIR_HEAD, Prizes::$EPIC_SIR_BODY, Prizes::$EPIC_SIR_FEET );
 			$this->prize = $sir_prizes[ array_rand($sir_prizes) ];
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		if( $this->course_id == self::LEVEL_DELIVERANCE ) {
 			$slender_prizes = array( Prizes::$SLENDER_HEAD, Prizes::$SLENDER_BODY, Prizes::$SLENDER_FEET );
 			$this->prize = $slender_prizes[ array_rand($slender_prizes) ];
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		if( !isset($this->prize) && $player_count > 1 ) {
 			if( rand($player_count*2, 20) >= 19 ) {
 				$prize_array = array(
@@ -229,35 +341,62 @@ class Game extends Room {
 				$this->prize = $prize_array[rand(0, count($prize_array)-1)];
 			}
 		}
+<<<<<<< HEAD
 		
 		if( !isset($this->prize) && $player_count > 2){
 			if(rand(0, 40) == 40){
 				$this->prize = Prizes::$EXP_HAT;
 			}
 			if(rand(0, 45) == 45){
+=======
+
+		if( !isset($this->prize) && $player_count > 2){
+			if(rand(0, 50) == 50){
+				$this->prize = Prizes::$EXP_HAT;
+			}
+			if(rand(0, 50) == 50){
+>>>>>>> shell-fix-prodemote
 				$this->prize = Prizes::$SANTA_HAT;
 			}
 			if(rand(0, 50) == 50){
 				$this->prize = Prizes::$PARTY_HAT;
 			}
+<<<<<<< HEAD
 			if( rand(0, 45) == 45 && pr2_server::$happy_hour ) {
 				$this->prize = Prizes::$JUMP_START_HAT;
 			}
 		}
 		
+=======
+			if( rand(0, 50) == 50 && pr2_server::$happy_hour ) {
+				$this->prize = Prizes::$JUMP_START_HAT;
+			}
+		}
+
+>>>>>>> shell-fix-prodemote
 		//no prizes on tournament
 		if( pr2_server::$no_prizes ) {
 			$this->prize = NULL;
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		//tell it to the world
 		if( isset($this->prize) ) {
 			$this->send_to_all( 'setPrize`'.$this->prize->to_str() );
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	public function finish_drawing($player, $data=null) {
 		if($player->race_stats->drawing === true) {
 			$arr = explode('`', $data);
@@ -272,11 +411,19 @@ class Game extends Room {
 			}
 			$this->send_to_all('finishDrawing`'.$player->temp_id);
 		}
+<<<<<<< HEAD
 		$this->maybe_begin_race();	
 	}
 	
 	
 	
+=======
+		$this->maybe_begin_race();
+	}
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function maybe_begin_race() {
 		$begin_race = true;
 		foreach($this->player_array as $player){
@@ -285,13 +432,22 @@ class Game extends Room {
 				break;
 			}
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		if($begin_race && !$this->begun) {
 			$this->begin_race();
 		}
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	private function begin_race() {
 		if(!$this->begun ) {
 			$this->begun = true;
@@ -300,19 +456,31 @@ class Game extends Room {
 			$this->finish_positions = $this->democratize( 'finish_positions' );
 			$this->finish_count = $this->democratize( 'finish_count' );
 			$this->cowboy_chance = $this->democratize( 'cowboy_chance' );
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//-- turn finish positions into an array
 			if( $this->finish_positions != 'all' ) {
 				$this->finish_positions = json_decode( $this->finish_positions );
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//-- boot people with the wrong level hash
 			foreach($this->player_array as $player) {
 				if($this->hash !== $player->race_stats->level_hash) {
 					$this->quit_race($player);
 				}
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//-- jigg hat
 			if($this->course_id == self::LEVEL_BUTO) {
 				$hat = new Hat($this->next_hat_id++, Hats::JIGG, 0xFFFFFF, -1);
@@ -322,7 +490,11 @@ class Game extends Room {
 				$rot = 0;
 				$this->send_to_all("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//-- artifact
 			if( $this->course_id == self::$artifact_level_id ) {
 				$hat = new Hat($this->next_hat_id++, Hats::ARTIFACT, 0xFFFFFF, -1);
@@ -332,13 +504,21 @@ class Game extends Room {
 				$rot = 0;
 				$this->send_to_all("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//-- eggs
 			if( $this->mode == self::MODE_EGG ) {
 				$this->send_to_all( 'setEggSeed`'.rand(0, 99999) );
 				$this->send_to_all( 'addEggs`10' );
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//-- sfchm
 			if( $this->cowboy_chance === '' ) {
 				$this->cowboy_chance = 5;
@@ -350,23 +530,37 @@ class Game extends Room {
 				$this->cowboy_mode = true;
 				$this->send_to_all('cowboyMode`');
 			}
+<<<<<<< HEAD
 			
 			//-- hats
 			$this->init_hats();
 			
+=======
+
+			//-- hats
+			$this->init_hats();
+
+>>>>>>> shell-fix-prodemote
 			//-- start
 			$this->start_time = microtime(true);
 			$this->send_to_all( 'ping`' . time() );
 			$this->send_to_all('beginRace`');
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function init_hats() {
 		foreach($this->player_array as $player) {
 			$player->worn_hat_array = array();
 			$hat_id = $player->hat;
+<<<<<<< HEAD
 			
 			if( $this->tournament ) {
 				$hat_id = pr2_server::$tournament_hat;
@@ -375,10 +569,21 @@ class Game extends Room {
 				$hat_id = 5;
 			}
 			
+=======
+
+			if( $this->tournament ) {
+				$hat_id = pr2_server::$tournament_hat;
+			}
+			if( $this->cowboy_mode ) {
+				$hat_id = 5;
+			}
+
+>>>>>>> shell-fix-prodemote
 			if( $hat_id != 1 ) {
 				$hat = new Hat( $this->next_hat_id++, $hat_id, $player->hat_color, $player->get_second_color('hat', $hat_id) );
 				$player->worn_hat_array[0] = $hat;
 			}
+<<<<<<< HEAD
 			
 			$this->send_to_all($this->get_hat_str($player));
 		}
@@ -386,6 +591,15 @@ class Game extends Room {
 	
 	
 	
+=======
+
+			$this->send_to_all($this->get_hat_str($player));
+		}
+	}
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function democratize( $var ) {
 		$winner = '';
 		$candidates = array();
@@ -403,8 +617,13 @@ class Game extends Room {
 		$winner = key( $candidates );
 		return $winner;
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	public function remote_finish_race( $player, $data ) {
 		if( $this->mode == self::MODE_RACE ) {
 			list($finish_id, $x, $y) = explode('`', $data);
@@ -412,6 +631,7 @@ class Game extends Room {
 		}
 		$this->finish_race( $player );
 	}
+<<<<<<< HEAD
 		
 	
 	public function finish_race($player) {
@@ -421,30 +641,58 @@ class Game extends Room {
 			$finish_time = microtime(true) - $this->start_time;
 			$this->set_finish_time($player, $finish_time);
 			
+=======
+
+
+	public function finish_race($player) {
+		if($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true){
+
+
+			$finish_time = microtime(true) - $this->start_time;
+			$this->set_finish_time($player, $finish_time);
+
+>>>>>>> shell-fix-prodemote
 			$time_mod = $finish_time / 120;
 			if($time_mod > 1) {
 				$time_mod = 1;
 			}
+<<<<<<< HEAD
 			
 			$place = array_search($player->race_stats, $this->finish_array);
 			
+=======
+
+			$place = array_search($player->race_stats, $this->finish_array);
+
+>>>>>>> shell-fix-prodemote
 			if( $place == 0 && count($this->finish_array) > 1 && $finish_time > 10 ) {
 				$this->give_gp( $player );
 				if( pr2_server::$tournament ) {
 					$this->broadcast_results( $player );
 				}
 			}
+<<<<<<< HEAD
 			
 			//--- prize -----------
 			$prize = null;
 			
+=======
+
+			//--- prize -----------
+			$prize = null;
+
+>>>>>>> shell-fix-prodemote
 			if( $this->course_id == self::LEVEL_BUTO && $player->wearing_hat(Hats::JIGG) ) {
 				$prize = Prizes::$JIGG_HAT;
 			}
 			if( isset($this->prize) && ($place == 0 || $this->prize->is_universal()) ) {
 				$prize = $this->prize;
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			if( isset($prize) ) {
 				$autoset = ( $prize->get_type() == 'hat' );
 				$result = $player->gain_part( $prize->get_type(), $prize->get_id(), $autoset );
@@ -453,23 +701,40 @@ class Game extends Room {
 				}
 				$player->write( 'winPrize`' . $prize->to_str() );
 			}
+<<<<<<< HEAD
 			
 			
+=======
+
+
+>>>>>>> shell-fix-prodemote
 			//--- exp gain -------
 			$tot_exp_gain = 0;
 			$tot_lux_gain = 0;
 			$wearing_moon = false;
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//--- welcome back bonus ---
 			$welcome_back_bonus = 0;
 			if( $player->exp_today == 0 && $player->rank >= 5 ) {
 				$welcome_back_bonus = 1000;
 			}
+<<<<<<< HEAD
 			
 			//--- level bonus ---
 			else {
 				$level_bonus = $this->apply_exp_curve( $player, 25 * $time_mod );
 				
+=======
+
+			//--- level bonus ---
+			else {
+				$level_bonus = $this->apply_exp_curve( $player, 25 * $time_mod );
+
+>>>>>>> shell-fix-prodemote
 				$completed_perc = 0;
 				if( $this->mode == self::MODE_OBJECTIVE && $this->finish_count > 0 ) {
 					$objective_count = count( $player->race_stats->objectives_reached );
@@ -479,6 +744,7 @@ class Game extends Room {
 					$completed_perc = $objective_count / $this->finish_count;
 					$level_bonus *= $completed_perc;
 				}
+<<<<<<< HEAD
 				
 				$level_bonus = round( $level_bonus );
 				
@@ -486,6 +752,15 @@ class Game extends Room {
 					$level_bonus = 0;
 				}
 				
+=======
+
+				$level_bonus = round( $level_bonus );
+
+				if( pr2_server::$no_prizes ) {
+					$level_bonus = 0;
+				}
+
+>>>>>>> shell-fix-prodemote
 				if($this->mode == self::MODE_DEATHMATCH) {
 					$player->write('award`Survival Bonus`+ '.$level_bonus);
 				}
@@ -495,10 +770,17 @@ class Game extends Room {
 				else {
 					$player->write('award`Level Completed`+ '.$level_bonus);
 				}
+<<<<<<< HEAD
 				
 				$tot_exp_gain += $level_bonus;
 			}
 			
+=======
+
+				$tot_exp_gain += $level_bonus;
+			}
+
+>>>>>>> shell-fix-prodemote
 			//--- opponent bonus ---
 			for($i = $place+1; $i < count($this->finish_array); $i++){
 				$race_stats = $this->finish_array[$i];
@@ -516,7 +798,11 @@ class Game extends Room {
 				$tot_exp_gain += $exp_gain;
 				$player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			$hat_bonus = 0;
 			foreach($player->worn_hat_array as $hat) {
 				if($hat->num == 2){
@@ -533,6 +819,7 @@ class Game extends Room {
 				$tot_exp_gain += $tot_exp_gain * $hat_bonus;
 				$player->write('award`Hat Bonus`exp X '.($hat_bonus+1));
 			}
+<<<<<<< HEAD
 			
 			if( isset($prize) && $prize->get_type() == Prizes::TYPE_EXP ){
 				$tot_exp_gain += $prize->get_id();
@@ -542,31 +829,59 @@ class Game extends Room {
 				$tot_lux_gain = count($this->finish_array) - $place - 1;
 			}
 			
+=======
+
+			if( isset($prize) && $prize->get_type() == Prizes::TYPE_EXP ){
+				$tot_exp_gain += $prize->get_id();
+			}
+
+			if($finish_time >= 90 && $wearing_moon) {
+				$tot_lux_gain = count($this->finish_array) - $place - 1;
+			}
+
+>>>>>>> shell-fix-prodemote
 			if(SimDetector::is_simming($player->user_id, $this->course_id, $tot_exp_gain)) {
 				$tot_exp_gain = 0;
 				$tot_lux_gain = 0;
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			if(pr2_server::$happy_hour) {
 				$tot_exp_gain *= 2;
 				$tot_lux_gain *= 2;
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//apply welcome back bonus after all multipliers
 			if( $welcome_back_bonus > 0 ) {
 				$tot_exp_gain += $welcome_back_bonus;
 				$player->write('award`Welcome Back Bonus`+ 1,000');
 			}
+<<<<<<< HEAD
 			
 			//artifact bonus
 			if( $this->course_id == self::$artifact_level_id && $player->artifact == 0 && $player->wearing_hat(Hats::ARTIFACT) ) {
 				$player->artifact = 1;
 				
+=======
+
+			//artifact bonus
+			if( $this->course_id == self::$artifact_level_id && $player->artifact == 0 && $player->wearing_hat(Hats::ARTIFACT) ) {
+				$player->artifact = 1;
+
+>>>>>>> shell-fix-prodemote
 				$max_artifact_bonus = 11111;
 				$artifact_bonus = $max_artifact_bonus * $player->active_rank / 20;
 				if( $artifact_bonus > $max_artifact_bonus ) {
 					$artifact_bonus = $max_artifact_bonus;
 				}
+<<<<<<< HEAD
 				
 				$tot_exp_gain += $artifact_bonus;
 				$player->write( 'award`Artifact Found!`+ ' . number_format( $artifact_bonus ) );
@@ -576,12 +891,26 @@ class Game extends Room {
 				exec( 'nohup php '.$import_path.'/commands/get_artifact.php '.$port.' '.$player->user_id.' > /dev/null &');		
 			}
 			
+=======
+
+				$tot_exp_gain += $artifact_bonus;
+				$player->write( 'award`Artifact Found!`+ ' . number_format( $artifact_bonus ) );
+
+				global $port;
+				exec( 'nohup php '.__DIR__.'/get_artifact.php '.$port.' '.$player->user_id.' > /dev/null &');
+			}
+
+>>>>>>> shell-fix-prodemote
 			//--- mark humans as robots at certain exp milestones
 			if($player->human && $this->passed_exp_threshold($player->exp_today, $player->exp_today+$tot_exp_gain )) {
 				$player->human = false;
 				$player->write('areYouHuman`');
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//---
 			if($player->human) {
 				$player->inc_exp($tot_exp_gain);
@@ -589,13 +918,21 @@ class Game extends Room {
 			else {
 				$player->hostage_exp_points = $tot_exp_gain;
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//lux gain
 			if($tot_lux_gain > 0) {
 				$player->write('setLuxGain`'.$tot_lux_gain);
 				$player->lux += $tot_lux_gain;
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			//--- save
 			if( isset($prize) && $prize->get_type() != Prizes::TYPE_EXP ) {
 				$player->save_info();
@@ -607,6 +944,7 @@ class Game extends Room {
 		else {
 			$this->set_finish_time($player, 'forfeit');
 		}
+<<<<<<< HEAD
 		
 		$player->finished_race = true;
 		
@@ -619,6 +957,20 @@ class Game extends Room {
 	private function broadcast_results( $player ) {
 		global $chat_room_array;
 		
+=======
+
+		$player->finished_race = true;
+
+		// everyone finishes at the same time in egg mode
+		$this->maybe_end_egg();
+	}
+
+
+
+	private function broadcast_results( $player ) {
+		global $chat_room_array;
+
+>>>>>>> shell-fix-prodemote
 		if( isset($chat_room_array['main']) ) {
 			$main = $chat_room_array['main'];
 			$message = '';
@@ -634,9 +986,15 @@ class Game extends Room {
 			$main->send_chat( "systemChat`$message", -1 );
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function maybe_end_deathmatch() {
 		if($this->mode == self::MODE_DEATHMATCH) {
 			$unfinished = 0;
@@ -660,28 +1018,46 @@ class Game extends Room {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function maybe_end_egg() {
 		if( $this->mode === self::MODE_EGG && !$this->ending_egg) {
 			$someone_finished = false;
 			$everyone_quit = true;
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			foreach($this->player_array as $player) {
 				if( $player->finished_race ) {
 					$someone_finished = true;
 					break;
 				}
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			foreach($this->player_array as $player) {
 				if( !$player->quit_race ) {
 					$everyone_quit = false;
 					break;
 				}
 			}
+<<<<<<< HEAD
 			
+=======
+
+>>>>>>> shell-fix-prodemote
 			if( $someone_finished || $everyone_quit ) {
 				$this->ending_egg = true;
 				foreach($this->player_array as $player) {
@@ -692,9 +1068,15 @@ class Game extends Room {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	public function quit_race($player) {
 		$this->finish_drawing($player);
 		if($player->finished_race == false) {
@@ -714,9 +1096,15 @@ class Game extends Room {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function set_finish_time($player, $finish_time){
 		if(!isset($player->race_stats->finish_time)) {
 			$player->race_stats->finish_time = $finish_time;
@@ -734,6 +1122,7 @@ class Game extends Room {
 			$sort_func = 'sort_finish_array';
 		}
 		usort($this->finish_array, $sort_func);
+<<<<<<< HEAD
 		
 		$this->broadcast_finish_times();
 		
@@ -743,6 +1132,17 @@ class Game extends Room {
 	
 	
 	
+=======
+
+		$this->broadcast_finish_times();
+
+		$this->send_to_all('var'.$player->temp_id.'`beginRemove`1');
+		$this->maybe_end_deathmatch();
+	}
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function broadcast_finish_times() {
 		$str = 'finishTimes';
 		foreach($this->finish_array as $race_stats) {
@@ -758,9 +1158,15 @@ class Game extends Room {
 		}
 		$this->send_to_all($str);
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function give_gp( $player ) {
 		if($player->human) {
 			$user_id = $player->user_id;
@@ -775,31 +1181,53 @@ class Game extends Room {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	public function set_pos($player, $data){
 		$this->send_to_room('p'.$player->temp_id.'`'.$data, $player->user_id);
 		list($moved_x, $moved_y) = explode('`', $data);
 		$player->pos_x += $moved_x;
 		$player->pos_y += $moved_y;
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	public function set_exact_pos($player, $data){
 		$this->send_to_room('exactPos'.$player->temp_id.'`'.$data, $player->user_id);
 		list($player->pos_x, $player->pos_y) = explode('`', $data);
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	public function squash($player, $data) {
 		list($target_id, $x, $y) = explode('`', $data);
 		$player->pos_x = (int)$x;
 		$player->pos_y = (int)$y;
 		$target = $this->id_to_player($target_id);
+<<<<<<< HEAD
 		if(isset($target) 
+=======
+		if(isset($target)
+>>>>>>> shell-fix-prodemote
 				&& $target->pos_y < $player->pos_y + 105
 				&& $target->pos_y > $player->pos_y + 0
 				&& $target->pos_x > $player->pos_x - 50
@@ -808,9 +1236,15 @@ class Game extends Room {
 			$this->send_to_room('squash'.$target->temp_id.'`', $player->user_id);
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	private function id_to_player($temp_id) {
 		$player = null;
 		foreach($this->player_array as $other_player) {
@@ -821,6 +1255,7 @@ class Game extends Room {
 		}
 		return $player;
 	}
+<<<<<<< HEAD
 	
 	
 	
@@ -828,6 +1263,15 @@ class Game extends Room {
 		if(!$player->finished_race) {
 			$this->send_to_room('var'.$player->temp_id.'`'.$data, $player->user_id);
 			
+=======
+
+
+
+	public function set_var($player, $data) {
+		if(!$player->finished_race) {
+			$this->send_to_room('var'.$player->temp_id.'`'.$data, $player->user_id);
+
+>>>>>>> shell-fix-prodemote
 			if($data === 'state`bumped' && $this->mode === self::MODE_DEATHMATCH) {
 				$player->lives--;
 				if($player->lives <= 0) {
@@ -840,9 +1284,15 @@ class Game extends Room {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	public function send_chat($message, $user_id){
 		foreach($this->player_array as $player){
 			if(!$player->is_ignored_id($user_id)){
@@ -850,9 +1300,15 @@ class Game extends Room {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	
+=======
+
+
+
+>>>>>>> shell-fix-prodemote
 	public function grab_egg( $player, $data ) {
 		if( !$player->finished_race ) {
 			$player->race_stats->eggs++;
@@ -862,8 +1318,13 @@ class Game extends Room {
 			$this->send_to_all( 'addEggs`1' );
 		}
 	}
+<<<<<<< HEAD
 			
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	public function loose_hat($player, $info){
 		if(count($player->worn_hat_array) > 0){
 			$hat = array_pop($player->worn_hat_array);
@@ -872,6 +1333,7 @@ class Game extends Room {
 			$this->send_to_all($this->get_hat_str($player));
 		}
 	}
+<<<<<<< HEAD
 	
 	
 	public function objective_reached( $player, $data ) {
@@ -883,14 +1345,32 @@ class Game extends Room {
 			throw new Exception( 'This objective has already been reached.' );
 		}
 		
+=======
+
+
+	public function objective_reached( $player, $data ) {
+		list($finish_id, $x, $y) = explode('`', $data);
+
+		$this->verify_finish_position( $x, $y, $finish_id );
+
+		if( isset( $player->race_stats->objectives_reached[$finish_id] ) ) {
+			throw new Exception( 'This objective has already been reached.' );
+		}
+
+>>>>>>> shell-fix-prodemote
 		$player->race_stats->objectives_reached[$finish_id] = 1;
 		$player->race_stats->last_objective_time = time();
 		if( count( $player->race_stats->objectives_reached ) >= $this->finish_count ) {
 			$this->finish_race( $player );
 		}
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	private function verify_finish_position( $x, $y, $id ) {
 		if( !is_numeric($id) || $id < 0 || $id > $this->finish_count ) {
 			throw new Exception( 'finish id is out of range' );
@@ -908,8 +1388,13 @@ class Game extends Room {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	public function get_hat($player, $hat_id) {
 		$hat = @$this->loose_hat_array[$hat_id];
 		if(isset($hat)) {
@@ -926,8 +1411,13 @@ class Game extends Room {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	private function commit_thievery($player, $hat) {
 		$candidates = array();
 		foreach($this->player_array as $other_player) {
@@ -948,8 +1438,13 @@ class Game extends Room {
 			$this->assign_hat($player, $hat);
 		}
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	private function assign_artifact( $player, $hat ) {
 		$this->loose_hat_array = array();
 		foreach($this->player_array as $other_player) {
@@ -958,14 +1453,24 @@ class Game extends Room {
 		}
 		$this->assign_hat( $player, $hat );
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	private function assign_hat($player, $hat) {
 		array_push($player->worn_hat_array, $hat);
 		$this->send_to_all($this->get_hat_str($player));
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	private function get_hat_str($player){
 		$str = 'setHats'.$player->temp_id.'`';
 		$len = count($player->worn_hat_array);
@@ -978,8 +1483,13 @@ class Game extends Room {
 		}
 		return $str;
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	private function apply_exp_curve( $player, $exp ) {
 		if( $player->exp_today < 5000 )
 			$tier = 2.0;
@@ -990,8 +1500,13 @@ class Game extends Room {
 		$exp *= $tier;
 		return $exp;
 	}
+<<<<<<< HEAD
 	
 	
+=======
+
+
+>>>>>>> shell-fix-prodemote
 	private function passed_exp_threshold( $prev_exp_today, $new_exp_today ) {
 		$ret = false;
 		if($new_exp_today >= 25000) {
@@ -1004,9 +1519,15 @@ class Game extends Room {
 		}
 		return $ret;
 	}
+<<<<<<< HEAD
 	
 	
 	public function remove(){		
+=======
+
+
+	public function remove(){
+>>>>>>> shell-fix-prodemote
 		$this->finish_array = NULL;
 		$this->course_id = NULL;
 		$this->start_time = NULL;
@@ -1017,7 +1538,11 @@ class Game extends Room {
 		$this->campaign = NULL;
 		$this->room_name = NULL;
 		$this->temp_id = NULL;
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> shell-fix-prodemote
 		parent::remove();
 	}
 }
