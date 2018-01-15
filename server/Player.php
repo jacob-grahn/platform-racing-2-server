@@ -793,8 +793,8 @@ class Player {
 		$db->call( 'epic_upgrades_upsert', array( $this->user_id, $epic_hat_array, $epic_head_array, $epic_body_array, $epic_feet_array ), MYSQLI_ASYNC );
 		$db->call( 'user_update_status', array( $this->user_id, $status, $e_server_id ), MYSQLI_ASYNC );
 		$db->call( 'rank_token_update', array( $this->user_id, $rt_used ), MYSQLI_ASYNC );
-		$db->call( 'exp_today_add', array( 'id-' . $this->user_id, $exp_today ), MYSQLI_ASYNC );
-		$db->call( 'exp_today_add', array( 'ip-' . $ip, $exp_today ), MYSQLI_ASYNC );
+		$db->call( 'exp_today_add', array( 'id-' . $this->user_id, $tot_exp_gained ), MYSQLI_ASYNC ); // todo $exp_today
+		$db->call( 'exp_today_add', array( 'ip-' . $ip, $tot_exp_gained ), MYSQLI_ASYNC );
 	}
 
 
