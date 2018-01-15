@@ -48,22 +48,17 @@ class ChatRoom extends Room {
 	
 	
 	public function send_chat($message, $user_id) {
-		if (strpos($message, '`') === false) {
-			$chat_message = new ChatMessage($user_id, $message);
-			
-			array_push($this->chat_array, $chat_message);
-			
-			$this->chat_array[0] = NULL;
-			array_shift($this->chat_array);
-			
-			foreach($this->player_array as $player){
-				if(!$player->is_ignored_id($user_id)){
-					$player->socket->write($message);
-				}
+		$chat_message = new ChatMessage($user_id, $message);
+		
+		array_push($this->chat_array, $chat_message);
+		
+		$this->chat_array[0] = NULL;
+		array_shift($this->chat_array);
+		
+		foreach($this->player_array as $player){
+			if(!$player->is_ignored_id($user_id)){
+				$player->socket->write($message);
 			}
-		}
-		else {
-			$player->write('message`Error: Illegal character in message.');
 		}
 	}
 	
