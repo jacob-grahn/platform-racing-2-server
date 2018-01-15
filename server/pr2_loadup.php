@@ -1,15 +1,14 @@
 <?php
 
-
-
 function begin_loadup( $server_id ) {
+	global $db;
 	$db = new DB();
-	
+
 	$server = $db->grab_row( 'server_select', array($server_id) );
 	$campaign = $db->to_array( $db->call('campaign_select') );
 	$perks = $db->to_array( $db->call('purchases_select_recent') );
 	$artifact = $db->grab_row('artifact_location_select');
-	
+
 	set_server( $db, $server );
 	set_campaign( $campaign );
 	set_perks( $perks );
@@ -31,7 +30,7 @@ function set_server( $db, $server ) {
 	if( pr2_server::$tournament ) {
 		pr2_server::$no_prizes = true;
 	}
-	
+
 	if( $guild_id != 0 ) {
 		$guild = $db->grab_row( 'guild_select', array($guild_id) );
 		$guild_owner = $guild->owner_id;

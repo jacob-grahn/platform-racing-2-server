@@ -704,18 +704,17 @@ class Player {
 
 
 
-	public function save_info(){
+	public function save_info () {
 		global $port;
 		global $server_id;
+		global $db;
 
+		// auto removing some hat?
 		$index = array_search(27, $this->hat_array);
 		if($index !== false) {
 			array_splice($this->hat_array, $index, 1);
 		}
 
-		$user_id = $this->user_id;
-
-		$name = $this->name;
 		$rank = $this->rank;
 		$exp_points = $this->exp_points;
 		$group = $this->group;
@@ -759,7 +758,11 @@ class Player {
 		$ip = $this->ip;
 		$tot_exp_gained = $this->exp_today - $this->start_exp_today;
 
-		if($this->group == 0){
+		if( $status == 'offline' ) {
+			$e_server_id = 0;
+		}
+
+		if($this->group == 0) {
 			$rank = 0;
 			$exp_points = 0;
 			$hat_array = '1';
@@ -780,7 +783,20 @@ class Player {
 			$jumping = 50;
 		}
 
-		actually_save_info($port, $name, $rank, $exp_points, $group, $hat_color, $head_color, $body_color, $feet_color, $hat, $head, $body, $feet, $hat_array, $head_array, $body_array, $feet_array, $speed, $acceleration, $jumping, $status, $lux, $rt_used, $ip, $tot_exp_gained, $e_server_id, $hat_color_2, $head_color_2, $body_color_2, $feet_color_2, $epic_hat_array, $epic_head_array, $epic_body_array, $epic_feet_array);
+		$db->call( 'pr2_update', array( $this->user_id, $rank, $exp_points,
+			$hat_color, $head_color, $body_color, $feet_color,
+			$hat_color_2, $head_color_2, $body_color_2, $feet_color_2,
+			$hat, $head, $body,
+			$feet, $hat_array, $head_array, $body_array, $feet_array,
+			$speed, $acceleration, $jumping ),
+			MYSQLI_ASYNC
+		);
+
+		$db->call( 'epic_upgrades_upsert', array( $this->user_id, $epic_hat_array, $epic_head_array, $epic_body_array, $epic_feet_array ), MYSQLI_ASYNC );
+		$db->call( 'user_update_status', array( $this->user_id, $status, $e_server_id ), MYSQLI_ASYNC );
+		$db->call( 'rank_token_update', array( $this->user_id, $rt_used ), MYSQLI_ASYNC );
+		$db->call( 'exp_today_add', array( 'id-' . $this->user_id, $exp_today ), MYSQLI_ASYNC );
+		$db->call( 'exp_today_add', array( 'ip-' . $ip, $exp_today ), MYSQLI_ASYNC );
 	}
 
 

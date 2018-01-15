@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../fns/get_artifact.php');
+require_once(__DIR__ . '/../fns/artifact_first_check.php');
 
 class Game extends Room {
 

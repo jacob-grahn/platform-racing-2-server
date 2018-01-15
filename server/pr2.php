@@ -78,6 +78,8 @@ $search_room = new LevelListRoom();
 $max_players = 200;
 $min_version = .60;
 
+$db;
+
 
 //load in startup info
 output('requesting startup info...');
