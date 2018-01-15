@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../commands/update_pr2_user.php');
+require_once(__DIR__ . '/fns/update_pr2_user.php');
 
 class Player {
 
@@ -255,7 +255,7 @@ class Player {
 		global $guild_owner;
 		global $player_array;
 		$chat_message = htmlspecialchars($chat_message); // html killer
-		
+
 		switch($chat_message) {
 			case '/b':
 				$chat_effect = 'bold';
@@ -278,7 +278,7 @@ class Player {
 				$chat_effect_tag = NULL;
 				break;
 		}
-		
+
 		if($this->group <= 0) {
 			$this->write('systemChat`Sorries, guests can\'t send chat messages.');
 		}
@@ -317,7 +317,7 @@ class Player {
 		else if(strpos($chat_message, '/a ') === 0) {
 			$announcement = trim(substr($chat_message, 3));
 			$announce_length = strlen($announcement);
-			
+
 			if ($this->group >= 2 || $this->user_id == $guild_owner) {
 				if($announce_length >= 1) {
 					$this->chat_room->send_chat('systemChat`' . $announcement, $this->user_id);
@@ -785,7 +785,7 @@ class Player {
 
 
 
-	public function remove(){
+	public function remove() {
 		global $player_array;
 
 		unset($player_array[$this->user_id]);
@@ -820,8 +820,6 @@ class Player {
 		$this->save_info();
 
 		//delete
-		//echo "removing player: ".$this->name."\n";
-
 		$this->socket = NULL;
 		$this->user_id = NULL;
 		$this->name = NULL;
@@ -871,8 +869,6 @@ class Player {
 		$this->domain = NULL;
 		$this->temp_mod = NULL;
 		$this->status = NULL;
-
-		unset($this);
 	}
 }
 

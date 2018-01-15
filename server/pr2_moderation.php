@@ -1,8 +1,8 @@
 <?php
 
 // call pro/demotion functions
-require_once(__DIR__ . '/../commands/promote_to_moderator.php');
-require_once(__DIR__ . '/../commands/demod.php');
+require_once(__DIR__ . '/fns/promote_to_moderator.php');
+require_once(__DIR__ . '/fns/demod.php');
 
 
 //--- kick a player -------------------------------------------------------------
@@ -191,7 +191,7 @@ function demote_moderator($socket, $name) {
 	if($from_player->group == 3){
 		global $port;
 		$to_player = name_to_player($name);
-		
+
 		demote_mod($port, $name, $from_player, $to_player);
 	}
 }
