@@ -1,7 +1,5 @@
 <?php
 
-require_once(__DIR__ . '/fns/update_pr2_user.php');
-
 class Player {
 
 	public $socket;
