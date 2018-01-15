@@ -314,7 +314,7 @@ class Player {
 				$this->write('systemChat`Such powers are reserved for owners of private servers and the PR2 staff team.');
 			}
 		}
-		else if(strpos($chat_message, '/a ')) {
+		else if(strpos($chat_message, '/a ') === 0) {
 			$announcement = trim(substr($chat_message, 3));
 			$announce_length = strlen($announcement);
 			
