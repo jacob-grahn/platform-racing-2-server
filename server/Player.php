@@ -357,7 +357,7 @@ class Player {
 			$pop_counted = count($player_array); // count players
 			$pop_singular = array("is", "user"); // language for 1 player
 			$pop_plural = array("are", "users"); // language for multiple players
-			
+
 			if ($pop_counted === 1) {
 				$pop_lang = $pop_singular; // if there is only one player, associate the singular language with the called variable
 			}
@@ -368,17 +368,18 @@ class Player {
 			$this->write('systemChat`There '.$pop_lang[0].' currently '.$pop_counted.' '.$pop_lang[1].' playing on this server.');
 		}
 		else if (($chat_message == '/clear' || $chat_message == '/cls') && $this->group >= 2) {
-			$chatroom_name = $this->chat_room->chat_room_name;
-			$this->chat_room->remove();
-			set_chat_room($this->socket, $chatroom_name);
+			$this->chat_room->clear();
+			for ($i = 0; $i <= 20; $i++) {
+				$this->write('systemChat` ');
+			}
 		}
 		else if ($chat_message == '/help' || $chat_message == '/?' || $chat_message == '/') {
 			$server_owner_supplement = '';
 			$staff_supplement = '';
-			
+
 			if ($this->group >= 2) {
 				$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
-				
+
 				if ($this->user_id == $guild_owner) {
 					$server_owner_supplement = '<br>Server Owner:<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
 				}
