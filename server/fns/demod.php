@@ -26,8 +26,7 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 		$result = $connection->query("SELECT *
 										FROM users
 										WHERE user_id = '$safe_admin_id'
-										LIMIT 0,1",
-										MYSQLI_ASYNC);
+										LIMIT 0,1");
 		$row = $result->fetch_object();
 		if($row->power != 3) {
 			throw new Exception("You lack the power to demote $user_name.");
@@ -35,8 +34,7 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 
 		//delete mod entry
 		$result = $connection->query("DELETE FROM mod_power
-										WHERE user_id = '$safe_user_id'",
-										MYSQLI_ASYNC);
+										WHERE user_id = '$safe_user_id'");
 		if(!$result) {
 			throw new Exception("Could not delete the moderator type from the database because $user_name isn\'t a moderator.");
 		}
@@ -45,8 +43,7 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 		//set power to 1
 		$result = $connection->query("UPDATE users
 										SET power = 1
-										WHERE user_id = '$safe_user_id'",
-										MYSQLI_ASYNC);
+										WHERE user_id = '$safe_user_id'");
 		if(!$result) {
 			throw new Exception("Could not demote $user_name due to a database error.");
 		}
