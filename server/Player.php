@@ -250,11 +250,38 @@ class Player {
 
 
 	public function send_chat($chat_message) {
+		global $guild_owner;
+		global $player_array;
+		$safe_chat_message = htmlspecialchars($chat_message); // html killer for systemChat
+
+		switch($chat_message) {
+			case '/b':
+				$chat_effect = 'bold';
+				$chat_effect_tag = '<b>';
+				break;
+			case '/i':
+				$chat_effect = 'italicized';
+				$chat_effect_tag = '<i>';
+				break;
+			case '/u':
+				$chat_effect = 'underlined';
+				$chat_effect_tag = '<u>';
+				break;
+			case '/li':
+				$chat_effect = 'bulleted';
+				$chat_effect_tag = '<li>';
+				break;
+			default:
+				$chat_effect = NULL;
+				$chat_effect_tag = NULL;
+				break;
+		}
+
 		if($this->group <= 0) {
 			$this->write('systemChat`Sorries, guests can\'t send chat messages.');
 		}
 		else if($this->chat_ban > time()) {
-			$this->write('systemChat`You have been temporarially banned from the chat. '
+			$this->write('systemChat`You have been temporarily banned from the chat. '
 				.'The ban will be lifted in '.($this->chat_ban - time()).' seconds.');
 		}
 		else if($this->get_chat_count() > 6) {
@@ -264,27 +291,114 @@ class Player {
 		else if($this->active_rank < 3) {
 			$this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
 		}
-		else if( strpos($chat_message, '/tournament') === 0 || strpos($chat_message, '/t') === 0 ) {
-			global $guild_owner;
-			if( $this->user_id == $guild_owner ) {
-				issue_tournament( $chat_message );
-				if( isset($this->chat_room) ) {
-					announce_tournament( $this->chat_room );
+		else if(strpos($chat_message, '`') !== false) {
+			$this->write('message`Error: Illegal character in message.');
+		}
+		else if(strpos($chat_message, '/tournament ') === 0 || strpos($chat_message, '/t ') === 0 || $chat_message == '/t') {
+			if($this->user_id == $guild_owner) {
+				if ($chat_message == '/t help') {
+					$this->write('systemChat`Welcome to tournament mode! To enable a tournament, use /t followed by a hat name and stat values for the desired speed, acceleration, and jumping of the tournament.<br><br>Example: /t exp 65 65 65<br>Hat: EXP<br>Speed: 65<br>Accel: 65<br>Jump: 65<br><br>To turn off tournament mode, type /t off.');
+				}
+				else {
+					issue_tournament($safe_chat_message);
+					if(isset($this->chat_room)) {
+						announce_tournament($this->chat_room);
+					}
 				}
 			}
 			else {
 				$this->write('systemChat`Such powers are reserved for owners of private servers.');
 			}
 		}
-		else {
-			$message = 'chat`'.$this->name.'`'.$this->group.'`'.$chat_message;
-			$this->chat_count++;
-			$this->chat_time = time();
-			if(isset($this->chat_room)) {
-				$this->chat_room->send_chat($message, $this->user_id);
+		else if(!is_null($chat_effect)) {
+			if ( $this->group >= 2 ) {
+				$this->chat_room->send_chat('systemChat`' . $chat_effect_tag . $this->name .
+							    ' has temporarily activated ' . $chat_effect . ' chat!', $this->user_id);
 			}
-			else if(isset($this->game_room)) {
-				$this->game_room->send_chat($message, $this->user_id);
+			else {
+				$this->write('systemChat`Such powers are reserved for owners of private servers and the PR2 staff team.');
+			}
+		}
+		else if(strpos($chat_message, '/a ') === 0) {
+			$announcement = trim(substr($chat_message, 3));
+			$safe_announcement = htmlspecialchars($announcement); // html killer
+			$announce_length = strlen($safe_announcement);
+
+			if ($this->group >= 2 || $this->user_id == $guild_owner) {
+				if($announce_length >= 1) {
+					$this->chat_room->send_chat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement, $this->user_id);
+				}
+				else {
+					$this->write('systemChat`Your announcement must be at least 1 character.');
+				}
+			}
+			else {
+				$this->write('systemChat`Only owners of private servers and members of the PR2 staff team may make chatroom announcements.');
+			}
+		}
+		else if(strpos($chat_message, '/give ') === 0) {
+			$givingthis = trim(substr($chat_message, 6));
+			$safe_givingthis = htmlspecialchars($givingthis); // html killer
+			$givingthis_length = strlen($safe_givingthis);
+
+			if ($this->group >= 2 || $this->user_id == $guild_owner) {
+				if($givingthis_length >= 1) {
+					$this->chat_room->send_chat('systemChat`'.$this->name.' has given ' . $safe_givingthis, $this->user_id);
+				}
+				else {
+					$this->write('systemChat`The thing you\'re giving must be at least 1 character.');
+				}
+			}
+			else {
+				$this->write('systemChat`Only owners of private servers and members of the PR2 staff team may use this command.');
+			}
+		}
+		else if($chat_message == '/pop' || $chat_message == '/population') {
+			$pop_counted = count($player_array); // count players
+			$pop_singular = array("is", "user"); // language for 1 player
+			$pop_plural = array("are", "users"); // language for multiple players
+			
+			if ($pop_counted === 1) {
+				$pop_lang = $pop_singular; // if there is only one player, associate the singular language with the called variable
+			}
+			else {
+				$pop_lang = $pop_plural; // if there is more than one player, associate the plural language with the called variable
+			}
+
+			$this->write('systemChat`There '.$pop_lang[0].' currently '.$pop_counted.' '.$pop_lang[1].' playing on this server.');
+		}
+		else if (($chat_message == '/clear' || $chat_message == '/cls') && $this->group >= 2) {
+			$chatroom_name = $this->chat_room->chat_room_name;
+			$this->chat_room->remove();
+			set_chat_room($this->socket, $chatroom_name);
+		}
+		else if ($chat_message == '/help' || $chat_message == '/?' || $chat_message == '/') {
+			$server_owner_supplement = '';
+			$staff_supplement = '';
+			
+			if ($this->group >= 2) {
+				$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
+				
+				if ($this->user_id == $guild_owner) {
+					$server_owner_supplement = '<br>Server Owner:<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
+				}
+			}
+			$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /population'.$staff_supplement.$server_owner_supplement);
+		}
+		else {
+			if (strpos($this->name, '`') !== false) {
+				$this->write('message`Error: Illegal character in username.');
+			}
+			else {
+				$message = 'chat`'.$this->name.'`'.$this->group.'`'.$chat_message;
+				$this->chat_count++;
+				$this->chat_time = time();
+				if(isset($this->chat_room)) {
+					$this->chat_room->send_chat($message, $this->user_id);
+				}
+				else if(isset($this->game_room)) {
+					$this->game_room->send_chat($message, $this->user_id);
+				}
 			}
 		}
 	}
@@ -527,6 +641,7 @@ class Player {
 
 		$this->verify_parts();
 		$this->verify_stats();
+		$this->save_info();
 	}
 
 
@@ -646,62 +761,65 @@ class Player {
 
 
 
-	public function save_info(){
+	public function save_info () {
 		global $port;
 		global $server_id;
+		global $db;
 
+		// auto removing some hat?
 		$index = array_search(27, $this->hat_array);
 		if($index !== false) {
 			array_splice($this->hat_array, $index, 1);
 		}
 
-		$user_id = escapeshellarg($this->user_id);
+		$rank = $this->rank;
+		$exp_points = $this->exp_points;
+		$group = $this->group;
 
-		$name = escapeshellarg($this->name);
-		$rank = escapeshellarg($this->rank);
-		$exp_points = escapeshellarg($this->exp_points);
-		$group = escapeshellarg($this->group);
+		$hat_color = $this->hat_color;
+		$head_color = $this->head_color;
+		$body_color = $this->body_color;
+		$feet_color = $this->feet_color;
 
-		$hat_color = escapeshellarg($this->hat_color);
-		$head_color = escapeshellarg($this->head_color);
-		$body_color = escapeshellarg($this->body_color);
-		$feet_color = escapeshellarg($this->feet_color);
+		$hat_color_2 = $this->hat_color_2;
+		$head_color_2 = $this->head_color_2;
+		$body_color_2 = $this->body_color_2;
+		$feet_color_2 = $this->feet_color_2;
 
-		$hat_color_2 = escapeshellarg($this->hat_color_2);
-		$head_color_2 = escapeshellarg($this->head_color_2);
-		$body_color_2 = escapeshellarg($this->body_color_2);
-		$feet_color_2 = escapeshellarg($this->feet_color_2);
+		$hat = $this->hat;
+		$head = $this->head;
+		$body = $this->body;
+		$feet = $this->feet;
 
-		$hat = escapeshellarg($this->hat);
-		$head = escapeshellarg($this->head);
-		$body = escapeshellarg($this->body);
-		$feet = escapeshellarg($this->feet);
+		$hat_array = join(',', $this->hat_array);
+		$head_array = join(',', $this->head_array);
+		$body_array = join(',', $this->body_array);
+		$feet_array = join(',', $this->feet_array);
 
-		$hat_array = escapeshellarg(join(',', $this->hat_array));
-		$head_array = escapeshellarg(join(',', $this->head_array));
-		$body_array = escapeshellarg(join(',', $this->body_array));
-		$feet_array = escapeshellarg(join(',', $this->feet_array));
+		$epic_hat_array = join(',', $this->epic_hat_array);
+		$epic_head_array = join(',', $this->epic_head_array);
+		$epic_body_array = join(',', $this->epic_body_array);
+		$epic_feet_array = join(',', $this->epic_feet_array);
 
-		$epic_hat_array = escapeshellarg(join(',', $this->epic_hat_array));
-		$epic_head_array = escapeshellarg(join(',', $this->epic_head_array));
-		$epic_body_array = escapeshellarg(join(',', $this->epic_body_array));
-		$epic_feet_array = escapeshellarg(join(',', $this->epic_feet_array));
+		$speed = $this->speed;
+		$acceleration = $this->acceleration;
+		$jumping = $this->jumping;
 
-		$speed = escapeshellarg($this->speed);
-		$acceleration = escapeshellarg($this->acceleration);
-		$jumping = escapeshellarg($this->jumping);
+		$status = $this->status;
+		$e_server_id = $server_id;
 
-		$status = escapeshellarg( $this->status );
-		$e_server_id = escapeshellarg( $server_id );
-
-		$lux = escapeshellarg($this->lux);
+		$lux = $this->lux;
 		$this->lux = 0;
 
-		$rt_used = escapeshellarg($this->rt_used);
-		$ip = escapeshellarg($this->ip);
-		$tot_exp_gained = escapeshellarg($this->exp_today - $this->start_exp_today);
+		$rt_used = $this->rt_used;
+		$ip = $this->ip;
+		$tot_exp_gained = $this->exp_today - $this->start_exp_today;
 
-		if($this->group == 0){
+		if( $status == 'offline' ) {
+			$e_server_id = 0;
+		}
+
+		if($this->group == 0) {
 			$rank = 0;
 			$exp_points = 0;
 			$hat_array = '1';
@@ -722,28 +840,25 @@ class Player {
 			$jumping = 50;
 		}
 
-		$update_str = 'nohup php '.__DIR__.'/commands/update_pr2_user.php '.$port.' '.$user_id
-		.' '.$name.' '.$rank.' '.$exp_points.' '.$group
-		.' '.$hat_color.' '.$head_color.' '.$body_color.' '.$feet_color
-		.' '.$hat.' '.$head.' '.$body.' '.$feet
-		.' '.$hat_array.' '.$head_array.' '.$body_array.' '.$feet_array
-		.' '.$speed.' '.$acceleration.' '.$jumping
-		.' '.$status
-		.' '.$lux
-		.' '.$rt_used
-		.' '.$ip
-		.' '.$tot_exp_gained
-		.' '.$e_server_id
-		.' '.$hat_color_2.' '.$head_color_2.' '.$body_color_2.' '.$feet_color_2
-		.' '.$epic_hat_array.' '.$epic_head_array.' '.$epic_body_array.' '.$epic_feet_array
-		.' > /dev/null &';
+		$db->call( 'pr2_update', array( $this->user_id, $rank, $exp_points,
+			$hat_color, $head_color, $body_color, $feet_color,
+			$hat_color_2, $head_color_2, $body_color_2, $feet_color_2,
+			$hat, $head, $body,
+			$feet, $hat_array, $head_array, $body_array, $feet_array,
+			$speed, $acceleration, $jumping ),
+			MYSQLI_ASYNC
+		);
 
-		exec($update_str);
+		$db->call( 'epic_upgrades_upsert', array( $this->user_id, $epic_hat_array, $epic_head_array, $epic_body_array, $epic_feet_array ), MYSQLI_ASYNC );
+		$db->call( 'user_update_status', array( $this->user_id, $status, $e_server_id ), MYSQLI_ASYNC );
+		$db->call( 'rank_token_update', array( $this->user_id, $rt_used ), MYSQLI_ASYNC );
+		$db->call( 'exp_today_add', array( 'id-' . $this->user_id, $tot_exp_gained ), MYSQLI_ASYNC ); // todo $exp_today
+		$db->call( 'exp_today_add', array( 'ip-' . $ip, $tot_exp_gained ), MYSQLI_ASYNC );
 	}
 
 
 
-	public function remove(){
+	public function remove() {
 		global $player_array;
 
 		unset($player_array[$this->user_id]);
@@ -778,8 +893,6 @@ class Player {
 		$this->save_info();
 
 		//delete
-		//echo "removing player: ".$this->name."\n";
-
 		$this->socket = NULL;
 		$this->user_id = NULL;
 		$this->name = NULL;
@@ -829,8 +942,6 @@ class Player {
 		$this->domain = NULL;
 		$this->temp_mod = NULL;
 		$this->status = NULL;
-
-		unset($this);
 	}
 }
 

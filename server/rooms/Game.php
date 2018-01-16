@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__ . '/../fns/artifact_first_check.php');
+
 class Game extends Room {
 
 	const LEVEL_BUTO = 1738847; //for jigg hat
@@ -58,11 +60,9 @@ class Game extends Room {
 			$player->quit_race = false;
 			$this->temp_id++;
 			$player->human = !Robots::is_robot($player->ip);
-
 			$race_stats = new RaceStats($player->temp_id, $player->name, $player->active_rank, $player->ip);
 			$race_stats->human = $player->human;
 			array_push($this->finish_array, $race_stats);
-
 			$player->race_stats = $race_stats;
 		}
 	}
@@ -141,6 +141,20 @@ class Game extends Room {
 
 
 
+	// Clint the Cowboy (Epic Cowboy Upgrade)
+	private function is_clint_cowboy_here() {
+		$ret = false;
+		foreach($this->player_array as $player) {
+			if($player->user_id == 5451130) {
+				$ret = true;
+			}
+		}
+		return($ret);
+	}
+
+
+
+	// Sir Sirlington (Epic Sir Parts + Epic Top Hat Upgrades)
 	private function is_sir_sirlington_here() {
 		$ret = false;
 		foreach($this->player_array as $player) {
@@ -166,6 +180,10 @@ class Game extends Room {
 			if( $player_count >= 4 || (isset($campaign_prize) && $campaign_prize->is_universal()) ) {
 				$this->prize = $campaign_prize;
 			}
+		}
+
+		if( $this->is_clint_cowboy_here() ) {
+			$this->prize = Prizes::$EPIC_COWBOY_HAT;
 		}
 
 		if( $this->is_sir_sirlington_here() ) {
@@ -212,17 +230,17 @@ class Game extends Room {
 			}
 		}
 
-		if( !isset($this->prize) && $player_count > 2){
-			if(rand(0, 50) == 50){
+		if( !isset($this->prize) && $player_count >= 2){
+			if(rand(0, 40) == 40){
 				$this->prize = Prizes::$EXP_HAT;
 			}
-			if(rand(0, 50) == 50){
+			if(rand(0, 45) == 45){
 				$this->prize = Prizes::$SANTA_HAT;
 			}
 			if(rand(0, 50) == 50){
 				$this->prize = Prizes::$PARTY_HAT;
 			}
-			if( rand(0, 50) == 50 && pr2_server::$happy_hour ) {
+			if( rand(0, 40) == 40 && pr2_server::$happy_hour ) {
 				$this->prize = Prizes::$JUMP_START_HAT;
 			}
 		}
@@ -554,7 +572,7 @@ class Game extends Room {
 				$player->write( 'award`Artifact Found!`+ ' . number_format( $artifact_bonus ) );
 
 				global $port;
-				exec( 'nohup php '.__DIR__.'/../commands/get_artifact.php '.$port.' '.$player->user_id.' > /dev/null &');
+				artifact_first_check($port, $player);
 			}
 
 			//--- mark humans as robots at certain exp milestones
@@ -603,15 +621,12 @@ class Game extends Room {
 		if( isset($chat_room_array['main']) ) {
 			$main = $chat_room_array['main'];
 			$message = '';
-
 			$names = array();
 			foreach($this->finish_array as $race_stats) {
 				$names[] = "[$race_stats->name]";
 			}
 			$vs_names = join( ' vs ', $names );
-
 			$message = "$vs_names: // $player->name wins!";
-
 			$main->send_chat( "systemChat`$message", -1 );
 		}
 	}
@@ -815,7 +830,6 @@ class Game extends Room {
 					$this->finish_race($player);
 				}
 			}
-
 			if(substr($data, 4) === 'item') {
 				$player->items_used++;
 			}
@@ -1002,5 +1016,4 @@ class Game extends Room {
 		parent::remove();
 	}
 }
-
 ?>
