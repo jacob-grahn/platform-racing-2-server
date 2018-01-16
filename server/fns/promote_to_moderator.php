@@ -180,11 +180,6 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 				$promoted_player->group = 2;
 				$promoted_player->write('setGroup`2');
 		}
-		else {
-				echo $admin->name." tried to promote $name to an invalid type of moderator ($type).";
-				$admin->write("message`Error: Invalid moderator type.");
-				return false;
-		}
 		echo $admin->name." promoted $name to a $type moderator.";
 		$admin->write("message`$name has been promoted to a $type moderator!");
 		return true;

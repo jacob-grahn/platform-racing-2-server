@@ -78,14 +78,23 @@ catch(Exception $e){
 
 
 function output_form($ban) {
-
+    $checked_box = 'checked="checked"';
+    $ip_checked = '';
+    $acc_checked = '';
+	    
+    if ($ban->ip_ban === 1) {
+    	$ip_checked = $checked_box;
+    }
+    if ($ban->account_ban === 1) {
+        $acc_checked = $checked_box;
+    }
     echo "
     <form>
 	<input type='hidden' value='edit' name='action'>
 	<input type='hidden' value='$ban->ban_id' name='ban_id'>
 	<p>Expire Date <input type='text' value='$ban->expire_datetime' name='expire_time'></p>
-	<p>Ip Ban <input type='checkbox' checked='$ban->ip_ban' name='ip_ban'></p>
-	<p>Account Ban <input type='checkbox' checked='$ban->account_ban' name='account_ban'></p>
+	<p>Ip Ban <input type='checkbox' $ip_checked name='ip_ban'></p>
+	<p>Account Ban <input type='checkbox' $acc_checked name='account_ban'></p>
 	<p>Notes <textarea rows='4' cols='50' name='notes'>$ban->notes</textarea>
 	<p><input type='submit' value='submit'></p>
     </form>";
