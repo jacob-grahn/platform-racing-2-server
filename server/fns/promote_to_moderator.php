@@ -29,8 +29,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	$admin_result = $connection->query("SELECT *
 									FROM users
 									WHERE user_id = '$safe_admin_id'
-									LIMIT 0,1",
-									MYSQLI_ASYNC);
+									LIMIT 0,1");
 	$admin_row = $admin_result->fetch_object();
 
 	//check for proper permission in the db (3rd + final line of defense before promotion)
@@ -45,8 +44,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	$user_result = $connection->query("SELECT *
 									FROM users
 									WHERE user_id = '$safe_user_id'
-									LIMIT 0,1",
-									MYSQLI_ASYNC);
+									LIMIT 0,1");
 	$user_row = $user_result->fetch_object();
 
 	// if the person being promoted is a guest, end the function
@@ -76,8 +74,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			$result = $connection->query("SELECT COUNT(*) as recent_promotion_count
 											FROM promotion_log
 											WHERE power > 1
-											AND time > $safe_min_time",
-											MYSQLI_ASYNC);
+											AND time > $safe_min_time");
 			if(!$result) {
 				throw new Exception('Could not check for recent promotions.');
 			}
@@ -91,8 +88,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			$result = $connection->query("INSERT INTO promotion_log
 										 	SET message = 'user_id: $safe_user_id has been promoted to $safe_type moderator',
 												power = 2,
-												time = '$safe_time'",
-												MYSQLI_ASYNC);
+												time = '$safe_time'");
 			if(!$result) {
 				throw new Exception('Could not record the promotion in the database.');
 			}
@@ -100,8 +96,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			//do the power change
 			$result = $connection->query("update users
 											set power = 2
-											where user_id = '$safe_user_id'",
-											MYSQLI_ASYNC);
+											where user_id = '$safe_user_id'");
 			if(!$result){
 				throw new Exception("Could not promote $name to a $type moderator.");
 			}
@@ -134,8 +129,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 												bans_per_hour = '$safe_bans_per_hour',
 												can_ban_ip = '1',
 												can_ban_account = '1',
-												can_unpublish_level = '$safe_can_unpublish_level'",
-												MYSQLI_ASYNC);
+												can_unpublish_level = '$safe_can_unpublish_level'");
 			if(!$result) {
 				throw new Exception('Could not set limits on the new moderator\'s power.');
 			}
@@ -159,8 +153,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			$result = $connection->query("SELECT *
 											FROM users
 											WHERE user_id = '$safe_admin_id'
-											LIMIT 0,1",
-											MYSQLI_ASYNC);
+											LIMIT 0,1");
 			$row = $result->fetch_object();
 			if($row->power != 3) {
 				throw new Exception("You lack the power to promote $name to a $type moderator.");
