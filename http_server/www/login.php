@@ -226,15 +226,6 @@ Thanks for playing, I hope you enjoy.
 		if( add_item($hat_array, 8) ) {
 			$stats->hat = 8;
 		}
-		if( add_item($head_array, 34) ) {
-		    $stats->head = 34;
-		}
-		if( add_item($body_array, 34) ) {
-		    $stats->body = 34;
-		}
-		if( add_item($feet_array, 34) ) {
-		    $stats->feet = 34;
-		}
 	}
 
 	//--- heart set
