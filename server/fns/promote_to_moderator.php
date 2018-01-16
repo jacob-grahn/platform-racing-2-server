@@ -31,7 +31,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 									WHERE user_id = '$safe_admin_id'
 									LIMIT 0,1",
 									MYSQLI_ASYNC);
-	$admin_row = $result->fetch_object();
+	$admin_row = $admin_result->fetch_object();
 
 	//check for proper permission in the db (3rd + final line of defense before promotion)
 	if($admin_row->power != 3) {
@@ -47,7 +47,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 									WHERE user_id = '$safe_user_id'
 									LIMIT 0,1",
 									MYSQLI_ASYNC);
-	$user_row = $result->fetch_object();
+	$user_row = $user_result->fetch_object();
 
 	// if the person being promoted is a guest, end the function
 	if($user_row->power < 1) {
@@ -155,7 +155,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 
 		try {
 
-			//check for proper permission in the db (3rd + final line of defense before promotion)
+			//check for proper permission in the db (useless due to identical check on line 36)
 			$result = $connection->query("SELECT *
 											FROM users
 											WHERE user_id = '$safe_admin_id'
