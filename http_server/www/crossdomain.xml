@@ -1,0 +1,4 @@
+<cross-domain-policy>
+<site-control permitted-cross-domain-policies="master-only"/>
+<allow-access-from domain="*" secure="false"/>
+</cross-domain-policy>
