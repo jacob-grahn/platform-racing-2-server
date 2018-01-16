@@ -369,9 +369,6 @@ class Player {
 		}
 		else if (($chat_message == '/clear' || $chat_message == '/cls') && $this->group >= 2) {
 			$this->chat_room->clear();
-			for ($i = 0; $i <= 20; $i++) {
-				$this->write('systemChat` ');
-			}
 		}
 		else if ($chat_message == '/help' || $chat_message == '/?' || $chat_message == '/') {
 			$server_owner_supplement = '';

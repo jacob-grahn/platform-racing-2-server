@@ -2,6 +2,7 @@
 
 class ChatRoom extends Room {
 
+	private $keep_count = 18;
 	private $chat_array = array();
 	protected $room_name = 'chat_room';
 
@@ -14,12 +15,14 @@ class ChatRoom extends Room {
 		global $chat_room_array;
 		$chat_room_array[htmlspecialchars($chat_room_name)] = $this;
 
-		$this->clear();
+		$this->chat_array = array_fill(0, $this->keep_count, '');
 	}
 
 
 	public function clear () {
-		$this->chat_array = array_fill(0, 18, '');
+		for ($i = 0; $i <= $this->keep_count; $i++) {
+			$this->send_chat('systemChat` ', 0);
+		}
 	}
 
 
