@@ -70,6 +70,7 @@ $html_lifted_by = htmlspecialchars($lifted_by);
 $html_lifted_reason = htmlspecialchars($lifted_reason);
 $html_mod_name = htmlspecialchars($mod_name);
 $html_banned_name = htmlspecialchars($display_name);
+$html_reason = htmlspecialchars($reason);
 $html_record = str_replace("\r", '<br/>',htmlspecialchars($record));
 $html_notes = str_replace("\n", '<br>', htmlspecialchars($notes));
 
@@ -97,7 +98,7 @@ if($is_mod === true) {
 
 
 echo "<p>$html_mod_name banned $html_banned_name for $f_duration on $formatted_time.</p>
-		<p>Reason: $reason</p>
+		<p>Reason: $html_reason</p>
 		<p>This ban will expire on $expire_formatted_time.</p>
 		<p> --- </p>
 		<p>$html_record</p>
