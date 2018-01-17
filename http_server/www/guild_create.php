@@ -21,7 +21,7 @@ try {
 	
 	//--- sanity check
 	if( $account->rank < 20 ) {
-		throw new Exception( 'Must be rank 20 or above to create a guild.' );
+		throw new Exception( 'You must be rank 20 or above to create a guild.' );
 	}
 	if( $account->power <= 0 ) {
 		throw new Exception( 'Guests can not create guilds.' );
@@ -30,16 +30,19 @@ try {
 		throw new Exception( 'You are already a member of a guild.' );
 	}
 	if( !isset( $note ) ) {
-		throw new Exception( 'Note not recieved.' );
+		throw new Exception( 'You need a guild prose.' );
 	}
 	if( !isset( $guild_name ) ) {
-		throw new Exception( 'Guild name not recieved.' );
+		throw new Exception( 'Your guild needs a name.' );
 	}
 	if( !isset( $emblem ) ) {
-		throw new Exception( 'Emblem not recieved.' );
+		throw new Exception( 'Your guild needs an emblem.' );
 	}
 	if( preg_match( '/.jpg$/', $emblem) !== 1 || preg_match( '/\.\.\//', $emblem) === 1 || preg_match( '/\?/', $emblem) === 1) {
-	    throw new Exception('Emblem invalid');
+		throw new Exception('Emblem invalid');
+	}
+	if( preg_match( "/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
+		throw new Exception('Guild name invalid; a-z, 0-9, space, and - are the only allowed characters.');
 	}
 	
 	
@@ -61,7 +64,7 @@ try {
 
 catch(Exception $e){
 	$reply = new stdClass();
-	$reply->error = $e->getMessage();
+	$reply->error = 'Error: '$e->getMessage();
 	echo json_encode( $reply );
 }
 
