@@ -185,10 +185,10 @@ Thanks for playing, I hope you enjoy.
 	}
 
 
-	$hat_array = split( ',', $stats->hat_array );
-	$head_array = split( ',', $stats->head_array );
-	$body_array = split( ',', $stats->body_array );
-	$feet_array = split( ',', $stats->feet_array );
+	$hat_array = explode( ',', $stats->hat_array );
+	$head_array = explode( ',', $stats->head_array );
+	$body_array = explode( ',', $stats->body_array );
+	$feet_array = explode( ',', $stats->feet_array );
 
 
 	//--- santa set
