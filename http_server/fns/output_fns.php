@@ -1,5 +1,9 @@
 <?php
 
+require_once('../../fns/all_fns.php');
+
+$formatting_for_mods = check_moderator($db, false);
+
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function output_header($title='', $mod=false) {
 ?>
@@ -10,7 +14,7 @@ function output_header($title='', $mod=false) {
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>PR2 Hub - <?php echo $title; ?></title>
     <link href="//pr2hub.com/pr2hub.css" rel="stylesheet" type="text/css"/>
-	<?php if($mod) { ?>
+	<?php if($formatting_for_mods) { ?>
 		<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 		<script src="https://malsup.github.com/jquery.form.js"></script>
 	<?php } ?>
@@ -42,7 +46,7 @@ function output_header($title='', $mod=false) {
 			<div class="content">
 
 <?php
-	if($mod) {
+	if($formatting_for_mods) {
 		output_mod_navigation();
 	}
 }
