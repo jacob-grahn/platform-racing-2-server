@@ -126,7 +126,7 @@ function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $
 	}
 
 	else {
-		throw new Exception( "Item not found: $slug" );
+		throw new Exception( "Item not found: " . strip_tags($slug, "<br/><br>") );
 	}
 
 	if( $command != '' ) {
