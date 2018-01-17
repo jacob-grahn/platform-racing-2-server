@@ -223,17 +223,8 @@ Thanks for playing, I hope you enjoy.
 
 	//--- party hat
 	if($date == 'December 31' || $date == 'January 1') {
-		if( add_item($hat_array, 7) ) {
-			$stats->hat = 7;
-		}
-		if( add_item($head_array, 34) ) {
-		    $stats->head = 34;
-		}
-		if( add_item($body_array, 34) ) {
-		    $stats->body = 34;
-		}
-		if( add_item($feet_array, 34) ) {
-		    $stats->feet = 34;
+		if( add_item($hat_array, 8) ) {
+			$stats->hat = 8;
 		}
 	}
 
