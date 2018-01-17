@@ -26,10 +26,6 @@ try{
 	$mod = check_moderator($db, false, 3);
 	
 	
-	//make it easy to get around
-	output_mod_navigation();
-	
-	
 	echo '<form name="input" action="" method="get">';
 	for( $i=1; $i<10; $i++ ) {
 		$name = ${"name$i"};
