@@ -18,10 +18,6 @@ try{
 	$mod = check_moderator($db, false, 3);
 	
 	
-	//make it easy to get around
-	output_mod_navigation();
-	
-	
 	echo '<form name="input" action="" method="get">';
 	echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'"><br>';
 	if( $guild_id != '' ) {
