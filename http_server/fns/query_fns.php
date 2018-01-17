@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/random_str');
+require_once(__DIR__ . '/random_str.php');
 
 
 //--- checks if a login is valid -----------------------------------------------------------
