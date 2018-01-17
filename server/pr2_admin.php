@@ -77,9 +77,6 @@ function register_login($socket, $data){
 				$socket->write('loginSuccessful`'.$group);
 				$socket->write('setRank`'.$player->active_rank);
 				$socket->write( 'ping`' . time() );
-				/*if( $tournament ) {
-					$socket->write( "message`Welcome to the tournament sever! Here you can prove your skills in fair matches. \n* The results of matches are posted in the chat. \n* All players have their speed, acceleration, and jumping set to 65. \n* No hats can be worn. \n* No exp or prizes can be won." );
-				}*/
 			}
 		}
 	}

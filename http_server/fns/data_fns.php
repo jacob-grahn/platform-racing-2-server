@@ -119,10 +119,6 @@ function poll_servers_2( $db, $message, $receive=true, $server_ids=array() ) {
 
 
 //--- connects to the farm server and calls a function -------------------------------------
-function talk_to_server( $address, $port, $key, $message, $receive=false ) {
-	return call_socket_function( $address, $port, $key, $message, $receive );
-}
-
 function call_socket_function($address, $port, $key, $server_function, $receive=false){
 	global $PROCESS_PASS;
 
@@ -146,7 +142,6 @@ function call_socket_function($address, $port, $key, $server_function, $receive=
 		stream_set_timeout($fsock, 2);
 		if($receive){
 			$reply = fread($fsock, 999999);
-			//error_log( '888r: '.$reply);
 		}
 		fclose($fsock);
 	}
