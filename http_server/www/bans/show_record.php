@@ -97,7 +97,7 @@ if($is_mod === true) {
 
 
 echo "<p>$html_mod_name banned $html_banned_name for $f_duration on $formatted_time.</p>
-		<p>Reason: $reason</p>
+		<p>Reason: " . strip_tags($reason, "<br/><br>") . "</p>
 		<p>This ban will expire on $expire_formatted_time.</p>
 		<p> --- </p>
 		<p>$html_record</p>
