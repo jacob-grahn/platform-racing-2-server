@@ -64,9 +64,6 @@ try {
 	if( !isset( $login->user_name ) ) {
 		throw new Exception( 'Invalid user name' );
 	}
-	if( $login_code != 'eisjI1dHWG4vVTAtNjB0Xw' ) {
-		throw new Exception( 'Invalid login code' );
-	}
 
 
 	//--- connect
