@@ -334,15 +334,15 @@ function rate_limit($key, $interval, $max, $error='Slow down a bit, yo.') {
 	$key .= '-'.$unit;
 	$count = 0;
 
-	if( apc_exists($key) ) {
-		$count = apc_fetch( $key );
+	if( apcu_exists($key) ) {
+		$count = apcu_fetch( $key );
 		if( $count >= $max ) {
 			throw new Exception( $error );
 		}
 	}
 
 	$count++;
-	apc_store( $key, $count, $interval );
+	apcu_store( $key, $count, $interval );
 
 	return( $count );
 }

@@ -20,7 +20,7 @@ try {
 	//--- get your captcha in progress
 	$key = 'cat-' . $ip;
 	$success = false;
-	$str_val = apc_fetch($key, $success);
+	$str_val = apcu_fetch($key, $success);
 	if( !$success ) {
 		throw new Exception('Could not find a pending captcha for your ip.');
 	}
