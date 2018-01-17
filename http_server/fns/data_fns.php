@@ -190,23 +190,6 @@ function valid_email($email) {
 
 
 
-//--- returns a random string made up of chars 1-9 and a-z -----------------------------------------------
-function get_random_string($length){
-	$char_array = array('1','2','3','4','5','6','7','8','9',
-	'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
-
-	$pass = "";
-
-	for($i = 0; $i<$length ;$i++){
-		$rand_number = round(rand(0, 34),0);
-		$pass.=$char_array[$rand_number];
-	}
-
-	return $pass;
-}
-
-
-
 //returns your account if you are a moderator
 function check_moderator($db, $check_ref=true, $min_power=2) {
 	if($check_ref) {

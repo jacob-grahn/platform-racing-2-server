@@ -52,7 +52,7 @@ try{
 	}
 
 	//--- begin an email change confirmation if they do already have an email address
-	$code = get_random_string(24);
+	$code = random_str(24);
 	$db->call( 'changing_email_insert', array($user_id, $old_email, $new_email, $code, $ip) );
 
 	//--- send a confirmation email
