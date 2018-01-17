@@ -7,21 +7,21 @@ $user_id = find('id');
 $action = find('action', 'lookup');
 
 try {
-    
+
     //connect
     $db = new DB();
 
 
     //make sure you're an admin
     $mod = check_moderator($db, true, 3);
-    
-    
+
+
     //lookup
     if($action === 'lookup') {
 	output_form($db, $user_id);
     }
-    
-    
+
+
     //update
     if($action === 'update') {
 	update($db);
@@ -47,20 +47,20 @@ try {
 
 
 function output_form($db, $user_id) {
-    
+
     output_header('Update PR2 Account');
-    
+
     //make it easy to get around
     output_mod_navigation();
-    
+
     echo '<form name="input" action="update_account.php" method="get">';
-    
+
 	$user = $db->grab_row('user_select', array($user_id));
 	$pr2 = $db->grab_row('pr2_select', array($user->user_id));
 	$pr2_epic = $db->grab_row('epic_upgrades_select', array($user->user_id), '', true);
 	echo "user_id: $user->user_id <br>---<br>";
 
-	
+
 	echo 'Name: <input type="text" size="" name="name" value="'.htmlspecialchars($user->name).'"><br>';
 	echo 'Email: <input type="text" name="email" value="'.htmlspecialchars($user->email).'"><br>';
 	echo 'Hats: <input type="text" size="100" name="hats" value="'.$pr2->hat_array.'"><br>';
@@ -75,11 +75,11 @@ function output_form($db, $user_id) {
 	}
 	echo '<input type="hidden" name="action" value="update">';
 	echo '<input type="hidden" name="id" value="'.$user->user_id.'">';
-    
+
     echo '<br/>';
     echo '<input type="submit" value="Submit">';
     echo '</form>';
-    
+
     echo '<br>';
     echo '---';
     echo '<br>';
@@ -217,7 +217,7 @@ Reindeer = 36
 Crocodile = 37
 Valentine = 38
 Rabbit = 39</pre>';
-    
+
     output_footer();
 }
 
@@ -225,10 +225,10 @@ Rabbit = 39</pre>';
 
 function update($db) {
     $user_id = find('id');
-    
+
     $user = $db->grab_row('user_select', array($user_id));
     $email = find('email');
-    
+
     if($user->email !== $email) {
 	$code = 'manual-' . time();
 	$db->call('changing_email_insert', array($user_id, $user->email, $email, $code, ''));
@@ -252,10 +252,8 @@ function update($db) {
 		find('eFeet')
 	    )
     );
-    
-    header("Location: http://pr2hub.com/mod/player_deep_info.php?name1=" . urlencode(find('name')));
-    /*echo('updated! <br>---<br>');
-    output_form($db, $user_id);*/
+
+    header("Location: player_deep_info.php?name1=" . urlencode(find('name')));
 }
 
 ?>

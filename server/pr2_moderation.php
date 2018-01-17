@@ -136,7 +136,7 @@ function ban($socket, $data){
 	if($player->group >= 2){
 		if(isset($player->chat_room)) {
 			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has banned '.$safe_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at http://pr2hub.com/bans.', $player->user_id);
+			.' has banned '.$safe_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at https://pr2hub.com/bans.', $player->user_id);
 		}
 		if(isset($ban_player) && $ban_player->group < 2) {
 			$ban_player->remove();
