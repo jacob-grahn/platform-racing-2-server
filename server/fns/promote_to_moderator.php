@@ -4,6 +4,7 @@
 require_once(__DIR__ . '/db_fns.php');
 
 function promote_mod($port, $name, $type, $admin, $promoted_player) {
+	global $db;
 
 	// boolean var for use in if statement @end
 	$caught_exception = false;
@@ -17,8 +18,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	}
 
 	// define variables needed
-	$connection = user_connect();
-	$user_id = name_to_id($connection, $name);
+	$user_id = name_to_id($db, $name);
 	$safe_admin_id = addslashes($admin->user_id);
 	$safe_user_id = addslashes($user_id);
 	$safe_type = addslashes($type);
@@ -26,7 +26,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	$safe_min_time = addslashes(time()-(60*60*6));
 
 	// get info about the person promoting
-	$admin_result = $connection->query("SELECT *
+	$admin_result = $db->query("SELECT *
 									FROM users
 									WHERE user_id = '$safe_admin_id'
 									LIMIT 0,1");
@@ -41,7 +41,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	}
 
 	// get info about the person being promoted
-	$user_result = $connection->query("SELECT *
+	$user_result = $db->query("SELECT *
 									FROM users
 									WHERE user_id = '$safe_user_id'
 									LIMIT 0,1");
@@ -71,7 +71,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		try {
 
 			//throttle mod promotions
-			$result = $connection->query("SELECT COUNT(*) as recent_promotion_count
+			$result = $db->query("SELECT COUNT(*) as recent_promotion_count
 											FROM promotion_log
 											WHERE power > 1
 											AND time > $safe_min_time");
@@ -85,7 +85,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			}
 
 			//log the power change
-			$result = $connection->query("INSERT INTO promotion_log
+			$result = $db->query("INSERT INTO promotion_log
 										 	SET message = 'user_id: $safe_user_id has been promoted to $safe_type moderator',
 												power = 2,
 												time = '$safe_time'");
@@ -94,7 +94,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			}
 
 			//do the power change
-			$result = $connection->query("update users
+			$result = $db->query("update users
 											set power = 2
 											where user_id = '$safe_user_id'");
 			if(!$result){
@@ -113,11 +113,11 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 				$can_unpublish_level = 1;
 			}
 
-			$safe_max_ban = $connection->real_escape_string($max_ban);
-			$safe_bans_per_hour = $connection->real_escape_string($bans_per_hour);
-			$safe_can_unpublish_level = $connection->real_escape_string($can_unpublish_level);
+			$safe_max_ban = $db->real_escape_string($max_ban);
+			$safe_bans_per_hour = $db->real_escape_string($bans_per_hour);
+			$safe_can_unpublish_level = $db->real_escape_string($can_unpublish_level);
 
-			$result = $connection->query("INSERT INTO mod_power
+			$result = $db->query("INSERT INTO mod_power
 											SET user_id = '$safe_user_id',
 												max_ban = '$safe_max_ban',
 												bans_per_hour = '$safe_bans_per_hour',
@@ -150,7 +150,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		try {
 
 			//check for proper permission in the db (useless due to identical check on line 36)
-			$result = $connection->query("SELECT *
+			$result = $db->query("SELECT *
 											FROM users
 											WHERE user_id = '$safe_admin_id'
 											LIMIT 0,1");

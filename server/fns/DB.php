@@ -5,8 +5,6 @@ class DB {
 	private $mysqli;
 	private $last_action;
 
-
-
 	public function __construct ($conn_name='') {
 		if($conn_name == '') {
 			$this->mysqli = user_connect();
@@ -17,26 +15,21 @@ class DB {
 		}
 	}
 
-
-
-	public function escape ($val) {
-		$safe_val = $this->mysqli->real_escape_string($val);
-		return $safe_val;
+	public function real_escape_string ($val) {
+		return $this->mysqli->real_escape_string($val);
 	}
 
-
+	public function escape ($val) {
+		return $this->mysqli->real_escape_string($val);
+	}
 
 	public function get_insert_id () {
 		return($this->mysqli->insert_id);
 	}
 
-
-
 	public function get_error () {
 		return($this->mysqli->error);
 	}
-
-
 
 	public function test_health () {
 		$elapsed = time() - $this->last_action;
@@ -49,8 +42,6 @@ class DB {
 			}
 		}
 	}
-
-
 
 	public function query ($query_str) {
 		$this->test_health();
@@ -74,13 +65,9 @@ class DB {
 		return $result;
 	}
 
-
-
 	public function next_result () {
 		return $this->mysqli->next_result();
 	}
-
-
 
 	public function format_call ($func, $arg_list=NULL) {
 		if(!isset($arg_list)) {
@@ -110,8 +97,6 @@ class DB {
 		return $query_str;
 	}
 
-
-
 	public function call ($func, $arg_list=NULL, $resultmode = MYSQLI_STORE_RESULT) {
 		if(!isset($arg_list)) {
 			$arg_list = array();
@@ -120,8 +105,6 @@ class DB {
 		$result = $this->query($query_str, $func, $resultmode);
 		return $result;
 	}
-
-
 
 	public function grab_row ($func, $arg_list=NULL) {
 		$result = $this->call($func, $arg_list);
@@ -135,8 +118,6 @@ class DB {
 		return($row);
 	}
 
-
-
 	public function grab ($var, $func, $arg_list=NULL) {
 		$row = $this->grab_row($func, $arg_list);
 		if(isset($row)) {
@@ -144,8 +125,6 @@ class DB {
 		}
 		return($val);
 	}
-
-
 
 	public function to_array ( $result ) {
 		$arr = array();

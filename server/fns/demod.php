@@ -4,6 +4,7 @@
 require_once(__DIR__ . '/db_fns.php');
 
 function demote_mod($port, $user_name, $admin, $demoted_player) {
+	global $db;
 
 	// boolean var for use in if statement @end
 	$caught_exception = false;
@@ -17,13 +18,12 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 	}
 
 	try {
-		$connection = user_connect();
-		$user_id = name_to_id($connection, $user_name);
+		$user_id = name_to_id($db, $user_name);
 		$safe_admin_id = addslashes($admin->user_id);
 		$safe_user_id = addslashes($user_id);
 
 		//check for proper permission in the db (3rd + final line of defense before promotion)
-		$result = $connection->query("SELECT *
+		$result = $db->query("SELECT *
 										FROM users
 										WHERE user_id = '$safe_admin_id'
 										LIMIT 0,1");
@@ -33,7 +33,7 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 		}
 
 		//delete mod entry
-		$result = $connection->query("DELETE FROM mod_power
+		$result = $db->query("DELETE FROM mod_power
 										WHERE user_id = '$safe_user_id'");
 		if(!$result) {
 			throw new Exception("Could not delete the moderator type from the database because $user_name isn\'t a moderator.");
@@ -41,7 +41,7 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 
 
 		//set power to 1
-		$result = $connection->query("UPDATE users
+		$result = $db->query("UPDATE users
 										SET power = 1
 										WHERE user_id = '$safe_user_id'");
 		if(!$result) {
