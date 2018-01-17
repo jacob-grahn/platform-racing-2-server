@@ -71,7 +71,7 @@ function output_footer() {
 		<ul class="footer_links">
 			<li><a href="//pr2hub.com/backups">Backups</a></li>
 			<li><a href="https://jiggmin2.com/forums/showthread.php?tid=19">Folding@Home</a></li>
-			<li><a href="://pr2hub.com/terms-of-use.php">Terms of Use</a></li>
+			<li><a href="//pr2hub.com/terms-of-use.php">Terms of Use</a></li>
 			<li><a href="https://jiggmin2.com/forums/showthread.php?tid=385">Rules</a></li>
 		</ul>
 	</div>
