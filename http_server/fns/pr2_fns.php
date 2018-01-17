@@ -1,11 +1,11 @@
 <?php
 
 function backup_level($db, $s3, $user_id, $level_id, $version, $title, $live=0, $rating=0, $votes=0, $note='', $min_level=0, $song=0, $play_count=0) {
-	
+
 	$filename = "$level_id.txt";
 	$backup_filename = "$level_id-v$version.txt";
 	$success = true;
-	
+
 	try {
 		$result = $s3->copyObject('pr2levels1', $filename, 'pr2backups', $backup_filename);
 		if(!$result) {
@@ -17,11 +17,11 @@ function backup_level($db, $s3, $user_id, $level_id, $version, $title, $live=0, 
 			throw new Exception('Could not register a backup of your level.');
 		}
 	}
-	
+
 	catch (Exception $e) {
 		$success = false;
 	}
-	
+
 	return $success;
 }
 
@@ -38,11 +38,11 @@ function send_pm( $db, $from_user_id, $to_user_id, $message ) {
 
 	$account = $db->grab_row('user_select', array($from_user_id));
 	$account_power = $account->power;
-	
+
 	$pr2_account = $db->grab_row('pr2_select', array($from_user_id));
 	$account_rank = $pr2_account->rank;
-	
-	
+
+
 	//min rank to send PMs
 	if($account_rank < 3) {
 		throw new Exception('You need to level up to rank 3 to send Private Messages.');
@@ -50,15 +50,15 @@ function send_pm( $db, $from_user_id, $to_user_id, $message ) {
 	if($account_power <= 0) {
 		throw new Exception('Guests can not send messages.');
 	}
-	
-	
+
+
 	//check the length of their message
 	$message_len = strlen($message);
 	if($message_len > 1000) {
 		throw new Exception('Could not send. The maximum message length is 1,000 characters. Your message is '. number_format($message_len) .' characters long.');
 	}
-	
-	
+
+
 	//prevent flooding
 	$key1 = 'pm-'.$from_user_id;
 	$key2 = 'pm-'.$ip;
@@ -67,8 +67,8 @@ function send_pm( $db, $from_user_id, $to_user_id, $message ) {
 	$error_message = 'You have sent 4 messages in the past 60 seconds, please wait a bit before sending another message.';
 	rate_limit( $key1, $interval, $limit, $error_message );
 	rate_limit( $key2, $interval, $limit, $error_message );
-	
-	
+
+
 	//see if they've been ignored
 	$result = $db->query("select * from
 									ignored
@@ -81,8 +81,8 @@ function send_pm( $db, $from_user_id, $to_user_id, $message ) {
 	if($result->num_rows > 0){
 		throw new Exception('You have been ignored by this player. They won\'t recieve any chat or messages from you.');
 	}
-	
-	
+
+
 	//add the message to the db
 	$db->call( 'message_insert', array( $to_user_id, $from_user_id, $message, $ip ) );
 }
@@ -90,13 +90,13 @@ function send_pm( $db, $from_user_id, $to_user_id, $message ) {
 
 function guild_count_active( $db, $guild_id ) {
 	$key = 'ga' . $guild_id;
-	
-	if( apc_exists($key) ) {
-		$active_count = apc_fetch( $key );
+
+	if( apcu_exists($key) ) {
+		$active_count = apcu_fetch( $key );
 	}
 	else {
 		$active_count = $db->grab( 'active_member_count', 'guild_select_active_member_count', array($guild_id) );
-		apc_store( $key, $active_count, 3600 ); //one hour
+		apcu_store( $key, $active_count, 3600 ); //one hour
 	}
 	return( $active_count );
 }

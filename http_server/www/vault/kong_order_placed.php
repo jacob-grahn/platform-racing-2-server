@@ -1,5 +1,8 @@
 <?php
 
+require_once(__DIR__ . '/random_str.php');
+
+
 function order_placed_handler( $db, $request ) {
 	$event = $request->event; //item_order_placed
 	$game_id = $request->game_id; //The game_id.
@@ -163,7 +166,7 @@ function create_server( $db, $guild_id, $seconds_of_life ) {
 	$server_name = $guild->guild_name;
 	$address = '192.241.178.72';
 	$expire_time = time() + $seconds_of_life;
-	$salt = random_bytes(20);
+	$salt = random_str(20);
 	$guild_id = $guild->guild_id;
 
 	if( $result->num_rows <= 0 ) {

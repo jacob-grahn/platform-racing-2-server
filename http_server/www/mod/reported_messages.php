@@ -17,21 +17,21 @@ output_mod_header('Reported Messages');
 
 
 try {
-	
+
 	//connect
 	$db = new DB();
 
 
 	//make sure you're a moderator
 	$mod = check_moderator($db, false);
-	
-	
+
+
 	//navigation
 	output_mod_navigation();
 	output_pagination($start, $count);
 	echo('<p>---</p>');
-	
-	
+
+
 	//get the messages
 	$result = $db->query("SELECT messages_reported.*, u1.name as from_name, u2.name as to_name
 									FROM messages_reported, users u1, users u2
@@ -42,8 +42,8 @@ try {
 	if(!$result){
 		throw new Exception('Could not retireve messages');
 	}
-	
-	
+
+
 	//output the messages
 	while($row = $result->fetch_object()) {
 		$formatted_time = date('M j, Y g:i A', $row->sent_time);
@@ -57,19 +57,19 @@ try {
 		$message_id = $row->message_id;
 		$html_safe_message = htmlspecialchars( filter_swears( $row->message ) );
 		$html_safe_message = str_replace("\r", '<br>', $html_safe_message);
-		
+
 		if($archived) {
 			$class = 'archived';
 		}
 		else {
 			$class = 'not-archived';
 		}
-		
+
 		echo("	<br/>
 				<div class='$class'>
-				<p><a href='http://pr2hub.com/mod/player_info.php?user_id=$from_user_id&force_ip=$from_ip'>$from_name</a> sent this message to <a href='http://pr2hub.com/mod/player_info.php?user_id=$to_user_id&force_ip=$reporter_ip'>$to_name</a> on $formatted_time<p>
+				<p><a href='player_info.php?user_id=$from_user_id&force_ip=$from_ip'>$from_name</a> sent this message to <a href='player_info.php?user_id=$to_user_id&force_ip=$reporter_ip'>$to_name</a> on $formatted_time<p>
 				<p>$html_safe_message</p> ");
-		
+
 		if(!$archived) {
 			$form_id = 'f'.$next_form_id;
 			$button_id = 'b'.$next_form_id;
@@ -98,8 +98,8 @@ try {
 						</select>
 					</form>
 				</div>
-				<script> 
-					$('#$form_id').ajaxForm(function() { 
+				<script>
+					$('#$form_id').ajaxForm(function() {
 						$('#$div_id').remove();
 						$.get('archive_message.php', {message_id: $message_id});
 					});
@@ -107,19 +107,19 @@ try {
 						$('#$div_id').remove();
 						$.get('archive_message.php', {message_id: $message_id});
 					});
-				</script> 
+				</script>
 			");
 		}
-		
+
 		echo("
 				</div>
 				<p>&nbsp;</p>");
 	}
-	
-	
+
+
 	echo('<p>---</p>');
 	output_pagination($start, $count);
-	
+
 	output_footer();
 }
 
@@ -134,7 +134,7 @@ function output_pagination($start, $count) {
 	if($last_start_num < 0) {
 		$last_start_num = 0;
 	}
-	
+
 	echo('<p>');
 	if($start > 0) {
 		echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");

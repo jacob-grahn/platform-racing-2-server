@@ -11,15 +11,15 @@ function output_header($title='', $mod=false) {
     <title>PR2 Hub - <?php echo $title; ?></title>
     <link href="//pr2hub.com/pr2hub.css" rel="stylesheet" type="text/css"/>
 	<?php if($mod) { ?>
-	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<script src="http://malsup.github.com/jquery.form.js"></script>
+	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+	<script src="https://malsup.github.com/jquery.form.js"></script>
 	<?php } ?>
 </head>
 
 <body>
 
 <div id="container">
-	
+
 	<div id="header">
 	</div>
 
@@ -62,7 +62,7 @@ function output_mod_navigation() {
 ?>
 
 <p>
-<b><a href="http://pr2hub.com/mod/reported_messages.php">Reported Messages</a> - <a href="http://pr2hub.com/mod/player_search.php">Player Search</a> - <a href="http://pr2hub.com/bans/bans.php">Ban Log</a></b>
+<b><a href="//pr2hub.com/mod/reported_messages.php">Reported Messages</a> - <a href="//pr2hub.com/mod/player_search.php">Player Search</a> - <a href="//pr2hub.com/bans/bans.php">Ban Log</a></b>
 </p>
 <p>---</p>
 

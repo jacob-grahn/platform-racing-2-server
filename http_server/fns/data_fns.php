@@ -119,10 +119,6 @@ function poll_servers_2( $db, $message, $receive=true, $server_ids=array() ) {
 
 
 //--- connects to the farm server and calls a function -------------------------------------
-function talk_to_server( $address, $port, $key, $message, $receive=false ) {
-	return call_socket_function( $address, $port, $key, $message, $receive );
-}
-
 function call_socket_function($address, $port, $key, $server_function, $receive=false){
 	global $PROCESS_PASS;
 
@@ -146,7 +142,6 @@ function call_socket_function($address, $port, $key, $server_function, $receive=
 		stream_set_timeout($fsock, 2);
 		if($receive){
 			$reply = fread($fsock, 999999);
-			//error_log( '888r: '.$reply);
 		}
 		fclose($fsock);
 	}
@@ -195,29 +190,12 @@ function valid_email($email) {
 
 
 
-//--- returns a random string made up of chars 1-9 and a-z -----------------------------------------------
-function get_random_string($length){
-	$char_array = array('1','2','3','4','5','6','7','8','9',
-	'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
-
-	$pass = "";
-
-	for($i = 0; $i<$length ;$i++){
-		$rand_number = round(rand(0, 34),0);
-		$pass.=$char_array[$rand_number];
-	}
-
-	return $pass;
-}
-
-
-
 //returns your account if you are a moderator
 function check_moderator($db, $check_ref=true, $min_power=2) {
 	if($check_ref) {
 		$ref = $_SERVER['HTTP_REFERER'];
 		if(
-			strpos($ref, 'http://pr2hub.com') !== 0 &&
+			strpos($ref, 'https://pr2hub.com') !== 0 &&
 			strpos($ref, 'http://cdn.jiggmin.com') !== 0 &&
 			strpos($ref, 'http://chat.kongregate.com') !== 0 &&
 			strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0
@@ -257,7 +235,7 @@ function is_moderator($db, $check_ref=true) {
 //
 function format_level_list($result, $max=9){
 	global $LEVEL_LIST_SALT;
-	
+
 	$num = 0;
 	$str = '';
 	while($row = $result->fetch_object()){
@@ -334,15 +312,15 @@ function rate_limit($key, $interval, $max, $error='Slow down a bit, yo.') {
 	$key .= '-'.$unit;
 	$count = 0;
 
-	if( apc_exists($key) ) {
-		$count = apc_fetch( $key );
+	if( apcu_exists($key) ) {
+		$count = apcu_fetch( $key );
 		if( $count >= $max ) {
 			throw new Exception( $error );
 		}
 	}
 
 	$count++;
-	apc_store( $key, $count, $interval );
+	apcu_store( $key, $count, $interval );
 
 	return( $count );
 }

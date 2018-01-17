@@ -2,7 +2,7 @@
 
 
 function describeVault( $db, $user_id, $arr ) {
-	
+
 	//--- gather infos
 	$user = $db->grab_row( 'user_select_expanded', array($user_id) );
 	$server = $db->grab_row( 'server_select', array($user->server_id), 'You don\'t seem to be logged into a pr2 server.' );
@@ -12,7 +12,7 @@ function describeVault( $db, $user_id, $arr ) {
 	else {
 		$guild = false;
 	}
-	
+
 	//--- collect requested descriptions
 	$descriptions = array();
 	foreach( $arr as $slug ) {
@@ -52,7 +52,7 @@ function describeVault( $db, $user_id, $arr ) {
 		else {
 			throw new Exception( 'Unknown item type.' );
 		}
-		
+
 		if( $item->price != 0 ) {
 			if( $item->slug === 'epic-everything' ) {
 			    $item->price = floor( $item->price * 0.75 );
@@ -63,15 +63,15 @@ function describeVault( $db, $user_id, $arr ) {
 			    $item->discount = '75% off';
 			}
 		}
-		
+
 		$descriptions[] = $item;
 	}
-	
+
 	//---
 	return( $descriptions );
 }
-	
-	
+
+
 function describeSuperBooster( $user, $server ) {
 	$d = new stdClass();
 	$d->slug = 'stats-boost';
@@ -81,14 +81,14 @@ function describeSuperBooster( $user, $server ) {
 	$d->price = 0;
 	$d->description = 'Boost all of your stats by 10 for one race. One use per day.';
 	$d->available = false;
-	$d->faq = 
+	$d->faq =
 		"Can I use more than one Super Booster per day if I pay for it?\n"
 		."Nope!\n\n";
-	
+
 	if( $server->tournament == 0 ) {
-		$d->available = !apc_fetch( "sb-$user->user_id" );
+		$d->available = !apcu_fetch( "sb-$user->user_id" );
 	}
-	
+
 	return( $d );
 }
 
@@ -102,14 +102,14 @@ function describeFred() {
 	$d->price = 20;
 	$d->description = 'You and your guild get to party as Fred for an hour.';
 	$d->available = true;
-	$d->faq = 
+	$d->faq =
 		"Is the Guild de Fred power-up useful?\n"
 		."- Not at all!\n\n"
 		."Do I get to run around as a giant cactus?\n"
 		."- Yes. Yes you do.\n\n"
 		."How does Guild de Fred work?\n"
 		."- A Giant Cactus body is temporarily added to your account. You can switch between the Giant Cactus body and your other bodies normally.\n\n";
-	
+
 	return( $d );
 }
 
@@ -123,14 +123,14 @@ function describeGhost() {
 	$d->price = 10;
 	$d->description = 'You and your guild gain (very) invisible parts for an hour.';
 	$d->available = true;
-	$d->faq = 
+	$d->faq =
 		"Will this make me feel like a ninja?\n"
 		."You'll be so ninja.\n\n"
 		."Is the Guild de Ghost power-up useful?\n"
 		."- It may actually be a massive disadvantage!\n\n"
 		."How does Guild de Ghost work?\n"
 		."- A very invisible head, body, and feet are temporarily added to your account. You can switch between these parts and your other parts normally.\n\n";
-	
+
 	return( $d );
 }
 
@@ -144,16 +144,16 @@ function describeHappyHour( $server ) {
 	$d->price = 50;
 	$d->description = 'Is there a happy hour right now? Well there should be.';
 	$d->available = false;
-	$d->faq = 
+	$d->faq =
 		"What's a Happy Hour?\n"
 		."- During a Happy Hour everyone on this server will receive double experience points, and everyone's speed, acceleration, and jumping are increased to 100.\n\n"
 		."Can a Happy Hour be used on a private server?\n"
 		."- Yup!\n\n";
-	
+
 	if( $server->tournament == 0 ) {
 		$d->available = true;
 	}
-	
+
 	return( $d );
 }
 
@@ -168,7 +168,7 @@ function describeRankRental( $db, $user ) {
 	$d->price = 50 + (20*$rented_tokens);
 	$d->description = 'You and your guild all gain a rank token for a week.';
 	$d->available = true;
-	$d->faq = 
+	$d->faq =
 		"What's a Rank Token?\n"
 		."- You can use rank tokens to increase or decrease your rank at will. A rank 40 account with 3 rank tokens could become a rank 43 account, for example.\n\n"
 		."Why does the price change?\n"
@@ -179,7 +179,7 @@ function describeRankRental( $db, $user ) {
 		."  etc\n\n"
 		."How many tokens can be used at once?\n"
 		."- Up to 21 rank tokens can be rented at a time.\n\n";
-	
+
 	return( $d );
 }
 
@@ -193,17 +193,17 @@ function describeKing( $user ) {
 	$d->price = 30;
 	$d->description = 'Permanently add the Wise King Set to your account.';
 	$d->available = false;
-	$d->faq = 
+	$d->faq =
 		"Does the Wise King set give me any stat boosts?\n"
 		."- Nope!\n\n"
 		."Does the Wise King set make me look totally rad?\n"
 		."- Totally.\n\n";
-	
+
 	$heads = explode( ',', $user->head_array );
 	if( array_search(28, $heads) === false ) {
 		$d->available = true;
 	}
-	
+
 	return( $d );
 }
 
@@ -217,17 +217,17 @@ function describeQueen( $user ) {
 	$d->price = 30;
 	$d->description = 'Permanently add the Wise Queen Set to your account.';
 	$d->available = false;
-	$d->faq = 
+	$d->faq =
 		"Does the Wise Queen set give me any stat boosts?\n"
 		."- Nope!\n\n"
 		."Does the Wise Queen set make me look totally rad?\n"
 		."- Totally.\n\n";
-	
+
 	$heads = explode( ',', $user->head_array );
 	if( array_search(29, $heads) === false ) {
 		$d->available = true;
 	}
-	
+
 	return( $d );
 }
 
@@ -241,17 +241,17 @@ function describeDjinn( $user ) {
 	$d->price = 50;
 	$d->description = 'Permanently add the Frost Djinn Set to your account.';
 	$d->available = false;
-	$d->faq = 
+	$d->faq =
 		"Does the Frost Djinn set give me any stat boosts?\n"
 		."- Nope!\n\n"
 		."Does the Frost Djinn set make me look totally rad?\n"
 		."- Totally.\n\n";
-	
+
 	$heads = explode( ',', $user->head_array );
 	if( array_search(35, $heads) === false ) {
 		$d->available = true;
 	}
-	
+
 	return( $d );
 }
 
@@ -265,7 +265,7 @@ function describePrivateServer1( $user, $guild ) {
 	$d->price = 20;
 	$d->description = 'Create an exclusive server for your guild. Runs for 1 day.';
 	$d->available = false;
-	$d->faq = 
+	$d->faq =
 		"Who can use a private server?\n"
 		."- You and members of your guild can use your private server.\n\n"
 		."Can moderators enter our private server?\n"
@@ -274,12 +274,12 @@ function describePrivateServer1( $user, $guild ) {
 		."- Not currently.\n\n"
 		."Why can't I create a private server?\n"
 		."- This option is for guild owners only!\n\n";
-	
-	
+
+
 	if( $guild && $guild->owner_id == $user->user_id ) {
 		$d->available = true;
 	}
-	
+
 	return( $d );
 }
 
@@ -293,7 +293,7 @@ function describePrivateServer30( $user, $guild ) {
 	$d->price = 300;
 	$d->description = 'Create an exclusive server for your guild. Runs for 30 days.';
 	$d->available = false;
-	$d->faq = 
+	$d->faq =
 		"Who can use a private server?\n"
 		."- You and members of your guild can use your private server.\n\n"
 		."Can moderators enter our private server?\n"
@@ -302,11 +302,11 @@ function describePrivateServer30( $user, $guild ) {
 		."- Not currently.\n\n"
 		."Why can't I create a private server?\n"
 		."- This option is for guild owners only!\n\n";
-	
+
 	if( $guild && $guild->owner_id == $user->user_id ) {
 		$d->available = true;
 	}
-	
+
 	return( $d );
 }
 
@@ -320,7 +320,7 @@ function describeEpicEverything( $user, $hats ) {
 	$d->price = 110;
 	$d->description = 'Unlock all Epic Upgrades';
 	$d->available = false;
-	$d->faq = 
+	$d->faq =
 		"What is an Epic Upgrade?\n"
 		."- It gives you a second editable color on a part you already own!\n\n"
 		."Does this include every Epic Upgrade that exists or ever will exist?\n"
@@ -329,12 +329,12 @@ function describeEpicEverything( $user, $hats ) {
 		."- No, but all parts you win in the future will automatically come with an Epic Upgrade.\n\n"
 		."Do epic upgrades provide a stat boost?\n"
 		."- Nope!\n\n";
-	
+
 	$heads = explode( ',', $user->epic_heads );
 	if( array_search('*', $heads) === false ) {
 		$d->available = true;
 	}
-	
+
 	return( $d );
 }
 

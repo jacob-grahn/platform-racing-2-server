@@ -14,25 +14,25 @@ $key = "search-$mode-$search_str-$order-$dir-$page";
 $cache_expire = 60 * 10; //10 minutes
 
 try {
-	
-	$page_str = apc_fetch($key);
+
+	$page_str = apcu_fetch($key);
 
 	while ($page_str === 'WAIT') {
 		sleep(1);
-		$page_str = apc_fetch($key);
+		$page_str = apcu_fetch($key);
 	}
-	
+
 	if($page_str === false) {
 		rate_limit("$ip-search", 10, 5);
-		apc_add($key, 'WAIT', 5); // will not overwrite existing
+		apcu_add($key, 'WAIT', 5); // will not overwrite existing
 		$page_str = search_levels($mode, $search_str, $order, $dir, $page);
-		apc_store($key, $page_str, $cache_expire); // will overwrite existing
+		apcu_store($key, $page_str, $cache_expire); // will overwrite existing
 	}
-	
+
 	echo $page_str;
-	
+
 }
-	
+
 catch(Exception $e){
 	echo 'error='.$e->getMessage();
 }

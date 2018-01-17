@@ -15,41 +15,41 @@ output_header('Player Info');
 
 
 try{
-	
+
 	//connect
 	$db = new DB();
-	
-	
+
+
 	//make sure you're a moderator
 	$mod = check_moderator($db, false);
-	
-	
+
+
 	//make it easy to get around
 	output_mod_navigation();
-	
-	
+
+
 	if(isset($user_id) && $user_id != 0) {
-		
+
 		//get dem infos
 		$result = $db->query("select pr2.rank, pr2.hat_array, users.power, users.status, users.name, users.ip
 										from users left join pr2
 										on users.user_id = pr2.user_id
 										where users.user_id = '$safe_user_id'
 										limit 0, 1");
-		
+
 		if(!$result){
 			throw new Exception('Could not retieve player info.');
 		}
-		
+
 		$row = $result->fetch_object();
 		$rank = $row->rank;
 		$hat_array = $row->hat_array;
 		$status = $row->status;
 		$ip = $row->ip;
 		$user_name = $row->name;
-		
+
 		$hats = count(explode(',', $hat_array))-1;
-		
+
 		//--- count how many times they have been banned
 		$account_bans = retrieve_bans($db, $user_id, 'account');
 		$account_ban_count = $account_bans->num_rows;
@@ -61,17 +61,17 @@ try{
 			$s1 = 's';
 		}
 	}
-	
+
 	//override ip
 	$overridden_ip = '';
 	if( isset( $force_ip ) && $force_ip != '' ) {
 		$overridden_ip = $ip;
 		$ip = $force_ip;
 	}
-	
+
 	//check if they are currently banned
 	$row = query_if_banned( $db, $user_id, $ip );
-	
+
 	//give some more info on the current ban in effect if there is one
 	if( $row !== false ) {
 		$ban_id = $row->ban_id;
@@ -86,10 +86,10 @@ try{
 		else if( $row->account_ban == 1 ) {
 			$ban_type = 'account is';
 		}
-		$banned = "<a href='http://pr2hub.com/bans/show_record.php?ban_id=$ban_id'>Yes.</a> This $ban_type banned until $ban_end_date. Reason: $reason";
+		$banned = "<a href='show_record.php?ban_id=$ban_id'>Yes.</a> This $ban_type banned until $ban_end_date. Reason: $reason";
 	}
-	
-	
+
+
 	//look for all historical bans given to this ip address
 	$ip_bans = retrieve_bans($db, $ip, 'ip');
 	$ip_ban_count = $ip_bans->num_rows;
@@ -100,8 +100,8 @@ try{
 	else {
 		$s2 = 's';
 	}
-	
-	
+
+
 	//output the results
 	if(isset($user_id) && $user_id != 0) {
 		$html_user_name = htmlspecialchars($user_name);
@@ -141,7 +141,7 @@ function create_ban_list($result) {
 			$ban_date = date("F j, Y, g:i a", $row->time);
 			$reason = htmlspecialchars($row->reason);
 			$ban_id = $row->ban_id;
-			$str .= "<li><a href='http://pr2hub.com/bans/show_record.php?ban_id=$ban_id'>$ban_date:</a> $reason";
+			$str .= "<li><a href='show_record.php?ban_id=$ban_id'>$ban_date:</a> $reason";
 		}
 		$str .= '</ul></p>';
 		return $str;

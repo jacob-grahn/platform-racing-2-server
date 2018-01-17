@@ -53,23 +53,6 @@ function is_obscene($str){
 
 
 
-//--- returns a random string made up of chars 1-9 and a-z -----------------------------------------------
-function get_random_string($length){
-	$char_array = array('1','2','3','4','5','6','7','8','9',
-	'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
-
-	$pass = "";
-
-	for($i = 0; $i<$length ;$i++){
-		$rand_number = round(rand(0, 34),0);
-		$pass.=$char_array[$rand_number];
-	}
-
-	return $pass;
-}
-
-
-
 //--- use a session if they have one, or do a db lookup ----------------------------------------------------
 function check_login($connection, $user_name, $user_pass, $force_new_login=false){
 	session_start();

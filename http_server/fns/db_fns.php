@@ -2,7 +2,7 @@
 
 function pr2_connect() {
 	global $DB_PASS, $DB_ADDRESS, $DB_USER, $DB_NAME, $DB_PORT;
-	$mysqli = new mysqli($DB_ADDRESS, $DB_USER, $DB_PASS, $DB_NAME, $DB_PRT);
+	$mysqli = new mysqli($DB_ADDRESS, $DB_USER, $DB_PASS, $DB_NAME, $DB_PORT);
 	if ($mysqli->connect_error) {
 		throw new Exception( 'Could not connect to pr2\'s database. ' );
 	}

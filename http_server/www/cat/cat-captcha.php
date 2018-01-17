@@ -13,7 +13,7 @@ try {
 
   $key = 'cat-' . $ip;
 
-	// if( apc_exists($key) ) {
+	// if( apcu_exists($key) ) {
 	// 	throw new Exception('Your account already has a captcha pending.');
 	// }
 
@@ -31,7 +31,7 @@ try {
 	}
 	$str_val = json_encode($val);
 
-	apc_store($key, $str_val, 120);
+	apcu_store($key, $str_val, 120);
 
 	$reply = new stdClass();
 	$reply->success = true;
