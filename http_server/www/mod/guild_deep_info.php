@@ -27,7 +27,7 @@ try{
 	if( $guild_id != '' ) {
 		try {
 			$guild = $db->grab_row( 'guild_select', array($guild_id) );
-			$members = $db->grab_row( 'guild_select_members', array($user->user_id), '', true );
+			$members = $db->grab_row( 'guild_select_members', array($guild->guild_id), '', true );
 			echo "Guild ID: $guild->guild_id <br/>";
 			output_object( $guild );
 			output_objects( $members );
