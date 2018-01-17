@@ -28,6 +28,31 @@
 			src="//pagead2.googlesyndication.com/pagead/show_ads.js">
 			</script>
 		</div>
+
+		<br />
+
+		<div id="artifact">
+
+			<center>
+
+			<img src="artifact.png">
+
+            <?php
+            $file = file_get_contents("https://pr2hub.com/files/artifact_hint.txt");
+            $decode = json_decode($file);
+                echo htmlspecialchars($decode->hint);
+            if ($decode->finder_name == "") {
+                echo "<i><b><br /> The Artifact has not been found yet!</i>";
+            } else {
+                echo "<br /> The first person to find this artifact was " . htmlspecialchars($decode->finder_name) . "!!</i>";
+            }
+            ?>
+
+            </center>
+
+        </div>
+
+        <br />
 			
 		<div class="content">			
 			<div class="game_holder">
@@ -39,10 +64,10 @@
 	
 	<div id="footer">
 		<ul class="footer_links">
-			<li><a href="//pr2hub.com/backups">Backups</a></li>
-			<li><a href="https://jiggmin2.com/forums/showthread.php?tid=19">Folding@Home</a></li>
-			<li><a href="https://jiggmin2.com">Jiggmin2.com</a></li>
-			<li><a href="https://jiggmin2.com/forums/showthread.php?tid=385">Rules</a></li>
+			<li><a href="//pr2hub.com/backups" target="_blank">Backups</a></li>
+			<li><a href="https://jiggmin2.com/forums/showthread.php?tid=19" target="_blank">Folding@Home</a></li>
+			<li><a href="https://jiggmin2.com" target="_blank">Jiggmin2.com</a></li>
+			<li><a href="https://jiggmin2.com/forums/showthread.php?tid=385" target="_blank">Rules</a></li>
 		</ul>
 	</div>
 	
