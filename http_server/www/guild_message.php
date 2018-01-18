@@ -29,7 +29,7 @@ try {
 		$db->call( 'message_insert', array( $member->user_id, $user_id, $message, $ip ) );
 	}
 	
-	echo 'message=Your message was sent succesfully!';		
+	echo 'message=Your message was sent successfully!';		
 }
 
 catch(Exception $e){
