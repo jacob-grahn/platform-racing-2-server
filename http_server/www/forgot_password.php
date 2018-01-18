@@ -14,7 +14,7 @@ $safe_email = addslashes($email);
 try{
 
 	if(!valid_email($email)){
-		throw new Exception("'" . htmlspecialchars($email); . "' is not a valid email address.");
+		throw new Exception("'" . htmlspecialchars($email) . "' is not a valid email address.");
 	}
 	if(strtolower($name) == 'jiggmin') {
 		throw new Exception('The password to Jiggmin\'s luggage is 12345.');
