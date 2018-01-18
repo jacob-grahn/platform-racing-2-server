@@ -5,9 +5,8 @@ require_once(__DIR__ . '/all_fns.php');
 function artifact_first_check($port, $player) {
 	global $db;
 
-	$caught_exception = false;
 	$user_id = $player->user_id;
-	$user_name = $player->name;
+	$safe_user_name = htmlspecialchars($player->name);
 
 	try {
 		$first_finder = $db->grab( 'first_finder', 'artifact_find', array($user_id) );
@@ -16,20 +15,16 @@ function artifact_first_check($port, $player) {
 			award_parts( $db, $user_id, 'head', [27] );
 			award_parts( $db, $user_id, 'body', [21] );
 			award_parts( $db, $user_id, 'feet', [28] );
+			echo "Awarded bubble set to $safe_user_name for finding the artifact first.";
+			$player->write('message`The most humble of congratulations to you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.<br><br>Thanks for playing Platform Racing 2!<br>- Jiggmin');
+			
 		}
 	}
 
 	catch(Exception $e) {
-		$caught_exception = true;
 		$message = $e->getMessage();
 		echo "Error: ".$message;
 		return false;
-	}
-
-	if(!$caught_exception) {
-		echo "Awarded bubble set to $user_name for finding the artifact first.";
-		$player->write('message`The most humble of congratulations to you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.\n\nThanks for playing Platform Racing 2!\n- Jiggmin');
-		return true;
 	}
 
 }
