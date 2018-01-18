@@ -144,6 +144,18 @@ try{
 		}
 	}
 	
+	//htmlspecialchars
+	$html_banned_name = htmlspecialchars($banned_name);
+	$html_mod_user_name = htmlspecialchars($mod_user_name);
+	if ($reason != '') {
+		$html_reason = "Reason: " . htmlspecialchars($reason);
+	}
+	else {
+		$html_reason = "no reason given";
+	}
+	
+	//record the ban in the action log
+	$db->call('mod_action_insert', array($mod->user_id, "$html_mod_user_name banned $html_banned_name {ban_id: $safe_record, duration: $duration, account_ban: $safe_account_ban, ip_ban: $safe_ip_ban, expire_time: $expire_time, $html_reason}", 0, get_ip()));
 	
 }
 
