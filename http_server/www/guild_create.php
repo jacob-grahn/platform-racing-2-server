@@ -8,7 +8,6 @@ try {
 	$note = find( 'note' );
 	$guild_name = find( 'name' );
 	$emblem = find( 'emblem' );
-	$noexploit = preg_replace("/[^a-zA-Z0-9#-.:;=?@~! ]/", "", $guild_name);
 
 	
 	//--- connect to the db
@@ -40,12 +39,12 @@ try {
 		throw new Exception( 'Emblem not recieved.' );
 	}
 	if( preg_match( '/.jpg$/', $emblem) !== 1 || preg_match( '/\.\.\//', $emblem) === 1 || preg_match( '/\?/', $emblem) === 1) {
-	    throw new Exception('Emblem invalid');
+		throw new Exception('Emblem invalid');
 	}	
-        if($noexploit != $guild_name){
-        throw new Exception('There is an invalid character in your guild name. '
-                            .'The allowed characters are a-z, 1-9, and !#$%&()*+.:;=?@~.');
-        }
+        if (preg_match('/[^a-zA-Z0-9#-.:;=?@~! ]/', $guild_name)) {
+		throw new Exception('There is an invalid character in your guild name. '
+		.'The allowed characters are a-z, 1-9, and !#$%&()*+.:;=?@~.');
+	}
 	
 	
 	//--- add guild to db
