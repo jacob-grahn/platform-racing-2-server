@@ -28,7 +28,7 @@ $half_exp = round( $tot_exp/2 );
 output( "half exp: $half_exp" );
 
 function output( $str ) {
-	echo "* $str <br/>";
+	echo "* " . strip_tags($str, "<br><br/>") . "<br/>";
 }
 
 ?>
