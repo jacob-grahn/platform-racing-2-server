@@ -3,8 +3,8 @@
 <?php
 
 require_once(__DIR__ . '/env.php');
-require_once(__DIR__ . '/server/fns/management_fns.php');
 require_once(__DIR__ . '/server/fns/all_fns.php');
+require_once(__DIR__ . '/server/fns/management_fns.php');
 
 $my_ip = exec(__DIR__ . '/get_server_ip');
 

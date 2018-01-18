@@ -37,7 +37,7 @@ function run_update_cycle( $db ) {
 			save_plays( $db, $server->result->plays );
 			save_gp( $db, $server->server_id, $server->result->gp );
 			save_population( $db, $server->server_id, $server->result->population );
-                        save_status( $db, $server->server_id, $server->result->status, $server->result->happy_hour );
+      save_status( $db, $server->server_id, $server->result->status, $server->result->happy_hour );
 		}
 		else {
 			output( 'server is down: ' . json_encode( $server ) );

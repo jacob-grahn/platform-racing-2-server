@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__ . '/data_fns.php')
+
 
 // starts a server if it is not running
 function test_server($script, $address, $port, $key, $server_id) {
