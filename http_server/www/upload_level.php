@@ -137,7 +137,7 @@ try {
 			."&note=$url_note&min_level=$min_level&song=$song&gravity=$gravity&max_time=$max_time"
 			."&has_pass=$has_pass&live=$live&items=$items&gameMode=$game_mode"
 			."&data=$data";
-	$str_to_hash = $version . $level_id . $str . '0kg4%dsw';
+	$str_to_hash = $version . $level_id . $str . $LEVEL_SALT_2;
 	$hash = md5($str_to_hash);
 	$str .= $hash;
 
