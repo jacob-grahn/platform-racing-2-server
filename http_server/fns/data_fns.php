@@ -81,8 +81,8 @@ function format_duration( $seconds ) {
 }
 
 
-function get_ip($proxy = true) {
-    return $_SERVER['HTTP_CF_CONNECTING_IP'];
+function get_ip() {
+    return $_SERVER['REMOTE_ADDR'];
 }
 
 

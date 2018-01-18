@@ -29,53 +29,6 @@ function check_for_name($connection, $name){
 }
 
 
-//--- checks if a login is valid -----------------------------------------------------------
-function login ($connection, $name, $pass) {
-	// safety first
-	$safe_name = addslashes($name);
-
-	// error check
-	if (empty($name) || empty($pass)) {
-		throw new Exception('You must enter a name and a password.');
-	}
-	if (strlen($name) < 2) {
-		throw new Exception('Your name must be at least 2 characters long.');
-	}
-	if (strlen($name) > 20) {
-		throw new Exception('Your name can not be more than 20 characters long.');
-	}
-
-	// fetch user row
-	$result = $connection->query("SELECT user_id, name, password, pass_hash
-		FROM users
-		WHERE name = '$safe_name'
-		LIMIT 0,1
-	");
-	if (!$result) {
-		throw new Exception('Could not check login.');
-	}
-	$row = $result->fetch_object();
-
-	// check password
-	if (!password_verify(sha1($pass), $row->pass_hash)) {
-		sleep(1);
-		throw new Exception('Invalid password');
-	}
-
-	//record this login
-	$safe_time = addslashes(time());
-	$safe_ip = addslashes(get_ip());
-	$safe_user_id = addslashes($row->user_id);
-	$connection->query("update users
-				set users.time = '$safe_time',
-				users.ip = '$safe_ip'
-				where users.user_id = '$safe_user_id'");
-
-	return ($row);
-}
-
-
-
 //--- gets a row from a database --------------------------------------------------------
 function get_row($connection, $table, $id_name, $id){
 	$safe_table = addslashes($table);
