@@ -34,7 +34,7 @@ try{
 	$user_id = $mod->user_id;
 	
 	//record the change
-	$db->call('mod_action_insert', array($user_id, "$html_name unpublished level $html_level_id from $ip.", $user_id, $ip));
+	$db->call('mod_action_insert', array($user_id, "$html_name unpublished level $html_level_id from $ip", $user_id, $ip));
 	
 }
 
