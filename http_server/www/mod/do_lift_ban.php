@@ -7,6 +7,7 @@ $ban_id = find('ban_id');
 $reason = find('reason');
 $safe_ban_id = addslashes($ban_id);
 $safe_reason = addslashes($reason . ' @' . date('M j, Y g:i A'));
+$ip = get_ip();
 
 try {
 
@@ -25,16 +26,6 @@ try {
 
 	$user_id = $mod->user_id;
 	$name = $mod->name;
-	
-	// htmlspecialchars
-	$html_name = htmlspecialchars($name);
-	$html_ban_id = htmlspecialchars($ban_id);
-	if ($reason != '') {
-		$html_reason = "Reason: " . htmlspecialchars($reason);
-	}
-	else {
-		$html_reason = "There was no reason given";
-	}
 
 	$safe_name = addslashes($name);
 
@@ -50,8 +41,18 @@ try {
 		throw new Exception('Could not lift ban');
 	}
 	
+	// htmlspecialchars
+	$html_name = htmlspecialchars($name);
+	$html_ban_id = htmlspecialchars($ban_id);
+	if ($reason != '') {
+		$html_reason = "Reason: " . htmlspecialchars($reason);
+	}
+	else {
+		$html_reason = "There was no reason given";
+	}
+	
 	//record the change
-	$db->call('mod_action_insert', array($mod->user_id, "$html_name lifted ban $html_ban_id. $html_reason.", 0, get_ip()));
+	$db->call('mod_action_insert', array($mod->user_id, "$html_name lifted ban $html_ban_id from $ip. $html_reason.", $mod->user_id, $ip));
 
 
 	//redirect to a page showing the lifted ban
