@@ -19,7 +19,7 @@ $guild_name = '';
 $friends = array();
 $ignored = array();
 $ip = get_ip();
-$country_code = $_SERVER["HTTP_CF_IPCOUNTRY"];
+$country_code = '?';
 
 try {
 
