@@ -30,7 +30,6 @@ try {
 
 } catch (Exception $e) {
     output_header('Update PR2 Account');
-    output_mod_navigation();
     echo 'error=' . ($e->getMessage());
     output_footer();
 }
@@ -50,9 +49,6 @@ function output_form($db, $user_id) {
 
     output_header('Update PR2 Account');
 
-    //make it easy to get around
-    output_mod_navigation();
-
     echo '<form name="input" action="update_account.php" method="get">';
 
 	$user = $db->grab_row('user_select', array($user_id));
@@ -63,6 +59,7 @@ function output_form($db, $user_id) {
 
 	echo 'Name: <input type="text" size="" name="name" value="'.htmlspecialchars($user->name).'"><br>';
 	echo 'Email: <input type="text" name="email" value="'.htmlspecialchars($user->email).'"><br>';
+	echo 'Guild: <input type="text" name="guild" value="'.htmlspecialchars($user->guild).'"><br>';
 	echo 'Hats: <input type="text" size="100" name="hats" value="'.$pr2->hat_array.'"><br>';
 	echo 'Heads: <input type="text" size="100" name="heads" value="'.$pr2->head_array.'"><br>';
 	echo 'Bodies: <input type="text" size="100" name="bodies" value="'.$pr2->body_array.'"><br>';
@@ -224,7 +221,8 @@ Rabbit = 39</pre>';
 
 
 function update($db) {
-    $user_id = find('id');
+    $guild_id = (int) find('id');
+    $user_id = (int) find('id');
 
     $user = $db->grab_row('user_select', array($user_id));
     $email = find('email');
@@ -239,9 +237,10 @@ function update($db) {
     $db->call(
 	    'user_update',
 	    array(
-		find('id'),
+		$user_id,
 		find('name'),
 		find('email'),
+		$guild_id,
 		find('hats'),
 		find('heads'),
 		find('bodies'),
