@@ -358,7 +358,7 @@ function generate_level_list($db, $mode) {
 		$result = $db->call('levels_select_newest');
 	}
 
-	$dir = '/home/jiggmin/pr2hub/www/files/lists/'.$mode.'/';
+	$dir = __DIR__ . '/../www/files/lists/'.$mode.'/';
 	@mkdir($dir, 0777, true);
 
 	for($j=0; $j<9; $j++) {
