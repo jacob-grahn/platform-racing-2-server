@@ -75,11 +75,12 @@ else {
 }
 
 function update($db) {
-    $guild_id = find('guild_id');
+    $guild_id = (int) find('guild_id');
+    $owner_id = (int) find('owner_id');
     
     $guild = $db->grab_row('guild_select', array($guild_id));
 
-    $db->call( 'guild_update', array(find('guild_id'), find('guild_name'), $emblem, find('note'), find('owner_id')), 'A guild already exists with that name.' );
+    $db->call( 'guild_update', array($guild_id, find('guild_name'), $emblem, find('note'), $owner_id), 'A guild already exists with that name.' );
     
     header("Location: http://pr2hub.com/mod/guild_deep_info.php?id=" . urlencode(find('guild_id')));
     /*echo('updated! <br>---<br>');
