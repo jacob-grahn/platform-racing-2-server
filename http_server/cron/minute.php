@@ -32,12 +32,7 @@ function run_update_cycle( $db ) {
 	//--- process replies
 	foreach( $servers as $server ) {
 		if( $server->result != false && $server->result != null ) {
-			if (isset($server->result->happy_hour)) {
-				$happy_hour = 1;
-			}
-			else {
-				$happy_hour = 0;
-			}
+			$happy_hour = (int)$server->result->happy_hour;
 			output( 'server is up' );
 			save_plays( $db, $server->result->plays );
 			save_gp( $db, $server->server_id, $server->result->gp );
