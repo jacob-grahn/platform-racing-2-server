@@ -25,7 +25,6 @@ try {
 	
 	
 	//navigation
-	output_mod_navigation();
 	output_pagination($start, $count);
 	echo('<p>---</p>');
 	

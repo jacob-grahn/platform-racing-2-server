@@ -58,8 +58,8 @@ try {
 		$active_rank = $rank + $used_tokens;
 		$hats = count(explode(',', $row->hat_array)) - 1;
 		
-		if(strpos($status, 'Playing Platform Racing 2 on ') !== false){
-			$status = substr($status, 29);
+		if(strpos($status, 'Playing on ') !== false){
+			$status = substr($status, 11);
 		}
 		
 		if($num > 0){

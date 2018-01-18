@@ -18,9 +18,6 @@ try {
 	$mod = check_moderator($db);
 	
 	
-	output_mod_navigation();
-	
-	
 	//get the ban
 	$result = $db->query("SELECT *
 								 	FROM bans
