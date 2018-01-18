@@ -32,7 +32,7 @@ try {
 	//tell the world
 	$ret = new stdClass();
 	$ret->success = true;
-	$ret->message = "The part was given to $user_name.";
+	$ret->message = "The part was given to " . htmlspecialchars($user_name) . ".";
 	echo json_encode( $ret );
 }
 
