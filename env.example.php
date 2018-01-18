@@ -28,6 +28,7 @@ $CHANGE_EMAIL_IV = 'why oh why';
 $LEVEL_PASS_SALT = 'fa';
 $LEVEL_PASS_KEY = 'so';
 $LEVEL_PASS_IV = 'la';
+$LEVEL_SALT_2 = 'ti';
 
 $LOGIN_KEY = 'hello';
 $LOGIN_IV = 'there';
