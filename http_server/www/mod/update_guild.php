@@ -51,7 +51,8 @@ function output_form($db, $guild_id) {
 	echo 'Guild Name: <input type="text" size="" name="guild_name" value="'.htmlspecialchars($guild->name).'"><br>';
 	echo 'Guild Owner: <input type="text" size"" name="owner_id" value="'.htmlspecialchars($guild->owner_id).'"><br>';
 	echo 'Prose: <input type="text" size="100" name="note" value="'.htmlspecialchars($guild->note).'"><br>';
-	echo 'Delete Emblem? <input type="checkbox" name="delete_emblem"><br>'
+	echo 'Delete Emblem? <input type="checkbox" name="delete_emblem"><br>';
+	echo 'Recount Members? <input type="checkbox" name="recount_members"><br>';
 	echo '<input type="hidden" name="action" value="update">';
 	echo '<input type="hidden" name="guild_id" value="'.$guild->guild_id.'">';
     
@@ -74,13 +75,20 @@ else {
 	$emblem = $guild->emblem;
 }
 
+if (!empty($_GET['recount_members'])) {
+	$member_count = mysqli_num_rows($members);
+}
+else {
+	$member_count = $guild->member_count;
+}
+
 function update($db) {
     $guild_id = (int) find('guild_id');
     $owner_id = (int) find('owner_id');
     
     $guild = $db->grab_row('guild_select', array($guild_id));
 
-    $db->call( 'guild_update', array($guild_id, find('guild_name'), $emblem, find('note'), $owner_id), 'A guild already exists with that name.' );
+    $db->call( 'guild_update', array($guild_id, find('guild_name'), $emblem, find('note'), $owner_id, $member_count), 'A guild already exists with that name.' );
     
     header("Location: http://pr2hub.com/mod/guild_deep_info.php?id=" . urlencode(find('guild_id')));
     /*echo('updated! <br>---<br>');
