@@ -1,5 +1,7 @@
 <?php
 
+$SERVER_IP = '127.0.0.1';
+
 $DB_ADDRESS = 'localhost';
 $DB_PASS = '123';
 $DB_USER = 'user';
