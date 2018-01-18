@@ -43,12 +43,6 @@ try {
 		throw new Exception('Could not publish level. Check the title and note for obscenities.');
 	}
 
-	$local_hash = md5($title . strtolower($user_name) . $data . $LEVEL_PASS_SALT);
-	if($local_hash != $remote_hash) {
-		$data_len = strlen($data);
-		throw new Exception('The level did not upload correctly. Maybe try again? length: '.$data_len);
-	}
-
 	$account = $db->grab_row('user_select', array($user_id));
 	if($account->power <= 0) {
 		throw new Exception('Guests can not save levels');
