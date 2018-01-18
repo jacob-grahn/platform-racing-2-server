@@ -9,7 +9,7 @@ $note = $_POST['note'];
 $data = $_POST['data'];
 $live = $_POST['live'];
 $min_level = $_POST['min_level'];
-$song = $_POST['song'];
+$song = (int)$_POST['song'];
 $gravity = $_POST['gravity'];
 $max_time = $_POST['max_time'];
 $items = $_POST['items'];
@@ -117,7 +117,7 @@ try {
 			$hash2 = $org_pass_hash2;
 		}
 		else {
-			$hash2 = sha1( $pass_hash . 'UihQJnQhVEEvJmptLSlnaw');
+			$hash2 = sha1( $pass_hash . $LEVEL_PASS_SALT);
 		}
 	}
 
