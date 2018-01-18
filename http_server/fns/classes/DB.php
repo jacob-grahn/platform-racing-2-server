@@ -22,6 +22,12 @@ class DB {
 
 
 
+	function __destruct() {
+       $this->close();
+   }
+
+
+
 	public function escape($val) {
 		$safe_val = $this->mysqli->real_escape_string($val);
 		return $safe_val;
@@ -211,6 +217,13 @@ class DB {
 			$arr[] = $row;
 		}
 		return $arr;
+	}
+
+
+	public function close () {
+		if (isset($this->mysqli)) {
+			$this->mysqli->close();
+		}
 	}
 }
 
