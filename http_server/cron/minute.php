@@ -32,11 +32,17 @@ function run_update_cycle( $db ) {
 	//--- process replies
 	foreach( $servers as $server ) {
 		if( $server->result != false && $server->result != null ) {
+			if (isset($server->result->happy_hour)) {
+				$happy_hour = 1;
+			}
+			else {
+				$happy_hour = 0;
+			}
 			output( 'server is up' );
 			save_plays( $db, $server->result->plays );
 			save_gp( $db, $server->server_id, $server->result->gp );
 			save_population( $db, $server->server_id, $server->result->population );
-      save_status( $db, $server->server_id, $server->result->status, $server->result->happy_hour );
+      save_status( $db, $server->server_id, $server->result->status, $happy_hour );
 		}
 		else {
 			output( 'server is down: ' . json_encode( $server ) );
