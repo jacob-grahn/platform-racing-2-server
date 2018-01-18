@@ -37,7 +37,7 @@ try {
 
 
 	//--- send a message to the player's server giving them a super boost
-	call_socket_function( $server->address, $server->port, $server->salt, "unlock_super_booster`$user_id", false);
+	talk_to_server( $server->address, $server->port, $server->salt, "unlock_super_booster`$user_id", false);
 
 
 	//--- reply

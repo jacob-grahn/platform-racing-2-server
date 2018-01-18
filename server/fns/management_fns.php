@@ -54,7 +54,7 @@ function connect_to_server($address, $port, $key){
 //graceful shutdown
 function shut_down_server($pid, $address, $port){
 	$result = false;
-	$result = call_socket_function($port, 'shut_down`', $address, true);
+	$result = talk_to_server($port, 'shut_down`', $address, true);
 	if(!$result){
 		kill_pid($pid);
 	}

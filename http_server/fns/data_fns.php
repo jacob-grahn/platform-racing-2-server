@@ -106,7 +106,7 @@ function poll_servers_2( $db, $message, $receive=true, $server_ids=array() ) {
 
 	foreach( $servers as $server ) {
 		if( count($server_ids) == 0 || array_search($server->server_id, $server_ids) !== false ) {
-			$result = call_socket_function( $server->address, $server->port, $server->salt, $message, $receive );
+			$result = talk_to_server( $server->address, $server->port, $server->salt, $message, $receive );
 			$server->command = $message;
 			$server->result = json_decode( $result );
 			$results[] = $server;
@@ -119,7 +119,7 @@ function poll_servers_2( $db, $message, $receive=true, $server_ids=array() ) {
 
 
 //--- connects to the farm server and calls a function -------------------------------------
-function call_socket_function($address, $port, $key, $server_function, $receive=false){
+function talk_to_server($address, $port, $key, $server_function, $receive=false){
 	global $PROCESS_PASS;
 
 	$end = chr(0x04);
