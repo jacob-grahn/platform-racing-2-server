@@ -139,8 +139,10 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			$html_type = htmlspecialchars($type);
 			$html_port = htmlspecialchars($port);
 			
+			$ip = $admin->ip;
+			
 			// log action in action log
-			$db->call('mod_action_insert', array($mod->user_id, "$html_admin_name promoted $html_promoted_name to a $html_type moderator from $ip on port $html_port", $admin->user_id, $ip));
+			$db->call('mod_action_insert', array($admin->user_id, "$html_admin_name promoted $html_promoted_name to a $html_type moderator from $ip on port $html_port", $admin->user_id, $ip));
 			
 		}
 
