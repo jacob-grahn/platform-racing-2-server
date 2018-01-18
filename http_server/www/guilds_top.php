@@ -34,14 +34,14 @@ try {
 	$reply = new stdClass();
 	$reply->success = true;
 	$reply->guilds = $guilds;
-	echo json_encode( $reply );
+	echo htmlspecialchars(json_encode( $reply ));
 }
 
 
 catch(Exception $e){
 	$reply = new stdClass();
 	$reply->error = $e->getMessage();
-	echo json_encode( $reply );
+	echo htmlspecialchars(json_encode( $reply ));
 }
 
 ?>
