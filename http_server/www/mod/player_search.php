@@ -16,8 +16,6 @@ try {
 	//make sure you're a moderator
 	$mod = check_moderator($db, false);
 	
-	output_mod_navigation();
-	
 	if($message != '') {
 		echo "<p><b>$message</b></p>";
 	}
