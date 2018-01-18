@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/data_fns.php')
+require_once(__DIR__ . '/data_fns.php');
 
 
 // starts a server if it is not running
