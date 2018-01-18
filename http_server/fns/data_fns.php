@@ -195,6 +195,7 @@ function check_moderator($db, $check_ref=true, $min_power=2) {
 	if($check_ref) {
 		$ref = $_SERVER['HTTP_REFERER'];
 		if(
+			strpos($ref, 'http://pr2hub.com') !== 0 &&
 			strpos($ref, 'https://pr2hub.com') !== 0 &&
 			strpos($ref, 'http://cdn.jiggmin.com') !== 0 &&
 			strpos($ref, 'http://chat.kongregate.com') !== 0 &&
