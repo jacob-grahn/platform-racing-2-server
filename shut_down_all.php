@@ -1,5 +1,3 @@
-#!/usr/bin/php
-
 <?php
 
 require_once(__DIR__ . '/server/fns/management_fns.php');

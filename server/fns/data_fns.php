@@ -25,17 +25,6 @@ function find_variable($string, $default){
 }
 
 
-//--- returns the ip address of the romote computer ----------------------------------------
-function get_ip(){
-	if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])){
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-	} else {
-		$ip = $_SERVER["REMOTE_ADDR"];
-	}
-	return $ip;
-}
-
-
 
 //--- tests to see if a string contains obscene words ---------------------------------------
 function is_obscene($str){
@@ -49,42 +38,6 @@ function is_obscene($str){
 		}
 	}
 	return $obscene;
-}
-
-
-
-//--- returns a random string made up of chars 1-9 and a-z -----------------------------------------------
-function get_random_string($length){
-	$char_array = array('1','2','3','4','5','6','7','8','9',
-	'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
-
-	$pass = "";
-
-	for($i = 0; $i<$length ;$i++){
-		$rand_number = round(rand(0, 34),0);
-		$pass.=$char_array[$rand_number];
-	}
-
-	return $pass;
-}
-
-
-
-//--- use a session if they have one, or do a db lookup ----------------------------------------------------
-function check_login($connection, $user_name, $user_pass, $force_new_login=false){
-	session_start();
-	if(isset($_SESSION['valid_user_id']) && !$force_new_login && $_SESSION['valid_name'] == $user_name){
-		$user_id = $_SESSION['valid_user_id'];
-	}
-	else{
-		$login = login($connection, $user_name, $user_pass);
-		$user_id = $login->user_id;
-		$ip = get_ip();
-		check_if_banned($connection, $user_id, $ip);
-		$_SESSION['valid_user_id'] = $user_id;
-		$_SESSION['valid_name'] = $user_name;
-	}
-	return $user_id;
 }
 
 

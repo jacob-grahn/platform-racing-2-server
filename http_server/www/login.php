@@ -64,9 +64,6 @@ try {
 	if( !isset( $login->user_name ) ) {
 		throw new Exception( 'Invalid user name' );
 	}
-	if( $login_code != 'eisjI1dHWG4vVTAtNjB0Xw' ) {
-		throw new Exception( 'Invalid login code' );
-	}
 
 
 	//--- connect
@@ -330,7 +327,7 @@ Thanks for playing, I hope you enjoy.
 	$send->epic_upgrades = $epic_upgrades;
 
 	$str = "register_login`" . json_encode( $send );
-	call_socket_function($server_address, $server_port, $server->salt, $str, false);
+	talk_to_server($server_address, $server_port, $server->salt, $str, false);
 
 
 	//--- tell it to the world

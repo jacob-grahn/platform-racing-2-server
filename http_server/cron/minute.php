@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 
 require_once(__DIR__ . '/../fns/all_fns.php');
@@ -33,16 +32,17 @@ function run_update_cycle( $db ) {
 	//--- process replies
 	foreach( $servers as $server ) {
 		if( $server->result != false && $server->result != null ) {
+			$happy_hour = (int)$server->result->happy_hour;
 			output( 'server is up' );
 			save_plays( $db, $server->result->plays );
 			save_gp( $db, $server->server_id, $server->result->gp );
 			save_population( $db, $server->server_id, $server->result->population );
-                        save_status( $db, $server->server_id, $server->result->status, $server->result->happy_hour );
+      save_status( $db, $server->server_id, $server->result->status, $happy_hour );
 		}
 		else {
 			output( 'server is down: ' . json_encode( $server ) );
 			save_population( $db, $server->server_id, 0 );
-			save_status( $db, $server->server_id, 'down' );
+			save_status( $db, $server->server_id, 'down', 0 );
 		}
 	}
 }

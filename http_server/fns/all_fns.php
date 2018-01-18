@@ -5,5 +5,6 @@ require_once('db_fns.php');
 require_once('data_fns.php');
 require_once('query_fns.php');
 require_once('classes/DB.php');
+require_once('random_str.php');
 
 ?>

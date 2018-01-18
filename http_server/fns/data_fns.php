@@ -81,8 +81,8 @@ function format_duration( $seconds ) {
 }
 
 
-function get_ip($proxy = true) {
-    return $_SERVER['HTTP_CF_CONNECTING_IP'];
+function get_ip() {
+    return $_SERVER['REMOTE_ADDR'];
 }
 
 
@@ -106,7 +106,7 @@ function poll_servers_2( $db, $message, $receive=true, $server_ids=array() ) {
 
 	foreach( $servers as $server ) {
 		if( count($server_ids) == 0 || array_search($server->server_id, $server_ids) !== false ) {
-			$result = call_socket_function( $server->address, $server->port, $server->salt, $message, $receive );
+			$result = talk_to_server( $server->address, $server->port, $server->salt, $message, $receive );
 			$server->command = $message;
 			$server->result = json_decode( $result );
 			$results[] = $server;
@@ -119,11 +119,7 @@ function poll_servers_2( $db, $message, $receive=true, $server_ids=array() ) {
 
 
 //--- connects to the farm server and calls a function -------------------------------------
-function talk_to_server( $address, $port, $key, $message, $receive=false ) {
-	return call_socket_function( $address, $port, $key, $message, $receive );
-}
-
-function call_socket_function($address, $port, $key, $server_function, $receive=false){
+function talk_to_server($address, $port, $key, $server_function, $receive=false){
 	global $PROCESS_PASS;
 
 	$end = chr(0x04);
@@ -146,7 +142,6 @@ function call_socket_function($address, $port, $key, $server_function, $receive=
 		stream_set_timeout($fsock, 2);
 		if($receive){
 			$reply = fread($fsock, 999999);
-			//error_log( '888r: '.$reply);
 		}
 		fclose($fsock);
 	}
@@ -191,23 +186,6 @@ function valid_email($email) {
   else {
 	  return false;
   }
-}
-
-
-
-//--- returns a random string made up of chars 1-9 and a-z -----------------------------------------------
-function get_random_string($length){
-	$char_array = array('1','2','3','4','5','6','7','8','9',
-	'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
-
-	$pass = "";
-
-	for($i = 0; $i<$length ;$i++){
-		$rand_number = round(rand(0, 34),0);
-		$pass.=$char_array[$rand_number];
-	}
-
-	return $pass;
 }
 
 

@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__ . '/data_fns.php');
+
 
 // starts a server if it is not running
 function test_server($script, $address, $port, $key, $server_id) {
@@ -52,7 +54,7 @@ function connect_to_server($address, $port, $key){
 //graceful shutdown
 function shut_down_server($pid, $address, $port){
 	$result = false;
-	$result = call_socket_function($port, 'shut_down`', $address, true);
+	$result = talk_to_server($port, 'shut_down`', $address, true);
 	if(!$result){
 		kill_pid($pid);
 	}
@@ -114,7 +116,6 @@ function get_pid_file($port) {
 
 function talk_to_server_id( $db, $server_id, $message, $receive ) {
 	$server = $db->grab_row( 'server_select', array($server_id) );
-	//$reply = talk_to_server( $server->address, $server->port, $server->salt, $message, $receive );
 	$reply = talk_to_server( 'localhost', $server->port, $server->salt, $message, $receive );
 	return( $reply );
 }
@@ -159,50 +160,6 @@ function talk_to_server( $address, $port, $key, $message, $receive ) {
 	}
 
 	output('management_fns->talk_to_server read: '.$reply);
-	return($reply);
-}
-
-
-//--- connects to the farm server and calls a function -------------------------------------
-function call_socket_function($port, $server_function, $server='jiggmin2.com', $recieve=false) {
-  global $COMM_PASS, $PROCESS_PASS;
-	$end = chr(0x04);
-	$send_num = 1;
-	$data = $PROCESS_PASS;
-	$intro_function = 'become_process';
-	$str_to_hash = $COMM_PASS . $send_num . '`' . $intro_function . '`' . $data;
-	$local_hash = md5($str_to_hash);
-	$sub_hash = substr($local_hash, 0, 3);
-
-	$message1 = $sub_hash .'`'. $send_num .'`'. $intro_function .'`'. $data . $end;
-	$message2 = $server_function . $end;
-	$send_str = $message1 . $message2;
-
-	$reply = true;
-	$fsock = @fsockopen($server, $port, $errno, $errstr, 5);
-
-	if($fsock){
-		output('management_fns->call_socket_function write: '.$send_str);
-		fputs($fsock, $send_str);
-		stream_set_timeout($fsock, 5);
-		if($recieve){
-			$reply = fread($fsock, 99999);
-		}
-		fclose($fsock);
-	}
-	else {
-		$reply = false;
-	}
-
-	output('management_fns->call_socket_function read: '.$reply);
-
-	if($recieve && $reply == ''){
-		$reply = false;
-	}
-	else{
-		$reply = substr($reply, 0, strlen($reply)-1);
-	}
-
 	return($reply);
 }
 

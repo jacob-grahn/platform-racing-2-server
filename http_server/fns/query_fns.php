@@ -1,5 +1,6 @@
 <?php
 
+require_once(__DIR__ . '/random_str.php');
 
 
 //--- checks if a login is valid -----------------------------------------------------------
@@ -265,7 +266,7 @@ function append_to_str_array( $str_arr, $val ) {
 
 //--- generates a login token ----------------------------------
 function get_login_token($user_id) {
-	$token = $user_id . '-' . random_bytes(30);
+	$token = $user_id . '-' . random_str(30);
 	return $token;
 }
 
@@ -357,7 +358,7 @@ function generate_level_list($db, $mode) {
 		$result = $db->call('levels_select_newest');
 	}
 
-	$dir = '/home/jiggmin/pr2hub/www/files/lists/'.$mode.'/';
+	$dir = __DIR__ . '/../www/files/lists/'.$mode.'/';
 	@mkdir($dir, 0777, true);
 
 	for($j=0; $j<9; $j++) {

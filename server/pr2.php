@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 
 ini_set('mbstring.func_overload', '0');

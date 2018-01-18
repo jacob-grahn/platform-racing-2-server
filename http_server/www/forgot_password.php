@@ -46,7 +46,7 @@ try{
 	$row = $result->fetch_object();
 	$user_id = $row->user_id;
 
-	$pass = get_random_string(12);
+	$pass = random_str(12);
 	$pass_hash = to_hash($pass);
 	$safe_pass_hash = addslashes($pass_hash);
 
