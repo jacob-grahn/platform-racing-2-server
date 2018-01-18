@@ -32,7 +32,6 @@ try {
 
 catch (Exception $e) {
     output_header('Update Guild');
-    output_mod_navigation();
     echo 'error=' . ($e->getMessage());
     output_footer();
 }
@@ -41,9 +40,6 @@ catch (Exception $e) {
 function output_form($db, $guild_id) {
     
     output_header('Update Guild');
-    
-    //make it easy to get around
-    output_mod_navigation();
     
     echo '<form name="input" action="update_guild.php" method="get">';
     
