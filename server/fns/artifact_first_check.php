@@ -7,7 +7,7 @@ function artifact_first_check($port, $player) {
 
 	$caught_exception = false;
 	$user_id = $player->user_id;
-	$user_name = $player->name;
+	$safe_user_name = htmlspecialchars($player->name);
 
 	try {
 		$first_finder = $db->grab( 'first_finder', 'artifact_find', array($user_id) );
@@ -27,8 +27,8 @@ function artifact_first_check($port, $player) {
 	}
 
 	if(!$caught_exception) {
-		echo "Awarded bubble set to $user_name for finding the artifact first.";
-		$player->write('message`The most humble of congratulations to you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.\n\nThanks for playing Platform Racing 2!\n- Jiggmin');
+		echo "Awarded bubble set to $safe_user_name for finding the artifact first.";
+		$player->write('message`The most humble of congratulations to you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.<br /><br />Thanks for playing Platform Racing 2!<br />- Jiggmin');
 		return true;
 	}
 
