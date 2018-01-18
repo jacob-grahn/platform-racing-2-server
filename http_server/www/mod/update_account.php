@@ -30,7 +30,6 @@ try {
 
 } catch (Exception $e) {
     output_header('Update PR2 Account');
-    output_mod_navigation();
     echo 'error=' . ($e->getMessage());
     output_footer();
 }
@@ -49,9 +48,6 @@ try {
 function output_form($db, $user_id) {
 
     output_header('Update PR2 Account');
-
-    //make it easy to get around
-    output_mod_navigation();
 
     echo '<form name="input" action="update_account.php" method="get">';
 
