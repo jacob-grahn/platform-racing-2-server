@@ -47,7 +47,7 @@ function run_update_cycle( $db ) {
 		else {
 			output( 'server is down: ' . json_encode( $server ) );
 			save_population( $db, $server->server_id, 0 );
-			save_status( $db, $server->server_id, 'down' );
+			save_status( $db, $server->server_id, 'down', 0 );
 		}
 	}
 }
