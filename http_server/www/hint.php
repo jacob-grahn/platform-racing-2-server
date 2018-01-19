@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Platform Racing 2 Hint</title>
-    <link href="pr2hub.css" rel="stylesheet" type="text/css"/>
+    <link href="hint.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
