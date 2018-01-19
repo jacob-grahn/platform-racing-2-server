@@ -27,7 +27,7 @@
                     }
 		}
 		catch (Exception $msg){
-			$error_message = htmlspecialchar("Error: " . $msg->getMessage());
+			$error_message = htmlspecialchars("Error: " . $msg->getMessage());
 			echo $error_message;	
 		}
                 ?>
