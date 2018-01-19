@@ -26,7 +26,7 @@
                         echo "<br /> The first person to find this artifact was " . htmlspecialchars($decode->finder_name) . "!!</i>";
                     }
 		}
-		carch (Exception $msg){
+		catch (Exception $msg){
 			$error_message = htmlspecialchar("Error: " . $msg->getMessage());
 			echo $error_message;	
 		}
