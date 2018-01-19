@@ -1,0 +1,6 @@
+RewriteEngine On
+Options +FollowSymLinks
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^pr2-loader-v13.swf$ http://cdn.jiggmin.com/games/platform-racing-2/platform-racing-2-loader-v13.swf [R=301,L]
