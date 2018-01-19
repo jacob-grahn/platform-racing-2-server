@@ -38,10 +38,7 @@ function artifact_first_check($port, $player) {
 			// pm the user (finishing touch!)
 			$artifact_first_pm = 'Dear '.$safe_user_name.',\r\rI\'d like to sincerely congratulate you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.\r\rThanks for playing Platform Racing 2!\r\r - Jiggmin';
 			
-			$db->call( 'message_insert', array($user_id, 1, $artifact_first_pm, '0') );
-
-			}
-			
+			$db->call( 'message_insert', array($user_id, 1, $artifact_first_pm, '0') );			
 		}
 	}
 
