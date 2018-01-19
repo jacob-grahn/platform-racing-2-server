@@ -29,7 +29,7 @@ try {
 		throw new Exception( 'Login data not recieved.' );
 	}
 	if( array_search( $version, $allowed_versions ) === false ) {
-		throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to dowloand the latest version.');
+		throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to download the latest version.');
 	}
 
 
@@ -56,7 +56,7 @@ try {
 
 	//--- more sanity checks
 	if( array_search( $version2, $allowed_versions ) === false ) {
-		throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to dowloand the latest version. [Version check 2] ' . $version2);
+		throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to download the latest version. [Version check 2] ' . $version2);
 	}
 	if( $origination_domain == 'local' ) {
 		throw new Exception( 'Testing mode has been disabled.' );
@@ -145,11 +145,16 @@ try {
 		$db->call('pr2_insert', array($user_id));
 
 		//--- send them a welcome pm
-		$welcome_message = 'Welcome to Platform Racing 2 '.$user_name.'!
-<a href="https://grahn.io" target="_blank"><u><font color="#0000FF">Click here to read about the latest Platform Racing news on my blog.
-If you have any questions or comments, send me an email at jacob@grahn.io
+		$welcome_message = 'Welcome to Platform Racing 2, '.$user_name.'!
+
+<a href="https://grahn.io" target="_blank"><u><font color="#0000FF">Click here</font></u></a> to read about the latest Platform Racing news on my blog.
+
+If you have any questions or comments, send me an email at <a href="mailto:jacob@grahn.io?subject=Questions or Comments about PR2" target="_blank"><u><font color="#0000FF">jacob@grahn.io</font></u></a>.
+
 Thanks for playing, I hope you enjoy.
+
 - Jacob';
+		
 		$db->call('message_insert', array($user_id, 1, $welcome_message, '0'));
 
 		//--- I don't feel like typing the defaults twice, so pull them from the db
