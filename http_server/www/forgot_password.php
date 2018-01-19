@@ -14,7 +14,7 @@ $safe_email = addslashes($email);
 try{
 
 	if(!valid_email($email)){
-		throw new Exception("'$email' is not a valid email address.");
+		throw new Exception("'" . htmlspecialchars($email) . "' is not a valid email address.");
 	}
 	if(strtolower($name) == 'jiggmin') {
 		throw new Exception('The password to Jiggmin\'s luggage is 12345.');
@@ -34,7 +34,7 @@ try{
 		throw new Exception('Could not get your id from the database.');
 	}
 	if($result->num_rows <= 0){
-		throw new Exception('No account was found with the username "'.$name.'" and the email address "'.$email.'".');
+		throw new Exception('No account was found with the username "' . htmlspecialchars($name) . '" and the email address "' . htmlspecialchars($email) . '".');
 	}
 	if($result->num_rows > 1){
 		throw new Exception('More than one result was returned. Something has gone horribly wrong, probably the world is about to explode.');
