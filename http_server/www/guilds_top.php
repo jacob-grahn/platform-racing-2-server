@@ -1,9 +1,5 @@
 <?php
 
-if (!headers_sent()){
-	header("Content-Type: text/plain");	
-}
-
 require_once( '../fns/all_fns.php' );
 require_once( '../fns/pr2_fns.php' );
 
