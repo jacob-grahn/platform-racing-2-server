@@ -1,4 +1,9 @@
 <?php
+
+if (!headers_sent()){
+	header("Content-Type: text/plain");	
+}
+
 require_once('../fns/all_fns.php');
 
 $start = find('start');
