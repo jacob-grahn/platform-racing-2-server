@@ -14,14 +14,22 @@
 			<center>
 			    <img src="img/artifact.png">
                 <?php
+		try {
                     $file = file_get_contents("https://pr2hub.com/files/artifact_hint.txt");
                     $decode = json_decode($file);
-                    echo htmlspecialchars($decode->hint);
+                    echo htmlspecialchars($decode->hint) . "<br/>";
                     if ($decode->finder_name == "") {
                         echo "<i><b><br /> The Artifact has not been found yet!</i>";
-                    } else {
+                    }
+		else
+		{
                         echo "<br /> The first person to find this artifact was " . htmlspecialchars($decode->finder_name) . "!!</i>";
                     }
+		}
+		carch (Exception $msg){
+			$error_message = htmlspecialchar("Error: " . $msg->getMessage());
+			echo $error_message;	
+		}
                 ?>
             </center>
         </div>
