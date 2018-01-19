@@ -2,7 +2,7 @@
 
 require_once('../../fns/all_fns.php');
 
-$formatting_for_mods = check_moderator($db, false);
+$formatting_for_mods = is_moderator($db, false);
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 function output_header($title='', $mod=false) {
