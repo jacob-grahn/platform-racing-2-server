@@ -1,6 +1,6 @@
 <?php
 
-header("Content-type: text/plain");
+header("Content-type: text/plain;charset=UTF-8");
 
 require_once('../fns/all_fns.php');
 
@@ -13,7 +13,7 @@ try {
 
 	$db = new DB();
 
-	//--- check thier login
+	//--- check their login
 	try {
 		$user_id = token_login($db);
 	}
@@ -31,7 +31,7 @@ try {
 	if( $target->guild != 0 ) {
 		try {
 			$guild = $db->grab_row( 'guild_select', array( $target->guild ) );
-			$guild_name = $guild->guild_name;
+			$guild_name = htmlspecialchars($guild->guild_name);
 		}
 		catch (Exception $e) {
 			$guild_name = '';
