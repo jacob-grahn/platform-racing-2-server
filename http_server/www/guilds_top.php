@@ -1,7 +1,7 @@
 <?php
 
 if (!headers_sent()){
-	header("Content-Type: text/plain");	
+	header("Content-Type: text/plain;charset=UTF-8");	
 }
 
 require_once( '../fns/all_fns.php' );
@@ -29,8 +29,10 @@ try {
 	
 	
 	//--- get active member count guild by guild
+	//--- also disable html parsing
 	foreach( $guilds as $guild ) {
 		$guild->active_count = guild_count_active( $db, $guild->guild_id );
+		$guild->guild_name = htmlspecialchars($guild->guild_name);
 	}
 	
 	
