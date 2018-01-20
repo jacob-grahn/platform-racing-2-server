@@ -1,8 +1,6 @@
 <?php
 
-if (!headers_sent()){
-	header("Content-Type: text/plain;charset=UTF-8");	
-}
+header("Content-Type: text/plain;charset=UTF-8");
 
 require_once( '../fns/all_fns.php' );
 require_once( '../fns/pr2_fns.php' );
