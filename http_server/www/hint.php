@@ -36,6 +36,8 @@
 		<center>
 			
 			<img src="img/artifact.png" />
+			
+			<br />
 
 		<?php
                     $file = file_get_contents("https://pr2hub.com/files/artifact_hint.txt");
