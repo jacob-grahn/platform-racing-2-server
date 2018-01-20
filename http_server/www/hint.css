@@ -43,8 +43,7 @@ body {
 	bottom: 0;
 	width: 100%;
 	height: 375px;
-
-    background-image: url(//pr2hub.com/img/bottom.jpg);
+        background-image: url(//pr2hub.com/img/bottom.jpg);
 	background-position: top center;
 	z-index: 1;
 }
