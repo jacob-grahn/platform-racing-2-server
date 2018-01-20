@@ -12,6 +12,8 @@
 	<div id="body">
 		<div id="artifact">
 			<center>
+				<img src="img/artifact_hint.png"></img>
+				<br/>
 				<img src="img/artifact.png" width="80px" height="70px"></img>
                 <?php
 		try {
