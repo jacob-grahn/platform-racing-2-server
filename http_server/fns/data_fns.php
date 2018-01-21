@@ -197,6 +197,8 @@ function check_moderator($db, $check_ref=true, $min_power=2) {
 		if(
 			strpos($ref, 'http://pr2hub.com') !== 0 &&
 			strpos($ref, 'https://pr2hub.com') !== 0 &&
+			strpos($ref, 'http://jiggmin2.com') !== 0 &&
+			strpos($ref, 'https://jiggmin2.com') !== 0 &&
 			strpos($ref, 'http://cdn.jiggmin.com') !== 0 &&
 			strpos($ref, 'http://chat.kongregate.com') !== 0 &&
 			strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0
