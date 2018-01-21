@@ -34,7 +34,7 @@ try {
 
 
 	//--- rate limit
-	rate_limit( 'login-'.$ip, 60, 10, 'Only 10 logins per minute per ip are accepted.' );
+	rate_limit( 'login-'.$ip, 60, 10, 'Only 10 logins per minute per IP are accepted.' );
 
 
 	//--- decrypt login data
@@ -59,10 +59,10 @@ try {
 		throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to download the latest version. [Version check 2] ' . $version2);
 	}
 	if( $origination_domain == 'local' ) {
-		throw new Exception( 'Testing mode has been disabled.' );
+		throw new Exception( 'Don\'t use modified client, yo.' );
 	}
 	if( !isset( $login->user_name ) ) {
-		throw new Exception( 'Invalid user name' );
+		throw new Exception( 'Login details are not correct.' );
 	}
 
 
@@ -80,7 +80,7 @@ try {
 	if( strtolower($login->user_name) == 'guest' ) {
 		$guest_login = true;
 		if( get_ip(false) != get_ip(true) ) {
-			throw new Exception( 'You seem to be using a proxy to connect to pr2. You won\'t be able to connect as a guest, but you can create an account to play.' );
+			throw new Exception( 'You seem to be using a proxy to connect to PR2. You won\'t be able to connect as a guest, but you can create an account to play.' );
 		}
 		$user = $db->grab_row('users_select_guest');
 		check_if_banned($db, $user->user_id, $ip);
