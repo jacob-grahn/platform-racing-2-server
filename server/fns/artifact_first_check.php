@@ -19,8 +19,8 @@ function artifact_first_check($port, $player) {
 			
 			// make a prize array for the game to show the user
 			$artifact_first_prize_popup = json_encode(array(
-				"type" => "body",
-				"id" => 21,
+				"type" => "eHat",
+				"id" => 14,
 				"name" => "Bubble Set",
 				"desc" => "For finding the artifact first, you earned your very own bubble set!",
 				"universal" => true
