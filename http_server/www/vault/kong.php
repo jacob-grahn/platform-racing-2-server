@@ -2,17 +2,17 @@
 
 header("Content-type: text/plain");
 
-require_once( 'kong_order_placed.php' );
-require_once( 'kong_order_request.php' );
-require_once( 'vault_descriptions.php' );
-require_once( '../../fns/all_fns.php' );
+require_once(__DIR__ . '/kong_order_placed.php');
+require_once(__DIR__ . '/kong_order_request.php');
+require_once(__DIR__ . '/vault_descriptions.php');
+require_once(__DIR__ . '/../../fns/all_fns.php');
 
 try {
 
 	//--- parse the incoming message
 	$encrypted_request = $_POST['signed_request'];
 	$request = parse_signed_request( $encrypted_request, $KONG_API_PASS );
-	
+
 	//--- connect
 	$db = new DB();
 
