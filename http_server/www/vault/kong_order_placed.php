@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../../random_str.php');
+require_once(__DIR__ . '/../../fns/random_str.php');
 
 
 function order_placed_handler( $db, $request ) {
