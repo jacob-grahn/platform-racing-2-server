@@ -219,12 +219,12 @@ function check_moderator($db, $check_ref=true, $min_power=2) {
 
 //returns true if you are logged in as a moderator, false if you are not
 function is_moderator($db, $check_ref=true) {
-	$id_mod = false;
+	$is_mod = false;
 	try {
 		check_moderator($db, $check_ref);
 		$is_mod = true;
 	}
-	catch ($e) {
+	catch (Exception $e) {
 	}
 
 	return $is_mod;
