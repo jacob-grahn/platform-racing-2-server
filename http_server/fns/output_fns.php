@@ -1,6 +1,6 @@
 <?php
 
-require_once('../../fns/all_fns.php');
+require_once(__DIR__ . '/all_fns.php');
 
 $formatting_for_mods = is_moderator($db, false);
 
