@@ -14,10 +14,6 @@ try {
 	
 	//connect
 	$db = new DB();
-
-
-	//make sure you're a moderator
-	$mod = check_moderator($db, false);
 	
 	
 	//get actions for this page

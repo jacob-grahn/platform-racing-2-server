@@ -24,10 +24,6 @@ try{
 	$mod = check_moderator($db, false);
 
 
-	//make it easy to get around
-	output_mod_navigation();
-
-
 	if(isset($user_id) && $user_id != 0) {
 
 		//get dem infos

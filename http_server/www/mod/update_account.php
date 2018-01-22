@@ -30,7 +30,6 @@ try {
 
 } catch (Exception $e) {
     output_header('Update PR2 Account');
-    output_mod_navigation();
     echo 'error=' . ($e->getMessage());
     output_footer();
 }

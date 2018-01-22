@@ -19,9 +19,6 @@ try {
 	$mod = check_moderator($db);
 	
 	
-	output_mod_navigation();
-	
-	
 	//get the user's name
 	$row = $db->grab_row( 'user_select', array($user_id) );
 	$name = $row->name;
