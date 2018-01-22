@@ -1,12 +1,8 @@
 <?php
 
-require_once(__DIR__ . '/all_fns.php');
-
-$db = new DB();
-$formatting_for_mods = is_moderator($db, false);
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function output_header($title='', $mod=false) {
+function output_header($title='', $formatting_for_mods=false) {
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -53,13 +49,6 @@ function output_header($title='', $mod=false) {
 }
 
 
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function output_mod_header($title='') {
-	output_header($title, true);
-}
-
-
 function output_footer() {
 ?>
 
@@ -83,10 +72,16 @@ function output_footer() {
 function output_mod_navigation() {
 ?>
 
-<p>
-<b><a href="//pr2hub.com/mod/reported_messages.php">Reported Messages</a> - <a href="//pr2hub.com/mod/player_search.php">Player Search</a> - <a href="//pr2hub.com/bans/bans.php">Ban Log</a></b>
-</p>
-<p>---</p>
+	<p>
+		<b>
+			<a href="//pr2hub.com/mod/reported_messages.php">Reported Messages</a>
+			-
+			<a href="//pr2hub.com/mod/player_search.php">Player Search</a>
+			-
+			<a href="//pr2hub.com/bans/bans.php">Ban Log</a>
+		</b>
+	</p>
+	<p>---</p>
 
 <?php
 }
