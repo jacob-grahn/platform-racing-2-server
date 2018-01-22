@@ -43,11 +43,17 @@ try {
 		throw new Exception('Could not publish level. Check the title and note for obscenities.');
 	}
 
+	// ensure the level survived the upload without data curruption
+	$local_hash = md5($title . strtolower($user_name) . $data . $LEVEL_SALT);
+	if ($local_hash != $remote_hash) {
+		throw new Exception('The level did not upload correctly. Maybe try again?');
+	}
+
+	//
 	$account = $db->grab_row('user_select', array($user_id));
 	if($account->power <= 0) {
 		throw new Exception('Guests can not save levels');
 	}
-
 
 	//limit submissions from a single ip
 	$safe_min_time = $db->escape( $time - 30 );
@@ -110,7 +116,7 @@ try {
 
 
 
-	//hash the password
+	// hash the password
 	$hash2 = NULL;
 	if($has_pass == 1) {
 		if($pass_hash == '') {
@@ -142,8 +148,7 @@ try {
 	$str .= $hash;
 
 
-	//save this file the new level system
-
+	//save this file to the new level system
 	$result = $s3->putObjectString($str, 'pr2levels1', $level_id.'.txt');
 	if(!$result) {
 		throw new Exception('A server error was encountered. Your level could not be saved.');
