@@ -19,10 +19,9 @@ try {
 	$account = $db->grab_row( 'user_select_expanded', array( $user_id ) );
 	$guild = $db->grab_row( 'guild_select', array( $account->guild ) );
 	
-	
 	//--- sanity check
 	if( $account->power <= 0 ) {
-		throw new Exception( 'Guests can not edit guilds.' );
+		throw new Exception( 'Guests cannot edit guilds.' );
 	}
 	if( $account->guild == 0 ) {
 		throw new Exception( 'You are not a member of a guild.' );
@@ -31,16 +30,22 @@ try {
 		throw new Exception( 'You are not the owner of this guild.' );
 	}
 	if( !isset( $note ) ) {
-		throw new Exception( 'Note not recieved.' );
+		throw new Exception( 'Your guild needs a prose.' );
 	}
 	if( !isset( $guild_name ) ) {
-		throw new Exception( 'Guild name not recieved.' );
+		throw new Exception( 'Your guild needs a name.' );
 	}
 	if( !isset( $emblem ) ) {
-		throw new Exception( 'Emblem not recieved.' );
+		throw new Exception( 'Your guild needs an emblem.' );
 	}
 	if( preg_match( '/.jpg$/', $emblem) !== 1 || preg_match( '/\.\.\//', $emblem) === 1 || preg_match( '/\?/', $emblem) === 1) {
-	    throw new Exception('Emblem invalid');
+		throw new Exception('Emblem invalid');
+	}
+	if( preg_match( "/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
+		throw new Exception('Guild name invalid; a-z, 0-9, space, and - are the only allowed characters.');
+	}
+	if( strlen(trim($guild_name)) === 0 ) {
+		throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
 	}
 	
 	

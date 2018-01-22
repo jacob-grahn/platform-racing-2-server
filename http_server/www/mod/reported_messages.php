@@ -13,21 +13,19 @@ $safe_count = addslashes($count);
 
 $next_form_id = 1;
 
-output_mod_header('Reported Messages');
-
 
 try {
 
 	//connect
 	$db = new DB();
 
-
 	//make sure you're a moderator
 	$mod = check_moderator($db, false);
 
+	// output header
+	output_header('Reported Messages', true);
 
 	//navigation
-	output_mod_navigation();
 	output_pagination($start, $count);
 	echo('<p>---</p>');
 

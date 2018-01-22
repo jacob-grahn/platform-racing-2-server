@@ -18,13 +18,13 @@ try {
 
     //lookup
     if($action === 'lookup') {
-	output_form($db, $user_id);
+	     output_form($db, $user_id);
     }
 
 
     //update
     if($action === 'update') {
-	update($db);
+	     update($db);
     }
 
 
@@ -47,7 +47,7 @@ try {
 
 function output_form($db, $user_id) {
 
-    output_header('Update PR2 Account');
+    output_header('Update PR2 Account', true);
 
     echo '<form name="input" action="update_account.php" method="get">';
 

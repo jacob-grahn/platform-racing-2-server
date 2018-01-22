@@ -27,8 +27,8 @@ body {
 }
 
 #header {
-	width: 100%;
-	height: 175px;
+	width: 500px;
+	height: 125px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -80,7 +80,7 @@ body {
 
 .content {
 	border-radius: 7px;
-	max-width: 55%;
+	max-width: 650px;
 	margin-left: auto;
 	margin-right: auto;
 	padding: 20px;
@@ -95,7 +95,7 @@ body {
 
 .above_game_ad {
 	text-align: center;
-	padding: 15px 0 15px 0;
+	padding: 0px 0 35px 0;
 	position: relative;
 	top: -5px;
 }
@@ -106,4 +106,13 @@ body {
 
 .date {
 	font-color: #666666;
+}
+
+#artifact {
+	border-radius: 7px;
+	max-width: 650px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 20px;
+	background-color: #EFF4F8;
 }

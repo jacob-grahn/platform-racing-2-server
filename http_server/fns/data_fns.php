@@ -195,6 +195,7 @@ function check_moderator($db, $check_ref=true, $min_power=2) {
 	if($check_ref) {
 		$ref = $_SERVER['HTTP_REFERER'];
 		if(
+			strpos($ref, 'http://pr2hub.com') !== 0 &&
 			strpos($ref, 'https://pr2hub.com') !== 0 &&
 			strpos($ref, 'http://cdn.jiggmin.com') !== 0 &&
 			strpos($ref, 'http://chat.kongregate.com') !== 0 &&
@@ -218,12 +219,12 @@ function check_moderator($db, $check_ref=true, $min_power=2) {
 
 //returns true if you are logged in as a moderator, false if you are not
 function is_moderator($db, $check_ref=true) {
-	$is_mod = true;
+	$is_mod = false;
 	try {
 		check_moderator($db, $check_ref);
+		$is_mod = true;
 	}
-	catch(Exception $e) {
-		$is_mod = false;
+	catch (Exception $e) {
 	}
 
 	return $is_mod;

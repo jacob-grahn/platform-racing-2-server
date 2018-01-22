@@ -6,7 +6,7 @@ require_once('../../fns/output_fns.php');
 $ban_id = $_GET['ban_id'];
 $safe_ban_id = addslashes($ban_id);
 
-output_header('View Ban');
+
 
 try{
 	$db = new DB();
@@ -22,9 +22,7 @@ try{
 
 	//output navigation if you're a moderator
 	$is_mod = is_moderator($db, false);
-	if($is_mod) {
-		output_mod_navigation();
-	}
+	output_header('View Ban', $is_mod);
 }
 catch(Exception $e){
 	echo 'Error: '.$e->getMessage();

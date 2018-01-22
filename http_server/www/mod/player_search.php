@@ -5,34 +5,29 @@ require_once('../../fns/output_fns.php');
 
 $message = find('message', '');
 
-output_header('Player Search');
-
 try {
-	
-	//connect
-	$db = new DB();	
 
+	// connect
+	$db = new DB();
 
-	//make sure you're a moderator
+	// make sure you're a moderator
 	$mod = check_moderator($db, false);
-	
-	output_mod_navigation();
-	
+
+	// header
+	output_header('Player Search', true);
+
+	//
 	if($message != '') {
 		echo "<p><b>$message</b></p>";
 	}
-	
-	
+
 	?>
-	
 	<form action="do_player_search.php" method="get">
 		Name <input type="text" value="" name="name" />
 		<input type="submit" value="Search" />
 	</form>
-	
-	
 	<?php
-	
+
 }
 
 catch(Exception $e){

@@ -42,7 +42,7 @@ try {
 
 
 	//redirect to a page showing the lifted ban
-	header("Location: show_record.php?ban_id=$ban_id") ;
+	header("Location: ../bans/show_record.php?ban_id=$ban_id") ;
 }
 
 catch(Exception $e){
