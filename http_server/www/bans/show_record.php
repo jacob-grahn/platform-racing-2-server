@@ -87,12 +87,12 @@ if($lifted == 1) {
 
 //make the names clickable for moderators
 if($is_mod === true) {
-	$html_mod_name = "<a href='player_info.php?user_id=$mod_user_id'>$html_mod_name</a>";
+	$html_mod_name = "<a href='/mod/player_info.php?user_id=$mod_user_id'>$html_mod_name</a>";
 	if($banned_user_id != 0 && $account_ban == 1) {
-		$html_banned_name = "<a href='player_info.php?user_id=$banned_user_id'>$html_banned_name</a>";
+		$html_banned_name = "<a href='/mod/player_info.php?user_id=$banned_user_id'>$html_banned_name</a>";
 	}
 	else {
-		$html_banned_name = "<a href='player_info.php?ip=$banned_ip'>$html_banned_name</a>";
+		$html_banned_name = "<a href='/mod/player_info.php?ip=$banned_ip'>$html_banned_name</a>";
 	}
 }
 
@@ -111,8 +111,8 @@ if($is_mod === true) {
 	    echo "<p> ---</p>";
     }
     if($lifted != 1) {
-	echo "<p><a href='ban_edit.php?ban_id=$ban_id'>Edit Ban</a></p>";
-	echo "<p><a href='lift_ban.php?ban_id=$ban_id'>Lift Ban</a></p>";
+	echo "<p><a href='/mod/ban_edit.php?ban_id=$ban_id'>Edit Ban</a></p>";
+	echo "<p><a href='/mod/lift_ban.php?ban_id=$ban_id'>Lift Ban</a></p>";
     }
 }
 
