@@ -59,7 +59,7 @@ try{
 	$from = 'Fred the Giant Cactus <contact@jiggmin.com>';
 	$to = $old_email;
 	$subject = 'PR2 Email Change Confirmation';
-	$body = "Hello! To change the email address on your Platform Racing 2 account, please click the link below.\n\nhttp://pr2hub.com/account_confirm_email_change.php?code=$code";
+	$body = "Hi there $safe_name,\n\nWe received a request to change the email on your account from $old_email to $new_email. If you requested this change, please click the link below to change the email address on your Platform Racing 2 account.\n\nhttp://pr2hub.com/account_confirm_email_change.php?code=$code\n\nIf you didn\'t request this change, you can disregard this email.\n\nAll the best,\nFred";
 	send_email( $from, $to, $subject, $body );
 
 	//--- tell it to the world
