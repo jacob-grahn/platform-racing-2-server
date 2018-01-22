@@ -11,18 +11,16 @@ $safe_user_id = addslashes($user_id);
 
 $banned = 'No';
 
-output_header('Player Info');
-
-
-try{
+try {
 
 	//connect
 	$db = new DB();
 
-
 	//make sure you're a moderator
 	$mod = check_moderator($db, false);
 
+	// header
+	output_header('Player Info', true);
 
 	if(isset($user_id) && $user_id != 0) {
 

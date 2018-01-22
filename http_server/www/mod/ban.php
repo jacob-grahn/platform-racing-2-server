@@ -7,31 +7,33 @@ $user_id = find('user_id');
 $force_ip = find( 'force_ip' );
 $reason = find('reason');
 
-output_header('Ban User');
-
 try {
-	
+
 	//connect
-	$db = new DB();	
+	$db = new DB();
 
 
 	//make sure you're a moderator
 	$mod = check_moderator($db);
-	
-	
+
+
+	// header
+	output_header('Ban User', true);
+
+
 	//get the user's name
 	$row = $db->grab_row( 'user_select', array($user_id) );
 	$name = $row->name;
 	$target_ip = $row->ip;
-	
+
 	if( isset( $force_ip ) && $force_ip != '' ) {
 		$target_ip = $force_ip;
 	}
-	
+
 	echo "<p>Ban $name [$target_ip]</p>";
-	
+
 	?>
-	
+
 	<form action="../ban_user.php" method="get">
 		<input type="hidden" value="yes" name="using_mod_site"  />
 		<input type="hidden" value="yes" name="redirect" />
@@ -54,10 +56,10 @@ try {
 		</select>
 		<input type="submit" value="Submit" />
 	</form>
-	
-	
+
+
 	<?php
-	
+
 }
 
 catch(Exception $e){

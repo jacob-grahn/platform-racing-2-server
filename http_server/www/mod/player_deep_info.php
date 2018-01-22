@@ -13,19 +13,20 @@ $name7 = find('name7', '');
 $name8 = find('name8', '');
 $name9 = find('name9', '');
 
-output_header('Player Deep Info');
 
+try {
 
-try{
-	
-	//connect
+	// connect
 	$db = new DB();
-	
-	
-	//make sure you're an admin
+
+
+	// make sure you're an admin
 	$mod = check_moderator($db, false, 3);
-	
-	
+
+	// header
+	output_header('Player Deep Info');
+
+	//
 	echo '<form name="input" action="" method="get">';
 	for( $i=1; $i<10; $i++ ) {
 		$name = ${"name$i"};
@@ -52,7 +53,7 @@ try{
 	}
 	echo '<input type="submit" value="Submit">';
 	echo '</form>';
-	
+
 }
 
 catch(Exception $e){
