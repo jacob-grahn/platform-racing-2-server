@@ -13,6 +13,7 @@ require_once(__DIR__ . '/fns/db_fns.php');
 require_once(__DIR__ . '/fns/data_fns.php');
 require_once(__DIR__ . '/fns/issue_tournament.php');
 require_once(__DIR__ . '/fns/sort_chat_room_array.php');
+require_once(__DIR__ . '/fns/shutdown_server.php');
 require_once(__DIR__ . '/fns/utils.php');
 require_once(__DIR__ . '/fns/vault.php');
 
@@ -28,14 +29,11 @@ require_once(__DIR__ . '/client/ping.php');
 require_once(__DIR__ . '/client/request_login_id.php');
 
 require_once(__DIR__ . '/process/check_status.php');
-require_once(__DIR__ . '/process/fail_login.php');
 require_once(__DIR__ . '/process/mark_human.php');
 require_once(__DIR__ . '/process/mark_robot.php');
-require_once(__DIR__ . '/process/process_message.php');
 require_once(__DIR__ . '/process/register_login.php');
 require_once(__DIR__ . '/process/send_message_to_player.php');
 require_once(__DIR__ . '/process/shut_down.php');
-require_once(__DIR__ . '/process/shutdown_server.php');
 require_once(__DIR__ . '/process/start_new_day.php');
 require_once(__DIR__ . '/process/unlock_super_booster.php');
 require_once(__DIR__ . '/process/update_cycle.php');
