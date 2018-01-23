@@ -93,19 +93,21 @@ class pr2_server_client extends socketServerClient {
 		try {
 			$array = explode('`', $string);
 			if ($this->process) {
-				$function = "process_$array[0]";
+				$call = $array[0];
+				$function = "process_$call";
 				array_splice($array, 0, 1);
 				$data = join('`', $array);
 			}
 			else {
 				$hash = $array[0];
 				$send_num = $array[1];
-				$function = "client_$array[2]";
+				$call = $array[2];
+				$function = "client_$call";
 
 				array_splice($array, 0, 3);
 				$data = join('`', $array);
 
-				$str_to_hash = $this->key . $send_num.'`'.$function.'`'.$data;
+				$str_to_hash = $this->key . $send_num.'`'.$call.'`'.$data;
 				$local_hash = md5($str_to_hash);
 				$sub_hash = substr($local_hash, 0, 3);
 
