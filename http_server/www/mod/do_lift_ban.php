@@ -40,9 +40,19 @@ try {
 		throw new Exception('Could not lift ban');
 	}
 
+	if ($reason != '') {
+		$reason = "Reason: " . $reason;
+	}
+	else {
+		$reason = "There was no reason given";
+	}
+	
+	//record the change
+	$db->call('mod_action_insert', array($user_id, "$name lifted ban $ban_id. $reason.", 0, get_ip()));
+
 
 	//redirect to a page showing the lifted ban
-	header("Location: ../bans/show_record.php?ban_id=$ban_id") ;
+	header("Location: show_record.php?ban_id=$ban_id") ;
 }
 
 catch(Exception $e){
