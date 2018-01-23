@@ -3,7 +3,6 @@
 require_once('../fns/all_fns.php');
 
 $level_id = find('level_id', 'none');
-$ip = get_ip();
 
 try{	
 	//error check
@@ -22,7 +21,11 @@ try{
 	}
 	
 	//check for the level's information
-	$level = $db->call('pr2_levels', array($level_id));
+	$level = $db->grab_row( 'level_select', array($level_id) );
+	$l_title = $level->title;
+	$l_creator = $level->user_id;
+	$l_note = $level->note;
+	
 	
 	//unpublish the level
 	$db->call('level_unpublish', array($level_id));
@@ -33,11 +36,10 @@ try{
 	//action log
 	$name = $mod->name;
 	$user_id = $mod->user_id;
-	$level_name = $level->title;
-	$level_desc = $level->note;
+	$ip = $mod->ip;
 	
 	//record the change
-	$db->call('mod_action_insert', array($user_id, "$name unpublished level $level_id from $ip {level_name: $level_name, level_note: $level_desc, creator: ????????????????}", $user_id, $ip));
+	$db->call('mod_action_insert', array($user_id, "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}", $user_id, $ip));
 	
 }
 
