@@ -17,7 +17,7 @@ try {
 	$db = new DB();
 
 	//check thier login
-	$user_id = token_login($db);
+	$user_id = token_login($db, false);
 
 	//check the pass
 	$hash2 = sha1($hash . $LEVEL_PASS_SALT);
