@@ -314,7 +314,8 @@ function check_if_banned($db, $user_id, $ip){
 		$output = "This account or ip address has been banned.\n"
 					."Reason: $reason \n"
 					."This ban will expire in $time_left. \n"
-					.'You can see more details about this ban at pr2hub.com/bans/show_record.php?ban_id='.$ban_id;
+					."You can see more details about this ban at pr2hub.com/bans/show_record.php?ban_id=$ban_id. \n\n"
+					."If you feel that this ban is unjust, you can dispute it. Follow the instructions outlined at jiggmin2.com/forums/showthread.php?tid=110.";
 
 		throw new Exception($output);
 	}
