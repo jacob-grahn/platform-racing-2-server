@@ -221,7 +221,7 @@ Rabbit = 39</pre>';
 
 
 function update($db) {
-    $guild_id = (int) find('id');
+    $guild_id = (int) find('guild');
     $user_id = (int) find('id');
 
     $user = $db->grab_row('user_select', array($user_id));
