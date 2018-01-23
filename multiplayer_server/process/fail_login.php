@@ -1,7 +1,7 @@
 <?php
 
 //--- disconnects if the log in failed -------------------------------------
-function client_fail_login ($socket, $data) {
+function process_fail_login ($socket, $data) {
 	if($socket->process == true){
 		global $login_array;
 

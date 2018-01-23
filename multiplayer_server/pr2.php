@@ -21,7 +21,6 @@ require_once(__DIR__ . '/socket/socket.php');
 require_once(__DIR__ . '/client/become_process.php');
 require_once(__DIR__ . '/client/check_status.php');
 require_once(__DIR__ . '/client/close.php');
-require_once(__DIR__ . '/client/fail_login.php');
 require_once(__DIR__ . '/client/ingame.php');
 require_once(__DIR__ . '/client/lobby.php');
 require_once(__DIR__ . '/client/moderation.php');
@@ -29,6 +28,7 @@ require_once(__DIR__ . '/client/ping.php');
 require_once(__DIR__ . '/client/request_login_id.php');
 
 require_once(__DIR__ . '/process/check_status.php');
+require_once(__DIR__ . '/process/fail_login.php');
 require_once(__DIR__ . '/process/mark_human.php');
 require_once(__DIR__ . '/process/mark_robot.php');
 require_once(__DIR__ . '/process/process_message.php');
