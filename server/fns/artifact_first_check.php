@@ -19,8 +19,8 @@ function artifact_first_check($port, $player) {
 			
 			// make a prize array for the game to show the user
 			$artifact_first_prize_popup = json_encode(array(
-				"type" => "body",
-				"id" => 21,
+				"type" => "eHat",
+				"id" => 14,
 				"name" => "Bubble Set",
 				"desc" => "For finding the artifact first, you earned your very own bubble set!",
 				"universal" => true
@@ -36,7 +36,13 @@ function artifact_first_check($port, $player) {
 			$player->write( 'winPrize`' . $artifact_first_prize_popup );
 			
 			// pm the user (finishing touch!)
-			$artifact_first_pm = 'Dear '.$safe_user_name.',\r\rI\'d like to sincerely congratulate you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.\r\rThanks for playing Platform Racing 2!\r\r - Jiggmin';
+			$artifact_first_pm = 'Dear '.$safe_user_name.',
+
+I\'d like to sincerely congratulate you for finding the artifact first! To commemorate this momentous occasion, you\'ve been awarded with your very own bubble set.
+
+Thanks for playing Platform Racing 2!
+
+- Jiggmin';
 			
 			$db->call( 'message_insert', array($user_id, 1, $artifact_first_pm, '0') );			
 		}

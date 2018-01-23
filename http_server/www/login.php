@@ -145,7 +145,15 @@ try {
 		$db->call('pr2_insert', array($user_id));
 
 		//--- send them a welcome pm
-		$welcome_message = 'Welcome to Platform Racing 2, '.$user_name.'!\r\r<a href="https://grahn.io" target="_blank"><u><font color="#0000FF">Click here</font></u></a> to read about the latest Platform Racing news on my blog.\r\rIf you have any questions or comments, send me an email at <a href="mailto:jacob@grahn.io?subject=Questions or Comments about PR2" target="_blank"><u><font color="#0000FF">jacob@grahn.io</font></u></a>.\r\rThanks for playing, I hope you enjoy.\r\r- Jacob';
+		$welcome_message = 'Welcome to Platform Racing 2, '.$user_name.'!
+
+<a href="https://grahn.io" target="_blank"><u><font color="#0000FF">Click here</font></u></a> to read about the latest Platform Racing news on my blog.
+
+If you have any questions or comments, send me an email at <a href="mailto:jacob@grahn.io?subject=Questions or Comments about PR2" target="_blank"><u><font color="#0000FF">jacob@grahn.io</font></u></a>.
+
+Thanks for playing, I hope you enjoy.
+
+- Jacob';
 		
 		$db->call('message_insert', array($user_id, 1, $welcome_message, '0'));
 
