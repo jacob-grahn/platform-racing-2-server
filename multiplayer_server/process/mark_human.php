@@ -1,7 +1,7 @@
 <?php
 
 //--- mark an ip as a good human ------------------------------------------------------
-function mark_human ($socket, $data) {
+function process_mark_human ($socket, $data) {
 	if($socket->process == true) {
 		$ip = $data;
 		global $player_array;

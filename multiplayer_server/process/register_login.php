@@ -1,7 +1,7 @@
 <?php
 
 //--- creates a player if the log in was successful -----------------------
-function register_login ($server_socket, $data) {
+function process_register_login ($server_socket, $data) {
   if ($server_socket->process == true) {
   	global $login_array;
   	global $player_array;
