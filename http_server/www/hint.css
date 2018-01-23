@@ -115,4 +115,6 @@ body {
 	margin-right: auto;
 	padding: 20px;
 	background-color: #EFF4F8;
+	position: relative;
+	top: 200px;
 }
