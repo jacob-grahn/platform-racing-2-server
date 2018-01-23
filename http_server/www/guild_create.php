@@ -67,7 +67,7 @@ try {
 
 catch(Exception $e){
 	$reply = new stdClass();
-	$reply->error = '' . $e->getMessage();
+	$reply->error = $e->getMessage();
 	echo json_encode( $reply );
 }
 
