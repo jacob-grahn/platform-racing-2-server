@@ -1,12 +1,10 @@
-#!/usr/bin/php
-
 <?php
 
 require_once(__DIR__ . '/env.php');
-require_once(__DIR__ . '/server/fns/management_fns.php');
-require_once(__DIR__ . '/server/fns/all_fns.php');
+require_once(__DIR__ . '/multiplayer_server/fns/all_fns.php');
+require_once(__DIR__ . '/multiplayer_server/fns/management_fns.php');
 
-$my_ip = exec(__DIR__ . '/get_server_ip');
+// $my_ip exec(__DIR__ . '/get_server_ip');
 
 output('testing if servers are running on server '.$my_ip.'... ');
 
@@ -24,9 +22,8 @@ $servers = $db->to_array( $db->call( 'servers_select', array() ) );
 foreach( $servers as $server ) {
 	output( $server->server_name );
 	output( $server->address );
-	output( $my_ip );
-	if($server->address == $my_ip) {
-		test_server(__DIR__ . '/server/pr2.php', 'localhost', $server->port, $server->salt, $server->server_id);
+	if($server->address == $SERVER_IP) {
+		test_server(__DIR__ . '/multiplayer_server/pr2.php', 'localhost', $server->port, $server->salt, $server->server_id);
 	}
 }
 

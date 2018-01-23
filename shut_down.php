@@ -1,9 +1,8 @@
-#!/usr/bin/php
 <?php
 
-require_once(__DIR__ . '/server/fns/DB.php');
-require_once(__DIR__ . '/server/fns/db_fns.php');
-require_once(__DIR__ . '/server/fns/management_fns.php');
+require_once(__DIR__ . '/multiplayer_server/fns/DB.php');
+require_once(__DIR__ . '/multiplayer_server/fns/db_fns.php');
+require_once(__DIR__ . '/multiplayer_server/fns/management_fns.php');
 
 $db = new DB();
 
