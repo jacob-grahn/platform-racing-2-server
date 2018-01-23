@@ -1,6 +1,7 @@
 <?php
 
 require_once( '../fns/all_fns.php' );
+$token = mysqli_real_escape_string($_GET['token']);
 
 try {
 	
@@ -15,7 +16,7 @@ try {
 	
 	
 	//--- check thier login
-	$user_id = token_login($db, false);
+	$user_id = use_login_token($db, $token);
 	$account = $db->grab_row( 'user_select_expanded', array( $user_id ) );
 	$guild = $db->grab_row( 'guild_select', array( $account->guild ) );
 	
@@ -46,6 +47,9 @@ try {
 	}
 	if( strlen(trim($guild_name)) === 0 ) {
 		throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
+	}
+	if( is_obscene($guild_name) || is_obscene($note) ) {
+		throw new Exception('Keep the guilds clean, pretty please. :)');
 	}
 	
 	
