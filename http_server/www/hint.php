@@ -15,6 +15,7 @@
 				<img src="img/artifact_hint.png"></img>
 				<br/>
 				<img src="img/artifact.png" width="80px" height="70px"></img>
+		<br/>
                 <?php
 		try {
                     $file = file_get_contents("https://pr2hub.com/files/artifact_hint.txt");
