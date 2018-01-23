@@ -3,7 +3,7 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$guild_id = find('id');
+$guild_id = find('guild_id');
 $action = find('action', 'lookup');
 
 try {
