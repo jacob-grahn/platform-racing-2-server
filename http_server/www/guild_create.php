@@ -39,10 +39,10 @@ try {
 		throw new Exception( 'Your guild needs an emblem.' );
 	}
 	if( preg_match( '/.jpg$/', $emblem) !== 1 || preg_match( '/\.\.\//', $emblem) === 1 || preg_match( '/\?/', $emblem) === 1) {
-		throw new Exception('Emblem invalid');
+		throw new Exception('Guild emblem is invalid.');
 	}
 	if( preg_match( "/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
-		throw new Exception('Guild name invalid; a-z, 0-9, space, and - are the only allowed characters.');
+		throw new Exception('Guild name is invalid. The allowed characters are: a-z, 0-9, Space, and -.');
 	}
 	if( strlen(trim($guild_name)) === 0 ) {
 		throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
@@ -67,7 +67,7 @@ try {
 
 catch(Exception $e){
 	$reply = new stdClass();
-	$reply->error = 'Error: ' . $e->getMessage();
+	$reply->error = $e->getMessage();
 	echo json_encode( $reply );
 }
 
