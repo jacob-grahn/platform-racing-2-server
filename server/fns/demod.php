@@ -46,6 +46,17 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 		if(!$result) {
 			throw new Exception("Could not demote $user_name due to a database error.");
 		}
+		
+		//htmlspecialchars
+		$html_admin_name = htmlspecialchars($admin->name);
+		$html_demoted_name = htmlspecialchars($user_name);
+		$html_port = htmlspecialchars($port);
+		
+		$ip = $admin->ip;
+		
+		// log action in action log
+		$db->call('mod_action_insert', array($admin->user_id, "$html_admin_name demoted $html_demoted_name from $ip on port $html_port", $admin->user_id, $ip));
+		
 	}
 
 	catch(Exception $e){

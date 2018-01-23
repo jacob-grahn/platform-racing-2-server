@@ -5,6 +5,7 @@ require_once('../../fns/output_fns.php');
 
 $message_id = find('message_id');
 $safe_message_id = addslashes($message_id);
+$ip = get_ip();
 
 
 	//connect
@@ -21,6 +22,14 @@ $safe_message_id = addslashes($message_id);
 							LIMIT 1");
 	if(!$result) {
 		throw new Exception('Could not mark message as archived.');
+	}
+
+	if ($mod->power >= 2) {
+		//htmlspecialchars
+		$html_mod_name = htmlspecialchars($mod->name);
+		
+		//record the change
+		$db->call('mod_action_insert', array($mod->user_id, "$html_mod_name archived the report of PM $safe_message_id from $ip", $mod->user_id, $ip));
 	}
 	
 ?>

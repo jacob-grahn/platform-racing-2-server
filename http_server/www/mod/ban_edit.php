@@ -6,6 +6,8 @@ require_once('../../fns/output_fns.php');
 $action = find('action', 'none');
 $ban_id = find('ban_id');
 
+$ip = get_ip();
+
 try {
     
     
@@ -49,7 +51,7 @@ try {
 	$db->query($query, 'ban_update', 'Could not update ban. query: ' . $query);
 	
 	//record the change
-	$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id {account_ban: $safe_account_ban, ip_ban: $safe_ip_ban, expire_time: $safe_expire_time, notes: $safe_notes}", 0, get_ip()));
+	$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id from $ip {account_ban: $safe_account_ban, ip_ban: $safe_ip_ban, expire_time: $safe_expire_time, notes: $safe_notes}", $mod->user_id, $ip));
 	
 	//redirect to the ban listing
 	header("Location: http://pr2hub.com/bans/show_record.php?ban_id=$ban_id");

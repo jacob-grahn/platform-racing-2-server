@@ -132,6 +132,18 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			if(!$result) {
 				throw new Exception('Could not set limits on the new moderator\'s power.');
 			}
+			
+			//htmlspecialchars
+			$html_admin_name = htmlspecialchars($admin->name);
+			$html_promoted_name = htmlspecialchars($promoted_player->name);
+			$html_type = htmlspecialchars($type);
+			$html_port = htmlspecialchars($port);
+			
+			$ip = $admin->ip;
+			
+			// log action in action log
+			$db->call('mod_action_insert', array($admin->user_id, "$html_admin_name promoted $html_promoted_name to a $html_type moderator from $ip on port $html_port", $admin->user_id, $ip));
+			
 		}
 
 		catch(Exception $e){
