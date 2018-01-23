@@ -5,6 +5,7 @@ require_once('../fns/Encryptor.php');
 
 $level_id = find('courseID');
 $hash = find('hash');
+$token = mysqli_real_escape_string($_GET['token']);
 
 try {
 
@@ -17,7 +18,7 @@ try {
 	$db = new DB();
 
 	//check thier login
-	$user_id = token_login($db);
+	$user_id = use_login_token($db, $token);
 
 	//check the pass
 	$hash2 = sha1($hash . $LEVEL_PASS_SALT);
