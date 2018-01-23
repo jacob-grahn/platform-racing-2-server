@@ -8,6 +8,8 @@ try {
 	$user_id = use_login_token($db, $token);
 	
 	$db->call('messages_delete_all', array($user_id) );
+	
+	echo "success=true";
 }
 
 catch(Exception $e){
