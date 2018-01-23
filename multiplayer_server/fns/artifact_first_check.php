@@ -15,12 +15,12 @@ function artifact_first_check($port, $player) {
 		if( $first_finder == $user_id ) {
 			
 			/* What are we gonna tell the player when they win?
-			How about display a prize window with the bubble body and the name "Bubble Set" */
+			How about display a prize window with the bubble head and the name "Bubble Set" */
 			
 			// make a prize array for the game to show the user
 			$artifact_first_prize_popup = json_encode(array(
-				"type" => "eHat",
-				"id" => 14,
+				"type" => "eHead",
+				"id" => 27,
 				"name" => "Bubble Set",
 				"desc" => "For finding the artifact first, you earned your very own bubble set!",
 				"universal" => true
