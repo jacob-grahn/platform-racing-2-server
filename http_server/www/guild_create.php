@@ -48,6 +48,9 @@ try {
 	if( strlen(trim($guild_name)) === 0 ) {
 		throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
 	}
+	if( is_obscene($guild_name) || is_obscene($note) ) {
+		throw new Exception('Keep the guilds clean, pretty please. :)');
+	}
 	
 	
 	//--- add guild to db
