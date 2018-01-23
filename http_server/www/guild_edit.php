@@ -5,9 +5,9 @@ require_once( '../fns/all_fns.php' );
 try {
 	
 	//--- import data
-	$note = find( 'note' );
-	$guild_name = find( 'name' );
-	$emblem = find( 'emblem' );
+	$note = filter_swears(find('note'));
+	$guild_name = filter_swears(find('name'));
+	$emblem = filter_swears(find('emblem'));
 	
 	
 	//--- connect to the db
