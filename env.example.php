@@ -12,6 +12,8 @@ $S3_SECRET = 'secret';
 $S3_PASS = 'pass';
 
 $PROCESS_PASS = 'abc';
+$PROCESS_IP = '127.0.0.1';
+
 $COMM_PASS = 'def';
 $KONG_API_PASS = 'ghi';
 
