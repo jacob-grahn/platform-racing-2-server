@@ -1,8 +1,8 @@
 <?php
 
 require_once(__DIR__ . '/env.php');
-require_once(__DIR__ . '/server/fns/all_fns.php');
-require_once(__DIR__ . '/server/fns/management_fns.php');
+require_once(__DIR__ . '/multiplayer_server/fns/all_fns.php');
+require_once(__DIR__ . '/multiplayer_server/fns/management_fns.php');
 
 // $my_ip exec(__DIR__ . '/get_server_ip');
 
@@ -23,7 +23,7 @@ foreach( $servers as $server ) {
 	output( $server->server_name );
 	output( $server->address );
 	if($server->address == $SERVER_IP) {
-		test_server(__DIR__ . '/server/pr2.php', 'localhost', $server->port, $server->salt, $server->server_id);
+		test_server(__DIR__ . '/multiplayer_server/pr2.php', 'localhost', $server->port, $server->salt, $server->server_id);
 	}
 }
 
