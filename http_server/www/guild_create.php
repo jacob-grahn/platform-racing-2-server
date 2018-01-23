@@ -1,6 +1,7 @@
 <?php
 
 require_once( '../fns/all_fns.php' );
+$token = mysqli_real_escape_string($_GET['token']);
 
 try {
 	
@@ -14,8 +15,8 @@ try {
 	$db = new DB();
 	
 	
-	//--- check thier login
-	$user_id = token_login($db, false);
+	//--- check their login
+	$user_id = use_login_token($db, $token);
 	$account = $db->grab_row( 'user_select_expanded', array($user_id) );
 	
 	
