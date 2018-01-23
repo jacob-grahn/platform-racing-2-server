@@ -2,6 +2,8 @@
 
 require_once('../fns/all_fns.php');
 
+$token = mysqli_real_escape_string($_GET['token']);
+
 $x = find('x', 0);
 $y = find('y', 0);
 $level_id = find('levelId', 0);
@@ -16,7 +18,7 @@ try {
 	$db = new DB();
 	
 	//check thier login
-	$user_id = token_login($db);
+	$user_id = use_login_token($db, $token);
 	if( $user_id != 1 && $user_id != 4291976 ) {
 		throw new Exception( 'You are not Fred.' );
 	}

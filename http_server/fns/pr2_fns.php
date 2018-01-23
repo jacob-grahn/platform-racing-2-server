@@ -101,4 +101,18 @@ function guild_count_active( $db, $guild_id ) {
 	return( $active_count );
 }
 
+//--- tests to see if a string contains obscene words ---------------------------------------
+function is_obscene($str){
+	$str = strtolower($str);
+	$bad_array = array('fuck', 'shit', 'nigger', 'nigga', 'whore', 'bitch', 'slut', 'cunt', 'cock', 'dick', 'penis', 'damn', 'spic');
+	$obscene = false;
+	foreach($bad_array as $bad){
+		if(strpos($str, $bad) !== false){
+			$obscene = true;
+			break;
+		}
+	}
+	return $obscene;
+}
+
 ?>
