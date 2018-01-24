@@ -1,7 +1,5 @@
 <?php
 
-/*
-
 require_once('../fns/all_fns.php');
 
 
@@ -222,7 +220,5 @@ function replace_name($name){
 function output( $str ) {
 	echo( "* $str \n" );
 }
-
-*/
 
 ?>
