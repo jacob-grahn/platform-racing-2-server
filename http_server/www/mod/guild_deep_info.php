@@ -3,7 +3,7 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$guild_id = find('id', 0);
+$guild_id = find('guild_id', 0);
 
 output_header('Guild Deep Info');
 
@@ -17,13 +17,17 @@ try{
 	//make sure you're an admin
 	$mod = check_moderator($db, false, 3);
 	
+	if ($guild_id == 0) {
+		$guild_id = '';
+	}
+	
 	
 	echo '<form name="input" action="" method="get">';
 	echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'"><br>';
 	if( $guild_id != '' ) {
 		try {
-			$guild = $db->grab_row( 'guild_select', array($guild_id) );
-			$members = $db->grab_row( 'guild_select_members', array($guild->guild_id), '', true );
+			$guild = $db->grab_row( 'guild_select', array($guild_id), 'Could not find a guild with that id.' );
+			$members = $db->call( 'guild_select_members', array($guild_id) );
 			echo "Guild ID: $guild->guild_id <br/>";
 			output_object( $guild );
 			output_objects( $members );
