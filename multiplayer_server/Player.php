@@ -5,7 +5,6 @@ class Player {
 	public $socket;
 	public $user_id;
 	public $guild_id;
-	public $human;
 
 	public $name;
 	public $rank;
@@ -148,8 +147,6 @@ class Player {
 		$socket->player = $this;
 		$this->active_rank = $this->rank + $this->rt_used;
 		$this->last_save_time = time();
-		$this->human = !Robots::is_robot($this->ip);
-		$this->hostage_exp_points = 0;
 
 		global $player_array;
 		global $max_players;
@@ -191,10 +188,6 @@ class Player {
 
 
 	public function inc_exp($exp) {
-		if(Robots::is_robot($this->ip)) {
-			$exp = 0;
-		}
-
 		$max_rank = RankupCalculator::get_exp_required($this->active_rank+1);
 		$this->write('setExpGain`'.$this->exp_points.'`'.($this->exp_points+$exp).'`'.$max_rank);
 		$this->exp_points += $exp;
@@ -700,9 +693,6 @@ class Player {
 			$part = $parts_available[0];
 			$this->{$type} = $part;
 		}
-		/*if( array_search($part, $epic_parts_available) === false ) {
-			$this->{$type.'_color_2'} = -1;
-		}*/
 	}
 
 

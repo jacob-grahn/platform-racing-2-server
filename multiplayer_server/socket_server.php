@@ -25,7 +25,6 @@ class pr2_server extends socketServer {
 		$elapsed = time() - pr2_server::$last_time;
 		TemporaryItems::remove_expired();
 		LocalBans::remove_expired();
-		Robots::remove_expired();
 		if($elapsed > 60*60) {
 			pr2_server::$last_time = time();
 			$this->consider_happy_hour();

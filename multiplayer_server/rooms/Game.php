@@ -59,9 +59,7 @@ class Game extends Room {
 			$player->finished_race = false;
 			$player->quit_race = false;
 			$this->temp_id++;
-			$player->human = !Robots::is_robot($player->ip);
 			$race_stats = new RaceStats($player->temp_id, $player->name, $player->active_rank, $player->ip);
-			$race_stats->human = $player->human;
 			array_push($this->finish_array, $race_stats);
 			$player->race_stats = $race_stats;
 		}
@@ -510,9 +508,6 @@ class Game extends Room {
 				if( pr2_server::$no_prizes ) {
 					$exp_gain = 0;
 				}
-				if(!$race_stats->human) {
-					$exp_gain = 0;
-				}
 				$tot_exp_gain += $exp_gain;
 				$player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
 			}
@@ -575,19 +570,8 @@ class Game extends Room {
 				artifact_first_check($port, $player);
 			}
 
-			//--- mark humans as robots at certain exp milestones
-			if($player->human && $this->passed_exp_threshold($player->exp_today, $player->exp_today+$tot_exp_gain )) {
-				$player->human = false;
-				$player->write('areYouHuman`');
-			}
-
 			//---
-			if($player->human) {
-				$player->inc_exp($tot_exp_gain);
-			}
-			else {
-				$player->hostage_exp_points = $tot_exp_gain;
-			}
+			$player->inc_exp($tot_exp_gain);
 
 			//lux gain
 			if($tot_lux_gain > 0) {
@@ -758,17 +742,15 @@ class Game extends Room {
 
 
 	private function give_gp( $player ) {
-		if($player->human) {
-			$user_id = $player->user_id;
-			$prev_gp = GuildPoints::get_previous_gp( $user_id, $this->course_id );
-			$earned_gp = floor( $player->race_stats->finish_time / 60 * count($this->player_array) / 4 );
-			if( $prev_gp + $earned_gp > 10 ) {
-				$earned_gp -= ( $prev_gp + $earned_gp ) - 10;
-			}
-			if( $earned_gp >= 1 ) {
-				GuildPoints::submit( $user_id, $this->course_id, $earned_gp );
-				$player->write( "gpGain`$earned_gp" );
-			}
+		$user_id = $player->user_id;
+		$prev_gp = GuildPoints::get_previous_gp( $user_id, $this->course_id );
+		$earned_gp = floor( $player->race_stats->finish_time / 60 * count($this->player_array) / 4 );
+		if( $prev_gp + $earned_gp > 10 ) {
+			$earned_gp -= ( $prev_gp + $earned_gp ) - 10;
+		}
+		if( $earned_gp >= 1 ) {
+			GuildPoints::submit( $user_id, $this->course_id, $earned_gp );
+			$player->write( "gpGain`$earned_gp" );
 		}
 	}
 
