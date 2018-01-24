@@ -44,7 +44,6 @@ function output_form($db, $guild_id) {
     echo '<form name="input" action="update_guild.php" method="get">';
     
 	$guild = $db->grab_row('guild_select', array($guild_id));
-	$members = $db->grab_row('guild_select_members', array($guild->guild_id));
 	echo "guild_id: $guild->guild_id <br>---<br>";
 
 	
@@ -57,7 +56,7 @@ function output_form($db, $guild_id) {
 	echo '<input type="hidden" name="guild_id" value="'.$guild->guild_id.'">';
     
     echo '<br/>';
-    echo '<input type="submit" value="Submit">';
+    echo '<input type="submit" value="Submit">&nbsp;(no confirmation!)';
     echo '</form>';
     
     echo '<br>';
@@ -76,6 +75,7 @@ else {
 }
 
 if (!empty($_GET['recount_members'])) {
+	$members = $db->call('guild_select_members', array($guild->guild_id));
 	$member_count = mysqli_num_rows($members);
 }
 else {
@@ -88,9 +88,15 @@ function update($db) {
     
     $guild = $db->grab_row('guild_select', array($guild_id));
 
-    $db->call( 'guild_update', array($guild_id, find('guild_name'), $emblem, find('note'), $owner_id, $member_count), 'A guild already exists with that name.' );
+    $db->call( 'guild_update', array(
+	    $guild_id,
+	    find('guild_name'),
+	    $emblem,
+	    find('note'),
+	    $owner_id,
+	    $member_count), 'A guild already exists with that name.' );
     
-    header("Location: http://pr2hub.com/mod/guild_deep_info.php?id=" . urlencode(find('guild_id')));
+    header("Location: http://pr2hub.com/mod/guild_deep_info.php?guild_id=" . urlencode(find('guild_id')));
     /*echo('updated! <br>---<br>');
     output_form($db, $user_id);*/
 }

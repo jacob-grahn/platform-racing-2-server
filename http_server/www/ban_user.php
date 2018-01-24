@@ -144,6 +144,17 @@ try{
 		}
 	}
 	
+	//action log
+	if ($reason != '') {
+		$reason = "reason: " . $reason;
+	}
+	else {
+		$reason = "no reason given";
+	}
+	$ip = $mod->ip; // get mod's ip
+	
+	//record the ban in the action log
+	$db->call('mod_action_insert', array($mod->user_id, "$mod_user_name banned $banned_name from $ip {ban_id: $safe_record, duration: $duration, account_ban: $safe_account_ban, ip_ban: $safe_ip_ban, expire_time: $expire_time, reason: $html_reason}", 0, $ip));
 	
 }
 
