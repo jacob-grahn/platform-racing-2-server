@@ -1,5 +1,10 @@
 <?php
 
+<<<<<<< HEAD:server/Player.php
+require_once(__DIR__ . '/../commands/update_pr2_user.php');
+
+=======
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 class Player {
 
 	public $socket;
@@ -252,8 +257,13 @@ class Player {
 	public function send_chat($chat_message) {
 		global $guild_owner;
 		global $player_array;
+<<<<<<< HEAD:server/Player.php
+		$chat_message = htmlspecialchars($chat_message); // html killer
+		
+=======
 		$safe_chat_message = htmlspecialchars($chat_message); // html killer for systemChat
 
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 		switch($chat_message) {
 			case '/b':
 				$chat_effect = 'bold';
@@ -276,7 +286,11 @@ class Player {
 				$chat_effect_tag = NULL;
 				break;
 		}
+<<<<<<< HEAD:server/Player.php
+		
+=======
 
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 		if($this->group <= 0) {
 			$this->write('systemChat`Sorries, guests can\'t send chat messages.');
 		}
@@ -291,6 +305,14 @@ class Player {
 		else if($this->active_rank < 3) {
 			$this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
 		}
+<<<<<<< HEAD:server/Player.php
+		else if( strpos($chat_message, '/tournament ') === 0 || strpos($chat_message, '/t ') === 0 || $chat_message == '/t' ) {
+			global $guild_owner;
+			if( $this->user_id == $guild_owner ) {
+				issue_tournament( $chat_message );
+				if( isset($this->chat_room) ) {
+					announce_tournament( $this->chat_room );
+=======
 		else if(strpos($chat_message, '`') !== false) {
 			$this->write('message`Error: Illegal character in message.');
 		}
@@ -304,6 +326,7 @@ class Player {
 					if(isset($this->chat_room)) {
 						announce_tournament($this->chat_room);
 					}
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 				}
 			}
 			else {
@@ -319,6 +342,15 @@ class Player {
 				$this->write('systemChat`Such powers are reserved for owners of private servers and the PR2 staff team.');
 			}
 		}
+<<<<<<< HEAD:server/Player.php
+		else if(strpos($chat_message, '/a ')) {
+			$announcement = trim(substr($chat_message, 3));
+			$announce_length = strlen($announcement);
+			
+			if ($this->group >= 2 || $this->user_id == $guild_owner) {
+				if($announce_length >= 1) {
+					$this->chat_room->send_chat('systemChat`' . $announcement, $this->user_id);
+=======
 		else if(strpos($chat_message, '/a ') === 0) {
 			$announcement = trim(substr($chat_message, 3));
 			$safe_announcement = htmlspecialchars($announcement); // html killer
@@ -327,12 +359,30 @@ class Player {
 			if ($this->group >= 2 || $this->user_id == $guild_owner) {
 				if($announce_length >= 1) {
 					$this->chat_room->send_chat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement, $this->user_id);
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 				}
 				else {
 					$this->write('systemChat`Your announcement must be at least 1 character.');
 				}
 			}
 			else {
+<<<<<<< HEAD:server/Player.php
+				$this->write('systemChat`Only owners of private servers and the PR2 staff team may make chatroom announcements.');
+			}
+		}
+		else if($chat_message == '/pop' || $chat_message == '/population') {
+			$this->write('systemChat`There are currently '.count($player_array).' people on this server.');
+		}
+		else {
+			$message = 'chat`'.$this->name.'`'.$this->group.'`'.$chat_message;
+			$this->chat_count++;
+			$this->chat_time = time();
+			if(isset($this->chat_room)) {
+				$this->chat_room->send_chat($message, $this->user_id);
+			}
+			else if(isset($this->game_room)) {
+				$this->game_room->send_chat($message, $this->user_id);
+=======
 				$this->write('systemChat`Only owners of private servers and members of the PR2 staff team may make chatroom announcements.');
 			}
 		}
@@ -397,6 +447,7 @@ class Player {
 				else if(isset($this->game_room)) {
 					$this->game_room->send_chat($message, $this->user_id);
 				}
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 			}
 		}
 	}
@@ -759,17 +810,30 @@ class Player {
 
 
 
+<<<<<<< HEAD:server/Player.php
+	public function save_info(){
+		global $port;
+		global $server_id;
+
+=======
 	public function save_info () {
 		global $port;
 		global $server_id;
 		global $db;
 
 		// auto removing some hat?
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 		$index = array_search(27, $this->hat_array);
 		if($index !== false) {
 			array_splice($this->hat_array, $index, 1);
 		}
 
+<<<<<<< HEAD:server/Player.php
+		$user_id = $this->user_id;
+
+		$name = $this->name;
+=======
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 		$rank = $this->rank;
 		$exp_points = $this->exp_points;
 		$group = $this->group;
@@ -813,11 +877,15 @@ class Player {
 		$ip = $this->ip;
 		$tot_exp_gained = $this->exp_today - $this->start_exp_today;
 
+<<<<<<< HEAD:server/Player.php
+		if($this->group == 0){
+=======
 		if( $status == 'offline' ) {
 			$e_server_id = 0;
 		}
 
 		if($this->group == 0) {
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 			$rank = 0;
 			$exp_points = 0;
 			$hat_array = '1';
@@ -838,6 +906,9 @@ class Player {
 			$jumping = 50;
 		}
 
+<<<<<<< HEAD:server/Player.php
+		actually_save_info($port, $name, $rank, $exp_points, $group, $hat_color, $head_color, $body_color, $feet_color, $hat, $head, $body, $feet, $hat_array, $head_array, $body_array, $feet_array, $speed, $acceleration, $jumping, $status, $lux, $rt_used, $ip, $tot_exp_gained, $e_server_id, $hat_color_2, $head_color_2, $body_color_2, $feet_color_2, $epic_hat_array, $epic_head_array, $epic_body_array, $epic_feet_array);
+=======
 		$db->call( 'pr2_update', array( $this->user_id, $rank, $exp_points,
 			$hat_color, $head_color, $body_color, $feet_color,
 			$hat_color_2, $head_color_2, $body_color_2, $feet_color_2,
@@ -852,11 +923,16 @@ class Player {
 		$db->call( 'rank_token_update', array( $this->user_id, $rt_used ), MYSQLI_ASYNC );
 		$db->call( 'exp_today_add', array( 'id-' . $this->user_id, $tot_exp_gained ), MYSQLI_ASYNC ); // todo $exp_today
 		$db->call( 'exp_today_add', array( 'ip-' . $ip, $tot_exp_gained ), MYSQLI_ASYNC );
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 	}
 
 
 
+<<<<<<< HEAD:server/Player.php
+	public function remove(){
+=======
 	public function remove() {
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 		global $player_array;
 
 		unset($player_array[$this->user_id]);
@@ -891,6 +967,11 @@ class Player {
 		$this->save_info();
 
 		//delete
+<<<<<<< HEAD:server/Player.php
+		//echo "removing player: ".$this->name."\n";
+
+=======
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 		$this->socket = NULL;
 		$this->user_id = NULL;
 		$this->name = NULL;
@@ -940,6 +1021,11 @@ class Player {
 		$this->domain = NULL;
 		$this->temp_mod = NULL;
 		$this->status = NULL;
+<<<<<<< HEAD:server/Player.php
+
+		unset($this);
+=======
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/Player.php
 	}
 }
 

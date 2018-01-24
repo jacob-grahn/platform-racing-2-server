@@ -1,12 +1,21 @@
 <?php
 
 // call pro/demotion functions
+<<<<<<< HEAD:server/pr2_moderation.php
+require_once(__DIR__ . '/../commands/promote_to_moderator.php');
+require_once(__DIR__ . '/../commands/demod.php');
+
+
+//--- kick a player -------------------------------------------------------------
+function kick($socket, $data){
+=======
 require_once(__DIR__ . '/../fns/promote_to_moderator.php');
 require_once(__DIR__ . '/../fns/demod.php');
 
 
 //--- kick a player -------------------------------------------------------------
 function client_kick ($socket, $data) {
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/client/moderation.php
 	global $guild_owner;
 	$name = $data;
 	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
@@ -38,7 +47,11 @@ function client_kick ($socket, $data) {
 
 
 //--- warn a player -------------------------------------------------------------
+<<<<<<< HEAD:server/pr2_moderation.php
+function warn($socket, $data){
+=======
 function client_warn ($socket, $data) {
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/client/moderation.php
 	list($name, $num) = explode("`", $data);
 	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
 
@@ -90,7 +103,11 @@ function client_warn ($socket, $data) {
 
 
 //--- ban a player -------------------------------------------------------
+<<<<<<< HEAD:server/pr2_moderation.php
+function ban($socket, $data){
+=======
 function client_ban ($socket, $data) {
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/client/moderation.php
 	list($banned_name, $seconds, $reason) = explode("`", $data);
 
 	$player = $socket->get_player();
@@ -136,7 +153,11 @@ function client_ban ($socket, $data) {
 	if($player->group >= 2){
 		if(isset($player->chat_room)) {
 			$player->chat_room->send_chat('systemChat`'.$player->name
+<<<<<<< HEAD:server/pr2_moderation.php
+			.' has banned '.$safe_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at http://pr2hub.com/bans.', $player->user_id);
+=======
 			.' has banned '.$safe_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at https://pr2hub.com/bans.', $player->user_id);
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/client/moderation.php
 		}
 		if(isset($ban_player) && $ban_player->group < 2) {
 			$ban_player->remove();
@@ -147,7 +168,11 @@ function client_ban ($socket, $data) {
 
 
 //--- promote a player to a moderator -------------------------------------
+<<<<<<< HEAD:server/pr2_moderation.php
+function promote_to_moderator($socket, $data){
+=======
 function client_promote_to_moderator ($socket, $data) {
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/client/moderation.php
 	list($name, $type) = explode("`", $data);
 	$from_player = $socket->get_player();
 	$to_player = name_to_player($name); // define before if
@@ -185,13 +210,21 @@ function client_promote_to_moderator ($socket, $data) {
 
 
 //-- demote a moderator ------------------------------------------------------------------
+<<<<<<< HEAD:server/pr2_moderation.php
+function demote_moderator($socket, $name) {
+=======
 function client_demote_moderator ($socket, $name) {
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/client/moderation.php
 	$from_player = $socket->get_player();
 
 	if($from_player->group == 3){
 		global $port;
 		$to_player = name_to_player($name);
+<<<<<<< HEAD:server/pr2_moderation.php
+		
+=======
 
+>>>>>>> 953edcb268f72150283df11849a05ce371d5d9ca:multiplayer_server/client/moderation.php
 		demote_mod($port, $name, $from_player, $to_player);
 	}
 }
