@@ -66,10 +66,9 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 			
 			//make pretty server names
 			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
+			$server_count = count($servers->servers);
 
-			$servercount = count($servers->servers);
-
-			foreach (range(0,count($servers->servers)) as $server_id) {
+			foreach (range(0,$server_count) as $server_id) {
 				$server_port = $servers->servers[$server_id]->port;
 
 				if ($port == $server_port) {
