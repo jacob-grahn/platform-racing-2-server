@@ -132,7 +132,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			
 			//action log
 			$safe_admin_name = addslashes($admin->name);
-			$safe_promoted_name = addslashes($name);
+			$safe_promoted_name = addslashes($user_row->name);
 			$ip = $admin->ip;
 			
 			//make pretty server names
