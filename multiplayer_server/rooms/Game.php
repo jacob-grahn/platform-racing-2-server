@@ -537,11 +537,6 @@ class Game extends Room {
 				$tot_lux_gain = count($this->finish_array) - $place - 1;
 			}
 
-			if(SimDetector::is_simming($player->user_id, $this->course_id, $tot_exp_gain)) {
-				$tot_exp_gain = 0;
-				$tot_lux_gain = 0;
-			}
-
 			if(pr2_server::$happy_hour) {
 				$tot_exp_gain *= 2;
 				$tot_lux_gain *= 2;
