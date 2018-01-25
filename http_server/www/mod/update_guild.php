@@ -95,8 +95,7 @@ function update($db) {
 		find('guild_name'),
 		$emblem,
 		find('note'),
-		$owner_id,
-		$member_count
+		$owner_id
 		)
     );
     
