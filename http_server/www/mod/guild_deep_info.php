@@ -28,7 +28,6 @@ try{
 		try {
 			$guild = $db->grab_row( 'guild_select', array($guild_id), 'Could not find a guild with that id.' );
 			$members = $db->call( 'guild_select_members', array($guild_id) );
-			echo "Guild ID: $guild->guild_id <br/>";
 			output_object( $guild );
 			output_objects( $members );
 			echo '<a href="//pr2hub.com/mod/update_guild.php?guild_id='.$guild->guild_id.'">edit</a><br><br><br>';
