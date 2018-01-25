@@ -41,14 +41,14 @@ try {
 	}
 
 	if ($reason != '') {
-		$reason = "Reason: " . $reason;
+		$disp_reason = "Reason: " . $safe_reason;
 	}
 	else {
-		$reason = "There was no reason given";
+		$disp_reason = "There was no reason given";
 	}
 	
 	//record the change
-	$db->call('mod_action_insert', array($user_id, "$name lifted ban $ban_id. $reason.", 0, get_ip()));
+	$db->call('mod_action_insert', array($user_id, "$name lifted ban $ban_id. $disp_reason.", 0, get_ip()));
 
 
 	//redirect to a page showing the lifted ban

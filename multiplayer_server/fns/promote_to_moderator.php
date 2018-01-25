@@ -1,9 +1,13 @@
 <?php
+
 require_once(__DIR__ . '/db_fns.php');
+
 function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	global $db;
+	
 	// boolean var for use in if statement @end
 	$caught_exception = false;
+	
 	// if the user isn't an admin on the server, kill the function (2nd line of defense)
 	if($admin->group != 3) {
 		$caught_exception = true;
@@ -11,6 +15,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		$admin->write("message`Error: You lack the power to promote $name to a $type moderator.");
 		return false;
 	}
+	
 	// define variables needed
 	$user_id = name_to_id($db, $name);
 	$safe_admin_id = addslashes($admin->user_id);
@@ -18,12 +23,14 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	$safe_type = addslashes($type);
 	$safe_time = addslashes(time());
 	$safe_min_time = addslashes(time()-(60*60*6));
+	
 	// get info about the person promoting
 	$admin_result = $db->query("SELECT *
 									FROM users
 									WHERE user_id = '$safe_admin_id'
 									LIMIT 0,1");
 	$admin_row = $admin_result->fetch_object();
+	
 	//check for proper permission in the db (3rd + final line of defense before promotion)
 	if($admin_row->power != 3) {
 		$caught_exception = true;
@@ -31,12 +38,14 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		$admin->write("message`Error: You lack the power to promote $name to a $type moderator.");
 		return false;
 	}
+	
 	// get info about the person being promoted
 	$user_result = $db->query("SELECT *
 									FROM users
 									WHERE user_id = '$safe_user_id'
 									LIMIT 0,1");
 	$user_row = $user_result->fetch_object();
+	
 	// if the person being promoted is a guest, end the function
 	if($user_row->power < 1) {
 		$caught_exception = true;
@@ -44,6 +53,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		$admin->write("message`Error: Guests can\'t be promoted to moderators.");
 		return false;
 	}
+	
 	// if the person being promoted doesn't exist, end the function
 	if(count($user_row) < 1) {
 		$caught_exception = true;
@@ -51,10 +61,13 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		$admin->write("message`Error: $name doesn\'t exist.");
 		return false;
 	}
+	
 	// now that we've determined that the user is able to do what they're trying to do, let's finish
 	// if type is trial or permanent, do promotion things in the db
 	if ($type == 'trial' || $type == 'permanent') {
+		
 		try {
+		
 			//throttle mod promotions
 			$result = $db->query("SELECT COUNT(*) as recent_promotion_count
 											FROM promotion_log
@@ -67,6 +80,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			if($row->recent_promotion_count > 0) {
 				throw new Exception('Someone has already been promoted to a moderator recently. Wait a bit before trying to promote again.');
 			}
+			
 			//log the power change
 			$result = $db->query("INSERT INTO promotion_log
 										 	SET message = 'user_id: $safe_user_id has been promoted to $safe_type moderator',
@@ -75,6 +89,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			if(!$result) {
 				throw new Exception('Could not record the promotion in the database.');
 			}
+			
 			//do the power change
 			$result = $db->query("update users
 											set power = 2
@@ -82,6 +97,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			if(!$result){
 				throw new Exception("Could not promote $name to a $type moderator.");
 			}
+			
 			//set power limits
 			if($type == 'trial') {
 				$max_ban = 60 * 60 * 24;
@@ -93,6 +109,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 				$bans_per_hour = 101;
 				$can_unpublish_level = 1;
 			}
+			
 			$safe_max_ban = $db->real_escape_string($max_ban);
 			$safe_bans_per_hour = $db->real_escape_string($bans_per_hour);
 			$safe_can_unpublish_level = $db->real_escape_string($can_unpublish_level);
@@ -114,13 +131,24 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			}
 			
 			//action log
-			$admin_name = $admin->name;
-			$promoted_name = $promoted_player->name;
-			
+			$safe_admin_name = addslashes($admin->name);
+			$safe_promoted_name = addslashes($name);
 			$ip = $admin->ip;
 			
+			//make pretty server names
+			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
+			$server_count = count($servers->servers);
+			
+			foreach (range(0,$server_count) as $server_id) {
+				$server_port = $servers->servers[$server_id]->port;
+				if ($port == $server_port) {
+					$server_name = $servers->servers[$server_id]->server_name;
+					break;
+				}
+			}
+			
 			// log action in action log
-			$db->call('mod_action_insert', array($admin->user_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on port $port", $admin->user_id, $ip));
+			$db->call('mod_action_insert', array($admin->user_id, "$safe_admin_name promoted $safe_promoted_name to a $type moderator from $ip on $server_name", $admin->user_id, $ip));
 			
 		}
 		catch(Exception $e){
@@ -131,7 +159,9 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			return false;
 		}
 	} // end if trial/permanent
+	
 	elseif ($type == 'temporary') {
+		
 		try {
 			//check for proper permission in the db (useless due to identical check on line 36)
 			$result = $db->query("SELECT *
@@ -142,6 +172,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			if($row->power != 3) {
 				throw new Exception("You lack the power to promote $name to a $type moderator.");
 			}
+			
 		}
 		catch(Exception $e){
 			$caught_exception = true;
@@ -151,6 +182,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			return false;
 		}
 	} // end if temp
+
 	// if all of that was valid and error-less, carry out the client-side changes
 	if (!$caught_exception) {
 		if(isset($promoted_player) && $promoted_player->group != 0 && $type == 'temporary'){
@@ -165,4 +197,5 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		return true;
 	}
 }
+
 ?>

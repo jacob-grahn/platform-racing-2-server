@@ -5,7 +5,7 @@ require_once('../../fns/output_fns.php');
 
 $guild_id = find('guild_id', 0);
 
-output_header('Guild Deep Info');
+output_header('Guild Deep Info', true);
 
 
 try{
@@ -28,10 +28,9 @@ try{
 		try {
 			$guild = $db->grab_row( 'guild_select', array($guild_id), 'Could not find a guild with that id.' );
 			$members = $db->call( 'guild_select_members', array($guild_id) );
-			echo "Guild ID: $guild->guild_id <br/>";
 			output_object( $guild );
 			output_objects( $members );
-			echo '<a href="//pr2hub.com/mod/update_guild.php?id='.$guild->guild_id.'">edit</a><br><br><br>';
+			echo '<a href="//pr2hub.com/mod/update_guild.php?guild_id='.$guild->guild_id.'">edit</a><br><br><br>';
 		}
 
 		catch(Exception $e) {

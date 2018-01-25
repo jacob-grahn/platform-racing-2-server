@@ -31,7 +31,7 @@ try {
 } 
 
 catch (Exception $e) {
-    output_header('Update Guild');
+    output_header('Update Guild', true);
     echo 'error=' . ($e->getMessage());
     output_footer();
 }
@@ -39,7 +39,7 @@ catch (Exception $e) {
 
 function output_form($db, $guild_id) {
     
-    output_header('Update Guild');
+    output_header('Update Guild', true);
     
     echo '<form name="input" action="update_guild.php" method="get">';
     
@@ -47,9 +47,9 @@ function output_form($db, $guild_id) {
 	echo "guild_id: $guild->guild_id <br>---<br>";
 
 	
-	echo 'Guild Name: <input type="text" size="" name="guild_name" value="'.htmlspecialchars($guild->name).'"><br>';
+	echo 'Guild Name: <input type="text" size="" name="guild_name" value="'.htmlspecialchars($guild->guild_name).'"><br>';
 	echo 'Guild Owner: <input type="text" size"" name="owner_id" value="'.htmlspecialchars($guild->owner_id).'"><br>';
-	echo 'Prose: <input type="text" size="100" name="note" value="'.htmlspecialchars($guild->note).'"><br>';
+	echo 'Prose: <textarea rows="4" name="note">'.htmlspecialchars($guild->note).'</textarea><br>';
 	echo 'Delete Emblem? <input type="checkbox" name="delete_emblem"><br>';
 	echo 'Recount Members? <input type="checkbox" name="recount_members"><br>';
 	echo '<input type="hidden" name="action" value="update">';
@@ -88,13 +88,17 @@ function update($db) {
     
     $guild = $db->grab_row('guild_select', array($guild_id));
 
-    $db->call( 'guild_update', array(
-	    $guild_id,
-	    find('guild_name'),
-	    $emblem,
-	    find('note'),
-	    $owner_id,
-	    $member_count), 'A guild already exists with that name.' );
+    $db->call(
+	    'guild_update',
+	    array(
+		$guild_id,
+		find('guild_name'),
+		$emblem,
+		find('note'),
+		$owner_id,
+		$member_count
+		)
+    );
     
     header("Location: http://pr2hub.com/mod/guild_deep_info.php?guild_id=" . urlencode(find('guild_id')));
     /*echo('updated! <br>---<br>');

@@ -24,7 +24,7 @@ try {
 	$mod = check_moderator($db, false, 3);
 
 	// header
-	output_header('Player Deep Info');
+	output_header('Player Deep Info', true);
 
 	//
 	echo '<form name="input" action="" method="get">';
