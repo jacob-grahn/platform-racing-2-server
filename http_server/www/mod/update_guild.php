@@ -51,7 +51,6 @@ function output_form($db, $guild_id) {
 	echo 'Guild Owner: <input type="text" size"" name="owner_id" value="'.htmlspecialchars($guild->owner_id).'"><br>';
 	echo 'Prose: <textarea rows="4" name="note">'.htmlspecialchars($guild->note).'</textarea><br>';
 	echo 'Delete Emblem? <input type="checkbox" name="delete_emblem"><br>';
-	echo 'Recount Members? <input type="checkbox" name="recount_members"><br>';
 	echo '<input type="hidden" name="action" value="update">';
 	echo '<input type="hidden" name="guild_id" value="'.$guild->guild_id.'">';
     
@@ -67,24 +66,21 @@ function output_form($db, $guild_id) {
     output_footer();
 }
 
-if (!empty($_GET['delete_emblem'])) {
-	$emblem = "default-emblem.jpg";
-}
-else {
-	$emblem = $guild->emblem;
-}
-
-if (!empty($_GET['recount_members'])) {
-	$members = $db->call('guild_select_members', array($guild->guild_id));
-	$member_count = mysqli_num_rows($members);
-}
-else {
-	$member_count = $guild->member_count;
-}
-
 function update($db) {
+
+    //make some nice-looking variables
     $guild_id = (int) find('guild_id');
+    $guild_name = find('guild_name');
+    $note = find('note');
     $owner_id = (int) find('owner_id');
+    
+    //check to see if the admin is trying to delete the guild emblem
+    if (!empty($_GET['delete_emblem'])) {
+	$emblem = "default-emblem.jpg";
+    }
+    else {
+	$emblem = $guild->emblem;
+    }
     
     $guild = $db->grab_row('guild_select', array($guild_id));
 
@@ -92,16 +88,15 @@ function update($db) {
 	    'guild_update',
 	    array(
 		$guild_id,
-		find('guild_name'),
+		$guild_name,
 		$emblem,
-		find('note'),
+		$note,
 		$owner_id
 		)
     );
     
     header("Location: http://pr2hub.com/mod/guild_deep_info.php?guild_id=" . urlencode(find('guild_id')));
-    /*echo('updated! <br>---<br>');
-    output_form($db, $user_id);*/
+
 }
 
 ?>
