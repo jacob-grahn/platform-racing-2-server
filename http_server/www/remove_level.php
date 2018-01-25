@@ -39,7 +39,7 @@ try{
 	$ip = $mod->ip;
 	
 	//record the change
-	$db->call('mod_action_insert', array($user_id, "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}", $user_id, $ip));
+	$db->call('mod_action_insert', array($user_id, "$name unpublished level $level_id from $ip {level_title: $l_title, creator_id: $l_creator, level_note: $l_note}", $user_id, $ip));
 	
 }
 
