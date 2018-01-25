@@ -51,7 +51,7 @@ try {
 	
 	
 	//--- edit guild in db
-	$db->call( 'guild_update', array( $guild->guild_id, $guild_name, $emblem, $note ), 'A guild already exists with that name.' );
+	$db->call( 'guild_update', array( $guild->guild_id, $guild_name, $emblem, $note, $guild->owner_id ), 'A guild already exists with that name.' );
 	
 	
 	//--- tell it to the world
