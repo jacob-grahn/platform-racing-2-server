@@ -88,13 +88,17 @@ function update($db) {
     
     $guild = $db->grab_row('guild_select', array($guild_id));
 
-    $db->call( 'guild_update', array(
-	    $guild_id,
-	    find('guild_name'),
-	    $emblem,
-	    find('note'),
-	    $owner_id,
-	    $member_count), 'A guild already exists with that name.' );
+    $db->call(
+	    'guild_update',
+	    array(
+		$guild_id,
+		find('guild_name'),
+		$emblem,
+		find('note'),
+		$owner_id,
+		$member_count
+		)
+    );
     
     header("Location: http://pr2hub.com/mod/guild_deep_info.php?guild_id=" . urlencode(find('guild_id')));
     /*echo('updated! <br>---<br>');
