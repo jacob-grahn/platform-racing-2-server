@@ -15,10 +15,18 @@ try{
 	
 	$db = new DB();
 	
-	//check thier login
+	//check their login
 	$user_id = token_login($db, false);
 	
 	
+	//make sure the message isn't already reported
+	$result = $db->query("SELECT COUNT(*) 
+									FROM messages_reported
+								 	WHERE message_id = '$safe_message_id',
+									LIMIT 0, 1");
+	if($result === 1) {
+		throw new Exception('It seems that you\'ve already reported this message.');
+	}
 	
 	//pull the selected message from the db
 	$result = $db->query("SELECT *
@@ -29,7 +37,7 @@ try{
 		throw new Exception('Could not retrieve message.');
 	}
 	if($result->num_rows <= 0) {
-		throw new Exception('The message was not found. '.$safe_message_id);
+		throw new Exception("The message you tried to report ($safe_message_id) doesn\'t exist.");
 	}
 	
 	
@@ -58,7 +66,7 @@ try{
 										message = '$safe_message'");
 	
 	if(!$result){
-		throw new Exception('Could not record the reported message. Maybe this message has been reported already?');
+		throw new Exception('Could not record the reported message.');
 	}
 	
 	
@@ -66,7 +74,7 @@ try{
 	
 	
 	//tell it to the world
-	echo 'message=The message was reported succesfully!';		
+	echo 'message=The message was reported successfully!';		
 }
 
 catch(Exception $e){
