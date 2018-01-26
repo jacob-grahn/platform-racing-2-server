@@ -73,16 +73,17 @@ function update($db) {
     $guild_name = find('guild_name');
     $note = find('note');
     $owner_id = (int) find('owner_id');
+
+    //grab the guild info
+    $guild = $db->grab_row('guild_select', array($guild_id));
     
-    //check to see if the admin is trying to delete the guild emblem
+    //check to see if the admin is trying to delete the guild emblem, then use gathered info
     if (!empty($_GET['delete_emblem'])) {
 	$emblem = "default-emblem.jpg";
     }
     else {
 	$emblem = $guild->emblem;
     }
-    
-    $guild = $db->grab_row('guild_select', array($guild_id));
 
     $db->call(
 	    'guild_update',
