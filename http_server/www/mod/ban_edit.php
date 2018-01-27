@@ -71,7 +71,7 @@ try {
 	$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id from $ip {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $safe_expire_time, notes: $disp_notes}", 0, $ip));
 	
 	//redirect to the ban listing
-	header("Location: http://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
+	header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
     }
     
     
