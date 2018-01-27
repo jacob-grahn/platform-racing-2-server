@@ -1,4 +1,2 @@
 env.php
-http_server/cron/last-pm.txt
-http_server/www/music/*
-http_server/www/files/*
+.DS_Store
