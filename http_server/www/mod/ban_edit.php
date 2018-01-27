@@ -83,11 +83,15 @@ catch(Exception $e){
 	output_footer();
 }
 
-    // checked box check needs to go outside the output_form function
+
+function output_form($ban) {
+
+    // define checked box variables
     $checked_box = 'checked="checked"';
     $ip_checked = '';
     $acc_checked = '';
-	    
+
+    // check for ban types
     if ($ban->ip_ban === 1) {
     	$ip_checked = $checked_box;
     }
@@ -95,15 +99,14 @@ catch(Exception $e){
         $acc_checked = $checked_box;
     }
 
-
-function output_form($ban) {
+    // write the data
     echo "
     <form>
 	<input type='hidden' value='edit' name='action'>
 	<input type='hidden' value='$ban->ban_id' name='ban_id'>
 	<p>Expire Date <input type='text' value='$ban->expire_datetime' name='expire_time'></p>
-	<p>Ip Ban <input type='checkbox' $ip_checked name='ip_ban'></p>
-	<p>Account Ban <input type='checkbox' $acc_checked name='account_ban'></p>
+	<p>IP Ban <input type='checkbox' name='ip_ban' $ip_checked></p>
+	<p>Account Ban <input type='checkbox' name='account_ban' $acc_checked></p>
 	<p>Notes <textarea rows='4' cols='50' name='notes'>$ban->notes</textarea>
 	<p><input type='submit' value='submit'></p>
     </form>";
