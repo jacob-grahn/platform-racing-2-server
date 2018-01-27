@@ -58,8 +58,17 @@ try {
 		$is_ip_ban = 'yes';
 	}
 	
+	// check for ban notes
+	$notes = trim(find('notes'));
+	if(empty($notes) || $notes == '') {
+		$disp_notes = 'no notes';
+	}
+	
+	// get ip
+	$ip = get_ip();
+	
 	//record the change
-	$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $safe_expire_time, notes: $safe_notes}", 0, get_ip()));
+	$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id from $ip {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $safe_expire_time, notes: $disp_notes}", 0, $ip));
 	
 	//redirect to the ban listing
 	header("Location: http://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
