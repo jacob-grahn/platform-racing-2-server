@@ -27,8 +27,8 @@ $safe_message_id = addslashes($message_id);
 	$name = $mod->name;
 	$ip = $mod->ip;
 		
-		//record the change
-		$db->call('mod_action_insert', array($mod->user_id, "$name archived the report of PM $safe_message_id from $ip", $mod->user_id, $ip));
-	}
+	//record the change
+	$db->call('mod_action_insert', array($mod->user_id, "$name archived the report of PM $safe_message_id from $ip", $mod->user_id, $ip));
 	
+
 ?>

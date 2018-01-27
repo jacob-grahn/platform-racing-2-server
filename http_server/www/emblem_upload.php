@@ -5,7 +5,7 @@ require_once( '../fns/classes/S3.php' );
 
 try {
 	
-	$image = @$GLOBALS["HTTP_RAW_POST_DATA"];
+	$image = file_get_contents("php://input");
 	$image_rendered = imagecreatefromstring($image);
 	
 	
