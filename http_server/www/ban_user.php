@@ -144,6 +144,59 @@ try{
 		}
 	}
 	
+	// ------- action log stuff below this point --------
+	// make duration pretty
+	switch ($duration) {
+		case 60:
+			$disp_duration = 'minute';
+			break;
+		case 3600:
+			$disp_duration = 'hour';
+			break;
+		case 86400:
+			$disp_duration = 'day';
+			break;
+		case 604800:
+			$disp_duration = 'pr2 week (8 days)';
+			break;
+		case 2419200:
+			$disp_duration = 'pr2 month (28 days)';
+			break;
+		case 29030400:
+			$disp_duration = 'pr2 year (11 months)';
+			break;
+		// if all else fails, echo the seconds
+		default:
+			$disp_duration = $duration.' seconds';
+			break;
+	}
+	// make reason pretty
+	if ($safe_reason != '') {
+		$disp_reason = "reason: " . $safe_reason;
+	}
+	else {
+		$disp_reason = "no reason given";
+	}
+	// get mod's IP
+	$ip = $mod->ip;
+	// make account/ip ban detection pretty
+	if($safe_account_ban === 1) {
+		$is_account_ban = 'yes';
+	}
+	else {
+		$is_account_ban = 'no';
+	}
+	if($safe_ip_ban === 1) {
+		$is_ip_ban = 'yes';
+	}
+	else {
+		$is_ip_ban = 'no';
+	}
+	// make expire time pretty
+	$disp_expire_time = date('Y-m-d H:i:s', $expire_time);
+	
+	//record the ban in the action log
+	$db->call('mod_action_insert', array($mod->user_id, "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, reason: $disp_reason}", 0, $ip));
 	
 }
 

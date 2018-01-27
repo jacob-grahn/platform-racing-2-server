@@ -48,8 +48,18 @@ try {
 		    LIMIT 1";
 	$db->query($query, 'ban_update', 'Could not update ban. query: ' . $query);
 	
+	//action log
+	$is_account_ban = 'no';
+	$is_ip_ban = 'no';
+	if($safe_account_ban === 1) {
+		$is_account_ban = 'yes';
+	}
+	if($safe_ip_ban === 1) {
+		$is_ip_ban = 'yes';
+	}
+	
 	//record the change
-	$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id {account_ban: $safe_account_ban, ip_ban: $safe_ip_ban, expire_time: $safe_expire_time, notes: $safe_notes}", 0, get_ip()));
+	$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $safe_expire_time, notes: $safe_notes}", 0, get_ip()));
 	
 	//redirect to the ban listing
 	header("Location: http://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
@@ -73,11 +83,7 @@ catch(Exception $e){
 	output_footer();
 }
 
-
-
-
-
-function output_form($ban) {
+    // checked box check needs to go outside the output_form function
     $checked_box = 'checked="checked"';
     $ip_checked = '';
     $acc_checked = '';
@@ -88,6 +94,9 @@ function output_form($ban) {
     if ($ban->account_ban === 1) {
         $acc_checked = $checked_box;
     }
+
+
+function output_form($ban) {
     echo "
     <form>
 	<input type='hidden' value='edit' name='action'>

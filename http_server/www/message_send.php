@@ -15,7 +15,7 @@ try {
 	
 	send_pm( $db, $from_user_id, $to_user_id, $message );
 	
-	echo 'message=Your message was sent succesfully!';		
+	echo 'message=Your message was sent successfully!';		
 }
 
 catch(Exception $e){
