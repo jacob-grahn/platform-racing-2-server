@@ -31,8 +31,9 @@ try {
 } 
 
 catch (Exception $e) {
-	$message = 'Error: ' . $e->getMessage();
-	output_form($db, $message);
+	output_header('Error', true, true);
+	echo 'Error: ' . $e->getMessage();
+	output_footer();
 }
 
 
