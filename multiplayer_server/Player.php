@@ -245,7 +245,12 @@ class Player {
 	public function send_chat($chat_message) {
 		global $guild_owner;
 		global $player_array;
-		$safe_chat_message = htmlspecialchars($chat_message); // html killer for systemChat
+		
+		//special text emotes
+		$chat_message = str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
+		
+		// html killer for systemChat
+		$safe_chat_message = htmlspecialchars($chat_message);
 
 		switch($chat_message) {
 			case '/b':
@@ -289,8 +294,11 @@ class Player {
 		}
 		else if(strpos($chat_message, '/tournament ') === 0 || strpos($chat_message, '/t ') === 0 || $chat_message == '/t') {
 			if($this->user_id == $guild_owner) {
-				if ($chat_message == '/t help') {
+				if($chat_message == '/t help') {
 					$this->write('systemChat`Welcome to tournament mode! To enable a tournament, use /t followed by a hat name and stat values for the desired speed, acceleration, and jumping of the tournament.<br><br>Example: /t exp 65 65 65<br>Hat: EXP<br>Speed: 65<br>Accel: 65<br>Jump: 65<br><br>To turn off tournament mode, type /t off.');
+				}
+				else if($chat_message == '/t status') {
+					tournament_status($this);
 				}
 				else {
 					issue_tournament($safe_chat_message);
@@ -300,50 +308,47 @@ class Player {
 				}
 			}
 			else {
-				$this->write('systemChat`Such powers are reserved for owners of private servers.');
+				tournament_status($this);
 			}
 		}
-		else if(!is_null($chat_effect)) {
-			if ( $this->group >= 2 ) {
-				$this->chat_room->send_chat('systemChat`' . $chat_effect_tag . $this->name .
-							    ' has temporarily activated ' . $chat_effect . ' chat!', $this->user_id);
-			}
-			else {
-				$this->write('systemChat`Such powers are reserved for owners of private servers and the PR2 staff team.');
-			}
+		else if(!is_null($chat_effect) && $this->group >= 2) {
+			$this->chat_room->send_chat('systemChat`' . $chat_effect_tag . $this->name .
+										' has temporarily activated ' . $chat_effect . ' chat!');
 		}
-		else if(strpos($chat_message, '/a ') === 0) {
+		else if(strpos($chat_message, '/a ') === 0 && ($this->group >= 2 || $this->user_id == $guild_owner)) {
 			$announcement = trim(substr($chat_message, 3));
 			$safe_announcement = htmlspecialchars($announcement); // html killer
 			$announce_length = strlen($safe_announcement);
 
-			if ($this->group >= 2 || $this->user_id == $guild_owner) {
-				if($announce_length >= 1) {
-					$this->chat_room->send_chat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement, $this->user_id);
-				}
-				else {
-					$this->write('systemChat`Your announcement must be at least 1 character.');
-				}
+			if($announce_length >= 1) {
+				$this->chat_room->send_chat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement);
 			}
 			else {
-				$this->write('systemChat`Only owners of private servers and members of the PR2 staff team may make chatroom announcements.');
+				$this->write('systemChat`Your announcement must be at least 1 character.');
 			}
 		}
-		else if(strpos($chat_message, '/give ') === 0) {
-			$givingthis = trim(substr($chat_message, 6));
-			$safe_givingthis = htmlspecialchars($givingthis); // html killer
-			$givingthis_length = strlen($safe_givingthis);
+		else if(strpos($chat_message, '/give ') === 0 && ($this->group >= 2 || $this->user_id == $guild_owner)) {
+			$give_this = trim(substr($chat_message, 6));
+			$safe_give_this = htmlspecialchars($give_this); // html killer
+			$give_this_length = strlen($safe_give_this);
 
-			if ($this->group >= 2 || $this->user_id == $guild_owner) {
-				if($givingthis_length >= 1) {
-					$this->chat_room->send_chat('systemChat`'.$this->name.' has given ' . $safe_givingthis, $this->user_id);
-				}
-				else {
-					$this->write('systemChat`The thing you\'re giving must be at least 1 character.');
-				}
+			if($give_this_length >= 1) {
+				$this->chat_room->send_chat('systemChat`'.$this->name.' has given ' . $safe_give_this);
 			}
 			else {
-				$this->write('systemChat`Only owners of private servers and members of the PR2 staff team may use this command.');
+				$this->write('systemChat`The thing you\'re giving must be at least 1 character.');
+			}
+		}
+		else if(strpos($chat_message, '/promote ') === 0 && $this->group >= 3) {
+			$promote_this = trim(substr($chat_message, 6));
+			$safe_promote_this = htmlspecialchars($promote_this); // html killer
+			$promote_this_length = strlen($safe_promote_this);
+
+			if($promote_this_length >= 1) {
+				$this->chat_room->send_chat('systemChat`'.$this->name.' has promoted ' . $safe_promote_this);
+			}
+			else {
+				$this->write('systemChat`The thing you\'re promoting must be at least 1 character.');
 			}
 		}
 		else if($chat_message == '/pop' || $chat_message == '/population') {
@@ -366,15 +371,19 @@ class Player {
 		else if ($chat_message == '/help' || $chat_message == '/?' || $chat_message == '/') {
 			$server_owner_supplement = '';
 			$staff_supplement = '';
+			$admin_supplement = '';
 
 			if ($this->group >= 2) {
-				$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
+				$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*- /clear<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
 
+				if ($this->group >= 3) {
+					$admin_supplement = '<br>Admin:<br>- /promote *message*';
+				}
 				if ($this->user_id == $guild_owner) {
 					$server_owner_supplement = '<br>Server Owner:<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
 				}
 			}
-			$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /population'.$staff_supplement.$server_owner_supplement);
+			$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population'.$staff_supplement.$admin_supplement.$server_owner_supplement);
 		}
 		else {
 			if (strpos($this->name, '`') !== false) {
