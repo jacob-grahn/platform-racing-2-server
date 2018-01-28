@@ -382,7 +382,7 @@ class Player {
 			}
 			else {
 				// emotes
-				str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
+				$chat_message = str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
 				// execute the chat message
 				$message = 'chat`'.$this->name.'`'.$this->group.'`'.$chat_message;
 				$this->chat_count++;
