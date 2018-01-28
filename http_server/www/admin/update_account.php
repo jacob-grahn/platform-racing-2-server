@@ -29,8 +29,8 @@ try {
 
 
 } catch (Exception $e) {
-	output_header('Update PR2 Account', true, true);
-	echo 'error=' . $e->getMessage();
+	output_header('Error');
+	echo 'Error: ' . $e->getMessage();
 	output_footer();
 }
 
