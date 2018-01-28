@@ -368,19 +368,22 @@ class Player {
 			$staff_supplement = '';
 
 			if ($this->group >= 2) {
-				$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
+				$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*- /clear<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
 
 				if ($this->user_id == $guild_owner) {
 					$server_owner_supplement = '<br>Server Owner:<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
 				}
 			}
-			$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /population'.$staff_supplement.$server_owner_supplement);
+			$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint<br>- /population'.$staff_supplement.$server_owner_supplement);
 		}
 		else {
 			if (strpos($this->name, '`') !== false) {
 				$this->write('message`Error: Illegal character in username.');
 			}
 			else {
+				// emotes
+				$chat_message = str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
+				// execute the chat message
 				$message = 'chat`'.$this->name.'`'.$this->group.'`'.$chat_message;
 				$this->chat_count++;
 				$this->chat_time = time();
