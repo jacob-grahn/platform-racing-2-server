@@ -9,18 +9,10 @@ try {
 	$db = new DB();
 
 	//make sure you're an admin
-	$mod = check_moderator($db, true, 3);
-
-}
-
-catch (Exception $e) {
+	$admin = check_moderator($db, true, 3);
+	
 	output_header('PR2 Part IDs', true, true);
-	echo 'Error: ' . $e->getMessage();
-	output_footer();
-}
-
-output_header('PR2 Part IDs', true, true);
-echo '<pre>Platform Racing 2 Part Codes
+	echo '<pre>Platform Racing 2 Part Codes
 
 -- Hats --
 1 - None
@@ -200,6 +192,15 @@ Hats: 15+
 Heads: 40+
 Bodies: 33, 40+
 Feet: 31-33, 40+</pre>';
-output_footer();
+
+	output_footer();
+
+}
+
+catch (Exception $e) {
+	output_header('Error');
+	echo 'Error: ' . $e->getMessage();
+	output_footer();
+}
 
 ?>
