@@ -21,7 +21,7 @@ class ChatRoom extends Room {
 
 	public function clear () {
 		for ($i = 0; $i <= $this->keep_count; $i++) {
-			$this->send_chat('systemChat` ', 0);
+			$this->send_chat('systemChat` ');
 		}
 	}
 
