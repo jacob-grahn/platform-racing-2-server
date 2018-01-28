@@ -33,21 +33,21 @@ try {
 		echo '<input type="text" name="name'.$i.'" value="'.htmlspecialchars($name).'"><br>';
 		if( $name != '' ) {
 			try {
-			$user = $db->grab_row( 'user_select_by_name', array($name) );
-			$pr2 = $db->grab_row( 'pr2_select', array($user->user_id), '', true );
-			$pr2_epic = $db->grab_row('epic_upgrades_select', array($user->user_id), '', true);
-			$changing_emails = $db->to_array( $db->call( 'changing_email_select_by_user', array($user->user_id) ));
-			$logins = $db->to_array( $db->call('recent_logins_select', array($user->user_id)) );
-			echo "user_id: $user->user_id <br/>";
-			output_object( $user );
-			output_object( $pr2 );
-			output_object( $pr2_epic );
-			output_objects( $changing_emails );
-			output_objects( $logins );
-			echo '<a href="update_account.php?id='.$user->user_id.'">edit</a><br><br><br>';
+				$user = $db->grab_row( 'user_select_by_name', array($name) );
+				$pr2 = $db->grab_row( 'pr2_select', array($user->user_id), '', true );
+				$pr2_epic = $db->grab_row('epic_upgrades_select', array($user->user_id), '', true);
+				$changing_emails = $db->to_array( $db->call( 'changing_email_select_by_user', array($user->user_id) ));
+				$logins = $db->to_array( $db->call('recent_logins_select', array($user->user_id)) );
+				echo "user_id: $user->user_id <br/>";
+				output_object( $user );
+				output_object( $pr2 );
+				output_object( $pr2_epic );
+				output_objects( $changing_emails );
+				output_objects( $logins );
+				echo '<a href="update_account.php?id='.$user->user_id.'">edit</a><br><br><br>';
 			}
 			catch(Exception $e) {
-			echo "<i>Error: ".$e->getMessage()."</i><br><br>";
+				echo "<i>Error: ".$e->getMessage()."</i><br><br>";
 			}
 		
 			output_footer();
