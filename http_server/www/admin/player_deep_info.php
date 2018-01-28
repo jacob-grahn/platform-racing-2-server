@@ -24,7 +24,7 @@ try {
 	$mod = check_moderator($db, false, 3);
 
 	// header
-	output_header('Player Deep Info', true);
+	output_header('Player Deep Info', true, true);
 
 	//
 	echo '<form name="input" action="" method="get">';
@@ -44,7 +44,7 @@ try {
 			output_object( $pr2_epic );
 			output_objects( $changing_emails );
 			output_objects( $logins );
-			echo '<a href="//pr2hub.com/mod/update_account.php?id='.$user->user_id.'">edit</a><br><br><br>';
+			echo '<a href="update_account.php?id='.$user->user_id.'">edit</a><br><br><br>';
 		    }
 		    catch(Exception $e) {
 			echo "<i>".$e->getMessage()."</i><br><br>";

@@ -58,20 +58,11 @@ try {
 		$is_ip_ban = 'yes';
 	}
 	
-	// check for ban notes
-	$notes = trim(find('notes'));
-	if(empty($notes) || $notes == '') {
-		$disp_notes = 'no notes';
-	}
-	
-	// get ip
-	$ip = get_ip();
-	
 	//record the change
-	$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id from $ip {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $safe_expire_time, notes: $disp_notes}", 0, $ip));
+	$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $safe_expire_time, notes: $safe_notes}", 0, get_ip()));
 	
 	//redirect to the ban listing
-	header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
+	header("Location: http://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
     }
     
     
@@ -92,15 +83,11 @@ catch(Exception $e){
 	output_footer();
 }
 
-
-function output_form($ban) {
-
-    // define checked box variables
+    // checked box check needs to go outside the output_form function
     $checked_box = 'checked="checked"';
     $ip_checked = '';
     $acc_checked = '';
-
-    // check for ban types
+	    
     if ($ban->ip_ban === 1) {
     	$ip_checked = $checked_box;
     }
@@ -108,14 +95,15 @@ function output_form($ban) {
         $acc_checked = $checked_box;
     }
 
-    // write the data
+
+function output_form($ban) {
     echo "
     <form>
 	<input type='hidden' value='edit' name='action'>
 	<input type='hidden' value='$ban->ban_id' name='ban_id'>
 	<p>Expire Date <input type='text' value='$ban->expire_datetime' name='expire_time'></p>
-	<p>IP Ban <input type='checkbox' name='ip_ban' $ip_checked></p>
-	<p>Account Ban <input type='checkbox' name='account_ban' $acc_checked></p>
+	<p>Ip Ban <input type='checkbox' $ip_checked name='ip_ban'></p>
+	<p>Account Ban <input type='checkbox' $acc_checked name='account_ban'></p>
 	<p>Notes <textarea rows='4' cols='50' name='notes'>$ban->notes</textarea>
 	<p><input type='submit' value='submit'></p>
     </form>";
