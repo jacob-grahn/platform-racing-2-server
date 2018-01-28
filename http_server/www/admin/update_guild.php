@@ -31,8 +31,8 @@ try {
 }
 
 catch (Exception $e) {
-	output_header('Update Guild', true, true);
-	echo 'error=' . $e->getMessage();
+	output_header('Error');
+	echo 'Error: ' . $e->getMessage();
 	output_footer();
 }
 
