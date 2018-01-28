@@ -7,7 +7,7 @@ try{
 	//connect to the db
 	$db = new DB();
 	
-	//check thier login
+	//check their login
 	$user_id = token_login($db);
 	
 	//get their username
