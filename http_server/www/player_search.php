@@ -2,117 +2,104 @@
 
 require_once('../fns/output_fns.php');
 
-error_reporting(0);
-
 output_header( 'Player Search' );
 
-$file = file_get_contents("https://pr2hub.com/get_player_info_2.php?name=" . $_GET['name']);
+$name = $_GET['name'];
 
-$decode = json_decode($file);
+// get the file and decode it
+$decode = json_decode(file_get_contents("https://pr2hub.com/get_player_info_2.php?name=" . $_GET['name']));
 
-echo "<center>";
+// pretty things
+echo "<center><img src='/img/player_search.png' /><br><br>";
 
-echo "<img src='/img/player_search.png' />";
+echo '<form method="get">
+Username: <input type="text" name="name">
+<input type="submit" value="Search">
+</form>';
 
-echo "<br /><br />";
+if(isset($name) && !empty($name) && strlen(trim($name)) !== 0) {
 
-echo "<form method='get'>
-Username: <input type='text' name='name'>
-<input type='submit' value='Search'>
-</form>";
+	$user_id = $decode->userId;
+	$error = $decode->error;
 
-if(isset($_GET['name'])) {
+	if(isset($decode->userId)) {
+		
+		// define some variables to make it easier for us
+		$group = (int) $decode->group;
+		$safe_name = htmlspecialchars($decode->name);
+		$status = $decode->status;
+		$guild_id = (int) $decode->guildId;
+		$safe_guild_name = htmlspecialchars($decode->guildName);
+		$rank = (int) $decode->rank;
+		$hats = (int) $decode->hats;
+		$join_date = $decode->registerDate;
+		$login_date = $decode->loginDate;
+		
+		
+		// make guild id 0 say none
+		if($guild_id === 0) {
+			$safe_guild_name = "none";
+		}
 
-if(isset($decode->userId)) {
+		// make join date say age of heroes if 1/Jan/1970
+		if($join_date == "1/Jan/1970") {
+			$join_date = "Age of Heroes";
+		}
+	
+		switch($group) {
+			case 0:
+				$group_name = "Guest";
+				$group_color = "#7E7F7F";
+				break;
+			case 1:
+				$group_name = "Member";
+				$group_color = "#047B7B";
+				break;
+			case 2:
+				$group_name = "Moderator";
+				$group_color = "#1C369F";
+				break;
+			case 3:
+				$group_name = "Admin";
+				$group_color = "#870A6F";
+				break;
+			default:
+				$group_name = "Unknown";
+				$group_color = "#000000";
+				break;
+		}
+	
+		// player name with group color
+		echo "<br>-- <u><font color='$group_color'><strong>$safe_name</strong></font></u> --<br><br>";
 
-    echo "<br />";
+		// Playing on ?/offline
+		echo "<i>$status</i><br><br>";
 
-    echo "-- <u><font color='";
-    if ($decode->group == "0") {
-        echo "#7E7F7F'>";
-    }
-    elseif ($decode->group == "1") {
-        echo "#047B7B'>";
-    }
-    elseif ($decode->group == "2") {
-        echo "#1C369F'>";
-    }
-    elseif ($decode->group == "3") {
-        echo "#870A6F'>";
-    }
-    else {
-        echo "#000000'>";
-    }
-    
-echo htmlspecialchars($decode->name) . "</font></u> --";
+		// group name
+		echo "Group: $group_name<br>";
 
-echo "<br /><br />";
+		// guild name
+		echo "Guild: $safe_guild_name<br>";
 
-echo "Status: " . $decode->status;
+		// rank
+		echo "Rank: $rank<br>";
 
-echo "<br /><br />";
+		// hats
+		echo "Hats: $hats<br>";
 
-echo "Group: ";
+		// join date
+		echo "Joined: $join_date<br>";
+		
+		// last login date
+		echo "Active: $login_date<br>";
 
-if ($decode->group == "0") {
-    echo "Guest";
-}
-elseif ($decode->group == "1") {
-    echo "Member";
-}
-elseif ($decode->group == "2") {
-    echo "Moderator";
-}
-elseif ($decode->group == "3") {
-    echo "Admin";
-}
-else {
-    echo "Unknown";
-}
+	}
 
-echo "<br /><br />";
-
-echo "Guild: ";
-
-if ($decode->guildId == "0") {
-    echo "none";
-}
-else {
-    echo htmlspecialchars($decode->guildName);
-}
-
-echo "<br /><br />";
-
-echo "Rank: " . $decode->rank;
-
-echo "<br /><br />";
-
-echo "Hats: " . $decode->hats;
-
-echo "<br /><br />";
-
-echo "Joined: ";
-
-if ($decode->registerDate == "1/Jan/1970") {
-    echo "Age of Heroes";
-}
-else {
-    echo $decode->registerDate;
-}
-
-echo "<br /><br />";
-
-echo "Active: " . $decode->loginDate;
-
-echo "<br /><br />";
+	else if(isset($error)) {
+		echo "<i>Error: $error</i><br />";
+	}
 
 }
-}
-
-if (isset($decode->error)) {
-    echo "<br />";
-    echo $decode->error;
-} 
 
 echo "</center>";
 
