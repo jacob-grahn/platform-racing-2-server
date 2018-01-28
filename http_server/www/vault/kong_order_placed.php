@@ -1,8 +1,5 @@
 <?php
 
-require_once(__DIR__ . '/../../fns/random_str.php');
-
-
 function order_placed_handler( $db, $request ) {
 	$event = $request->event; //item_order_placed
 	$game_id = $request->game_id; //The game_id.
@@ -160,13 +157,14 @@ order id: $order_id";
 
 
 function create_server( $db, $guild_id, $seconds_of_life ) {
+	global $COMM_PASS;
 	$result = $db->call( 'server_select_by_guild_id', array($guild_id), 'Could not check if you already have a guild server.' );
 	$guild = $db->grab_row( 'guild_select', array($guild_id), 'Could not select your guild.' );
 	$port = 1 + $db->grab( 'port', 'servers_select_highest_port', array(), 'Could not select port.' );
 	$server_name = $guild->guild_name;
-	$address = '192.241.178.72';
+	$address = 'assign';
 	$expire_time = time() + $seconds_of_life;
-	$salt = random_str(20);
+	$salt = $COMM_PASS;
 	$guild_id = $guild->guild_id;
 
 	if( $result->num_rows <= 0 ) {
