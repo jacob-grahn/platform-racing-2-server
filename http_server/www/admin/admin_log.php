@@ -39,7 +39,9 @@ try {
 }
 
 catch(Exception $e){
+	output_header('Error');
 	echo 'Error: '.$e->getMessage();
+	output_footer();
 }
 
 ?>
