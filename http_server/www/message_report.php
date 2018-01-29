@@ -20,11 +20,12 @@ try{
 	
 	
 	//make sure the message isn't already reported
-	$result = $db->query("SELECT COUNT(*) 
+	$result = $db->query("SELECT *
 									FROM messages_reported
 								 	WHERE message_id = '$safe_message_id',
 									LIMIT 0, 1");
-	if($result === 1) {
+	$num_rows = mysqli_num_rows($result);
+	if($num_rows === 1) {
 		throw new Exception('It seems that you\'ve already reported this message.');
 	}
 	
@@ -74,7 +75,7 @@ try{
 	
 	
 	//tell it to the world
-	echo 'message=The message was reported successfully!';		
+	echo 'message=The message was reported successfully!';
 }
 
 catch(Exception $e){

@@ -47,12 +47,14 @@ try {
 		$disp_reason = "There was no reason given";
 	}
 	
+	$ip = get_ip();
+	
 	//record the change
-	$db->call('mod_action_insert', array($user_id, "$name lifted ban $ban_id. $disp_reason.", 0, get_ip()));
+	$db->call('mod_action_insert', array($user_id, "$name lifted ban $ban_id from $ip. $disp_reason.", 0, $ip));
 
 
 	//redirect to a page showing the lifted ban
-	header("Location: show_record.php?ban_id=$ban_id") ;
+	header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id") ;
 }
 
 catch(Exception $e){

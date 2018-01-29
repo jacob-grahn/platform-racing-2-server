@@ -76,23 +76,32 @@ function update($db) {
     
     //check to see if the admin is trying to delete the guild emblem
     if (!empty($_GET['delete_emblem'])) {
-	$emblem = "default-emblem.jpg";
+	    $emblem = "default-emblem.jpg";
     }
     else {
-	$emblem = $guild->emblem;
+	    $emblem = $guild->emblem;
     }
-    
+
+    //grab the guild info
     $guild = $db->grab_row('guild_select', array($guild_id));
+    
+    //check to see if the admin is trying to delete the guild emblem, then use gathered info
+    if (!empty($_GET['delete_emblem'])) {
+	    $emblem = "default-emblem.jpg";
+    }
+    else {
+	    $emblem = $guild->emblem;
+    }
 
     $db->call(
 	    'guild_update',
 	    array(
-		$guild_id,
-		$guild_name,
-		$emblem,
-		$note,
-		$owner_id
-		)
+		    $guild_id,
+		    $guild_name,
+		    $emblem,
+		    $note,
+		    $owner_id
+		  )
     );
     
     header("Location: http://pr2hub.com/mod/guild_deep_info.php?guild_id=" . urlencode(find('guild_id')));
