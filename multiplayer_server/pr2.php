@@ -45,7 +45,6 @@ require_once(__DIR__ . '/CourseBox.php');
 require_once(__DIR__ . '/ChatMessage.php');
 require_once(__DIR__ . '/RaceStats.php');
 require_once(__DIR__ . '/Hat.php');
-require_once(__DIR__ . '/SimDetector.php');
 require_once(__DIR__ . '/LocalBans.php');
 require_once(__DIR__ . '/LoiterDetector.php');
 require_once(__DIR__ . '/GuildPoints.php');
