@@ -18,8 +18,11 @@ $emblem = '';
 $guild_name = '';
 $friends = array();
 $ignored = array();
+
+// ip info and run it through an IP info API (because installing geoip is not worth the hassle)
 $ip = get_ip();
-$country_code = '?';
+$ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
+$country_code = $ip_info->data->geo->country_code;
 
 try {
 
@@ -61,8 +64,8 @@ try {
 	if( $origination_domain == 'local' ) {
 		throw new Exception( 'Testing mode has been disabled.' );
 	}
-	if( !isset( $login->user_name ) ) {
-		throw new Exception( 'Invalid user name' );
+	if( !isset($user_name) || empty($user_name) || strlen(trim($user_name)) === 0 || strpos($user_name, '`') !== false ) {
+		throw new Exception( 'Invalid user name entered.' );
 	}
 
 
@@ -80,7 +83,7 @@ try {
 	if( strtolower($login->user_name) == 'guest' ) {
 		$guest_login = true;
 		if( get_ip(false) != get_ip(true) ) {
-			throw new Exception( 'You seem to be using a proxy to connect to pr2. You won\'t be able to connect as a guest, but you can create an account to play.' );
+			throw new Exception( 'You seem to be using a proxy to connect to PR2. You won\'t be able to connect as a guest, but you can create an account to play.' );
 		}
 		$user = $db->grab_row('users_select_guest');
 		check_if_banned($db, $user->user_id, $ip);
