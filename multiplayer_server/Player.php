@@ -342,8 +342,9 @@ class Player {
 						}
 						catch (Exception $e) {
 							$caught_exception = true;
+							$err = $e->getMessage();
 							$err_supl = " Make sure you typed everything correctly! For help with tournaments, type /t help.";
-							$this->write('systemChat`Error: ' . $e . $err_supl);
+							$this->write('systemChat`Error: ' . $err . $err_supl);
 						}
 						
 						// if an error was not encountered, announce the tournament to the chatroom
