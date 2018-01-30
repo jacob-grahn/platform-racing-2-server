@@ -5,10 +5,7 @@ require_once('../../fns/output_fns.php');
 
 $guild_id = find('guild_id', 0);
 
-output_header('Guild Deep Info', true);
-
-
-try{
+try {
 	
 	//connect
 	$db = new DB();
@@ -21,21 +18,28 @@ try{
 		$guild_id = '';
 	}
 	
+	output_header('Guild Deep Info', true, true);
+	
 	
 	echo '<form name="input" action="" method="get">';
 	echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'"><br>';
 	if( $guild_id != '' ) {
+		
 		try {
 			$guild = $db->grab_row( 'guild_select', array($guild_id), 'Could not find a guild with that id.' );
 			$members = $db->call( 'guild_select_members', array($guild_id) );
 			output_object( $guild );
 			output_objects( $members );
-			echo '<a href="//pr2hub.com/mod/update_guild.php?guild_id='.$guild->guild_id.'">edit</a><br><br><br>';
+			echo '<a href="update_guild.php?guild_id='.$guild->guild_id.'">edit</a><br><br><br>';
+			
+			output_footer();
+			
 		}
 
 		catch(Exception $e) {
-			echo "<i>".$e->getMessage()."</i><br><br>";
+			echo "<i>Error: ".$e->getMessage()."</i><br><br>";
 		}
+
 	}
 	
 	echo '<input type="submit" value="Submit">';
@@ -44,10 +48,10 @@ try{
 }
 
 catch(Exception $e){
-	echo 'error='.($e->getMessage());
+	output_header('Error');
+	echo 'Error: ' . $e->getMessage();
+	output_footer();
 }
-
-output_footer();
 
 function output_objects( $objs ) {
 	foreach( $objs as $obj ) {
