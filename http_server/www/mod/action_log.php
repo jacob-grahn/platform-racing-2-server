@@ -13,7 +13,7 @@ try {
 	$db = new DB();
 	
 	//make sure you're a moderator
-	$mod = check_moderator($db);
+	$mod = check_moderator($db, false);
 
 	//get actions for this page
 	$actions = $db->call( 'mod_actions_select', array( $start, $count ) );
@@ -36,7 +36,9 @@ try {
 }
 
 catch(Exception $e){
+	output_header('Error')
 	echo 'Error: '.$e->getMessage();
+	output_footer();
 }
 
 ?>
