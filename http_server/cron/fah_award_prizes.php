@@ -9,7 +9,7 @@ $name_switch_array = array();
 
 
 //--- connect to the db ----------------------------------------------------------------------------------
-$fah_db = new DB( fah_connect(), false );
+$fah_db = new DB(fah_connect());
 $pr2_db = new DB();
 
 
