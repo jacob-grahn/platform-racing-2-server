@@ -32,9 +32,6 @@ try {
 			output_object( $guild );
 			output_objects( $members );
 			echo '<a href="update_guild.php?guild_id='.$guild->guild_id.'">edit</a><br><br><br>';
-			
-			output_footer();
-			
 		}
 
 		catch(Exception $e) {
@@ -43,6 +40,7 @@ try {
 	}
 	
 	echo '</form>';
+	output_footer();
 
 }
 
