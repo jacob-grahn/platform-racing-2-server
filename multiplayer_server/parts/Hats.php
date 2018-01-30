@@ -25,7 +25,7 @@ class Hats {
 			$str = 'None';
 		}
 		else if( $id == Hats::EXP ) {
-			$str = 'Exp';
+			$str = 'EXP';
 		}
 		else if( $id == Hats::KONG ) {
 			$str = 'Kong';
