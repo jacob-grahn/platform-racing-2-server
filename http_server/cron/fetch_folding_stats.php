@@ -1,7 +1,5 @@
 <?php
 
-/*
-
 require_once('../fns/all_fns.php');
 
 
@@ -107,7 +105,5 @@ foreach($user_array as $user_str) {
 function output( $str ) {
 	echo( "* $str \n" );
 }
-
-*/
 
 ?>
