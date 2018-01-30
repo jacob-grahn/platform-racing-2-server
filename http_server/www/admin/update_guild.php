@@ -13,7 +13,7 @@ try {
 
 
 	//make sure you're an admin
-	$mod = check_moderator($db, true, 3);
+	$admin = check_moderator($db, true, 3);
 	
 	
 	//lookup
@@ -68,8 +68,11 @@ function output_form($db, $guild_id) {
 }
 
 function update($db) {
+	
+	global $admin;
 
 	//make some nice-looking variables
+	$guild = $db->grab_row('guild_select', array($guild_id));
 	$guild_id = (int) find('guild_id');
 	$guild_name = find('guild_name');
 	$note = find('note');
@@ -85,36 +88,36 @@ function update($db) {
 	}
 	
 	try {
+
 		if($changes == "" || empty($changes) || !isset($changes) || strlen(trim($changes)) === 0) {
 			throw new Exception('The description of changes cannot be blank.');
 		}
+		
+		$db->call(
+			'guild_update',
+			array(
+			$guild_id,
+			$guild_name,
+			$emblem,
+			$note,
+			$owner_id
+			)
+		);
+	
+		//admin log
+		$admin_name = $admin->name;
+		$admin_id = $admin->user_id;
+		$ip = get_ip();
+		$disp_changes = "Changes: " . $changes;
+		
+		$db->call('admin_action_insert', array($admin_id, "$admin_name updated guild $guild_id from $ip. $disp_changes.", $admin_id, $ip));
+
 	}
 	catch (Exception $e) {
 		output_header('Update PR2 Account', true, true);
 		echo 'Error: ' . $e->getMessage();
 		output_footer();
 	}
-	
-	$guild = $db->grab_row('guild_select', array($guild_id));
-
-	$db->call(
-		'guild_update',
-		array(
-		$guild_id,
-		$guild_name,
-		$emblem,
-		$note,
-		$owner_id
-		)
-	);
-	
-	//admin log
-	$admin_name = $admin->name;
-	$admin_id = $admin->user_id;
-	$ip = get_ip();
-	$disp_changes = "Changes: " . $changes;
-	
-	$db->call('admin_action_insert', array($admin_id, "$admin_name updated guild $guild_id from $ip. $disp_changes.", $admin_id, $ip));
 	
 	header("Location: guild_deep_info.php?guild_id=" . urlencode(find('guild_id')));
 	die();
