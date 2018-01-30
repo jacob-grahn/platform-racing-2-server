@@ -194,7 +194,7 @@ class Game extends Room {
 			$this->prize = $slender_prizes[ array_rand($slender_prizes) ];
 		}
 
-		if( !isset($this->prize) && $player_count > 1 ) {
+		if( !isset($this->prize) && $player_count >= 1 ) {
 			if( rand($player_count*2, 20) >= 19 ) {
 				$prize_array = array(
 					Prizes::$TACO_HEAD,
@@ -961,20 +961,6 @@ class Game extends Room {
 			$tier = 1;
 		$exp *= $tier;
 		return $exp;
-	}
-
-
-	private function passed_exp_threshold( $prev_exp_today, $new_exp_today ) {
-		$ret = false;
-		if($new_exp_today >= 25000) {
-			$test_every = 2500;
-			$prev_category = floor($prev_exp_today / $test_every);
-			$new_category = floor($new_exp_today / $test_every);
-			if($prev_category < $new_category) {
-				$ret = true;
-			}
-		}
-		return $ret;
 	}
 
 
