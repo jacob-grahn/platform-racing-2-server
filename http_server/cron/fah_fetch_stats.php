@@ -17,7 +17,7 @@ if($contents == false || $contents == '' || strpos($contents, 'Stats update in p
 
 
 //--- connect to the db ----------------------------------------------------------------------------------
-$db = new DB();
+$db = new DB(fah_connect());
 
 
 //--- query the list of existing users and their current stats --------------------------------------------------
