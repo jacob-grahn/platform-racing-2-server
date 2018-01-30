@@ -2,7 +2,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function output_header($title='', $formatting_for_mods=false) {
+function output_header($title='', $formatting_for_mods=false, $formatting_for_admins=false) {
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -44,7 +44,7 @@ function output_header($title='', $formatting_for_mods=false) {
 
 <?php
 	if($formatting_for_mods) {
-		output_mod_navigation();
+		output_mod_navigation($formatting_for_admins);
 	}
 }
 
@@ -69,7 +69,7 @@ function output_footer() {
 }
 
 
-function output_mod_navigation() {
+function output_mod_navigation($formatting_for_admins=true) {
 ?>
 
 	<p>
@@ -79,6 +79,19 @@ function output_mod_navigation() {
 			<a href="//pr2hub.com/mod/player_search.php">Player Search</a>
 			-
 			<a href="//pr2hub.com/bans/bans.php">Ban Log</a>
+			-
+			<a href="//pr2hub.com/mod/mod_log.php">Mod Action Log</a>
+			<?php if($formatting_for_admins) { ?>
+			<br>
+			<a href="//pr2hub.com/admin/player_deep_info.php">Update Account</a>
+			-
+			<a href="//pr2hub.com/admin/guild_deep_info.php">Update Guild</a>
+			-
+			<a href="//pr2hub.com/admin/set_campaign.php">Set Custom Campaign</a>
+			-
+			<a href="//pr2hub.com/admin/admin_log.php">Admin Action Log</a>
+			<?php } ?>
+			
 		</b>
 	</p>
 	<p>---</p>

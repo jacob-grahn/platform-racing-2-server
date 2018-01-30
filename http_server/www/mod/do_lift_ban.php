@@ -3,6 +3,7 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
+$ip = get_ip();
 $ban_id = find('ban_id');
 $reason = find('reason');
 $safe_ban_id = addslashes($ban_id);
@@ -47,14 +48,12 @@ try {
 		$disp_reason = "There was no reason given";
 	}
 	
-	$ip = get_ip();
-	
 	//record the change
 	$db->call('mod_action_insert', array($user_id, "$name lifted ban $ban_id from $ip. $disp_reason.", 0, $ip));
 
 
 	//redirect to a page showing the lifted ban
-	header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id") ;
+	header("Location: show_record.php?ban_id=$ban_id") ;
 }
 
 catch(Exception $e){
