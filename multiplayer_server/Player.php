@@ -252,6 +252,7 @@ class Player {
 		// html killer for systemChat
 		$safe_chat_message = htmlspecialchars($chat_message);
 
+		// switch for text effects
 		switch($chat_message) {
 			case '/b':
 				$chat_effect = 'bold';
@@ -275,82 +276,133 @@ class Player {
 				break;
 		}
 
+		// guest check
 		if($this->group <= 0) {
 			$this->write('systemChat`Sorries, guests can\'t send chat messages.');
 		}
+		// chat ban check
 		else if($this->chat_ban > time()) {
 			$this->write('systemChat`You have been temporarily banned from the chat. '
 				.'The ban will be lifted in '.($this->chat_ban - time()).' seconds.');
 		}
+		// spam check
 		else if($this->get_chat_count() > 6) {
 			$this->chat_ban = time() + 60;
 			$this->write('systemChat`Slow down a bit, yo.');
 		}
+		// rank 3 check
 		else if($this->active_rank < 3) {
 			$this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
 		}
+		// illegal character check
 		else if(strpos($chat_message, '`') !== false) {
 			$this->write('message`Error: Illegal character in message.');
 		}
-		else if(strpos($chat_message, '/tournament ') === 0 || strpos($chat_message, '/t ') === 0 || $chat_message == '/t') {
-			if($this->user_id == $guild_owner) {
-				if($chat_message == '/t help') {
-					$this->write('systemChat`Welcome to tournament mode! To enable a tournament, use /t followed by a hat name and stat values for the desired speed, acceleration, and jumping of the tournament.<br><br>Example: /t exp 65 65 65<br>Hat: EXP<br>Speed: 65<br>Accel: 65<br>Jump: 65<br><br>To turn off tournament mode, type /t off.');
+		// tournament mode
+		else if(strpos($chat_message, '/t ') === 0 || strpos($chat_message, '/tournament ') === 0 || $chat_message == '/t' || $chat_message == '/tournament') {
+			// if guild owner, allow them to do guild owner things
+			if ($this->user_id == $guild_owner) {
+				// help
+				if($chat_message == '/t help' || $chat_message == '/t' || $chat_message == '/tournament') {
+					$this->write('systemChat`Welcome to tournament mode!<br><br>To enable a tournament, use /t followed by a hat name and stat values for the desired speed, acceleration, and jumping of the tournament.<br><br>Example: /t none 65 65 65<br>Hat: None<br>Speed: 65<br>Accel: 65<br>Jump: 65<br><br>To turn off tournament mode, type /t off. To find out whether tournament mode is on or off, type /t status.');
 				}
+				// status
 				else if($chat_message == '/t status') {
 					tournament_status($this);
 				}
+				// tournament mode
 				else {
-					issue_tournament($safe_chat_message);
-					if(isset($this->chat_room)) {
-						announce_tournament($this->chat_room);
+					try {
+						issue_tournament($safe_chat_message);
+						if(isset($this->chat_room)) {
+							announce_tournament($this->chat_room);
+						}
+						if(isset($this->game_room)) {
+							announce_tournament($this->game_room);
+						}
+					}
+					catch (Exception $e) {
+						$err_supl = " Make sure you typed everything correctly! For help with tournaments, type /t help.";
+						$this->write('systemChat`Error: ' . $e . $err_supl);
 					}
 				}
 			}
+			// if not the guild owner, limit their ability to checking the status of a tournament only
 			else {
-				tournament_status($this);
+				// status
+				if ($chat_message == '/t status' || $chat_message == '/t' || $chat_message == '/tournament') {
+					tournament_status($this);
+				}
+				// tell them how to get the status
+				else {
+					$this->write('systemChat`To find out whether tournament mode is on or off, type /t status.');
+				}
 			}
 		}
+		// chat effects
 		else if(!is_null($chat_effect) && $this->group >= 2) {
-			$this->chat_room->send_chat('systemChat`' . $chat_effect_tag . $this->name .
-										' has temporarily activated ' . $chat_effect . ' chat!');
+			if(isset($this->chat_room)) {
+				$this->chat_room->send_chat('systemChat`' . $chat_effect_tag . $this->name . ' has temporarily activated ' . $chat_effect . ' chat!');
+			}
+			if(isset($this->game_room)) {
+				$this->game_room->send_chat('systemChat`' . $chat_effect_tag . $this->name . ' has temporarily activated ' . $chat_effect . ' chat!');
+			}
 		}
+		// chat announcements
 		else if(strpos($chat_message, '/a ') === 0 && ($this->group >= 2 || $this->user_id == $guild_owner)) {
 			$announcement = trim(substr($chat_message, 3));
 			$safe_announcement = htmlspecialchars($announcement); // html killer
 			$announce_length = strlen($safe_announcement);
 
 			if($announce_length >= 1) {
-				$this->chat_room->send_chat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement);
+				if(isset($this->chat_room)) {
+					$this->chat_room->send_chat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement);
+				}
+				else if(isset($this->game_room)) {
+					$this->game_room->send_chat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement);
+				}
 			}
 			else {
 				$this->write('systemChat`Your announcement must be at least 1 character.');
 			}
 		}
+		// "give" command
 		else if(strpos($chat_message, '/give ') === 0 && ($this->group >= 2 || $this->user_id == $guild_owner)) {
 			$give_this = trim(substr($chat_message, 6));
 			$safe_give_this = htmlspecialchars($give_this); // html killer
 			$give_this_length = strlen($safe_give_this);
 
 			if($give_this_length >= 1) {
-				$this->chat_room->send_chat('systemChat`'.$this->name.' has given ' . $safe_give_this);
+				if(isset($this->chat_room)) {
+					$this->chat_room->send_chat('systemChat`'.$this->name.' has given ' . $safe_give_this);
+				}
+				else if(isset($this->game_room)) {
+					$this->game_room->send_chat('systemChat`'.$this->name.' has given ' . $safe_give_this);
+				}
 			}
 			else {
 				$this->write('systemChat`The thing you\'re giving must be at least 1 character.');
 			}
 		}
+		// "promote" command
 		else if(strpos($chat_message, '/promote ') === 0 && $this->group >= 3) {
-			$promote_this = trim(substr($chat_message, 6));
+			$promote_this = trim(substr($chat_message, 9));
 			$safe_promote_this = htmlspecialchars($promote_this); // html killer
 			$promote_this_length = strlen($safe_promote_this);
 
 			if($promote_this_length >= 1) {
-				$this->chat_room->send_chat('systemChat`'.$this->name.' has promoted ' . $safe_promote_this);
+				if(isset($this->chat_room)) {
+					$this->chat_room->send_chat('systemChat`'.$this->name.' has promoted ' . $safe_promote_this);
+				}
+				else if(isset($this->game_room)) {
+					$this->game_room->send_chat('systemChat`'.$this->name.' has promoted ' . $safe_promote_this);
+				}
 			}
 			else {
 				$this->write('systemChat`The thing you\'re promoting must be at least 1 character.');
 			}
 		}
+		// population command
 		else if($chat_message == '/pop' || $chat_message == '/population') {
 			$pop_counted = count($player_array); // count players
 			$pop_singular = array("is", "user"); // language for 1 player
@@ -365,16 +417,23 @@ class Player {
 
 			$this->write('systemChat`There '.$pop_lang[0].' currently '.$pop_counted.' '.$pop_lang[1].' playing on this server.');
 		}
+		// clear command
 		else if (($chat_message == '/clear' || $chat_message == '/cls') && $this->group >= 2) {
-			$this->chat_room->clear();
+			if(isset($this->chat_room)) {
+				$this->chat_room->clear();
+			}
+			else if(isset($this->game_room)) {
+				$this->game_room->clear();
+			}
 		}
+		// help command
 		else if ($chat_message == '/help' || $chat_message == '/?' || $chat_message == '/') {
 			$server_owner_supplement = '';
 			$staff_supplement = '';
 			$admin_supplement = '';
 
 			if ($this->group >= 2) {
-				$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*- /clear<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
+				$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*<br>- /clear<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
 
 				if ($this->group >= 3) {
 					$admin_supplement = '<br>Admin:<br>- /promote *message*';
@@ -385,6 +444,7 @@ class Player {
 			}
 			$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population'.$staff_supplement.$admin_supplement.$server_owner_supplement);
 		}
+		// send chat message
 		else {
 			if (strpos($this->name, '`') !== false) {
 				$this->write('message`Error: Illegal character in username.');
