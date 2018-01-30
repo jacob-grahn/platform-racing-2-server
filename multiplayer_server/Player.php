@@ -427,7 +427,7 @@ class Player {
 			}
 		}
 		// help command
-		else if ($chat_message == '/help' || $chat_message == '/?' || $chat_message == '/') {
+		else if ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
 			$server_owner_supplement = '';
 			$staff_supplement = '';
 			$admin_supplement = '';
