@@ -96,7 +96,7 @@ if(isset($name) && !empty($name) && strlen(trim($name)) !== 0) {
 	}
 
 	else if(isset($error)) {
-		echo "<i>Error: $error</i><br />";
+		echo "<br /><i>Error: $error</i><br />";
 	}
 
 }
