@@ -4,12 +4,11 @@ class DB {
 
 	public $mysqli;
 	private $last_action;
-	private $record = true;
 	private $last_query_str = '';
 
 
 
-	public function __construct($mysqli=NULL, $record=true) {
+	public function __construct($mysqli=NULL) {
 		if( isset( $mysqli ) ) {
 			$this->mysqli = $mysqli;
 		}
@@ -17,7 +16,6 @@ class DB {
 			$this->mysqli = pr2_connect();
 		}
 		$this->last_action = time();
-		$this->record = $record;
 	}
 
 
