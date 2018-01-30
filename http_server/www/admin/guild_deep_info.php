@@ -22,7 +22,8 @@ try {
 	
 	
 	echo '<form name="input" action="" method="get">';
-	echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'"><br>';
+	echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'">&nbsp;';
+	echo '<input type="submit" value="Submit">';
 	if( $guild_id != '' ) {
 		
 		try {
@@ -39,10 +40,8 @@ try {
 		catch(Exception $e) {
 			echo "<i>Error: ".$e->getMessage()."</i><br><br>";
 		}
-
 	}
 	
-	echo '<input type="submit" value="Submit">';
 	echo '</form>';
 
 }
