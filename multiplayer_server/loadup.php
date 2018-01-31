@@ -13,7 +13,7 @@ function begin_loadup( $server_id ) {
 	set_campaign( $campaign );
 	set_perks( $perks );
 	place_artifact($artifact);
-	HappyHour.activate();
+	HappyHour::activate();
 	start_perk(Perks::GUILD_FRED, 0, -1);
 }
 
@@ -61,7 +61,7 @@ function set_perks( $perks ) {
 			start_perk( $slug, $perk->user_id, $perk->guild_id );
 		}
 		if( $slug == 'happy-hour' ) {
-			HappyHour.activate();
+			HappyHour::activate();
 		}
 	}
 }
