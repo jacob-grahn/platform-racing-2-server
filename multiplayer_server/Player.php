@@ -430,7 +430,7 @@ class Player {
 			}
 			// clear command
 			else if (($chat_message == '/clear' || $chat_message == '/cls') && $this->group >= 2) {
-				if($player_room == $this->chat_room)) {
+				if($player_room == $this->chat_room) {
 					$player_room->clear();
 				}
 				else {
