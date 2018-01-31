@@ -47,9 +47,8 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 			<div id="artifact">
 			<?php } else { ?>
 			<div class="content">
-			<?php } ?>
+			<?php }
 
-<?php
 	if($formatting_for_mods) {
 		output_mod_navigation($formatting_for_admins);
 	}
