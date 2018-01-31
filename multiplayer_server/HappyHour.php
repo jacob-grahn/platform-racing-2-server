@@ -13,7 +13,7 @@ class HappyHour {
   }
 
   public static function isActive () {
-    return self::$active_until >= $time;
+    return self::$active_until >= time();
   }
 }
 
