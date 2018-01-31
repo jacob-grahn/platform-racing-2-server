@@ -21,8 +21,14 @@ $ignored = array();
 
 // ip info and run it through an IP info API (because installing geoip is not worth the hassle)
 $ip = get_ip();
-$ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
-$country_code = $ip_info->data->geo->country_code;
+
+try {
+	$ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
+	$country_code = $ip_info->data->geo->country_code;
+}
+catch (Exception $e) {
+	$country_code = '?';
+}
 
 try {
 
