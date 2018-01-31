@@ -9,9 +9,12 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>PR2 Hub - <?php echo $title; ?></title>
-    <link href="//pr2hub.com/pr2hub.css" rel="stylesheet" type="text/css"/>
-	<?php if($formatting_for_mods) { ?>
+	<title>PR2 Hub - <?php echo $title; ?></title>
+	<?php if(basename($_SERVER['PHP_SELF']) == "hint.php") { ?>
+	<link href="//pr2hub.com/style/hint.css" rel="stylesheet" type="text/css" />
+	<?php } else { ?>
+	<link href="//pr2hub.com/style/pr2hub.css" rel="stylesheet" type="text/css"/>
+	<?php } if($formatting_for_mods) { ?>
 		<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 		<script src="https://malsup.github.com/jquery.form.js"></script>
 	<?php } ?>
