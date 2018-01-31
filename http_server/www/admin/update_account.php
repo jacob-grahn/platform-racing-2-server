@@ -90,6 +90,8 @@ function output_form($db, $user_id) {
 
 function update($db) {
 
+	global $admin;
+	
 	// make some nice variables
 	$guild_id = (int) find('guild');
 	$user_id = (int) find('id');
@@ -106,45 +108,47 @@ function update($db) {
 	}
 	
 	try {
+	
+		// check for description of changes
 		if($changes == "" || empty($changes) || !isset($changes) || strlen(trim($changes)) === 0) {
 			throw new Exception('The description of changes cannot be blank.');
 		}
+		
+		// perform the action
+		$db->call(
+			'user_update',
+			array(
+			$user_id,
+			find('name'),
+			find('email'),
+			$guild_id,
+			find('hats'),
+			find('heads'),
+			find('bodies'),
+			find('feet'),
+			find('eHats'),
+			find('eHeads'),
+			find('eBodies'),
+			find('eFeet')
+			)
+		);
+		
+		// log the action in the admin log
+		$admin_name = $admin->name;
+		$admin_id = $admin->user_id;
+		$ip = get_ip();
+		$disp_changes = "Changes: " . $changes;
+		
+		$db->call('admin_action_insert', array($admin_id, "$admin_name updated player $user_name from $ip. $disp_changes.", $admin_id, $ip));
+		
 	}
 	catch (Exception $e) {
 		output_header('Update PR2 Account', true, true);
 		echo 'Error: ' . $e->getMessage();
 		output_footer();
 	}
-
-	$db->call(
-		'user_update',
-		array(
-		$user_id,
-		find('name'),
-		find('email'),
-		$guild_id,
-		find('hats'),
-		find('heads'),
-		find('bodies'),
-		find('feet'),
-		find('eHats'),
-		find('eHeads'),
-		find('eBodies'),
-		find('eFeet')
-		)
-	);
-
-	//admin log
-	$admin_name = $admin->name;
-	$admin_id = $admin->user_id;
-	$ip = get_ip();
-	$disp_changes = "Changes: " . $changes;
-	
-	$db->call('admin_action_insert', array($admin_id, "$admin_name updated player $user_name from $ip. $disp_changes.", $admin_id, $ip));
 	
 	header("Location: player_deep_info.php?name1=" . urlencode(find('name')));
 	die();
 
 }
-
-?>

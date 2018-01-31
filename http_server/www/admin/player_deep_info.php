@@ -28,9 +28,11 @@ try {
 
 	//
 	echo '<form name="input" action="" method="get">';
-	for( $i=1; $i<10; $i++ ) {
+	foreach( range(1,9) as $i ) {
+		
 		$name = ${"name$i"};
 		echo '<input type="text" name="name'.$i.'" value="'.htmlspecialchars($name).'"><br>';
+		
 		if( $name != '' ) {
 			try {
 				$user = $db->grab_row( 'user_select_by_name', array($name) );
@@ -49,12 +51,12 @@ try {
 			catch(Exception $e) {
 				echo "<i>Error: ".$e->getMessage()."</i><br><br>";
 			}
-		
-			output_footer();
 		}
 	}
 	echo '<input type="submit" value="Submit">';
 	echo '</form>';
+	
+	output_footer();
 
 }
 

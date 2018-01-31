@@ -22,7 +22,8 @@ try {
 	
 	
 	echo '<form name="input" action="" method="get">';
-	echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'"><br>';
+	echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'">&nbsp;';
+	echo '<input type="submit" value="Submit">';
 	if( $guild_id != '' ) {
 		
 		try {
@@ -31,19 +32,15 @@ try {
 			output_object( $guild );
 			output_objects( $members );
 			echo '<a href="update_guild.php?guild_id='.$guild->guild_id.'">edit</a><br><br><br>';
-			
-			output_footer();
-			
 		}
 
 		catch(Exception $e) {
 			echo "<i>Error: ".$e->getMessage()."</i><br><br>";
 		}
-
 	}
 	
-	echo '<input type="submit" value="Submit">';
 	echo '</form>';
+	output_footer();
 
 }
 
