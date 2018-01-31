@@ -12,8 +12,18 @@ function issue_tournament( $str ) {
 
 		// did the user say /t on? if so, let's ignore 'on' and handle the rest of the data as normal (if any)
 		if( isset($arr[0]) && $arr[0] == 'on' ) {
+			// take 'on' out of the array
 			array_shift($arr);
+
+			// if they didn't give any values after "on", start the default tournament
+			if ( !isset($arr[0]) || trim($str) == '/t on' ) {
+				$arr[0] = "None";
+				$arr[1] = "65";
+				$arr[2] = "65";
+				$arr[3] = "65";
+			}
 		}
+		
 		// did the user say /t off? if so, let's turn off the tournament
 		if( !isset($arr[0]) || $arr[0] == 'off' || $arr[0] == '' ) {
 			pr2_server::$tournament = false;
