@@ -5,6 +5,8 @@ require_once('../../fns/output_fns.php');
 
 $action = find('action', 'lookup');
 $message = find('message', '');
+$campaign_id = 5; // 0 = Original, 1 = Speed, 2 = Luna, 3 = Timeline, 4 = Legendary, 5 = Custom
+$campaign = $db->to_array( $db->call('campaign_select_by_id', $campaign_id) ); 
 
 try {
 	
@@ -36,8 +38,32 @@ catch (Exception $e) {
 	output_footer();
 }
 
+function get_level_info( $campaign, $levelnum ) {
+	$campaign_array = array();
+
+	foreach ($campaign->$levelnum as $level) {
+		${"level_id_$levelnum"} = $campaign_array[$level->level_id];
+		${"prize_type_$levelnum"} = $campaign_array[$level->prize_type];
+		${"prize_id_$levelnum"} = $campaign_array[$level->prize_id];
+	}
+	return $campaign_array;
+}
+
+function is_selected($prize_type, $option_value) {
+	$prize_type = strtolower($prize_type);
+	$option_value = strtolower($option_value);
+	
+	if ($option_value == $prize_type) {
+		return "selected='selected'";
+	}
+	else {
+		return '';
+	}
+
+}
 
 function output_form($db, $message) {
+	global $campaign;
 	
 	output_header('Set Campaign', true, true);
 	
@@ -46,23 +72,54 @@ function output_form($db, $message) {
 		echo "<p><b>$message</b></p>";
 	}
 	
-	// select the custom campaign
-	$campaign = $db->to_array($db->call('campaign_select'));
-	$campaign = $campaign[5]; // 0 = Original, 1 = Speed, 2 = Luna, 3 = Timeline, 4 = Legendary, 5 = Custom
+	$level_info = get_level_info($campaign);
 	
 	echo '<form name="input" action="set_campaign.php" method="get">';
 	
 	echo "Set Custom Campaign <br>---<br>";
-
-	echo 'Level 1: <input type="text" size="" name="l1" value="'.htmlspecialchars($campaign->levelID0).'"><br>';
-	echo 'Level 2: <input type="text" size="" name="l2" value="'.htmlspecialchars($campaign->levelID1).'"><br>';
-	echo 'Level 3: <input type="text" size="" name="l3" value="'.htmlspecialchars($campaign->levelID2).'"><br>';
-	echo 'Level 4: <input type="text" size="" name="l4" value="'.htmlspecialchars($campaign->levelID3).'"><br>';
-	echo 'Level 5: <input type="text" size="" name="l5" value="'.htmlspecialchars($campaign->levelID4).'"><br>';
-	echo 'Level 6: <input type="text" size="" name="l6" value="'.htmlspecialchars($campaign->levelID5).'"><br>';
-	echo 'Level 7: <input type="text" size="" name="l7" value="'.htmlspecialchars($campaign->levelID6).'"><br>';
-	echo 'Level 8: <input type="text" size="" name="l8" value="'.htmlspecialchars($campaign->levelID7).'"><br>';
-	echo 'Level 9: <input type="text" size="" name="l9" value="'.htmlspecialchars($campaign->levelID8).'"><br>';
+	
+	foreach (range(1,9) as $num) {
+		
+		// get level/prize information
+		$level_id = $campaign[$num->level_id];
+		$prize_type = $campaign[$num->prize_type];
+		$prize_id = $campaign[$num->prize_id];
+		
+		// define prize types
+		$hat = "Hat";
+		$head = "Head";
+		$body = "Body";
+		$feet = "Feet";
+		$ehat = "eHat";
+		$ehead = "eHead";
+		$ebody = "eBody";
+		$eFeet = "eFeet";
+		
+		// check which type the current prize is, then select it in the dropdown
+		$hat_selected = is_selected($prize_type, $hat);
+		$head_selected = is_selected($prize_type, $head);
+		$body_selected = is_selected($prize_type, $body);
+		$feet_selected = is_selected($prize_type, $feet);
+		$ehat_selected = is_selected($prize_type, $ehat);
+		$ehead_selected = is_selected($prize_type, $ehead);
+		$ebody_selected = is_selected($prize_type, $ebody);
+		$efeet_selected = is_selected($prize_type, $efeet);
+		
+		$prize_html = "<select name='prize_type_$num'>
+						<option value=''>Choose a type...</option>
+						<option value='$hat' $hat_checked>Hat</option>
+						<option value='$head' $head_checked>Head</option>
+						<option value='$body' $body_checked>Body</option>
+						<option value='$feet' $feet_checked>Feet</option>
+						<option value='$ehat' $ehat_checked>Epic Hat</option>
+						<option value='$ehead' $ehead_checked>Epic Head</option>
+						<option value='$ebody' $ebody_checked>Epic Body</option>
+						<option value='$efeet' $efeet_checked>Epic Feet</option>
+					</select>&nbsp;<input type='text' size='' name='prize_id_$num' value='$prize_id'>";
+		
+		echo "Level $num: <input type='text' size='' name='level_id_$num' value='$level_id'> | Prize: $prize_html<br>";
+	
+	}
 	
 	echo '<input type="hidden" name="action" value="update">';
 	
@@ -79,57 +136,70 @@ function output_form($db, $message) {
 }
 
 function update($db) {
-
-	//define which campaign we're updating
-	$campaign_id = 6;
+	global $admin;
+	global $campaign_id;
 	
 	foreach (range(1,9) as $id) {
 	
-		// get individual level IDs
-		${'l' . $id} = (int) find('l' . $id);
-		// clean up variable
-		$l = ${'l' . $id};
+		// get individual level details
+		$level_id = (int) find("level_id_$id");
+		$prize_type = find("prize_type_$id");
+		$prize_id = (int) find("prize_id_$id");
 		
 		try {
 		
-			$level = $db->grab_row('level_select', array($l));
+			$level = $db->grab_row('level_select', array($level_id));
 			
 			if (!level) {
-				throw new Exception("Level $id $l does not exist.");
+				throw new Exception("Level $id ($level_id) does not exist.");
 			}
 			
 		}
 		
 		catch (Exception $e) {
-			$message = "Error: " .  $e->getMessage();
+			$message = "Error: " . $e->getMessage();
 			output_form($db, $message);
 		}
+		
+		// finalize variables
+		${"level_$id"} = $level_id;
+		${"prizetype_$id"} = $prize_type;
+		${"prizeid_$id"} = $prize_id;
+		
 	}
 
-	$db->call(
-		'campaign_update',
-		array(
-		$campaign_id,
-		$l1,
-		$l2,
-		$l3,
-		$l4,
-		$l5,
-		$l6,
-		$l7,
-		$l8,
-		$l9
-		)
-	);
+	try {
 	
-	//admin log
-	$admin_name = $admin->name;
-	$admin_id = $admin->user_id;
-	$ip = get_ip();
+		$db->call(
+			'campaign_update',
+			array(
+			$campaign_id,
+			$level_1, $prizetype_1, $prizeid_1,
+			$level_2, $prizetype_2, $prizeid_2,
+			$level_3, $prizetype_3, $prizeid_3,
+			$level_4, $prizetype_4, $prizeid_4,
+			$level_5, $prizetype_5, $prizeid_5,
+			$level_6, $prizetype_6, $prizeid_6,
+			$level_7, $prizetype_7, $prizeid_7,
+			$level_8, $prizetype_8, $prizeid_8,
+			$level_9, $prizetype_9, $prizeid_9
+			)
+		);
+		
+		//admin log
+		$admin_name = $admin->name;
+		$admin_id = $admin->user_id;
+		$ip = get_ip();
+		
+		$db->call('admin_action_insert', array($admin_id, "$admin_name set a new custom campaign from $ip", $admin_id, $ip));
 	
-	$db->call('admin_action_insert', array($admin_id, "$admin_name set a new custom campaign from $ip", $admin_id, $ip));
+	}
+	catch(Exception $e) {
+		$message = "Error: " . $e->getMessage();
+		output_form($db, $message);
+	}
 	
-	//redirect back to the script
+	// did the script get here? great! redirect back to the script with a success message
 	$message = "Great success! The new campaign has been set. It will take effect at the top of the next hour.";
 	header("Location: set_campaign.php?message=" . urlencode($message));
 	die();
