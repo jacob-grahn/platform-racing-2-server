@@ -10,6 +10,7 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>PR2 Hub - <?php echo $title; ?></title>
+	<link href="//pr2hub.com/style/gwibble.css" rel="stylesheet" type="text/css" />
 	<?php if(basename($_SERVER['PHP_SELF']) == "hint.php") { ?>
 	<link href="//pr2hub.com/style/hint.css" rel="stylesheet" type="text/css" />
 	<?php } else { ?>
