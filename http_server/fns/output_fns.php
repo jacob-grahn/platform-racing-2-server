@@ -43,8 +43,11 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 					src="//pagead2.googlesyndication.com/pagead/show_ads.js">
 					</script>
 				</div>
-			<?php } ?>
+			<?php } if(basename($_SERVER['PHP_SELF']) == "hint.php") { ?>
+			<div id="artifact">
+			<?php } else { ?>
 			<div class="content">
+			<?php } ?>
 
 <?php
 	if($formatting_for_mods) {
