@@ -114,7 +114,7 @@ class Game extends Room {
 		}
 
 		//happy hour
-		if(pr2_server::$happy_hour) {
+		if(HappyHour::isActive()) {
 			$this->send_to_all('happyHour`');
 		}
 
@@ -238,7 +238,7 @@ class Game extends Room {
 			if(rand(0, 50) == 50){
 				$this->prize = Prizes::$PARTY_HAT;
 			}
-			if( rand(0, 40) == 40 && pr2_server::$happy_hour ) {
+			if( rand(0, 40) == 40 && HappyHour::isActive() ) {
 				$this->prize = Prizes::$JUMP_START_HAT;
 			}
 		}
@@ -537,7 +537,7 @@ class Game extends Room {
 				$tot_lux_gain = count($this->finish_array) - $place - 1;
 			}
 
-			if(pr2_server::$happy_hour) {
+			if(HappyHour::isActive()) {
 				$tot_exp_gain *= 2;
 				$tot_lux_gain *= 2;
 			}

@@ -12,7 +12,7 @@ function process_update_cycle ($socket, $data) {
 		$rep->gp = GuildPoints::drain();
 		$rep->population = get_population();
 		$rep->status = get_status();
-		$rep->happy_hour = pr2_server::$happy_hour;
+		$rep->happy_hour = HappyHour::isActive();
 
 		$socket->write( json_encode( $rep ) );
 	}

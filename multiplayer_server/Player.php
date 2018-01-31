@@ -245,7 +245,7 @@ class Player {
 	public function send_chat($chat_message) {
 		global $guild_owner;
 		global $player_array;
-		
+
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
 			$room_type = "c"; // c for chat
@@ -263,10 +263,10 @@ class Player {
 		else {
 			$room_type = "n"; // n for none
 		}
-		
+
 		//special text emotes
 		$chat_message = str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
-		
+
 		// html killer for systemChat
 		$safe_chat_message = htmlspecialchars($chat_message);
 
@@ -293,10 +293,10 @@ class Player {
 				$chat_effect_tag = NULL;
 				break;
 		}
-		
+
 		// make sure they're in exactly one valid room
 		if($room_type != 'n' && $room_type != 'b' && isset($player_room)) {
-		
+
 			// guest check
 			if($this->group <= 0) {
 				$this->write('systemChat`Sorries, guests can\'t send chat messages.');
@@ -336,7 +336,7 @@ class Player {
 						try {
 							//handle exceptions
 							$caught_exception = false;
-							
+
 							// attempt to start a tournament using the specified parameters
 							issue_tournament($safe_chat_message);
 						}
@@ -346,7 +346,7 @@ class Player {
 							$err_supl = " Make sure you typed everything correctly! For help with tournaments, type /t help.";
 							$this->write('systemChat`Error: ' . $err . $err_supl);
 						}
-						
+
 						// if an error was not encountered, announce the tournament to the chatroom
 						if(!$caught_exception) {
 							announce_tournament($player_room);
@@ -379,7 +379,7 @@ class Player {
 				$announcement = trim(substr($chat_message, 3));
 				$safe_announcement = htmlspecialchars($announcement); // html killer
 				$announce_length = strlen($safe_announcement);
-	
+
 				if($announce_length >= 1) {
 					$player_room->send_chat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement);
 				}
@@ -392,7 +392,7 @@ class Player {
 				$give_this = trim(substr($chat_message, 6));
 				$safe_give_this = htmlspecialchars($give_this); // html killer
 				$give_this_length = strlen($safe_give_this);
-	
+
 				if($give_this_length >= 1) {
 					$player_room->send_chat('systemChat`'.$this->name.' has given ' . $safe_give_this);
 				}
@@ -405,7 +405,7 @@ class Player {
 				$promote_this = trim(substr($chat_message, 9));
 				$safe_promote_this = htmlspecialchars($promote_this); // html killer
 				$promote_this_length = strlen($safe_promote_this);
-	
+
 				if($promote_this_length >= 1) {
 					$player_room->send_chat('systemChat`'.$this->name.' has promoted ' . $safe_promote_this);
 				}
@@ -418,14 +418,14 @@ class Player {
 				$pop_counted = count($player_array); // count players
 				$pop_singular = array("is", "user"); // language for 1 player
 				$pop_plural = array("are", "users"); // language for multiple players
-	
+
 				if ($pop_counted === 1) {
 					$pop_lang = $pop_singular; // if there is only one player, associate the singular language with the called variable
 				}
 				else {
 					$pop_lang = $pop_plural; // if there is more than one player, associate the plural language with the called variable
 				}
-	
+
 				$this->write('systemChat`There '.$pop_lang[0].' currently '.$pop_counted.' '.$pop_lang[1].' playing on this server.');
 			}
 			// clear command
@@ -442,10 +442,10 @@ class Player {
 				$server_owner_supplement = '';
 				$staff_supplement = '';
 				$admin_supplement = '';
-	
+
 				if ($this->group >= 2) {
 					$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*<br>- /clear<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
-	
+
 					if ($this->group >= 3) {
 						$admin_supplement = '<br>Admin:<br>- /promote *message*';
 					}
@@ -653,7 +653,7 @@ class Player {
 
 
 	private function get_stat_str() {
-		if(pr2_server::$happy_hour) {
+		if(HappyHour::isActive()) {
 			$speed = 100;
 			$accel = 100;
 			$jump = 100;

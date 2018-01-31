@@ -3,7 +3,6 @@
 class pr2_server extends socketServer {
 
 	public static $last_read_time = 0;
-	public static $happy_hour = false;
 	public static $tournament = false;
 	public static $no_prizes = false;
 	public static $tournament_hat = 1;
@@ -11,24 +10,16 @@ class pr2_server extends socketServer {
 	public static $tournament_acceleration = 65;
 	public static $tournament_jumping = 65;
 
-	private static $last_time = 0;
-
 
 	public function __construct($client_class, $bind_address = 0, $bind_port = 0, $domain = AF_INET, $type = SOCK_STREAM, $protocol = SOL_TCP) {
 		parent::__construct($client_class, $bind_address, $bind_port, $domain, $type, $protocol);
-		pr2_server::$last_time = time();
 		pr2_server::$last_read_time = time();
 	}
 
 
 	public function on_timer() { //once every 10 seconds
-		$elapsed = time() - pr2_server::$last_time;
 		TemporaryItems::remove_expired();
 		LocalBans::remove_expired();
-		if($elapsed > 60*60) {
-			pr2_server::$last_time = time();
-			$this->consider_happy_hour();
-		}
 	}
 
 
@@ -38,29 +29,10 @@ class pr2_server extends socketServer {
 	}
 
 
-	private function consider_happy_hour() {
-		if(pr2_server::$happy_hour) {
-			pr2_server::$happy_hour = false;
-		}
-		else if(rand(0, 36) == 36) {
-			pr2_server::start_happy_hour();
-		}
-		echo "pr2_server::do_happy_hour - ".pr2_server::$happy_hour."\n";
-	}
-
-
 	private function consider_shutting_down() {
 		$elapsed = time() - pr2_server::$last_read_time;
 		if($elapsed > 60*5) {
 			shutdown_server();
-		}
-	}
-
-
-	public static function start_happy_hour() {
-		if( !pr2_server::$tournament ) {
-			pr2_server::$last_time = time();
-			pr2_server::$happy_hour = true;
 		}
 	}
 }

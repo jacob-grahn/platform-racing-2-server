@@ -14,7 +14,7 @@ function start_perk( $slug, $user_id, $guild_id ) {
 		assign_guild_part( 'feet', 27, $user_id, $guild_id, $seconds_duration );
 	}
 	else if( $slug == PERKS::HAPPY_HOUR ) {
-		pr2_server::start_happy_hour();
+		HappyHour.activate();
 	}
 }
 
