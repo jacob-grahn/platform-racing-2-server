@@ -132,6 +132,8 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			
 			//action log
 			$ip = $admin->ip;
+			$admin_name = $admin->name;
+			$promoted_name = $name;
 			
 			//make pretty server names
 			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
