@@ -5,7 +5,7 @@ function describeVault( $db, $user_id, $arr ) {
 
 	//--- gather infos
 	$user = $db->grab_row( 'user_select_expanded', array($user_id) );
-	$server = $db->grab_row( 'server_select', array($user->server_id), 'You don\'t seem to be logged into a pr2 server.' );
+	$server = $db->grab_row( 'server_select', array($user->server_id), 'You don\'t seem to be logged into a PR2 server.' );
 	if( $user->guild != 0 ) {
 		$guild = $db->grab_row( 'guild_select', array($user->guild) );
 	}
@@ -24,6 +24,9 @@ function describeVault( $db, $user_id, $arr ) {
 		}
 		else if( $slug == 'guild-ghost' ) {
 			$item = describeGhost();
+		}
+		else if( $slug == 'guild-artifact' ) {
+			$item = describeArtifact();
 		}
 		else if( $slug == 'happy-hour' ) {
 			$item = describeHappyHour( $server );
@@ -125,11 +128,32 @@ function describeGhost() {
 	$d->available = true;
 	$d->faq =
 		"Will this make me feel like a ninja?\n"
-		."You'll be so ninja.\n\n"
+		."- You'll be so ninja.\n\n"
 		."Is the Guild de Ghost power-up useful?\n"
 		."- It may actually be a massive disadvantage!\n\n"
 		."How does Guild de Ghost work?\n"
 		."- A very invisible head, body, and feet are temporarily added to your account. You can switch between these parts and your other parts normally.\n\n";
+
+	return( $d );
+}
+
+
+function describeArtifact() {
+	$d = new stdClass();
+	$d->slug = 'guild-artifact';
+	$d->title = 'Guild de Artifact';
+	$d->imgUrl = 'https://pr2hub.com/img/vault/Guild-de-Artifact-112x63.png';
+	$d->imgUrlSmall = 'https://pr2hub.com/img/vault/Guild-de-Artifact-40x40.png';
+	$d->price = 30;
+	$d->description = 'You and your guild gain the artifact as a hat for an hour.';
+	$d->available = true;
+	$d->faq =
+		"Will the artifact give me 11,111 EXP every race?\n"
+		."- Nope!\n\n"
+		."Is the Guild de Artifact power-up useful?\n"
+		."- It may actually be a massive disadvantage!\n\n"
+		."How does Guild de Artifact work?\n"
+		."- Fred has harnessed the power of the artifact for your control! The artifact will temporarily be added to your account, and you\'ll still be able switch between it and your other hats normally.\n\n";
 
 	return( $d );
 }
