@@ -23,7 +23,7 @@ try {
 	
 	echo '<form name="input" action="" method="get">';
 	echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'">&nbsp;';
-	echo '<input type="submit" value="Submit">';
+	echo '<input type="submit" value="Submit"><br>';
 	if( $guild_id != '' ) {
 		
 		try {
