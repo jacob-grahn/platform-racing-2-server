@@ -57,12 +57,10 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 		}
 		
 		// if the user was a mod or higher, log it in the action log
-		if($user_result->power >= 2) {
+		if($user_row->power >= 2) {
 		
 			//action log
 			$ip = $admin->ip;
-			$safe_admin_name = addslashes($admin->name);
-			$safe_user_name = addslashes($user_name);
 			
 			//make pretty server names
 			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
@@ -78,7 +76,7 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 			}
 			
 			// log action in action log
-			$db->call('mod_action_insert', array($admin->user_id, "$safe_admin_name demoted $safe_user_name from $ip on $server_name", $admin->user_id, $ip));
+			$db->call('admin_action_insert', array($admin->user_id, "$admin_name demoted $user_name from $ip on $server_name", $admin->user_id, $ip));
 			
 		}
 		
