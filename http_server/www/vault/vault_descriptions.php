@@ -324,7 +324,7 @@ function describePrivateServer30( $user, $guild ) {
 }
 
 
-function describeEpicEverything( $user, $hats ) {
+function describeEpicEverything( $user ) {
 	$d = new stdClass();
 	$d->slug = 'epic-everything';
 	$d->title = 'Epic Everything';
