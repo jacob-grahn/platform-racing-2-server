@@ -85,6 +85,44 @@ function get_ip() {
     return $_SERVER['REMOTE_ADDR'];
 }
 
+function check_value($value, $check_for, $yes='yes', $no='no') {
+	
+	/*
+	Arguments:
+	1. $value: the string/value you're checking
+	2. $check_for: what you are checking the string against
+	3. $yes: what you want to be echoed if the check is found
+	4. $no: what you want to be echoed if the check isn't found
+	*/
+	
+	if ($value == $check_for) {
+		return $yes;
+	}
+	else {
+		return $no;
+	}
+}
+
+
+function is_empty($str) {
+	
+	// if the string length is 0, it's empty
+	if (strlen(trim($str)) === 0) {
+		return true;
+	}
+	// if the string isn't set, it's empty
+	if (!isset($str)) {
+		return true;
+	}
+	// if the string is empty, it's empty
+	if (empty($str)) {
+		return true;
+	}
+
+	// you're still here? must mean $str isn't empty
+	return false;
+	
+}
 
 
 function poll_servers_strict( $db, $message, $server_ids ) {
