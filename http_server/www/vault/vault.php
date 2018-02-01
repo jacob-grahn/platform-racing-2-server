@@ -12,7 +12,7 @@ try {
 	
 	//--- create listings
 	$user_id = token_login($db, true);
-	$raw_listings = describeVault( $db, $user_id, array('stats-boost', 'epic-everything', 'guild-fred', 'guild-ghost', 'happy-hour', 'rank-rental', 'djinn-set', 'king-set', 'queen-set', 'server-1-day', 'server-30-days') );
+	$raw_listings = describeVault( $db, $user_id, array('stats-boost', 'epic-everything', 'guild-fred', 'guild-ghost', 'guild-artifact', 'happy-hour', 'rank-rental', 'djinn-set', 'king-set', 'queen-set', 'server-1-day', 'server-30-days') );
 
 	
 	//--- weed out only the info we want to return
