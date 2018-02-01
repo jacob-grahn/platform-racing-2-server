@@ -48,17 +48,20 @@ try {
 		$db->query($query, 'ban_update', 'Could not update ban. query: ' . $query);
 	
 		//action log
-		$is_account_ban = 'no';
-		$is_ip_ban = 'no';
-		if($safe_account_ban === 1) {
-			$is_account_ban = 'yes';
+		$expire_time = find('expire_time');
+		$notes = find('notes');
+		$is_account_ban = bintoyesno($safe_account_ban);
+		$is_ip_ban = bintoyesno($safe_ip_ban);
+		
+		if(is_empty($notes)) {
+			$disp_notes = "no notes";
 		}
-		if($safe_ip_ban === 1) {
-			$is_ip_ban = 'yes';
+		else {
+			$disp_notes = "notes: $notes";
 		}
 	
 		//record the change
-		$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $safe_expire_time, notes: $safe_notes}", 0, get_ip()));
+		$db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $expire_time, $disp_notes}", 0, get_ip()));
 		
 		//redirect to the ban listing
 		header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
@@ -70,10 +73,10 @@ try {
 	// --- display a form containing the current ban data 
 	// --------------------------------------------------------------------------
 	else {
-	$ban = $db->grab_row('ban_select', array($ban_id));
-	output_header('Edit Ban');
-	output_form($ban);
-	output_footer();
+		$ban = $db->grab_row('ban_select', array($ban_id));
+		output_header('Edit Ban');
+		output_form($ban);
+		output_footer();
 	}
 }
 
@@ -89,6 +92,15 @@ function checked ($value) {
 	}
 	else {
 		return '';
+	}
+}
+
+function bintoyesno($value, $default=0) {
+	if ($value === 1 || $default === 1) {
+		return 'yes';
+	}
+	else {
+		return 'no';
 	}
 }
 
