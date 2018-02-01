@@ -25,8 +25,8 @@ try {
 	$r = new stdClass();
 	$r->success = true;
 	$r->listings = $listings;
-	$r->title = 'Stayin\' Alive Sale';
-	$r->sale = true;
+	$r->title = 'Vault of Magics';
+	$r->sale = false;
 	echo json_encode( $r );
 }
 
