@@ -14,15 +14,18 @@ $safe_banned_name = addslashes($banned_name);
 $safe_reason = addslashes($reason);
 $safe_record = addslashes($record);
 
-try{
+// if it's a month/year ban coming from PR2, correct the weird ban times
+if ($using_mod_site == 'no') {
+	$duration = str_replace('29030400', '31536000', $duration); // fix year ban
+	$duration = str_replace('2419200', '2592000', $duration); // fix month ban
+}
+
+try {
 	$db = new DB();
 	
 	//sanity
-	if($banned_name == '') {
-		throw new Exception('invalid name provided');
-	}
-	if($type != 'both' && $type != 'ip' && $type != 'account') {
-		throw new Exception('Invalid ban type');
+	if(is_empty($banned_name)) {
+		throw new Exception('Invalid name provided');
 	}
 	
 	$mod = check_moderator($db);
@@ -71,31 +74,34 @@ try{
 	
 	
 	//override ip
-	if( isset( $force_ip ) && $force_ip != '' ) {
+	if( !is_empty($force_ip) ) {
 		$banned_ip = $force_ip;
 	}
 	
 	
-	//throw out non banned-info
-	if($type == 'both') {
-		$ip_ban = 1;
-		$account_ban = 1;
-	}
-	else if($type == 'account') {
-		$ip_ban = 0;
-		$account_ban = 1;
-		//$banned_ip = '';
-	}
-	else if($type == 'ip') {
-		$ip_ban = 1;
-		$account_ban = 0;
-		//$banned_user_id = 0;
+	//throw out non banned-info, set ban types
+	switch ($type) {
+		case 'both':
+			$ip_ban = 1;
+			$account_ban = 1;
+			break;
+		case 'account':
+			$ip_ban = 0;
+			$account_ban = 1;
+			break;
+		case 'ip':
+			$ip_ban = 1;
+			$account_ban = 0;
+			break;
+		default:
+			throw new Exception("Invalid ban type specified.");
+			break;
 	}
 	
 	
 	//error check
 	if($mod_power <= $banned_power || $mod_power < 2){
-		throw new Exception('You lack the power to ban '.$banned_name." $mod_power <= $banned_power");
+		throw new Exception("You lack the power to ban $banned_name.");
 	}
 	
 	
@@ -145,58 +151,30 @@ try{
 	}
 	
 	// ------- action log stuff below this point --------
+	
 	// make duration pretty
-	switch ($duration) {
-		case 60:
-			$disp_duration = 'minute';
-			break;
-		case 3600:
-			$disp_duration = 'hour';
-			break;
-		case 86400:
-			$disp_duration = 'day';
-			break;
-		case 604800:
-			$disp_duration = 'pr2 week (8 days)';
-			break;
-		case 2419200:
-			$disp_duration = 'pr2 month (28 days)';
-			break;
-		case 29030400:
-			$disp_duration = 'pr2 year (11 months)';
-			break;
-		// if all else fails, echo the seconds
-		default:
-			$disp_duration = $duration.' seconds';
-			break;
-	}
+	$disp_duration = format_duration($duration);
+	
 	// make reason pretty
-	if ($safe_reason != '') {
-		$disp_reason = "reason: " . $safe_reason;
+	if (!is_empty($reason)) {
+		$disp_reason = "reason: $reason";
 	}
 	else {
 		$disp_reason = "no reason given";
 	}
+	
 	// get mod's IP
 	$ip = $mod->ip;
-	// make account/ip ban detection pretty
-	if($safe_account_ban === 1) {
-		$is_account_ban = 'yes';
-	}
-	else {
-		$is_account_ban = 'no';
-	}
-	if($safe_ip_ban === 1) {
-		$is_ip_ban = 'yes';
-	}
-	else {
-		$is_ip_ban = 'no';
-	}
+	
+	// make account/ip ban detection pretty courtesy of data_fns.php
+	$is_account_ban = check_value($safe_account_ban, 1);
+	$is_ip_ban = check_value($safe_ip_ban, 1);
+
 	// make expire time pretty
 	$disp_expire_time = date('Y-m-d H:i:s', $expire_time);
 	
 	//record the ban in the action log
-	$db->call('mod_action_insert', array($mod->user_id, "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, reason: $disp_reason}", 0, $ip));
+	$db->call('mod_action_insert', array($mod->user_id, "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}", 0, $ip));
 	
 }
 

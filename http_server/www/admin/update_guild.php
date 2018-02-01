@@ -51,9 +51,9 @@ function output_form($db, $guild_id) {
 	echo 'Guild Owner: <input type="text" size"" name="owner_id" value="'.htmlspecialchars($guild->owner_id).'"><br>';
 	echo 'Prose: <textarea rows="4" name="note">'.htmlspecialchars($guild->note).'</textarea><br>';
 	echo 'Delete Emblem? <input type="checkbox" name="delete_emblem"><br>';
-	echo 'Description of Changes: <input type="text" size="100" name="changes"><br>';
+	echo 'Description of Changes: <input type="text" size="100" name="guild_changes"><br>';
 	echo '<input type="hidden" name="action" value="update">';
-	echo '<input type="hidden" name="guild_id" value="'.$guild->guild_id.'">';
+	echo '<input type="hidden" name="guild_id_submit" value="'.$guild->guild_id.'">';
 	
 	echo '<br/>';
 	echo '<input type="submit" value="Submit">&nbsp;(no confirmation!)';
@@ -71,13 +71,15 @@ function update($db) {
 	
 	global $admin;
 
-	//make some nice-looking variables
-	$guild = $db->grab_row('guild_select', array($guild_id));
-	$guild_id = (int) find('guild_id');
+	//make some nice-looking variables out of the information in the form
+	$guild_id = (int) find('guild_id_submit');
 	$guild_name = find('guild_name');
 	$note = find('note');
 	$owner_id = (int) find('owner_id');
-	$changes = find('changes');
+	$guild_changes = find('guild_changes');
+	
+	// call guild information
+	$guild = $db->grab_row('guild_select', array($guild_id));
 	
 	//check to see if the admin is trying to delete the guild emblem
 	if (!empty($_GET['delete_emblem'])) {
@@ -89,7 +91,7 @@ function update($db) {
 	
 	try {
 
-		if($changes == "" || empty($changes) || !isset($changes) || strlen(trim($changes)) === 0) {
+		if(is_empty($guild_changes)) {
 			throw new Exception('The description of changes cannot be blank.');
 		}
 		
@@ -108,18 +110,18 @@ function update($db) {
 		$admin_name = $admin->name;
 		$admin_id = $admin->user_id;
 		$ip = get_ip();
-		$disp_changes = "Changes: " . $changes;
+		$disp_changes = "Changes: " . $guild_changes;
 		
 		$db->call('admin_action_insert', array($admin_id, "$admin_name updated guild $guild_id from $ip. $disp_changes.", $admin_id, $ip));
 
 	}
 	catch (Exception $e) {
-		output_header('Update PR2 Account', true, true);
+		output_header('Update Guild', true, true);
 		echo 'Error: ' . $e->getMessage();
 		output_footer();
 	}
 	
-	header("Location: guild_deep_info.php?guild_id=" . urlencode(find('guild_id')));
+	header("Location: guild_deep_info.php?guild_id=" . urlencode(find('guild_id_submit')));
 	die();
 
 }

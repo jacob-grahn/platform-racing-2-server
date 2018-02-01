@@ -44,10 +44,9 @@ try {
 			<option value="60">1 Minute</option>
 			<option value="3600">1 Hour</option>
 			<option value="86400">1 Day</option>
-			<option value="648000">1 Week</option>
+			<option value="604800">1 Week</option>
 			<option value="2592000">1 Month</option>
-			<option value="31104000">1 Year</option>
-			<option value="99999999">Forever</option>
+			<option value="31536000">1 Year</option>
 		</select>
 		<select name="type">
 			<option value="account">account</option>

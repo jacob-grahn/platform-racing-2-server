@@ -131,8 +131,6 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			}
 			
 			//action log
-			$safe_admin_name = addslashes($admin->name);
-			$safe_promoted_name = addslashes($user_row->name);
 			$ip = $admin->ip;
 			
 			//make pretty server names
@@ -148,7 +146,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			}
 			
 			// log action in action log
-			$db->call('mod_action_insert', array($admin->user_id, "$safe_admin_name promoted $safe_promoted_name to a $type moderator from $ip on $server_name", $admin->user_id, $ip));
+			$db->call('admin_action_insert', array($admin->user_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name", $admin->user_id, $ip));
 			
 		}
 		catch(Exception $e){

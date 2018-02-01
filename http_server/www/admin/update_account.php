@@ -70,7 +70,7 @@ function output_form($db, $user_id) {
 		echo 'Epic Bodies: <input type="text" size="100" name="eBodies" value="'.$pr2_epic->epic_bodies.'"><br>';
 		echo 'Epic Feet: <input type="text" size="100" name="eFeet" value="'.$pr2_epic->epic_feet.'"><br>';
 	}
-	echo 'Description of Changes: <input type="text" size="100" name="changes"><br>';
+	echo 'Description of Changes: <input type="text" size="100" name="account_changes"><br>';
 	echo '<input type="hidden" name="action" value="update">';
 	echo '<input type="hidden" name="id" value="'.$user->user_id.'">';
 
@@ -95,9 +95,11 @@ function update($db) {
 	// make some nice variables
 	$guild_id = (int) find('guild');
 	$user_id = (int) find('id');
-	$user = $db->grab_row('user_select', array($user_id));
 	$email = find('email');
-	$changes = find('changes');
+	$account_changes = find('account_changes');
+	
+	// call user information
+	$user = $db->grab_row('user_select', array($user_id));
 	$user_name = $user->name;
 
 	if($user->email !== $email) {
@@ -110,8 +112,8 @@ function update($db) {
 	try {
 	
 		// check for description of changes
-		if($changes == "" || empty($changes) || !isset($changes) || strlen(trim($changes)) === 0) {
-			throw new Exception('The description of changes cannot be blank.');
+		if(is_empty($account_changes)) {
+			throw new Exception('You must enter a description of your changes.');
 		}
 		
 		// perform the action
@@ -137,7 +139,7 @@ function update($db) {
 		$admin_name = $admin->name;
 		$admin_id = $admin->user_id;
 		$ip = get_ip();
-		$disp_changes = "Changes: " . $changes;
+		$disp_changes = "Changes: " . $account_changes;
 		
 		$db->call('admin_action_insert', array($admin_id, "$admin_name updated player $user_name from $ip. $disp_changes.", $admin_id, $ip));
 		
