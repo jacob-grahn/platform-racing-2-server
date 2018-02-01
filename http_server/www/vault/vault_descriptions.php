@@ -142,8 +142,8 @@ function describeArtifact() {
 	$d = new stdClass();
 	$d->slug = 'guild-artifact';
 	$d->title = 'Guild de Artifact';
-	$d->imgUrl = 'https://pr2hub.com/img/vault/Guild-de-Artifact-112x63.png';
-	$d->imgUrlSmall = 'https://pr2hub.com/img/vault/Guild-de-Artifact-40x40.png';
+	$d->imgUrl = 'https://pr2hub.com/img/vault/Avatar-112x63.png';
+	$d->imgUrlSmall = 'https://pr2hub.com/img/vault/Avatar-40x40.png';
 	$d->price = 30;
 	$d->description = 'You and your guild gain the artifact as a hat for an hour.';
 	$d->available = true;
