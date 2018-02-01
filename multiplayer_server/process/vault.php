@@ -14,6 +14,9 @@ function process_unlock_perk ($socket, $data) {
 			if( $slug == PERKS::GUILD_GHOST ) {
 				send_to_guild( $guild_id, "systemChat`$user_name unlocked Ghost mode for your guild!" );
 			}
+			if( $slug == PERKS::GUILD_ARTIFACT ) {
+				send_to_guild( $guild_id, "systemChat`$user_name unlocked Artifact mode for your guild!" );
+			}
 			if( $slug == PERKS::HAPPY_HOUR ) {
 				send_to_all_players( "systemChat`$user_name just triggered a Happy Hour!" );
 			}

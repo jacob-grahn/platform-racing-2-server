@@ -13,6 +13,10 @@ function start_perk( $slug, $user_id, $guild_id ) {
 		assign_guild_part( 'body', 30, $user_id, $guild_id, $seconds_duration );
 		assign_guild_part( 'feet', 27, $user_id, $guild_id, $seconds_duration );
 	}
+	else if( $slug == PERKS::GUILD_ARTIFACT ) {
+		assign_guild_part( 'hat', 14, $user_id, $guild_id, $seconds_duration );
+		assign_guild_part( 'eHat', 14, $user_id, $guild_id, $seconds_duration );
+	}
 	else if( $slug == PERKS::HAPPY_HOUR ) {
 		HappyHour::activate();
 	}

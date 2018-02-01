@@ -42,6 +42,10 @@ function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $
 	else if( $slug == 'guild-ghost' ) {
 		$reply = "Ninja mode: engage!";
 	}
+	
+	else if( $slug == 'guild-artifact' ) {
+		$reply = "Ultimate power, courtesy of Fred!";
+	}
 
 	else if( $slug == 'king-set' ) {
 		award_part( $db, $user_id, 'head', 28 );
@@ -109,7 +113,7 @@ function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $
 			$reply = 'The best server ever is starting up! ETA 2 minutes.';
 		}
 		if( $result == 2 ) {
-			$reply = 'The life of your private server has been exteded! Long live your guild!';
+			$reply = 'The life of your private server has been extended! Long live your guild!';
 		}
 	}
 
