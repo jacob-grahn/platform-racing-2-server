@@ -9,7 +9,7 @@ try {
 	$db = new DB();
 
 	//make sure you're an admin
-	$admin = check_moderator($db, true, 3);
+	$admin = check_moderator($db, false, 3);
 	
 	output_header('PR2 Part IDs', true, true);
 	echo '<pre>Platform Racing 2 Part Codes
