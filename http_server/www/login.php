@@ -5,6 +5,7 @@ require_once( '../fns/Encryptor.php' );
 
 $encrypted_login = find( 'i' );
 $version = find( 'version' );
+$in_token = find( 'token' );
 
 $allowed_versions = array('24-dec-2013-v1');
 $guest_login = false;
@@ -19,7 +20,7 @@ $guild_name = '';
 $friends = array();
 $ignored = array();
 
-// ip info and run it through an IP info API (because installing geoip is not worth the hassle)
+// get the user's ip info and run it through an ip info api (because installing geoip is not worth the hassle)
 $ip = get_ip();
 
 try {
@@ -70,7 +71,7 @@ try {
 	if( $origination_domain == 'local' ) {
 		throw new Exception( 'Testing mode has been disabled.' );
 	}
-	if( !isset($user_name) || empty($user_name) || strlen(trim($user_name)) === 0 || strpos($user_name, '`') !== false ) {
+	if( (is_empty($in_token) === true && is_empty($user_name) === true) || strpos($user_name, '`') !== false ) {
 		throw new Exception( 'Invalid user name entered.' );
 	}
 
@@ -101,9 +102,6 @@ try {
 
 		//--- record this attempted log in
 		$db->call( 'login_attempt_insert', array($ip, $login->user_name) );
-
-		//--- check for a token
-		$in_token = find( 'token' );
 
 		//token login
 		if( isset($in_token) && $login->user_name == '' && $login->user_pass == '') {
