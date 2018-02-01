@@ -23,13 +23,14 @@ try {
 	
 	//htmlspecialchars
 	$mod_name = $mod->name;
+	$mod_id = $mod->user_id;
 	$ip = $mod->ip;
 	$guild_name = $guild->name;
 	$guild_note = $guild->note;
 	$guild_owner = $guild->owner_id;
 	
 	//record the deletion in the action log
-	$db->call('mod_action_insert', array($user_id, "$mod_name deleted guild $guild_id from $ip {name: $guild_name, note: $guild_note, owner_id: $guild_owner}", $user_id, $ip));
+	$db->call('mod_action_insert', array($mod_id, "$mod_name deleted guild $guild_id from $ip {name: $guild_name, note: $guild_note, owner_id: $guild_owner}", $mod_id, $ip));
 
 
 	//--- tell it to the world
