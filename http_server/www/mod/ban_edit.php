@@ -50,8 +50,8 @@ try {
 		//action log
 		$expire_time = find('expire_time');
 		$notes = find('notes');
-		$is_account_ban = bintoyesno($safe_account_ban);
-		$is_ip_ban = bintoyesno($safe_ip_ban);
+		$is_account_ban = check_value($safe_account_ban, 1);
+		$is_ip_ban = check_value($safe_ip_ban, 1);
 		
 		if(is_empty($notes)) {
 			$disp_notes = "no notes";
@@ -86,29 +86,11 @@ catch(Exception $e){
 	output_footer();
 }
 
-function checked ($value) {
-	if ($value === 1) {
-		return 'checked="checked"';
-	}
-	else {
-		return '';
-	}
-}
-
-function bintoyesno($value, $default=0) {
-	if ($value === 1 || $default === 1) {
-		return 'yes';
-	}
-	else {
-		return 'no';
-	}
-}
-
 function output_form($ban) {
 	
-	//check if the boxes are checked
-	$ip_checked = checked($ban->ip_ban);
-	$acc_checked = checked($ban->account_ban);
+	//check if the boxes are checked courtesy of data_fns.php
+	$ip_checked = check_value($ban->ip_ban, 1, 'checked="checked"', '')
+	$acc_checked = check_value($ban->account_ban, 1, 'checked="checked"', '')
 
 	echo "
 	<form>
