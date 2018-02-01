@@ -1,5 +1,7 @@
 <?php
 
+require_once('../fns/output_fns.php');
+
 output_header('Artifact Hint');
 
 echo '<center>
