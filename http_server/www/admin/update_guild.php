@@ -53,7 +53,7 @@ function output_form($db, $guild_id) {
 	echo 'Delete Emblem? <input type="checkbox" name="delete_emblem"><br>';
 	echo 'Description of Changes: <input type="text" size="100" name="guild_changes"><br>';
 	echo '<input type="hidden" name="action" value="update">';
-	echo '<input type="hidden" name="guild_id" value="'.$guild->guild_id.'">';
+	echo '<input type="hidden" name="guild_id_submit" value="'.$guild->guild_id.'">';
 	
 	echo '<br/>';
 	echo '<input type="submit" value="Submit">&nbsp;(no confirmation!)';
@@ -71,13 +71,15 @@ function update($db) {
 	
 	global $admin;
 
-	//make some nice-looking variables
-	$guild = $db->grab_row('guild_select', array($guild_id));
-	$guild_id = (int) find('guild_id');
+	//make some nice-looking variables out of the information in the form
+	$guild_id = (int) find('guild_id_submit');
 	$guild_name = find('guild_name');
 	$note = find('note');
 	$owner_id = (int) find('owner_id');
 	$guild_changes = find('guild_changes');
+	
+	// call guild information
+	$guild = $db->grab_row('guild_select', array($guild_id));
 	
 	//check to see if the admin is trying to delete the guild emblem
 	if (!empty($_GET['delete_emblem'])) {
@@ -119,7 +121,7 @@ function update($db) {
 		output_footer();
 	}
 	
-	header("Location: guild_deep_info.php?guild_id=" . urlencode(find('guild_id')));
+	header("Location: guild_deep_info.php?guild_id=" . urlencode(find('guild_id_submit')));
 	die();
 
 }
