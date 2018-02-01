@@ -10,7 +10,7 @@ $name = $_GET['name'];
 $decode = json_decode(file_get_contents("https://pr2hub.com/get_player_info_2.php?name=" . $_GET['name']));
 
 // pretty things
-echo "<center><img src='/img/player_search.png' /><br><br>";
+echo '<center><font face="Gwibble" class="gwibble">-- Player Search --</font><br><br>';
 
 echo '<form method="get">
 Username: <input type="text" name="name">

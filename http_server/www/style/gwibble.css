@@ -1,0 +1,11 @@
+@charset "utf-8";
+/* CSS Document */
+
+@font-face {
+	font-family: Gwibble;
+	src: url(//pr2hub.com/style/gwibble.ttf);
+}
+.gwibble {
+	font-family: Gwibble;
+	font-size: 30px;
+}
