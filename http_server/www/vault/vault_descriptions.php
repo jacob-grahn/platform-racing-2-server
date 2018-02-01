@@ -56,17 +56,6 @@ function describeVault( $db, $user_id, $arr ) {
 			throw new Exception( 'Unknown item type.' );
 		}
 
-		if( $item->price != 0 ) {
-			if( $item->slug === 'epic-everything' ) {
-			    $item->price = floor( $item->price * 0.75 );
-			    $item->discount = '25% off';
-			}
-			else {
-			    $item->price = floor( $item->price * 0.25 );
-			    $item->discount = '75% off';
-			}
-		}
-
 		$descriptions[] = $item;
 	}
 
