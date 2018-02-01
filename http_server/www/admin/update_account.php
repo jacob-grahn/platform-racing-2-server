@@ -95,9 +95,11 @@ function update($db) {
 	// make some nice variables
 	$guild_id = (int) find('guild');
 	$user_id = (int) find('id');
-	$user = $db->grab_row('user_select', array($user_id));
 	$email = find('email');
 	$account_changes = find('account_changes');
+	
+	// call user information
+	$user = $db->grab_row('user_select', array($user_id));
 	$user_name = $user->name;
 
 	if($user->email !== $email) {
