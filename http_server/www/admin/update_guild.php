@@ -119,6 +119,7 @@ function update($db) {
 		output_header('Update Guild', true, true);
 		echo 'Error: ' . $e->getMessage();
 		output_footer();
+		die();
 	}
 	
 	header("Location: guild_deep_info.php?guild_id=" . urlencode(find('guild_id_submit')));
