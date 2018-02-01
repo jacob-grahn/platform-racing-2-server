@@ -245,6 +245,7 @@ class Player {
 	public function send_chat($chat_message) {
 		global $guild_owner;
 		global $player_array;
+		global $port;
 
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
@@ -437,6 +438,42 @@ class Player {
 					$this->write('systemChat`This command cannot be used in levels.');
 				}
 			}
+			else if (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3) {
+				$admin_name = $this->name;
+				$admin_id = $this->user_id;
+				$ip = $this->ip;
+				
+				if ($player_room == $this->chat_room) {
+					if ($chat_message == '/restart_server yes, i am sure!') {
+						
+						try {
+							// convert port to server name
+							$server_list = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
+							$number_of_servers = count($server_list->servers);
+							foreach (range(0,$number_of_servers) as $server_id) {
+								$server_port = $server_list->servers[$server_id]->port;
+								if ($port == $server_port) {
+									$server_name = $servers->servers[$server_id]->server_name;
+									break;
+								}
+							}
+							// log action in action log
+							$db->call('admin_action_insert', array($admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip));
+							shutdown_server();	
+						}
+						catch(Exception $e) {
+							$message = $e->getMessage();
+							$this->write("message`Error: $message");
+						}
+					}
+					else {
+						$this->write('systemChat`WARNING: You just typed the server restart command. If you choose to proceed, this action will disconnect EVERY player on this server. Are you sure you want to disconnect ALL players and restart the server? If so, type: /restart_server yes, i am sure!');
+					}
+				}
+				else {
+					$this->write('systemChat`This command cannot be used in levels.');
+				}
+			}
 			// help command
 			else if ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
 				$server_owner_supplement = '';
@@ -447,7 +484,7 @@ class Player {
 					$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*<br>- /clear<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
 
 					if ($this->group >= 3) {
-						$admin_supplement = '<br>Admin:<br>- /promote *message*';
+						$admin_supplement = '<br>Admin:<br>- /promote *message*<br>- /restart_server';
 					}
 					if ($this->user_id == $guild_owner) {
 						$server_owner_supplement = '<br>Server Owner:<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
