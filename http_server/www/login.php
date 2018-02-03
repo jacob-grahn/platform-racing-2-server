@@ -238,7 +238,7 @@ Thanks for playing, I hope you enjoy.
 	}
 
 	//--- heart set
-	if($date == 'February 13' || $date == 'February 14' || $date == 'February 19' || $date == 'February 20') {
+	if($date == 'February 13' || $date == 'February 14') {
 		if( add_item($head_array, 38) ) {
 		    $stats->head = 38;
 		}
