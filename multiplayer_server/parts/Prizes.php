@@ -283,7 +283,7 @@ class Prizes {
 		self::$EPIC_SANTA_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::SANTA, 'Epic Upgrade' ); // PR2 Quests jiggmin.com/threads/109956-PR2-Quests
 		self::$EPIC_PARTY_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::PARTY, 'Epic Upgrade' );
 		self::$EPIC_TOP_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::TOP_HAT, 'Epic Upgrade' ); // Sir Sirlington
-		self::$EPIC_JUMP_START_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::JUMP_START, 'Epic Upgrade' ); // campaign 6
+		self::$EPIC_JUMP_START_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::JUMP_START, 'Epic Upgrade', true ); // campaign 6
 		self::$EPIC_MOON_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::MOON, 'Epic Upgrade' );
 		self::$EPIC_THIEF_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::THIEF, 'Epic Upgrade' );
 		self::$EPIC_JIGG_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::JIGG, 'Epic Upgrade' ); // caption of the week
