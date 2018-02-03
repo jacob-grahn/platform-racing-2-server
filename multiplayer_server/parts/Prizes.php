@@ -266,7 +266,7 @@ class Prizes {
 		self::$PROPELLER_HAT = new Prize( self::TYPE_HAT, Hats::PROPELLER, 'Propeller Hat', 'Hold up while wearing this hat to float!', true );
 		self::$COWBOY_HAT = new Prize( self::TYPE_HAT, Hats::COWBOY, 'Cowboy Hat' );
 		self::$CROWN_HAT = new Prize( self::TYPE_HAT, Hats::CROWN, 'Crown' );
-		self::$SANTA_HAT = new Prize( self::TYPE_HAT, Hats::SANTA, 'Santa Cap', 'Briefly freezes the blocks you stand on!' );
+		self::$SANTA_HAT = new Prize( self::TYPE_HAT, Hats::SANTA, 'Santa Hat', 'Briefly freezes the blocks you stand on!' );
 		self::$PARTY_HAT = new Prize( self::TYPE_HAT, Hats::PARTY, 'Party Hat', 'Wear this hat to become immune to lightning!' );
 		self::$TOP_HAT = new Prize( self::TYPE_HAT, Hats::TOP_HAT, 'Top Hat', 'Stroll through vanish blocks with class!', true );
 		self::$JUMP_START_HAT = new Prize( self::TYPE_HAT, Hats::JUMP_START, 'Jump Start Hat', 'Waiting is slow! Start racing right away.' );
@@ -301,8 +301,8 @@ class Prizes {
 		self::$BALLOON_HEAD = new Prize( self::TYPE_HEAD, Heads::BALLOON, 'Balloon Head' );
 		self::$WORM_HEAD = new Prize( self::TYPE_HEAD, Heads::WORM, 'Worm Head' );
 		self::$UNICORN_HEAD = new Prize( self::TYPE_HEAD, Heads::UNICORN, 'Unicorn Head' );
-		self::$BIRD_HEAD = new Prize( self::TYPE_HEAD, Heads::BIRD, 'Bird Head' );
-		self::$SUN_HEAD = new Prize( self::TYPE_HEAD, Heads::SUN, 'Sun Head');
+		self::$BIRD_HEAD = new Prize( self::TYPE_HEAD, Heads::BIRD, 'Giant Bird Head' );
+		self::$SUN_HEAD = new Prize( self::TYPE_HEAD, Heads::SUN, 'Cool Sun Head');
 		self::$CANDY_HEAD = new Prize( self::TYPE_HEAD, Heads::CANDY, 'Candy Head' );
 		self::$INVISIBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::INVISIBLE, 'Invisible Head' );
 		self::$FOOTBALL_HELMET_HEAD = new Prize( self::TYPE_HEAD, Heads::FOOTBALL_HELMET, 'Helmet Head' );
@@ -370,7 +370,7 @@ class Prizes {
 		self::$MISS_PR2_BODY = new Prize( self::TYPE_BODY, Bodies::MISS_PR2, 'Miss PR2 Body' );
 		self::$BELT_BODY = new Prize( self::TYPE_BODY, Bodies::BELT, 'Belt Body' );
 		self::$SNAKE_BODY = new Prize( self::TYPE_BODY, Bodies::SNAKE, 'Snake Body' );
-		self::$BIRD_BODY = new Prize( self::TYPE_BODY, Bodies::BIRD, 'Bird Body' );
+		self::$BIRD_BODY = new Prize( self::TYPE_BODY, Bodies::BIRD, 'Giant Bird Body' );
 		self::$INVISIBLE_BODY = new Prize( self::TYPE_BODY, Bodies::INVISIBLE, 'Invisible Body' );
 		self::$BEE_BODY = new Prize( self::TYPE_BODY, Bodies::BEE, 'Bee Body' );
 		self::$STICK_BODY = new Prize( self::TYPE_BODY, Bodies::STICK, 'Stick Body' );
@@ -438,7 +438,7 @@ class Prizes {
 		self::$SANDAL_FEET = new Prize( self::TYPE_FEET, Feet::SANDAL, 'Sandal Feet' );
 		self::$BARE_FEET = new Prize( self::TYPE_FEET, Feet::BARE, 'Bare Feet' );
 		self::$NICE_FEET = new Prize( self::TYPE_FEET, Feet::NICE, 'Nice Feet' );
-		self::$BIRD_FEET = new Prize( self::TYPE_FEET, Feet::BIRD, 'Bird Feet' );
+		self::$BIRD_FEET = new Prize( self::TYPE_FEET, Feet::BIRD, 'Giant Bird Feet' );
 		self::$INVISIBLE_FEET = new Prize( self::TYPE_FEET, Feet::INVISIBLE, 'Invisible Feet' );
 		self::$STICK_FEET = new Prize( self::TYPE_FEET, Feet::STICK, 'Stick Feet' );
 		self::$CAT_FEET = new Prize( self::TYPE_FEET, Feet::CAT, 'Cat Feet' );
