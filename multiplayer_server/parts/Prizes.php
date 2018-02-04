@@ -400,6 +400,7 @@ class Prizes {
 		self::$EPIC_VERY_INVISIBLE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::VERY_INVISIBLE, 'Epic Upgrade' );
 		self::$EPIC_TACO_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::TACO, 'Epic Upgrade' ); //Racer of the week
 		self::$EPIC_SLENDER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::SLENDER, 'Epic Upgrade' ); //campaign 6
+		self::$EPIC_SANTA_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::SANTA, 'Epic Upgrade' );
 		self::$EPIC_FROST_DJINN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::FROST_DJINN, 'Epic Upgrade' );
 		self::$EPIC_REINDEER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::REINDEER, 'Epic Upgrade' );
 		self::$EPIC_CROCODILE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CROCODILE, 'Epic Upgrade' );
@@ -440,6 +441,7 @@ class Prizes {
 		self::$VERY_INVISIBLE_BODY = new Prize( self::TYPE_BODY, Bodies::VERY_INVISIBLE, 'Very Invisible Body' );
 		self::$TACO_BODY = new Prize( self::TYPE_BODY, Bodies::TACO, 'Taco Body' ); //random levels
 		self::$SLENDER_BODY = new Prize( self::TYPE_BODY, Bodies::SLENDER, 'Slender Body' ); //-Deliverance- by changelings
+		self::$SANTA_BODY = new Prize( self::TYPE_BODY, Bodies::SANTA, 'Santa Body' );
 		self::$FROST_DJINN_BODY = new Prize( self::TYPE_BODY, Bodies::FROST_DJINN, 'Frost Djinn Body' );
 		self::$REINDEER_BODY = new Prize( self::TYPE_BODY, Bodies::REINDEER, 'Reindeer Body' );
 		self::$CROCODILE_BODY = new Prize( self::TYPE_BODY, Bodies::CROCODILE, 'Crocodile Body' );
@@ -478,6 +480,7 @@ class Prizes {
 		self::$EPIC_VERY_INVISIBLE_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::VERY_INVISIBLE, 'Epic Upgrade' );
 		self::$EPIC_TACO_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::TACO, 'Epic Upgrade' ); //racer of the week
 		self::$EPIC_SLENDER_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::SLENDER, 'Epic Upgrade' ); //campaign 6
+		self::$EPIC_SANTA_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::SANTA, 'Epic Upgrade' );
 		self::$EPIC_FROST_DJINN_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::FROST_DJINN, 'Epic Upgrade' );
 		self::$EPIC_REINDEER_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::REINDEER, 'Epic Upgrade' );
 		self::$EPIC_CROCODILE_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::CROCODILE, 'Epic Upgrade' );
@@ -516,6 +519,7 @@ class Prizes {
 		self::$BUBBLE_FEET = new Prize( self::TYPE_FEET, Feet::BUBBLE, 'Bubble Feet' );
 		self::$TACO_FEET = new Prize( self::TYPE_FEET, Feet::TACO, 'Taco Feet' ); //random levels
 		self::$SLENDER_FEET = new Prize( self::TYPE_FEET, Feet::SLENDER, 'Slender Feet' ); //-Deliverance- by changelings
+		self::$SANTA_FEET = new Prize( self::TYPE_FEET, Feet::SANTA, 'Santa Feet' );
 		self::$FROST_DJINN_FEET = new Prize( self::TYPE_FEET, Feet::FROST_DJINN, 'Frost Djinn Feet' );
 		self::$REINDEER_FEET = new Prize( self::TYPE_FEET, Feet::REINDEER, 'Reindeer Feet' );
 		self::$CROCODILE_FEET = new Prize( self::TYPE_FEET, Feet::CROCODILE, 'Crocodile Feet' );
@@ -552,6 +556,7 @@ class Prizes {
 		self::$EPIC_BUBBLE_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::BUBBLE, 'Epic Upgrade' );
 		self::$EPIC_TACO_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::TACO, 'Epic Upgrade' ); //racer of the week
 		self::$EPIC_SLENDER_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::SLENDER, 'Epic Upgrade' ); //campaign 6
+		self::$EPIC_SANTA_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::SANTA, 'Epic Upgrade' );
 		self::$EPIC_FROST_DJINN_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::FROST_DJINN, 'Epic Upgrade' );
 		self::$EPIC_REINDEER_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::REINDEER, 'Epic Upgrade' );
 		self::$EPIC_CROCODILE_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::CROCODILE, 'Epic Upgrade' );
