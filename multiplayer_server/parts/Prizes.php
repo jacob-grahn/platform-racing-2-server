@@ -80,6 +80,12 @@ class Prizes {
 	public static $VERY_INVISIBLE_HEAD;
 	public static $TACO_HEAD;
 	public static $SLENDER_HEAD;
+	public static $SANTA_HEAD;
+	public static $FROST_DJINN_HEAD;
+	public static $REINDEER_HEAD;
+	public static $CROCODILE_HEAD;
+	public static $VALENTINE_HEAD;
+	public static $BUNNY_HEAD;
 
 	public static $EPIC_CLASSIC_HEAD;
 	public static $EPIC_TIRED_HEAD;
@@ -114,6 +120,12 @@ class Prizes {
 	public static $EPIC_VERY_INVISIBLE_HEAD;
 	public static $EPIC_TACO_HEAD;
 	public static $EPIC_SLENDER_HEAD;
+	public static $EPIC_SANTA_HEAD;
+	public static $EPIC_FROST_DJINN_HEAD;
+	public static $EPIC_REINDEER_HEAD;
+	public static $EPIC_CROCODILE_HEAD;
+	public static $EPIC_VALENTINE_HEAD;
+	public static $EPIC_BUNNY_HEAD;
 
 
 
@@ -150,6 +162,12 @@ class Prizes {
 	public static $VERY_INVISIBLE_BODY;
 	public static $TACO_BODY;
 	public static $SLENDER_BODY;
+	public static $SANTA_BODY;
+	public static $FROST_DJINN_BODY;
+	public static $REINDEER_BODY;
+	public static $CROCODILE_BODY;
+	public static $VALENTINE_BODY;
+	public static $BUNNY_BODY;
 
 	public static $EPIC_CLASSIC_BODY;
 	public static $EPIC_STRAP_BODY;
@@ -183,6 +201,12 @@ class Prizes {
 	public static $EPIC_VERY_INVISIBLE_BODY;
 	public static $EPIC_TACO_BODY;
 	public static $EPIC_SLENDER_BODY;
+	public static $EPIC_SANTA_BODY;
+	public static $EPIC_FROST_DJINN_BODY;
+	public static $EPIC_REINDEER_BODY;
+	public static $EPIC_CROCODILE_BODY;
+	public static $EPIC_VALENTINE_BODY;
+	public static $EPIC_BUNNY_BODY;
 
 
 
@@ -217,6 +241,12 @@ class Prizes {
 	public static $BUBBLE_FEET;
 	public static $TACO_FEET;
 	public static $SLENDER_FEET;
+	public static $SANTA_FEET;
+	public static $FROST_DJINN_FEET;
+	public static $REINDEER_FEET;
+	public static $CROCODILE_FEET;
+	public static $VALENTINE_FEET;
+	public static $BUNNY_FEET;
 
 	public static $EPIC_CLASSIC_FEET;
 	public static $EPIC_HEEL_FEET;
@@ -248,6 +278,12 @@ class Prizes {
 	public static $EPIC_BUBBLE_FEET;
 	public static $EPIC_TACO_FEET;
 	public static $EPIC_SLENDER_FEET;
+	public static $EPIC_SANTA_FEET;
+	public static $EPIC_FROST_DJINN_FEET;
+	public static $EPIC_REINDEER_FEET;
+	public static $EPIC_CROCODILE_FEET;
+	public static $EPIC_VALENTINE_FEET;
+	public static $EPIC_BUNNY_FEET;
 
 
 	//---
@@ -324,6 +360,12 @@ class Prizes {
 		self::$VERY_INVISIBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::VERY_INVISIBLE, 'Very Invisible Head' );
 		self::$TACO_HEAD = new Prize( self::TYPE_HEAD, Heads::TACO, 'Taco Head' ); // random levels
 		self::$SLENDER_HEAD = new Prize( self::TYPE_HEAD, Heads::SLENDER, 'Slender Head' ); // -Deliverance- by changelings
+		self::$SANTA_HEAD = new Prize( self::TYPE_HEAD, Heads::SANTA, 'Santa Head' );
+		self::$FROST_DJINN_HEAD = new Prize( self::TYPE_HEAD, Heads::FROST_DJINN, 'Frost Djinn Head' );
+		self::$REINDEER_HEAD = new Prize( self::TYPE_HEAD, Heads::REINDEER, 'Reindeer Head' );
+		self::$CROCODILE_HEAD = new Prize( self::TYPE_HEAD, Heads::CROCODILE, 'Crocodile Head' );
+		self::$VALENTINE_HEAD = new Prize( self::TYPE_HEAD, Heads::VALENTINE, 'Valentine Head' );
+		self::$BUNNY_HEAD = new Prize( self::TYPE_HEAD, Heads::BUNNY, 'Bunny Head' );
 
 		self::$EPIC_CLASSIC_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade' ); // random levels
 		self::$EPIC_TIRED_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::TIRED, 'Epic Upgrade' ); // random levels
@@ -358,6 +400,11 @@ class Prizes {
 		self::$EPIC_VERY_INVISIBLE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::VERY_INVISIBLE, 'Epic Upgrade' );
 		self::$EPIC_TACO_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::TACO, 'Epic Upgrade' ); //Racer of the week
 		self::$EPIC_SLENDER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::SLENDER, 'Epic Upgrade' ); //campaign 6
+		self::$EPIC_FROST_DJINN_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::FROST_DJINN, 'Epic Upgrade' );
+		self::$EPIC_REINDEER_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::REINDEER, 'Epic Upgrade' );
+		self::$EPIC_CROCODILE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::CROCODILE, 'Epic Upgrade' );
+		self::$EPIC_VALENTINE_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::VALENTINE, 'Epic Upgrade' );
+		self::$EPIC_BUNNY_HEAD = new Prize( self::TYPE_EPIC_HEAD, Heads::BUNNY, 'Epic Upgrade' );
 
 
 		//---
@@ -393,6 +440,11 @@ class Prizes {
 		self::$VERY_INVISIBLE_BODY = new Prize( self::TYPE_BODY, Bodies::VERY_INVISIBLE, 'Very Invisible Body' );
 		self::$TACO_BODY = new Prize( self::TYPE_BODY, Bodies::TACO, 'Taco Body' ); //random levels
 		self::$SLENDER_BODY = new Prize( self::TYPE_BODY, Bodies::SLENDER, 'Slender Body' ); //-Deliverance- by changelings
+		self::$FROST_DJINN_BODY = new Prize( self::TYPE_BODY, Bodies::FROST_DJINN, 'Frost Djinn Body' );
+		self::$REINDEER_BODY = new Prize( self::TYPE_BODY, Bodies::REINDEER, 'Reindeer Body' );
+		self::$CROCODILE_BODY = new Prize( self::TYPE_BODY, Bodies::CROCODILE, 'Crocodile Body' );
+		self::$VALENTINE_BODY = new Prize( self::TYPE_BODY, Bodies::VALENTINE, 'Valentine Body' );
+		self::$BUNNY_BODY = new Prize( self::TYPE_BODY, Bodies::BUNNY, 'Bunny Body' );
 
 		self::$EPIC_CLASSIC_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::CLASSIC, 'Epic Upgrade' ); //random levels
 		self::$EPIC_STRAP_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::STRAP, 'Epic Upgrade' ); //random levels
@@ -426,6 +478,11 @@ class Prizes {
 		self::$EPIC_VERY_INVISIBLE_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::VERY_INVISIBLE, 'Epic Upgrade' );
 		self::$EPIC_TACO_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::TACO, 'Epic Upgrade' ); //racer of the week
 		self::$EPIC_SLENDER_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::SLENDER, 'Epic Upgrade' ); //campaign 6
+		self::$EPIC_FROST_DJINN_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::FROST_DJINN, 'Epic Upgrade' );
+		self::$EPIC_REINDEER_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::REINDEER, 'Epic Upgrade' );
+		self::$EPIC_CROCODILE_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::CROCODILE, 'Epic Upgrade' );
+		self::$EPIC_VALENTINE_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::VALENTINE, 'Epic Upgrade' );
+		self::$EPIC_BUNNY_BODY = new Prize( self::TYPE_EPIC_BODY, Bodies::BUNNY, 'Epic Upgrade' );
 
 
 		//---
@@ -459,6 +516,11 @@ class Prizes {
 		self::$BUBBLE_FEET = new Prize( self::TYPE_FEET, Feet::BUBBLE, 'Bubble Feet' );
 		self::$TACO_FEET = new Prize( self::TYPE_FEET, Feet::TACO, 'Taco Feet' ); //random levels
 		self::$SLENDER_FEET = new Prize( self::TYPE_FEET, Feet::SLENDER, 'Slender Feet' ); //-Deliverance- by changelings
+		self::$FROST_DJINN_FEET = new Prize( self::TYPE_FEET, Feet::FROST_DJINN, 'Frost Djinn Feet' );
+		self::$REINDEER_FEET = new Prize( self::TYPE_FEET, Feet::REINDEER, 'Reindeer Feet' );
+		self::$CROCODILE_FEET = new Prize( self::TYPE_FEET, Feet::CROCODILE, 'Crocodile Feet' );
+		self::$VALENTINE_FEET = new Prize( self::TYPE_FEET, Feet::VALENTINE, 'Valentine Feet' );
+		self::$BUNNY_FEET = new Prize( self::TYPE_FEET, Feet::BUNNY, 'Bunny Feet' );
 
 		self::$EPIC_CLASSIC_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::CLASSIC, 'Epic Upgrade' ); //random levels
 		self::$EPIC_HEEL_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::HEEL, 'Epic Upgrade' ); //random levels
@@ -490,6 +552,11 @@ class Prizes {
 		self::$EPIC_BUBBLE_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::BUBBLE, 'Epic Upgrade' );
 		self::$EPIC_TACO_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::TACO, 'Epic Upgrade' ); //racer of the week
 		self::$EPIC_SLENDER_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::SLENDER, 'Epic Upgrade' ); //campaign 6
+		self::$EPIC_FROST_DJINN_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::FROST_DJINN, 'Epic Upgrade' );
+		self::$EPIC_REINDEER_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::REINDEER, 'Epic Upgrade' );
+		self::$EPIC_CROCODILE_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::CROCODILE, 'Epic Upgrade' );
+		self::$EPIC_VALENTINE_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::VALENTINE, 'Epic Upgrade' );
+		self::$EPIC_BUNNY_FEET = new Prize( self::TYPE_EPIC_FEET, Feet::BUNNY, 'Epic Upgrade' );
 
 
 		//---
