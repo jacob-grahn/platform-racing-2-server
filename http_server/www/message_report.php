@@ -29,8 +29,9 @@ try{
 	if(!$result) {
 		throw new Exception('Could not check if the message was already reported.');
 	}
-	if($row->count !== 0) {
-		throw new Exception('It seems that you\'ve already reported this message.');
+	if($row->count !== 0 && $user_id === 3483035) { // 3483035 is bls1999's user ID. trying to figure out what the heckin problem is.
+		$count = $row->count;
+		throw new Exception("The number of rows that were returned is $count.");
 	}
 	
 	//pull the selected message from the db

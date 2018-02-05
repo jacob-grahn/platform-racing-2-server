@@ -142,7 +142,7 @@ function describeArtifact() {
 		."Is the Guild de Artifact power-up useful?\n"
 		."- It may actually be a massive disadvantage!\n\n"
 		."How does Guild de Artifact work?\n"
-		."- Fred has harnessed the power of the artifact for your control! The artifact will temporarily be added to your account, and you\'ll still be able switch between it and your other hats normally.\n\n";
+		."- Fred has harnessed the power of the artifact for your control! The artifact will temporarily be added to your account, and you'll still be able switch between it and your other hats normally.\n\n";
 
 	return( $d );
 }

@@ -449,12 +449,28 @@ class Player {
 						try {
 							// convert port to server name
 							$server_list = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
+							// debugging
+							if (empty($server_list)) {
+								throw new Exception("No servers found.");
+							}
 							$number_of_servers = count($server_list->servers);
+							// debugging
+							if (empty($number_of_servers)) {
+								throw new Exception("Unable to count the number of servers.");
+							}
 							foreach (range(0,$number_of_servers) as $server_id) {
 								$server_port = $server_list->servers[$server_id]->port;
+								// debugging
+								if (empty($server_port)) {
+									throw new Exception("Unable to get server port numbers.");
+								}
 								if ($port == $server_port) {
 									$server_name = $servers->servers[$server_id]->server_name;
 									break;
+								}
+								// debugging
+								if (empty($server_name)) {
+									throw new Exception("Unable to determine the server name.");
 								}
 							}
 							// log action in action log

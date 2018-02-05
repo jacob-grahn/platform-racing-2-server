@@ -148,6 +148,7 @@ function update($db) {
 		output_header('Update PR2 Account', true, true);
 		echo 'Error: ' . $e->getMessage();
 		output_footer();
+		die();
 	}
 	
 	header("Location: player_deep_info.php?name1=" . urlencode(find('name')));

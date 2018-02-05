@@ -89,8 +89,8 @@ catch(Exception $e){
 function output_form($ban) {
 	
 	//check if the boxes are checked courtesy of data_fns.php
-	$ip_checked = check_value($ban->ip_ban, 1, 'checked="checked"', '')
-	$acc_checked = check_value($ban->account_ban, 1, 'checked="checked"', '')
+	$ip_checked = check_value($ban->ip_ban, 1, 'checked="checked"', '');
+	$acc_checked = check_value($ban->account_ban, 1, 'checked="checked"', '');
 
 	echo "
 	<form>

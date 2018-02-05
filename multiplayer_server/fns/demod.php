@@ -61,6 +61,9 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 		
 			//action log
 			$ip = $admin->ip;
+			$admin_id = $admin->user_id;
+			$admin_name = $admin->name;
+			$demoted_name = $user_name;
 			
 			//make pretty server names
 			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
@@ -76,7 +79,7 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 			}
 			
 			// log action in action log
-			$db->call('admin_action_insert', array($admin->user_id, "$admin_name demoted $user_name from $ip on $server_name", $admin->user_id, $ip));
+			$db->call('admin_action_insert', array($admin_id, "$admin_name demoted $user_name from $ip on $server_name.", $admin_id, $ip));
 			
 		}
 		

@@ -132,6 +132,8 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			
 			//action log
 			$ip = $admin->ip;
+			$admin_name = $admin->name;
+			$promoted_name = $name;
 			
 			//make pretty server names
 			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
@@ -146,7 +148,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			}
 			
 			// log action in action log
-			$db->call('admin_action_insert', array($admin->user_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name", $admin->user_id, $ip));
+			$db->call('admin_action_insert', array($admin->user_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name.", $admin->user_id, $ip));
 			
 		}
 		catch(Exception $e){
