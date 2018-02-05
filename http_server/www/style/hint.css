@@ -34,7 +34,8 @@ body {
 }
 
 #body {
-	padding-bottom: 375px;
+	padding-top: 80px;
+	padding-bottom: 170px;
 	min-height: 300px;
 }
 
@@ -42,7 +43,7 @@ body {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	height: 375px;
+	height: 200px;
         background-image: url(//pr2hub.com/img/bottom.jpg);
 	background-position: top center;
 	z-index: 1;
@@ -84,36 +85,4 @@ body {
 	margin-right: auto;
 	padding: 20px;
 	background-color: #EFF4F8;
-}
-
-.game_holder {
-	border-radius: 7px;
-	width: 100%;
-	text-align: center;
-}
-
-.above_game_ad {
-	text-align: center;
-	padding: 0px 0 35px 0;
-	position: relative;
-	top: -5px;
-}
-
-.archived {
-    font-color: #666666;
-}
-
-.date {
-	font-color: #666666;
-}
-
-#artifact {
-	border-radius: 7px;
-	max-width: 650px;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 20px;
-	background-color: #EFF4F8;
-	position: relative;
-	top: 200px;
 }
