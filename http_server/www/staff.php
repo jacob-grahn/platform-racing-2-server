@@ -1,7 +1,5 @@
 <?php
 
-// code
-
 require_once('../fns/output_fns.php');
 
 $staff_array = array(
