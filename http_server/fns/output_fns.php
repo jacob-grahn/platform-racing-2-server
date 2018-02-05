@@ -105,3 +105,66 @@ function output_mod_navigation($formatting_for_admins=true) {
 <?php
 }
 ?>
+
+<?php
+
+function get_staff($playerlist) {
+
+$plist = explode(",", $playerlist);
+
+foreach ($plist as $player) {
+
+$decode = json_decode(file_get_contents("https://pr2hub.com/get_player_info_2.php?name=" . $player));
+
+echo "<tr><td>";
+
+echo '<u><font color="';
+
+if ($decode->group == "0") {
+    echo '#7e7f7f">';
+}
+
+elseif ($decode->group == "1") {
+    echo '#047b7b">';
+}
+
+elseif ($decode->group == "2") {
+    echo '#1c369f">';
+}
+
+elseif ($decode->group == "3") {
+    echo '#870a6f">';
+}
+
+echo htmlspecialchars($decode->name) . "</u></font></td>";
+
+echo "<td>" . $decode->status . "</td>";
+
+if ($decode->guildId == "0") {
+    echo "<td>" . "none" . "</td>";
+}
+else {
+    echo "<td>" . htmlspecialchars($decode->guildName) . "</td>";
+}
+
+echo "<td>" . $decode->rank . "</td>";
+
+echo "<td>" . strval($decode->hats) . "</td>";
+
+if ($decode->registerDate == "1/Jan/1970") {
+    echo "<td>Age of Heroes</td>";
+}
+else {
+    echo "<td>" . $decode->registerDate . "</td>";
+}
+
+echo "<td>" . $decode->loginDate . "</td>";
+
+echo "</tr>";
+}
+
+echo "</table>";
+
+}
+
+?>
