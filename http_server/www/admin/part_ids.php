@@ -70,7 +70,7 @@ try {
 36 - Reindeer
 37 - Crocodile
 38 - Valentine
-39 - Rabbit
+39 - Bunny
 40+ - *BLANK*
 
 -- Bodies --
@@ -112,7 +112,7 @@ try {
 36 - Reindeer
 37 - Crocodile
 38 - Valentine
-39 - Rabbit
+39 - Bunny
 40+ - *BLANK*
 
 -- Feet --
@@ -154,7 +154,7 @@ try {
 36 - Reindeer
 37 - Crocodile
 38 - Valentine
-39 - Rabbit
+39 - Bunny
 40+ - *BLANK*
 
 -- Full Sets --

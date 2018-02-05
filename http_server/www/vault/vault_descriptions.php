@@ -301,7 +301,7 @@ function describePrivateServer30( $user, $guild ) {
 	$d = new stdClass();
 	$d->slug = 'server-30-days';
 	$d->title = 'Private Server 30';
-	$d->imgUrl = 'https://pr2hub.com/img/vault/Private-Server-112x63.png';
+	$d->imgUrl = 'https://pr2hub.com/img/vault/Privat-%20Server-112x63.png';
 	$d->imgUrlSmall = 'https://pr2hub.com/img/vault/Private-Server-40x40.png';
 	$d->price = 300;
 	$d->description = 'Create an exclusive server for your guild. Runs for 30 days.';
