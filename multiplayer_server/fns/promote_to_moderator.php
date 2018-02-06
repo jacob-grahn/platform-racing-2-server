@@ -29,7 +29,6 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	
 	//check for proper permission in the db (3rd + final line of defense before promotion)
 	if($admin_row->power != 3) {
-		$caught_exception = true;
 		echo $admin->name." lacks the database power to promote $name to a $type moderator.";
 		$admin->write("message`Error: You lack the power to promote $name to a $type moderator.");
 		return false;
@@ -188,20 +187,12 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		}
 
 	} // end if temp
-
-	// if all of that was valid and error-less, carry out the client-side changes
-	if (!$caught_exception) {
-		if(isset($promoted_player) && $promoted_player->group != 0 && $type == 'temporary'){
-				$promoted_player->become_temp_mod();
-		}
-		elseif(isset($promoted_player) && $promoted_player->group != 0 && ($type == 'trial' || $type == 'permanent')){
-				$promoted_player->group = 2;
-				$promoted_player->write('setGroup`2');
-		}
-		echo $admin->name." promoted $name to a $type moderator.";
-		$admin->write("message`$name has been promoted to a $type moderator!");
-		return true;
-	}
+	
+	else {
+		$admin->write('message`Error: Unknown moderator type specified.');
+		return false;
+	} // if the type wasn't trial, perma, or temp, then something's wrong. Kill the function.
+	
 }
 
 ?>
