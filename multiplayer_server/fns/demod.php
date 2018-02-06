@@ -61,12 +61,6 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 			$admin_name = $admin->name;
 			$demoted_name = $user_name;
 			
-			// debugging; trying to figure out what is returned from these variables
-			// 3483035 is bls1999
-			if ($admin_id === 3483035) {
-				$admin->write('message`Variables, Pre-Server Check: <br><br>admin_name: ' . $admin_name . ' <br>demoted_name: ' . $demoted_name . ' <br>ip: ' . $ip);
-			}
-			
 			//make pretty server names
 			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
 			$server_count = count($servers->servers);
@@ -80,14 +74,8 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 				}
 			}
 			
-			// debugging; trying to figure out what is returned from these variables
-			// 3483035 is bls1999
-			if ($admin_id === 3483035) {
-				$admin->write('message`Variables, Post-Server Check: <br><br>admin_name: ' . $admin_name . ' <br>demoted_name: ' . $demoted_name . ' <br>server: ' . $server_name . '<br>ip: ' . $ip);
-			}
-			
 			// log action in action log
-			$db->call('admin_action_insert', array($admin_id, $admin_name ' demoted ' . $demoted_name . ' from ' . $ip . ' on ' . $server_name . '.', $admin_id, $ip));
+			$db->call('admin_action_insert', array($admin_id, "$admin_name demoted $demoted_name from $ip on $server_name.", $admin_id, $ip));
 			
 			// do it!
 			if(isset($demoted_player) && $demoted_player->group >= 2) {
