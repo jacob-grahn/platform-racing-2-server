@@ -129,12 +129,6 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			$admin_id = $admin->user_id;
 			$promoted_name = $name;
 			
-			// debugging; trying to figure out what is returned from these variables
-			// 3483035 is bls1999
-			if ($admin_id === 3483035) {
-				$admin->write('message`Variables, Pre-Server Check: <br><br>admin_name: ' . $admin_name . ' <br>promoted_name: ' . $promoted_name . ' <br>type: ' . $type . ' <br>ip: ' . $ip);
-			}
-			
 			//make pretty server names
 			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
 			$server_count = count($servers->servers);
@@ -147,14 +141,8 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 				}
 			}
 			
-			// debugging; trying to figure out what is returned from these variables
-			// 3483035 is bls1999
-			if ($admin_id === 3483035) {
-				$admin->write('message`Variables, Post-Server Check: <br><br>admin_name: ' . $admin_name . ' <br>promoted_name: ' . $promoted_name . ' <br>type: ' . $type . ' <br>server: ' . $server_name . '<br>ip: ' . $ip);
-			}
-			
 			// log action in action log
-			$db->call('admin_action_insert', array($admin_id, $admin_name . ' promoted ' . $promoted_name . ' to a ' . $type . ' moderator from ' . $ip . ' on ' . $server_name . '.', $admin_id, $ip));
+			$db->call('admin_action_insert', array($admin_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name.", $admin_id, $ip));
 			
 			if(isset($promoted_player) && $promoted_player->group != 0){
 				$promoted_player->group = 2;
@@ -175,15 +163,16 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	elseif ($type == 'temporary') {
 		
 		try {
-			
 			if(isset($promoted_player) && $promoted_player->group != 0){
 				$promoted_player->become_temp_mod();
 			}
 			
+			return true;
 		}
 		catch(Exception $e){
 			echo "Error: ".$e->getMessage();
 			$admin->write('message`Error: '.$e->getMessage());
+			return false;
 		}
 
 	} // end if temp
