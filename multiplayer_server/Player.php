@@ -245,7 +245,6 @@ class Player {
 	public function send_chat($chat_message) {
 		global $guild_owner;
 		global $player_array;
-		global $port;
 
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
@@ -439,6 +438,9 @@ class Player {
 				}
 			}
 			else if (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3) {
+				global $port;
+				
+				// make some variables
 				$admin_name = $this->name;
 				$admin_id = $this->user_id;
 				$ip = $this->ip;
@@ -449,33 +451,27 @@ class Player {
 						try {
 							// convert port to server name
 							$server_list = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
-							// debugging
-							if (empty($server_list)) {
-								throw new Exception("No servers found.");
-							}
 							$number_of_servers = count($server_list->servers);
-							// debugging
-							if (empty($number_of_servers)) {
-								throw new Exception("Unable to count the number of servers.");
-							}
+
 							foreach (range(0,$number_of_servers) as $server_id) {
 								$server_port = $server_list->servers[$server_id]->port;
-								// debugging
-								if (empty($server_port)) {
-									throw new Exception("Unable to get server port numbers.");
-								}
+								
 								if ($port == $server_port) {
-									$server_name = $servers->servers[$server_id]->server_name;
+									$server_name = $server_list->servers[$server_id]->server_name;
 									break;
 								}
-								// debugging
-								if (empty($server_name)) {
-									throw new Exception("Unable to determine the server name.");
+								else {
+									continue;
 								}
+								
 							}
+							
 							// log action in action log
 							$db->call('admin_action_insert', array($admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip));
-							shutdown_server();	
+								
+							// shut it down, yo
+							shutdown_server();
+							
 						}
 						catch(Exception $e) {
 							$message = $e->getMessage();
