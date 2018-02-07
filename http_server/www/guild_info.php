@@ -8,6 +8,9 @@ require_once( '../fns/pr2_fns.php' );
 
 try {
 	
+	//--- rate limit
+	rate_limit(get_ip(), 120, 10);
+	
 	//--- import data
 	$guild_id = find( 'id', 0 );
 	$guild_name = find( 'name', '' );
