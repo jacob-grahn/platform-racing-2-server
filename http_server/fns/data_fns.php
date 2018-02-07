@@ -140,22 +140,19 @@ function is_empty($str, $incl_zero=true) {
 	
 }
 
-function check_ref($custom_error=false) {
+function check_ref() {
 		$ref = $_SERVER['HTTP_REFERER'];
 		if(
 			strpos($ref, 'http://pr2hub.com') !== 0 &&
 			strpos($ref, 'https://pr2hub.com') !== 0 &&
 			strpos($ref, 'http://cdn.jiggmin.com') !== 0 &&
 			strpos($ref, 'http://chat.kongregate.com') !== 0 &&
-			strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0
+			strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0 &&
+			strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') !== 0
 		) {
-			if (!$custom_error) {
-				throw new Exception('Referrer is: '.$ref);
-			}
-			else {
-				throw new Exception($custom_error);
-			}
+			return $ref;
 		}
+		return true;
 }
 
 
@@ -265,7 +262,11 @@ function valid_email($email) {
 //returns your account if you are a moderator
 function check_moderator($db, $check_ref=true, $min_power=2) {
 	if($check_ref) {
-		check_ref();
+		$ref = check_ref();
+		if ($ref !== true) {
+			$safe_ref = htmlspecialchars($ref);
+			throw new Exception("Incorrect referrer. The referrer is: $safe_ref");
+		}
 	}
 
 	$user_id = token_login($db);
