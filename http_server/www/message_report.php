@@ -11,7 +11,7 @@ $safe_reporter_ip = addslashes($ip);
 $safe_time = addslashes($time);
 
 
-try{
+try {
 	
 	$db = new DB();
 	
@@ -21,29 +21,33 @@ try{
 	
 	//make sure the message isn't already reported
 	$result = $db->query("SELECT COUNT(*)
-									AS count
-									FROM messages_reported
-								 	WHERE message_id = '$safe_message_id'
-									");
-	$row = $result->fetch_object();
+								FROM messages_reported
+							 	WHERE message_id = '$safe_message_id'
+								");
+	$count = $result->fetch_object();
 	if(!$result) {
 		throw new Exception('Could not check if the message was already reported.');
 	}
-	if($row->count !== 0 && $user_id === 3483035) { // 3483035 is bls1999's user ID. trying to figure out what the heckin problem is.
-		$count = $row->count;
-		throw new Exception("The number of rows that were returned is $count.");
+	// debugging
+	if($user_id === 3483035) { // 3483035 is bls1999's user ID. trying to figure out what the heckin problem is.
+		$data = var_dump($result);
+		$data_count = var_dump($count);
+		throw new Exception("Welcome, bls1999. Below, you will find the data that was returned from the server.<br><br>Raw data: $data<br><br>Count data: $data_count");
 	}
+	
+	// DEBUGGING; TEMPORARILY DISABLES MESSAGE REPORTING
+	throw new Exception("Message reporting is currently disabled. If you still wish to report a PM, you may do so by registering and posting in the Ask a Mod forum on https://jiggmin2.com/forums.<br><br>We apologize for the inconvenience and hope to have message reporting up and running again soon.<br><br>- PR2 Staff");
 	
 	//pull the selected message from the db
 	$result = $db->query("SELECT *
-								 	FROM messages
-									WHERE message_id = '$safe_message_id'
-									LIMIT 0, 1");
+								FROM messages
+								WHERE message_id = '$safe_message_id'
+								LIMIT 0, 1");
 	if(!$result){
 		throw new Exception('Could not retrieve message.');
 	}
 	if($result->num_rows <= 0) {
-		throw new Exception("The message you tried to report ($safe_message_id) doesn\'t exist.");
+		throw new Exception("The message you tried to report ($safe_message_id) doesn't exist.");
 	}
 	
 	
@@ -81,6 +85,8 @@ try{
 	
 	//tell it to the world
 	echo 'message=The message was reported successfully!';
+		
+	}
 }
 
 catch(Exception $e){
