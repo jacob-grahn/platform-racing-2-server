@@ -2,8 +2,8 @@
 
 class HappyHour {
 
-	private static $active_until = 0;
-  private static $random_hour = rand(0, 23);
+  private static $active_until = 0;
+  public static $random_hour = 0;
 
   public static function activate ($duration = 3600) {
     $time = time();
@@ -15,8 +15,10 @@ class HappyHour {
 
   public static function isActive () {
     $current_hour = (int) date('G');
-    return self::$active_until >= time() || $current_hour === $random_hour;
+    return self::$active_until >= time() || $current_hour === self::$random_hour;
   }
 }
+
+HappyHour::$random_hour = rand(0, 23);
 
 ?>
