@@ -356,43 +356,6 @@ Thanks for playing, I hope you enjoy.
 	$reply->emblem = $emblem;
 	$reply->userId = $user_id;
 	
-	// debugging, user id 4719041 is 1bls64
-	if ( $user_id === "4719041" ) {
-		
-		// check if in_token is getting the value it should be
-		if (isset($in_token)) {
-			$reply->inToken = $in_token;
-		}
-		else {
-			$reply->inToken = 'not set';
-		}
-		
-		// check if a cookie is set
-		if (isset($_COOKIE['token'])) {
-			$reply->tokenCookie = $_COOKIE['token'];
-		}
-		else {
-			$reply->tokenCookie = 'not set';
-		}
-		
-		// check if a post value is set
-		if (isset($_POST['token'])) {
-			$reply->tokenPost = $_POST['token'];
-		}
-		else {
-			$reply->tokenPost = 'not set';
-		}
-		
-		// check if the username is set
-		if (isset($user_name)) {
-			$reply->usernameSet = true;
-		}
-		else {
-			$reply->usernameSet = false;
-		}
-		
-	}
-	
 	echo json_encode( $reply );
 }
 

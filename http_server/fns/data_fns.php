@@ -6,31 +6,36 @@
 function find($str, $default=NULL) {
 	if( isset($_COOKIE[$str]) ) {
 		$val = $_COOKIE[$str];
+		return $val;
 	}
 	if( isset($_POST[$str]) ) {
 		$val = $_POST[$str];
+		return $val;
 	}
 	if( isset($_GET[$str]) ) {
 		$val = $_GET[$str];
+		return $val;
 	}
 	if( !isset($val) ) {
 		$val = $default;
+		return $val;
 	}
-	return $val;
 }
 
 
 function find_no_cookie($str, $default=NULL) {
 	if( isset($_POST[$str]) ) {
 		$val = $_POST[$str];
+		return $val;
 	}
 	if( isset($_GET[$str]) ) {
 		$val = $_GET[$str];
+		return $val;
 	}
 	if( !isset($val) ) {
 		$val = $default;
+		return $val;
 	}
-	return $val;
 }
 
 
