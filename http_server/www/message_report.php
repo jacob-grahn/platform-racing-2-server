@@ -85,12 +85,11 @@ try {
 	
 	//tell it to the world
 	echo 'message=The message was reported successfully!';
-		
-	}
+
 }
 
 catch(Exception $e){
-	echo 'error='.($e->getMessage());
+	echo 'error=' . $e->getMessage();
 }
 
 ?>
