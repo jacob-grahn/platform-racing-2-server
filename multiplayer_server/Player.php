@@ -245,6 +245,7 @@ class Player {
 	public function send_chat($chat_message) {
 		global $guild_owner;
 		global $player_array;
+		global $port;
 
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
@@ -438,9 +439,6 @@ class Player {
 				}
 			}
 			else if (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3) {
-				global $port;
-				
-				// make some variables
 				$admin_name = $this->name;
 				$admin_id = $this->user_id;
 				$ip = $this->ip;
