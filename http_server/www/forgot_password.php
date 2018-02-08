@@ -9,20 +9,15 @@ $email = $_POST['email'];
 $safe_name = addslashes($name);
 $safe_email = addslashes($email);
 
-
 try{
-	$rpage = "";
-	if (isset($_SERVER["HTTP_REFERER"])){
-		$rpage = $_SERVER["HTTP_REFERER"];
-	}
-	else
-	{
-		throw new Exception("Referrer not set");	
-	}
-	if (strpos($rpage, "http://pr2hub.com") !== 0 || strpos($rpage, "https://pr2hub.com") !== 0 || strpos($rpage, "http://cdn.jiggmin.com") !== 0 || strpos($rpage, "https://cdn.jiggmin.com") !== 0 || strpos($rpage, "http://chat.kongregate.com") !== 0 || strpos($rpage, "https://chat.kongregate.com") !== 0 || strpos($rpage, "http://external.kongregate-games.com/gamez/") !== 0 || strpos($rpage, "https://external.kongregate-games.com/gamez/") !== 0){
+
+	$ref = check_ref();
+	
+	if ($ref === true) {
 
 		if(!valid_email($email)){
-			throw new Exception("'" . htmlspecialchars($email) . "' is not a valid email address.");
+			$safe_disp_email = htmlspecialchars($email);
+			throw new Exception("\"$safe_disp_email\" is not a valid email address.");
 		}
 		if(strtolower($name) == 'jiggmin') {
 			throw new Exception('The password to Jiggmin\'s luggage is 12345.');
@@ -42,7 +37,9 @@ try{
 			throw new Exception('Could not get your id from the database.');
 		}
 		if($result->num_rows <= 0){
-			throw new Exception('No account was found with the username "' . htmlspecialchars($name) . '" and the email address "' . htmlspecialchars($email) . '".');
+			$safe_disp_name = htmlspecialchars($name);
+			$safe_disp_email = htmlspecialchars($email);
+			throw new Exception("No account was found with the username \"$safe_disp_name\" and the email address \"$safe_disp_email\".");
 		}
 		if($result->num_rows > 1){
 			throw new Exception('More than one result was returned. Something has gone horribly wrong, probably the world is about to explode.');
@@ -101,13 +98,12 @@ try{
 		echo 'message=Great success! You should receive an email with your new password shortly.';
 
 	}
-	else
-	{
-		throw new Exception("Disallowed referrer");
+	else {
+		throw new Exception("For security reasons, you may only request a new password from approved sites such as pr2hub.com.");
 	}
 }
 catch(Exception $e){
-	echo 'error=' . htmlspecialchars($e->getMessage());
+	echo 'error=' . $e->getMessage();
 	exit();
 }
 
