@@ -476,7 +476,7 @@ class Player {
 				}
 			}
 			// days left of private server command
-			else if ($chat_message == '/ps' && $this->user_id == $guild_owner) {
+			else if ($chat_message == '/ps' || $chat_message == '/timeleft' && $this->user_id == $guild_owner && $guild_owner !== 4291976) {
 				$result = $db->call( 'server_select_by_guild_id', array($guild_id), 'Could not check if you already have a guild server.' );
 				$server = $result->fetch_object();
 				$expire_time = $server->expire_date;
