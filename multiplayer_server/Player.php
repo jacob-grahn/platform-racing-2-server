@@ -495,7 +495,7 @@ class Player {
 						$admin_supplement = '<br>Admin:<br>- /promote *message*<br>- /restart_server';
 					}
 					if ($this->user_id == $guild_owner) {
-						$server_owner_supplement = '<br>Server Owner:<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
+						$server_owner_supplement = '<br>Server Owner:<br>- /timeleft (Private Server)<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
 					}
 				}
 				$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population'.$staff_supplement.$admin_supplement.$server_owner_supplement);
