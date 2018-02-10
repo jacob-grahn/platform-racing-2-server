@@ -4,6 +4,7 @@ require_once(__DIR__ . '/db_fns.php');
 
 function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	global $db;
+	global $server_name;
 	
 	// if the user isn't an admin on the server, kill the function (2nd line of defense)
 	if($admin->group != 3) {
@@ -128,18 +129,6 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			$admin_name = $admin->name;
 			$admin_id = $admin->user_id;
 			$promoted_name = $name;
-			
-			//make pretty server names
-			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
-			$server_count = count($servers->servers);
-			
-			foreach (range(0,$server_count) as $server_id) {
-				$server_port = $servers->servers[$server_id]->port;
-				if ($port == $server_port) {
-					$server_name = $servers->servers[$server_id]->server_name;
-					break;
-				}
-			}
 			
 			// log action in action log
 			$db->call('admin_action_insert', array($admin_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name.", $admin_id, $ip));
