@@ -109,3 +109,10 @@ a {
 .date {
 	font-color: #666666;
 }
+
+table, th, td {
+    background-color: #f2f2f2;
+    padding: 5px;
+    border: 1px solid #000000;
+    border-collapse: collapse;
+}
