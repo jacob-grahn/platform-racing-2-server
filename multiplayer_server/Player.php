@@ -438,6 +438,7 @@ class Player {
 					$this->write('systemChat`This command cannot be used in levels.');
 				}
 			}
+			// restart server command
 			else if (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3) {
 				$admin_name = $this->name;
 				$admin_id = $this->user_id;
@@ -490,6 +491,13 @@ class Player {
 					$this->write('systemChat`This command cannot be used in levels.');
 				}
 			}
+			// time left command
+			else if ($chat_message == '/timeleft' || $chat_message == '/ps' && $this->user_id == $guild_owner && $guild_owner !== 4291976) {
+				$result = $db->call( 'server_select_by_guild_id', array($guild_id), 'Could not check if you already have a guild server.' );
+				$server = $result->fetch_object();
+				$expire_time = $server->expire_date;
+				$this->write('systemChat`Your server will expire on '.$expire_time.'.');
+			}
 			// help command
 			else if ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
 				$server_owner_supplement = '';
@@ -503,7 +511,7 @@ class Player {
 						$admin_supplement = '<br>Admin:<br>- /promote *message*<br>- /restart_server';
 					}
 					if ($this->user_id == $guild_owner) {
-						$server_owner_supplement = '<br>Server Owner:<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
+						$server_owner_supplement = '<br>Server Owner:<br>- /timeleft (Private Server)<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
 					}
 				}
 				$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population'.$staff_supplement.$admin_supplement.$server_owner_supplement);
