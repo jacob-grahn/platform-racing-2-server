@@ -19,7 +19,9 @@ body {
 	background-repeat: no-repeat;
 }
 
-
+a {
+	color: #3300F8;
+}
 
 #container {
 	min-height: 100%;
