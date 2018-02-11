@@ -31,10 +31,10 @@ try{
 	if(is_obsene($name)){
 		throw new Exception('Do try to think of a different name.');
 	}
-	$test_name = preg_replace("/[^a-zA-Z0-9#-.:;=?@~! ]/", "", $name);
+	$test_name = preg_replace("/[^a-zA-Z0-9-.:;=?~! ]/", "", $name);
 	if($test_name != $name){
 		throw new Exception('There is an invalid character in your name. '
-							.'The allowed characters are a-z, 1-9, and !#$%&()*+.:;=?@~.');
+							.'The allowed characters are a-z, 0-9, and !$&()*+.:;=?~.');
 	}
 
 
