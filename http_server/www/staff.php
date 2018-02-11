@@ -8,7 +8,6 @@ $staff_array = array(
 				"bls1999",
 				"Eternal",
 				"inuyasharox",
-				"Captain of the Inks",
 				"Dangevin",
 				"cod4fan",
 				"Dev52",
@@ -58,6 +57,10 @@ try {
 		$hats = (int) $decode->hats;
 		$register_date = $decode->registerDate;
 		$active_date = $decode->loginDate;
+		
+		if ($group <= 1) {
+			continue;
+		}
 
 		// make nice group variables
 		switch($group) {
