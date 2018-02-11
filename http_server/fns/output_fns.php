@@ -40,6 +40,7 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 					src="//pagead2.googlesyndication.com/pagead/show_ads.js">
 					</script>
 				</div>
+			<?php } ?>
 			<div class="content">
 
 <?php
