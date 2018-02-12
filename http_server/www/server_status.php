@@ -25,7 +25,7 @@ try {
 	<table>
 	  <tr>
 		<th>Server Name</th>
-		<th>Players</th>
+		<th>Status</th>
 		<th>Happy Hour</th>
 		<th>Tournament</th>
 	  </tr>
