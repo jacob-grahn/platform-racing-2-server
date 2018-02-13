@@ -155,7 +155,8 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			if(isset($promoted_player) && $promoted_player->group != 0){
 				$promoted_player->become_temp_mod();
 			}
-			
+			echo $admin->name." promoted $name to a $type moderator.";
+			$admin->write("message`$name has been promoted to a $type moderator!");
 			return true;
 		}
 		catch(Exception $e){
