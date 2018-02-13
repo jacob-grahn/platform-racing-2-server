@@ -72,7 +72,9 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 			}
 			echo $admin->name." demoted $user_name.";
 			$admin->write("message`$user_name has been demoted.");
-			
+		}
+		else {
+			throw new Exception("$user_name isn't a moderator.");
 		}
 		
 	}
