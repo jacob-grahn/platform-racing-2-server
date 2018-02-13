@@ -32,6 +32,7 @@ try {
 	while ($row = $staff_result->fetch_object()) {
 		// make nice variables for our data
 		$safe_name = htmlspecialchars($row->name);
+		$safe_name = str_replace(' ', '&nbsp;', $safe_name);
 		$group = (int) $row->power;
 		$group_color = $group_colors[$group];
 		$status = $row->status;
