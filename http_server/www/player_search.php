@@ -27,6 +27,7 @@ if(isset($name) && !empty($name) && strlen(trim($name)) !== 0) {
 		// define some variables to make it easier for us
 		$group = (int) $decode->group;
 		$safe_name = htmlspecialchars($decode->name);
+		$safe_name = str_replace(' ', '&nbsp;', $safe_name);
 		$status = $decode->status;
 		$guild_id = (int) $decode->guildId;
 		$safe_guild_name = htmlspecialchars($decode->guildName);
