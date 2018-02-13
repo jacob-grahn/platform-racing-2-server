@@ -1,6 +1,6 @@
 <?php
 
-require_once('../fns/all_fns.php');
+require_once(__DIR__ . '/../fns/all_fns.php');
 
 
 $prize_array = array();

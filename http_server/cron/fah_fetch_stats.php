@@ -1,6 +1,6 @@
 <?php
 
-require_once('../fns/all_fns.php');
+require_once(__DIR__ . '/../fns/all_fns.php');
 
 
 //--- load the team page for Team Jiggmin -----------------------------------------------------------------
