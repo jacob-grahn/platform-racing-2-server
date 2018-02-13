@@ -19,6 +19,6 @@ class HappyHour {
   }
 }
 
-HappyHour::$random_hour = rand(0, 23);
+HappyHour::$random_hour = rand(0, 36);
 
 ?>
