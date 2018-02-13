@@ -45,7 +45,7 @@ try {
 		$decode = json_decode(file_get_contents("https://pr2hub.com/get_player_info_2.php?name=" . urlencode($player)));
 
 		// make sure the data came back without an error
-		if (array_key_exists("error", $decode) {
+		if (array_key_exists("error", $decode)) {
 			throw new Exception($decode->error);
 		}
 
