@@ -243,13 +243,7 @@ class Player {
 
 
 	public function send_chat($chat_message) {
-		global $guild_owner;
-		global $player_array;
-		global $port;
-		global $server_name;
-		global $server_id;
-		global $server_expire_time;
-		global $db;
+		global $guild_owner, $player_array, $port, $server_name, $server_id, $server_expire_time, $db;
 
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
