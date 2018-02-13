@@ -14,7 +14,7 @@ try {
 		FROM users
 		WHERE power > 1
 		ORDER BY loginDate DESC
-	')
+	');
 
 	echo '
 	<center>
