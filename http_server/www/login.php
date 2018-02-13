@@ -188,8 +188,9 @@ Thanks for playing, I hope you enjoy.
 
 
 	//--- record moderator login
+	$server_name = $server->server_name;
 	if( $group > 1 ) {
-		$db->call( 'mod_action_insert', array( $user_id, "$user_name logged in from $ip", $user_id, $ip ) );
+		$db->call( 'mod_action_insert', array( $user_id, "$user_name logged into $server_name from $ip", $user_id, $ip ) );
 	}
 
 

@@ -25,7 +25,8 @@ try {
 }
 
 catch(Exception $e){
-	echo 'error='.($e->getMessage());
+	$message = $e->getMessage();
+	echo 'error=' . $message;
 }
 
 ?>

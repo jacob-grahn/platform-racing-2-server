@@ -246,6 +246,8 @@ class Player {
 		global $guild_owner;
 		global $player_array;
 		global $port;
+		global $server_name;
+		global $server_expire_time;
 
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
@@ -368,7 +370,7 @@ class Player {
 			}
 			// chat effects
 			else if(!is_null($chat_effect) && $this->group >= 2) {
-				if($player_room == $this->chat_room) {
+				if($room_type == 'c') {
 					$player_room->send_chat('systemChat`' . $chat_effect_tag . $this->name . ' has temporarily activated ' . $chat_effect . ' chat!');
 				}
 				else {
@@ -438,48 +440,38 @@ class Player {
 					$this->write('systemChat`This command cannot be used in levels.');
 				}
 			}
+			// restart server command for admins
 			else if (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3) {
 				$admin_name = $this->name;
 				$admin_id = $this->user_id;
 				$ip = $this->ip;
 				
-				if ($player_room == $this->chat_room) {
+				if ($room_type == 'c') {
 					if ($chat_message == '/restart_server yes, i am sure!') {
 						
 						try {
-							// convert port to server name
-							$server_list = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
-							// debugging
-							if (empty($server_list)) {
-								throw new Exception("No servers found.");
+							
+							// check to see if the server name has been defined...
+							if(!isset($server_name) || empty($server_name)) {
+								throw new Exception('Unable to retrieve the server name. The port number has been logged instead.');
 							}
-							$number_of_servers = count($server_list->servers);
-							// debugging
-							if (empty($number_of_servers)) {
-								throw new Exception("Unable to count the number of servers.");
-							}
-							foreach (range(0,$number_of_servers) as $server_id) {
-								$server_port = $server_list->servers[$server_id]->port;
-								// debugging
-								if (empty($server_port)) {
-									throw new Exception("Unable to get server port numbers.");
-								}
-								if ($port == $server_port) {
-									$server_name = $servers->servers[$server_id]->server_name;
-									break;
-								}
-								// debugging
-								if (empty($server_name)) {
-									throw new Exception("Unable to determine the server name.");
-								}
-							}
+							
 							// log action in action log
 							$db->call('admin_action_insert', array($admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip));
-							shutdown_server();	
+							
+							// shut it down, yo
+							shutdown_server();
+							
 						}
 						catch(Exception $e) {
 							$message = $e->getMessage();
 							$this->write("message`Error: $message");
+							
+							// log it with the port instead of the server name
+							$db->call('admin_action_insert', array($admin_id, "$admin_name restarted the server running on port $port from $ip.", $admin_id, $ip));
+							
+							// shut it down, yo
+							shutdown_server();
 						}
 					}
 					else {
@@ -490,23 +482,37 @@ class Player {
 					$this->write('systemChat`This command cannot be used in levels.');
 				}
 			}
+			// time left in a private server command
+			else if ($chat_message == '/timeleft' && $this->user_id == $guild_owner) {
+				if ($server_id > 10) {
+					$this->write("systemChat`Your server will expire on $server_expire_time. To extend your time, buy either Private Server 1 or Private Server 30 from the Vault of Magics.");
+				}
+				else {
+					$this->write("systemChat`This is not a private server.");
+				}
+			}
 			// help command
 			else if ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
 				$server_owner_supplement = '';
 				$staff_supplement = '';
 				$admin_supplement = '';
 
-				if ($this->group >= 2) {
-					$staff_supplement = '<br>- /a (Announcement)<br>- /give *text*<br>- /clear<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
-
-					if ($this->group >= 3) {
-						$admin_supplement = '<br>Admin:<br>- /promote *message*<br>- /restart_server';
-					}
-					if ($this->user_id == $guild_owner) {
-						$server_owner_supplement = '<br>Server Owner:<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
-					}
+				if ($room_type == 'g') {
+					$this->write('systemChat`To get a list of commands that can be used in the chatroom, go to the chat tab in the lobby and type /help.');
 				}
-				$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population'.$staff_supplement.$admin_supplement.$server_owner_supplement);
+				else {
+					if ($this->group >= 2) {
+						$staff_supplement = '<br>Moderator:<br>- /a (Announcement)<br>- /give *text*<br>- /clear<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
+	
+						if ($this->group >= 3) {
+							$admin_supplement = '<br>Admin:<br>- /promote *message*<br>- /restart_server';
+						}
+						if ($this->user_id == $guild_owner) {
+							$server_owner_supplement = '<br>Server Owner:<br>- /timeleft<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
+						}
+					}
+					$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population'.$staff_supplement.$admin_supplement.$server_owner_supplement);
+				}
 			}
 			// send chat message
 			else {

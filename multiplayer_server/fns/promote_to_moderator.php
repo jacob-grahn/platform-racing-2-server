@@ -4,13 +4,10 @@ require_once(__DIR__ . '/db_fns.php');
 
 function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	global $db;
-	
-	// boolean var for use in if statement @end
-	$caught_exception = false;
+	global $server_name;
 	
 	// if the user isn't an admin on the server, kill the function (2nd line of defense)
 	if($admin->group != 3) {
-		$caught_exception = true;
 		echo $admin->name." lacks the server power to promote $name to a $type moderator.";
 		$admin->write("message`Error: You lack the power to promote $name to a $type moderator.");
 		return false;
@@ -33,7 +30,6 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	
 	//check for proper permission in the db (3rd + final line of defense before promotion)
 	if($admin_row->power != 3) {
-		$caught_exception = true;
 		echo $admin->name." lacks the database power to promote $name to a $type moderator.";
 		$admin->write("message`Error: You lack the power to promote $name to a $type moderator.");
 		return false;
@@ -46,19 +42,17 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 									LIMIT 0,1");
 	$user_row = $user_result->fetch_object();
 	
-	// if the person being promoted is a guest, end the function
-	if($user_row->power < 1) {
-		$caught_exception = true;
-		echo $admin->name." tried to promote a guest ($name) to a $type moderator.";
-		$admin->write("message`Error: Guests can\'t be promoted to moderators.");
+	// if the person being promoted doesn't exist, end the function
+	if (!$user_result) {
+		echo $admin->name." tried to promote a user that doesn't exist ($name) to a $type moderator.";
+		$admin->write("message`Error: $name doesn't exist.");
 		return false;
 	}
 	
-	// if the person being promoted doesn't exist, end the function
-	if(count($user_row) < 1) {
-		$caught_exception = true;
-		echo $admin->name." tried to promote a user that doesn\'t exist ($name) to a $type moderator.";
-		$admin->write("message`Error: $name doesn\'t exist.");
+	// if the person being promoted is a guest, end the function
+	if($user_row->power < 1) {
+		echo $admin->name." tried to promote a guest ($name) to a $type moderator.";
+		$admin->write("message`Error: Guests can't be promoted to moderators.");
 		return false;
 	}
 	
@@ -133,27 +127,22 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			//action log
 			$ip = $admin->ip;
 			$admin_name = $admin->name;
+			$admin_id = $admin->user_id;
 			$promoted_name = $name;
 			
-			//make pretty server names
-			$servers = json_decode(file_get_contents('https://pr2hub.com/files/server_status_2.txt'));
-			$server_count = count($servers->servers);
-			
-			foreach (range(0,$server_count) as $server_id) {
-				$server_port = $servers->servers[$server_id]->port;
-				if ($port == $server_port) {
-					$server_name = $servers->servers[$server_id]->server_name;
-					break;
-				}
-			}
-			
 			// log action in action log
-			$db->call('admin_action_insert', array($admin->user_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name.", $admin->user_id, $ip));
+			$db->call('admin_action_insert', array($admin_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name.", $admin_id, $ip));
+			
+			if(isset($promoted_player) && $promoted_player->group != 0){
+				$promoted_player->group = 2;
+				$promoted_player->write('setGroup`2');
+			}
+			echo $admin->name." promoted $name to a $type moderator.";
+			$admin->write("message`$name has been promoted to a $type moderator!");
+			return true;
 			
 		}
 		catch(Exception $e){
-			$caught_exception = true;
-			$promoted_player = NULL;
 			echo "Error: ".$e->getMessage();
 			$admin->write('message`Error: '.$e->getMessage());
 			return false;
@@ -163,39 +152,25 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	elseif ($type == 'temporary') {
 		
 		try {
-			//check for proper permission in the db (useless due to identical check on line 36)
-			$result = $db->query("SELECT *
-											FROM users
-											WHERE user_id = '$safe_admin_id'
-											LIMIT 0,1");
-			$row = $result->fetch_object();
-			if($row->power != 3) {
-				throw new Exception("You lack the power to promote $name to a $type moderator.");
+			if(isset($promoted_player) && $promoted_player->group != 0){
+				$promoted_player->become_temp_mod();
 			}
 			
+			return true;
 		}
 		catch(Exception $e){
-			$caught_exception = true;
-			$promoted_player = NULL;
 			echo "Error: ".$e->getMessage();
 			$admin->write('message`Error: '.$e->getMessage());
 			return false;
 		}
-	} // end if temp
 
-	// if all of that was valid and error-less, carry out the client-side changes
-	if (!$caught_exception) {
-		if(isset($promoted_player) && $promoted_player->group != 0 && $type == 'temporary'){
-				$promoted_player->become_temp_mod();
-		}
-		elseif(isset($promoted_player) && $promoted_player->group != 0 && ($type == 'trial' || $type == 'permanent')){
-				$promoted_player->group = 2;
-				$promoted_player->write('setGroup`2');
-		}
-		echo $admin->name." promoted $name to a $type moderator.";
-		$admin->write("message`$name has been promoted to a $type moderator!");
-		return true;
-	}
+	} // end if temp
+	
+	else {
+		$admin->write('message`Error: Unknown moderator type specified.');
+		return false;
+	} // if the type wasn't trial, perma, or temp, then something's wrong. Kill the function.
+	
 }
 
 ?>
