@@ -140,6 +140,21 @@ function is_empty($str, $incl_zero=true) {
 	
 }
 
+function check_ref() {
+		$ref = $_SERVER['HTTP_REFERER'];
+		if(
+			strpos($ref, 'http://pr2hub.com') !== 0 &&
+			strpos($ref, 'https://pr2hub.com') !== 0 &&
+			strpos($ref, 'http://cdn.jiggmin.com') !== 0 &&
+			strpos($ref, 'http://chat.kongregate.com') !== 0 &&
+			strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0 &&
+			strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') !== 0
+		) {
+			return $ref;
+		}
+		return true;
+}
+
 
 function poll_servers_strict( $db, $message, $server_ids ) {
 	$servers = poll_servers_2( $db, $message, true, $server_ids );
@@ -247,15 +262,10 @@ function valid_email($email) {
 //returns your account if you are a moderator
 function check_moderator($db, $check_ref=true, $min_power=2) {
 	if($check_ref) {
-		$ref = $_SERVER['HTTP_REFERER'];
-		if(
-			strpos($ref, 'http://pr2hub.com') !== 0 &&
-			strpos($ref, 'https://pr2hub.com') !== 0 &&
-			strpos($ref, 'http://cdn.jiggmin.com') !== 0 &&
-			strpos($ref, 'http://chat.kongregate.com') !== 0 &&
-			strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0
-		) {
-			throw new Exception('referrer is: '.$ref);
+		$ref = check_ref();
+		if ($ref !== true) {
+			$safe_ref = htmlspecialchars($ref);
+			throw new Exception("Incorrect referrer. The referrer is: $safe_ref");
 		}
 	}
 
