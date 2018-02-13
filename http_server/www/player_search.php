@@ -76,7 +76,12 @@ if(isset($name) && !empty($name) && strlen(trim($name)) !== 0) {
 		echo "<i>$status</i><br><br>";
 
 		// group name
-		echo "Group: $group_name<br>";
+		if ($group >= 2) {
+			echo "Group: <a href='staff.php'><b><font color='#000000'>$group_name</font></b></a>";
+		}
+		else {
+			echo "Group: $group_name<br>";
+		}
 
 		// guild name
 		echo "Guild: $safe_guild_name<br>";
