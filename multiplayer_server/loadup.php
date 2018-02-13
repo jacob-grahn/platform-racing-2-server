@@ -20,11 +20,12 @@ function begin_loadup( $server_id ) {
 
 
 function set_server( $db, $server ) {
-	global $port, $guild_id, $guild_owner, $server_name, $key;
+	global $port, $guild_id, $guild_owner, $server_name, $server_expire_time, $key;
 	$port = $server->port;
 	$server_name = $server->server_name;
 	$guild_id = $server->guild_id;
 	$guild_owner = 0;
+	$server_expire_time = $server->expire_date;
 	$key = $server->salt;
 	pr2_server::$tournament = $server->tournament;
 	if( pr2_server::$tournament ) {

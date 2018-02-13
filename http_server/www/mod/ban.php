@@ -51,7 +51,7 @@ try {
 		<select name="type">
 			<option value="account">account</option>
 			<option value="ip">ip</option>
-			<option value="both">ip and account</option>
+			<option value="both" selected="selected">ip and account</option>
 		</select>
 		<input type="submit" value="Submit" />
 	</form>

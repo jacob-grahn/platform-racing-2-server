@@ -20,7 +20,7 @@ try {
 	
 	//--- check if the guild exists and make some rad variables
 	$guild = $db->grab_row( 'guild_select', array($guild_id), 'Could not find a guild with that id.' );
-	$guild_name = $guild->name;
+	$guild_name = $guild->guild_name;
 	$guild_note = $guild->note;
 	$guild_owner = $guild->owner_id;
 
