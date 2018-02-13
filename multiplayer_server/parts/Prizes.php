@@ -319,7 +319,7 @@ class Prizes {
 		self::$EPIC_SANTA_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::SANTA, 'Epic Upgrade' ); // PR2 Quests jiggmin.com/threads/109956-PR2-Quests
 		self::$EPIC_PARTY_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::PARTY, 'Epic Upgrade' );
 		self::$EPIC_TOP_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::TOP_HAT, 'Epic Upgrade' ); // Sir Sirlington
-		self::$EPIC_JUMP_START_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::JUMP_START, 'Epic Upgrade', true ); // campaign 6
+		self::$EPIC_JUMP_START_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::JUMP_START, 'Epic Upgrade', '', true ); // campaign 6
 		self::$EPIC_MOON_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::MOON, 'Epic Upgrade' );
 		self::$EPIC_THIEF_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::THIEF, 'Epic Upgrade' );
 		self::$EPIC_JIGG_HAT = new Prize( self::TYPE_EPIC_HAT, Hats::JIGG, 'Epic Upgrade' ); // caption of the week
@@ -354,8 +354,8 @@ class Prizes {
 		self::$FAIRY_HEAD = new Prize( self::TYPE_HEAD, Heads::FAIRY, 'Fairy Head' );
 		self::$GINGERBREAD_HEAD = new Prize( self::TYPE_HEAD, Heads::GINGERBREAD, 'Gingerbread Head' );
 		self::$BUBBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::BUBBLE, 'Bubble Head' );
-		self::$KING_HEAD = new Prize( self::TYPE_HEAD, Heads::KING, 'King Head' );
-		self::$QUEEN_HEAD = new Prize( self::TYPE_HEAD, Heads::QUEEN, 'Queen Head' );
+		self::$KING_HEAD = new Prize( self::TYPE_HEAD, Heads::KING, 'Wise King Head' );
+		self::$QUEEN_HEAD = new Prize( self::TYPE_HEAD, Heads::QUEEN, 'Wise Queen Head' );
 		self::$SIR_HEAD = new Prize( self::TYPE_HEAD, Heads::SIR, 'Sir Head' );
 		self::$VERY_INVISIBLE_HEAD = new Prize( self::TYPE_HEAD, Heads::VERY_INVISIBLE, 'Very Invisible Head' );
 		self::$TACO_HEAD = new Prize( self::TYPE_HEAD, Heads::TACO, 'Taco Head' ); // random levels
@@ -434,8 +434,8 @@ class Prizes {
 		self::$ARMOR_BODY = new Prize( self::TYPE_BODY, Bodies::ARMOR, 'Armor Body' );
 		self::$FAIRY_BODY = new Prize( self::TYPE_BODY, Bodies::FAIRY, 'Fairy Body' );
 		self::$GINGERBREAD_BODY = new Prize( self::TYPE_BODY, Bodies::GINGERBREAD, 'Gingerbread Body' );
-		self::$KING_BODY = new Prize( self::TYPE_BODY, Bodies::KING, 'King Body' );
-		self::$QUEEN_BODY = new Prize( self::TYPE_BODY, Bodies::QUEEN, 'Queen Body' );
+		self::$KING_BODY = new Prize( self::TYPE_BODY, Bodies::KING, 'Wise King Body' );
+		self::$QUEEN_BODY = new Prize( self::TYPE_BODY, Bodies::QUEEN, 'Wise Queen Body' );
 		self::$SIR_BODY = new Prize( self::TYPE_BODY, Bodies::SIR, 'Sir Body' );
 		self::$FRED_BODY = new Prize( self::TYPE_BODY, Bodies::FRED, 'Fred Body' );
 		self::$VERY_INVISIBLE_BODY = new Prize( self::TYPE_BODY, Bodies::VERY_INVISIBLE, 'Very Invisible Body' );
@@ -512,8 +512,8 @@ class Prizes {
 		self::$ARMOR_FEET = new Prize( self::TYPE_FEET, Feet::ARMOR, 'Armor Feet' );
 		self::$FAIRY_FEET = new Prize( self::TYPE_FEET, Feet::FAIRY, 'Fairy Feet' );
 		self::$GINGERBREAD_FEET = new Prize( self::TYPE_FEET, Feet::GINGERBREAD, 'Gingerbread Feet' );
-		self::$KING_FEET = new Prize( self::TYPE_FEET, Feet::KING, 'King Feet' );
-		self::$QUEEN_FEET = new Prize( self::TYPE_FEET, Feet::QUEEN, 'Queen Feet' );
+		self::$KING_FEET = new Prize( self::TYPE_FEET, Feet::KING, 'Wise King Feet' );
+		self::$QUEEN_FEET = new Prize( self::TYPE_FEET, Feet::QUEEN, 'Wise Queen Feet' );
 		self::$SIR_FEET = new Prize( self::TYPE_FEET, Feet::SIR, 'Sir Feet' );
 		self::$VERY_INVISIBLE_FEET = new Prize( self::TYPE_FEET, Feet::VERY_INVISIBLE, 'Very Invisible Feet' );
 		self::$BUBBLE_FEET = new Prize( self::TYPE_FEET, Feet::BUBBLE, 'Bubble Feet' );

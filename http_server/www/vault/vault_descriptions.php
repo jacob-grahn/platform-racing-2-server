@@ -331,7 +331,7 @@ function describeEpicEverything( $user ) {
 	$d->imgUrl = 'https://pr2hub.com/img/vault/Guild-de-Ghost-112x63.png';
 	$d->imgUrlSmall = 'https://pr2hub.com/img/vault/Guild-de-Ghost-40x40.png';
 	$d->price = 110;
-	$d->description = 'Unlock all Epic Upgrades';
+	$d->description = 'Unlock all Epic Upgrades.';
 	$d->available = false;
 	$d->faq =
 		"What is an Epic Upgrade?\n"
@@ -340,7 +340,7 @@ function describeEpicEverything( $user ) {
 		."- Sure does!\n\n"
 		."Does this unlock all the parts too?\n"
 		."- No, but all parts you win in the future will automatically come with an Epic Upgrade.\n\n"
-		."Do epic upgrades provide a stat boost?\n"
+		."Do Epic Upgrades provide a stat boost?\n"
 		."- Nope!\n\n";
 
 	$heads = explode( ',', $user->epic_heads );
