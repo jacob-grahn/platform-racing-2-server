@@ -17,6 +17,7 @@ try {
 	
 	//check their login
 	$user_id = token_login($db, false);
+	$int_user_id = (int) $user_id;
 	
 	
 	//make sure the message isn't already reported
@@ -29,7 +30,7 @@ try {
 		throw new Exception('Could not check if the message was already reported.');
 	}
 	// debugging
-	if($user_id === 3483035) { // 3483035 is bls1999's user ID. trying to figure out what the heckin problem is.
+	if($int_user_id === 3483035) { // 3483035 is bls1999's user ID. trying to figure out what the heckin problem is.
 		$data = var_dump($result);
 		$data_count = var_dump($count);
 		throw new Exception("Welcome, bls1999. Below, you will find the data that was returned from the server.<br><br>Raw data: $data<br><br>Count data: $data_count");
