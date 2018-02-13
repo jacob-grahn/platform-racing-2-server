@@ -32,7 +32,6 @@ try {
 	  <tr>
 	    <th>Username</th>
 	    <th>Status</th>
-	    <th>Guild</th>
 	    <th>Rank</th>
 	    <th>Hats</th>
 	    <th>Joined</th>
@@ -87,8 +86,9 @@ try {
 		// start the row
 		echo "<tr>";
 		
-		// display the name with the color
-		echo "<td><font color='#$group_color'><u>$safe_name</u></font></td>";
+		// display the name with the color and link to the player search page
+		$url_name = urlencode($safe_name);
+		echo "<td><font color='#$group_color'><u><a href='player_search.php?name=$url_name'>$safe_name</a></u></font></td>";
 		if (empty($safe_name) && strlen(trim($safe_name)) === 0) {
 			throw new Exception("Invalid name.");
 		}
