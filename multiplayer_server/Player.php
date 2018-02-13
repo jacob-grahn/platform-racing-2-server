@@ -446,6 +446,10 @@ class Player {
 				$admin_id = $this->user_id;
 				$ip = $this->ip;
 				
+				if($chat_message == '/restart_server debug') {
+					$this->write("message`chat_message: $chat_message<br>admin_name: $admin_name<br>admin_id: $admin_id<br>ip: $ip<br>server_name: $server_name<br>port: $port");
+				}
+				
 				if ($room_type == 'c') {
 					if ($chat_message == '/restart_server yes, i am sure!') {
 						
@@ -483,13 +487,8 @@ class Player {
 				}
 			}
 			// time left in a private server command
-			else if ($chat_message == '/timeleft' && $this->user_id == $guild_owner) {
-				if ($server_id > 10) {
-					$this->write("systemChat`Your server will expire on $server_expire_time. To extend your time, buy either Private Server 1 or Private Server 30 from the Vault of Magics.");
-				}
-				else {
-					$this->write("systemChat`This is not a private server.");
-				}
+			else if ($chat_message == '/timeleft' && $this->user_id == $guild_owner && $port > 9170) {
+				$this->write("systemChat`Your server will expire on $server_expire_time. To extend your time, buy either Private Server 1 or Private Server 30 from the Vault of Magics.");
 			}
 			// help command
 			else if ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
