@@ -11,7 +11,7 @@ output_header('PR2 Staff Team');
 try {
 	$db = new DB();
 	$staff_result = $db->query('
-		SELECT power, status, name, active_date, register_date, guild
+		SELECT power, status, name, active_date, register_time, guild
 		FROM users
 		WHERE power > 1
 		ORDER BY active_date DESC
@@ -37,7 +37,7 @@ try {
 		$group = (int) $row->group;
 		$status = $row->status;
 		$active_date = $row->active_date;
-		$register_date = $row->register_date;
+		$register_date = date('j/M/Y', $row->register_time);
 		$guild = $row->guild;
 		$group_name = $group_names[$group];
 		$group_color = $group_colors[$group];
