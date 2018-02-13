@@ -11,11 +11,8 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>PR2 Hub - <?php echo $title; ?></title>
 	<link href="//pr2hub.com/style/gwibble.css" rel="stylesheet" type="text/css" />
-	<?php if(basename($_SERVER['PHP_SELF']) == "hint.php") { ?>
-	<link href="//pr2hub.com/style/hint.css" rel="stylesheet" type="text/css" />
-	<?php } else { ?>
 	<link href="//pr2hub.com/style/pr2hub.css" rel="stylesheet" type="text/css"/>
-	<?php } if($formatting_for_mods) { ?>
+	<?php if($formatting_for_mods) { ?>
 		<script src="https://code.jquery.com/jquery-latest.min.js"></script>
 		<script src="https://malsup.github.com/jquery.form.js"></script>
 	<?php } ?>
@@ -43,11 +40,10 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 					src="//pagead2.googlesyndication.com/pagead/show_ads.js">
 					</script>
 				</div>
-			<?php } if(basename($_SERVER['PHP_SELF']) == "hint.php") { ?>
-			<div id="artifact">
-			<?php } else { ?>
+			<?php } ?>
 			<div class="content">
-			<?php }
+
+<?php
 
 	if($formatting_for_mods) {
 		output_mod_navigation($formatting_for_admins);
