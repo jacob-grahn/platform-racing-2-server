@@ -22,12 +22,12 @@ try {
 	<br>
 	<br>
 	<table>
-	  <tr>
-	    <th>Username</th>
-	    <th>Status</th>
+		<tr>
+			<th>Username</th>
+			<th>Status</th>
 			<th>Register Date</th>
-	    <th>Last Login</th>
-	  </tr>';
+			<th>Last Login</th>
+		</tr>';
 
 	while ($row = $staff_result->fetch_object()) {
 		// make nice variables for our data
@@ -36,9 +36,9 @@ try {
 		$group_color = $group_colors[$group];
 		$status = $row->status;
 		$register_date = date('j/M/Y', $row->register_time);
-    $active_date = $row->active_date;
-    $active_date = date_create($active_date);
-    $active_date = date_format($active_date, 'j/M/Y');
+		$active_date = $row->active_date;
+		$active_date = date_create($active_date);
+		$active_date = date_format($active_date, 'j/M/Y');
 
 		// start the row
 		echo "<tr>";
