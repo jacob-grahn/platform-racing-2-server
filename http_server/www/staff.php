@@ -11,10 +11,10 @@ output_header('PR2 Staff Team');
 try {
 	$db = new DB();
 	$staff_result = $db->query('
-		SELECT power, status, name, login_date, register_date
+		SELECT power, status, name, active_date, register_date
 		FROM users
 		WHERE power > 1
-		ORDER BY loginDate DESC
+		ORDER BY active_date DESC
 	');
 
 	echo '
@@ -35,7 +35,7 @@ try {
 		$safe_name = htmlspecialchars($row->name);
 		$group = (int) $row->group;
 		$status = $row->status;
-		$active_date = $row->login_date;
+		$active_date = $row->active_date;
 		$register_date = $row->register_date;
 		$group_name = $group_names[$group];
 		$group_color = $group_colors[$group];
