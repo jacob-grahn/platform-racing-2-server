@@ -248,6 +248,7 @@ class Player {
 		global $port;
 		global $server_name;
 		global $server_expire_time;
+		global $db;
 
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
