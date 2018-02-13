@@ -3,7 +3,6 @@
 require_once('../fns/all_fns.php');
 require_once('../fns/output_fns.php');
 
-$group_names = ['Guest', 'Member', 'Moderator', 'Admin'];
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
 output_header('PR2 Staff Team');
@@ -34,12 +33,11 @@ try {
 	while ($row = $staff_result->fetch_object()) {
 		// make nice variables for our data
 		$safe_name = htmlspecialchars($row->name);
-		$group = (int) $row->group;
+		$group = (int) $row->power;
 		$status = $row->status;
 		$active_date = $row->active_date;
 		$register_date = date('j/M/Y', $row->register_time);
 		$guild = $row->guild;
-		$group_name = $group_names[$group];
 		$group_color = $group_colors[$group];
 
 		// start the row
