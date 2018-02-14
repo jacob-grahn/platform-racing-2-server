@@ -13,7 +13,7 @@ try {
 		SELECT power, status, name, active_date, register_time
 		FROM users
 		WHERE power > 1
-		ORDER BY power, active_date DESC
+		ORDER BY power DESC, active_date DESC
 	');
 
 	echo '
@@ -46,7 +46,7 @@ try {
 
 		// display the name with the color and link to the player search page
 		$url_name = urlencode($safe_name);
-		echo "<td><font color='#$group_color'><u><a href='player_search.php?name=$url_name'>$safe_name</a></u></font></td>";
+		echo "<td><a href='player_search.php?name=$url_name' style='color: $group_color; text-decoration: underline;'>$safe_name</a></td>";
 
 		if (empty($safe_name) && strlen(trim($safe_name)) === 0) {
 			throw new Exception("Invalid name.");
@@ -54,9 +54,6 @@ try {
 
 		// display the status
 		echo "<td>$status</td>";
-
-		// display the guild
-		echo "<td>$guild</td>";
 
 		// display the register date
 		if ($register_date == "1/Jan/1970") {
