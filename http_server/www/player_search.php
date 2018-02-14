@@ -5,6 +5,7 @@ require_once('../fns/output_fns.php');
 output_header( 'Player Search' );
 
 $name = $_GET['name'];
+$box_name = htmlspecialchars($name);
 
 // get the file and decode it
 $decode = json_decode(file_get_contents("https://pr2hub.com/get_player_info_2.php?name=" . $_GET['name']));
@@ -12,10 +13,10 @@ $decode = json_decode(file_get_contents("https://pr2hub.com/get_player_info_2.ph
 // pretty things
 echo '<center><font face="Gwibble" class="gwibble">-- Player Search --</font><br><br>';
 
-echo '<form method="get">
-Username: <input type="text" name="name">
-<input type="submit" value="Search">
-</form>';
+echo "<form method='get'>
+Username: <input type='text' name='name' value='$box_name'>
+<input type='submit' value='Search'>
+</form>";
 
 if(isset($name) && !empty($name) && strlen(trim($name)) !== 0) {
 
@@ -27,6 +28,7 @@ if(isset($name) && !empty($name) && strlen(trim($name)) !== 0) {
 		// define some variables to make it easier for us
 		$group = (int) $decode->group;
 		$safe_name = htmlspecialchars($decode->name);
+		$safe_name = str_replace(' ', '&nbsp;', $safe_name);
 		$status = $decode->status;
 		$guild_id = (int) $decode->guildId;
 		$safe_guild_name = htmlspecialchars($decode->guildName);
@@ -76,7 +78,12 @@ if(isset($name) && !empty($name) && strlen(trim($name)) !== 0) {
 		echo "<i>$status</i><br><br>";
 
 		// group name
-		echo "Group: $group_name<br>";
+		if ($group >= 2) {
+			echo "Group: <a href='staff.php'><b><font color='#000000'>$group_name</font></b></a>";
+		}
+		else {
+			echo "Group: $group_name<br>";
+		}
 
 		// guild name
 		echo "Guild: $safe_guild_name<br>";
