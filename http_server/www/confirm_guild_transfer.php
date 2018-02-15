@@ -28,10 +28,14 @@ try {
 	
 	$db->call('guild_transfer_complete', array($change_id, $ip), 'Could not confirm the transfer.');
 	$db->call('user_transfer_guild', array($user_id, $old_email, $new_email), 'Could not transfer guild ownership.');
-	//$db->call( 'guild_transfer_delete', array($code), 'Could not clean up.' );
+	
+	// get updated guild data
+	$guild = $db->grab_row('guild_select', array($guild_id), 'Could not get updated guild information from the database.');
+	$safe_guild_name = htmlspecialchars($guild->guild_name);
+	$safe_new_owner = htmlspecialchars(id_to_name($guild->owner_id));
 	
 	// tell the world
-	echo "Great success! Your email address has been changed from '$old_email' to '$new_email'.";
+	echo "Great success! The new owner of $safe_guild_name is $safe_new_owner. Long live $safe_guild_name!";
 	output_footer();
 }
 
