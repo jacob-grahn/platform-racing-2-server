@@ -24,13 +24,15 @@ try {
 	echo '<form name="input" action="" method="get">';
 	echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'">&nbsp;';
 	echo '<input type="submit" value="Submit"><br>';
-	if( $guild_id != '' ) {
+	if($guild_id != '') {
 		
 		try {
-			$guild = $db->grab_row( 'guild_select', array($guild_id), 'Could not find a guild with that id.' );
-			$members = $db->call( 'guild_select_members', array($guild_id) );
-			output_object( $guild );
-			output_objects( $members );
+			$guild = $db->grab_row('guild_select', array($guild_id), 'Could not find a guild with that id.');
+			$owner_transfers = $db->to_array($db->call('guild_transfers_select_by_guild', array($guild->guild_id)));
+			$members = $db->call('guild_select_members', array($guild_id));
+			output_object($guild);
+			output_objects($owner_transfers);
+			output_objects($members);
 			echo '<a href="update_guild.php?guild_id='.$guild->guild_id.'">edit</a><br><br><br>';
 		}
 
