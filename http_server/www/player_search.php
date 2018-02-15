@@ -79,7 +79,7 @@ if(isset($name) && !empty($name) && strlen(trim($name)) !== 0) {
 
 		// group name
 		if ($group >= 2) {
-			echo "Group: <a href='staff.php'><b><font color='#000000'>$group_name</font></b></a>";
+			echo "Group: <a href='staff.php'><b><font color='#000000'>$group_name</font></b></a><br>";
 		}
 		else {
 			echo "Group: $group_name<br>";
