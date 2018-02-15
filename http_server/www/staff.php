@@ -55,9 +55,6 @@ try {
 		// display the status
 		echo "<td>$status</td>";
 
-		// display the guild
-		echo "<td>$guild</td>";
-
 		// display the register date
 		if ($register_date == "1/Jan/1970") {
 			echo "<td>Age of Heroes</td>";
