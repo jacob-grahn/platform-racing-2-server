@@ -7,7 +7,7 @@ require_once('../fns/output_fns.php');
 try {
 
 	// what is the user trying to do
-	if (is_empty($_POST['action']) {
+	if (is_empty($_POST['action'])) {
 		$action = 'form';
 	}
 	else {
@@ -112,6 +112,12 @@ function start_transfer($db, $old_user, $guild) {
 	$old_email = $old_user->email;
 	
 	// email sanity check
+	if (!valid_email($email)) {
+		$safe_email = htmlspecialchars($email);
+		throw new Exception("'$safe_email' is not a valid email address.");
+	}
+	
+	// check if the emails match
 	if ($email != $old_email) {
 		throw new Exception("The email address you entered is incorrect.");
 	}
