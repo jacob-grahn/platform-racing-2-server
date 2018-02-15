@@ -4,7 +4,7 @@ require_once('../fns/output_fns.php');
 
 output_header('Artifact Hint');
 
-echo '<center><font face="Gwibble" class="gwibble">-- Artifact Hint --</font>
+echo '<font face="Gwibble" class="gwibble">-- Artifact Hint --</font>
 	<br/>
 	<img src="img/artifact.png" width="80px" height="70px"></img>
 	<br/>';
@@ -23,7 +23,6 @@ catch (Exception $msg){
 	echo $error_message;
 }
 
-echo '</center>';
 output_footer();
 
 ?>
