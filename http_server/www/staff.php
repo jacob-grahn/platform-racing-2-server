@@ -10,10 +10,10 @@ output_header('PR2 Staff Team');
 try {
 	$db = new DB();
 	$staff_result = $db->query('
-		SELECT power, status, name, active_date, register_time
+		SELECT power, status, name, active_date, register_time, guild
 		FROM users
 		WHERE power > 1
-		ORDER BY power, active_date DESC
+		ORDER BY active_date DESC
 	');
 
 	echo '
@@ -22,32 +22,29 @@ try {
 	<br>
 	<br>
 	<table>
-		<tr>
-			<th>Username</th>
-			<th>Status</th>
+	  <tr>
+	    <th>Username</th>
+	    <th>Status</th>
+	    <th>Guild</th>
 			<th>Register Date</th>
-			<th>Last Login</th>
-		</tr>';
+	    <th>Last Login</th>
+	  </tr>';
 
 	while ($row = $staff_result->fetch_object()) {
 		// make nice variables for our data
 		$safe_name = htmlspecialchars($row->name);
-		$safe_name = str_replace(' ', '&nbsp;', $safe_name);
 		$group = (int) $row->power;
-		$group_color = $group_colors[$group];
 		$status = $row->status;
-		$register_date = date('j/M/Y', $row->register_time);
 		$active_date = $row->active_date;
-		$active_date = date_create($active_date);
-		$active_date = date_format($active_date, 'j/M/Y');
+		$register_date = date('j/M/Y', $row->register_time);
+		$guild = $row->guild;
+		$group_color = $group_colors[$group];
 
 		// start the row
 		echo "<tr>";
 
-		// display the name with the color and link to the player search page
-		$url_name = urlencode($safe_name);
-		echo "<td><font color='#$group_color'><u><a href='player_search.php?name=$url_name'>$safe_name</a></u></font></td>";
-
+		// display the name with the color
+		echo "<td><font color='#$group_color'><u>$safe_name</u></font></td>";
 		if (empty($safe_name) && strlen(trim($safe_name)) === 0) {
 			throw new Exception("Invalid name.");
 		}
