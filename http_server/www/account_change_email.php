@@ -25,54 +25,63 @@ try{
 	$new_email = $data->email;
 	$pass = $data->pass;
 
-	//--- connect
+	// connect
 	$db = new DB();
 
-	//--- check thier login
+	// check their login
 	$user_id = token_login( $db, false );
-	$user = $db->grab_row( 'user_select', array($user_id) );
+	$user = $db->grab_row('user_select', array($user_id));
+	$user_name = $user->name;
 	$old_email = $user->email;
+	
+	// make things safe
+	$safe_old_email = htmlspecialchars($old_email);
+	$safe_new_email = htmlspecialchars($new_email);
+	$safe_name = htmlspecialchars($user_name);
 
-	//--- check pass
-	pass_login($db, $user->name, $pass);
+	// check password
+	pass_login($db, $user_name, $pass);
 
-	//--- more sanity checks
-	if( $user->power < 1 ) {
-		throw new Exception( 'Guests don\'t even really have accounts...' );
+	// sanity check: check for guest
+	if ($user->power < 1) {
+		throw new Exception("Guests don't even really have accounts...");
 	}
-	if( !valid_email($new_email) ){
-		throw new Exception("'$new_email' is not a valid email address.");
+	
+	// sanity check: check for invalid email
+	if (!valid_email($new_email)) {
+		throw new Exception("'$safe_new_email' is not a valid email address.");
 	}
-	rate_limit( 'change-email-'.$user_id, 86400, 2, 'Your email can be changed a maximum of two times per day.' );
-	rate_limit( 'change-email-'.$ip, 86400, 2, 'Your email can be changed a maximum of two times per day.' );
+	
+	rate_limit('change-email-'.$user_id, 86400, 2, 'Your email can be changed a maximum of two times per day.');
+	rate_limit('change-email-'.$ip, 86400, 2, 'Your email can be changed a maximum of two times per day.');
 
-	//--- update their email if they don't have one
-	if( $user->email == '' || !isset($user->email) ) {
-		$db->call( 'user_update_email', array($user_id, $old_email, $new_email) );
+	// set their email if they don't already have one
+	if (is_empty($old_email)) {
+		$db->call('user_update_email', array($user_id, $old_email, $new_email));
 	}
 
-	//--- begin an email change confirmation if they do already have an email address
+	// initiate an email change confirmation (generate code) if they do already have an email address
 	$code = random_str(24);
-	$db->call( 'changing_email_insert', array($user_id, $old_email, $new_email, $code, $ip) );
+	$db->call('changing_email_insert', array($user_id, $old_email, $new_email, $code, $ip));
 
-	//--- send a confirmation email
+	// send a confirmation email
 	$from = 'Fred the Giant Cactus <contact@jiggmin.com>';
 	$to = $old_email;
 	$subject = 'PR2 Email Change Confirmation';
-	$body = "Howdy $safe_name,\n\nWe received a request to change the email on your account from $old_email to $new_email. If you requested this change, please click the link below to change the email address on your Platform Racing 2 account.\n\nhttp://pr2hub.com/account_confirm_email_change.php?code=$code\n\nIf you didn\'t request this change, you may need to change your password.\n\nAll the best,\nFred";
-	send_email( $from, $to, $subject, $body );
+	$body = "Howdy <b>$safe_name</b>,\n\nWe received a request to change the email on your account from <b>$safe_old_email</b> to <b>$safe_new_email</b>. If you requested this change, please click the link below to change the email address on your Platform Racing 2 account.\n\nhttp://pr2hub.com/account_confirm_email_change.php?code=$code\n\nIf you didn't request this change, you may need to change your password.\n\nAll the best,\nFred";
+	send_email($from, $to, $subject, $body);
 
-	//--- tell it to the world
+	// tell it to the world
 	$ret = new stdClass();
-	$ret->message = 'A confirmation email has been sent to your old email address.';
-	echo json_encode( $ret );
+	$ret->message = 'Almost done! We just sent a confirmation email to your old email address. Until you confirm the change, your old email address will still be active.';
+	echo json_encode($ret);
 }
 
 
 catch(Exception $e){
 	$ret = new stdClass();
 	$ret->error = $e->getMessage();
-	echo json_encode( $ret );
+	echo json_encode($ret);
 }
 
 ?>
