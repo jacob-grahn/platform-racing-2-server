@@ -492,6 +492,10 @@ class Player {
 					$this->write("systemChat`This is not a private server.");
 				}
 			}
+			// be awesome command
+			else if ($chat_message == '/be_awesome' || $chat_message == '/beawesome') {
+				$this->write("message`<b>You're awesome!</b>");
+			}
 			// help command
 			else if ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
 				$server_owner_supplement = '';
