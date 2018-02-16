@@ -265,6 +265,7 @@ class Player {
 
 		//special text emotes
 		$chat_message = str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
+		$chat_message = str_replace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
 
 		// html killer for systemChat
 		$safe_chat_message = htmlspecialchars($chat_message);
