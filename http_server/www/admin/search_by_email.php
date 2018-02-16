@@ -32,6 +32,7 @@ catch (Exception $e) {
 	output_header('Error');
 	echo "Error: $message";
 	output_footer();
+	die();
 }
 
 // admin validated try block
