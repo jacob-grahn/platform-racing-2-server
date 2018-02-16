@@ -45,7 +45,7 @@ try {
 		echo "<tr>";
 
 		// display the name with the color and link to the player search page
-		$url_name = urlencode($safe_name);
+		$url_name = urlencode($row->name);
 		echo "<td><a href='player_search.php?name=$url_name' style='color: #$group_color; text-decoration: underline;'>$safe_name</a></td>";
 
 		if (empty($safe_name) && strlen(trim($safe_name)) === 0) {
