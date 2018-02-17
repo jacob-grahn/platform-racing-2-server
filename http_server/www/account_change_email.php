@@ -56,6 +56,7 @@ try{
 	$db->call( 'changing_email_insert', array($user_id, $old_email, $new_email, $code, $ip) );
 
 	//--- send a confirmation email
+	$safe_name = htmlspecialchars($user->name);
 	$from = 'Fred the Giant Cactus <contact@jiggmin.com>';
 	$to = $old_email;
 	$subject = 'PR2 Email Change Confirmation';
