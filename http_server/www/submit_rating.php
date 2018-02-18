@@ -1,5 +1,6 @@
 <?php
 
+header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
 $level_id = find('level_id');
@@ -18,19 +19,19 @@ $safe_ip = addslashes($ip);
 $safe_new_rating = addslashes($new_rating);
 
 try{
-	//error check
+	// sanity check: is the rating valid?
 	$new_rating = round($new_rating);
 	if(is_nan($new_rating) || $new_rating < 1 || $new_rating > 5){
-		throw new Exception('Could not vote $new_rating.');
+		throw new Exception("Could not vote $new_rating.");
 	}
 
-	//connect to the db
+	// connect
 	$db = new DB();
 
-	//check thier login
+	// check their login
 	$user_id = token_login($db);
 
-	//see if they made this level
+	// see if they made this level
 	$result = $db->query("select level_id
 									from pr2_levels
 									where user_id = '$user_id'
@@ -40,10 +41,10 @@ try{
 		throw new Exception('Could not check your voting status.');
 	}
 	if($result->num_rows > 0){
-		throw new Exception('You can\'t vote on yer own level, matey!');
+		throw new Exception("You can't vote on yer own level, matey!");
 	}
 
-	//get their voting weight
+	// get their voting weight
 	$rank_result = $db->query("select rank
 											from pr2
 											where user_id = '$user_id'
@@ -62,7 +63,7 @@ try{
 		$weight = 1;
 	}
 
-	//see if they have voted on this level before
+	// see if they have voted on this level before
 	$vote_result = $db->query("select rating, weight
 										from pr2_ratings
 										where user_id = '$user_id'
@@ -83,12 +84,12 @@ try{
 		}
 	}
 
-	//if they have, they must wait
+	// if they have, they must wait
 	if($vote_result->num_rows > 0){
 		throw new Exception('You have already voted on this level. You can vote on it again in a week.');
 	}
 
-	//if they haven't add their vote
+	// if they haven't voted
 	else{
 		$result = $db->query("insert into pr2_ratings
 										set rating = '$safe_new_rating',
@@ -102,22 +103,22 @@ try{
 		}
 	}
 
-	//get the average rating and votes so I can do some math
+	// get the average rating and votes so I can do some math
 	$result = $db->query("select rating, votes
 									from pr2_levels
 									where level_id = '$level_id'
 									limit 0, 1");
 	if(!$result){
-		throw new Exception('Could not retireve old rating.');
+		throw new Exception('Could not retrieve old rating.');
 	}
 	if($result->num_rows <= 0){
-		throw new Exception('Course not found. This is probably because the level has been updated since you downloaded it.');
+		throw new Exception('Course not found. This is probably because the level has been modified since you started playing it.');
 	}
 	$row = $result->fetch_object();
 	$average_rating = $row->rating;
 	$votes = $row->votes;
 
-	//do some math!
+	// quick maths
 	$total_rating = $average_rating * $votes;
 	$total_rating -= $weight * $old_rating;
 	$total_rating += $weight * $new_rating;
@@ -134,7 +135,7 @@ try{
 		$votes = 0;
 	}
 
-	//put the final average back into the level
+	// put the final average back into the level
 	if(!is_nan($new_average_rating)){
 		$result = $db->query("update pr2_levels
 										set rating = '$new_average_rating',
@@ -146,23 +147,23 @@ try{
 		}
 	}
 
-	//echo a message back
-	echo 'message=';
+	// echo a message back
+	echo 'message=Thank you for voting! ';
 	$old = round($average_rating, 2);
 	$new = round($new_average_rating, 2);
 	if($old == 0){
 		$old = 'none';
 	}
 	if($old_rating == 0){
-		echo 'Thank you for voting! Your vote of '.$new_rating.' changed the average rating from '
-		.$old.' to '.$new.'.';
-	}else{
-		echo 'Thank you for voting! You changed your vote from '.$old_rating.' to '
-		.$new_rating.', which changed the average rating from '.$old.' to '.$new.'.';
+		echo "Your vote of $new_rating changed the average rating from $old to $new.";
+	}
+	else{
+		echo "You changed your vote from $old_rating to $new_rating, which changed the average rating from $old to $new.";
 	}
 }
-catch(Exception $e){
-	echo 'error='.$e->getMessage();
+catch (Exception $e) {
+	$error = $e->getMessage();
+	echo "error=$error";
 }
 
 
