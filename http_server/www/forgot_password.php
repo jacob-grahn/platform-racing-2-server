@@ -9,7 +9,7 @@ $email = $_POST['email'];
 $safe_name = addslashes($name);
 $safe_email = addslashes($email);
 
-try{
+try {
 
 	$ref = check_ref();
 	
@@ -20,7 +20,7 @@ try{
 			throw new Exception("\"$safe_disp_email\" is not a valid email address.");
 		}
 		if(strtolower($name) == 'jiggmin') {
-			throw new Exception('The password to Jiggmin\'s luggage is 12345.');
+			throw new Exception("The password to Jiggmin's luggage is 12345.");
 		}
 
 		$db = new DB();
@@ -42,7 +42,7 @@ try{
 			throw new Exception("No account was found with the username \"$safe_disp_name\" and the email address \"$safe_disp_email\".");
 		}
 		if($result->num_rows > 1){
-			throw new Exception('More than one result was returned. Something has gone horribly wrong, probably the world is about to explode.');
+			throw new Exception('More than one result was returned. Something has gone horribly wrong and the world is about to explode.');
 		}
 
 
@@ -103,7 +103,9 @@ try{
 	}
 }
 catch(Exception $e){
-	echo 'error=' . $e->getMessage();
+	header("Content-type: text/plain");
+	$error = $e->getMessage();
+	echo "error=$error";
 	exit();
 }
 
