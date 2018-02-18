@@ -90,7 +90,8 @@ function add_prizes( $db, $name, $score, $prize_array, $processed_names ){
 					if(!$add_result){
 						throw new Exception("Could not create $name's F@H record.");
 					}
-					send_message($db, $user_id, "Welcome to Team Jiggmin, $name! Your help in taking over the world (or curing cancer) is much appreciated! \n\n- Jiggmin");
+					$message = "Welcome to Team Jiggmin, $name! Your help in taking over the world (or curing cancer) is much appreciated! \n\n- Jiggmin";
+					$db->call('message_insert', array($user_id, 1, $message, '0'));
 					throw new Exception("Successfully created $name's F@H record.");
 				}
 				$row = $result->fetch_object();
@@ -169,8 +170,9 @@ function award_prize($db, $user_id, $name, $score, $row, $db_val, $min_score, $p
 		}
 
 		//send them a PM
-		send_message($db, $user_id, "$name, congratulations on earning $min_score points for Team Jiggmin! You have been awarded with a $prize_str. \n\nThanks for helping us take over the world! (or cure cancer)\n\n- Jiggmin");
-
+		$message = "$name, congratulations on earning $min_score points for Team Jiggmin! You have been awarded with a $prize_str. \n\nThanks for helping us take over the world! (or cure cancer)\n\n- Jiggmin";
+		$db->call('message_insert', array($user_id, 1, $message, '0'));
+		
 		//remember that this prize has been given
 		$result = $db->query("update folding_at_home
 										set $db_val = 1
@@ -179,22 +181,6 @@ function award_prize($db, $user_id, $name, $score, $row, $db_val, $min_score, $p
 		if(!$result){
 			throw new Exception("Could not update $db_val status for $name.");
 		}
-	}
-}
-
-
-
-function send_message($db, $user_id, $message){
-	$time = time();
-	$safe_user_id = $db->real_escape_string($user_id);
-	$safe_message = $db->real_escape_string($message);
-	$result = $db->query("insert into messages
-									set from_user_id = '1',
-										to_user_id = '$safe_user_id',
-										message = '$safe_message',
-										time = '$time'");
-	if(!$result){
-		throw new Exception("Could not send this message to $user_id: $message");
 	}
 }
 
