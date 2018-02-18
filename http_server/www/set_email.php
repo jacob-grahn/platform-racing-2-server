@@ -24,7 +24,7 @@ try {
 		throw new Exception("Guests don't even really have accounts...");
 	}
 	
-	// change their email
+	// safety first
 	$safe_email = $db->escape($email);
 	$safe_user_id = $db->escape($user_id);
 	
@@ -42,7 +42,7 @@ try {
 	}
 	
 	// tell the world
-	echo 'message=Your email has been changed successfully!';
+	echo 'message=Your email address has been set!';
 	
 }
 catch (Exception $e) {
