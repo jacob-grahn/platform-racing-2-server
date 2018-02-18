@@ -9,7 +9,7 @@ $note = $_POST['note'];
 $data = $_POST['data'];
 $live = $_POST['live'];
 $min_level = $_POST['min_level'];
-$song = (int)$_POST['song'];
+$song = (int) $_POST['song'];
 $gravity = $_POST['gravity'];
 $max_time = $_POST['max_time'];
 $items = $_POST['items'];
@@ -18,8 +18,6 @@ $pass_hash = find('passHash', '');
 $has_pass = find('hasPass', 0);
 $game_mode = find('gameMode', 'race');
 $cowboy_chance = find('cowboyChance', '5');
-
-$note = str_replace('<', '&lt;', $note);
 
 $time = time();
 $ip = get_ip();
