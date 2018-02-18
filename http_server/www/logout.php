@@ -1,5 +1,6 @@
 <?php
 
+header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
 try {
@@ -19,8 +20,9 @@ try {
 	echo 'success=true';
 }
 
-catch(Exception $e) {
-	echo 'error='.$e->getMessage();
+catch (Exception $e) {
+	$error = $e->getMessage();
+	echo "error=$error";
 }
 
 ?>
