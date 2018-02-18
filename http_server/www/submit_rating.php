@@ -3,8 +3,8 @@
 header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
-$level_id = find('level_id');
-$new_rating = find('rating');
+$level_id = $_POST['level_id'];
+$new_rating = $_POST['rating'];
 
 $level_id = addslashes($level_id);
 
@@ -18,7 +18,7 @@ $ip = get_ip();
 $safe_ip = addslashes($ip);
 $safe_new_rating = addslashes($new_rating);
 
-try{
+try {
 	// sanity check: is the rating valid?
 	$new_rating = round($new_rating);
 	if(is_nan($new_rating) || $new_rating < 1 || $new_rating > 5){
