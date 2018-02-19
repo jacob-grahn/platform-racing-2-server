@@ -107,14 +107,14 @@ function output_form($db, $message) {
 		
 		$prize_html = "<select name='prize_type_$num'>
 						<option value=''>Choose a type...</option>
-						<option value='$hat' $hat_checked>Hat</option>
-						<option value='$head' $head_checked>Head</option>
-						<option value='$body' $body_checked>Body</option>
-						<option value='$feet' $feet_checked>Feet</option>
-						<option value='$ehat' $ehat_checked>Epic Hat</option>
-						<option value='$ehead' $ehead_checked>Epic Head</option>
-						<option value='$ebody' $ebody_checked>Epic Body</option>
-						<option value='$efeet' $efeet_checked>Epic Feet</option>
+						<option value='$hat' $hat_selected>Hat</option>
+						<option value='$head' $head_selected>Head</option>
+						<option value='$body' $body_selected>Body</option>
+						<option value='$feet' $feet_selected>Feet</option>
+						<option value='$ehat' $ehat_selected>Epic Hat</option>
+						<option value='$ehead' $ehead_selected>Epic Head</option>
+						<option value='$ebody' $ebody_selected>Epic Body</option>
+						<option value='$efeet' $efeet_selected>Epic Feet</option>
 					</select>&nbsp;<input type='text' size='' name='prize_id_$num' value='$prize_id'>";
 		
 		echo "Level $num: <input type='text' size='' name='level_id_$num' value='$level_id'> | Prize: $prize_html<br>";

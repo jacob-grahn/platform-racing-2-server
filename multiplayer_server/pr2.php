@@ -79,6 +79,7 @@ $port = 0;
 $server_name = '';
 $guild_id = 0;
 $guild_owner = 0;
+$server_expire_time = '';
 $key = '';
 
 $login_array = array();
