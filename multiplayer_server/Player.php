@@ -243,11 +243,7 @@ class Player {
 
 
 	public function send_chat($chat_message) {
-		global $guild_owner;
-		global $player_array;
-		global $port;
-		global $server_name;
-		global $server_expire_time;
+		global $guild_owner, $player_array, $port, $server_name, $server_id, $server_expire_time, $db;
 
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
@@ -269,6 +265,7 @@ class Player {
 
 		//special text emotes
 		$chat_message = str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
+		$chat_message = str_replace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
 
 		// html killer for systemChat
 		$safe_chat_message = htmlspecialchars($chat_message);
@@ -446,6 +443,10 @@ class Player {
 				$admin_id = $this->user_id;
 				$ip = $this->ip;
 				
+				if($chat_message == '/restart_server debug') {
+					$this->write("message`chat_message: $chat_message<br>admin_name: $admin_name<br>admin_id: $admin_id<br>ip: $ip<br>server_name: $server_name<br>server_id: $server_id<br>port: $port");
+				}
+				
 				if ($room_type == 'c') {
 					if ($chat_message == '/restart_server yes, i am sure!') {
 						
@@ -490,6 +491,10 @@ class Player {
 				else {
 					$this->write("systemChat`This is not a private server.");
 				}
+			}
+			// be awesome command
+			else if ($chat_message == '/be_awesome' || $chat_message == '/beawesome') {
+				$this->write("message`<b>You're awesome!</b>");
 			}
 			// help command
 			else if ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
