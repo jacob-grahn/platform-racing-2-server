@@ -16,7 +16,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		return false;
 	}
 	
-	// if the player being promoted is an admin, kill the function
+	// if the player being promoted is an admin, end the function
 	if($promoted_player->group == 3) {
 		echo $admin->name . " lacks the power to \"promote\" another admin ($safe_name) to a $safe_type moderator.";
 		$admin->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
@@ -63,6 +63,13 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	if($user_row->power < 1) {
 		echo $admin->name." tried to promote a guest ($name) to a $type moderator.";
 		$admin->write("message`Error: Guests can't be promoted to moderators.");
+		return false;
+	}
+	
+	// if the person being promoted is an admin, kill the function
+	if($promoted_player->group == 3) {
+		echo $admin->name . " lacks the power to \"promote\" another admin ($safe_name) to a $safe_type moderator.";
+		$admin->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
 		return false;
 	}
 	
