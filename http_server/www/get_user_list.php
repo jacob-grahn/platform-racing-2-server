@@ -1,8 +1,9 @@
 <?php
 
 require_once('../fns/all_fns.php');
+header("Content-type: text/plain");
 
-$mode = $_POST['mode'];
+$mode = find('mode');
 
 
 try {
@@ -16,15 +17,16 @@ try {
 		$var = 'ignore_id';
 	}
 	else {
-		throw new Exception('invalid mode.');
+		throw new Exception('Invalid list mode specified.');
 	}
 	
-	
+	// connect
 	$db = new DB();
 	
-	//check thier login
+	// check their login
 	$user_id = token_login($db);
 	
+	// get the information from the database
 	$result = $db->query("select users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens
 									from $table
 									inner join users
@@ -42,8 +44,9 @@ try {
 	
 	$num = 0;
 
+	// make individual list entries
 	while($row = $result->fetch_object()){
-		$name = urlencode($row->name);
+		$name = urlencode(htmlspecialchars($row->name));
 		$group = $row->power;
 		$status = $row->status;
 		$rank = $row->rank;
@@ -76,7 +79,8 @@ try {
 }
 
 catch(Exception $e){
-	echo 'error='.($e->getMessage());
+	$error = $e->getMessage();
+	echo "error=$error";
 }
 
 ?>

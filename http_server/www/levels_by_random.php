@@ -1,6 +1,7 @@
 <?php
 
 require_once('../fns/all_fns.php');
+header("Content-type: text/plain");
 
 $ip = get_ip();
 

@@ -1,5 +1,6 @@
 <?php
 
+header("Content-type: text/plain");
 require_once( '../fns/all_fns.php' );
 
 try {

@@ -5,6 +5,7 @@ header("Content-type: text/plain");
 require_once('../../fns/all_fns.php');
 
 $user_name = find('user_name');
+$safe_name = htmlspecialchars($user_name);
 $pass = find('pass');
 $type = find('type');
 $part_id = find('part_id');
@@ -32,7 +33,7 @@ try {
 	//tell the world
 	$ret = new stdClass();
 	$ret->success = true;
-	$ret->message = "The part was given to " . htmlspecialchars($user_name) . ".";
+	$ret->message = "The part was given to $safe_name.";
 	echo json_encode( $ret );
 }
 

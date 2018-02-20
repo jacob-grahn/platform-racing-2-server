@@ -1,5 +1,6 @@
 <?php
 
+header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
 $mode = find('mode', 'user');
@@ -33,8 +34,9 @@ try {
 
 }
 
-catch(Exception $e){
-	echo 'error='.$e->getMessage();
+catch (Exception $e){
+	$error = $e->getMessage();
+	echo "error=$error";
 }
 
 ?>

@@ -1,5 +1,6 @@
 <?php
 
+header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
 $count = find('count', 100);
@@ -14,8 +15,9 @@ try {
 	
 	echo $str;
 }
-catch(Exception $e){
-	echo 'error='.$e->getMessage();
+catch (Exception $e) {
+	$error = $e->getMessage();
+	echo "error=$error";
 }
 
 ?>

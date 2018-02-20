@@ -1,26 +1,31 @@
 <?php
+
+header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
-$target_name = $_POST['target_name'];
+$ignored_name = $_POST['target_name'];
+$safe_ignored_name = htmlspecialchars($ignored_name);
 
-try{
+try {
 	
+	// connect
 	$db = new DB();
 	
-	//check thier login
+	// check their login
 	$user_id = token_login($db);
 	
-	//get the to id
-	$target_id = name_to_id($db, $target_name);
+	// get the ignored user's id
+	$ignored_id = name_to_id($db, $ignored_name);
 	
-	//create the magical one sided friendship
-	$db->call('ignored_insert', array($user_id, $target_id));
+	// create the restraining order
+	$db->call('ignored_insert', array($user_id, $ignored_id));
 	
-	//tell it to the world
-	echo 'message='.$target_name.' has been ignored. You won\'t recieve any chat or private messages from them.';			
+	// tell it to the world
+	echo "message=$safe_ignored_name has been ignored. You won't recieve any chat or private messages from them.";
 }
 
-catch(Exception $e){
-	echo 'error='.($e->getMessage());
+catch (Exception $e) {
+	$error = $e->getMessage();
+	echo "error=$error";
 	exit;
 }

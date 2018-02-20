@@ -9,7 +9,7 @@ $ip = get_ip();
 try {
 	
 	//--- rate limit
-	rate_limit( 'guildMessage-'.$ip, 60*5, 1, 'Only one guild message can be sent every five minutes.' );
+	rate_limit( 'guildMessage-'.$ip, 300, 1, 'Only one guild message can be sent every five minutes.' );
 	
 	//--- connect
 	$db = new DB();
@@ -32,8 +32,9 @@ try {
 	echo 'message=Your message was sent successfully!';		
 }
 
-catch(Exception $e){
-	echo 'error='.($e->getMessage());
+catch (Exception $e) {
+	$error = $e->getMessage();
+	echo "error=$error";
 }
 
 ?>

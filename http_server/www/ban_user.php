@@ -1,5 +1,6 @@
 <?php
 require_once('../fns/all_fns.php');
+header("Content-type: text/plain");
 
 $banned_name = find('banned_name', '');
 $duration = find('duration', 60);
@@ -146,7 +147,8 @@ try {
 			echo("message=Guest [$banned_ip] has been banned for $duration seconds.");
 		}
 		else {
-			echo("message=$banned_name has been banned for $duration seconds.");
+			$disp_name = htmlspecialchars($banned_name);
+			echo("message=$disp_name has been banned for $duration seconds.");
 		}
 	}
 	
@@ -179,7 +181,8 @@ try {
 }
 
 catch(Exception $e){
-	echo 'message=Error: '.$e->getMessage();
+	$error = $e->getMessage();
+	echo "error=$error";
 }
 
 ?>
