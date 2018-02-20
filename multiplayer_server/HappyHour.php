@@ -6,7 +6,6 @@ class HappyHour {
 	public static $random_hour = 0;
 
 	public static function activate ($duration = 3600) {
-		
 		$time = time();
 		
 		if (self::$active_until < $time) {
@@ -20,8 +19,13 @@ class HappyHour {
 		if (pr2_server::$tournament) {
 			return false;
 		}
-		$current_hour = (int) date('G');
-		return self::$active_until >= time() || $current_hour === self::$random_hour;
+		elseif (self::$active_until >= time()) {
+			return true;
+		}
+		else {
+			$current_hour = (int) date('G');
+			return $current_hour === self::$random_hour;
+		}
 	}
 
 }
