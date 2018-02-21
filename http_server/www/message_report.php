@@ -26,11 +26,11 @@ try {
 								FROM messages_reported
 							 	WHERE message_id = '$safe_message_id'
 								");
-	$row = $result->fetch_object();
-	$count = (int) $row->count;
 	if(!$result) {
 		throw new Exception('Could not check if the message was already reported.');
 	}
+	$row = $result->fetch_object();
+	$count = (int) $row->count;
 	if ($count > 0) {
 		throw new Exception("It looks like you've already reported this message before.");
 	}
