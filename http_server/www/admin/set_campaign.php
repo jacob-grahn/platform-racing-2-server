@@ -170,7 +170,7 @@ function output_form($db, $message) {
 	echo '<br>';
 	echo '---';
 	echo '<br>';
-	echo '<pre>To set the custom campaign, gather the levels you want to set.<br>Then, find the level IDs of those levels.<br>Finally, use the level IDs to update the campaign in the form above.<br><br>NOTE: Since the data updates hourly, this process may take up to an hour to complete.</pre>';
+	echo '<pre>To set the custom campaign, gather the levels you want to set.<br>Then, find the level IDs of those levels.<br>Finally, use the level IDs to update the campaign in the form above.<br><br>You can find a list of prizes and their corresponding IDs <a href="part_ids.php" target="_blank">here</a>.</pre>';
 	
 	output_footer();
 }
@@ -215,7 +215,7 @@ function update($db) {
 	}
 	
 	// did the script get here? great! redirect back to the script with a success message
-	$message = "Great success! The new campaign has been set. It will take effect at the top of the next hour.";
+	$message = "Great success! The new campaign has been set and will take effect shortly.";
 	header("Location: set_campaign.php?message=" . urlencode($message));
 	die();
 
