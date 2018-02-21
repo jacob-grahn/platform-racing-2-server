@@ -147,45 +147,16 @@ function update($db) {
 		$prize_id = (int) find("prize_id_$id");
 		
 		try {
-		
-			$level = $db->grab_row('level_select', array($level_id));
-			
-			if (!$level) {
-				throw new Exception("Level $id ($level_id) does not exist.");
-			}
-			
+			$level = $db->grab_row('level_select', [$level_id], "Level $id ($level_id) does not exist.");			
+			$db->call('campaign_update', [$campaign_id, $id, $level_id, $prize_type, $prize_id]);	
 		}
-		
 		catch (Exception $e) {
 			$message = "Error: " . $e->getMessage();
 			output_form($db, $message);
 		}
-		
-		// finalize variables
-		${"level_$id"} = $level_id;
-		${"prizetype_$id"} = $prize_type;
-		${"prizeid_$id"} = $prize_id;
-		
 	}
 
-	try {
-	
-		$db->call(
-			'campaign_update',
-			array(
-			$campaign_id,
-			$level_1, $prizetype_1, $prizeid_1,
-			$level_2, $prizetype_2, $prizeid_2,
-			$level_3, $prizetype_3, $prizeid_3,
-			$level_4, $prizetype_4, $prizeid_4,
-			$level_5, $prizetype_5, $prizeid_5,
-			$level_6, $prizetype_6, $prizeid_6,
-			$level_7, $prizetype_7, $prizeid_7,
-			$level_8, $prizetype_8, $prizeid_8,
-			$level_9, $prizetype_9, $prizeid_9
-			)
-		);
-		
+	try {		
 		//admin log
 		$admin_name = $admin->name;
 		$admin_id = $admin->user_id;
