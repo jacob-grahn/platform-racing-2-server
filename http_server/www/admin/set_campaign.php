@@ -5,7 +5,7 @@ require_once('../../fns/output_fns.php');
 
 $action = find('action', 'lookup');
 $message = find('message', '');
-$campaign_id = 5; // 0 = Original, 1 = Speed, 2 = Luna, 3 = Timeline, 4 = Legendary, 5 = Custom
+$campaign_id = 6; // 1 = Original, 2 = Speed, 3 = Luna, 4 = Timeline, 5 = Legendary, 6 = Custom
 $campaign = $db->to_array( $db->call('campaign_select_by_id', $campaign_id) ); 
 
 try {
@@ -150,7 +150,7 @@ function update($db) {
 		
 			$level = $db->grab_row('level_select', array($level_id));
 			
-			if (!level) {
+			if (!$level) {
 				throw new Exception("Level $id ($level_id) does not exist.");
 			}
 			
