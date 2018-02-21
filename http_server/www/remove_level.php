@@ -25,9 +25,9 @@ try{
 	// check for the level's information
 	$level = $db->grab_row( 'level_select', array($level_id) );
 	$l_title = $level->title;
-	$l_creator = id_to_name($level->user_id);
+	$l_creator_id = (int) $level->user_id;
+	$l_creator = id_to_name($l_creator_id);
 	$l_note = $level->note;
-	
 	
 	// unpublish the level
 	$db->call('level_unpublish', array($level_id));
