@@ -6,7 +6,6 @@ require_once('../../fns/output_fns.php');
 $action = find('action', 'lookup');
 $message = find('message', '');
 $campaign_id = 6; // 1 = Original, 2 = Speed, 3 = Luna, 4 = Timeline, 5 = Legendary, 6 = Custom
-$campaign = $db->to_array( $db->call('campaign_select_by_id', [$campaign_id]) ); 
 
 try {
 	
@@ -63,7 +62,7 @@ function is_selected($prize_type, $option_value) {
 }
 
 function output_form($db, $message) {
-	global $campaign;
+	$campaign = $db->to_array( $db->call('campaign_select_by_id', [$campaign_id]) ); 
 	
 	output_header('Set Campaign', true, true);
 	
