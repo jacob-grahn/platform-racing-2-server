@@ -62,6 +62,7 @@ function is_selected($prize_type, $option_value) {
 }
 
 function output_form($db, $message) {
+	global $campaign_id;
 	$campaign = $db->to_array( $db->call('campaign_select_by_id', [$campaign_id]) ); 
 	
 	output_header('Set Campaign', true, true);
