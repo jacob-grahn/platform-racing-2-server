@@ -78,43 +78,27 @@ function output_form($db, $message) {
 	
 	echo "Set Custom Campaign <br>---<br>";
 	
-	foreach (range(1,9) as $num) {
+	foreach ($campaign as $row) {
 		
 		// get level/prize information
-		$level_id = $campaign[$num->level_id];
-		$prize_type = $campaign[$num->prize_type];
-		$prize_id = $campaign[$num->prize_id];
+		$num = $row->level_num;
+		$level_id = $row->level_id;
+		$prize_type = $row->prize_type;
+		$prize_id = $row->prize_id;
 		
 		// define prize types
-		$hat = "Hat";
-		$head = "Head";
-		$body = "Body";
-		$feet = "Feet";
-		$ehat = "eHat";
-		$ehead = "eHead";
-		$ebody = "eBody";
-		$eFeet = "eFeet";
+		$prize_types = ['hat', 'head', 'body', 'feet', 'eHat', 'eHead', 'eBody', 'eFeet'];
 		
 		// check which type the current prize is, then select it in the dropdown
-		$hat_selected = is_selected($prize_type, $hat);
-		$head_selected = is_selected($prize_type, $head);
-		$body_selected = is_selected($prize_type, $body);
-		$feet_selected = is_selected($prize_type, $feet);
-		$ehat_selected = is_selected($prize_type, $ehat);
-		$ehead_selected = is_selected($prize_type, $ehead);
-		$ebody_selected = is_selected($prize_type, $ebody);
-		$efeet_selected = is_selected($prize_type, $efeet);
+		$option_html = ''
+		foreach ($prize_types as $pt) {
+			$selected = is_selected($prize_type, $pt);
+			$option_html .= "<option value='$pt' $selected>$pt</option>";
+		}
 		
 		$prize_html = "<select name='prize_type_$num'>
 						<option value=''>Choose a type...</option>
-						<option value='$hat' $hat_selected>Hat</option>
-						<option value='$head' $head_selected>Head</option>
-						<option value='$body' $body_selected>Body</option>
-						<option value='$feet' $feet_selected>Feet</option>
-						<option value='$ehat' $ehat_selected>Epic Hat</option>
-						<option value='$ehead' $ehead_selected>Epic Head</option>
-						<option value='$ebody' $ebody_selected>Epic Body</option>
-						<option value='$efeet' $efeet_selected>Epic Feet</option>
+						$option_html
 					</select>&nbsp;<input type='text' size='' name='prize_id_$num' value='$prize_id'>";
 		
 		echo "Level $num: <input type='text' size='' name='level_id_$num' value='$level_id'> | Prize: $prize_html<br>";
