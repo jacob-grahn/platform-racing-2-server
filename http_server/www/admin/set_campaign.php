@@ -90,7 +90,7 @@ function output_form($db, $message) {
 		$prize_types = ['hat', 'head', 'body', 'feet', 'eHat', 'eHead', 'eBody', 'eFeet'];
 		
 		// check which type the current prize is, then select it in the dropdown
-		$option_html = ''
+		$option_html = '';
 		foreach ($prize_types as $pt) {
 			$selected = is_selected($prize_type, $pt);
 			$option_html .= "<option value='$pt' $selected>$pt</option>";
