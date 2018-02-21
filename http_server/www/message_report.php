@@ -22,10 +22,11 @@ try {
 	
 	// make sure the message isn't already reported
 	$result = $db->query("SELECT COUNT(*)
+								AS count
 								FROM messages_reported
 							 	WHERE message_id = '$safe_message_id'
 								");
-	$count = (int) $result->fetch_object();
+	$count = (int) $result['count'];
 	if(!$result) {
 		throw new Exception('Could not check if the message was already reported.');
 	}
