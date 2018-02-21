@@ -26,7 +26,8 @@ try {
 								FROM messages_reported
 							 	WHERE message_id = '$safe_message_id'
 								");
-	$count = (int) $result['count'];
+	$row = $result->fetch_object();
+	$count = (int) $row->count;
 	if(!$result) {
 		throw new Exception('Could not check if the message was already reported.');
 	}
