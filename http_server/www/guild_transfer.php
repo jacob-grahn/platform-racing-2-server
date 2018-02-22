@@ -149,11 +149,11 @@ function start_transfer($db, $old_name, $guild) {
 	}
 	
 	// don't let a guild change hands more than once in a week
-	rate_limit('guild-transfer-'.$guild_id, 604800, 1, 'Guild ownership can only be transferred once per week.');
+	rate_limit('guild-transfer-'.$guild->guild_id, 604800, 1, 'Guild ownership can only be transferred once per week.');
 	
 	// begin a guild transfer confirmation
 	$code = random_str(24);
-	$db->call('guild_transfer_insert', array($guild_id, $old_id, $new_id, $code, $ip));
+	$db->call('guild_transfer_insert', [$guild->guild_id, $old_id, $new_id, $code, $ip]);
 	
 	// send a confirmation email
 	$from = 'Fred the Giant Cactus <contact@jiggmin.com>';
