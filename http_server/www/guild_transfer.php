@@ -55,7 +55,7 @@ try {
 			throw new Exception("Incorrect referrer. The referrer is: $safe_ref");
 		}
 		else {
-			start_transfer($db, $user, $guild);
+			start_transfer($db, $guild);
 		}
 		
 	}
@@ -95,7 +95,7 @@ function output_form($user, $guild) {
 	
 }
 
-function start_transfer($db, $old_user, $guild) {
+function start_transfer($db, $guild) {
 	
 	// get the ip address of the requester
 	$ip = get_ip();
@@ -105,7 +105,8 @@ function start_transfer($db, $old_user, $guild) {
 	$pass = $_POST['pass'];
 	$new_name = $_POST['new_owner'];
 	
-	// db variables
+	// check pass
+	$old_user = pass_login($db, $old_name, $pass);
 	$old_id = $old_user->user_id;
 	$old_name = $old_user->name;
 	$old_email = $old_user->email;
@@ -121,9 +122,6 @@ function start_transfer($db, $old_user, $guild) {
 		throw new Exception("The email address you entered is incorrect.");
 	}
 	
-	// check pass
-	pass_login($db, $old_name, $pass);
-	
 	// get new user's info
 	$new_user = $db->grab_row('user_select_by_name', [$new_name]); // new user info
 	$new_id = $new_user->user_id;
@@ -138,7 +136,7 @@ function start_transfer($db, $old_user, $guild) {
 	
 	// make some variables from the guild
 	$safe_guild_name = htmlspecialchars($guild->guild_name);
-	$old_owner = $guild->owner_id;
+	$current_owner = $guild->owner_id;
 	
 	// sanity check: make sure guests aren't getting any funny ideas
 	if($old_power < 1 || $new_power < 1) {
