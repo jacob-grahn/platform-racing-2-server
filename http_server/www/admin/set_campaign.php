@@ -3,29 +3,39 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$action = find('action', 'lookup');
+$action = $_POST['action'];
 $message = find('message', '');
 $campaign_id = 6; // 1 = Original, 2 = Speed, 3 = Luna, 4 = Timeline, 5 = Legendary, 6 = Custom
 
+// if empty or not set
+if (is_empty($action)) {
+	$action = "lookup";
+}
+
 try {
 	
-	//connect
+	// connect
 	$db = new DB();
 
 
-	//make sure you're an admin
-	$admin = check_moderator($db, true, 3);
+	// make sure you're an admin
+	$admin = check_moderator($db, false, 3);
 	
 	
-	//lookup
+	// lookup
 	if($action === 'lookup') {
 		output_form($db, $message);
 	}
 	
 	
-	//update
-	if($action === 'update') {
+	// update
+	else if($action === 'update') {
 		update($db);
+	}
+	
+	// this should never happen
+	else {
+		throw new Exception("Invalid action specified.");
 	}
 
 
@@ -61,6 +71,62 @@ function is_selected($prize_type, $option_value) {
 
 }
 
+function prize_check($type, $id, $err_prefix) {
+	$type_array = array("hat", "head", "body", "feet", "eHat", "eHead", "eBody", "eFeet");
+	
+	// safety first
+	$safe_type = htmlspecialchars($type);
+	$safe_id = htmlspecialchars($id);
+	
+	// check for a valid prize type
+	if (!in_array($type, $type_array)) {
+		throw new Exception("$err_prefix ($safe_type is an invalid prize type).");
+	}
+	
+	// check for a valid hat id
+	if ($type == "hat" || $type == "eHat") {
+		if ($id < 2 || $id > 14) {
+			throw new Exception("$err_prefix (invalid hat ID ($safe_id) specified).");
+		}
+		else {
+			return true;
+		}
+	}
+	
+	// check for a valid head id
+	if ($type == "head" || $type == "eHead") {
+		if ($id < 1 || $id > 39) {
+			throw new Exception("$err_prefix (invalid head ID ($safe_id) specified).");
+		}
+		else {
+			return true;
+		}
+	}
+	
+	// check for a valid body id
+	if ($type == "body" || $type == "eBody") {
+		if ($id < 1 || $id > 39 || $id === 33) {
+			throw new Exception("$err_prefix (invalid body ID ($safe_id) specified).");
+		}
+		else {
+			return true;
+		}
+	}
+	
+	// check for a valid feet id
+	if ($type == "feet" || $type == "feet") {
+		if ($id < 1 || $id > 39 || ($id >= 31 && $id <= 33)) {
+			throw new Exception("$err_prefix (invalid feet ID ($safe_id) specified).");
+		}
+		else {
+			return true;
+		}
+	}
+	
+	// this should never happen
+	throw new Exception("$err_prefix (an unknown error occurred).");
+}
+
 function output_form($db, $message) {
 	global $campaign_id;
 	$campaign = $db->to_array( $db->call('campaign_select_by_id', [$campaign_id]) ); 
@@ -74,7 +140,7 @@ function output_form($db, $message) {
 	
 	$level_info = get_level_info($campaign);
 	
-	echo '<form name="input" action="set_campaign.php" method="get">';
+	echo '<form name="input" action="set_campaign.php" method="post">';
 	
 	echo "Set Custom Campaign <br>---<br>";
 	
@@ -114,7 +180,7 @@ function output_form($db, $message) {
 	echo '<br>';
 	echo '---';
 	echo '<br>';
-	echo '<pre>To set the custom campaign, gather the levels you want to set.<br>Then, find the level IDs of those levels.<br>Finally, use the level IDs to update the campaign in the form above.<br><br>NOTE: Since the data updates hourly, this process may take up to an hour to complete.</pre>';
+	echo '<pre>To set the custom campaign, gather the levels you want to set.<br>Then, find the level IDs of those levels.<br>Finally, use the level IDs to update the campaign in the form above.<br><br>You can find a list of prizes and their corresponding IDs <a href="part_ids.php" target="_blank">here</a>.</pre>';
 	
 	output_footer();
 }
@@ -125,13 +191,14 @@ function update($db) {
 	
 	foreach (range(1,9) as $id) {
 	
-		// get individual level details
+		// get individual level/prize details
 		$level_id = (int) find("level_id_$id");
 		$prize_type = find("prize_type_$id");
 		$prize_id = (int) find("prize_id_$id");
 		
 		try {
-			$level = $db->grab_row('level_select', [$level_id], "Level $id ($level_id) does not exist.");			
+			$level = $db->grab_row('level_select', [$level_id], "Level $id ($level_id) does not exist.");
+			prize_check($prize_type, $prize_id, "The prize for level $id is invalid");
 			$db->call('campaign_update', [$campaign_id, $id, $level_id, $prize_type, $prize_id]);	
 		}
 		catch (Exception $e) {
@@ -140,6 +207,9 @@ function update($db) {
 		}
 	}
 
+	// push the changes to the servers
+	generate_level_list($db, 'campaign');
+	
 	try {		
 		//admin log
 		$admin_name = $admin->name;
@@ -155,7 +225,7 @@ function update($db) {
 	}
 	
 	// did the script get here? great! redirect back to the script with a success message
-	$message = "Great success! The new campaign has been set. It will take effect at the top of the next hour.";
+	$message = "Great success! The new campaign has been set and will take effect shortly.";
 	header("Location: set_campaign.php?message=" . urlencode($message));
 	die();
 
