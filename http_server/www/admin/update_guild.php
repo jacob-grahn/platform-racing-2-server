@@ -84,9 +84,9 @@ function update($db) {
 	
 	if($guild->owner_id !== $owner_id) {
 		$code = 'manual-' . time();
-		$db->call('guild_transfer_insert', array($guild->guild_id, $old_id, $new_id, $code, $ip));
-		$change_id = $db->grab('change_id', 'guild_transfer_select_by_code', array($code));
-		$db->call('guild_transfer_complete', array($change_id, $ip));
+		$db->call('guild_transfer_insert', array($guild->guild_id, $old_id, $new_id, $code, $ip), 'Could not initiate the owner change.');
+		$change_id = $db->grab('change_id', 'guild_transfer_select_by_code', array($code), 'Could not get the owner change ID.');
+		$db->call('guild_transfer_complete', array($change_id, $ip), 'Could not complete the owner change.');
 	}
 	
 	//check to see if the admin is trying to delete the guild emblem
@@ -105,7 +105,7 @@ function update($db) {
 		}
 		
 		// do it
-		$db->call('guild_update', array($guild_id, $guild_name, $emblem, $note, $owner_id));
+		$db->call('guild_update', array($guild_id, $guild_name, $emblem, $note, $owner_id), 'Could not update the guild.');
 	
 		//admin log
 		$admin_name = $admin->name;
@@ -113,7 +113,7 @@ function update($db) {
 		$ip = get_ip();
 		$disp_changes = "Changes: " . $guild_changes;
 		
-		$db->call('admin_action_insert', array($admin_id, "$admin_name updated guild $guild_id from $ip. $disp_changes.", $admin_id, $ip));
+		$db->call('admin_action_insert', array($admin_id, "$admin_name updated guild $guild_id from $ip. $disp_changes.", $admin_id, $ip), 'Could not insert the changes to the admin log.');
 
 	}
 	catch (Exception $e) {
@@ -123,7 +123,7 @@ function update($db) {
 		die();
 	}
 	
-	header("Location: guild_deep_info.php?guild_id=" . urlencode(find('guild_id_submit')));
+	header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));
 	die();
 
 }
