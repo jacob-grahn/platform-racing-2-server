@@ -118,7 +118,7 @@ function start_transfer($db, $old_name, $guild) {
 	}
 	
 	// check if the emails match
-	if ($email != $old_email) {
+	if (strtolower($email) != strtolower($old_email)) {
 		throw new Exception("The email address you entered is incorrect.");
 	}
 	
