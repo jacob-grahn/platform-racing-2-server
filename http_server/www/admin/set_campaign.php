@@ -3,29 +3,39 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$action = find('action', 'lookup');
+$action = $_POST['action'];
 $message = find('message', '');
 $campaign_id = 6; // 1 = Original, 2 = Speed, 3 = Luna, 4 = Timeline, 5 = Legendary, 6 = Custom
 
+// if empty or not set
+if (is_empty($action)) {
+	$action = "lookup";
+}
+
 try {
 	
-	//connect
+	// connect
 	$db = new DB();
 
 
-	//make sure you're an admin
-	$admin = check_moderator($db, true, 3);
+	// make sure you're an admin
+	$admin = check_moderator($db, false, 3);
 	
 	
-	//lookup
+	// lookup
 	if($action === 'lookup') {
 		output_form($db, $message);
 	}
 	
 	
-	//update
-	if($action === 'update') {
+	// update
+	else if($action === 'update') {
 		update($db);
+	}
+	
+	// this should never happen
+	else {
+		throw new Exception("Invalid action specified.");
 	}
 
 
@@ -130,7 +140,7 @@ function output_form($db, $message) {
 	
 	$level_info = get_level_info($campaign);
 	
-	echo '<form name="input" action="set_campaign.php" method="get">';
+	echo '<form name="input" action="set_campaign.php" method="post">';
 	
 	echo "Set Custom Campaign <br>---<br>";
 	
