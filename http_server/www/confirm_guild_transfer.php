@@ -20,19 +20,19 @@ try {
 	$db = new DB();
 	
 	// get the pending change information
-	$row = $db->grab_row('guild_transfer_select', array($code), 'No pending change was found.');
+	$row = $db->grab_row('guild_transfer_select_by_code', [$code], 'No pending change was found.');
 	$guild_id = $row->guild_id;
-	$old_id = $row->old_id;
-	$new_id = $row->new_id;
+	$new_owner_id = $row->new_owner_id;
 	$change_id = $row->change_id;
 	
-	$db->call('guild_transfer_complete', array($change_id, $ip), 'Could not confirm the transfer.');
-	$db->call('user_transfer_guild', array($user_id, $old_email, $new_email), 'Could not transfer guild ownership.');
-	
 	// get updated guild data
-	$guild = $db->grab_row('guild_select', array($guild_id), 'Could not get updated guild information from the database.');
+	$guild = $db->grab_row('guild_select', [$guild_id], 'Could not get updated guild information from the database.');
 	$safe_guild_name = htmlspecialchars($guild->guild_name);
-	$safe_new_owner = htmlspecialchars(id_to_name($guild->owner_id));
+	$safe_new_owner = htmlspecialchars(id_to_name($db, $guild->owner_id));
+	
+	// do the transfer
+	$db->call('guild_transfer_complete', [$change_id, $ip], 'Could not confirm the transfer.');
+	$db->call('guild_update', [$guild_id, $guild->guild_name, $guild->emblem, $guild->note, $new_owner_id], 'Could not transfer guild ownership.');
 	
 	// tell the world
 	echo "Great success! The new owner of $safe_guild_name is $safe_new_owner. Long live $safe_guild_name!";
