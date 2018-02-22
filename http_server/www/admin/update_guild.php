@@ -81,6 +81,13 @@ function update($db) {
 	// call guild information
 	$guild = $db->grab_row('guild_select', array($guild_id));
 	
+	if($guild->owner_id !== $owner_id) {
+		$code = 'manual-' . time();
+		$db->call('guild_transfer_insert', array($guild_id, $old_id, $new_id, $code, $ip));
+		$change_id = $db->grab('change_id', 'guild_transfer_select', array($code));
+		$db->call('guild_transfer_complete', array($change_id, ''));
+	}
+	
 	//check to see if the admin is trying to delete the guild emblem
 	if (!empty($_GET['delete_emblem'])) {
 		$emblem = "default-emblem.jpg";
