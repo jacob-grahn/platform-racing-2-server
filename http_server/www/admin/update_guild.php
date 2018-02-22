@@ -5,6 +5,7 @@ require_once('../../fns/output_fns.php');
 
 $guild_id = find('guild_id');
 $action = find('action', 'lookup');
+$ip = get_ip();
 
 try {
 	
@@ -69,7 +70,7 @@ function output_form($db, $guild_id) {
 
 function update($db) {
 	
-	global $admin;
+	global $admin, $ip;
 
 	//make some nice-looking variables out of the information in the form
 	$guild_id = (int) find('guild_id_submit');
@@ -83,9 +84,9 @@ function update($db) {
 	
 	if($guild->owner_id !== $owner_id) {
 		$code = 'manual-' . time();
-		$db->call('guild_transfer_insert', array($guild_id, $old_id, $new_id, $code, $ip));
-		$change_id = $db->grab('change_id', 'guild_transfer_select', array($code));
-		$db->call('guild_transfer_complete', array($change_id, ''));
+		$db->call('guild_transfer_insert', array($guild->guild_id, $old_id, $new_id, $code, $ip));
+		$change_id = $db->grab('change_id', 'guild_transfer_select_by_code', array($code));
+		$db->call('guild_transfer_complete', array($change_id, $ip));
 	}
 	
 	//check to see if the admin is trying to delete the guild emblem
@@ -98,20 +99,13 @@ function update($db) {
 	
 	try {
 
+		// check to make sure the description of changes exists
 		if(is_empty($guild_changes)) {
 			throw new Exception('The description of changes cannot be blank.');
 		}
 		
-		$db->call(
-			'guild_update',
-			array(
-			$guild_id,
-			$guild_name,
-			$emblem,
-			$note,
-			$owner_id
-			)
-		);
+		// do it
+		$db->call('guild_update', array($guild_id, $guild_name, $emblem, $note, $owner_id));
 	
 		//admin log
 		$admin_name = $admin->name;
