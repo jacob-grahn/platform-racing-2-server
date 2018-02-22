@@ -84,10 +84,11 @@ function output_form($user, $guild) {
 	
 	echo 'Your Email Address: <input type="text" name="email"><br>';
 	echo 'Your Password: <input type="password" name="pass"><br>';
-	echo 'New Guild Owner\'s Username: <input type="text" name="new_owner"><br>';
+	echo 'New Guild Owner\'s Username: <input type="text" name="new_owner"><br><br>';
 	echo '<input type="hidden" name="action" value="submit">';
 	
-	echo '<br/>';
+	echo 'NOTE: You may only transfer guild ownership once per week. If you still want to proceed, click submit below.<br><br>';
+
 	echo '<input type="submit" value="Submit">&nbsp;(no confirmation!)';
 	echo '</form>';
 	
