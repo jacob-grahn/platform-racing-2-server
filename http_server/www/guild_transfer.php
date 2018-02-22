@@ -104,7 +104,6 @@ function start_transfer($db, $old_user, $guild) {
 	$email = $_POST['email'];
 	$pass = $_POST['pass'];
 	$new_name = $_POST['new_owner'];
-	$new_id = name_to_id($db, $new_name);
 	
 	// db variables
 	$old_id = $old_user->user_id;
@@ -126,7 +125,8 @@ function start_transfer($db, $old_user, $guild) {
 	pass_login($db, $old_name, $pass);
 	
 	// get new user's info
-	$new_user = $db->grab_row('user_select', array($new_id)); // new user info
+	$new_user = $db->grab_row('user_select_by_name', [$new_name]); // new user info
+	$new_id = $new_user->user_id;
 	
 	// make some variables from the old user
 	$safe_old_name = htmlspecialchars($old_user->name);
