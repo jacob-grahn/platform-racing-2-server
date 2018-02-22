@@ -55,7 +55,7 @@ try {
 			throw new Exception("Incorrect referrer. The referrer is: $safe_ref");
 		}
 		else {
-			start_transfer($db, $guild);
+			start_transfer($db, $user->name, $guild);
 		}
 		
 	}
@@ -95,7 +95,7 @@ function output_form($user, $guild) {
 	
 }
 
-function start_transfer($db, $guild) {
+function start_transfer($db, $old_name, $guild) {
 	
 	// get the ip address of the requester
 	$ip = get_ip();
