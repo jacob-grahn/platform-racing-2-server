@@ -23,7 +23,7 @@ try {
 	$row = $db->grab_row('guild_transfer_select_by_code', [$code], 'No pending change was found.');
 	$guild_id = $row->guild_id;
 	$new_owner_id = $row->new_owner_id;
-	$change_id = $row->change_id;
+	$transfer_id = $row->transfer_id;
 	
 	// get updated guild data
 	$guild = $db->grab_row('guild_select', [$guild_id], 'Could not get updated guild information from the database.');
@@ -31,7 +31,7 @@ try {
 	$safe_new_owner = htmlspecialchars(id_to_name($db, $guild->owner_id));
 	
 	// do the transfer
-	$db->call('guild_transfer_complete', [$change_id, $ip], 'Could not confirm the transfer.');
+	$db->call('guild_transfer_complete', [$transfer_id, $ip], 'Could not confirm the transfer.');
 	$db->call('guild_update', [$guild_id, $guild->guild_name, $guild->emblem, $guild->note, $new_owner_id], 'Could not transfer guild ownership.');
 	
 	// tell the world
