@@ -63,7 +63,7 @@ try {
 
 catch (Exception $e) {
 	$message = $e->getMessage();
-	echo "Error: $message.";
+	echo "Error: $message";
 	output_footer();
 	die();
 }
@@ -159,7 +159,7 @@ function start_transfer($db, $old_name, $guild) {
 	$from = 'Fred the Giant Cactus <contact@jiggmin.com>';
 	$to = $old_user->email;
 	$subject = 'PR2 Guild Transfer Confirmation';
-	$body = "Howdy $safe_old_name,\n\nWe received a request to change the owner of your guild <b>$safe_guild_name</b> to <b>$safe_new_name</b>. If you requested this change, please click the link below to complete the guild ownership transfer.\n\nhttps://pr2hub.com/confirm_guild_transfer.php?code=$code\n\nIf you didn't request this change, you may need to change your password.\n\nAll the best,\nFred";
+	$body = "Howdy $safe_old_name,\n\nWe received a request to change the owner of your guild $safe_guild_name to $safe_new_name. If you requested this change, please click the link below to complete the guild ownership transfer.\n\nhttps://pr2hub.com/confirm_guild_transfer.php?code=$code\n\nIf you didn't request this change, you may need to change your password.\n\nAll the best,\nFred";
 	send_email($from, $to, $subject, $body);
 	
 	// tell the world
