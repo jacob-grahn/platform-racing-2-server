@@ -84,7 +84,7 @@ function update($db) {
 	
 	if($guild->owner_id !== $owner_id) {
 		$code = 'manual-' . time();
-		$db->call('guild_transfer_insert', array($guild->guild_id, $old_id, $new_id, $code, $ip), 'Could not initiate the owner change.');
+		$db->call('guild_transfer_insert', array($guild->guild_id, $guild->guild_id, $owner_id, $code, $ip), 'Could not initiate the owner change.');
 		$change_id = $db->grab('change_id', 'guild_transfer_select_by_code', array($code), 'Could not get the owner change ID.');
 		$db->call('guild_transfer_complete', array($change_id, $ip), 'Could not complete the owner change.');
 	}
