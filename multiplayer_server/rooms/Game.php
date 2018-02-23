@@ -537,7 +537,14 @@ class Game extends Room {
 				$tot_lux_gain = count($this->finish_array) - $place - 1;
 			}
 
+			// happy hour bonus
 			if(HappyHour::isActive()) {
+				$tot_exp_gain *= 2;
+				$tot_lux_gain *= 2;
+			}
+			
+			// campaign bonus
+			if (isset($this->campaign)) {
 				$tot_exp_gain *= 2;
 				$tot_lux_gain *= 2;
 			}
