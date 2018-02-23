@@ -63,7 +63,7 @@ try {
 
 catch (Exception $e) {
 	$message = $e->getMessage();
-	echo "Error: $message.";
+	echo "Error: $message";
 	output_footer();
 	die();
 }
@@ -84,10 +84,11 @@ function output_form($user, $guild) {
 	
 	echo 'Your Email Address: <input type="text" name="email"><br>';
 	echo 'Your Password: <input type="password" name="pass"><br>';
-	echo 'New Guild Owner\'s Username: <input type="text" name="new_owner"><br>';
+	echo 'New Guild Owner\'s Username: <input type="text" name="new_owner"><br><br>';
 	echo '<input type="hidden" name="action" value="submit">';
 	
-	echo '<br/>';
+	echo 'NOTE: You may only transfer guild ownership once per week. If you still want to proceed, click submit below.<br><br>';
+
 	echo '<input type="submit" value="Submit">&nbsp;(no confirmation!)';
 	echo '</form>';
 	
@@ -118,7 +119,7 @@ function start_transfer($db, $old_name, $guild) {
 	}
 	
 	// check if the emails match
-	if ($email != $old_email) {
+	if (strtolower($email) != strtolower($old_email)) {
 		throw new Exception("The email address you entered is incorrect.");
 	}
 	
@@ -159,7 +160,7 @@ function start_transfer($db, $old_name, $guild) {
 	$from = 'Fred the Giant Cactus <contact@jiggmin.com>';
 	$to = $old_user->email;
 	$subject = 'PR2 Guild Transfer Confirmation';
-	$body = "Howdy $safe_old_name,\n\nWe received a request to change the owner of your guild <b>$safe_guild_name</b> to <b>$safe_new_name</b>. If you requested this change, please click the link below to complete the guild ownership transfer.\n\nhttps://pr2hub.com/confirm_guild_transfer.php?code=$code\n\nIf you didn't request this change, you may need to change your password.\n\nAll the best,\nFred";
+	$body = "Howdy $safe_old_name,\n\nWe received a request to change the owner of your guild $safe_guild_name to $safe_new_name. If you requested this change, please click the link below to complete the guild ownership transfer.\n\nhttps://pr2hub.com/confirm_guild_transfer.php?code=$code\n\nIf you didn't request this change, you may need to change your password.\n\nAll the best,\nFred";
 	send_email($from, $to, $subject, $body);
 	
 	// tell the world
