@@ -77,6 +77,7 @@ $server_id = (int) $argv[1];
 
 $port = 0;
 $server_name = '';
+$uptime = '';
 $guild_id = 0;
 $guild_owner = 0;
 $server_expire_time = '';
