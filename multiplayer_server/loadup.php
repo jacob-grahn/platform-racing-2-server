@@ -14,7 +14,7 @@ function begin_loadup( $server_id ) {
 	set_perks( $perks );
 	place_artifact($artifact);
 	HappyHour::activate();
-	start_perk(Perks::GUILD_FRED, 0, -1);
+	start_perk(Perks::SERVER_RESTART, 0, -1);
 }
 
 
