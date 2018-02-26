@@ -81,10 +81,11 @@ function update($db) {
 	
 	// call guild information
 	$guild = $db->grab_row('guild_select', array($guild_id));
+	$guild_owner = (int) $guild->owner_id;
 	
-	if($guild->owner_id !== $owner_id) {
+	if($guild_owner !== $owner_id) {
 		$code = 'manual-' . time();
-		$db->call('guild_transfer_insert', array($guild->guild_id, $old_id, $new_id, $code, $ip), 'Could not initiate the owner change.');
+		$db->call('guild_transfer_insert', array($guild->guild_id, $guild_owner, $owner_id, $code, $ip), 'Could not initiate the owner change.');
 		$change_id = $db->grab('change_id', 'guild_transfer_select_by_code', array($code), 'Could not get the owner change ID.');
 		$db->call('guild_transfer_complete', array($change_id, $ip), 'Could not complete the owner change.');
 	}
