@@ -20,15 +20,11 @@ function start_perk( $slug, $user_id, $guild_id ) {
 	else if( $slug == PERKS::HAPPY_HOUR ) {
 		HappyHour::activate();
 	}
-	else if( $slug == PERKS::SERVER_RESTART ) {
-		HappyHour::activate();
-		assign_guild_part( 'body', 29, $user_id, $guild_id, $seconds_duration, false );
-	}
 }
 
 
 //--------------------------------------------------------------------------------
-function assign_guild_part( $type, $part_id, $user_id, $guild_id, $seconds_duration, $set=true ) {
+function assign_guild_part( $type, $part_id, $user_id, $guild_id, $seconds_duration ) {
 	global $player_array;
 
 	TemporaryItems::add( $type, $part_id, $user_id, $guild_id, $seconds_duration );
