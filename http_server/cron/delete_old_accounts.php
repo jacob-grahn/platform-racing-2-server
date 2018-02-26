@@ -26,7 +26,7 @@ while($row = $result->fetch_object()) {
 	}
 
 	$str = "$i $user_id plays: $play_count rank: $rank.";
-	if($play_count > 50 || $rank > 10) {
+	if($play_count > 100 || $rank > 15) {
 		output("$str SPARE");
 	}
 	else {
