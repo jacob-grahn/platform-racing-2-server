@@ -38,7 +38,5 @@ function assign_guild_part( $type, $part_id, $user_id, $guild_id, $seconds_durat
 	}
 }
 
-//
-
 
 ?>
