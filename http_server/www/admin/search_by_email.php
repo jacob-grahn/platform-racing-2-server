@@ -56,15 +56,16 @@ try {
 							WHERE email = '$safe_email'
 							ORDER BY active_date DESC
 							");
+	$row_count = $result->num_rows;
+	if ($row_count <= 0) {
+		throw new Exception("No accounts found with the email address '$safe_email'.");
+	}
+	else {
+		$row = $result->fetch_object();
+	}
 	
 	// protect the user
 	$safe_email = htmlspecialchars($email);
-	
-	// if no rows are returned, then there must not have been any results
-	$row_count = (int) $result->num_rows;
-	if ($row_count === 0) {
-		throw new Exception("No accounts found with the email address '$safe_email'.");
-	}
   
 	// show the search form
 	output_search($safe_email);
