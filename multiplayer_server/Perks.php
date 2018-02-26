@@ -6,7 +6,6 @@ class Perks {
 	const GUILD_GHOST = 'guild-ghost';
 	const GUILD_ARTIFACT = 'guild-artifact';
 	const HAPPY_HOUR = 'happy-hour';
-	const SERVER_RESTART = 'server-restart';
 	
 }
 ?>
