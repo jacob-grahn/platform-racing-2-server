@@ -16,7 +16,7 @@ try {
 	$db = new DB();
 	
 	// check their login
-	$user_id = token_login($db);
+	$user_id = token_login($db,false);
 	$user = $db->grab_row('user_select', array($user_id));
 	
 	// sanity check: are they a guest?
