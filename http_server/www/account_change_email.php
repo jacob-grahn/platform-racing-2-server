@@ -44,7 +44,7 @@ try {
 	$db = new DB();
 
 	// check their login
-	$user_id = token_login( $db, false );
+	$user_id = token_login($db, false);
 	$user = $db->grab_row('user_select', array($user_id));
 	$user_name = $user->name;
 	$old_email = $user->email;
@@ -73,7 +73,20 @@ try {
 
 	// set their email if they don't already have one
 	if (is_empty($old_email)) {
+		$time = time();
+		$code = "set-email-$time";
+		
+		// log and do it
+		$db->call('changing_email_insert', array($user_id, $old_email, $new_email, $code, $ip));
+		$change_id = $db->grab('change_id', 'changing_email_select', array($code));
+		$db->call('changing_email_complete', array($change_id, $ip));
 		$db->call('user_update_email', array($user_id, $old_email, $new_email));
+		
+		// tell the user and end the script
+		$ret = new stdClass();
+		$ret->message = 'Your email was changed successfully!';
+		echo json_encode($ret);
+		die();
 	}
 
 	// initiate an email change confirmation (generate code) if they do already have an email address
