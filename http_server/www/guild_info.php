@@ -5,25 +5,25 @@ header("Content-type: text/plain");
 require_once( '../fns/all_fns.php' );
 require_once( '../fns/pr2_fns.php' );
 
+$guild_id = find_no_cookie('id', 0);
+$guild_name = find_no_cookie('name', '');
+$get_members = find_no_cookie('getMembers', 'no');
+$ip = get_ip();
 
 try {
 	
-	//--- rate limit
-	rate_limit(get_ip(), 120, 10);
-	
-	//--- import data
-	$guild_id = find( 'id', 0 );
-	$guild_name = find( 'name', '' );
-	$get_members = find( 'getMembers', 'no' );
+	// rate limiting
+	rate_limit('guild-info-'.$ip, 5, 1);
+	rate_limit('guild-info'.$ip, 60, 10);
 	
 	
-	//--- connect to the db
+	// connect
 	$db = new DB();
 	
 	
-	//--- sanity check
-	if( (!is_numeric($guild_id) || $guild_id <= 0) && $guild_name == '' )  {
-		throw new Exception( 'No id or name of guild was provided.' );
+	// sanity check: was any information requested?
+	if((!is_numeric($guild_id) || $guild_id <= 0) && $guild_name == '')  {
+		throw new Exception('No guild name or ID was provided.');
 	}
 	
 	
