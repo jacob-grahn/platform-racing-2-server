@@ -3,19 +3,31 @@
 header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
-$level_id = find('level_id', 'none');
+$level_id = (int) default_val($_POST['level_id']);
 
-try{	
+try {
+	
+	// check for post
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		throw new Exception("Invalid request method.");
+	}
+	
 	// sanity check: was a level ID specified?
-	if($level_id == 'none'){
+	if(is_empty($level_id, false)){
 		throw new Exception('No level ID was specified.');
 	}
+	
+	// rate limiting
+	rate_limit('remove-level-'.$ip, 3, 1);
 	
 	// connect
 	$db = new DB();
 	
 	// make sure the user is a moderator
 	$mod = check_moderator($db);
+	
+	// more rate limiting
+	rate_limit('remove-level-'.$mod->user_id, 3, 1);
 	
 	// make sure the user is a permanent moderator
 	if($mod->can_unpublish_level != 1) {
