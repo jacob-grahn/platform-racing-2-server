@@ -22,7 +22,8 @@ function set_server( $db, $server ) {
 	global $port, $server_name, $uptime, $server_expire_time, $guild_id, $guild_owner, $key;
 	$port = $server->port;
 	$server_name = $server->server_name;
-	$uptime = new DateTime()->format('Y-m-d H:i:s P');
+	$datetime = new DateTime();
+	$uptime = $datetime->format('Y-m-d H:i:s P');
 	$server_expire_time = $server->expire_date;
 	$guild_id = $server->guild_id;
 	$guild_owner = 0;
