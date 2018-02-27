@@ -13,6 +13,8 @@ $redirect = default_val($_POST['redirect'], 'no');
 $type = default_val($_POST['type'], 'both');
 $force_ip = default_val($_POST['force_ip']);
 
+$ip = get_ip();
+
 $safe_banned_name = mysqli_real_escape_string($banned_name);
 $safe_reason = mysqli_real_escape_string($reason);
 $safe_record = mysqli_real_escape_string($record);
@@ -25,9 +27,13 @@ if ($using_mod_site == 'no') {
 
 try {
 	
+	// POST check
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		throw new Exception("Invalid request method.");
 	}
+	
+	// rate limiting
+	rate_limit('ban-'.$ip, 5, 1);
 	
 	// connect
 	$db = new DB();
@@ -44,6 +50,9 @@ try {
 	$mod_user_id = $mod->user_id;
 	$mod_user_name = $mod->name;
 	$mod_power = 2;
+	
+	// more rate limiting
+	rate_limit('ban-'.$mod_user_id, 5, 1);
 	
 	
 	//limit ban length
