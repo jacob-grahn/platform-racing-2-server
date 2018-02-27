@@ -5,13 +5,14 @@ header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
 $target_name = find_no_cookie('name');
-
 $friend = 0;
 $ignored = 0;
+$ip = get_ip();
 
 try {
 	
 	// rate limit
+	rate_limit('get-player-info-2-'.$ip, 3, 1);
 	rate_limit('get-player-info-2-'.$ip, 60, 10);
 
 	// connect
@@ -20,6 +21,7 @@ try {
 	// check their login
 	try {
 		$user_id = token_login($db);
+		rate_limit('get-player-info-2-'.$user_id, 3, 1);
 		rate_limit('get-player-info-2-'.$user_id, 60, 10);
 	}
 	catch(Exception $e) {
