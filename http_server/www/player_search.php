@@ -1,115 +1,148 @@
 <?php
 
 require_once('../fns/output_fns.php');
+require_once('../fns/all_fns.php');
 
-output_header( 'Player Search' );
+$name = find_no_cookie('name', '');
+$ip = get_ip();
 
-$name = $_GET['name'];
-$box_name = htmlspecialchars($name);
+output_header("Player Search");
 
-// get the file and decode it
-$decode = json_decode(file_get_contents("https://pr2hub.com/get_player_info_2.php?name=" . $_GET['name']));
+try {
 
-// pretty things
-echo '<center><font face="Gwibble" class="gwibble">-- Player Search --</font><br><br>';
-
-echo "<form method='get'>
-Username: <input type='text' name='name' value='$box_name'>
-<input type='submit' value='Search'>
-</form>";
-
-if(isset($name) && !empty($name) && strlen(trim($name)) !== 0) {
-
-	$user_id = $decode->userId;
-	$error = $decode->error;
-
-	if(isset($decode->userId)) {
-		
-		// define some variables to make it easier for us
-		$group = (int) $decode->group;
-		$safe_name = htmlspecialchars($decode->name);
-		$safe_name = str_replace(' ', '&nbsp;', $safe_name);
-		$status = $decode->status;
-		$guild_id = (int) $decode->guildId;
-		$safe_guild_name = htmlspecialchars($decode->guildName);
-		$rank = (int) $decode->rank;
-		$hats = (int) $decode->hats;
-		$join_date = $decode->registerDate;
-		$login_date = $decode->loginDate;
-		
-		
-		// make guild id 0 say none
-		if($guild_id === 0) {
-			$safe_guild_name = "none";
-		}
-
-		// make join date say age of heroes if 1/Jan/1970
-		if($join_date == "1/Jan/1970") {
-			$join_date = "Age of Heroes";
-		}
-	
-		switch($group) {
-			case 0:
-				$group_name = "Guest";
-				$group_color = "#7E7F7F";
-				break;
-			case 1:
-				$group_name = "Member";
-				$group_color = "#047B7B";
-				break;
-			case 2:
-				$group_name = "Moderator";
-				$group_color = "#1C369F";
-				break;
-			case 3:
-				$group_name = "Admin";
-				$group_color = "#870A6F";
-				break;
-			default:
-				$group_name = "Unknown";
-				$group_color = "#000000";
-				break;
-		}
-	
-		// player name with group color
-		echo "<br>-- <u><font color='$group_color'><strong>$safe_name</strong></font></u> --<br><br>";
-
-		// Playing on ?/offline
-		echo "<i>$status</i><br><br>";
-
-		// group name
-		if ($group >= 2) {
-			echo "Group: <a href='staff.php'><b><font color='#000000'>$group_name</font></b></a><br>";
-		}
-		else {
-			echo "Group: $group_name<br>";
-		}
-
-		// guild name
-		echo "Guild: $safe_guild_name<br>";
-
-		// rank
-		echo "Rank: $rank<br>";
-
-		// hats
-		echo "Hats: $hats<br>";
-
-		// join date
-		echo "Joined: $join_date<br>";
-		
-		// last login date
-		echo "Active: $login_date<br>";
-
+	// sanity check: check for a name
+	if (is_empty($name)) {
+		throw new Exception("");
 	}
+	
+	// rate limiting
+	rate_limit('gui-player-search-'.$ip, 5, 1, 'Wait a bit before searching again.');
+	rate_limit('gui-player-search-'.$ip, 30, 5, 'Wait a bit before searching again.');
+	
+	// connect
+	$db = new DB();
+	
+	// get id from name
+	$user_id = name_to_id($db, $name);
+	
+}
+catch (Exception $e) {
+	$error = $e->getMessage();
+	output_search($name);
+	output_error($error);
+	output_footer();
+	die();
+}
 
-	else if(isset($error)) {
-		echo "<br /><i>Error: $error</i><br />";
-	}
+try {
+	
+	// output functions
+	output_search($name);
+	output_page($user_id);
+	output_footer;
+	
+	// seeya
+	die();
+	
+}
+catch (Exception $e) {
+	$error = $e->getMessage();
+	output_error($error);
+	output_footer();
+	die();
+}
+
+function output_search($name='') {
+
+	// safety first
+	$safe_name = htmlspecialchars($name);
+	
+	echo '<center><font face="Gwibble" class="gwibble">-- Player Search --</font><br><br>';
+	
+	echo "<form method='get'>
+	Username: <input type='text' name='name' value='$safe_name'>
+	<input type='submit' value='Search'>
+	</form>";
 
 }
 
-echo "</center>";
+function output_error($error='') {
+	$error = "<br><i>Error: $error</i>";
+	echo $error;
+}
 
-output_footer();
+function output_page($user_id) {
+	
+	// prepare the user id
+	$user_id = (int) $user_id;
+	
+	// get player info from id
+	$user = $db->grab_row('user_select_expanded', array($user_id));
+	
+	// sanity check: is the used tokens value set?
+	if (!isset($user->used_tokens)) {
+		$user->used_tokens = 0;
+	}
+
+	// group arrays
+	$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
+	$group_names = ['Guest', 'Member', 'Moderator', 'Admin'];
+
+	// make some variables
+	$user_name = $user->name; // name
+	$group = (int) $user->power; // group
+	$group_color = $group_colors[$group];
+	$group_name = $group_names[$group];
+	$status = $user->status; // status
+	$guild_id = (int) $user->guild; // guild id
+	$rank = (int) ($user->rank + $user->used_tokens); // rank
+	$hats = (int) (count(explode(',', $user->hat_array)) - 1); // hats
+	$login_date = date('j/M/Y', $user->time); // active
+	$register_date = date('j/M/Y', $user->register_time); // joined
+	
+	// aoh check
+	if ($register_date == '1/Jan/1970') {
+		$register_date = "Age of Heroes";
+	}
+	
+	// guild id to name
+	if ($guild_id !== 0) {
+		$guild = $db->grab_row('guild_select', array($guild_id));
+		$guild_name = $guild->guild_name;
+	}
+	else {
+		$guild_name = '';
+	}
+	
+	// group html change if staff
+	if ($group >= 2) {
+		$group_name = "<a href='https://pr2hub.com/staff.php' style='color: #000000; font-weight: bold'>$group_name</a>";
+	}
+	
+	// safety first
+	$safe_name = htmlspecialchars($user_name);
+	$safe_status = htmlspecialchars($status);
+	$safe_guild = htmlspecialchars($guild_name);
+	
+	// --- Start the Page --- \\
+	
+	output_search($name);
+	
+	echo "<br><br>";
+	
+	echo "-- <font style='color: #$group_color; text-decoration: underline; font-weight: bold'>$safe_name</font> --<br><br>";
+	
+	echo "<i>$safe_status</i><br><br>";
+	
+	echo "Group: $group_name<br>";
+	echo "Guild: $safe_guild<br>";
+	echo "Rank: $rank<br>";
+	echo "Hats: $hats<br>";
+	echo "Joined: $register_date<br>";
+	echo "Active: $login_date";
+	
+	echo "</center>";
+	
+}
 
 ?>
