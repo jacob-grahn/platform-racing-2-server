@@ -243,8 +243,13 @@ class Player {
 
 
 	public function send_chat($chat_message) {
-		global $guild_owner, $player_array, $port, $server_name, $server_id, $server_expire_time, $db;
-
+		
+		// globals and variables
+		global $guild_id, $guild_owner, $player_array, $port, $server_name, $server_id, $server_expire_time, $uptime, $db;
+		$admin_name = $this->name;
+		$admin_id = $this->user_id;
+		$ip = $this->ip;
+		
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
 			$room_type = "c"; // c for chat
@@ -437,16 +442,25 @@ class Player {
 					$this->write('systemChat`This command cannot be used in levels.');
 				}
 			}
-			// restart server command for admins
-			else if (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3) {
-				$admin_name = $this->name;
-				$admin_id = $this->user_id;
-				$ip = $this->ip;
-				
-				if($chat_message == '/restart_server debug') {
-					$this->write("message`chat_message: $chat_message<br>admin_name: $admin_name<br>admin_id: $admin_id<br>ip: $ip<br>server_name: $server_name<br>server_id: $server_id<br>port: $port");
+			// debug command for admins
+			else if (($chat_message == '/debug' || strpos($chat_message, '/debug ') === 0) && $this->group >= 3) {
+				$is_ps = 'no';
+				if ($guild_id !== 0) {
+					$is_ps = 'yes';
 				}
 				
+				if ($chat_message == '/debug') {
+					$this->write("systemChat`Enter an argument to get the data you want.");
+				}
+				else if ($chat_message == '/debug restart_server') {
+					$this->write("message`chat_message: $chat_message<br>admin_name: $admin_name<br>admin_id: $admin_id<br>ip: $ip<br>server_name: $server_name<br>server_id: $server_id<br>port: $port");
+				}
+				else if ($chat_message == '/debug server') {
+					$this->write("message`chat_message: $chat_message<br>port: $port<br>server_name: $server_name<br>server_id: $server_id<br>uptime: $uptime<br>private_server: $is_ps<br>server_guild: $guild_id<br>server_owner: $guild_owner<br>server_expire_time: $server_expire_time");
+				}
+			}	 
+			// restart server command for admins
+			else if (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3) {
 				if ($room_type == 'c') {
 					if ($chat_message == '/restart_server yes, i am sure!') {
 						
