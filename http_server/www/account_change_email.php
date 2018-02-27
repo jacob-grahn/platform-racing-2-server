@@ -17,6 +17,12 @@ try {
 		throw new Exception("Invalid request method.");
 	}
 	
+	// check referrer
+	$ref = check_ref();
+	if ($ref !== true) {
+		throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only change your email from an approved site such as pr2hub.com.");
+	}
+	
 	// rate limiting
 	rate_limit('change-email-attempt-'.$ip, 30, 1, 'Please wait at least 30 seconds before attempting to change the email address on your account again.');
 	rate_limit('change-email-attempt-'.$ip, 300, 5, 'You may only send a maximum of 5 email change requests every 5 minutes. Try again later.');
