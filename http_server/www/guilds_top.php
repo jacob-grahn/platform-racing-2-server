@@ -1,15 +1,18 @@
 <?php
 
-header("Content-Type: text/plain;charset=UTF-8");
+header("Content-Type: text/plain");
 
 require_once( '../fns/all_fns.php' );
 require_once( '../fns/pr2_fns.php' );
 
+$sort = find('sort', 'gpToday');
+$ip = get_ip();
+
 try {
 	
-	//--- import data
-	$sort = find('sort', 'gpToday');
-	
+	// rate limiting
+	rate_limit('guilds-top-'.$ip, 5, 1);
+	rate_limit('guilds-top-'.$ip, 60, 10);
 	
 	//--- connect to the db
 	$db = new DB();
