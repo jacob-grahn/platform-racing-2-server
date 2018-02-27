@@ -26,21 +26,6 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 	</div>
 
 	<div id="body">
-			<?php if(basename($_SERVER['PHP_SELF']) == "index.php") { ?>
-				<div class="above_game_ad">
-					<script type="text/javascript"><!--
-						google_ad_client = "ca-pub-1320797949858618";
-						/* Above Game */
-						google_ad_slot = "8735302549";
-						google_ad_width = 728;
-						google_ad_height = 90;
-						//-->
-					</script>
-					<script type="text/javascript"
-					src="//pagead2.googlesyndication.com/pagead/show_ads.js">
-					</script>
-				</div>
-			<?php } ?>
 			<div class="content">
 
 <?php
