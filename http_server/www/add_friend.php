@@ -23,7 +23,7 @@ try {
 	$db = new DB();
 	
 	// check their login
-	$user_id = token_login($db);
+	$user_id = token_login($db, false);
 	
 	// more rate limiting
 	rate_limit('friends-list-'.$user_id, 3, 1);
