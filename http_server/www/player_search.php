@@ -68,7 +68,9 @@ function output_search($name='') {
 
 function output_error($error='') {
 	$error = "<br><i>Error: $error</i>";
-	echo $error;
+	if (!is_empty($error)) {
+		echo $error;
+	}
 }
 
 function output_page($user_id) {
