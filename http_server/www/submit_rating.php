@@ -6,7 +6,7 @@ require_once('../fns/all_fns.php');
 $level_id = $_POST['level_id'];
 $new_rating = $_POST['rating'];
 
-$level_id = addslashes($level_id);
+$level_id = mysqli_real_escape_string($level_id);
 
 $time = time();
 $old_weight = 0;
@@ -15,10 +15,20 @@ $old_rating = 0;
 
 $ip = get_ip();
 
-$safe_ip = addslashes($ip);
-$safe_new_rating = addslashes($new_rating);
+$safe_ip = mysqli_real_escape_string($ip);
+$safe_new_rating = mysqli_real_escape_string($new_rating);
 
 try {
+	
+	// POST check
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		throw new Exception('Invalid request method.');
+	}
+	
+	// rate limiting
+	rate_limit('submit-rating-'.$ip, 5, 1);
+	rate_limit('submit-rating-'.$ip, 30, 5);
+	
 	// sanity check: is the rating valid?
 	$new_rating = round($new_rating);
 	if(is_nan($new_rating) || $new_rating < 1 || $new_rating > 5){
@@ -29,14 +39,18 @@ try {
 	$db = new DB();
 
 	// check their login
-	$user_id = token_login($db);
+	$user_id = token_login($db, false);
+	
+	// rate limiting
+	rate_limit('submit-rating-'.$ip, 5, 1);
+	rate_limit('submit-rating-'.$ip, 30, 5);
 
 	// see if they made this level
-	$result = $db->query("select level_id
-									from pr2_levels
-									where user_id = '$user_id'
-									and level_id = '$level_id'
-									limit 0, 1");
+	$result = $db->query("SELECT level_id
+									FROM pr2_levels
+									WHERE user_id = '$user_id'
+									AND level_id = '$level_id'
+									LIMIT 0, 1");
 	if(!$result){
 		throw new Exception('Could not check your voting status.');
 	}
@@ -45,10 +59,10 @@ try {
 	}
 
 	// get their voting weight
-	$rank_result = $db->query("select rank
-											from pr2
-											where user_id = '$user_id'
-											limit 0, 1");
+	$rank_result = $db->query("SELECT rank
+									FROM pr2
+									WHERE user_id = '$user_id'
+									LIMIT 0, 1");
 	if(!$rank_result){
 		throw new Exception('Could not get your rank.');
 	}
@@ -64,21 +78,21 @@ try {
 	}
 
 	// see if they have voted on this level before
-	$vote_result = $db->query("select rating, weight
-										from pr2_ratings
-										where user_id = '$user_id'
-										and level_id = '$level_id'
-										limit 0, 1");
+	$vote_result = $db->query("SELECT rating, weight
+									FROM pr2_ratings
+									WHERE user_id = '$user_id'
+									AND level_id = '$level_id'
+									LIMIT 0, 1");
 	if(!$vote_result){
 		throw new Exception('Could not check to see if you have voted on this course before');
 	}
 
 	if($vote_result->num_rows <= 0) {
-		$vote_result = $db->query("select rating, weight
-											from pr2_ratings
-											where ip = '$safe_ip'
-											and level_id = '$level_id'
-											limit 0, 1");
+		$vote_result = $db->query("SELECT rating, weight
+										FROM pr2_ratings
+										WHERE ip = '$safe_ip'
+										AND level_id = '$level_id'
+										LIMIT 0, 1");
 		if(!$vote_result){
 			throw new Exception('Could not check to see if you have ip voted on this course before');
 		}
@@ -91,8 +105,8 @@ try {
 
 	// if they haven't voted
 	else{
-		$result = $db->query("insert into pr2_ratings
-										set rating = '$safe_new_rating',
+		$result = $db->query("INSERT into pr2_ratings
+										SET rating = '$safe_new_rating',
 											user_id = '$user_id',
 											level_id = '$level_id',
 											weight = '$weight',
@@ -104,10 +118,10 @@ try {
 	}
 
 	// get the average rating and votes so I can do some math
-	$result = $db->query("select rating, votes
-									from pr2_levels
-									where level_id = '$level_id'
-									limit 0, 1");
+	$result = $db->query("SELECT rating, votes
+									FROM pr2_levels
+									WHERE level_id = '$level_id'
+									LIMIT 0, 1");
 	if(!$result){
 		throw new Exception('Could not retrieve old rating.');
 	}
@@ -137,11 +151,11 @@ try {
 
 	// put the final average back into the level
 	if(!is_nan($new_average_rating)){
-		$result = $db->query("update pr2_levels
-										set rating = '$new_average_rating',
+		$result = $db->query("UPDATE pr2_levels
+										SET rating = '$new_average_rating',
 											votes = '$votes'
-										where level_id = '$level_id'
-										limit 1");
+										WHERE level_id = '$level_id'
+										LIMIT 1");
 		if(!$result){
 			throw new Exception('Could not update rating.');
 		}
