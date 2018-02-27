@@ -324,6 +324,10 @@ class Player {
 			else if(strpos($chat_message, '`') !== false) {
 				$this->write('message`Error: Illegal character in message.');
 			}
+			// 100 characters check
+			else if(strlen($chat_message) > 100 {
+				$this->write('message`Error: You cannot type more than 100 characters.');
+			}
 			// tournament mode
 			else if(strpos($chat_message, '/t ') === 0 || strpos($chat_message, '/tournament ') === 0 || $chat_message == '/t' || $chat_message == '/tournament') {
 				// if guild owner, allow them to do guild owner things
