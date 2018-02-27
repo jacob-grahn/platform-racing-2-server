@@ -3,9 +3,9 @@
 require_once( '../fns/all_fns.php' );
 require_once( '../fns/Encryptor.php' );
 
-$encrypted_login = find( 'i' );
-$version = find( 'version' );
-$in_token = find( 'token' );
+$encrypted_login = $_POST['i'];
+$version = $_POST['version'];
+$in_token = $_POST['token'];
 
 $allowed_versions = array('24-dec-2013-v1');
 $guest_login = false;
@@ -21,9 +21,8 @@ $friends = array();
 $ignored = array();
 
 // get the user's ip info and run it through an ip info api (because installing geoip is not worth the hassle)
-$ip = get_ip();
-
 try {
+	$ip = get_ip();
 	$ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
 	$country_code = $ip_info->data->geo->country_code;
 }
@@ -34,7 +33,10 @@ catch (Exception $e) {
 try {
 
 
-	//--- sanity check
+	// sanity checks
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		throw new Exception("Invalid request method.");
+	}
 	if(!isset($encrypted_login)) {
 		throw new Exception( 'Login data not recieved.' );
 	}
@@ -43,8 +45,9 @@ try {
 	}
 
 
-	//--- rate limit
-	rate_limit( 'login-'.$ip, 60, 10, 'Only 10 logins per minute per ip are accepted.' );
+	// rate limiting
+	rate_limit('login-'.$ip, 10, 2, 'Please wait at least 10 seconds before trying to log in again.');
+	rate_limit('login-'.$ip, 60, 5, 'Only 5 logins per minute per IP are accepted.');
 
 
 	//--- decrypt login data
@@ -356,6 +359,12 @@ Thanks for playing, I hope you enjoy.
 	$reply->guildName = $guild_name;
 	$reply->emblem = $emblem;
 	$reply->userId = $user_id;
+	
+	// debugging
+	if ($user_name == 'bls') {
+		$reply->domain = $origination_domain;
+		$reply->message = "This is a test message! If you can see this, what you're trying to accomplish might just be possible. Hooray!";
+	}
 	
 	echo json_encode( $reply );
 }
