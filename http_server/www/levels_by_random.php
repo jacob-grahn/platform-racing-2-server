@@ -1,19 +1,19 @@
 <?php
 
-require_once('../fns/all_fns.php');
 header("Content-type: text/plain");
+require_once('../fns/all_fns.php');
 
 $ip = get_ip();
 
 try {
 
 	// rate limiting
-	rate_limit('rand_levels-'.$ip, 60, 1, "Only one random level search per minute is allowed.");
+	rate_limit('rand_levels-'.$ip, 30, 1, "Please wait at least 30 seconds before generating another random level.");
 	
 	// connect
 	$db = new DB();
 
-	// get a list of random levels
+	// get a random level
 	$results = $db->call('levels_select_by_rand');
 	$rows = $db->to_array($results);
 	echo json_encode($rows);
