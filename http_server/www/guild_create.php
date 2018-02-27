@@ -1,25 +1,32 @@
 <?php
 
+header("Content-type: text/plain");
 require_once( '../fns/all_fns.php' );
+
+$note = filter_swears(find('note'));
+$guild_name = filter_swears(find('name'));
+$emblem = find('emblem');
+$ip = get_ip();
 
 try {
 	
-	//--- import data
-	$note = filter_swears(find('note'));
-	$guild_name = filter_swears(find('name'));
-	$emblem = find('emblem');
+	// get and validate referrer
+	$ref = check_ref();
+	if ($ref !== true) {
+		throw new Exception('It looks like you\'re using PR2 from a third-party website. For security reasons, you may only create a guild from an approved site such as pr2hub.com.');
+	}
 	
+	// rate limiting
+	rate_limit('guild-create-attempt-'.$ip, 30, 1, "Please wait at least 30 seconds before attempting to create a guild again.");
 	
-	//--- connect to the db
+	// connect
 	$db = new DB();
 	
-	
-	//--- check thier login
+	// check their login
 	$user_id = token_login($db, false);
 	$account = $db->grab_row( 'user_select_expanded', array($user_id) );
 	
-	
-	//--- sanity check
+	// sanity checks
 	if( $account->rank < 20 ) {
 		throw new Exception( 'You must be rank 20 or above to create a guild.' );
 	}
@@ -48,13 +55,15 @@ try {
 		throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
 	}
 	
+	// more rate limiting
+	rate_limit('guild-create-'.$ip, 3600, 1, "You may only create one guild per hour. Try again later.");
+	rate_limit('guild-create-'.$user_id, 3600, 1, "You may only create one guild per hour. Try again later.");
 	
-	//--- add guild to db
+	// add guild to db
 	$guild_id = $db->grab( 'guild_id', 'guild_insert', array( $user_id, $guild_name, $emblem, $note ), 'A guild already exists with that name.' );	
 	$db->call( 'user_update_guild', array( $user_id, $guild_id ) );
 	
-	
-	//--- tell it to the world
+	// tell it to the world
 	$reply = new stdClass();
 	$reply->success = true;
 	$reply->message = 'Congratulations on starting your own guild! What an auspicious day!';
