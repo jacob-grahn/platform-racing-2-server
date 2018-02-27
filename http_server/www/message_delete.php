@@ -4,8 +4,18 @@ header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
 $message_id = $_POST['message_id'];
+$ip = get_ip();
 
 try {
+	
+	// post check
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		throw new Exception("Invalid request method.");
+	}
+	
+	// rate limiting
+	rate_limit('message-delete'.$ip, 5, 1, "Please wait at least 5 seconds before trying to delete another PM.");
+	rate_limit('message-delete-'.$ip, 120, 20);
 	
 	// connect
 	$db = new DB();
