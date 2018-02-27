@@ -26,6 +26,7 @@ try {
 	$user_id = token_login($db);
 	
 	// more rate limiting
+	rate_limit('friends-list-'.$user_id, 3, 1);
 	rate_limit('friends-list-'.$user_id, 30, 5);
 	
 	// get the new friend's id
