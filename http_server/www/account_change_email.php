@@ -6,11 +6,20 @@ require_once( '../fns/all_fns.php' );
 require_once( '../fns/Encryptor.php' );
 require_once( '../fns/email_fns.php' );
 
-$encrypted_data = find( 'data' );
+$encrypted_data = $_POST['data'];
 
 $ip = get_ip();
 
-try{
+try {
+	
+	// post check
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		throw new Exception("Invalid request method.");
+	}
+	
+	// rate limiting
+	rate_limit('change-email-attempt-'.$ip, 30, 1, 'Please wait at least 30 seconds before attempting to change the email address on your account again.');
+	rate_limit('change-email-attempt-'.$ip, 300, 5, 'You may only send a maximum of 5 email change requests every 5 minutes. Try again later.');
 
 	//--- sanity check
 	if( !isset($encrypted_data) ) {
@@ -52,6 +61,7 @@ try{
 		throw new Exception("'$safe_new_email' is not a valid email address.");
 	}
 	
+	// rate limiting
 	rate_limit('change-email-'.$user_id, 86400, 2, 'Your email can be changed a maximum of two times per day.');
 	rate_limit('change-email-'.$ip, 86400, 2, 'Your email can be changed a maximum of two times per day.');
 
