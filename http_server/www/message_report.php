@@ -4,12 +4,10 @@ header("Content-type: text/plain");
 
 require_once('../fns/all_fns.php');
 
-$message_id = $_POST['message_id'];
-$safe_message_id = addslashes($message_id);
-$safe_reporter_ip = addslashes($ip);
-$safe_time = addslashes($time);
-$time = time();
+$message_id = (int) $_POST['message_id'];
+$time = (int) time();
 $ip = get_ip();
+$safe_reporter_ip = addslashes($ip);
 
 try {
 
@@ -35,7 +33,7 @@ try {
 	$result = $db->query("SELECT COUNT(*)
 								AS count
 								FROM messages_reported
-							 	WHERE message_id = '$safe_message_id'
+							 	WHERE message_id = '$message_id'
 								");
 	if(!$result) {
 		throw new Exception('Could not check if the message was already reported.');
@@ -49,14 +47,13 @@ try {
 	// pull the selected message from the db
 	$result = $db->query("SELECT *
 								FROM messages
-								WHERE message_id = '$safe_message_id'
+								WHERE message_id = '$message_id'
 								LIMIT 0, 1");
 	if(!$result){
 		throw new Exception('Could not retrieve message.');
 	}
 	if($result->num_rows <= 0) {
-		$safe_message_id = htmlspecialchars($message_id);
-		throw new Exception("The message you tried to report ($safe_message_id) doesn't exist.");
+		throw new Exception("The message you tried to report ($message_id) doesn't exist.");
 	}
 	
 	
@@ -68,20 +65,20 @@ try {
 	
 	
 	// insert the message into the reported messages table
-	$safe_to_user_id = addslashes($row->to_user_id);
-	$safe_from_user_id = addslashes($row->from_user_id);
+	$to_user_id = (int) $row->to_user_id;
+	$from_user_id = (int) $row->from_user_id;
 	$safe_message = addslashes($row->message);
 	$safe_sent_time = addslashes($row->time);
 	$safe_from_ip = addslashes($row->ip);
 	
 	$result = $db->query("INSERT INTO messages_reported
-								 	SET to_user_id = '$safe_to_user_id',
-										from_user_id = '$safe_from_user_id',
+								 	SET to_user_id = '$to_user_id',
+										from_user_id = '$from_user_id',
 										reporter_ip = '$safe_reporter_ip',
 										from_ip = '$safe_from_ip',
 										sent_time = '$safe_sent_time',
-										reported_time = '$safe_time',
-										message_id = '$safe_message_id',
+										reported_time = '$time',
+										message_id = '$message_id',
 										message = '$safe_message'");
 	
 	if(!$result){
