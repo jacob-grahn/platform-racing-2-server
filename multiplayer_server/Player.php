@@ -325,7 +325,7 @@ class Player {
 				$this->write('message`Error: Illegal character in message.');
 			}
 			// 100 characters check
-			else if(strlen($chat_message) > 100 {
+			else if(strlen($chat_message) > 100) {
 				$this->write('message`Error: You cannot type more than 100 characters.');
 			}
 			// tournament mode
