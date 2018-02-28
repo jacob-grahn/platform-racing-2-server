@@ -1,7 +1,6 @@
 <?php
 
 header("Content-type: text/plain");
-
 require_once( '../../fns/all_fns.php' );
 
 $server_id = (int) $_GET['server_id'];
@@ -9,7 +8,6 @@ $server_id = (int) $_GET['server_id'];
 try {
 
 	// sanity check: was there any value found for the server id?
-	
 	if(is_empty($server_id, false)) { // is_empty($value, false) includes the number 0 as empty.
 		throw new Exception('Invalid server ID specified.');
 	}
