@@ -5,7 +5,6 @@ require_once('../../fns/output_fns.php');
 
 $user_id = (int) default_val($_GET['user_id'], 0);
 $force_ip = find_no_cookie('force_ip');
-$safe_user_id = mysqli_real_escape_string($user_id);
 
 $mod_ip = get_ip();
 
@@ -49,7 +48,7 @@ try {
 	$result = $db->query("SELECT pr2.rank, pr2.hat_array, users.power, users.status, users.name, users.ip
 									FROM users LEFT JOIN pr2
 									ON users.user_id = pr2.user_id
-									WHERE users.user_id = '$safe_user_id'
+									WHERE users.user_id = '$user_id'
 									LIMIT 0, 1");
 
 	if(!$result){
