@@ -4,19 +4,40 @@ require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 require_once('mod_fns.php');
 
-$start = find('start', 0);
-$count = find('count', 25);
+$start = (int) default_val($_GET['start'], 0);
+$count = (int) default_val($_GET['count'], 25);
+$ip = get_ip();
 
 try {
 
+	// rate limiting
+	rate_limit('mod-action-log-'.$ip, 10, 1);
+	rate_limit('mod-action-log-'.$ip, 30, 2);
+	
 	//connect
 	$db = new DB();
 
 	//make sure you're a moderator
 	$mod = check_moderator($db, false);
+	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header("Error");
+	echo "Error: $error";
+	output_footer();
+	die();
+}
 
-	//get actions for this page
-	$actions = $db->call( 'mod_actions_select', array( $start, $count ) );
+try {
+	
+	// rate limiting
+	$mod_id = $mod->user_id;
+	rate_limit('mod-action-log-'.$mod_id, 10, 1);
+	rate_limit('mod-action-log-'.$mod_id, 30, 2);
+
+	// get actions for this page
+	$actions = $db->call('mod_actions_select', array($start, $count));
 
 	// output header
 	output_header('Mod Action Log', true);
@@ -26,7 +47,7 @@ try {
 	echo('<p>---</p>');
 
 	//output actions
-	while( $row = $actions->fetch_object() ) {
+	while($row = $actions->fetch_object()) {
 		echo("<p><span class='date'>$row->time</span> -- ".htmlspecialchars($row->message)."</p>");
 	}
 
@@ -36,8 +57,9 @@ try {
 }
 
 catch(Exception $e){
-	output_header('Error');
-	echo 'Error: '.$e->getMessage();
+	$error = $e->getMessage();
+	output_header('Mod Action Log', true);
+	echo "Error: $error";
 	output_footer();
 }
 
