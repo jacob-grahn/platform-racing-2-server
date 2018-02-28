@@ -41,8 +41,9 @@ try {
 	output_header('Player Info', true);
 	
 	// rate limiting
-	rate_limit('mod-player-info-'.$mod_ip, 5, 1);
-	rate_limit('mod-player-info-'.$mod_ip, 30, 5);
+	$mod_id = $mod->user_id;
+	rate_limit('mod-player-info-'.$mod_id, 5, 1);
+	rate_limit('mod-player-info-'.$mod_id, 30, 5);
 
 	//get dem infos
 	$result = $db->query("SELECT pr2.rank, pr2.hat_array, users.power, users.status, users.name, users.ip
