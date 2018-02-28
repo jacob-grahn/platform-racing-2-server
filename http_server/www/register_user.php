@@ -46,8 +46,7 @@ try {
 	}
 	$test_name = preg_replace("/[^a-zA-Z0-9-.:;=?~! ]/", "", $name);
 	if($test_name != $name){
-		throw new Exception('There is an invalid character in your name. '
-							.'The allowed characters are a-z, 0-9, and !$&()*+.:;=?~.');
+		throw new Exception('Your name is invalid. You may only use alphanumeric characters, spaces and, !-.:;=?~.');
 	}
 
 	// connect to the db
