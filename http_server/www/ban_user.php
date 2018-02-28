@@ -5,7 +5,7 @@ header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
 $banned_name = default_val($_POST['banned_name']);
-$duration = default_val($_POST['duration'], 60);
+$duration = (int) default_val($_POST['duration'], 60);
 $reason = default_val($_POST['reason'], '');
 $record = default_val($_POST['record'], '');
 $using_mod_site = default_val($_POST['using_mod_site'], 'no');
@@ -47,7 +47,7 @@ try {
 	$mod = check_moderator($db);
 	
 	// get variables from the mod variable
-	$mod_user_id = $mod->user_id;
+	$mod_user_id = (int) $mod->user_id;
 	$mod_user_name = $mod->name;
 	$mod_power = 2;
 	
@@ -55,21 +55,20 @@ try {
 	rate_limit('ban-'.$mod_user_id, 5, 1);
 	
 	
-	//limit ban length
+	// limit ban length
 	if($duration > $mod->max_ban) {
 		$duration = $mod->max_ban;
 	}
-	$time = time();
+	$time = (int) time();
 	$expire_time = $time + $duration;
 	
 	
-	//limit number of bans per hour
-	$safe_mod_user_id = addslashes($mod_user_id);
-	$safe_min_time = addslashes(time()-(60*60));
+	// throttle bans
+	$min_time = $time - 3600;
 	$result = $db->query("SELECT COUNT(*) as recent_ban_count
 									FROM bans
-									WHERE mod_user_id = '$safe_mod_user_id'
-									AND time > '$safe_min_time'");
+									WHERE mod_user_id = '$mod_user_id'
+									AND time > '$min_time'");
 	if(!$result) {
 		throw new Exception('Could not check ban throttle');
 	}
@@ -102,6 +101,8 @@ try {
 	
 	
 	//throw out non-banned info, set ban types
+	$ip_ban = 0;
+	$account_ban = 0;
 	switch ($type) {
 		case 'both':
 			$ip_ban = 1;
@@ -129,14 +130,12 @@ try {
 	
 	// don't ban guest accounts, just the ip
 	if($banned_power == 0){
-		$banned_user_id = '0';
+		$banned_user_id = 0;
 		$banned_name = '';
 	}
 	
-	//add the ban
+	// add the ban
 	$safe_mod_user_name = $db->real_escape_string($mod_user_name);
-	$safe_ip_ban = $db->real_escape_string($ip_ban);
-	$safe_account_ban = $db->real_escape_string($account_ban);
 	$result = $db->query("INSERT INTO bans
 									SET banned_ip = '$banned_ip',
 										banned_user_id = $banned_user_id,
@@ -147,8 +146,8 @@ try {
 										record = '$safe_record',
 										banned_name = '$safe_banned_name',
 										mod_name = '$safe_mod_user_name',
-										ip_ban = '$safe_ip_ban',
-										account_ban = '$safe_account_ban'");
+										ip_ban = '$ip_ban',
+										account_ban = '$account_ban'");
 	if(!$result){
 		throw new Exception('Could not record ban.');
 	}
@@ -159,19 +158,6 @@ try {
 	$db->call('tokens_delete_by_user', array($banned_user_id));
 	
 	
-	
-	if($using_mod_site == 'yes' && $redirect == 'yes') {
-		header('Location: //pr2hub.com/mod/player_info.php?user_id='.$banned_user_id.'&force_ip='.$force_ip);
-	}
-	else {
-		if($banned_user_id == 0) {
-			echo("message=Guest [$banned_ip] has been banned for $duration seconds.");
-		}
-		else {
-			$disp_name = htmlspecialchars($banned_name);
-			echo("message=$disp_name has been banned for $duration seconds.");
-		}
-	}
 	
 	// --- action log stuff below this point --- \\
 	
@@ -198,6 +184,24 @@ try {
 	
 	//record the ban in the action log
 	$db->call('mod_action_insert', array($mod->user_id, "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}", 0, $ip));
+	
+	
+	// --- end action log stuff --- \\
+	
+	
+	if($using_mod_site == 'yes' && $redirect == 'yes') {
+		header('Location: //pr2hub.com/mod/player_info.php?user_id='.$banned_user_id.'&force_ip='.$force_ip);
+		die();
+	}
+	else {
+		if($banned_user_id == 0) {
+			echo("message=Guest [$banned_ip] has been banned for $duration seconds.");
+		}
+		else {
+			$disp_name = htmlspecialchars($banned_name);
+			echo("message=$disp_name has been banned for $duration seconds.");
+		}
+	}
 	
 }
 
