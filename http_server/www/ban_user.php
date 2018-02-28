@@ -15,9 +15,9 @@ $force_ip = default_val($_POST['force_ip']);
 
 $ip = get_ip();
 
-$safe_banned_name = mysqli_real_escape_string($banned_name);
-$safe_reason = mysqli_real_escape_string($reason);
-$safe_record = mysqli_real_escape_string($record);
+$safe_banned_name = addslashes($banned_name);
+$safe_reason = addslashes($reason);
+$safe_record = addslashes($record);
 
 // if it's a month/year ban coming from PR2, correct the weird ban times
 if ($using_mod_site == 'no') {
@@ -64,8 +64,8 @@ try {
 	
 	
 	//limit number of bans per hour
-	$safe_mod_user_id = mysqli_real_escape_string($mod_user_id);
-	$safe_min_time = mysqli_real_escape_string(time()-(60*60));
+	$safe_mod_user_id = addslashes($mod_user_id);
+	$safe_min_time = addslashes(time()-(60*60));
 	$result = $db->query("SELECT COUNT(*) as recent_ban_count
 									FROM bans
 									WHERE mod_user_id = '$safe_mod_user_id'
