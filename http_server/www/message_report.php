@@ -5,9 +5,9 @@ header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
 $message_id = $_POST['message_id'];
-$safe_message_id = mysqli_real_escape_string($message_id);
-$safe_reporter_ip = mysqli_real_escape_string($ip);
-$safe_time = mysqli_real_escape_string($time);
+$safe_message_id = addslashes($message_id);
+$safe_reporter_ip = addslashes($ip);
+$safe_time = addslashes($time);
 $time = time();
 $ip = get_ip();
 
@@ -68,11 +68,11 @@ try {
 	
 	
 	// insert the message into the reported messages table
-	$safe_to_user_id = mysqli_real_escape_string($row->to_user_id);
-	$safe_from_user_id = mysqli_real_escape_string($row->from_user_id);
-	$safe_message = mysqli_real_escape_string($row->message);
-	$safe_sent_time = mysqli_real_escape_string($row->time);
-	$safe_from_ip = mysqli_real_escape_string($row->ip);
+	$safe_to_user_id = addslashes($row->to_user_id);
+	$safe_from_user_id = addslashes($row->from_user_id);
+	$safe_message = addslashes($row->message);
+	$safe_sent_time = addslashes($row->time);
+	$safe_from_ip = addslashes($row->ip);
 	
 	$result = $db->query("INSERT INTO messages_reported
 								 	SET to_user_id = '$safe_to_user_id',
