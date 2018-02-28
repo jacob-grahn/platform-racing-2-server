@@ -6,7 +6,7 @@ require_once('../fns/all_fns.php');
 $level_id = $_POST['level_id'];
 $new_rating = $_POST['rating'];
 
-$level_id = mysqli_real_escape_string($level_id);
+$level_id = addslashes($level_id);
 
 $time = time();
 $old_weight = 0;
@@ -15,8 +15,8 @@ $old_rating = 0;
 
 $ip = get_ip();
 
-$safe_ip = mysqli_real_escape_string($ip);
-$safe_new_rating = mysqli_real_escape_string($new_rating);
+$safe_ip = addslashes($ip);
+$safe_new_rating = addslashes($new_rating);
 
 try {
 	
