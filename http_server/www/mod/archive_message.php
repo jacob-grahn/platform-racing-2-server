@@ -4,7 +4,6 @@ require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
 $message_id = (int) default_val($_GET['message_id'], 0);
-$safe_message_id = mysqli_real_escape_string($message_id);
 $ip = get_ip();
 
 try {
@@ -38,7 +37,7 @@ try {
 	// archive the message
 	$result = $db->query("UPDATE messages_reported
 							SET archived = 1
-							WHERE message_id = '$safe_message_id'
+							WHERE message_id = '$message_id'
 							LIMIT 1");
 	if(!$result) {
 		throw new Exception('Could not archive the message.');
@@ -49,7 +48,7 @@ try {
 	$ip = $mod->ip;
 
 	// record the change
-	$db->call('mod_action_insert', array($mod->user_id, "$name archived the report of PM $safe_message_id from $ip", $mod->user_id, $ip));
+	$db->call('mod_action_insert', array($mod->user_id, "$name archived the report of PM $message_id from $ip", $mod->user_id, $ip));
 
 	// tell the sorry saps trying to debug
 	$ret = new stdClass();
