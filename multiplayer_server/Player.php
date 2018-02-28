@@ -452,7 +452,7 @@ class Player {
 			// debug command for admins
 			else if (($chat_message == '/debug' || strpos($chat_message, '/debug ') === 0) && $this->group >= 3) {
 				$is_ps = 'no';
-				if ($guild_id !== 0) {
+				if ($guild_id != '0') {
 					$is_ps = 'yes';
 				}
 				
