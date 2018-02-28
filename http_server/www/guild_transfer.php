@@ -4,8 +4,13 @@ require_once('../fns/all_fns.php');
 require_once('../fns/email_fns.php');
 require_once('../fns/output_fns.php');
 
+$ip = get_ip();
+
 try {
 
+	// rate limit
+	rate_limit('gui-guild-transfer-connect-'.$ip, 5, 1, 'Please wait at least 5 seconds before trying to reload this page.');
+	
 	// what is the user trying to do
 	if (is_empty($_POST['action'])) {
 		$action = 'form';
@@ -100,6 +105,9 @@ function start_transfer($db, $old_name, $guild) {
 	
 	// get the ip address of the requester
 	$ip = get_ip();
+	
+	// rate limiting
+	rate_limit('gui-guild-transfer-'.$ip, 60, 1, 'Please wait at least one minute before attempting to transfer your guild again.');
 	
 	// receive variables from post
 	$email = $_POST['email'];

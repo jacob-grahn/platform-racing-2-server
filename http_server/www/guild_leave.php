@@ -1,8 +1,20 @@
 <?php
 
+header("Content-type: text/plain");
 require_once( '../fns/all_fns.php' );
 
+$ip = get_ip();
+
 try {
+	
+	// get and validate referrer
+	$ref = check_ref();
+	if ($ref !== true && $ref != '') {
+		throw new Exception('It looks like you\'re using PR2 from a third-party website. For security reasons, you may only leave a guild from an approved site such as pr2hub.com.');
+	}
+	
+	// rate limiting
+	rate_limit('guild-leave-attempt-'.$ip, 30, 1, "Please wait at least 30 seconds before attempting to leave your guild again.");
 	
 	//--- connect to the db
 	$db = new DB();

@@ -3,11 +3,10 @@
 require_once( '../fns/all_fns.php' );
 require_once( '../fns/output_fns.php' );
 
+$code = $_GET['code'];
+$ip = get_ip();
+
 try {
-	
-	// get the data from the link
-	$code = $_GET['code'];
-	$ip = get_ip();
 	
 	output_header('Confirm Guild Ownership Transfer');
 	
@@ -15,6 +14,9 @@ try {
 	if(!isset($code)) {
 		throw new Exception('No code found.');
 	}
+	
+	// rate limiting
+	rate_limit('confirm-guild-transfer-'.$ip, 30, 1, "Please wait at least 30 seconds before attempting to confirm another guild transfer.");
 	
 	// connect
 	$db = new DB();

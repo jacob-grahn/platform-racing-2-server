@@ -6,11 +6,26 @@ require_once( '../fns/all_fns.php' );
 require_once( '../fns/Encryptor.php' );
 require_once( '../fns/email_fns.php' );
 
-$encrypted_data = find( 'data' );
+$encrypted_data = $_POST['data'];
 
 $ip = get_ip();
 
-try{
+try {
+	
+	// post check
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		throw new Exception("Invalid request method.");
+	}
+	
+	// check referrer
+	$ref = check_ref();
+	if ($ref !== true) {
+		throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only change your email from an approved site such as pr2hub.com.");
+	}
+	
+	// rate limiting
+	rate_limit('change-email-attempt-'.$ip, 30, 1, 'Please wait at least 30 seconds before attempting to change the email address on your account again.');
+	rate_limit('change-email-attempt-'.$ip, 300, 5, 'You may only send a maximum of 5 email change requests every 5 minutes. Try again later.');
 
 	//--- sanity check
 	if( !isset($encrypted_data) ) {
@@ -29,7 +44,7 @@ try{
 	$db = new DB();
 
 	// check their login
-	$user_id = token_login( $db, false );
+	$user_id = token_login($db, false);
 	$user = $db->grab_row('user_select', array($user_id));
 	$user_name = $user->name;
 	$old_email = $user->email;
@@ -52,12 +67,26 @@ try{
 		throw new Exception("'$safe_new_email' is not a valid email address.");
 	}
 	
+	// rate limiting
 	rate_limit('change-email-'.$user_id, 86400, 2, 'Your email can be changed a maximum of two times per day.');
 	rate_limit('change-email-'.$ip, 86400, 2, 'Your email can be changed a maximum of two times per day.');
 
 	// set their email if they don't already have one
 	if (is_empty($old_email)) {
+		$time = time();
+		$code = "set-email-$time";
+		
+		// log and do it
+		$db->call('changing_email_insert', array($user_id, $old_email, $new_email, $code, $ip));
+		$change_id = $db->grab('change_id', 'changing_email_select', array($code));
+		$db->call('changing_email_complete', array($change_id, $ip));
 		$db->call('user_update_email', array($user_id, $old_email, $new_email));
+		
+		// tell the user and end the script
+		$ret = new stdClass();
+		$ret->message = 'Your email was changed successfully!';
+		echo json_encode($ret);
+		die();
 	}
 
 	// initiate an email change confirmation (generate code) if they do already have an email address

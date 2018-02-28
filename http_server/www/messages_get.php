@@ -4,27 +4,36 @@ header("Content-type: text/plain");
 
 require_once('../fns/all_fns.php');
 
-$start = find('start', 0);
-$count = find('count', 10);
+$start = (int) find('start', 0);
+$count = (int) find('count', 10);
 $messages = array();
 $largest_id = 0;
+$ip = get_ip();
 
-try{
+try {
 	
-	//connect the the db
+	// rate limiting
+	rate_limit( 'get-messages-'.$ip, 5, 1 );
+	rate_limit( 'get-messages-'.$ip, 60, 10 );
+	
+	// connect
 	$db = new DB();
 	
-	//check thier login
+	// check their login
 	$user_id = token_login($db);
+	
+	// more rate limiting
+	rate_limit( 'get-messages-'.$user_id, 5, 1 );
+	rate_limit( 'get-messages-'.$user_id, 60, 10 );
 	
 	$safe_user_id = $db->escape( $user_id );
 	$safe_start = $db->escape( $start );
 	$safe_count = $db->escape( $count );
-	$result = $db->query("select messages.message_id, messages.message, messages.time, messages.from_user_id
-									from messages
-									where messages.to_user_id = '$safe_user_id'
-									order by messages.time desc
-									limit $safe_start, $safe_count");
+	$result = $db->query("SELECT messages.message_id, messages.message, messages.time, messages.from_user_id
+									FROM messages
+									WHERE messages.to_user_id = '$safe_user_id'
+									ORDER BY messages.time desc
+									LIMIT $safe_start, $safe_count");
 	if(!$result){
 		throw new Exception('Could not retrieve messages.');
 	}

@@ -3,26 +3,29 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$action = find('action', 'none');
-$ban_id = find('ban_id');
+$action = default_val($_GET['action'], 'none');
+$ban_id = default_val($_GET['ban_id'], 0);
+$ip = get_ip();
 
 try {
 	
-	//sanity
-	if(!isset($ban_id)) {
-		throw new Exception('No ban_id');
+	// sanity check: what ban id?
+	if(is_empty($ban_id, false)) {
+		throw new Exception('No ban ID specified.');
 	}
-
+	
+	// rate limiting
+	rate_limit('mod-ban-edit-'.$ip, 5, 1);
+	rate_limit('mod-ban-edit-'.$ip, 30, 5);
 
 	//connect
 	$db = new DB();
-
 
 	//make sure you're a moderator
 	$mod = check_moderator($db);
 	$user_id = $mod->user_id;
 	$name = $mod->name;
-	$safe_name = addslashes($name);
+	$safe_name = mysqli_real_escape_string($name);
 	
 	
 	// ------------------------------------------------------------------
@@ -39,10 +42,10 @@ try {
 		//update the ban
 		$query = "UPDATE bans
 				SET account_ban = '$safe_account_ban',
-				ip_ban = '$safe_ip_ban',
-				expire_time = UNIX_TIMESTAMP('$safe_expire_time'),
-				notes = '$safe_notes',
-				modified_time = NOW()
+					ip_ban = '$safe_ip_ban',
+					expire_time = UNIX_TIMESTAMP('$safe_expire_time'),
+					notes = '$safe_notes',
+					modified_time = NOW()
 				WHERE ban_id = '$safe_ban_id'
 				LIMIT 1";
 		$db->query($query, 'ban_update', 'Could not update ban. query: ' . $query);

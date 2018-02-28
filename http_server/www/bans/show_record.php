@@ -3,30 +3,46 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$ban_id = $_GET['ban_id'];
-$safe_ban_id = addslashes($ban_id);
+$ban_id = (int) $_GET['ban_id'];
+$safe_ban_id = mysqli_real_escape_string($ban_id);
+$ip = get_ip();
 
-
-
-try{
+try {
+	
+	// rate limiting
+	rate_limit('show-ban-record-'.$ip, 5, 1);
+	rate_limit('show-ban-record-'.$ip, 30, 5);
+	
+	// connect
 	$db = new DB();
+	
+	// are they a moderator
+	$is_mod = is_moderator($db, false);
+	
+	// DEBUGGING
+	if ($is_mod === true && ($ban_id === 0 || $ban_id === 90000)) {
+		var_dump($result);
+		die();
+	}
+	
+	// output header (w/ mod nav if they're a mod)
+	output_header('View Ban', $is_mod);
 
-	$result = $db->query("select *
-							from bans
-							where ban_id = '$safe_ban_id'
-							limit 0, 1");
+	$result = $db->query("SELECT *
+							FROM bans
+							WHERE ban_id = '$safe_ban_id'
+							LIMIT 0, 1");
 	if(!$result){
-		throw new Exception('Could not display ban record');
+		throw new Exception('Could not display the ban record.');
 	}
 	$row = $result->fetch_assoc();
-
-	//output navigation if you're a moderator
-	$is_mod = is_moderator($db, false);
-	output_header('View Ban', $is_mod);
 }
-catch(Exception $e){
-	echo 'Error: '.$e->getMessage();
-	exit;
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header('Error Fetching Ban', $is_mod);
+	echo "Error: $error";
+	output_footer();
+	die();
 }
 
 

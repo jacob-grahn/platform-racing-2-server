@@ -14,7 +14,7 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 	<link href="//pr2hub.com/style/pr2hub.css" rel="stylesheet" type="text/css"/>
 	<?php if($formatting_for_mods) { ?>
 		<script src="https://code.jquery.com/jquery-latest.min.js"></script>
-		<script src="https://malsup.github.com/jquery.form.js"></script>
+		<script src="https://malsup.github.io/jquery.form.js"></script>
 	<?php } ?>
 </head>
 

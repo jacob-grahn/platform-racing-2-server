@@ -1,32 +1,37 @@
 <?php
 
 header("Content-type: text/plain");
-
 require_once( '../../fns/all_fns.php' );
 
-$server_id = find('server_id');
+$server_id = (int) $_GET['server_id'];
 
 try {
 
-	//--- sanity check
-	if( !isset( $server_id ) || !is_numeric( $server_id ) || $server_id <= 0 ) {
-		throw new Exception( 'Invalid server id' );
+	// sanity check: was there any value found for the server id?
+	if(is_empty($server_id, false)) { // is_empty($value, false) includes the number 0 as empty.
+		throw new Exception('Invalid server ID specified.');
 	}
 
-
-	//--- connect
+	// rate limiting
+	rate_limit('super-booster-'.$ip, 60, 1, "Please wait at least one minute before attempting to use the super booster again.");
+	
+	// connect
 	$db = new DB();
 
-
-	//--- gather infos
-	$user_id = token_login($db);
+	// get user id
+	$user_id = token_login($db, false);
+	
+	// more rate limiting
+	rate_limit('super-booster-'.$user_id, 60, 1, "Please wait at least one minute before attempting to use the super booster again.");
+	
+	// get server info
 	$server = $db->grab_row( 'server_select', array( $server_id ) );
 
 
 	//--- remember that the super booster was used
 	$key = "sb-$user_id";
 	if( apcu_exists( $key ) ) {
-		throw new Exception( 'Super Booster can only be used once per day.' );
+		throw new Exception( 'The Super Booster can only be used once per day.' );
 	}
 	else {
 		$result = apcu_add( $key, true, 86400 );

@@ -32,7 +32,7 @@ try {
 
 
 	//check thier login
-	$user_id = token_login($db);
+	$user_id = token_login($db, false);
 	$user_name = id_to_name($db, $user_id);
 
 

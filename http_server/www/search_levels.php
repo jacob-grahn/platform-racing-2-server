@@ -3,18 +3,23 @@
 header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
-$mode = find('mode', 'user');
-$search_str = find('search_str', '');
-$order = find('order', '');
-$dir = find('dir', 'desc');
-$page = find('page', '1');
+$mode = default_val($_POST['mode'], 'user');
+$search_str = default_val($_POST['search_str'], '');
+$order = default_val($_POST['order'], '');
+$dir = default_val($_POST['dir'], 'desc');
+$page = default_val($_POST['page'], 1);
 $ip = get_ip();
 
 $page = min(25, $page);
 $key = "search-$mode-$search_str-$order-$dir-$page";
-$cache_expire = 60 * 10; //10 minutes
+$cache_expire = 600; //10 minutes
 
 try {
+	
+	// check request method
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		throw new Exception("Invalid request method.");
+	}
 
 	$page_str = apcu_fetch($key);
 

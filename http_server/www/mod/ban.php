@@ -3,26 +3,49 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$user_id = find('user_id');
-$force_ip = find( 'force_ip' );
-$reason = find('reason');
+$user_id = find_no_cookie('user_id', 0);
+$force_ip = find_no_cookie('force_ip');
+$reason = find_no_cookie('reason');
+$ip = get_ip();
 
 try {
 
-	//connect
+	// sanity check: who are you trying to ban?
+	if (is_empty($user_id, false)) {
+		throw new Exception("No user specified.");
+	}
+	
+	// rate limiting
+	rate_limit('mod-ban-'.$ip, 5, 1);
+	rate_limit('mod-ban-'.$ip, 30, 5);
+	
+	// connect
 	$db = new DB();
 
-
-	//make sure you're a moderator
+	// make sure you're a moderator
 	$mod = check_moderator($db);
+	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header('Error');
+	echo "Error: $error";
+	output_footer();
+	die();
+}
 
-
-	// header
+try {
+	
+	// output header w/ mod nav
 	output_header('Ban User', true);
+	
+	// rate limiting
+	$mod_id = $mod->user_id;
+	rate_limit('mod-ban-'.$mod_id, 5, 1);
+	rate_limit('mod-ban-'.$mod_id, 30, 5);
 
-
-	//get the user's name
-	$row = $db->grab_row( 'user_select', array($user_id) );
+	// get the user's name
+	$row = $db->grab_row('user_select', array($user_id));
 	$name = $row->name;
 	$target_ip = $row->ip;
 
@@ -34,7 +57,7 @@ try {
 
 	?>
 
-	<form action="../ban_user.php" method="get">
+	<form action="../ban_user.php" method="post">
 		<input type="hidden" value="yes" name="using_mod_site"  />
 		<input type="hidden" value="yes" name="redirect" />
 		<input type="hidden" value="<?php echo $target_ip; ?>" name="force_ip" />
@@ -59,11 +82,13 @@ try {
 
 	<?php
 
+	output_footer();
+	
 }
 
 catch(Exception $e){
+	output_header("Ban User", true);
 	echo 'Error: '.$e->getMessage();
+	output_footer();
 }
-
-output_footer();
 ?>

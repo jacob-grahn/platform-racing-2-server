@@ -1,24 +1,29 @@
 <?php
 
-require_once('../fns/all_fns.php');
 header("Content-type: text/plain");
+require_once('../fns/all_fns.php');
 
-$mode = find('mode');
-
+$mode = find_no_cookie('mode');
+$ip = get_ip();
 
 try {
 	
-	if($mode == 'friends'){
-		$table = 'friends';
-		$var = 'friend_id';
+	switch($mode) {
+		case 'friends':
+			$table = 'friends';
+			$var = 'friend_id';
+			break;
+		case 'ignored':
+			$table = 'ignored';
+			$var = 'ignore_id';
+			break;
+		default:
+			throw new Exception("Invalid list mode specified.");
 	}
-	else if($mode == 'ignored'){
-		$table = 'ignored';
-		$var = 'ignore_id';
-	}
-	else {
-		throw new Exception('Invalid list mode specified.');
-	}
+	
+	// rate limiting
+	rate_limit("user-list-$table-$ip", 5, 1);
+	rate_limit("user-list-$table-$ip", 30, 5);
 	
 	// connect
 	$db = new DB();
@@ -26,17 +31,20 @@ try {
 	// check their login
 	$user_id = token_login($db);
 	
+	// rate limiting
+	rate_limit("user-list-$table-$user_id", 30, 5);
+	
 	// get the information from the database
-	$result = $db->query("select users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens
-									from $table
-									inner join users
-									on users.user_id = $table.$var
-									left join pr2
-									on users.user_id = pr2.user_id
-									left join rank_tokens
-									on users.user_id = rank_tokens.user_id
-									where $table.user_id = '$user_id'
-									limit 0, 250");
+	$result = $db->query("SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens
+									FROM $table
+									INNER JOIN users
+									ON users.user_id = $table.$var
+									LEFT JOIN pr2
+									ON users.user_id = pr2.user_id
+									LEFT JOIN rank_tokens
+									ON users.user_id = rank_tokens.user_id
+									WHERE $table.user_id = '$user_id'
+									LIMIT 0, 250");
 	
 	if(!$result){
 		throw new Exception('Could not retrieve player list.');

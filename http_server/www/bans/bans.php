@@ -3,16 +3,23 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-try{
-	rate_limit('list-bans-' . get_ip(), 60, 10);
+$ip = get_ip();
 
+try {
+	
+	// rate limiting
+	rate_limit('list-bans-'.$ip, 10, 1);
+	rate_limit('list-bans-'.$ip, 60, 5);
+
+	// connect
 	$db = new DB();
-	$result = $db->query('select *
-									from bans
-									order by time desc
-									limit 0, 100');
+	
+	$result = $db->query('SELECT *
+									FROM bans
+									ORDER BY time DESC
+									LIMIT 0, 100');
 	if(!$result){
-		throw new Exception('Could not retireve bans');
+		throw new Exception('Could not retrieve the ban list.');
 	}
 
 	$is_mod = is_moderator($db, false);

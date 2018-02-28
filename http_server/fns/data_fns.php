@@ -39,6 +39,16 @@ function find_no_cookie($str, $default=NULL) {
 }
 
 
+function default_val($val, $default=NULL) {
+	if (is_empty($val)) {
+		return $default;
+	}
+	else {
+		return $val;
+	}
+}
+
+
 
 function format_duration( $seconds ) {
 	if($seconds < 60){

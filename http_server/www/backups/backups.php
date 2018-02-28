@@ -4,14 +4,36 @@ require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 require_once('../../fns/classes/S3.php');
 
-output_header('Your Backups');
+$ip = get_ip();
 
 try {
 	
-	//connect
+	// rate limiting
+	rate_limit('level-backups-'.$ip, 5, 1);
+	rate_limit('level-backups-'.$ip, 30, 5);
+	
+	// connect
 	$db = new DB();
 	$user_id = token_login($db);
 	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header("Level Backups");
+	echo "Error: $error";
+	output_footer();
+	die();
+}
+	
+try {
+	
+	// rate limiting
+	rate_limit('level-backups-'.$user_id, 5, 1);
+	rate_limit('level-backups-'.$user_id, 30, 5);
+	
+	// output mod nav if they're a mod
+	$is_mod = is_moderator($db, false);
+	output_header('Level Backups', $is_mod);
 	
 	//restore a backup
 	$action = find('action');
@@ -67,7 +89,7 @@ try {
 	}
 	
 	else {
-		echo '<p>Welcome to PR2\'s level restore system. You can restore any level that was modified or deleted in the past month.</p>';
+		echo "<p>Welcome to PR2's level restore system. You can use this tool to restore any level that was modified or deleted in the past month.</p>";
 	}
 	
 	
@@ -81,8 +103,9 @@ try {
 }
 
 catch(Exception $e){
-	echo '<p>Error: ' . $e->getMessage() . '</p>';
+	$error = $e->getMessage();
+	echo "Error: $error";
+	output_footer();
 }
 
-output_footer();
 ?>

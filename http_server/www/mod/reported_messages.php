@@ -3,29 +3,50 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$archive = find('archive', 0);
-$start = find('start', 0);
-$count = find('count', 25);
+$archive = default_val($_GET['archive'], 0);
+$start = default_val($_GET['start'], 0);
+$count = default_val($_GET['count'], 25);
 
-$safe_archive = addslashes($archive);
-$safe_start = addslashes($start);
-$safe_count = addslashes($count);
+$safe_archive = mysqli_real_escape_string($archive);
+$safe_start = mysqli_real_escape_string($start);
+$safe_count = mysqli_real_escape_string($count);
 
 $next_form_id = 1;
+$mod_ip = get_ip();
 
 
 try {
 
+	// rate limiting
+	rate_limit('mod-reported-messages-'.$mod_ip, 10, 1);
+	rate_limit('mod-reported-messages-'.$mod_ip, 60, 5);
+	
 	//connect
 	$db = new DB();
 
 	//make sure you're a moderator
 	$mod = check_moderator($db, false);
+	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header("Error");
+	echo "Error: $error";
+	output_footer();
+	die();
+}
 
+try {
+	
 	// output header
 	output_header('Reported Messages', true);
+	
+	// more rate limiting
+	$mod_id = $mod->user_id;
+	rate_limit('mod-reported-messages-'.$mod_id, 10, 1);
+	rate_limit('mod-reported-messages-'.$mod_id, 60, 5);
 
-	//navigation
+	// navigation
 	output_pagination($start, $count);
 	echo('<p>---</p>');
 
@@ -38,7 +59,7 @@ try {
 									ORDER by reported_time desc
 									LIMIT $safe_start, $safe_count");
 	if(!$result){
-		throw new Exception('Could not retireve messages');
+		throw new Exception('Could not retrieve the list of reported messages.');
 	}
 
 
@@ -77,7 +98,7 @@ try {
 					<br/>
 					-- or --
 					<br/>
-					<form id='$form_id' action='../ban_user.php' method='get'>
+					<form id='$form_id' action='../ban_user.php' method='post'>
 						<input type='hidden' value='yes' name='using_mod_site'  />
 						<input type='hidden' value='$from_name' name='banned_name' />
 						<input type='hidden' value='$from_ip' name='force_ip' />
@@ -89,10 +110,9 @@ try {
 							<option value='60'>1 Minute</option>
 							<option value='3600' selected='selected'>1 Hour</option>
 							<option value='86400'>1 Day</option>
-							<option value='648000'>1 Week</option>
+							<option value='604800'>1 Week</option>
 							<option value='2592000'>1 Month</option>
-							<option value='31104000'>1 Year</option>
-							<option value='99999999'>Forever</option>
+							<option value='31536000'>1 Year</option>
 						</select>
 					</form>
 				</div>
@@ -122,7 +142,10 @@ try {
 }
 
 catch(Exception $e){
-	echo 'Error: '.$e->getMessage();
+	$error = $e->getMessage();
+	output_header('Reported Messages', true);
+	echo "Error: $error";
+	output_footer();
 }
 
 
