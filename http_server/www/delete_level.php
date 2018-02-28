@@ -6,7 +6,7 @@ require_once('../fns/all_fns.php');
 require_once('../fns/classes/S3.php');
 require_once('../fns/pr2_fns.php');
 
-$level_id = default_val($_POST['level_id'], 'none');
+$level_id = (int) default_val($_POST['level_id'], 0);
 $ip = get_ip();
 
 try {
@@ -22,8 +22,8 @@ try {
 		throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only delete a level from an approved site such as pr2hub.com.");
 	}
 	
-	// error check
-	if($level_id == 'none'){
+	// sanity check
+	if(is_empty($level_id, false)){
 		throw new Exception('No level ID was specified.');
 	}
 	
