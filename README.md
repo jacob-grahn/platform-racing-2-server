@@ -14,8 +14,8 @@ To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com
 
 ## Contributors
 - aaaaaa123456789
-- Antonhs30000
 - bls1999
+- BrokenBulb78
 - EternalUF
 - fourst4r
 - Grovbi
