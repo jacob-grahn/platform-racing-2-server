@@ -1,6 +1,7 @@
 <?php
 
 require_once('../../fns/all_fns.php');
+require_once('../../fns/output_fns.php');
 
 $name = default_val($_POST['name'], '');
 $ip = get_ip();
@@ -26,9 +27,19 @@ try {
 
 	// make sure you're a moderator
 	$mod = check_moderator($db);
-	$mod_id = $mod->user_id;
+	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header("Error");
+	echo "Error: $error";
+	output_footer();
+}
+
+try {
 	
 	// more rate limiting
+	$mod_id = $mod->user_id;
 	rate_limit('mod-do-player-search-'.$mod_id, 10, 1);
 	rate_limit('mod-do-player-search-'.$mod_id, 60, 5);
 
