@@ -3,61 +3,83 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$ban_id = find('ban_id');
-$safe_ban_id = addslashes($ban_id);
+$ban_id = (int) default_val($_GET['ban_id'], 0);
+$safe_ban_id = mysqli_real_escape_string($ban_id);
+
+$ip = get_ip();
 
 try {
 
-	//connect
+	// rate limiting
+	rate_limit('mod-lift-ban-'.$ip, 5, 1);
+	rate_limit('mod-lift-ban-'.$ip, 30, 5);
+	
+	// connect
 	$db = new DB();
 
-
-	//make sure you're a moderator
+	// make sure you're a moderator
 	$mod = check_moderator($db);
+	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header('Error');
+	echo "Error: $error";
+	output_footer();
+	die();
+}
 
+try {
 
-	// header
+	// output header
 	output_header('Lift Ban', true);
+	
+	// rate limiting
+	$mod_id = $mod->user_id;
+	rate_limit('mod-lift-ban-'.$mod_id, 5, 1);
+	rate_limit('mod-lift-ban-'.$mod_id, 30, 5);
 
-
-	//get the ban
+	// get the ban
 	$result = $db->query("SELECT *
 								 	FROM bans
 									WHERE ban_id = '$safe_ban_id'
 									LIMIT 0, 1");
 	if(!$result){
-		throw new Exception('Could not lookup ban');
+		throw new Exception("Could not get the ban's data from the database.");
 	}
 	if($result->num_rows <= 0) {
-		throw new Exception('Ban was not found');
+		throw new Exception("Ban ID #$ban_id doesn't exist.");
 	}
 
+	// get ban info
 	$row = $result->fetch_object();
 	$banned_name = $row->banned_name;
 	$lifted = $row->lifted;
-
 	if($lifted == '1') {
-		throw new Exception('This ban has already been lifted');
+		throw new Exception('This ban has already been lifted.');
 	}
 
+	// make the visible things
+	
 	echo "<p>To lift the ban on $banned_name, please enter a reason and hit submit.</p>";
 
 	?>
 
-	<form action="do_lift_ban.php" method="get">
+	<form action="do_lift_ban.php" method="post">
 		<input type="hidden" value="<?php echo $ban_id; ?>" name="ban_id"  />
 		<input type="text" value="They bribed me with skittles!" name="reason" size="70" />
-		<input type="submit" value="Submit" />
+		<input type="submit" value="Lift Ban" />
 	</form>
 
 
 	<?php
 
 }
-
 catch(Exception $e){
-	echo 'Error: '.$e->getMessage();
+	// header already echoed
+	$error = $e->getMessage();
+	echo "Error: $error";
+	output_footer();
 }
 
-output_footer();
 ?>
