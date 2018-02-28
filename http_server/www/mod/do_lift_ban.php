@@ -18,7 +18,7 @@ try {
 
 	// sanity check: are any values blank?
 	if(is_empty($ban_id, false) || is_empty($reason)) {
-		throw new Exception('Invalid paramaters provided');
+		throw new Exception('Some information is missing.');
 	}
 
 	// rate limiting
@@ -30,6 +30,19 @@ try {
 
 	// make sure you're a moderator
 	$mod = check_moderator($db);
+	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header("Error");
+	echo "Error: $error";
+	output_footer();
+	die();
+}
+
+try {
+	
+	// make some variables
 	$user_id = $mod->user_id;
 	$name = $mod->name;
 	
@@ -40,7 +53,7 @@ try {
 	$safe_name = mysqli_real_escape_string($name);
 
 
-	//lift the ban
+	// lift the ban
 	$result = $db->query("UPDATE bans
 									SET lifted = '1',
 										lifted_by = '$safe_name',
@@ -52,7 +65,7 @@ try {
 	}
 
 	if ($reason != '') {
-		$disp_reason = "Reason: " . $safe_reason;
+		$disp_reason = "Reason: $safe_reason";
 	}
 	else {
 		$disp_reason = "There was no reason given";
@@ -63,11 +76,13 @@ try {
 
 
 	//redirect to a page showing the lifted ban
-	header("Location: //pr2hub.com/bans/show_record.php?ban_id=$ban_id") ;
+	header("Location: //pr2hub.com/bans/show_record.php?ban_id=$ban_id");
+	die();
+	
 }
 
 catch(Exception $e){
-	output_header('Error');
+	output_header('Lift Ban', true);
 	echo 'Error: '.$e->getMessage();
 	output_footer();
 }
