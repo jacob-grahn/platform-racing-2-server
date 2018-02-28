@@ -16,6 +16,16 @@ try {
 	//make sure you're an admin
 	$admin = check_moderator($db, true, 3);
 	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header("Error");
+	echo "Error: $error";
+	output_footer();
+	die();
+}
+
+try {
 	
 	//lookup
 	if($action === 'lookup') {
@@ -32,9 +42,11 @@ try {
 }
 
 catch (Exception $e) {
-	output_header('Error');
-	echo 'Error: ' . $e->getMessage();
+	$error = $e->getMessage();
+	output_header('Update Guild', true, true);
+	echo "Error: $error";
 	output_footer();
+	die();
 }
 
 
