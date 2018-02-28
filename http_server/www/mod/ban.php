@@ -3,7 +3,7 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$user_id = find_no_cookie('user_id');
+$user_id = find_no_cookie('user_id', 0);
 $force_ip = find_no_cookie('force_ip');
 $reason = find_no_cookie('reason');
 $ip = get_ip();
@@ -25,8 +25,24 @@ try {
 	// make sure you're a moderator
 	$mod = check_moderator($db);
 	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header('Error');
+	echo "Error: $error";
+	output_footer();
+	die();
+}
+
+try {
+	
 	// output header w/ mod nav
 	output_header('Ban User', true);
+	
+	// rate limiting
+	$mod_id = $mod->user_id;
+	rate_limit('mod-ban-'.$mod_id, 5, 1);
+	rate_limit('mod-ban-'.$mod_id, 30, 5);
 
 	// get the user's name
 	$row = $db->grab_row('user_select', array($user_id));
@@ -71,7 +87,7 @@ try {
 }
 
 catch(Exception $e){
-	output_header("Error");
+	output_header("Ban User", true);
 	echo 'Error: '.$e->getMessage();
 	output_footer();
 }
