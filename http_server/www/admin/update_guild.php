@@ -86,8 +86,8 @@ function update($db) {
 	if($guild_owner !== $owner_id) {
 		$code = 'manual-' . time();
 		$db->call('guild_transfer_insert', array($guild->guild_id, $guild_owner, $owner_id, $code, $ip), 'Could not initiate the owner change.');
-		$change_id = $db->grab('change_id', 'guild_transfer_select_by_code', array($code), 'Could not get the owner change ID.');
-		$db->call('guild_transfer_complete', array($change_id, $ip), 'Could not complete the owner change.');
+		$transfer_id = $db->grab('transfer_id', 'guild_transfer_select_by_code', array($code), 'Could not get the owner change ID.');
+		$db->call('guild_transfer_complete', array($transfer_id, $ip), 'Could not complete the owner change.');
 	}
 	
 	//check to see if the admin is trying to delete the guild emblem
