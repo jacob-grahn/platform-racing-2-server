@@ -22,8 +22,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit("user-list-$table-$ip", 5, 1);
-	rate_limit("user-list-$table-$ip", 30, 5);
+	rate_limit("user-list-$table-$ip", 5, 2);
 	
 	// connect
 	$db = new DB();
@@ -31,8 +30,8 @@ try {
 	// check their login
 	$user_id = token_login($db);
 	
-	// rate limiting
-	rate_limit("user-list-$table-$user_id", 30, 5);
+	// more rate limiting
+	rate_limit("user-list-$table-$user_id", 5, 2);
 	
 	// get the information from the database
 	$result = $db->query("SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens
