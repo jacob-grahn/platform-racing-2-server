@@ -38,7 +38,7 @@ try {
 	$user_id = token_login($db, false);
 	
 	// more rate limiting
-	rate_limit('delete-level-attempt-'.$ip, 10, 1, 'Please wait at least 10 seconds before trying to delete another level.');
+	rate_limit('delete-level-attempt-'.$user_id, 10, 1, 'Please wait at least 10 seconds before trying to delete another level.');
 	rate_limit('delete-level-'.$ip, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 	rate_limit('delete-level-'.$user_id, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 	
