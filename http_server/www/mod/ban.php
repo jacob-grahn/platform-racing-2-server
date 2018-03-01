@@ -16,7 +16,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('mod-ban-'.$ip, 2, 1);
+	rate_limit('mod-ban-'.$ip, 3, 2);
 	
 	// connect
 	$db = new DB();
