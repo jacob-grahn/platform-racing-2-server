@@ -9,8 +9,7 @@ $ip = get_ip();
 try {
 
 	// rate limiting
-	rate_limit('mod-lift-ban-'.$ip, 5, 1);
-	rate_limit('mod-lift-ban-'.$ip, 30, 5);
+	rate_limit('mod-lift-ban-'.$ip, 5, 2);
 	
 	// connect
 	$db = new DB();
@@ -31,11 +30,6 @@ try {
 
 	// output header
 	output_header('Lift Ban', true);
-	
-	// rate limiting
-	$mod_id = $mod->user_id;
-	rate_limit('mod-lift-ban-'.$mod_id, 5, 1);
-	rate_limit('mod-lift-ban-'.$mod_id, 30, 5);
 
 	// get the ban
 	$result = $db->query("SELECT *
@@ -57,8 +51,7 @@ try {
 		throw new Exception('This ban has already been lifted.');
 	}
 
-	// make the visible things
-	
+	// make the visible things...
 	echo "<p>To lift the ban on $banned_name, please enter a reason and hit submit.</p>";
 
 	?>
