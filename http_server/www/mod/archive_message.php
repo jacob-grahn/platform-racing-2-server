@@ -9,8 +9,7 @@ $ip = get_ip();
 try {
 
 	// rate limiting
-	rate_limit('mod-archive-message-'.$ip, 3, 1);
-	rate_limit('mod-archive-message-'.$ip, 15, 3);
+	rate_limit('mod-archive-message-'.$ip, 3, 2);
 
 	// connect
 	$db = new DB();
@@ -28,11 +27,6 @@ catch(Exception $e) {
 }
 
 try {
-	
-	// more rate limiting
-	$mod_id = $mod->user_id;
-	rate_limit('mod-archive-message-'.$mod_id, 3, 1);
-	rate_limit('mod-archive-message-'.$mod_id, 15, 3);
 	
 	// archive the message
 	$result = $db->query("UPDATE messages_reported
