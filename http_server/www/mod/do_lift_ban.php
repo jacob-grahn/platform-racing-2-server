@@ -15,14 +15,8 @@ try {
 		throw new Exception("Invalid request method.");
 	}
 
-	// sanity check: are any values blank?
-	if(is_empty($ban_id, false) || is_empty($reason)) {
-		throw new Exception('Some information is missing.');
-	}
-
 	// rate limiting
-	rate_limit('mod-do-lift-ban-'.$ip, 10, 1);
-	rate_limit('mod-do-lift-ban-'.$ip, 60, 5);
+	rate_limit('mod-do-lift-ban-'.$ip, 5, 2);
 
 	// connect
 	$db = new DB();
@@ -41,16 +35,17 @@ catch(Exception $e) {
 
 try {
 	
+	// sanity check: are any values blank?
+	if(is_empty($ban_id, false) || is_empty($reason)) {
+		throw new Exception('Some information is missing.');
+	}
+	
 	// make some variables
 	$user_id = $mod->user_id;
 	$name = $mod->name;
-	
-	// more rate limiting
-	rate_limit('mod-do-lift-ban-'.$user_id, 10, 1);
-	rate_limit('mod-do-lift-ban-'.$user_id, 60, 5);
 
+	// safety first
 	$safe_name = addslashes($name);
-
 
 	// lift the ban
 	$result = $db->query("UPDATE bans
@@ -80,9 +75,10 @@ try {
 	
 }
 
-catch(Exception $e){
+catch(Exception $e) {
+	$error = $e->getMessage();
 	output_header('Lift Ban', true);
-	echo 'Error: '.$e->getMessage();
+	echo "Error: $error";
 	output_footer();
 }
 
