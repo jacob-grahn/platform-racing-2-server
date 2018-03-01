@@ -5,17 +5,16 @@ header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 require_once('../fns/Encryptor.php');
 
-$level_id = find_no_cookie('courseID', '');
+$level_id = (int) default_val($_GET['courseID'], 0);
 $hash = find_no_cookie('hash', '');
 
 try {
 	
 	// rate limiting
-	rate_limit('level-pass-'.$ip, 3, 1);
-	rate_limit('level-pass-'.$ip, 60, 10);
+	rate_limit('level-pass-'.$ip, 3, 2);
 
 	// sanity
-	if(is_empty($level_id) || is_empty($hash)) {
+	if(is_empty($level_id, false) || is_empty($hash)) {
 		throw new Exception('Invalid input. ' . join(', ', $_GET));
 	}
 
@@ -26,8 +25,7 @@ try {
 	$user_id = token_login($db, false);
 	
 	// more rate limiting
-	rate_limit('level-pass-'.$user_id, 3, 1);
-	rate_limit('level-pass-'.$user_id, 60, 10);
+	rate_limit('level-pass-'.$user_id, 3, 2);
 
 	// check the pass
 	$hash2 = sha1($hash . $LEVEL_PASS_SALT);
