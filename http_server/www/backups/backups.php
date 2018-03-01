@@ -5,12 +5,13 @@ require_once('../../fns/output_fns.php');
 require_once('../../fns/classes/S3.php');
 
 $ip = get_ip();
+$desc = "<p><center>Welcome to PR2's level restore system!<br>You can use this tool to restore any level that was modified or deleted in the past month.</center></p>";
 
 try {
 	
 	// rate limiting
-	rate_limit('level-backups-'.$ip, 5, 1);
-	rate_limit('level-backups-'.$ip, 30, 5);
+	rate_limit('level-backups-'.$ip, 5, 2);
+	rate_limit('level-backups-'.$ip, 30, 10);
 	
 	// connect
 	$db = new DB();
@@ -85,11 +86,13 @@ try {
 		}
 		
 		//success
+		echo $desc;
+		echo '<p>---</p>';
 		echo "<p><b>".htmlspecialchars($title)." v$version</b> restored successfully!</p>";
 	}
 	
 	else {
-		echo "<p>Welcome to PR2's level restore system. You can use this tool to restore any level that was modified or deleted in the past month.</p>";
+		echo $desc;
 	}
 	
 	
