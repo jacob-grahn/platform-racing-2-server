@@ -25,7 +25,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('forgot-password-attempt-'.$ip, 60, 1, 'Please wait at least one minute before submitting another request to recover your account.');
+	rate_limit('forgot-password-attempt-'.$ip, 5, 1);
 
 	// sanity check: is it a valid email address?
 	if(!valid_email($email)){
