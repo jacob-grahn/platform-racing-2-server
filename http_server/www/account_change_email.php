@@ -24,8 +24,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('change-email-attempt-'.$ip, 30, 1, 'Please wait at least 30 seconds before attempting to change the email address on your account again.');
-	rate_limit('change-email-attempt-'.$ip, 300, 5, 'You may only send a maximum of 5 email change requests every 5 minutes. Try again later.');
+	rate_limit('change-email-attempt-'.$ip, 5, 1);
 
 	//--- sanity check
 	if( !isset($encrypted_data) ) {
@@ -45,6 +44,11 @@ try {
 
 	// check their login
 	$user_id = token_login($db, false);
+	
+	// more rate limiting
+	rate_limit('change-email-attempt-'.$user_id, 5, 1);
+	
+	// get user info
 	$user = $db->grab_row('user_select', array($user_id));
 	$user_name = $user->name;
 	$old_email = $user->email;
@@ -64,7 +68,7 @@ try {
 	
 	// sanity check: check for invalid email
 	if (!valid_email($new_email)) {
-		throw new Exception("'$safe_new_email' is not a valid email address.");
+		throw new Exception("\"$safe_new_email\" is not a valid email address.");
 	}
 	
 	// rate limiting
