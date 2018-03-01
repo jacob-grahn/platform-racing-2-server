@@ -17,13 +17,18 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('guild-create-attempt-'.$ip, 30, 1, "Please wait at least 30 seconds before attempting to create a guild again.");
+	rate_limit('guild-create-attempt-'.$ip, 10, 3, "Please wait at least 10 seconds before attempting to create a guild again.");
 	
 	// connect
 	$db = new DB();
 	
 	// check their login
 	$user_id = token_login($db, false);
+	
+	// more rate limiting
+	rate_limit('guild-create-attempt-'.$user_id, 10, 3, "Please wait at least 10 seconds before attempting to create a guild again.");
+	
+	// get user info
 	$account = $db->grab_row( 'user_select_expanded', array($user_id) );
 	
 	// sanity checks
