@@ -13,8 +13,7 @@ $mod_ip = get_ip();
 try {
 
 	// rate limiting
-	rate_limit('mod-reported-messages-'.$mod_ip, 10, 1);
-	rate_limit('mod-reported-messages-'.$mod_ip, 60, 5);
+	rate_limit('mod-reported-messages-'.$mod_ip, 5, 3);
 	
 	//connect
 	$db = new DB();
@@ -35,11 +34,6 @@ try {
 	
 	// output header
 	output_header('Reported Messages', true);
-	
-	// more rate limiting
-	$mod_id = $mod->user_id;
-	rate_limit('mod-reported-messages-'.$mod_id, 10, 1);
-	rate_limit('mod-reported-messages-'.$mod_id, 60, 5);
 
 	// navigation
 	output_pagination($start, $count);
