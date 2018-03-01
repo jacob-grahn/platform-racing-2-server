@@ -50,7 +50,7 @@ try {
 		throw new Exception('Emblem invalid');
 	}
 	if( preg_match( "/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
-		throw new Exception('Guild name invalid; a-z, 0-9, space, and - are the only allowed characters.');
+		throw new Exception('Guild name is invalid. You may only use alphanumeric characters, spaces and hyphens.');
 	}
 	if( strlen(trim($guild_name)) === 0 ) {
 		throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
