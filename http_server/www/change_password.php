@@ -33,7 +33,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('password-change-attempt-'.$ip, 30, 1, 'Please wait at least 30 seconds before trying to change your password again.');
+	rate_limit('password-change-attempt-'.$ip, 5, 1, 'Please wait at least 5 seconds before trying to change your password again.');
 
 	// connect
 	$db = new DB();
