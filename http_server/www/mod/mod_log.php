@@ -11,7 +11,7 @@ $ip = get_ip();
 try {
 
 	// rate limiting
-	rate_limit('mod-action-log-'.$ip, 5, 2);
+	rate_limit('mod-action-log-'.$ip, 5, 3);
 	
 	//connect
 	$db = new DB();
