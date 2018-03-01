@@ -48,7 +48,7 @@ try {
 	}
 	
 	// protect the db
-	$safe_email = mysqli_real_escape_string($email);
+	$safe_email = addslashes($email);
 
 	// if there's an email set, let's get data from the db
 	$result = $db->query("SELECT power, name, active_date
@@ -62,10 +62,10 @@ try {
 	}
 	
 	// protect the user
-	$safe_email = htmlspecialchars($email);
+	$disp_email = htmlspecialchars($email);
   
 	// show the search form
-	output_search($safe_email);
+	output_search($disp_email);
 	
 	// only gonna get here if there were results
 	while ($row = $result->fetch_object()) {
