@@ -21,8 +21,8 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('emblem-upload-attempt-'.$ip, 60, 1, "Please wait at least one minute before trying to upload a guild emblem again.");
-	rate_limit('emblem-upload-attempt-'.$ip, 3600, 10, "You can attempt a maximum of 10 guild emblem uploads per hour. Try again later.");
+	rate_limit('emblem-upload-attempt-'.$ip, 15, 1, "Please wait at least 15 seconds before trying to upload a guild emblem again.");
+	rate_limit('emblem-upload-attempt-'.$ip, 900, 10, "Please wait at least 15 minutes before trying to upload a guild emblem again.");
 	
 	$image = file_get_contents("php://input");
 	$image_rendered = imagecreatefromstring($image);
@@ -35,6 +35,12 @@ try {
 	
 	// check their login
 	$user_id = token_login($db, false);
+	
+	// more rate limiting
+	rate_limit('emblem-upload-attempt-'.$user_id, 15, 1, "Please wait at least 15 seconds before trying to upload a guild emblem again.");
+	rate_limit('emblem-upload-attempt-'.$user_id, 900, 10, "Please wait at least 15 minutes before trying to upload a guild emblem again.");
+	
+	// get user info
 	$account = $db->grab_row( 'user_select_expanded', array($user_id) );
 	
 	// sanity checks
