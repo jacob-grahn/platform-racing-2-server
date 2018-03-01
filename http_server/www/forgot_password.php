@@ -7,8 +7,8 @@ require_once('../fns/to_hash.php');
 
 $name = $_POST['name'];
 $email = $_POST['email'];
-$safe_name = mysqli_real_escape_string($name);
-$safe_email = mysqli_real_escape_string($email);
+$safe_name = addslashes($name);
+$safe_email = addslashes($email);
 $ip = get_ip();
 
 try {
@@ -21,7 +21,7 @@ try {
 	// check referrer
 	$ref = check_ref();
 	if ($ref !== true) {
-		throw new Exception("It looks like you\'re using PR2 from a third-party website. For security reasons, you may only request a new password from an approved site such as pr2hub.com.");
+		throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only request a new password from an approved site such as pr2hub.com.");
 	}
 	
 	// rate limiting
@@ -70,7 +70,7 @@ try {
 	// give them a new pass
 	$pass = random_str(12);
 	$pass_hash = to_hash($pass);
-	$safe_pass_hash = mysqli_real_escape_string($pass_hash);
+	$safe_pass_hash = addslashes($pass_hash);
 
 	$result = $db->query("UPDATE users
 									SET temp_pass_hash = '$safe_pass_hash'

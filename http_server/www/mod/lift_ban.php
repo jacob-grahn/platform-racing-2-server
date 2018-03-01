@@ -4,8 +4,6 @@ require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
 $ban_id = (int) default_val($_GET['ban_id'], 0);
-$safe_ban_id = mysqli_real_escape_string($ban_id);
-
 $ip = get_ip();
 
 try {
@@ -42,7 +40,7 @@ try {
 	// get the ban
 	$result = $db->query("SELECT *
 								 	FROM bans
-									WHERE ban_id = '$safe_ban_id'
+									WHERE ban_id = '$ban_id'
 									LIMIT 0, 1");
 	if(!$result){
 		throw new Exception("Could not get the ban's data from the database.");

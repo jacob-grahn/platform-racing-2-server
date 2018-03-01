@@ -4,7 +4,7 @@ require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
 $action = default_val($_GET['action'], 'none');
-$ban_id = default_val($_GET['ban_id'], 0);
+$ban_id = (int) default_val($_GET['ban_id'], 0);
 $ip = get_ip();
 
 try {
@@ -25,7 +25,7 @@ try {
 	$mod = check_moderator($db);
 	$user_id = $mod->user_id;
 	$name = $mod->name;
-	$safe_name = mysqli_real_escape_string($name);
+	$safe_name = addslashes($name);
 	
 	
 	// ------------------------------------------------------------------

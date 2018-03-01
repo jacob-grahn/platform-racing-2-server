@@ -12,9 +12,7 @@ $new_pass = $_POST['new_pass'];
 $ip = get_ip();
 
 // safety first
-$safe_name = mysqli_real_escape_string($name);
-$safe_old_pass = mysqli_real_escape_string($old_pass);
-$safe_new_pass = mysqli_real_escape_string($new_pass);
+$safe_name = addslashes($name);
 
 try {
 	
@@ -51,7 +49,7 @@ try {
 	
 	// change their pass
 	$pass_hash = to_hash($new_pass);
-	$safe_pass_hash = mysqli_real_escape_string($pass_hash);
+	$safe_pass_hash = addslashes($pass_hash);
 	$result = $db->query("UPDATE users
 						SET pass_hash = '$safe_pass_hash'
 						WHERE name = '$safe_name'");

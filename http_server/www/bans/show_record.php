@@ -4,7 +4,7 @@ require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
 $ban_id = (int) $_GET['ban_id'];
-$safe_ban_id = mysqli_real_escape_string($ban_id);
+$safe_ban_id = addslashes($ban_id);
 $ip = get_ip();
 
 try {

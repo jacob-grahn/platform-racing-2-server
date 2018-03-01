@@ -3,20 +3,16 @@
 header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
-$level_id = $_POST['level_id'];
-$new_rating = $_POST['rating'];
+$level_id = (int) $_POST['level_id'];
+$new_rating = (int) $_POST['rating'];
 
-$level_id = mysqli_real_escape_string($level_id);
-
-$time = time();
+$time = (int) time();
 $old_weight = 0;
 $weight = 1;
 $old_rating = 0;
 
 $ip = get_ip();
-
-$safe_ip = mysqli_real_escape_string($ip);
-$safe_new_rating = mysqli_real_escape_string($new_rating);
+$safe_ip = addslashes($ip);
 
 try {
 	
@@ -106,7 +102,7 @@ try {
 	// if they haven't voted
 	else{
 		$result = $db->query("INSERT into pr2_ratings
-										SET rating = '$safe_new_rating',
+										SET rating = '$new_rating',
 											user_id = '$user_id',
 											level_id = '$level_id',
 											weight = '$weight',

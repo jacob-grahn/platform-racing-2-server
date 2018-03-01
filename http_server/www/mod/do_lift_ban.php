@@ -3,10 +3,9 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$ban_id = default_val($_POST['ban_id'], 0);
+$ban_id = (int) default_val($_POST['ban_id'], 0);
 $reason = default_val($_POST['reason'], 'They bribed me with skittles!');
-$safe_ban_id = mysqli_real_escape_string($ban_id);
-$safe_reason = mysqli_real_escape_string($reason . ' @' . date('M j, Y g:i A'));
+$safe_reason = addslashes($reason . ' @' . date('M j, Y g:i A'));
 $ip = get_ip();
 
 try {
@@ -50,7 +49,7 @@ try {
 	rate_limit('mod-do-lift-ban-'.$user_id, 10, 1);
 	rate_limit('mod-do-lift-ban-'.$user_id, 60, 5);
 
-	$safe_name = mysqli_real_escape_string($name);
+	$safe_name = addslashes($name);
 
 
 	// lift the ban
@@ -58,7 +57,7 @@ try {
 									SET lifted = '1',
 										lifted_by = '$safe_name',
 										lifted_reason = '$safe_reason'
-									WHERE ban_id = '$safe_ban_id'
+									WHERE ban_id = '$ban_id'
 									LIMIT 1");
 	if(!$result){
 		throw new Exception('Could not lift ban.');

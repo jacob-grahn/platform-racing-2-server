@@ -3,13 +3,8 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$archive = default_val($_GET['archive'], 0);
-$start = default_val($_GET['start'], 0);
-$count = default_val($_GET['count'], 25);
-
-$safe_archive = mysqli_real_escape_string($archive);
-$safe_start = mysqli_real_escape_string($start);
-$safe_count = mysqli_real_escape_string($count);
+$start = (int) default_val($_GET['start'], 0);
+$count = (int) default_val($_GET['count'], 25);
 
 $next_form_id = 1;
 $mod_ip = get_ip();
@@ -57,7 +52,7 @@ try {
 									WHERE to_user_id = u2.user_id
 									AND from_user_id = u1.user_id
 									ORDER by reported_time desc
-									LIMIT $safe_start, $safe_count");
+									LIMIT $start, $count");
 	if(!$result){
 		throw new Exception('Could not retrieve the list of reported messages.');
 	}
