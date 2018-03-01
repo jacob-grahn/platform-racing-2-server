@@ -8,7 +8,7 @@ $ip = get_ip();
 try {
 
 	// rate limiting
-	rate_limit('rand_levels-'.$ip, 30, 1, "Please wait at least 30 seconds before generating another random level.");
+	rate_limit('random-level-'.$ip, 10, 1, "Please wait at least 10 seconds before generating another random level.");
 	
 	// connect
 	$db = new DB();
