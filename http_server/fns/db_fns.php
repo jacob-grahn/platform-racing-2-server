@@ -19,6 +19,17 @@ function pr2_connect() {
 	return $mysqli;
 }
 
+function pdo_connect () {
+	try {
+	    global $DB_ADDRESS, $DB_USER, $DB_PASS, $DB_NAME, $DB_PORT;
+	    $dbh = new PDO("mysql:host=$DB_ADDRESS;port=$DB_PORT;dbname=$DB_NAME", $DB_USER, $DB_PASS);
+        return $dbh;
+    } catch (PDOException $e) {
+        // throw a custom error to make sure an error containing db info is not shown
+        throw new Exception('Could not connect to the database.');
+    }
+}
+
 function fah_connect() {
 	global $DB_ADDRESS, $DB_FAH_USER, $DB_FAH_PASS, $DB_FAH_NAME, $DB_PORT;
 	$mysqli = new mysqli($DB_ADDRESS, $DB_FAH_USER, $DB_FAH_PASS, $DB_FAH_NAME, $DB_PORT);
