@@ -10,7 +10,7 @@ $ip = get_ip();
 try {
 	
 	// rate limiting
-	rate_limit('get-levels-'.$ip, 15, 1, "Please wait at least 15 seconds before loading your levels again.");
+	rate_limit('get-levels-'.$ip, 3, 2);
 	
 	// connect
 	$db = new DB();
@@ -19,7 +19,7 @@ try {
 	$user_id = token_login($db);
 	
 	// more rate limiting
-	rate_limit('get-levels-'.$user_id, 15, 1, "Please wait at least 15 seconds before loading your levels again.");
+	rate_limit('get-levels-'.$user_id, 3, 2);
 	
 	// get levels
 	$result = $db->call('levels_select_by_owner', array($user_id));
