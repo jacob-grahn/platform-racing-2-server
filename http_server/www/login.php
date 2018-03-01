@@ -1,11 +1,13 @@
 <?php
 
+header("Content-type: text/plain");
+
 require_once( '../fns/all_fns.php' );
 require_once( '../fns/Encryptor.php' );
 
 $encrypted_login = $_POST['i'];
 $version = $_POST['version'];
-$in_token = $_POST['token'];
+$in_token = find('token');
 
 $allowed_versions = array('24-dec-2013-v1');
 $guest_login = false;
@@ -46,8 +48,8 @@ try {
 
 
 	// rate limiting
-	rate_limit('login-'.$ip, 10, 2, 'Please wait at least 10 seconds before trying to log in again.');
-	rate_limit('login-'.$ip, 60, 5, 'Only 5 logins per minute per IP are accepted.');
+	rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
+	rate_limit('login-'.$ip, 60, 10, 'Only 10 logins per minute per IP are accepted.');
 
 
 	//--- decrypt login data
@@ -360,10 +362,10 @@ Thanks for playing, I hope you enjoy.
 	$reply->emblem = $emblem;
 	$reply->userId = $user_id;
 	
-	// debugging
-	if ($user_name == 'bls') {
-		$reply->domain = $origination_domain;
-		$reply->message = "This is a test message! If you can see this, what you're trying to accomplish might just be possible. Hooray!";
+	// allowed domain check
+	$ref = check_ref();
+	if ($ref !== true) {
+		$reply->message = "It looks like you're using PR2 from a third-party website. For security reasons, some game features may be disabled. To access a version of the game with all features available to you, play from an approved site such as pr2hub.com.";
 	}
 	
 	echo json_encode( $reply );
