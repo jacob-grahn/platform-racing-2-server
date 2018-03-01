@@ -37,7 +37,7 @@ try {
 	$user_id = token_login($db, false);
 	
 	// rate limiting
-	rate_limit('submit-rating-'.$user_id, 5, 1);
+	rate_limit('submit-rating-'.$user_id, 5, 2);
 
 	// see if they made this level
 	$result = $db->query("SELECT level_id
