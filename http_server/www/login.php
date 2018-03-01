@@ -5,7 +5,7 @@ require_once( '../fns/Encryptor.php' );
 
 $encrypted_login = $_POST['i'];
 $version = $_POST['version'];
-$in_token = $_POST['token'];
+$in_token = $_COOKIE['token'];
 
 $allowed_versions = array('24-dec-2013-v1');
 $guest_login = false;
