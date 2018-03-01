@@ -9,7 +9,7 @@ $ip = get_ip();
 try {
 
 	// rate limiting
-	rate_limit('mod-player-search-'.$ip, 3, 2);
+	rate_limit('mod-player-search-'.$ip, 5, 3);
 	
 	// connect
 	$db = new DB();
