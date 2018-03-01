@@ -14,14 +14,16 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('message-delete'.$ip, 5, 1, "Please wait at least 5 seconds before trying to delete another PM.");
-	rate_limit('message-delete-'.$ip, 120, 20);
+	rate_limit('message-delete'.$ip, 5, 2, "Please wait at least 5 seconds before trying to delete another PM.");
 	
 	// connect
 	$db = new DB();
 	
 	// check their login
 	$user_id = token_login($db);
+	
+	// more rate limiting
+	rate_limit('message-delete'.$user_id, 5, 2, "Please wait at least 5 seconds before trying to delete another PM.");
 	
 	// delete the message from the database
 	$db->call('message_delete', array($user_id, $message_id));
