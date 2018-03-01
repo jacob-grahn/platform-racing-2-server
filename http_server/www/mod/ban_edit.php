@@ -3,9 +3,29 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
-$action = default_val($_GET['action'], 'none');
+$action = find('action', 'none');
 $ban_id = (int) default_val($_GET['ban_id'], 0);
 $ip = get_ip();
+
+try {
+	
+	// rate limiting
+	rate_limit('mod-ban-edit-'.$ip, 3, 2);
+
+	//connect
+	$db = new DB();
+
+	//make sure you're a moderator
+	$mod = check_moderator($db);
+	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header('Error');
+	echo "Error: $error";
+	output_footer();
+	die();
+}
 
 try {
 	
@@ -13,15 +33,8 @@ try {
 	if(is_empty($ban_id, false)) {
 		throw new Exception('No ban ID specified.');
 	}
-	
-	// rate limiting
-	rate_limit('mod-ban-edit-'.$ip, 2, 1);
 
-	//connect
-	$db = new DB();
-
-	//make sure you're a moderator
-	$mod = check_moderator($db);
+	// get mod info
 	$user_id = $mod->user_id;
 	$name = $mod->name;
 	$safe_name = addslashes($name);
@@ -30,7 +43,7 @@ try {
 	// ------------------------------------------------------------------
 	// --- edit an existing ban, then redirect to that ban listing
 	// ------------------------------------------------------------------
-	if($action === 'edit') {
+	if($action === 'edit' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 	
 		$safe_ban_id = $db->escape($ban_id);
 		$safe_account_ban = $db->escape(0+!!find('account_ban'));
@@ -83,8 +96,9 @@ try {
 }
 
 catch(Exception $e){
-	output_header('Error');
-	echo 'Error: '.$e->getMessage();
+	$error = $e->getMessage();
+	output_header('Edit Ban', true);
+	echo "Error: $error";
 	output_footer();
 }
 
@@ -95,7 +109,7 @@ function output_form($ban) {
 	$acc_checked = check_value($ban->account_ban, 1, 'checked="checked"', '');
 
 	echo "
-	<form>
+	<form method='post'>
 	<input type='hidden' value='edit' name='action'>
 	<input type='hidden' value='$ban->ban_id' name='ban_id'>
 	<p>Expire Date <input type='text' value='$ban->expire_datetime' name='expire_time'></p>
