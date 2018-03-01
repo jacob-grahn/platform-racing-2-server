@@ -250,6 +250,11 @@ class Player {
 		$admin_id = $this->user_id;
 		$ip = $this->ip;
 		
+		// sanity check: is the message more than 100 characters?
+		if(strlen($chat_message) > 100) {
+			$chat_message = substr($chat_message, 0, 100);
+		}
+		
 		// find what room the player is in
 		if(isset($this->chat_room) && !isset($this->game_room)) {
 			$room_type = "c"; // c for chat
@@ -269,8 +274,10 @@ class Player {
 		}
 
 		//special text emotes
-		$chat_message = str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
-		$chat_message = str_replace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
+		if ($room_type == 'c') {
+			$chat_message = str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
+			$chat_message = str_replace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
+		}
 
 		// html killer for systemChat
 		$safe_chat_message = htmlspecialchars($chat_message);
@@ -445,7 +452,7 @@ class Player {
 			// debug command for admins
 			else if (($chat_message == '/debug' || strpos($chat_message, '/debug ') === 0) && $this->group >= 3) {
 				$is_ps = 'no';
-				if ($guild_id !== 0) {
+				if ($guild_id != '0') {
 					$is_ps = 'yes';
 				}
 				
