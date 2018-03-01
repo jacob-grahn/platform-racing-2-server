@@ -9,7 +9,7 @@ $ip = get_ip();
 try {
 	
 	// rate limiting
-	rate_limit('guild-delete-'.$ip, 5, 1);
+	rate_limit('guild-delete-'.$ip, 5, 2);
 	
 	// connect to the db
 	$db = new DB();
@@ -21,7 +21,7 @@ try {
 	$ip = $mod->ip;
 	
 	// more rate limiting
-	rate_limit('guild-delete-'.$mod_id, 5, 1);
+	rate_limit('guild-delete-'.$mod_id, 5, 2);
 	
 	// check if the guild exists and make some rad variables
 	$guild = $db->grab_row('guild_select', array($guild_id), 'Could not find a guild with that id.');

@@ -9,8 +9,7 @@ $ip = get_ip();
 try {
 
 	// rate limiting
-	rate_limit('mod-player-search-'.$ip, 5, 1);
-	rate_limit('mod-player-search-'.$ip, 30, 5);
+	rate_limit('mod-player-search-'.$ip, 5, 3);
 	
 	// connect
 	$db = new DB();
@@ -31,11 +30,6 @@ try {
 	
 	// header
 	output_header('Player Search', true);
-	
-	// rate limiting
-	$mod_id = $mod->user_id;
-	rate_limit('mod-player-search-'.$mod_id, 5, 1);
-	rate_limit('mod-player-search-'.$mod_id, 30, 5);
 
 	// error message
 	if(!is_empty($message)) {
@@ -48,6 +42,9 @@ try {
 		<input type="submit" value="Search" />
 	</form>
 	<?php
+	
+	// footer
+	output_footer();
 
 }
 

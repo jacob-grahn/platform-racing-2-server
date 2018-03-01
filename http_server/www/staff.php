@@ -10,7 +10,7 @@ output_header('PR2 Staff Team');
 try {
 	
 	// rate limiting
-	rate_limit('gui-staff-list-'.$ip, 10, 1, 'Please wait at least 10 seconds before refreshing the page again.');
+	rate_limit('gui-staff-list-'.$ip, 5, 2, 'Please wait at least 10 seconds before refreshing the page again.');
 	
 	// connect
 	$db = new DB();

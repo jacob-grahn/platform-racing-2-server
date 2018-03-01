@@ -3,27 +3,40 @@
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
 
+$start = (int) default_val($_GET['start'], 0);
+$count = (int) default_val($_GET['count'], 100);
 $ip = get_ip();
 
 try {
 	
 	// rate limiting
-	rate_limit('list-bans-'.$ip, 10, 1);
-	rate_limit('list-bans-'.$ip, 60, 5);
+	rate_limit('list-bans-'.$ip, 5, 3);
 
 	// connect
 	$db = new DB();
 	
+	// header, also check if mod and output the mod links if so
+	$is_mod = is_moderator($db, false);
+	output_header('Ban Log', $is_mod);
+	
+	// navigation
+	output_pagination($start, $count);
+	echo('<p>---</p>');
+	
+	if ($is_mod === false) {
+		rate_limit('list-bans-'.$ip, 60, 10);
+		if ($count - $start > 100) {
+			$count = $start + 100;
+		}
+	}
+	
 	$result = $db->query('SELECT *
 									FROM bans
 									ORDER BY time DESC
-									LIMIT 0, 100');
+									LIMIT $start, $count');
 	if(!$result){
 		throw new Exception('Could not retrieve the ban list.');
 	}
-
-	$is_mod = is_moderator($db, false);
-	output_header('Ban Log', $is_mod);
 }
 catch(Exception $e){
 	echo 'Error: '.$e->getMessage();
@@ -75,6 +88,25 @@ while($row = $result->fetch_assoc()){
 //end_page($out);
 echo $out;
 
+echo('<p>---</p>');
+output_pagination($start, $count);
+
 output_footer();
+
+function output_pagination($start, $count) {
+	$next_start_num = $start + $count;
+	$last_start_num = $start - $count;
+	if($last_start_num < 0) {
+		$last_start_num = 0;
+	}
+	echo('<p>');
+	if($start > 0) {
+		echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");
+	}
+	else {
+		echo('<- Last |');
+	}
+	echo(" <a href='?start=$next_start_num&count=$count'>Next -></a></p>");
+}
 
 ?>

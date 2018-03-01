@@ -9,7 +9,7 @@ $ip = get_ip();
 try {
 
 	// rate limit
-	rate_limit('gui-guild-transfer-connect-'.$ip, 5, 1, 'Please wait at least 5 seconds before trying to reload this page.');
+	rate_limit('gui-guild-transfer-connect-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to reload this page.');
 	
 	// what is the user trying to do
 	if (is_empty($_POST['action'])) {
@@ -107,7 +107,7 @@ function start_transfer($db, $old_name, $guild) {
 	$ip = get_ip();
 	
 	// rate limiting
-	rate_limit('gui-guild-transfer-'.$ip, 60, 1, 'Please wait at least one minute before attempting to transfer your guild again.');
+	rate_limit('gui-guild-transfer-'.$ip, 10, 1, 'Please wait at least 10 seconds before attempting to transfer your guild again.');
 	
 	// receive variables from post
 	$email = $_POST['email'];

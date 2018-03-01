@@ -30,15 +30,15 @@ try {
 	// check their login
 	$user_id = token_login($db);
 	
+	// more rate limiting
+	if ($user_id != 1) {
+		rate_limit( 'place-artifact-'.$ip, 3600, 10, "The artifact can only be placed a maximum of 10 times per hour. Try again later." );
+		rate_limit( 'place-artifact-'.$user_id, 3600, 10, "The artifact can only be placed a maximum of 10 times per hour. Try again later." );
+	}
+	
 	// sanity check: are they Fred?
 	if( $user_id != 1 && $user_id != 4291976 ) {
 		throw new Exception( 'You are not Fred.' );
-	}
-	
-	// more rate limiting
-	rate_limit( 'place-artifact-'.$ip, 3600, 5, "The artifact can only be placed a maximum of 5 times per hour. Try again later." );
-	if ($user_id != 1) {
-		rate_limit( 'place-artifact-'.$user_id, 3600, 5, "The artifact can only be placed a maximum of 5 times per hour. Try again later." );
 	}
 	
 	// update the artifact location in the database

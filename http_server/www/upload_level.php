@@ -1,5 +1,7 @@
 <?php
 
+header("Content-type: text/plain");
+
 require_once('../fns/all_fns.php');
 require_once('../fns/classes/S3.php');
 require_once('../fns/pr2_fns.php');
@@ -7,39 +9,47 @@ require_once('../fns/pr2_fns.php');
 $title = $_POST['title'];
 $note = $_POST['note'];
 $data = $_POST['data'];
-$live = $_POST['live'];
-$min_level = $_POST['min_level'];
+$live = (int) $_POST['live'];
+$min_level = (int) $_POST['min_level'];
 $song = (int) $_POST['song'];
 $gravity = $_POST['gravity'];
-$max_time = $_POST['max_time'];
+$max_time = (int) $_POST['max_time'];
 $items = $_POST['items'];
 $remote_hash = $_POST['hash'];
-$pass_hash = find('passHash', '');
-$has_pass = find('hasPass', 0);
+$pass_hash = default_val($_POST['passHash'], '');
+$has_pass = (int) default_val($_POST['hasPass'], 0);
 $game_mode = find('gameMode', 'race');
-$cowboy_chance = find('cowboyChance', '5');
+$cowboy_chance = (int) default_val($_POST['cowboyChance'], 5);
 
 $time = time();
 $ip = get_ip();
 
 
 try {
-
-
-	//connect to the db
-	$db = new DB();
-	$s3 = s3_connect();
-
-
-	//check thier login
-	$user_id = token_login($db, false);
-	$user_name = id_to_name($db, $user_id);
-
-
-	//sanity check
+	
+	// post check
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		throw new Exception("Invalid request method.");
+	}
+	
+	// sanity check
 	if($live == 1 && (is_obsene($title) || is_obsene($note))){
 		throw new Exception('Could not publish level. Check the title and note for obscenities.');
 	}
+
+	// rate limiting
+	rate_limit('upload-level-attempt-'.$ip, 10, 3, "Please wait at least 10 seconds before trying to save again.");
+
+	// connect to the db
+	$db = new DB();
+	$s3 = s3_connect();
+
+	// check their login
+	$user_id = token_login($db, false);
+	$user_name = id_to_name($db, $user_id);
+	
+	// more rate limiting
+	rate_limit('upload-level-attempt-'.$user_id, 10, 3, "Please wait at least 10 seconds before trying to save again.");
 
 	// ensure the level survived the upload without data curruption
 	$local_hash = md5($title . strtolower($user_name) . $data . $LEVEL_SALT);
@@ -163,7 +173,8 @@ try {
 }
 
 catch(Exception $e){
-	echo 'error='.$e->getMessage();
+	$error = $e->getMessage();
+	echo "error=$error";
 }
 
 ?>

@@ -13,8 +13,7 @@ $ip = get_ip();
 try {
 	
 	// rate limiting
-	rate_limit('guild-info-'.$ip, 5, 1);
-	rate_limit('guild-info'.$ip, 60, 10);
+	rate_limit('guild-info-'.$ip, 3, 2);
 	
 	
 	// connect

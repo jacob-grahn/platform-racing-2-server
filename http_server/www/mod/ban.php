@@ -16,8 +16,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('mod-ban-'.$ip, 5, 1);
-	rate_limit('mod-ban-'.$ip, 30, 5);
+	rate_limit('mod-ban-'.$ip, 3, 2);
 	
 	// connect
 	$db = new DB();
@@ -38,11 +37,6 @@ try {
 	
 	// output header w/ mod nav
 	output_header('Ban User', true);
-	
-	// rate limiting
-	$mod_id = $mod->user_id;
-	rate_limit('mod-ban-'.$mod_id, 5, 1);
-	rate_limit('mod-ban-'.$mod_id, 30, 5);
 
 	// get the user's name
 	$row = $db->grab_row('user_select', array($user_id));

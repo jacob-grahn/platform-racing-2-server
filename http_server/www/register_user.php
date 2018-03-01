@@ -23,7 +23,7 @@ try {
 	}
 	
 	// rate limiting (check if the IP address is spamming)
-	rate_limit('register-account-attempt-'.$ip, 60, 1, 'Please wait at least one minute before trying to create another account.');
+	rate_limit('register-account-attempt-'.$ip, 10, 2, 'Please wait at least 10 seconds before trying to create another account.');
 
 	// error check
 	if(empty($name) || !is_string($password) || $password == ''){
@@ -42,7 +42,7 @@ try {
 		throw new Exception("'$email' is not a valid email address.");
 	}
 	if(is_obsene($name)){
-		throw new Exception('Do try to think of a different name.');
+		throw new Exception('Keep your username clean, pretty please!');
 	}
 	$test_name = preg_replace("/[^a-zA-Z0-9-.:;=?~! ]/", "", $name);
 	if($test_name != $name){
@@ -62,7 +62,7 @@ try {
 	}
 	
 	// more rate limiting (check if too many accounts have been made from this ip today)
-	rate_limit( 'register-account-'.$ip, 60, 5, 'You may create a maximum of five accounts from the same IP address per day.' );
+	rate_limit('register-account-'.$ip, 86400, 5, 'You may create a maximum of five accounts from the same IP address per day.');
 
 	// everything looks good, so register the user
 	$pass_hash = to_hash($password);
@@ -78,23 +78,6 @@ catch(Exception $e){
 	$ret->error = $e->getMessage();
 	echo json_encode( $ret );
 }
-
-/* OLD RATE LIMITING CODE (remove if not needed and new code works):
-
-	//check if this ip address is spamming
-	$min_time = $time - 60;
-	$register_attempts = $db->grab('register_attempts', 'users_new_select_register_attempts', array($ip, $min_time));
-	if($register_attempts >= 1) {
-		throw new Exception('Please wait at least 60 seconds before trying to create another account.');
-	}
-	//check if too many accounts have been made from this ip today
-	$min_time = $time - (60*60*24);
-	$register_attempts = $db->grab('register_attempts', 'users_new_select_register_attempts', array($ip, $min_time));
-	if($register_attempts >= 5) {
-		throw new Exception('A maximum of five accounts can be created from the same ip address per day.');
-	}
-	
-*/
 
 
 ?>

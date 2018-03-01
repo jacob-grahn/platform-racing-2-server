@@ -22,7 +22,7 @@ try {
 	}
 	
 	// rate limit
-	rate_limit('guildMessage-attempt-'.$ip, 60, 1, "Please wait at least one minute before trying to message your guild again.");
+	rate_limit('guildMessage-attempt-'.$ip, 15, 1, "Please wait at least 15 seconds before trying to message your guild again.");
 	
 	// connect
 	$db = new DB();
@@ -37,7 +37,7 @@ try {
 	}
 	
 	// confirm that there's a message
-	if($message === NULL) {
+	if(is_empty($message)) {
 		throw new Exception('You must enter a valid message.');
 	}
 	

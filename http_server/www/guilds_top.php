@@ -11,8 +11,7 @@ $ip = get_ip();
 try {
 	
 	// rate limiting
-	rate_limit('guilds-top-'.$ip, 5, 1);
-	rate_limit('guilds-top-'.$ip, 60, 10);
+	rate_limit('guilds-top-'.$ip, 5, 3);
 	
 	//--- connect to the db
 	$db = new DB();

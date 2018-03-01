@@ -17,17 +17,22 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('guild-edit-attempt-'.$ip, 15, 1, "Please wait at least 15 seconds before editing your guild again.");
+	rate_limit('guild-edit-attempt-'.$ip, 10, 3, "Please wait at least 10 seconds before editing your guild again.");
 	
-	//--- connect to the db
+	// connect to the db
 	$db = new DB();
 	
-	//--- check their login
+	// check their login
 	$user_id = token_login($db, false);
+	
+	// more rate limiting
+	rate_limit('guild-edit-attempt-'.$user_id, 10, 3, "Please wait at least 10 seconds before editing your guild again.");
+	
+	// get account and guild info
 	$account = $db->grab_row( 'user_select_expanded', array( $user_id ) );
 	$guild = $db->grab_row( 'guild_select', array( $account->guild ) );
 	
-	//--- sanity check
+	// sanity checks
 	if( $account->power <= 0 ) {
 		throw new Exception( 'Guests cannot edit guilds.' );
 	}
@@ -56,11 +61,11 @@ try {
 		throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
 	}
 	
-	//--- edit guild in db
+	// edit guild in db
 	$db->call( 'guild_update', array( $guild->guild_id, $guild_name, $emblem, $note, $guild->owner_id ), 'A guild already exists with that name.' );
 	
 	
-	//--- tell it to the world
+	// tell it to the world
 	$reply = new stdClass();
 	$reply->success = true;
 	$reply->message = 'Guild edited successfully!';

@@ -11,8 +11,7 @@ $ip = get_ip();
 try {
 
 	// rate limiting
-	rate_limit('mod-action-log-'.$ip, 10, 1);
-	rate_limit('mod-action-log-'.$ip, 30, 2);
+	rate_limit('mod-action-log-'.$ip, 5, 3);
 	
 	//connect
 	$db = new DB();
@@ -30,11 +29,6 @@ catch(Exception $e) {
 }
 
 try {
-	
-	// rate limiting
-	$mod_id = $mod->user_id;
-	rate_limit('mod-action-log-'.$mod_id, 10, 1);
-	rate_limit('mod-action-log-'.$mod_id, 30, 2);
 
 	// get actions for this page
 	$actions = $db->call('mod_actions_select', array($start, $count));

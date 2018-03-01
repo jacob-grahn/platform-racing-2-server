@@ -12,8 +12,7 @@ $ip = get_ip();
 try {
 	
 	// rate limit
-	rate_limit('get-player-info-2-'.$ip, 3, 1);
-	rate_limit('get-player-info-2-'.$ip, 60, 10);
+	rate_limit('get-player-info-2-'.$ip, 3, 2);
 
 	// connect
 	$db = new DB();
@@ -21,8 +20,7 @@ try {
 	// check their login
 	try {
 		$user_id = token_login($db);
-		rate_limit('get-player-info-2-'.$user_id, 3, 1);
-		rate_limit('get-player-info-2-'.$user_id, 60, 10);
+		rate_limit('get-player-info-2-'.$user_id, 3, 2);
 	}
 	catch(Exception $e) {
 		$friend = 0;

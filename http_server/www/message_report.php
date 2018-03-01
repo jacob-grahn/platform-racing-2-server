@@ -17,7 +17,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('message-report-'.$ip, 5, 1, "Please wait at least 5 seconds before trying to report another PM.");
+	rate_limit('message-report-'.$ip, 5, 2, "Please wait at least 5 seconds before trying to report another PM.");
 	rate_limit('message-report-'.$ip, 60, 5);
 	
 	// connect
@@ -27,6 +27,7 @@ try {
 	$user_id = token_login($db, false);
 	
 	// more rate limiting
+	rate_limit('message-report-'.$user_id, 5, 2, "Please wait at least 5 seconds before trying to report another PM.");
 	rate_limit('message-report-'.$user_id, 60, 5);
 	
 	// make sure the message isn't already reported

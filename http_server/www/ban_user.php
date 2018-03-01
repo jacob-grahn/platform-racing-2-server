@@ -51,10 +51,6 @@ try {
 	$mod_user_name = $mod->name;
 	$mod_power = 2;
 	
-	// more rate limiting
-	rate_limit('ban-'.$mod_user_id, 5, 1);
-	
-	
 	// limit ban length
 	if($duration > $mod->max_ban) {
 		$duration = $mod->max_ban;

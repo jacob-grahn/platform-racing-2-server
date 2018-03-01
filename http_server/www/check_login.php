@@ -8,7 +8,7 @@ $ip = get_ip();
 try {
 	
 	// rate limiting
-	rate_limit('check-login-'.$ip, 15, 1);
+	rate_limit('check-login-'.$ip, 10, 1);
 	
 	// connect to the db
 	$db = new DB();

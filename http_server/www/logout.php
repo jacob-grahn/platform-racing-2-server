@@ -8,7 +8,7 @@ $ip = get_ip();
 try {
 	
 	// rate limiting
-	rate_limit('logout-'.$ip, 10, 2, 'Please wait at least 10 seconds before attempting to log out again.');
+	rate_limit('logout-'.$ip, 5, 2, 'Please wait at least 5 seconds before attempting to log out again.');
 	rate_limit('logout-'.$ip, 60, 10, 'Only 10 logout requests per minute per IP are accepted.');
 	
 	if(isset($_COOKIE['token'])) {
