@@ -28,7 +28,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('delete-level-attempt-'.$ip, 30, 1, 'Please wait at least 30 seconds before trying to delete another level.');
+	rate_limit('delete-level-attempt-'.$ip, 10, 1, 'Please wait at least 10 seconds before trying to delete another level.');
 	
 	//connect
 	$db = new DB();
@@ -38,17 +38,18 @@ try {
 	$user_id = token_login($db, false);
 	
 	// more rate limiting
+	rate_limit('delete-level-attempt-'.$ip, 10, 1, 'Please wait at least 10 seconds before trying to delete another level.');
 	rate_limit('delete-level-'.$ip, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 	rate_limit('delete-level-'.$user_id, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 	
-	//save this file to the backup system
+	// save this file to the backup system
 	$row = $db->grab_row('levels_select_one', array($level_id, $user_id));
 	backup_level($db, $s3, $user_id, $level_id, $row->version, $row->title, $row->live, $row->rating, $row->votes, $row->note, $row->min_level, $row->song, $row->play_count);
 	
-	//delete the level in the db
+	// delete the level in the db
 	$db->call('level_delete', array($level_id, $user_id));
 	
-	//delete the file from s3
+	// delete the file from s3
 	$result = $s3->deleteObject('pr2levels1', $level_id.'.txt');
 	if(!$result) {
 		throw new Exception('A server error was encountered. Your level could not be deleted.');
