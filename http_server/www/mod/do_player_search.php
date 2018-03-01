@@ -13,14 +13,8 @@ try {
 		throw new Exception("Invalid request method.");
 	}
 	
-	// sanity check
-	if(is_empty($name)) {
-		throw new Exception('No username specified.');
-	}
-	
 	// rate limiting
-	rate_limit('mod-do-player-search-'.$ip, 10, 1);
-	rate_limit('mod-do-player-search-'.$ip, 60, 5);
+	rate_limit('mod-do-player-search-'.$ip, 5, 2);
 
 	// connect
 	$db = new DB();
@@ -38,10 +32,10 @@ catch(Exception $e) {
 
 try {
 	
-	// more rate limiting
-	$mod_id = $mod->user_id;
-	rate_limit('mod-do-player-search-'.$mod_id, 10, 1);
-	rate_limit('mod-do-player-search-'.$mod_id, 60, 5);
+	// sanity check
+	if(is_empty($name)) {
+		throw new Exception('No username specified.');
+	}
 
 	// look for a player with provided name
 	$user_id = name_to_id($db, $name);
