@@ -13,8 +13,6 @@ $ip = get_ip();
 
 // safety first
 $safe_name = addslashes($name);
-$safe_old_pass = addslashes($old_pass);
-$safe_new_pass = addslashes($new_pass);
 
 try {
 	
