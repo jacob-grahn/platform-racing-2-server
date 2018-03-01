@@ -3,16 +3,18 @@
 require_once( '../fns/all_fns.php' );
 require_once( '../fns/output_fns.php' );
 
+$code = $_GET['code'];
+$ip = get_ip();
+
 try {
-	
-	// get info
-	$code = $_GET['code'];
-	$ip = get_ip();
 	
 	// sanity check: check for the code
 	if (is_empty($code)) {
 		throw new Exception('No code found.');
 	}
+	
+	// rate limiting
+	rate_limit('account-confirm-email-change-'.$ip, 5, 1);
 	
 	// connect
 	$db = new DB();
