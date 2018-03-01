@@ -22,7 +22,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('submit-rating-'.$ip, 5, 1);
+	rate_limit('submit-rating-'.$ip, 5, 2);
 	
 	// sanity check: is the rating valid?
 	$new_rating = round($new_rating);
