@@ -16,7 +16,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('confirm-guild-transfer-'.$ip, 30, 1, "Please wait at least 30 seconds before attempting to confirm another guild transfer.");
+	rate_limit('confirm-guild-transfer-'.$ip, 5, 1);
 	
 	// connect
 	$db = new DB();
