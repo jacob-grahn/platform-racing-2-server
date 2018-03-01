@@ -13,7 +13,7 @@ $ip = get_ip();
 try {
 	
 	// rate limiting
-	rate_limit( 'get-messages-'.$ip, 5, 1 );
+	rate_limit( 'get-messages-'.$ip, 3, 2 );
 	rate_limit( 'get-messages-'.$ip, 60, 10 );
 	
 	// connect
@@ -23,7 +23,7 @@ try {
 	$user_id = token_login($db);
 	
 	// more rate limiting
-	rate_limit( 'get-messages-'.$user_id, 5, 1 );
+	rate_limit( 'get-messages-'.$user_id, 3, 2 );
 	rate_limit( 'get-messages-'.$user_id, 60, 10 );
 	
 	$safe_user_id = $db->escape( $user_id );
