@@ -11,7 +11,7 @@ $ip = get_ip();
 try {
 	
 	// rate limiting
-	rate_limit('guild-invite-attempt-'.$ip, 30, 1, "Please wait 30 seconds before attempting to invite another player to your guild.");
+	rate_limit('guild-invite-attempt-'.$ip, 5, 2, "Please wait at least 5 seconds before attempting to invite another player to your guild.");
 	
 	// connect
 	$db = new DB();
