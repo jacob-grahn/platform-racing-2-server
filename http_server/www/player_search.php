@@ -39,7 +39,7 @@ try {
 	// output functions
 	output_search($name);
 	output_page($user_id);
-	output_footer;
+	output_footer();
 	
 	// seeya
 	die();
