@@ -16,8 +16,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('friends-list-'.$ip, 3, 1);
-	rate_limit('friends-list-'.$ip, 30, 5);
+	rate_limit('friends-list-'.$ip, 3, 2);
 	
 	// connect
 	$db = new DB();
@@ -26,8 +25,7 @@ try {
 	$user_id = token_login($db, false);
 	
 	// more rate limiting
-	rate_limit('friends-list-'.$user_id, 3, 1);
-	rate_limit('friends-list-'.$user_id, 30, 5);
+	rate_limit('friends-list-'.$user_id, 3, 2);
 	
 	// get the new friend's id
 	$friend_id = name_to_id($db, $friend_name);
