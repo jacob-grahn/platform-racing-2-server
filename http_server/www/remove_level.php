@@ -1,7 +1,9 @@
 <?php
 
 header("Content-type: text/plain");
-require_once('../fns/all_fns.php');
+
+require_once(__DIR__ . '/../fns/all_fns.php');
+require_once(__DIR__ . '/../queries/levels/level_unpublish.php');
 
 $level_id = (int) default_val($_POST['level_id']);
 
@@ -22,6 +24,7 @@ try {
 	
 	// connect
 	$db = new DB();
+	$pdo = pdo_connect();
 	
 	// make sure the user is a moderator
 	$mod = check_moderator($db);
@@ -41,7 +44,8 @@ try {
 	$l_note = $level->note;
 	
 	// unpublish the level
-	$db->call('level_unpublish', array($level_id));
+	// $db->call('level_unpublish', array($level_id));
+	level_unpublish($pdo, $level_id);
 	
 	//tell it to the world
 	echo 'message=This level has been removed successfully. It may take up to 60 seconds for this change to take effect.';
