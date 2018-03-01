@@ -16,8 +16,7 @@ try {
 	}
 	
 	// rate limiting
-	rate_limit('mod-player-info-'.$mod_ip, 5, 1);
-	rate_limit('mod-player-info-'.$mod_ip, 30, 5);
+	rate_limit('mod-player-info-'.$mod_ip, 5, 2);
 	
 	// connect
 	$db = new DB();
@@ -38,11 +37,6 @@ try {
 	
 	// header
 	output_header('Player Info', true);
-	
-	// rate limiting
-	$mod_id = $mod->user_id;
-	rate_limit('mod-player-info-'.$mod_id, 5, 1);
-	rate_limit('mod-player-info-'.$mod_id, 30, 5);
 
 	//get dem infos
 	$result = $db->query("SELECT pr2.rank, pr2.hat_array, users.power, users.status, users.name, users.ip
@@ -135,6 +129,9 @@ try {
 				."<p>Currently banned: $banned</p>"
 				."<p>IP has been banned $ip_ban_count time$s2.</p> $ip_ban_list";
 	}
+	
+	// footer
+	output_footer();
 }
 
 catch(Exception $e){
@@ -142,7 +139,6 @@ catch(Exception $e){
 	echo "Error: $error";
 	output_footer();
 }
-
 
 
 function create_ban_list($result) {
