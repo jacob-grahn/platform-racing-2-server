@@ -441,7 +441,7 @@ class Player {
 				$this->write('systemChat`There '.$pop_lang[0].' currently '.$pop_counted.' '.$pop_lang[1].' playing on this server.');
 			}
 			// clear command
-			else if (($chat_message == '/clear' || $chat_message == '/cls') && $this->group >= 2) {
+			else if (($chat_message == '/clear' || $chat_message == '/cls') && $this->group >= 2 && $this->temp_mod === false) {
 				if($player_room == $this->chat_room) {
 					$player_room->clear();
 				}
@@ -456,14 +456,17 @@ class Player {
 					$is_ps = 'yes';
 				}
 				
-				if ($chat_message == '/debug') {
-					$this->write("systemChat`Enter an argument to get the data you want.");
+				if ($chat_message == '/debug help') {
+					$this->write("systemChat`Acceptable Arguments:<br><br>- restart_server<br>- server");
 				}
 				else if ($chat_message == '/debug restart_server') {
 					$this->write("message`chat_message: $chat_message<br>admin_name: $admin_name<br>admin_id: $admin_id<br>ip: $ip<br>server_name: $server_name<br>server_id: $server_id<br>port: $port");
 				}
 				else if ($chat_message == '/debug server') {
 					$this->write("message`chat_message: $chat_message<br>port: $port<br>server_name: $server_name<br>server_id: $server_id<br>uptime: $uptime<br>private_server: $is_ps<br>server_guild: $guild_id<br>server_owner: $guild_owner<br>server_expire_time: $server_expire_time");
+				}
+				else {
+					$this->write("systemChat`Enter an argument to get the data you want. For a list of acceptable arguments, type /debug help.");
 				}
 			}	 
 			// restart server command for admins
@@ -517,27 +520,56 @@ class Player {
 			else if ($chat_message == '/be_awesome' || $chat_message == '/beawesome') {
 				$this->write("message`<b>You're awesome!</b>");
 			}
+			// kick command
+			else if(strpos($chat_message, '/kick ') === 0 && $this->group >= 2 && $this->temp_mod === false) {
+				$kicked_name = trim(substr($chat_message, 6));
+				client_kick($socket, $kicked_name);
+			}
+			// disconnect command
+			else if((strpos($chat_message, '/dc ') === 0 || strpos($chat_message, '/disconnect ') === 0) && $this->temp_mod === false && $this->group >= 2) {
+				$dc_name = trim(substr($chat_message, 12)); // for /disconnect
+				if(strpos($chat_message, '/dc ') === 0) {
+					$dc_name = trim(substr($chat_message, 4)); // for /dc
+				}
+				
+				$dc_player = name_to_player($dc_name); // convert name to player
+				$safe_dc_name = htmlspecialchars($dc_name); // html killer
+				if(isset($dc_player)) {
+					$dc_player->remove(); // disconnect them if they're on
+					$this->write("message`$safe_dc_name has been disconnected."); // tell the disconnector
+				}
+				else {
+					$this->write("message`Error: Could not find a user with the name \"$safe_dc_name\" on this server."); // they're not online or don't exist
+				}
+				
+			}
 			// help command
 			else if ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
-				$server_owner_supplement = '';
-				$staff_supplement = '';
-				$admin_supplement = '';
+				$temp_mod = '';
+				$full_mod = '';
+				$effects = '';
+				$admin = '';
+				$server_owner = '';
 
 				if ($room_type == 'g') {
 					$this->write('systemChat`To get a list of commands that can be used in the chatroom, go to the chat tab in the lobby and type /help.');
 				}
 				else {
 					if ($this->group >= 2) {
-						$staff_supplement = '<br>Moderator:<br>- /a (Announcement)<br>- /give *text*<br>- /clear<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
+						$temp_mod = '<br>Moderator:<br>- /a (Announcement)<br>- /give *text*';
+						$effects = '<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
 	
+						if ($this->temp_mod === false) {
+							$full_mod = '<br>- /kick *name*<br>- /disconnect *name*<br>- /clear';
+						}
 						if ($this->group >= 3) {
-							$admin_supplement = '<br>Admin:<br>- /promote *message*<br>- /restart_server';
+							$admin = '<br>Admin:<br>- /promote *message*<br>- /restart_server<br>- /debug *arg*';
 						}
 						if ($this->user_id == $guild_owner) {
-							$server_owner_supplement = '<br>Server Owner:<br>- /timeleft<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
+							$server_owner = '<br>Server Owner:<br>- /timeleft<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
 						}
 					}
-					$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population'.$staff_supplement.$admin_supplement.$server_owner_supplement);
+					$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population<br>- /beawesome'.$temp_mod.$full_mod.$effects.$admin.$server_owner);
 				}
 			}
 			// send chat message
