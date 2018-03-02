@@ -86,15 +86,15 @@ try {
 
 
 	//--- get the server they're connecting to
-	$server = $db->grab_row( 'server_select', array( $server_id ) );
+	$server = $db->grab_row('server_select', array($server_id));
 
 
 
 	//--- guest login
-	if( strtolower($login->user_name) == 'guest' ) {
+	if( strtolower(trim($login->user_name)) == 'guest' ) {
 		$guest_login = true;
 		if( get_ip(false) != get_ip(true) ) {
-			throw new Exception( 'You seem to be using a proxy to connect to PR2. You won\'t be able to connect as a guest, but you can create an account to play.' );
+			throw new Exception( "You seem to be using a proxy to connect to PR2. You won't be able to connect as a guest, but you can create an account to play." );
 		}
 		$user = $db->grab_row('users_select_guest');
 		check_if_banned($db, $user->user_id, $ip);
@@ -133,10 +133,20 @@ try {
 	}
 
 
-	//--
+	// create variables from user data in db
 	$user_id = $user->user_id;
 	$user_name = $user->name;
+	$login->user_name = $user_name; // sanitize user input by taking name from the db to send to the server
 	$group = $user->power;
+	
+	
+	// name sanity checks
+	if (strlen(trim($user_name)) < 2) {
+		throw new Exception("Your name must be at least 2 characters long.");
+	}
+	if (strlen(trim($user_name)) > 20) {
+		throw new Exception("Your name cannot be more than 20 characters long.");
+	}
 
 
 	//---
