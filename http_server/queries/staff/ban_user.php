@@ -1,12 +1,11 @@
 <?php
 
 function throttle_bans($pdo, $mod_user_id) {
-	$mod_user_id = (int) $mod_user_id;
 	$time = (int) (time() - 3600);
   
 	$stmt = $pdo->prepare('SELECT COUNT(*) as recent_ban_count FROM bans WHERE mod_user_id = ? AND time > ?');
 	$stmt->bindParam(1, $mod_user_id, PDO::PARAM_INT);
-	$stmt->bindParam(1, $mod_user_id, PDO::PARAM_INT);
+	$stmt->bindParam(2, $time, PDO::PARAM_INT);
 	$stmt->execute();
 	$row = $stmt->fetchAll(PDO::FETCH_OBJ);
 	return $row;
