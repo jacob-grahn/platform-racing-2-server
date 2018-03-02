@@ -36,6 +36,9 @@ try {
 
 	// update
 	if($action === 'update') {
+		if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			throw new Exception('Invalid request type.');
+		}
 		update($db);
 	}
 	
@@ -48,7 +51,7 @@ try {
 // page
 function output_form($db, $user_id) {
 
-	echo '<form name="input" action="update_account.php" method="get">';
+	echo '<form name="input" action="update_account.php" method="post">';
 
 	$user = $db->grab_row('user_select', array($user_id));
 	$pr2 = $db->grab_row('pr2_select', array($user->user_id), '', true);
