@@ -53,7 +53,7 @@ function output_form($db, $user_id) {
 
 	echo '<form name="input" action="update_account.php" method="post">';
 
-	$user = $db->grab_row('user_select', array($user_id));
+	$user = $db->grab_row('user_select', array($user_id), 'Could not find a user with that ID.');
 	$pr2 = $db->grab_row('pr2_select', array($user->user_id), '', true);
 	$pr2_epic = $db->grab_row('epic_upgrades_select', array($user->user_id), '', true);
 	echo "user_id: $user->user_id <br>---<br>";
