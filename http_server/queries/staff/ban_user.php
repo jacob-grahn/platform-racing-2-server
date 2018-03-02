@@ -8,6 +8,8 @@ function throttle_bans($pdo, $mod_user_id) {
 	$stmt->bindParam(1, $mod_user_id, PDO::PARAM_INT);
 	$stmt->bindParam(1, $mod_user_id, PDO::PARAM_INT);
 	$stmt->execute();
+	$row = $stmt->fetchAll(PDO::FETCH_OBJ);
+	return $row;
 }
 
 function ban_user($pdo, $banned_ip, $banned_user_id, $mod_user_id, $expire_time, $reason, $record, $banned_name, $mod_name, $ip_ban, $account_ban) {
@@ -40,8 +42,10 @@ function ban_user($pdo, $banned_ip, $banned_user_id, $mod_user_id, $expire_time,
 	$stmt->bindParam(10, $ip_ban, PDO::PARAM_INT);
 	$stmt->bindParam(11, $account_ban, PDO::PARAM_INT);
 	
-	// execute the PDO
+	// execute the PDO and get the results
 	$stmt->execute();
+	
+	return true;
 
 }
 
