@@ -30,10 +30,10 @@ try {
 		}
 	}
 	
-	$result = $db->query('SELECT *
+	$result = $db->query("SELECT *
 									FROM bans
 									ORDER BY time DESC
-									LIMIT $start, $count');
+									LIMIT $start, $count");
 	if(!$result){
 		throw new Exception('Could not retrieve the ban list.');
 	}
