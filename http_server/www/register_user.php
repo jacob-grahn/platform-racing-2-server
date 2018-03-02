@@ -29,10 +29,10 @@ try {
 	if(empty($name) || !is_string($password) || $password == ''){
 		throw new Exception('You must enter a name and a password to register an account.');
 	}
-	if(strlen($name) < 2){
+	if(trim(strlen($name)) < 2){
 		throw new Exception('Your name must be at least 2 characters long.');
 	}
-	if(strlen($name) > 20){
+	if(trim(strlen($name)) > 20){
 		throw new Exception('Your name can not be more than 20 characters long.');
 	}
 	if(strpos($name, '`') !== false){
