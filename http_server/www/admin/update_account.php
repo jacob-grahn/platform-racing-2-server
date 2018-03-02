@@ -14,45 +14,44 @@ try {
 
 	//make sure you're an admin
 	$admin = check_moderator($db, true, 3);
-
-
-	//lookup
-	if($action === 'lookup') {
-		 output_form($db, $user_id);
-	}
-
-
-	//update
-	if($action === 'update') {
-		 update($db);
-	}
-
-
+	
 } catch (Exception $e) {
 	output_header('Error');
 	echo 'Error: ' . $e->getMessage();
 	output_footer();
+	die();
 }
 
+try {
 
-
-
-
-
-
-
-
-
-
-
-function output_form($db, $user_id) {
-
+	// header
 	output_header('Update PR2 Account', true, true);
+	
+	// form
+	if($action === 'lookup') {
+		output_form($db, $user_id);
+		output_footer();
+	}
+
+
+	// update
+	if($action === 'update') {
+		update($db);
+	}
+	
+} catch (Exception $e) {
+	echo "Error: " . $e->getMessage();
+	output_footer();
+	die();
+}
+
+// page
+function output_form($db, $user_id) {
 
 	echo '<form name="input" action="update_account.php" method="get">';
 
 	$user = $db->grab_row('user_select', array($user_id));
-	$pr2 = $db->grab_row('pr2_select', array($user->user_id));
+	$pr2 = $db->grab_row('pr2_select', array($user->user_id), '', true);
 	$pr2_epic = $db->grab_row('epic_upgrades_select', array($user->user_id), '', true);
 	echo "user_id: $user->user_id <br>---<br>";
 
@@ -83,11 +82,10 @@ function output_form($db, $user_id) {
 	echo '<br>';
 	echo '<pre>When making changes, use the "Description of Changes" box to summarize what you did.<br><br>Find what each part ID is <a href="part_ids.php" target="blank">here</a>.<br><br>NOTE: Make sure the user is logged out of PR2 before trying to change parts.</pre>';
 
-	output_footer();
 }
 
 
-
+// update function
 function update($db) {
 
 	global $admin;
@@ -109,47 +107,37 @@ function update($db) {
 		$db->call('changing_email_complete', array($change_id, ''));
 	}
 	
-	try {
+	// check for description of changes
+	if(is_empty($account_changes)) {
+		throw new Exception('You must enter a description of your changes.');
+	}
 	
-		// check for description of changes
-		if(is_empty($account_changes)) {
-			throw new Exception('You must enter a description of your changes.');
-		}
-		
-		// perform the action
-		$db->call(
-			'user_update',
-			array(
-			$user_id,
-			find('name'),
-			find('email'),
-			$guild_id,
-			find('hats'),
-			find('heads'),
-			find('bodies'),
-			find('feet'),
-			find('eHats'),
-			find('eHeads'),
-			find('eBodies'),
-			find('eFeet')
-			)
-		);
-		
-		// log the action in the admin log
-		$admin_name = $admin->name;
-		$admin_id = $admin->user_id;
-		$ip = get_ip();
-		$disp_changes = "Changes: " . $account_changes;
-		
-		$db->call('admin_action_insert', array($admin_id, "$admin_name updated player $user_name from $ip. $disp_changes.", $admin_id, $ip));
-		
-	}
-	catch (Exception $e) {
-		output_header('Update PR2 Account', true, true);
-		echo 'Error: ' . $e->getMessage();
-		output_footer();
-		die();
-	}
+	// perform the action
+	$db->call(
+		'user_update',
+		array(
+		$user_id,
+		find('name'),
+		find('email'),
+		$guild_id,
+		find('hats'),
+		find('heads'),
+		find('bodies'),
+		find('feet'),
+		find('eHats'),
+		find('eHeads'),
+		find('eBodies'),
+		find('eFeet')
+		)
+	);
+	
+	// log the action in the admin log
+	$admin_name = $admin->name;
+	$admin_id = $admin->user_id;
+	$ip = get_ip();
+	$disp_changes = "Changes: " . $account_changes;
+	
+	$db->call('admin_action_insert', array($admin_id, "$admin_name updated player $user_name from $ip. $disp_changes.", $admin_id, $ip));
 	
 	header("Location: player_deep_info.php?name1=" . urlencode(find('name')));
 	die();
