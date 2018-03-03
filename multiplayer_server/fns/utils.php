@@ -17,7 +17,7 @@ function send_to_guild( $guild_id, $str ) {
 }
 
 // limit the amount of times an action can be performed in a certain time period
-function rate_limit($key, $interval, $max, $display_error=false, $player, $error='Slow down a bit, yo.') {
+function rate_limit($key, $interval, $max, $display_error=false, $player=NULL, $error='Slow down a bit, yo.') {
 	$unit = round(time() / $interval);
 	$key .= '-'.$unit;
 	$count = 0;
@@ -25,7 +25,7 @@ function rate_limit($key, $interval, $max, $display_error=false, $player, $error
 		$count = apcu_fetch( $key );
 		if( $count >= $max ) {
 			output("$key triggered rate limit");
-			if ($display_error === true) {
+			if ($display_error === true && $player != NULL) {
 				$player->write("message`Error: $error");
 			}
 		}
