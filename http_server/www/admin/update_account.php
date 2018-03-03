@@ -62,10 +62,12 @@ function output_form($db, $user_id) {
 	echo 'Name: <input type="text" size="" name="name" value="'.htmlspecialchars($user->name).'"><br>';
 	echo 'Email: <input type="text" name="email" value="'.htmlspecialchars($user->email).'"><br>';
 	echo 'Guild: <input type="text" name="guild" value="'.htmlspecialchars($user->guild).'"><br>';
-	echo 'Hats: <input type="text" size="100" name="hats" value="'.$pr2->hat_array.'"><br>';
-	echo 'Heads: <input type="text" size="100" name="heads" value="'.$pr2->head_array.'"><br>';
-	echo 'Bodies: <input type="text" size="100" name="bodies" value="'.$pr2->body_array.'"><br>';
-	echo 'Feet: <input type="text" size="100" name="feet" value="'.$pr2->feet_array.'"><br>';
+	if($pr2) {
+		echo 'Hats: <input type="text" size="100" name="hats" value="'.$pr2->hat_array.'"><br>';
+		echo 'Heads: <input type="text" size="100" name="heads" value="'.$pr2->head_array.'"><br>';
+		echo 'Bodies: <input type="text" size="100" name="bodies" value="'.$pr2->body_array.'"><br>';
+		echo 'Feet: <input type="text" size="100" name="feet" value="'.$pr2->feet_array.'"><br>';
+	}
 	if($pr2_epic) {
 		echo 'Epic Hats: <input type="text" size="100" name="eHats" value="'.$pr2_epic->epic_hats.'"><br>';
 		echo 'Epic Heads: <input type="text" size="100" name="eHeads" value="'.$pr2_epic->epic_heads.'"><br>';
@@ -102,7 +104,18 @@ function update($db) {
 	// call user information
 	$user = $db->grab_row('user_select', array($user_id));
 	$user_name = $user->name;
-
+	
+	// adjust guild member count
+	if($user->guild != $guild_id) {
+		if ($user->guild != 0) {
+			$db->call('guild_increment_member', array($user->guild, -1));
+		}
+		if ($guild_id != 0) {
+			$db->call('guild_increment_member', array($guild_id, 1));
+		}
+	}
+	
+	// email change logging
 	if($user->email !== $email) {
 		$code = 'manual-' . time();
 		$db->call('changing_email_insert', array($user_id, $user->email, $email, $code, ''));
