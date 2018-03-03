@@ -413,7 +413,7 @@ class Player {
 				}
 			}
 			// "promote" command
-			else if(strpos($chat_message, '/promote ') === 0 && $this->group >= 3) {
+			else if(strpos($chat_message, '/promote ') === 0 && $this->group >= 3 && $guild_owner != $this->user_id) {
 				$promote_this = trim(substr($chat_message, 9));
 				$safe_promote_this = htmlspecialchars($promote_this); // html killer
 				$promote_this_length = strlen($safe_promote_this);
@@ -450,7 +450,7 @@ class Player {
 				}
 			}
 			// debug command for admins
-			else if (($chat_message == '/debug' || strpos($chat_message, '/debug ') === 0) && $this->group >= 3) {
+			else if (($chat_message == '/debug' || strpos($chat_message, '/debug ') === 0) && $this->group >= 3 && $guild_owner != $this->user_id) {
 				$is_ps = 'no';
 				if ($guild_id != '0') {
 					$is_ps = 'yes';
@@ -470,34 +470,11 @@ class Player {
 				}
 			}	 
 			// restart server command for admins
-			else if (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3) {
+			else if (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3 && ($this->user_id != $guild_owner || $guild_id == 183)) {
 				if ($room_type == 'c') {
 					if ($chat_message == '/restart_server yes, i am sure!') {
-						
-						try {
-							
-							// check to see if the server name has been defined...
-							if(!isset($server_name) || empty($server_name)) {
-								throw new Exception('Unable to retrieve the server name. The port number has been logged instead.');
-							}
-							
-							// log action in action log
-							$db->call('admin_action_insert', array($admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip));
-							
-							// shut it down, yo
-							shutdown_server();
-							
-						}
-						catch(Exception $e) {
-							$message = $e->getMessage();
-							$this->write("message`Error: $message");
-							
-							// log it with the port instead of the server name
-							$db->call('admin_action_insert', array($admin_id, "$admin_name restarted the server running on port $port from $ip.", $admin_id, $ip));
-							
-							// shut it down, yo
-							shutdown_server();
-						}
+						$db->call('admin_action_insert', array($admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip));
+						shutdown_server();
 					}
 					else {
 						$this->write('systemChat`WARNING: You just typed the server restart command. If you choose to proceed, this action will disconnect EVERY player on this server. Are you sure you want to disconnect ALL players and restart the server? If so, type: /restart_server yes, i am sure!');
@@ -523,20 +500,31 @@ class Player {
 			// kick command
 			else if(strpos($chat_message, '/kick ') === 0 && $this->group >= 2 && $this->temp_mod === false) {
 				$kicked_name = trim(substr($chat_message, 6));
-				client_kick($socket, $kicked_name);
+				client_kick($this->socket, $kicked_name);
 			}
 			// disconnect command
-			else if((strpos($chat_message, '/dc ') === 0 || strpos($chat_message, '/disconnect ') === 0) && $this->temp_mod === false && $this->group >= 2) {
+			else if((strpos($chat_message, '/dc ') === 0 || strpos($chat_message, '/disconnect ') === 0) && $this->group >= 2) {
 				$dc_name = trim(substr($chat_message, 12)); // for /disconnect
 				if(strpos($chat_message, '/dc ') === 0) {
 					$dc_name = trim(substr($chat_message, 4)); // for /dc
 				}
+				$dc_id = name_to_id($db, $dc_name); // convert name to id
+				$dc_player = id_to_player($dc_id); // convert id to player
+				$safe_dc_name = htmlspecialchars($dc_player->name); // make the name safe to echo back to the user
 				
-				$dc_player = name_to_player($dc_name); // convert name to player
-				$safe_dc_name = htmlspecialchars($dc_name); // html killer
-				if(isset($dc_player)) {
-					$dc_player->remove(); // disconnect them if they're on
+				// permission checks
+				if(isset($dc_player) && ($dc_player->group < 2 || $dc_player->temp_mod === true || $this->user_id == $guild_owner)) {
+					$mod_id = $this->user_id;
+					$mod_name = $this->name;
+					$mod_ip = $this->ip;
+					
+					// do it and log it, then tell the user
+					$dc_player->remove();
+					$db->call('mod_action_insert', array($mod_id, "$mod_name disconnected $dc_name from $server_name from $mod_ip.", $mod_id, $mod_ip));
 					$this->write("message`$safe_dc_name has been disconnected."); // tell the disconnector
+				}
+				else if(isset($dc_player) && $dc_player->group > 2 && $dc_player->temp_mod === false && $this->user_id != $guild_owner) {
+					$this->write("message`Error: You lack the power to disconnect $safe_dc_name.");
 				}
 				else {
 					$this->write("message`Error: Could not find a user with the name \"$safe_dc_name\" on this server."); // they're not online or don't exist
@@ -562,7 +550,7 @@ class Player {
 						if ($this->temp_mod === false) {
 							$full_mod = '<br>- /kick *name*<br>- /disconnect *name*<br>- /clear';
 						}
-						if ($this->group >= 3) {
+						if ($this->group >= 3 && $guild_owner != $this->user_id && $guild_id != 183) {
 							$admin = '<br>Admin:<br>- /promote *message*<br>- /restart_server<br>- /debug *arg*';
 						}
 						if ($this->user_id == $guild_owner) {
@@ -950,6 +938,16 @@ class Player {
 		$this->group = 2;
 		$this->temp_mod = true;
 		$this->write('becomeTempMod`');
+	}
+	
+	
+	
+	// For now, I'm enabling this just for Fred the G. Cactus so I can test it out.
+	// I'll have to figure out the specifics of how PR2 handles a client-side admin.
+	public function become_server_owner() {
+		$this->group = 3;
+		$this->write('setGroup`3');
+		$this->write("message`Welcome to your private server! You have admin privileges here. To promote server mods, use the \"Temp Mod\" button in your player popup. They'll remain modded until they log out.<br><br>For more information, type /help in the chat.");
 	}
 
 
