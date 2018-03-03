@@ -129,6 +129,11 @@ class Game extends Room {
 	private function record_plays() {
 		global $play_count_array;
 		$player_count = count($this->player_array);
+		foreach($this->player_array as $player){
+			$level_id = $this->course_id;
+			$user_id = $player->user_id;
+			rate_limit("level-play-count-$level_id-$user_id", 3600, 50);
+		}
 		if(isset($play_count_array[$this->course_id])){
 			$play_count_array[$this->course_id] += $player_count;
 		}
