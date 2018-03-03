@@ -517,10 +517,16 @@ class Game extends Room {
 				$player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
 			}
 
+			// hat, campaign, hh bonuses
 			$hat_bonus = 0;
 			foreach($player->worn_hat_array as $hat) {
 				if($hat->num == 2){
-					$hat_bonus += 1;
+					if (isset($this->campaign)) {
+						$hat_bonus += .4;
+					}
+					else if(!isset($this->campaign)) {
+						$hat_bonus += 1;
+					}
 				}
 				else if($hat->num == 3){
 					$hat_bonus += .25;
@@ -531,7 +537,6 @@ class Game extends Room {
 			}
 			if($hat_bonus > 0){
 				$tot_exp_gain += $tot_exp_gain * $hat_bonus;
-				$player->write('award`Hat Bonus`exp X '.($hat_bonus+1));
 			}
 
 			if( isset($prize) && $prize->get_type() == Prizes::TYPE_EXP ){
@@ -553,6 +558,44 @@ class Game extends Room {
 				$tot_exp_gain *= 2;
 				$tot_lux_gain *= 2;
 			}
+			
+			// tell the user about the hat/hh/campaign bonus(es)
+			if ($hat_bonus > 0 || isset($this->campaign) || HappyHour::isActive() == true) {
+				// hat bonus only
+				if ($hat_bonus > 0 && !isset($this->campaign) && HappyHour::isActive() != true) {
+					$player->write('award`Hat Bonus`exp X '.($hat_bonus+1));
+				}
+				
+				// campaign bonus only
+				else if ($hat_bonus == 0 && isset($this->campaign) && HappyHour::isActive() != true) {
+					$player->write('award`Campaign Bonus`exp X 2');
+				}
+				
+				// hh bonus only
+				else if ($hat_bonus == 0 && !isset($this->campaign) && HappyHour::isActive() == true) {
+					$player->write('award`Happy Hour Bonus`exp X 2');
+				}
+				
+				// hat + campaign bonuses
+				else if ($hat_bonus > 0 && isset($this->campaign) && HappyHour::isActive() != true) {
+					$player->write('award`Hat & Campaign Bonuses`exp X '.($hat_bonus+2));
+				}
+
+				// hat + hh bonuses
+				else if ($hat_bonus > 0 && !isset($this->campaign) && HappyHour::isActive() == true) {
+					$player->write('award`Hat & Happy Hour Bonuses`exp X '.($hat_bonus+2));
+				}
+				
+				// hh + campaign bonuses
+				else if ($hat_bonus == 0 && isset($this->campaign) && HappyHour::isActive() == true) {
+					$player->write('award`Hat & Happy Hour Bonuses`exp X 4');
+				}
+				
+				// hat+ campaign + hh bonuses
+				else if ($hat_bonus == 0 && isset($this->campaign) && HappyHour::isActive() == true) {
+					$player->write('award`Hat/Campaign/Happy Hour Bonuses`exp X '($hat_bonus+4));
+				}
+			}
 
 			//apply welcome back bonus after all multipliers
 			if( $welcome_back_bonus > 0 ) {
@@ -564,7 +607,7 @@ class Game extends Room {
 			if( $this->course_id == self::$artifact_level_id && $player->artifact == 0 && $player->wearing_hat(Hats::ARTIFACT) ) {
 				$player->artifact = 1;
 
-				$max_artifact_bonus = 11111;
+				$max_artifact_bonus = 15000;
 				$artifact_bonus = $max_artifact_bonus * $player->active_rank / 20;
 				if( $artifact_bonus > $max_artifact_bonus ) {
 					$artifact_bonus = $max_artifact_bonus;
