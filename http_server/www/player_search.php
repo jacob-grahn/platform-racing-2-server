@@ -38,7 +38,7 @@ try {
 	
 	// output functions
 	output_search($name);
-	output_page($user_id);
+	output_page($db, $user_id);
 	output_footer();
 	
 	// seeya
@@ -73,7 +73,7 @@ function output_error($error='') {
 	}
 }
 
-function output_page($user_id) {
+function output_page($db, $user_id) {
 	
 	// prepare the user id
 	$user_id = (int) $user_id;
