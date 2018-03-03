@@ -165,20 +165,17 @@ try {
 		$new_account = 'true';
 		$db->call('pr2_insert', array($user_id));
 
-		//--- send them a welcome pm
-		$welcome_message = 'Welcome to Platform Racing 2, '.$user_name.'!
-
-<a href="https://grahn.io" target="_blank"><u><font color="#0000FF">Click here</font></u></a> to read about the latest Platform Racing news on my blog.
-
-If you have any questions or comments, send me an email at <a href="mailto:jacob@grahn.io?subject=Questions or Comments about PR2" target="_blank"><u><font color="#0000FF">jacob@grahn.io</font></u></a>.
-
-Thanks for playing, I hope you enjoy.
-
-- Jacob';
+		// compose a welcome pm
+		$welcome_message = "Welcome to Platform Racing 2, $user_name!\n\n"
+					."<a href='https://grahn.io' target='_blank'><u><font color='#0000FF'>Click here</font></u></a> to read about the latest Platform Racing news on my blog.\n\n"
+					."If you have any questions or comments, send me an email at <a href='mailto:jacob@grahn.io?subject=Questions or Comments about PR2' target='_blank'><u><font color='#0000FF'>jacob@grahn.io</font></u></a>.\n\n"
+					."Thanks for playing, I hope you enjoy.\n\n"
+					."- Jacob";
 		
+		// send the welcome PM
 		$db->call('message_insert', array($user_id, 1, $welcome_message, '0'));
 
-		//--- I don't feel like typing the defaults twice, so pull them from the db
+		// I don't feel like typing the defaults twice, so pull them from the db
 		$pr2_result = $db->call('pr2_select', array($user_id));
 	}
 
