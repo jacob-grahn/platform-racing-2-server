@@ -457,13 +457,77 @@ class Player {
 				}
 				
 				if ($chat_message == '/debug help') {
-					$this->write("systemChat`Acceptable Arguments:<br><br>- restart_server<br>- server");
+					$this->write("systemChat`Acceptable Arguments:<br><br>- help<br>- player *name*<br>- restart_server<br>- server");
 				}
 				else if ($chat_message == '/debug restart_server') {
 					$this->write("message`chat_message: $chat_message<br>admin_name: $admin_name<br>admin_id: $admin_id<br>ip: $ip<br>server_name: $server_name<br>server_id: $server_id<br>port: $port");
 				}
 				else if ($chat_message == '/debug server') {
 					$this->write("message`chat_message: $chat_message<br>port: $port<br>server_name: $server_name<br>server_id: $server_id<br>uptime: $uptime<br>private_server: $is_ps<br>server_guild: $guild_id<br>server_owner: $guild_owner<br>server_expire_time: $server_expire_time");
+				}
+				else if (strpos($chat_message, '/debug player ') === 0) {
+					$player_name = trim(substr($chat_message, 14));
+					$player_id = name_to_id($db, $player_name);
+					$player = id_to_player($player_id);
+					
+					if(isset($player)) {
+						$pip = $player->ip;
+						$pname = $player->name;
+						$puid = $player->user_id;
+						$pstatus = $player->status;
+						$pgroup = $player->group;
+						$pguild = $player->guild_id;
+						$parank = $player->active_rank;
+						$prank = $player->rank;
+						$prtused = $player->rt_used;
+						$prtavail = $player->rt_available;
+						$pexp2day = $player->exp_today;
+						$pexppoints = $player->exp_points;
+						$pspeed = $player->speed;
+						$paccel = $player->acceleration;
+						$pjump = $player->jumping;
+						$phat = $player->hat;
+						$phead = $player->head;
+						$pbody = $player->body;
+						$pfeet = $player->feet;
+						$phatc = $player->hat_color;
+						$pheadc = $player->head_color;
+						$pbodyc = $player->body_color;
+						$pfeetc = $player->feet_color;
+						$pehatc = $player->hat_color_2;
+						$peheadc = $player->head_color_2;
+						$pebodyc = $player->body_color_2;
+						$pefeetc = $player->feet_color_2;
+						$pdomain = $player->domain;
+						$pversion = $player->version;
+						if ($player->temp_mod === true) {
+							$ptemp = 'yes';
+						}
+						else {
+							$ptemp = 'no';
+						}
+						
+						$this->write("message`"
+								."chat_message: $chat_message<br>"
+								."ip: $pip<br>"
+								."name: $pname | user_id: $puid<br>"
+								."status: $pstatus<br>"
+								."group: $pgroup | temp_mod: $ptemp<br>"
+								."guild_id: $pguild<br>"
+								."active_rank: $parank | rank (no rt): $prank | rt_used: $prtused | rt_avail: $prtavail<br>"
+								."exp_today: $pexp2day | exp_points: $pexppoints<br>"
+								."speed: $pspeed | acceleration: $paccel | jumping: $pjump<br>"
+								."hat: $phat | head: $phead | body: $pbody | feet: $pfeet<br>"
+								."hat_color: $phatc | hat_color_2: $pehatc<br>"
+								."head_color: $pheadc | head_color_2: $peheadc<br>"
+								."body_color: $pbodyc | body_color_2: $pebodyc<br>"
+								."feet_color: $pfeetc | feet_color_2: $pefeetc<br>"
+								."domain: $pdomain<br>"
+								."version: $pversion");
+					}
+					else {
+						$this->write('message`Error: Could not find a player with that name on this server.');
+					}
 				}
 				else {
 					$this->write("systemChat`Enter an argument to get the data you want. For a list of acceptable arguments, type /debug help.");
