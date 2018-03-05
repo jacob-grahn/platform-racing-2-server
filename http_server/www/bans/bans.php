@@ -26,14 +26,11 @@ try {
 	if ($is_mod === false) {
 		rate_limit('list-bans-'.$ip, 60, 10);
 		if (($count - $start) > 100) {
-			$count = $start + 100;
+			$count = 100;
 		}
 	}
 	
-	$result = $db->query("SELECT *
-									FROM bans
-									ORDER BY time DESC
-									LIMIT $start, $count");
+	$result = $db->query("SELECT * FROM bans ORDER BY time DESC LIMIT $start, $count");
 	if(!$result){
 		throw new Exception('Could not retrieve the ban list.');
 	}
