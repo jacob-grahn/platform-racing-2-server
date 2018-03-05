@@ -7,7 +7,6 @@ function send_to_all_players( $str ) {
 	}
 }
 
-
 function send_to_guild( $guild_id, $str ) {
 	global $player_array;
 	foreach( $player_array as $player ) {
@@ -15,6 +14,25 @@ function send_to_guild( $guild_id, $str ) {
 			$player->write( $str );
 		}
 	}
+}
+
+// limit the amount of times an action can be performed in a certain time period
+function rate_limit($key, $interval, $max, $display_error=false, $player=NULL, $error='Slow down a bit, yo.') {
+	$unit = round(time() / $interval);
+	$key .= '-'.$unit;
+	$count = 0;
+	if( apcu_exists($key) ) {
+		$count = apcu_fetch( $key );
+		if( $count >= $max ) {
+			output("$key triggered rate limit");
+			if ($display_error === true && $player != NULL) {
+				$player->write("message`Error: $error");
+			}
+		}
+	}
+	$count++;
+	apcu_store( $key, $count, $interval );
+	return( $count );
 }
 
 
@@ -30,7 +48,7 @@ function id_to_player($id, $throw_exception=true){
 
 
 
-//--- takes a name and returns a player -----------------------------------------
+//--- takes a name and returns a player --------------------------------------
 function name_to_player($name){
 	global $player_array;
 	$return_player = NULL;
@@ -45,7 +63,7 @@ function name_to_player($name){
 
 
 
-//--- checks to see if an ip is banned ------------------------------------------
+//--- checks to see if an ip is banned ---------------------------------------
 function get_banned_ip($ip){
 	global $banned_ip_array;
 	$banned_ip = @$banned_ip_array[$ip];
@@ -70,7 +88,7 @@ function get_login_id(){
 }
 
 
-//--- get an existing chat room, or make a new one ---------------------------------------
+//--- get an existing chat room, or make a new one --------------------------
 function get_chat_room($chat_room_name){
 	global $chat_room_array;
 	if(isset($chat_room_array[$chat_room_name])){
@@ -83,7 +101,7 @@ function get_chat_room($chat_room_name){
 }
 
 
-//--- accept bans from other servers ----------------------------------------------------
+//--- accept bans from other servers ----------------------------------------
 function apply_bans( $bans ){
 	global $player_array;
 	
@@ -98,7 +116,7 @@ function apply_bans( $bans ){
 
 
 
-//--- send new pm notifications out ----------------------------------------------------
+//--- send new pm notifications out -----------------------------------------
 function pm_notify( $pms ){
 	global $player_array;
 

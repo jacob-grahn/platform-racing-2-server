@@ -3,7 +3,7 @@
 header("Content-type: text/plain");
 require_once('../fns/all_fns.php');
 
-$guild_id = find('guildId');
+$guild_id = (int) find_no_cookie('guildId', 0);
 $ip = get_ip();
 
 try {
@@ -17,14 +17,14 @@ try {
 	// gather information
 	$user_id = token_login($db, false);
 	$account = $db->grab_row('user_select_expanded', array($user_id));
-	$guild = $db->grab_row('guild_select', array($guild_id));
+	$guild = $db->grab_row('guild_select', array($guild_id), 'Could not find a guild with that ID.');
 	
 	// sanity checks
 	if($account->guild != 0) {
 		throw new Exception('You are already a member of a guild.');
 	}
 	if($account->power <= 0) {
-                throw new Exception('Guests can not join guilds.');
+                throw new Exception('Guests can\'t join guilds.');
 	}
 	if($guild->member_count >= 200) {
 		throw new Exception('This guild is full.');
