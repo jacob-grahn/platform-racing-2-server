@@ -58,7 +58,7 @@ try {
 							");
 	$row_count = $result->num_rows;
 	if ($row_count <= 0) {
-		throw new Exception("No accounts found with the email address '$safe_email'.");
+		throw new Exception("No accounts found with the email address \"$safe_email\".");
 	}
 	
 	// protect the user
@@ -66,6 +66,15 @@ try {
   
 	// show the search form
 	output_search($disp_email);
+	
+	// output the number of results
+	if($row_count == 1) {
+		$res = 'result';
+	}
+	else {
+		$res = 'results';
+	}
+	echo "$row_count $res found for the email address \"$disp_email\".<br><br>";
 	
 	// only gonna get here if there were results
 	while ($row = $result->fetch_object()) {
@@ -79,6 +88,9 @@ try {
 		$active_date = $row->active_date; // active date -- get data
 		$active_date = date_create($active_date); // active date -- create a date
 		$active_date = date_format($active_date, 'j/M/Y'); // active date -- format the created date
+		if ($active_date == '30/Nov/-0001') {
+			$active_date = 'Never';
+		}
 
 		// display the name with the color and link to the player search page
 		echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>$safe_name</a> | Last Active: $active_date<br>";
