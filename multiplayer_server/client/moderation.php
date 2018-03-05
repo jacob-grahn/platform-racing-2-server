@@ -19,15 +19,18 @@ function client_kick ($socket, $data) {
 
 		LocalBans::add($name);
 
-		if( isset($kicked_player) ) {
+		if(isset($kicked_player)) {
 			$kicked_player->remove();
 			$player->write('message`'.$safe_name.' has been kicked from this server for 30 minutes.');
+			
+			// let people know that the player kicked someone
+			if(isset($player->chat_room)){
+				$player->chat_room->send_chat('systemChat`'.$player->name
+				.' has kicked '.$safe_name.' from this server for 30 minutes.', $player->user_id);
+			}
 		}
-
-		// let people know that the player kicked someone
-		if(isset($player->chat_room)){
-			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has kicked '.$safe_name.' from this server for 30 minutes.', $player->user_id);
+		else {
+			$player->write("message`Error: Could not find a user with the name \"$safe_name\" on this server.");
 		}
 	}
 	// if they don't have the power to do that, tell them
@@ -39,15 +42,16 @@ function client_kick ($socket, $data) {
 
 //--- warn a player -------------------------------------------------------------
 function client_warn ($socket, $data) {
+	global $guild_owner;
 	list($name, $num) = explode("`", $data);
 	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
-
+	
+	// get player info
+	$warned_player = name_to_player($name);
 	$player = $socket->get_player();
 
 	// if they're a mod, warn the user
-	if($player->group >= 2){
-
-		$warned_player = name_to_player($name);
+	if(($player->group >= 2) && (($warned_player->group < 2) || ($player->user_id == $guild_owner))){
 
 		$w_str = '';
 		$time = 0;
@@ -133,7 +137,7 @@ function client_ban ($socket, $data) {
 		$disp_reason = 'Reason: '.$safe_reason;
 	}
 
-	if($player->group >= 2){
+	if($player->group >= 2 && isset($ban_player)){
 		if(isset($player->chat_room)) {
 			$player->chat_room->send_chat('systemChat`'.$player->name
 			.' has banned '.$safe_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at https://pr2hub.com/bans.', $player->user_id);
