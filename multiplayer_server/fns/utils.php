@@ -35,18 +35,6 @@ function rate_limit($key, $interval, $max, $display_error=false, $player=NULL, $
 	return( $count );
 }
 
-//--- takes an id and returns a name -----------------------------------------
-function id_to_name($db, $user_id) {
-	$user_name = $db->grab('name', 'user_select', array($user_id));
-	return $user_name;
-}
-
-//--- takes a name and returns an id -----------------------------------------
-function name_to_id($db, $name) {
-	$user_id = $db->grab('user_id', 'user_select_user_id', array($name), 'Could not find a user with that name.');
-	return $user_id;
-}
-
 
 //--- takes an id and returns a player ---------------------------------------
 function id_to_player($id, $throw_exception=true){
