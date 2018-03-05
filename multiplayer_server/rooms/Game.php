@@ -583,17 +583,17 @@ class Game extends Room {
 
 				// hat + hh bonuses
 				else if ($hat_bonus > 0 && !isset($this->campaign) && HappyHour::isActive() == true) {
-					$player->write('award`Hat & Happy Hour Bonuses`exp X '.($hat_bonus+2));
+					$player->write('award`Hat/Happy Hour Bonuses`exp X '.($hat_bonus+2));
 				}
 				
 				// hh + campaign bonuses
 				else if ($hat_bonus == 0 && isset($this->campaign) && HappyHour::isActive() == true) {
-					$player->write('award`Hat & Happy Hour Bonuses`exp X 4');
+					$player->write('award`Campaign/HH Bonuses`exp X 4');
 				}
 				
 				// hat+ campaign + hh bonuses
-				else if ($hat_bonus == 0 && isset($this->campaign) && HappyHour::isActive() == true) {
-					$player->write('award`Hat/Campaign/Happy Hour Bonuses`exp X '($hat_bonus+4));
+				else if ($hat_bonus > 0 && isset($this->campaign) && HappyHour::isActive() == true) {
+					$player->write('award`Hat/Campaign/HH Bonuses`exp X '($hat_bonus+4));
 				}
 			}
 
