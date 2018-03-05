@@ -29,7 +29,9 @@ try {
 catch (Exception $e) {
 	$error = $e->getMessage();
 	output_search($name);
-	output_error($error);
+	if($error != '') {
+		output_error($error);
+	}
 	output_footer();
 	die();
 }
@@ -127,8 +129,6 @@ function output_page($db, $user_id) {
 	$safe_guild = htmlspecialchars($guild_name);
 	
 	// --- Start the Page --- \\
-	
-	output_search($name);
 	
 	echo "<br><br>";
 	
