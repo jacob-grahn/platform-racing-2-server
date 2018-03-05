@@ -36,16 +36,12 @@ catch(Exception $e) {
 	
 	if ($is_mod === false) {
 		rate_limit('list-bans-'.$ip, 60, 10);
-		if ($count - $start > 100) {
-			$count = $start + 100;
+		if ($count > 100) {
+			$count = 100;
 		}
 	}
-	
-	// retrieve ban list using prepared statement
-	/*$result = $db->query('SELECT *
-									FROM bans
-									ORDER BY time DESC
-									LIMIT $start, $count');*/
+
+	// retrieve the ban list
 	$result = retrieve_ban_list($pdo, $start, $count);
 	if(!$result){
 		throw new Exception('Could not retrieve the ban list.');
