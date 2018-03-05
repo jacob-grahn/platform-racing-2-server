@@ -25,7 +25,7 @@ try {
 	
 	if ($is_mod === false) {
 		rate_limit('list-bans-'.$ip, 60, 10);
-		if ($count - $start > 100) {
+		if (($count - $start) > 100) {
 			$count = $start + 100;
 		}
 	}
