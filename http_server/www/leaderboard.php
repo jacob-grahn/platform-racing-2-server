@@ -27,13 +27,13 @@ try {
 	// limit amount of entries to be obtained from the db at a time
 	if ($is_mod === true) {
 		if (($count - $start) > 1000) {
-			$count = $start + 1000;
+			$count = 1000;
 		}
 	}
 	else if ($is_mod === false) {
 		rate_limit('leaderboard-'.$ip, 60, 10, 'Please wait at least one minute before trying to view the leaderboard again.');
 		if (($count - $start) > 100) {
-			$count = $start + 100;
+			$count = 100;
 		}
 	}
 	else {
