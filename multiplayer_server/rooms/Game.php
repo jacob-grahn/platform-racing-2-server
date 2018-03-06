@@ -593,7 +593,7 @@ class Game extends Room {
 				
 				// hat+ campaign + hh bonuses
 				else if ($hat_bonus > 0 && isset($this->campaign) && HappyHour::isActive() == true) {
-					$player->write('award`Hat/Campaign/HH Bonuses`exp X '($hat_bonus+4));
+					$player->write('award`Hat/Campaign/HH Bonuses`exp X '.($hat_bonus+4));
 				}
 			}
 
@@ -607,8 +607,8 @@ class Game extends Room {
 			if( $this->course_id == self::$artifact_level_id && $player->artifact == 0 && $player->wearing_hat(Hats::ARTIFACT) ) {
 				$player->artifact = 1;
 
-				$max_artifact_bonus = 15000;
-				$artifact_bonus = $max_artifact_bonus * $player->active_rank / 20;
+				$max_artifact_bonus = 50000;
+				$artifact_bonus = $max_artifact_bonus * $player->active_rank / 60;
 				if( $artifact_bonus > $max_artifact_bonus ) {
 					$artifact_bonus = $max_artifact_bonus;
 				}
