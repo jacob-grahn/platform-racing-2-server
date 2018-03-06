@@ -3,7 +3,7 @@
 header("Content-type: text/plain");
 
 require_once(__DIR__ . '/../fns/all_fns.php');
-require_once(__DIR__ . '/../queries/levels/level_unpublish.php');
+require_once(__DIR__ . '/../queries/staff/level_unpublish.php');
 
 $level_id = (int) default_val($_POST['level_id']);
 

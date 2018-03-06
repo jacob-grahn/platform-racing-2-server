@@ -17,7 +17,7 @@ try {
 	
 	// check referrer
 	$ref = check_ref();
-	if ($ref !== true || $ref == '') {
+	if ($ref !== true && $ref != '') {
 		throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only set the artifact from an approved site such as pr2hub.com.");
 	}
 	

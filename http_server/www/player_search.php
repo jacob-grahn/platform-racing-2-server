@@ -27,11 +27,9 @@ try {
 	
 }
 catch (Exception $e) {
-	$error = $e->getMessage();
+	$safe_error = htmlspecialchars($e->getMessage());
 	output_search($name);
-	if($error != '') {
-		output_error($error);
-	}
+	echo "Error: $safe_error";
 	output_footer();
 	die();
 }
@@ -48,8 +46,9 @@ try {
 	
 }
 catch (Exception $e) {
-	$error = $e->getMessage();
-	output_error($error);
+	$safe_error = htmlspecialchars($e->getMessage());
+	output_search($name);
+	echo "Error: $safe_error";
 	output_footer();
 	die();
 }
@@ -66,13 +65,6 @@ function output_search($name='') {
 	<input type='submit' value='Search'>
 	</form>";
 
-}
-
-function output_error($error='') {
-	$error = "<br><i>Error: $error</i>";
-	if (!is_empty($error)) {
-		echo $error;
-	}
 }
 
 function output_page($db, $user_id) {
