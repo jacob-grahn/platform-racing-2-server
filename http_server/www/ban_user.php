@@ -3,6 +3,9 @@
 header("Content-type: text/plain");
 
 require_once('../fns/all_fns.php');
+require_once('../queries/get_info/user.php'); // pdo
+require_once('../queries/staff/action_log.php'); // pdo
+require_once('../queries/staff/ban_user.php'); // pdo
 
 $banned_name = default_val($_POST['banned_name']);
 $duration = (int) default_val($_POST['duration'], 60);
@@ -14,10 +17,6 @@ $type = default_val($_POST['type'], 'both');
 $force_ip = default_val($_POST['force_ip']);
 
 $ip = get_ip();
-
-$safe_banned_name = addslashes($banned_name);
-$safe_reason = addslashes($reason);
-$safe_record = addslashes($record);
 
 // if it's a month/year ban coming from PR2, correct the weird ban times
 if ($using_mod_site == 'no') {
@@ -37,6 +36,7 @@ try {
 	
 	// connect
 	$db = new DB();
+	$pdo = pdo_connect();
 	
 	// sanity check: was a name passed to the script?
 	if(is_empty($banned_name)) {
@@ -49,7 +49,7 @@ try {
 	// get variables from the mod variable
 	$mod_user_id = (int) $mod->user_id;
 	$mod_user_name = $mod->name;
-	$mod_power = 2;
+	$mod_power = $mod->power;
 	
 	// limit ban length
 	if($duration > $mod->max_ban) {
@@ -59,39 +59,27 @@ try {
 	$expire_time = $time + $duration;
 	
 	
-	// throttle bans
-	$min_time = $time - 3600;
-	$result = $db->query("SELECT COUNT(*) as recent_ban_count
-									FROM bans
-									WHERE mod_user_id = '$mod_user_id'
-									AND time > '$min_time'");
-	if(!$result) {
-		throw new Exception('Could not check ban throttle');
-	}
-	$row = $result->fetch_object();
-	$recent_ban_count = $row->recent_ban_count;
-	
+	// throttle bans using PDO
+	$throttle = throttle_bans($pdo, $mod_user_id);
+	$recent_ban_count = $throttle->recent_ban_count;
 	if($recent_ban_count > $mod->bans_per_hour) {
 		throw new Exception('You have reached the cap of '.$mod->bans_per_hour.' bans per hour.');
 	}
 	
-	
-	// get the banned user's info
-	$result = $db->call('user_select_by_name', array($banned_name));
-	
-	// sanity check: does the user exist?
-	if($result->num_rows <= 0){
-		throw new Exception('The account you are trying to ban does not exist.');
+	// get the banned user's info using PDO
+	$target = user_select_by_name($pdo, $banned_name);
+	if ($target === false) {
+		throw new Exception("The user you're trying to ban doesn't exist.");
 	}
 	
-	$row = $result->fetch_object();
-	$banned_ip = $row->ip;
-	$banned_power = $row->power;
-	$banned_user_id = $row->user_id;
+	// make some variables
+	$banned_ip = $target->ip;
+	$banned_power = $target->power;
+	$banned_user_id = $target->user_id;
 	
 	
 	// override ip
-	if( !is_empty($force_ip) ) {
+	if(!is_empty($force_ip)) {
 		$banned_ip = $force_ip;
 	}
 	
@@ -130,41 +118,26 @@ try {
 		$banned_name = '';
 	}
 	
-	// add the ban
-	$safe_mod_user_name = $db->real_escape_string($mod_user_name);
-	$result = $db->query("INSERT INTO bans
-									SET banned_ip = '$banned_ip',
-										banned_user_id = $banned_user_id,
-										mod_user_id = '$mod_user_id',
-										time = $time,
-										expire_time = $expire_time,
-										reason = '$safe_reason',
-										record = '$safe_record',
-										banned_name = '$safe_banned_name',
-										mod_name = '$safe_mod_user_name',
-										ip_ban = '$ip_ban',
-										account_ban = '$account_ban'");
-	if(!$result){
+	// add the ban using pdo
+	$result = ban_user($pdo, $banned_ip, $banned_user_id, $mod_user_id, $expire_time, $reason, $record, $banned_name, $mod_user_name, $ip_ban, $account_ban);
+	if($result === false){
 		throw new Exception('Could not record ban.');
 	}
 	
 	
-	
-	//remove login token
+	// remove login token
 	$db->call('tokens_delete_by_user', array($banned_user_id));
 	
 	
 	
-	// --- action log stuff below this point --- \\
+	// --- action log stuff --- \\
 	
 	// make duration pretty
 	$disp_duration = format_duration($duration);
 	
 	// make reason pretty
-	if (!is_empty($reason)) {
-		$disp_reason = "reason: $reason";
-	}
-	else {
+	$disp_reason = "reason: $reason";
+	if (is_empty($reason)) {
 		$disp_reason = "no reason given";
 	}
 	
@@ -178,9 +151,12 @@ try {
 	// make expire time pretty
 	$disp_expire_time = date('Y-m-d H:i:s', $expire_time);
 	
-	//record the ban in the action log
-	$db->call('mod_action_insert', array($mod->user_id, "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}", 0, $ip));
+	// action log string
+	$action_string = "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}";
 	
+	//record the ban in the action log
+	//$db->call('mod_action_insert', array($mod->user_id, "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}", 0, $ip));
+	log_mod_action($pdo, $action_string, $mod_user_id, $ip);
 	
 	// --- end action log stuff --- \\
 	

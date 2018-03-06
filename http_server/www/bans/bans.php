@@ -2,6 +2,7 @@
 
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
+require_once(__DIR__ . '/../queries/bans/retrieve_ban_list.php');
 
 $start = (int) default_val($_GET['start'], 0);
 $count = (int) default_val($_GET['count'], 100);
@@ -14,6 +15,16 @@ try {
 
 	// connect
 	$db = new DB();
+	$pdo = pdo_connect();
+	
+}
+catch(Exception $e) {
+	$error = $e->getMessage();
+	output_header('Error');
+	echo "Error: $error";
+	output_footer();
+	die();
+}
 	
 	// header, also check if mod and output the mod links if so
 	$is_mod = is_moderator($db, false);
@@ -25,22 +36,23 @@ try {
 	
 	if ($is_mod === false) {
 		rate_limit('list-bans-'.$ip, 60, 10);
-		if (($count - $start) > 100) {
-			$count = $start + 100;
+		if ($count > 100) {
+			$count = 100;
 		}
 	}
-	
-	$result = $db->query("SELECT *
-									FROM bans
-									ORDER BY time DESC
-									LIMIT $start, $count");
+
+	// retrieve the ban list
+	$result = retrieve_ban_list($pdo, $start, $count);
 	if(!$result){
 		throw new Exception('Could not retrieve the ban list.');
 	}
 }
 catch(Exception $e){
-	echo 'Error: '.$e->getMessage();
-	exit;
+	$error = $e->getMessage();
+	output_header("Ban List", $is_mod);
+	echo "Error: $error";
+	output_footer();
+	die();
 }
 
 
@@ -92,6 +104,7 @@ echo('<p>---</p>');
 output_pagination($start, $count);
 
 output_footer();
+die();
 
 function output_pagination($start, $count) {
 	$next_start_num = $start + $count;
