@@ -24,6 +24,14 @@ while($row = $result->fetch_object()) {
 	if(!isset($play_count)) {
 		$play_count = 0;
 	}
+	if(!isset($user_id)) {
+    		$user_id = 0; //placeholder id so it isn't null
+    		output("$str DELETE");
+    		$db->call('user_delete', array($user_id));
+	}
+	else {
+    		output("$str SPARE");
+	}
 
 	$str = "$i $user_id plays: $play_count rank: $rank.";
 	if($play_count > 100 || $rank > 15) {
