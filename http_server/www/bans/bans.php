@@ -43,7 +43,7 @@ try {
 	}
 
 	// retrieve the ban list
-	$result = retrieve_ban_list($pdo, $start, $count);
+	$bans = retrieve_ban_list($pdo, $start, $count);
 	if(!$result){
 		throw new Exception('Could not retrieve the ban list.');
 	}
@@ -61,7 +61,7 @@ catch(Exception $e){
 
 $out = '';
 
-while($row = $result->fetch_assoc()){
+foreach ($bans as $row) {
 	$ban_id = $row['ban_id'];
 	$banned_ip = $row['banned_ip'];
 	$mod_user_id = $row['mod_user_id'];
