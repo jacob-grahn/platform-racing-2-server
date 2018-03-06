@@ -43,7 +43,7 @@ try {
 	$users_result = $db->query("SELECT
 						users.name,
 						users.power,
-						(pr2.used_tokens + pr2.rank) AS active_rank,
+						(rank_tokens.used_tokens + pr2.rank) AS active_rank,
 						pr2.hat_array AS hats
 					FROM users, pr2, rank_tokens
 					WHERE users.user_id = pr2.user_id
