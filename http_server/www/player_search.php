@@ -1,37 +1,38 @@
 <?php
 
-require_once('../fns/output_fns.php');
-require_once('../fns/all_fns.php');
+require_once("../fns/output_fns.php");
+require_once("../fns/all_fns.php");
 
-$name = find_no_cookie('name', '');
+$name = find_no_cookie("name", "");
 $ip = get_ip();
 
 output_header("Player Search");
 
+// sanity check: check for a name
+if (is_empty($name)) {
+	throw new Exception("");
+}
+
 try {
 
-	// sanity check: check for a name
-	if (is_empty($name)) {
-		throw new Exception("");
-	}
-	
 	// rate limiting
-	rate_limit('gui-player-search-'.$ip, 5, 1, 'Wait a bit before searching again.');
-	rate_limit('gui-player-search-'.$ip, 30, 5, 'Wait a bit before searching again.');
+	rate_limit("gui-player-search-" . $ip, 5, 1, "Wait a bit before searching again.");
+	rate_limit("gui-player-search-" . $ip, 30, 5, "Wait a bit before searching again.");
 	
 	// connect
 	$db = new DB();
 	
 	// get id from name
 	$user_id = name_to_id($db, $name);
-	
+
 }
 catch (Exception $e) {
 	$safe_error = htmlspecialchars($e->getMessage());
 	output_search($name);
-	echo "Error: $safe_error";
+	echo "<br /><i>Error: $safe_error</i>";
 	output_footer();
 	die();
+
 }
 
 try {
@@ -42,13 +43,13 @@ try {
 	output_footer();
 	
 	// seeya
-	die();
-	
+	die();	
+
 }
 catch (Exception $e) {
 	$safe_error = htmlspecialchars($e->getMessage());
 	output_search($name);
-	echo "Error: $safe_error";
+	echo "<br /><i>Error: $safe_error</i>";
 	output_footer();
 	die();
 }
@@ -58,12 +59,18 @@ function output_search($name='') {
 	// safety first
 	$safe_name = htmlspecialchars($name);
 	
-	echo '<center><font face="Gwibble" class="gwibble">-- Player Search --</font><br><br>';
+	echo '
+	<center>
+	<font face="Gwibble" class="gwibble">-- Player Search --</font>
+	<br /><br />
+	';
 	
-	echo "<form method='get'>
+	echo "
+	<form method='get'>
 	Username: <input type='text' name='name' value='$safe_name'>
 	<input type='submit' value='Search'>
-	</form>";
+	</form>
+	";
 
 }
 
@@ -122,20 +129,25 @@ function output_page($db, $user_id) {
 	
 	// --- Start the Page --- \\
 	
-	echo "<br><br>";
-	
-	echo "-- <font style='color: #$group_color; text-decoration: underline; font-weight: bold'>$safe_name</font> --<br><br>";
-	
-	echo "<i>$safe_status</i><br><br>";
-	
-	echo "Group: $group_name<br>";
-	echo "Guild: $safe_guild<br>";
-	echo "Rank: $rank<br>";
-	echo "Hats: $hats<br>";
-	echo "Joined: $register_date<br>";
-	echo "Active: $login_date";
-	
-	echo "</center>";
+	echo "
+	<br /><br />	
+	-- <font style='color: #$group_color; text-decoration: underline; font-weight: bold'>$safe_name</font> --
+	<br />	
+	<i>$safe_status</i>
+	<br /><br />	
+	Group: $group_name
+	<br />
+	Guild: $safe_guild
+	<br />
+	Rank: $rank
+	<br />
+	Hats: $hats
+	<br />
+	Joined: $register_date
+	<br />
+	Active: $login_date	
+	</center>
+	";
 	
 }
 
