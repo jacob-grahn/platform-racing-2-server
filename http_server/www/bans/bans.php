@@ -2,7 +2,7 @@
 
 require_once('../../fns/all_fns.php');
 require_once('../../fns/output_fns.php');
-require_once(__DIR__ . '/../queries/bans/retrieve_ban_list.php');
+require_once(__DIR__ . '/../../queries/bans/retrieve_ban_list.php');
 
 $start = (int) default_val($_GET['start'], 0);
 $count = (int) default_val($_GET['count'], 100);
