@@ -574,7 +574,7 @@ class Player {
 				client_kick($this->socket, $kicked_name);
 			}
 			// disconnect command
-			else if((strpos($chat_message, '/dc ') === 0 || strpos($chat_message, '/disconnect ') === 0) && $this->group >= 2 && $this->temp_mod === false) {
+			else if((strpos($chat_message, '/dc ') === 0 || strpos($chat_message, '/disconnect ') === 0) && $this->group >= 2 && ($this->temp_mod === false || $this->server_owner == true)) {
 				$dc_name = trim(substr($chat_message, 12)); // for /disconnect
 				if(strpos($chat_message, '/dc ') === 0) {
 					$dc_name = trim(substr($chat_message, 4)); // for /dc
@@ -584,19 +584,23 @@ class Player {
 				$safe_dc_name = htmlspecialchars($dc_player->name); // make the name safe to echo back to the user
 				
 				// permission checks
-				if(isset($dc_player) && ($dc_player->group < 2 || $this->server_owner == true) {
+				if(isset($dc_player) && ($dc_player->group < 2 || $this->server_owner == true)) {
 					$mod_id = $this->user_id;
 					$mod_name = $this->name;
 					$mod_ip = $this->ip;
 					
-					// do it and log it, then tell the user
+					// do it
 					$dc_player->remove();
+					
+					// if they're an actual mod, log it
 					if ($this->server_owner != true || $this->user_id == 4291976) {
 						$db->call('mod_action_insert', array($mod_id, "$mod_name disconnected $dc_name from $server_name from $mod_ip.", $mod_id, $mod_ip));
 					}
+					
+					// tell the world
 					$this->write("message`$safe_dc_name has been disconnected."); // tell the disconnector
 				}
-				else if(isset($dc_player) && $dc_player->group > 2 && $dc_player->temp_mod === false && $this->user_id != $guild_owner) {
+				else if(isset($dc_player) && ($dc_player->group > 2 || $this->server_owner == false) {
 					$this->write("message`Error: You lack the power to disconnect $safe_dc_name.");
 				}
 				else {
@@ -604,17 +608,36 @@ class Player {
 				}
 				
 			}
-			// temp command
-			else if (($chat_message == '/temp' || strpos($chat_message, '/temp ') === 0) && $this->group >= 3) {
-				// get the user's name and ID
-				$to_name = trim(substr($chat_message, 6));
-				$to_id = name_to_id($db, $dc_name);
-				
-				// get the player info
-				$from_player = $this;
-				$to_player = id_to_player($to_id);
-				
-				promote_mod($port, $name, 'temporary', $from_player, $to_player);
+			// server mod command for server owners
+			else if (($chat_message == '/mod' || strpos($chat_message, '/mod ') === 0) && $this->group >= 3 && $this->server_owner == true) {
+				if ($chat_message == '/mod help') {
+					$this->write('systemChat`To promote someone to a server moderator, type "/mod promote" followed by their username. They will be a server moderator until they log out or are demoted. To demote an existing server moderator, type "/mod demote" followed by their username.');
+				}
+				else if (strpos($chat_message, '/mod promote ') === 0 || strpos($chat_message, '/mod demote ') === 0) {
+					// get the user's name and ID
+					if (strpos($chat_message, '/mod promote ') === 0) {
+						$action = 'promote';
+						$to_name = trim(substr($chat_message, 13));
+					}
+					else if (strpos($chat_message, '/mod demote ') === 0) {
+						$action = 'demote';
+						$to_name = trim(substr($chat_message, 12));
+					}
+					$to_id = name_to_id($db, $to_name);
+					$target = id_to_player($to_id);
+					$owner = $this;
+					
+					// do the appropriate action
+					if ($action == 'promote') {
+						promote_server_mod($name, $owner, $target);
+					}
+					else if ($action == 'demote') {
+						demote_server_mod($name, $owner, $target);
+					}
+				}
+				else {
+					$this->write("Invalid action. For more information on how to use this command, type /mod help.");
+				}
 			}
 			// help command
 			else if ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
@@ -634,10 +657,10 @@ class Player {
 							$effects = '<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
 						}
 						if ($this->group >= 3 && $guild_owner != $this->user_id && $guild_id != 183) {
-							$admin = '<br>Admin:<br>- /promote *message*<br>- /restart_server<br>- /debug *arg*<br>- /temp *player*';
+							$admin = '<br>Admin:<br>- /promote *message*<br>- /restart_server<br>- /debug *arg*';
 						}
 						if ($this->server_owner == true) {
-							$server_owner = '<br>Server Owner:<br>- /timeleft<br>- /temp *player*<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
+							$server_owner = '<br>Server Owner:<br>- /timeleft<br>- /mod help<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
 						}
 					}
 					$this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population<br>- /beawesome'.$mod.$effects.$admin.$server_owner);
@@ -1020,7 +1043,6 @@ class Player {
 	public function become_temp_mod() {
 		$this->group = 2;
 		$this->temp_mod = true;
-		$this->server_owner = true; // going to remove this after tests are done
 		$this->write('becomeTempMod`');
 	}
 	
@@ -1029,11 +1051,11 @@ class Player {
 	// For now, I'm enabling this just for Fred the G. Cactus so I can test it out.
 	// I'll have to figure out the specifics of how PR2 handles a client-side admin.
 	public function become_server_owner() {
-		$this->group = 3;
+		$this->write('becomeTempMod`'); // to pop up the temp mod menu for server owners
 		$this->server_owner = true;
-		$this->write('becomeTempMod`');
+		$this->group = 3;
 		$this->write('setGroup`3');
-		$this->write("message`Welcome to your private server! You have admin privileges here. To promote server mods, type /temp *player name here* in the chat. They'll remain modded until they log out.<br><br>For more information about what commands you can use, type /help in the chat.");
+		$this->write("message`Welcome to your private server! You have admin privileges here. To promote server mods, type /mod demote *player name here* in the chat. They'll remain modded until they log out.<br><br>For more information about what commands you can use, type /help in the chat.");
 	}
 
 
