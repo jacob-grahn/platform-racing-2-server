@@ -41,12 +41,14 @@ try {
 	}
 
 	$users_result = $db->query("SELECT
-						users.name AS name,
-						users.power AS group,
-						SUM(pr2.used_tokens + pr2.rank) AS active_rank,
+						users.name,
+						users.power,
+						(pr2.used_tokens + pr2.rank) AS active_rank,
 						pr2.hat_array AS hats
-					FROM users, pr2
-					WHERE active_rank > 49
+					FROM users, pr2, rank_tokens
+					WHERE users.user_id = pr2.user_id
+					AND pr2.user_id = rank_tokens.user_id
+					AND rank > 49
 					ORDER BY active_rank DESC
 					LIMIT $start, $count");
 	if (!$users_result) {
