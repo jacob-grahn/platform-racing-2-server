@@ -21,6 +21,21 @@ function demote_mod($port, $user_name, $admin, $demoted_player) {
 		$admin->write("message`Error: The server owner reigns supreme!");
 		return false;
 	}
+	
+	// let the server owner demote temps
+	if ($admin->server_owner == true) {
+		if (isset($demoted_player) && $demoted_player->temp_mod == true) {
+			$demoted_player->group = 1;
+			$demoted_player->write('setGroup`1');
+			$demoted_player->temp_mod = false;
+			$admin->write("message`$safe_user_name has been demoted.");
+			return true;
+		}
+		else {
+			$admin->write("message`$safe_user_name is not a moderator on this server.");
+			return false;
+		}
+	}
 
 	try {
 		$user_id = name_to_id($db, $user_name);
