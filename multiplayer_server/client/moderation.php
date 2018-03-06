@@ -86,6 +86,7 @@ function client_warn ($socket, $data) {
 			else {
 				$player->write("message`Error: Could not find a user named \"$safe_name\" on this server.");
 			}
+		}
 	}
 	// if they aren't a mod, tell them
 	else {
