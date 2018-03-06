@@ -600,7 +600,7 @@ class Player {
 					// tell the world
 					$this->write("message`$safe_dc_name has been disconnected."); // tell the disconnector
 				}
-				else if(isset($dc_player) && ($dc_player->group > 2 || $this->server_owner == false) {
+				else if(isset($dc_player) && ($dc_player->group > 2 || $this->server_owner == false)) {
 					$this->write("message`Error: You lack the power to disconnect $safe_dc_name.");
 				}
 				else {
