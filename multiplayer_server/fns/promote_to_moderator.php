@@ -24,7 +24,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	}
 	
 	// define variables needed
-	$user_id = name_to_id($db, $name);
+	$user_id = addslashes($promoted_player->user_id);
 	$safe_admin_id = addslashes($admin->user_id);
 	$safe_user_id = addslashes($user_id);
 	$safe_type = addslashes($type);
@@ -169,12 +169,17 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	elseif ($type == 'temporary') {
 		
 		try {
-			if(isset($promoted_player) && $promoted_player->group != 0){
+			if(isset($promoted_player)) {
 				$promoted_player->become_temp_mod();
+				echo $admin->name." promoted $name to a $type moderator.";
+				$admin->write("message`$safe_name has been promoted to a $type moderator!");
+				return true;
 			}
-			echo $admin->name." promoted $name to a $type moderator.";
-			$admin->write("message`$name has been promoted to a $type moderator!");
-			return true;
+			else {
+				$admin->write("message`Error: Could not find a user with the name $safe_name on this server.");
+				return false;
+			}
+			
 		}
 		catch(Exception $e){
 			echo "Error: ".$e->getMessage();
