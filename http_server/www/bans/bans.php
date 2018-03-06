@@ -26,6 +26,7 @@ catch(Exception $e) {
 	die();
 }
 	
+try {
 	// header, also check if mod and output the mod links if so
 	$is_mod = is_moderator($db, false);
 	output_header('Ban Log', $is_mod);
