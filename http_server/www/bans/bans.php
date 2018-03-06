@@ -44,7 +44,7 @@ try {
 
 	// retrieve the ban list
 	$bans = retrieve_ban_list($pdo, $start, $count);
-	if(!$result){
+	if(!$bans){
 		throw new Exception('Could not retrieve the ban list.');
 	}
 }
