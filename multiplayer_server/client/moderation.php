@@ -15,39 +15,43 @@ function client_kick ($socket, $data) {
 	$player = $socket->get_player();
 
 	// if the player actually has the power to do what they're trying to do, then do it
-	if(($player->group >= 2) && (($kicked_player->group < 2) || ($player->user_id == $guild_owner))) {
+	if($player->group >= 2 && ($kicked_player->group < 2 || $player->server_owner == true)) {
 
 		LocalBans::add($name);
 
-		if( isset($kicked_player) ) {
+		if(isset($kicked_player)) {
 			$kicked_player->remove();
-			$player->write('message`'.$safe_name.' has been kicked from this server for 30 minutes.');
+			$player->write("message`$safe_name has been kicked from this server for 30 minutes.");
+			
+			// let people know that the player kicked someone
+			if(isset($player->chat_room)){
+				$safe_pname = htmlspecialchars($player->name);
+				$player->chat_room->send_chat("systemChat`$safe_pname has kicked $safe_name from this server for 30 minutes.", $player->user_id);
+			}
 		}
-
-		// let people know that the player kicked someone
-		if(isset($player->chat_room)){
-			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has kicked '.$safe_name.' from this server for 30 minutes.', $player->user_id);
+		else {
+			$player->write("message`Error: Could not find a user with the name \"$safe_name\" on this server.");
 		}
 	}
 	// if they don't have the power to do that, tell them
 	else {
-		$player->write('message`Error: You lack the power to kick '.$safe_name.'.');
+		$player->write("message`Error: You lack the power to kick $safe_name.");
 	}
 }
 
 
 //--- warn a player -------------------------------------------------------------
 function client_warn ($socket, $data) {
+	global $guild_owner;
 	list($name, $num) = explode("`", $data);
 	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
-
+	
+	// get player info
+	$warned_player = name_to_player($name);
 	$player = $socket->get_player();
 
 	// if they're a mod, warn the user
-	if($player->group >= 2){
-
-		$warned_player = name_to_player($name);
+	if($player->group >= 2 && ($warned_player->group < 2 || $player->server_owner == true)){
 
 		$w_str = '';
 		$time = 0;
@@ -75,14 +79,17 @@ function client_warn ($socket, $data) {
 		}
 
 		if(isset($player->chat_room)){
-			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has given '.$safe_name.' '.$num.' '.$w_str.'. '
-			.'They have been banned from the chat for '.$time.' seconds.', $player->user_id);
-		}
+			if (isset($warned_player)) {
+				$safe_pname = htmlspecialchars($player->name);
+				$player->chat_room->send_chat("systemChat`$safe_pname has given $safe_name $num $w_str. They have been banned from the chat for $time seconds.", $player->user_id);
+			}
+			else {
+				$player->write("message`Error: Could not find a user named \"$safe_name\" on this server.");
+			}
 	}
 	// if they aren't a mod, tell them
 	else {
-		$player->write('message`Error: You lack the power to warn '.$safe_name.'.');
+		$player->write("message`Error: You lack the power to warn $safe_name.");
 	}
 }
 
@@ -133,10 +140,10 @@ function client_ban ($socket, $data) {
 		$disp_reason = 'Reason: '.$safe_reason;
 	}
 
-	if($player->group >= 2){
+	if($player->group >= 2 && isset($ban_player)) {
 		if(isset($player->chat_room)) {
-			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has banned '.$safe_name.' for '.$disp_time.'. '.$disp_reason.'. This ban has been recorded at https://pr2hub.com/bans.', $player->user_id);
+			$safe_pname = htmlspecialchars($player->name);
+			$player->chat_room->send_chat("systemChat`$safe_pname has banned $safe_name for $disp_time. $disp_reason. This ban has been recorded at https://pr2hub.com/bans.", $player->user_id);
 		}
 		if(isset($ban_player) && $ban_player->group < 2) {
 			$ban_player->remove();
@@ -171,15 +178,14 @@ function client_promote_to_moderator ($socket, $data) {
 				break;
 		}
 
-		if(isset($from_player->chat_room)){
-			$from_player->chat_room->send_chat('systemChat`'.$from_player->name
-			.' has promoted '.$safe_name
-			.' to a '.$type.' moderator! May they reign in '.$reign_time.' of peace and prosperity! Make sure you read the moderator guidelines at jiggmin2.com/forums/showthread.php?tid=12', $from_player->user_id);
+		if(isset($from_player->chat_room) && (isset($to_player) || $type != 'temporary')) {
+			$same_fname = htmlspecialchars($from_player->name);
+			$from_player->chat_room->send_chat("systemChat`$safe_fname has promoted $safe_name to a $type moderator! May they reign in $reign_time of peace and prosperity! Make sure you read the moderator guidelines at https://jiggmin2.com/forums/showthread.php?tid=12", $from_player->user_id);
 		}
 	}
 	// if they're not an admin, tell them
 	else {
-		$from_player->write('message`Error: You lack the power to promote '.$safe_name.' to a '.$type.' moderator.');
+		$from_player->write("message`Error: You lack the power to promote $safe_name to a $type moderator.");
 	}
 }
 

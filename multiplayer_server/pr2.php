@@ -14,6 +14,7 @@ require_once(__DIR__ . '/fns/data_fns.php');
 require_once(__DIR__ . '/fns/announce_tournament.php');
 require_once(__DIR__ . '/fns/issue_tournament.php');
 require_once(__DIR__ . '/fns/sort_chat_room_array.php');
+require_once(__DIR__ . '/fns/server_owner.php');
 require_once(__DIR__ . '/fns/shutdown_server.php');
 require_once(__DIR__ . '/fns/utils.php');
 require_once(__DIR__ . '/fns/vault.php');
@@ -110,8 +111,8 @@ begin_loadup( $server_id );
 
 
 //start the socket server
-$date = date( 'r' );
-output( "Starting pr2 server $server_name on port $port at on $date." );
+$date = date('r');
+output("Starting PR2 server $server_name on port $port at on $date.");
 $daemon = new socketDaemon();
 $server = $daemon->create_server('pr2_server', 'pr2_server_client', 0, $port);
 $daemon->process();
