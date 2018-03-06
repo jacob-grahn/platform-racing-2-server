@@ -629,10 +629,10 @@ class Player {
 					
 					// do the appropriate action
 					if ($action == 'promote') {
-						promote_server_mod($name, $owner, $target);
+						promote_server_mod($to_name, $owner, $target);
 					}
 					else if ($action == 'demote') {
-						demote_server_mod($name, $owner, $target);
+						demote_server_mod($to_name, $owner, $target);
 					}
 				}
 				else {
