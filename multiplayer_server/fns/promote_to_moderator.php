@@ -10,7 +10,7 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 	$safe_type = htmlspecialchars($type);
 	
 	// if the user isn't an admin on the server, kill the function (2nd line of defense)
-	if($admin->group != 3) {
+	if($admin->group != 3 && $admin->server_owner == false) {
 		echo $admin->name." lacks the server power to promote $safe_name to a $safe_type moderator.";
 		$admin->write("message`Error: You lack the power to promote $safe_name to a $safe_type moderator.");
 		return false;
@@ -21,6 +21,11 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 		echo $admin->name . " lacks the power to \"promote\" another admin ($safe_name) to a $safe_type moderator.";
 		$admin->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
 		return false;
+	}
+	
+	// if a server owner is trying to promote a temp mod, make sure it's a temp
+	if($admin->server_owner == true) {
+		$type = 'temporary';
 	}
 	
 	// define variables needed
