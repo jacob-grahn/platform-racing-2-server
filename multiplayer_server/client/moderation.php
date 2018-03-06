@@ -15,7 +15,7 @@ function client_kick ($socket, $data) {
 	$player = $socket->get_player();
 
 	// if the player actually has the power to do what they're trying to do, then do it
-	if(($player->group >= 2) && (($kicked_player->group < 2) || ($player->user_id == $guild_owner))) {
+	if($player->group >= 2 && ($kicked_player->group < 2 || $player->server_owner == true)) {
 
 		LocalBans::add($name);
 
@@ -51,7 +51,7 @@ function client_warn ($socket, $data) {
 	$player = $socket->get_player();
 
 	// if they're a mod, warn the user
-	if(($player->group >= 2) && (($warned_player->group < 2) || ($player->user_id == $guild_owner))){
+	if($player->group >= 2 && ($warned_player->group < 2 || $player->server_owner == true)){
 
 		$w_str = '';
 		$time = 0;
@@ -79,9 +79,14 @@ function client_warn ($socket, $data) {
 		}
 
 		if(isset($player->chat_room)){
-			$player->chat_room->send_chat('systemChat`'.$player->name
-			.' has given '.$safe_name.' '.$num.' '.$w_str.'. '
-			.'They have been banned from the chat for '.$time.' seconds.', $player->user_id);
+			if (isset($warned_player)) {
+				$player->chat_room->send_chat('systemChat`'.$player->name
+					.' has given '.$safe_name.' '.$num.' '.$w_str.'. '
+					.'They have been banned from the chat for '.$time.' seconds.', $player->user_id);
+			}
+			else {
+				$player->write("message`Error: Could not find a user named \"$safe_name\" on this server.");
+			}
 		}
 	}
 	// if they aren't a mod, tell them
@@ -192,7 +197,7 @@ function client_promote_to_moderator ($socket, $data) {
 function client_demote_moderator ($socket, $name) {
 	$from_player = $socket->get_player();
 
-	if($from_player->group == 3){
+	if($from_player->group == 3 || $from_player->server_owner == true){
 		global $port;
 		$to_player = name_to_player($name);
 
