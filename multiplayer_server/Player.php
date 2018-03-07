@@ -448,8 +448,7 @@ class Player
                     $this->write("message`chat_message: $chat_message<br>port: $port<br>server_name: $server_name<br>server_id: $server_id<br>uptime: $uptime<br>private_server: $is_ps<br>server_guild: $guild_id<br>server_owner: $guild_owner<br>server_expire_time: $server_expire_time");
                 } elseif (strpos($chat_message, '/debug player ') === 0) {
                     $player_name = trim(substr($chat_message, 14));
-                    $player_id = name_to_id($db, $player_name);
-                    $player = id_to_player($player_id);
+                    $player = name_to_player($player_name);
                     
                     if (isset($player)) {
                         $pip = $player->ip;
@@ -498,7 +497,7 @@ class Player
                             ."ip: $pip<br>"
                             ."name: $pname | user_id: $puid<br>"
                             ."status: $pstatus<br>"
-                            ."group: $pgroup | temp_mod: $ptemp | server_owner $pso<br>"
+                            ."group: $pgroup | temp_mod: $ptemp | server_owner: $pso<br>"
                             ."guild_id: $pguild<br>"
                             ."active_rank: $parank | rank (no rt): $prank | rt_used: $prtused | rt_avail: $prtavail<br>"
                             ."exp_today: $pexp2day | exp_points: $pexppoints<br>"
@@ -549,8 +548,7 @@ class Player
                 if (strpos($chat_message, '/dc ') === 0) {
                     $dc_name = trim(substr($chat_message, 4)); // for /dc
                 }
-                $dc_id = name_to_id($db, $dc_name); // convert name to id
-                $dc_player = id_to_player($dc_id); // convert id to player
+                $dc_player = name_to_player($dc_name);
                 $safe_dc_name = htmlspecialchars($dc_player->name); // make the name safe to echo back to the user
                 
                 // permission checks
@@ -579,7 +577,6 @@ class Player
                 if ($chat_message == '/mod help') {
                     $this->write('systemChat`To promote someone to a server moderator, type "/mod promote" followed by their username. They will be a server moderator until they log out or are demoted. To demote an existing server moderator, type "/mod demote" followed by their username.');
                 } elseif (strpos($chat_message, '/mod promote ') === 0 || strpos($chat_message, '/mod demote ') === 0) {
-                    // get the user's name and ID
                     if (strpos($chat_message, '/mod promote ') === 0) {
                         $action = 'promote';
                         $to_name = trim(substr($chat_message, 13));
@@ -587,8 +584,7 @@ class Player
                         $action = 'demote';
                         $to_name = trim(substr($chat_message, 12));
                     }
-                    $to_id = name_to_id($db, $to_name);
-                    $target = id_to_player($to_id);
+                    $target = name_to_player($to_name);
                     $owner = $this;
                     
                     // do the appropriate action
