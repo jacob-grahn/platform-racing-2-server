@@ -8,7 +8,6 @@ $safe_name = htmlspecialchars($target_name);
 $ip = get_ip();
 
 try {
-    
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -34,12 +33,7 @@ try {
     
     // tell the world
     echo "message=$safe_name has been un-ignored. You will now recieve any chat or private messages they send you.";
-
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>

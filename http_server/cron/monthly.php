@@ -10,5 +10,3 @@ $db->call('messages_delete_old');
 $db->call('all_optimize');
 
 echo 'result=ok';
-
-?>

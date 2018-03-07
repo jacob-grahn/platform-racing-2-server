@@ -1,9 +1,7 @@
 <?php
 
-function client_close($socket, $data) 
+function client_close($socket, $data)
 {
     $socket->close();
     $socket->on_disconnect();
 }
-
-?>

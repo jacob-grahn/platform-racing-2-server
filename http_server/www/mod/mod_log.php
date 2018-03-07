@@ -9,7 +9,6 @@ $count = (int) default_val($_GET['count'], 25);
 $ip = get_ip();
 
 try {
-
     // rate limiting
     rate_limit('mod-action-log-'.$ip, 5, 3);
     
@@ -18,9 +17,7 @@ try {
 
     //make sure you're a moderator
     $mod = check_moderator($db, false);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");
     echo "Error: $error";
@@ -29,7 +26,6 @@ catch(Exception $e) {
 }
 
 try {
-
     // get actions for this page
     $actions = $db->call('mod_actions_select', array($start, $count));
 
@@ -41,20 +37,16 @@ try {
     echo('<p>---</p>');
 
     //output actions
-    while($row = $actions->fetch_object()) {
+    while ($row = $actions->fetch_object()) {
         echo("<p><span class='date'>$row->time</span> -- ".htmlspecialchars($row->message)."</p>");
     }
 
     echo('<p>---</p>');
     output_pagination($start, $count);
     output_footer();
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Mod Action Log', true);
     echo "Error: $error";
     output_footer();
 }
-
-?>

@@ -19,50 +19,37 @@ class Hats
     const ARTIFACT = 14;
     
     
-    public static function id_to_str( $id ) 
+    public static function id_to_str($id)
     {
         $str = 'Unknown';
         
-        if($id == Hats::NONE ) {
+        if ($id == Hats::NONE) {
             $str = 'None';
-        }
-        else if($id == Hats::EXP ) {
+        } elseif ($id == Hats::EXP) {
             $str = 'EXP';
-        }
-        else if($id == Hats::KONG ) {
+        } elseif ($id == Hats::KONG) {
             $str = 'Kong';
-        }
-        else if($id == Hats::PROPELLER ) {
+        } elseif ($id == Hats::PROPELLER) {
             $str = 'Propeller';
-        }
-        else if($id == Hats::COWBOY ) {
-            $str = 'Cowboy'; 
-        }
-        else if($id == Hats::CROWN ) {
+        } elseif ($id == Hats::COWBOY) {
+            $str = 'Cowboy';
+        } elseif ($id == Hats::CROWN) {
             $str = 'Crown';
-        }
-        else if($id == Hats::SANTA ) {
+        } elseif ($id == Hats::SANTA) {
             $str = 'Santa';
-        }
-        else if($id == Hats::PARTY ) {
+        } elseif ($id == Hats::PARTY) {
             $str = 'Party';
-        }
-        else if($id == Hats::TOP_HAT ) {
+        } elseif ($id == Hats::TOP_HAT) {
             $str = 'Top Hat';
-        }
-        else if($id == Hats::JUMP_START ) {
+        } elseif ($id == Hats::JUMP_START) {
             $str = 'Jump Start';
-        }
-        else if($id == Hats::MOON ) {
+        } elseif ($id == Hats::MOON) {
             $str = 'Moon';
-        }
-        else if($id == Hats::THIEF ) {
+        } elseif ($id == Hats::THIEF) {
             $str = 'Thief';
-        }
-        else if($id == Hats::JIGG ) {
+        } elseif ($id == Hats::JIGG) {
             $str = 'Jigg';
-        }
-        else if($id == Hats::ARTIFACT ) {
+        } elseif ($id == Hats::ARTIFACT) {
             $str = 'Artifact';
         }
         
@@ -70,57 +57,41 @@ class Hats
     }
     
     
-    public static function str_to_id( $str ) 
+    public static function str_to_id($str)
     {
         $str = strtolower($str);
         $id = 1;
         
-        if($str == 'none' || $str == 'n' || $str == '' || $str == Hats::NONE ) {
+        if ($str == 'none' || $str == 'n' || $str == '' || $str == Hats::NONE) {
             $id = Hats::NONE;
-        }
-        else if($str == 'exp' || $str == 'experience' || $str == 'e' || $str == Hats::EXP ) {
+        } elseif ($str == 'exp' || $str == 'experience' || $str == 'e' || $str == Hats::EXP) {
             $id = Hats::EXP;
-        }
-        else if ($str == 'kong' || $str == 'kongregate' || $str == 'k' || $str == Hats::KONG ) {
+        } elseif ($str == 'kong' || $str == 'kongregate' || $str == 'k' || $str == Hats::KONG) {
             $id = Hats::KONG;
-        }
-        else if($str == 'propeller' || $str == 'prop' || $str == 'pr' || $str == Hats::PROPELLER ) {
+        } elseif ($str == 'propeller' || $str == 'prop' || $str == 'pr' || $str == Hats::PROPELLER) {
             $id = Hats::PROPELLER;
-        }
-        else if($str == 'cowboy' || $str == 'gallon' || $str == 'co' || $str == Hats::COWBOY ) {
+        } elseif ($str == 'cowboy' || $str == 'gallon' || $str == 'co' || $str == Hats::COWBOY) {
             $id = Hats::COWBOY;
-        }
-        else if($str == 'crown' || $str == 'cr' || $str == Hats::CROWN ) {
+        } elseif ($str == 'crown' || $str == 'cr' || $str == Hats::CROWN) {
             $id = Hats::CROWN;
-        }
-        else if($str == 'santa' || $str == 's' || $str == Hats::SANTA ) {
+        } elseif ($str == 'santa' || $str == 's' || $str == Hats::SANTA) {
             $id = Hats::SANTA;
-        }
-        else if($str == 'party' || $str == 'p' || $str == Hats::PARTY ) {
+        } elseif ($str == 'party' || $str == 'p' || $str == Hats::PARTY) {
             $id = Hats::PARTY;
-        }
-        else if($str == 'top' || $str == 'top_hat' || $str == 'tophat' || $str == Hats::TOP_HAT ) {
+        } elseif ($str == 'top' || $str == 'top_hat' || $str == 'tophat' || $str == Hats::TOP_HAT) {
             $id = Hats::TOP_HAT;
-        }
-        else if($str == 'start' || $str == 'jump' || $str == 'jumpstart' || $str == 'jump_start' || $str == Hats::JUMP_START ) {
+        } elseif ($str == 'start' || $str == 'jump' || $str == 'jumpstart' || $str == 'jump_start' || $str == Hats::JUMP_START) {
             $id = Hats::JUMP_START;
-        }
-        else if($str == 'moon' || $str == 'm' || $str == 'luna' || $str == Hats::MOON ) {
+        } elseif ($str == 'moon' || $str == 'm' || $str == 'luna' || $str == Hats::MOON) {
             $id = Hats::MOON;
-        }
-        else if($str == 'thief' || $str == 't' || $str == Hats::THIEF ) {
+        } elseif ($str == 'thief' || $str == 't' || $str == Hats::THIEF) {
             $id = Hats::THIEF;
-        }
-        else if($str == 'jigg' || $str == 'j' || $str == 'jiggmin' || $str == Hats::JIGG ) {
+        } elseif ($str == 'jigg' || $str == 'j' || $str == 'jiggmin' || $str == Hats::JIGG) {
             $id = Hats::JIGG;
-        }
-        else if($str == 'artifact' || $str == 'a' || $str == Hats::ARTIFACT ) {
+        } elseif ($str == 'artifact' || $str == 'a' || $str == Hats::ARTIFACT) {
             $id = Hats::ARTIFACT;
         }
         
         return( $id );
     }
-    
 }
-
-?>

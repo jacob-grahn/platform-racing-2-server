@@ -7,7 +7,6 @@ $ban_id = (int) $_GET['ban_id'];
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('show-ban-record-'.$ip, 5, 2);
     
@@ -29,7 +28,7 @@ try {
 							WHERE ban_id = '$ban_id'
 							LIMIT 0, 1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not display the ban record.');
     }
     $row = $result->fetch_assoc();
@@ -41,9 +40,7 @@ try {
         var_dump($row);
         die();
     }
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error Fetching Ban', $is_mod);
     echo "Error: $error";
@@ -76,11 +73,11 @@ $duration = $expire_time - $time;
 $f_duration = format_duration($duration);
 
 $display_name = '';
-if($account_ban == 1 ) {
+if ($account_ban == 1) {
     $display_name .= $banned_name;
 }
-if($ip_ban == 1 && $is_mod ) {
-    if($display_name != '' ) {
+if ($ip_ban == 1 && $is_mod) {
+    if ($display_name != '') {
         $display_name .= ' ';
     }
     $display_name .= "[$banned_ip]";
@@ -95,7 +92,7 @@ $html_record = str_replace("\r", '<br/>', htmlspecialchars($record));
 $html_notes = str_replace("\n", '<br>', htmlspecialchars($notes));
 
 
-if($lifted == 1) {
+if ($lifted == 1) {
     echo     '<b><p>-----------------------------------------------------------------------------------------------</p>'
     ."<p>--- This ban has been lifted by $html_lifted_by ---</p>"
     ."<p>--- Reason: $html_lifted_reason ---</p>"
@@ -106,12 +103,11 @@ if($lifted == 1) {
 
 
 //make the names clickable for moderators
-if($is_mod === true) {
+if ($is_mod === true) {
     $html_mod_name = "<a href='/mod/player_info.php?user_id=$mod_user_id'>$html_mod_name</a>";
-    if($banned_user_id != 0 && $account_ban == 1) {
+    if ($banned_user_id != 0 && $account_ban == 1) {
         $html_banned_name = "<a href='/mod/player_info.php?user_id=$banned_user_id'>$html_banned_name</a>";
-    }
-    else {
+    } else {
         $html_banned_name = "<a href='/mod/player_info.php?ip=$banned_ip'>$html_banned_name</a>";
     }
 }
@@ -124,13 +120,13 @@ echo "<p>$html_mod_name banned $html_banned_name for $f_duration on $formatted_t
 		<p>$html_record</p>
 		<p> --- </p>";
 
-if($is_mod === true) {
-    if(isset($notes) && $notes != '') {
+if ($is_mod === true) {
+    if (isset($notes) && $notes != '') {
         echo "<p> --- notes</p>";
         echo "<p>$html_notes</p>";
         echo "<p> ---</p>";
     }
-    if($lifted != 1) {
+    if ($lifted != 1) {
         echo "<p><a href='/mod/ban_edit.php?ban_id=$ban_id'>Edit Ban</a></p>";
         echo "<p><a href='/mod/lift_ban.php?ban_id=$ban_id'>Lift Ban</a></p>";
     }
@@ -139,4 +135,3 @@ if($is_mod === true) {
 echo '<p><a href="bans.php">Go Back</a></p>';
 
 output_footer();
-?>

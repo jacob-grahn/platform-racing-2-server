@@ -8,7 +8,6 @@ require_once 'vault_descriptions.php';
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('vault-listing-'.$ip, 3, 1);
     rate_limit('vault-listing-'.$ip, 15, 4);
@@ -28,20 +27,18 @@ try {
     
     // weed out only the info we want to return
     $listings = array();
-    foreach( $raw_listings as $raw ) {
+    foreach ($raw_listings as $raw) {
         $listings[] = makeListing($raw);
     }
 
-    // reply        
+    // reply
     $r = new stdClass();
     $r->success = true;
     $r->listings = $listings;
     $r->title = 'Vault of Magics';
     $r->sale = false;
     echo json_encode($r);
-}
-
-catch(Exception $e) {
+} catch (Exception $e) {
     $r = new stdClass();
     $r->state = 'canceled';
     $r->error = $e->getMessage();
@@ -49,7 +46,7 @@ catch(Exception $e) {
 }
 
 
-function makeListing( $desc ) 
+function makeListing($desc)
 {
     $obj = new stdClass();
     $obj->slug = $desc->slug;
@@ -59,12 +56,8 @@ function makeListing( $desc )
     $obj->description = $desc->description;
     $obj->longDescription = $desc->faq;
     $obj->available = $desc->available;
-    if(isset($desc->discount) ) {
+    if (isset($desc->discount)) {
         $obj->discount = $desc->discount;
     }
     return $obj;
 }
-
-
-
-?>

@@ -4,7 +4,6 @@ require_once '../../fns/all_fns.php';
 require_once '../../fns/output_fns.php';
 
 try {
-    
     //connect
     $db = new DB();
 
@@ -194,13 +193,8 @@ Bodies: 33, 40+
 Feet: 31-33, 40+</pre>';
 
     output_footer();
-
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
     output_footer();
 }
-
-?>

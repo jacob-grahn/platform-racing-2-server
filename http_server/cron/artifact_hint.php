@@ -18,7 +18,7 @@ $user_id = $level->user_id;
 $user = $db->grab_row('user_select', array($user_id));
 $user_name = $user->name;
 
-if($first_finder != 0 ) {
+if ($first_finder != 0) {
     $finder = $db->grab_row('user_select', array( $first_finder ));
     $finder_name = $finder->name;
 } else {
@@ -34,7 +34,7 @@ $len = strlen($str);
 //--- figure out how much of the string to reveal
 $elapsed = time() - $updated_time;
 $perc = $elapsed / (60*60*24*3);
-if($perc > 1 ) {
+if ($perc > 1) {
     $perc = 1;
 }
 $hide_perc = 1 - $perc;
@@ -52,17 +52,17 @@ Random::seed(112);
 //--- replace a percentage of characters with underscores
 $arr = str_split($str);
 $loops = 0;
-while( $hide_characters > 0 ) {
+while ($hide_characters > 0) {
     $index = Random::num(0, $len-1);
 
-    while( $arr[$index] == '_' ) {
+    while ($arr[$index] == '_') {
         $index++;
-        if($index >= $len ) {
+        if ($index >= $len) {
             $index = 0;
         }
 
         $loops++;
-        if($loops > 100 ) {
+        if ($loops > 100) {
             output('infinite loop');
             break;
         }
@@ -86,7 +86,7 @@ output($r->hint);
 
 
 //---
-function output( $str ) 
+function output($str)
 {
     echo "* $str \n";
 }
@@ -98,19 +98,18 @@ class Random
     // random seed
     private static $RSeed = 0;
     // set seed
-    public static function seed($s = 0) 
+    public static function seed($s = 0)
     {
         self::$RSeed = abs(intval($s)) % 9999999 + 1;
         self::num();
     }
     // generate random number
-    public static function num($min = 0, $max = 9999999) 
+    public static function num($min = 0, $max = 9999999)
     {
-        if (self::$RSeed == 0) { self::seed(mt_rand());
+        if (self::$RSeed == 0) {
+            self::seed(mt_rand());
         }
         self::$RSeed = (self::$RSeed * 125) % 2796203;
         return self::$RSeed % ($max - $min + 1) + $min;
     }
 }
-
-?>

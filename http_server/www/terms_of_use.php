@@ -13,5 +13,3 @@ echo "By accessing this site (\"PR2hub\") and/or Platform Racing 2 (\"PR2\"), yo
 	<a href=\"https://www.kongregate.com/pages/terms_of_sale\">Agreement Governing Vault of Magics Purchases</a>";
 
 output_footer();
-
-?>

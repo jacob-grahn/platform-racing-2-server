@@ -1,6 +1,6 @@
 <?php
 
-function user_select_by_name($pdo, $name) 
+function user_select_by_name($pdo, $name)
 {
     $stmt = $pdo->prepare(
         'SELECT 
@@ -24,7 +24,7 @@ function user_select_by_name($pdo, $name)
     return $result;
 }
 
-function user_select_by_id($pdo, $user_id) 
+function user_select_by_id($pdo, $user_id)
 {
     $stmt = $pdo->prepare(
         'SELECT 
@@ -47,5 +47,3 @@ function user_select_by_id($pdo, $user_id)
     $result = $stmt->fetchAll(PDO::FETCH_OBJ);
     return $result;
 }
-
-?>

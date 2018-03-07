@@ -9,7 +9,6 @@ $group_colors = ["7e7f7f", "047b7b", "1c369f", "870a6f"];
 $ip = get_ip();
 
 try {
-
     // rate limiting
     rate_limit("leaderboard-" . $ip, 5, 2);
 
@@ -29,14 +28,12 @@ try {
         if (($count - $start) > 1000) {
             $count = 1000;
         }
-    }
-    else if ($is_mod === false) {
+    } elseif ($is_mod === false) {
         rate_limit('leaderboard-'.$ip, 60, 10, 'Please wait at least one minute before trying to view the leaderboard again.');
         if (($count - $start) > 100) {
             $count = 100;
         }
-    }
-    else {
+    } else {
         throw new Exception("Could not determine user staff boolean.");
     }
 
@@ -73,7 +70,6 @@ try {
 	';
 
     while ($user = $users_result->fetch_object()) {
-
         // name
         $name = $user->name;
         $safe_name = htmlspecialchars($name);
@@ -94,14 +90,13 @@ try {
         $info_link = "player_search.php?name=$url_name";
         
         // echo the row
-        echo "<tr>";    
+        echo "<tr>";
 
         echo "<td><a href='$info_link' style='color: #$group_color; text-decoration: underline;'>$safe_name</a></td>";
         echo "<td>$rank</td>";
         echo "<td>$hats</td>";
 
         echo "</tr>";
-
     }
 
     echo "</table></center>";
@@ -110,30 +105,25 @@ try {
     output_pagination($start, $count);
 
     output_footer();
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     $safe_error = htmlspecialchars($error);
     echo "Error: $safe_error";
     output_footer();
 }
 
-function output_pagination($start, $count) 
+function output_pagination($start, $count)
 {
     $next_start_num = $start + $count;
     $last_start_num = $start - $count;
-    if($last_start_num < 0) {
+    if ($last_start_num < 0) {
         $last_start_num = 0;
     }
     echo('<p>');
-    if($start > 0) {
+    if ($start > 0) {
         echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");
-    }
-    else {
+    } else {
         echo('<- Last |');
     }
     echo(" <a href='?start=$next_start_num&count=$count'>Next -></a></p>");
 }
-
-?>

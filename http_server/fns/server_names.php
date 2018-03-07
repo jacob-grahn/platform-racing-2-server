@@ -1,41 +1,30 @@
 <?php
 
-function get_server_name($port) 
+function get_server_name($port)
 {
-    if($port == 9160) {
+    if ($port == 9160) {
         $server_name = 'Derron';
-    }
-    else if($port == 9161) {
+    } elseif ($port == 9161) {
         $server_name = 'Carina';
-    }
-    else if($port == 9162) {
+    } elseif ($port == 9162) {
         $server_name = 'Grayan';
-    }
-    else if($port == 9163) {
+    } elseif ($port == 9163) {
         $server_name = 'Fitz';
-    }
-    else if($port == 9164) {
+    } elseif ($port == 9164) {
         $server_name = 'Loki';
-    }
-    else if($port == 9165) {
+    } elseif ($port == 9165) {
         $server_name = 'Promie';
-    }
-    else if($port == 9166) {
+    } elseif ($port == 9166) {
         $server_name = 'Morgana';
-    }
-    else if($port == 9167) {
+    } elseif ($port == 9167) {
         $server_name = 'Andres';
-    }
-    else if($port == 9168) {
+    } elseif ($port == 9168) {
         $server_name = 'Fred';
-    }
-    else if($port == 9169) {
+    } elseif ($port == 9169) {
         $server_name = 'Isabel';
-    }
-    else{
+    } else {
         $server_name = 'Port: '.$port;
     }
     
     return $server_name;
 }
-?>

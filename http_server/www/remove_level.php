@@ -8,14 +8,13 @@ require_once __DIR__ . '/../queries/staff/level_unpublish.php';
 $level_id = (int) default_val($_POST['level_id']);
 
 try {
-    
     // check for post
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
     
     // sanity check: was a level ID specified?
-    if(is_empty($level_id, false)) {
+    if (is_empty($level_id, false)) {
         throw new Exception('No level ID was specified.');
     }
     
@@ -33,7 +32,7 @@ try {
     rate_limit('remove-level-'.$mod->user_id, 3, 1);
     
     // make sure the user is a permanent moderator
-    if($mod->can_unpublish_level != 1) {
+    if ($mod->can_unpublish_level != 1) {
         throw new Exception('You can not unpublish levels.');
     }
     
@@ -57,12 +56,7 @@ try {
     
     //record the change
     $db->call('mod_action_insert', array($user_id, "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}", $user_id, $ip));
-    
-}
-
-catch (Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>

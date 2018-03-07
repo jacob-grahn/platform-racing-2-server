@@ -25,7 +25,6 @@ if ($using_mod_site == 'no') {
 }
 
 try {
-    
     // POST check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -39,7 +38,7 @@ try {
     $pdo = pdo_connect();
     
     // sanity check: was a name passed to the script?
-    if(is_empty($banned_name)) {
+    if (is_empty($banned_name)) {
         throw new Exception('Invalid name provided');
     }
     
@@ -52,7 +51,7 @@ try {
     $mod_power = $mod->power;
     
     // limit ban length
-    if($duration > $mod->max_ban) {
+    if ($duration > $mod->max_ban) {
         $duration = $mod->max_ban;
     }
     $time = (int) time();
@@ -62,7 +61,7 @@ try {
     // throttle bans using PDO
     $throttle = throttle_bans($pdo, $mod_user_id);
     $recent_ban_count = $throttle->recent_ban_count;
-    if($recent_ban_count > $mod->bans_per_hour) {
+    if ($recent_ban_count > $mod->bans_per_hour) {
         throw new Exception('You have reached the cap of '.$mod->bans_per_hour.' bans per hour.');
     }
     
@@ -79,7 +78,7 @@ try {
     
     
     // override ip
-    if(!is_empty($force_ip)) {
+    if (!is_empty($force_ip)) {
         $banned_ip = $force_ip;
     }
     
@@ -88,39 +87,39 @@ try {
     $ip_ban = 0;
     $account_ban = 0;
     switch ($type) {
-    case 'both':
-        $ip_ban = 1;
-        $account_ban = 1;
+        case 'both':
+            $ip_ban = 1;
+            $account_ban = 1;
+            break;
+        case 'account':
+            $ip_ban = 0;
+            $account_ban = 1;
+            break;
+        case 'ip':
+            $ip_ban = 1;
+            $account_ban = 0;
+            break;
+        default:
+            throw new Exception("Invalid ban type specified.");
         break;
-    case 'account':
-        $ip_ban = 0;
-        $account_ban = 1;
-        break;
-    case 'ip':
-        $ip_ban = 1;
-        $account_ban = 0;
-        break;
-    default:
-        throw new Exception("Invalid ban type specified.");
-      break;
     }
     
     
     // permission check
-    if($mod_power <= $banned_power || $mod_power < 2) {
+    if ($mod_power <= $banned_power || $mod_power < 2) {
         throw new Exception("You lack the power to ban $banned_name.");
     }
     
     
     // don't ban guest accounts, just the ip
-    if($banned_power == 0) {
+    if ($banned_power == 0) {
         $banned_user_id = 0;
         $banned_name = '';
     }
     
     // add the ban using pdo
     $result = ban_user($pdo, $banned_ip, $banned_user_id, $mod_user_id, $expire_time, $reason, $record, $banned_name, $mod_user_name, $ip_ban, $account_ban);
-    if($result === false) {
+    if ($result === false) {
         throw new Exception('Could not record ban.');
     }
     
@@ -161,25 +160,18 @@ try {
     // --- end action log stuff --- \\
     
     
-    if($using_mod_site == 'yes' && $redirect == 'yes') {
+    if ($using_mod_site == 'yes' && $redirect == 'yes') {
         header('Location: //pr2hub.com/mod/player_info.php?user_id='.$banned_user_id.'&force_ip='.$force_ip);
         die();
-    }
-    else {
-        if($banned_user_id == 0) {
+    } else {
+        if ($banned_user_id == 0) {
             echo("message=Guest [$banned_ip] has been banned for $duration seconds.");
-        }
-        else {
+        } else {
             $disp_name = htmlspecialchars($banned_name);
             echo("message=$disp_name has been banned for $duration seconds.");
         }
     }
-    
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>

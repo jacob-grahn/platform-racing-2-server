@@ -9,7 +9,6 @@ $safe_friend_name = htmlspecialchars($friend_name);
 $ip = get_ip();
 
 try {
-    
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -34,12 +33,8 @@ try {
     $db->call('friends_insert', array($user_id, $friend_id));
     
     // tell it to the world
-    echo "message=$safe_friend_name has been added to your friends list!";            
-}
-
-catch(Exception $e){
+    echo "message=$safe_friend_name has been added to your friends list!";
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>

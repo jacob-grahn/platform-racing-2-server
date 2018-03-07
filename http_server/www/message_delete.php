@@ -7,7 +7,6 @@ $message_id = $_POST['message_id'];
 $ip = get_ip();
 
 try {
-    
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -30,11 +29,8 @@ try {
     
     // tell the world
     echo 'success=true';
-    
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
     exit;
 }
-?>

@@ -15,7 +15,6 @@ $name9 = find('name9', '');
 
 
 try {
-
     // connect
     $db = new DB();
 
@@ -28,12 +27,11 @@ try {
 
     //
     echo '<form name="input" action="" method="get">';
-    foreach( range(1, 9) as $i ) {
-        
+    foreach (range(1, 9) as $i) {
         $name = ${"name$i"};
         echo '<input type="text" name="name'.$i.'" value="'.htmlspecialchars($name).'"><br>';
         
-        if($name != '' ) {
+        if ($name != '') {
             try {
                 $user = $db->grab_row('user_select_by_name', array($name));
                 $pr2 = $db->grab_row('pr2_select', array($user->user_id), '', true);
@@ -47,8 +45,7 @@ try {
                 output_objects($changing_emails);
                 output_objects($logins);
                 echo '<a href="update_account.php?id='.$user->user_id.'">edit</a><br><br><br>';
-            }
-            catch(Exception $e) {
+            } catch (Exception $e) {
                 echo "<i>Error: ".$e->getMessage()."</i><br><br>";
             }
         }
@@ -57,33 +54,28 @@ try {
     echo '</form>';
     
     output_footer();
-
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
     output_footer();
 }
 
-function output_objects( $objs ) 
+function output_objects($objs)
 {
-    foreach( $objs as $obj ) {
+    foreach ($objs as $obj) {
         output_object($obj, ', ');
         echo '<br/>';
     }
 }
 
-function output_object( $obj, $sep='<br/>' ) 
+function output_object($obj, $sep = '<br/>')
 {
-    foreach( $obj as $var=>$val ) {
-        if($var == 'time' || $var == 'register_time' ) {
+    foreach ($obj as $var => $val) {
+        if ($var == 'time' || $var == 'register_time') {
             $val = date('M j, Y g:i A', $val);
         }
-        if($var != 'user_id' ) {
+        if ($var != 'user_id') {
             echo "$var: ".htmlspecialchars($val)."$sep";
         }
     }
 }
-
-?>

@@ -2,7 +2,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-function output_header($title='', $formatting_for_mods=false, $formatting_for_admins=false) 
+function output_header($title = '', $formatting_for_mods = false, $formatting_for_admins = false)
 {
 ?>
 
@@ -13,7 +13,7 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
     <title>PR2 Hub - <?php echo $title; ?></title>
     <link href="//pr2hub.com/style/gwibble.css" rel="stylesheet" type="text/css" />
     <link href="//pr2hub.com/style/pr2hub.css" rel="stylesheet" type="text/css"/>
-    <?php if($formatting_for_mods) { ?>
+    <?php if ($formatting_for_mods) { ?>
         <script src="https://code.jquery.com/jquery-latest.min.js"></script>
         <script src="https://malsup.github.io/jquery.form.js"></script>
     <?php } ?>
@@ -31,13 +31,13 @@ function output_header($title='', $formatting_for_mods=false, $formatting_for_ad
 
 <?php
 
-if($formatting_for_mods) {
+if ($formatting_for_mods) {
     output_mod_navigation($formatting_for_admins);
 }
 }
 
 
-function output_footer() 
+function output_footer()
 {
 ?>
 
@@ -58,7 +58,7 @@ function output_footer()
 }
 
 
-function output_mod_navigation($formatting_for_admins=true) 
+function output_mod_navigation($formatting_for_admins = true)
 {
 ?>
 
@@ -71,7 +71,7 @@ function output_mod_navigation($formatting_for_admins=true)
             <a href="//pr2hub.com/bans/bans.php">Ban Log</a>
             -
             <a href="//pr2hub.com/mod/mod_log.php">Mod Action Log</a>
-    <?php if($formatting_for_admins) { ?>
+    <?php if ($formatting_for_admins) { ?>
             <br>
             <a href="//pr2hub.com/admin/player_deep_info.php">Update Account</a>
             -

@@ -8,7 +8,6 @@ $ip = get_ip();
 $desc = "<p><center>Welcome to PR2's level restore system!<br>You can use this tool to restore any level that was modified or deleted in the past month.</center></p>";
 
 try {
-    
     // rate limiting
     rate_limit('level-backups-'.$ip, 5, 2);
     rate_limit('level-backups-'.$ip, 30, 10);
@@ -16,9 +15,7 @@ try {
     // connect
     $db = new DB();
     $user_id = token_login($db);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Level Backups");
     echo "Error: $error";
@@ -27,7 +24,6 @@ catch(Exception $e) {
 }
     
 try {
-    
     // rate limiting
     rate_limit('level-backups-'.$user_id, 5, 1);
     rate_limit('level-backups-'.$user_id, 30, 5);
@@ -39,12 +35,11 @@ try {
     //restore a backup
     $action = find('action');
     
-    if($action == 'restore') {
-        
+    if ($action == 'restore') {
         //get the level_id that this backup_id points to
         $backup_id = find('backup_id');
         $row = $db->grab_row('level_backups_select_one', array($backup_id));
-        if($row->user_id != $user_id) {
+        if ($row->user_id != $user_id) {
             throw new Exception('You do not own this backup.');
         }
         
@@ -60,7 +55,7 @@ try {
         
         //pull the backup
         $file = $s3->getObject('pr2backups', "$level_id-v$version.txt");
-        if(!$file) {
+        if (!$file) {
             throw new Exception('Could not load backup contents.');
         }
         $body = $file->body;
@@ -81,7 +76,7 @@ try {
         
         //write the backup to the level system
         $result = $s3->putObjectString($body, 'pr2levels1', "$level_id.txt");
-        if(!$result) {
+        if (!$result) {
             throw new Exception('Could not restore backup.');
         }
         
@@ -89,9 +84,7 @@ try {
         echo $desc;
         echo '<p>---</p>';
         echo "<p><b>".htmlspecialchars($title)." v$version</b> restored successfully!</p>";
-    }
-    
-    else {
+    } else {
         echo $desc;
     }
     
@@ -99,16 +92,11 @@ try {
     //display available backups
     echo '<br/>';
     $result = $db->call('level_backups_select', array($user_id));
-    while($row = $result->fetch_object()) {
+    while ($row = $result->fetch_object()) {
         echo "<p>$row->date: <b>".htmlspecialchars($row->title)."</b> v$row->version <a href='?action=restore&backup_id=$row->backup_id'>restore</a></p>";
     }
-    
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "Error: $error";
     output_footer();
 }
-
-?>

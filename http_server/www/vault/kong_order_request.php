@@ -1,6 +1,6 @@
 <?php
 
-function order_request_handler( $db, $request ) 
+function order_request_handler($db, $request)
 {
     
     //--- sort incoming data
@@ -17,7 +17,7 @@ function order_request_handler( $db, $request )
     
     //---
     $items = array();
-    foreach( $items_raw as $raw ) {
+    foreach ($items_raw as $raw) {
         $items[] = format_for_kong($raw);
     }
 
@@ -29,7 +29,7 @@ function order_request_handler( $db, $request )
 
 
 
-function format_for_kong( $desc ) 
+function format_for_kong($desc)
 {
     $item = new stdClass();
     $item->name = $desc->title;
@@ -38,5 +38,3 @@ function format_for_kong( $desc )
     $item->image_url = $desc->imgUrlSmall;
     return( $item );
 }
-
-?>

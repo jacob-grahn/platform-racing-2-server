@@ -7,7 +7,6 @@ $name = default_val($_POST['name'], '');
 $ip = get_ip();
 
 try {
-    
     // POST check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -21,9 +20,7 @@ try {
 
     // make sure you're a moderator
     $mod = check_moderator($db);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");
     echo "Error: $error";
@@ -31,9 +28,8 @@ catch(Exception $e) {
 }
 
 try {
-    
     // sanity check
-    if(is_empty($name)) {
+    if (is_empty($name)) {
         throw new Exception('No username specified.');
     }
 
@@ -43,13 +39,8 @@ try {
     // redirect
     header("Location: player_info.php?user_id=$user_id");
     die();
-    
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = urlencode($e->getMessage());
     header("Location: player_search.php?message=$error");
     die();
 }
-
-?>

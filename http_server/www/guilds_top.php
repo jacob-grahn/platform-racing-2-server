@@ -9,7 +9,6 @@ $sort = find('sort', 'gpToday');
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('guilds-top-'.$ip, 5, 3);
     
@@ -19,7 +18,7 @@ try {
     
     //--- sanity check
     $allowed_sort_values = array( 'gpToday', 'gpTotal', 'members', 'activeMembers' );
-    if(array_search($sort, $allowed_sort_values) === false ) {
+    if (array_search($sort, $allowed_sort_values) === false) {
         throw new Exception('Unexpected sort value');
     }
     
@@ -30,7 +29,7 @@ try {
     
     //--- get active member count guild by guild
     //--- also disable html parsing
-    foreach( $guilds as $guild ) {
+    foreach ($guilds as $guild) {
         $guild->active_count = guild_count_active($db, $guild->guild_id);
         $guild->guild_name = htmlspecialchars($guild->guild_name);
     }
@@ -41,13 +40,8 @@ try {
     $reply->success = true;
     $reply->guilds = $guilds;
     echo json_encode($reply);
-}
-
-
-catch(Exception $e){
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
-
-?>

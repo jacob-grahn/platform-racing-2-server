@@ -8,7 +8,6 @@ $count = find_no_cookie('count', 100);
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('get-levels-'.$ip, 3, 2);
     
@@ -27,10 +26,7 @@ try {
     
     // tell the world
     echo $str;
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>

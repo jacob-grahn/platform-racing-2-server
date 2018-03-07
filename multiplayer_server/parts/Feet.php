@@ -39,7 +39,4 @@ class Feet
     const CROCODILE = 37;
     const VALENTINE = 38;
     const BUNNY = 39;
-    
 }
-
-?>

@@ -8,7 +8,6 @@ $start = find('start', 0);
 $count = find('count', 25);
 
 try {
-
     //connect
     $db = new DB();
   
@@ -27,7 +26,7 @@ try {
 
 
     //output actions
-    while( $row = $actions->fetch_object() ) {
+    while ($row = $actions->fetch_object()) {
         //$formatted_time = date('M j, Y g:i A', $row->time);
         echo("<p><span class='date'>$row->time</span> -- ".htmlspecialchars($row->message)."</p>");
     }
@@ -36,12 +35,8 @@ try {
     echo('<p>---</p>');
     output_pagination($start, $count);
     output_footer();
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     output_header('Error');
     echo 'Error: '.$e->getMessage();
     output_footer();
 }
-
-?>

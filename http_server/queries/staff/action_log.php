@@ -1,6 +1,6 @@
 <?php
 
-function log_mod_action($pdo, $string, $user_id, $ip) 
+function log_mod_action($pdo, $string, $user_id, $ip)
 {
     $time = (int) time();
 
@@ -19,7 +19,7 @@ function log_mod_action($pdo, $string, $user_id, $ip)
     $stmt->execute();
 }
 
-function log_admin_action($pdo, $string, $user_id, $ip) 
+function log_admin_action($pdo, $string, $user_id, $ip)
 {
     $time = (int) time();
 
@@ -37,5 +37,3 @@ function log_admin_action($pdo, $string, $user_id, $ip)
     // execute the PDO
     $stmt->execute();
 }
-
-?>

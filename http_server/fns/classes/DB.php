@@ -9,12 +9,11 @@ class DB
 
 
 
-    public function __construct($mysqli=null) 
+    public function __construct($mysqli = null)
     {
-        if(isset($mysqli) ) {
+        if (isset($mysqli)) {
             $this->mysqli = $mysqli;
-        }
-        else {
+        } else {
             $this->mysqli = pr2_connect();
         }
         $this->last_action = time();
@@ -22,14 +21,14 @@ class DB
 
 
 
-    function __destruct() 
+    function __destruct()
     {
           $this->close();
     }
 
 
 
-    public function escape($val) 
+    public function escape($val)
     {
         $safe_val = $this->mysqli->real_escape_string($val);
         return $safe_val;
@@ -37,7 +36,7 @@ class DB
 
 
 
-    public function real_escape_string($val) 
+    public function real_escape_string($val)
     {
         $safe_val = $this->mysqli->real_escape_string($val);
         return $safe_val;
@@ -45,33 +44,33 @@ class DB
 
 
 
-    public function get_insert_id() 
+    public function get_insert_id()
     {
         return($this->mysqli->insert_id);
     }
 
 
 
-    public function get_error() 
+    public function get_error()
     {
         return($this->mysqli->error);
     }
 
 
 
-    public function get_last_query() 
+    public function get_last_query()
     {
         return($this->last_query_str);
     }
 
 
 
-    public function test_health() 
+    public function test_health()
     {
         $elapsed = time() - $this->last_action;
-        if($elapsed > 3) {
+        if ($elapsed > 3) {
             $connected = $this->mysqli->ping();
-            if(!$connected) {
+            if (!$connected) {
                 $this->mysqli->close();
                 $this->mysqli = pr2_connect();
                 $this->last_action = time();
@@ -81,7 +80,7 @@ class DB
 
 
 
-    public function query($query_str, $query_name='noname', $custom_error='', $suppress_error=false) 
+    public function query($query_str, $query_name = 'noname', $custom_error = '', $suppress_error = false)
     {
 
         $this->last_query_str = $query_str;
@@ -91,11 +90,10 @@ class DB
         $start_time = microtime(true);
 
         $result = $this->mysqli->query($query_str);
-        if(!$result && !$suppress_error) {
-            if($custom_error != '') {
+        if (!$result && !$suppress_error) {
+            if ($custom_error != '') {
                 throw new Exception($custom_error);
-            }
-            else {
+            } else {
                 throw new Exception('Could not perform query. ');
                 //throw new Exception($this->mysqli->error);
             }
@@ -110,12 +108,12 @@ class DB
 
 
 
-    public function clear_results(&$mysqli) 
+    public function clear_results(&$mysqli)
     {
         $loops = 0;
         while ($bool = $mysqli->next_result()) {
             $loops++;
-            if($loops > 100) {
+            if ($loops > 100) {
                 break;
             }
         }
@@ -123,7 +121,7 @@ class DB
 
 
 
-    public function multi_query($query_str, $query_name='noname') 
+    public function multi_query($query_str, $query_name = 'noname')
     {
         $this->clear_results($this->mysqli);
 
@@ -137,20 +135,20 @@ class DB
 
 
 
-    public function next_result() 
+    public function next_result()
     {
         return $this->mysqli->next_result();
     }
 
 
 
-    public function format_call($func, $arg_list=null) 
+    public function format_call($func, $arg_list = null)
     {
-        if(!isset($arg_list)) {
+        if (!isset($arg_list)) {
             $arg_list = array();
         }
 
-        if(!is_string($func)) {
+        if (!is_string($func)) {
             throw new Exception('DB::call - Invalid call func');
         }
 
@@ -159,11 +157,11 @@ class DB
 
         $query_str = 'CALL '.$safe_func.'(';
 
-        for($i=0; $i<$arg_count; $i++) {
+        for ($i=0; $i<$arg_count; $i++) {
             $arg = $arg_list[$i];
             $safe_arg = $this->escape($arg);
             $query_str .= '"'.$safe_arg.'"';
-            if($i<$arg_count-1) {
+            if ($i<$arg_count-1) {
                 $query_str .= ', ';
             }
         }
@@ -175,9 +173,9 @@ class DB
 
 
 
-    public function call($func, $arg_list=null, $custom_error='', $suppress_error=false) 
+    public function call($func, $arg_list = null, $custom_error = '', $suppress_error = false)
     {
-        if(!isset($arg_list)) {
+        if (!isset($arg_list)) {
             $arg_list = array();
         }
         $query_str = $this->format_call($func, $arg_list);
@@ -187,24 +185,22 @@ class DB
 
 
 
-    public function grab_row($func, $arg_list=null, $custom_error='', $suppress_error=false) 
+    public function grab_row($func, $arg_list = null, $custom_error = '', $suppress_error = false)
     {
         $result = $this->call($func, $arg_list, $custom_error, $suppress_error);
-        if(!$result) {
+        if (!$result) {
             return null;
         }
-        if($result->num_rows != 1) {
+        if ($result->num_rows != 1) {
             $row = null;
-            if(!$suppress_error) {
-                if($custom_error) {
+            if (!$suppress_error) {
+                if ($custom_error) {
                     throw new Exception($custom_error);
-                }
-                else {
+                } else {
                     throw new Exception('Found '. $result->num_rows .' rows for DB->grab_row '.$func);
                 }
             }
-        }
-        else {
+        } else {
             $row = $result->fetch_object();
         }
         return($row);
@@ -212,13 +208,12 @@ class DB
 
 
 
-    public function grab($var, $func, $arg_list=null, $custom_error='', $suppress_error=false, $default=null) 
+    public function grab($var, $func, $arg_list = null, $custom_error = '', $suppress_error = false, $default = null)
     {
         $row = $this->grab_row($func, $arg_list, $custom_error, $suppress_error);
-        if(isset($row)) {
+        if (isset($row)) {
             $val = $row->{$var};
-        }
-        else {
+        } else {
             $val = $default;
         }
         return($val);
@@ -226,22 +221,20 @@ class DB
 
 
 
-    public function to_array( $result ) 
+    public function to_array($result)
     {
         $arr = array();
-        while( $row = $result->fetch_object() ) {
+        while ($row = $result->fetch_object()) {
             $arr[] = $row;
         }
         return $arr;
     }
 
 
-    public function close() 
+    public function close()
     {
         if (isset($this->mysqli)) {
             $this->mysqli->close();
         }
     }
 }
-
-?>

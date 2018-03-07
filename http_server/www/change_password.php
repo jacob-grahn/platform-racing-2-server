@@ -15,7 +15,6 @@ $ip = get_ip();
 $safe_name = addslashes($name);
 
 try {
-    
     // check request method
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -28,7 +27,7 @@ try {
     }
     
     // sanity check: was a password entered?
-    if(strlen($new_pass) <= 0) {
+    if (strlen($new_pass) <= 0) {
         throw new Exception('You must enter a password, silly person.');
     }
     
@@ -43,7 +42,7 @@ try {
 
     // make sure guests aren't getting any funny ideas
     $power = $login->power;
-    if($power < 1) {
+    if ($power < 1) {
         throw new Exception('Guests don\'t even really have passwords...');
     }
     
@@ -56,7 +55,7 @@ try {
 						WHERE name = '$safe_name'"
     );
 
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not update your password. Sorries.');
     }
 
@@ -65,11 +64,7 @@ try {
 
     // tell it to the world
     echo 'message=Your password has been changed successfully!';
-}
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-
-?>

@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/all_fns.php';
 
-function artifact_first_check($port, $player) 
+function artifact_first_check($port, $player)
 {
     global $db;
 
@@ -10,11 +10,9 @@ function artifact_first_check($port, $player)
     $safe_user_name = htmlspecialchars($player->name);
 
     try {
-        
         $first_finder = $db->grab('first_finder', 'artifact_find', array($user_id));
 
-        if($first_finder == $user_id ) {
-            
+        if ($first_finder == $user_id) {
             /* What are we gonna tell the player when they win?
             How about display a prize window with the bubble head and the name "Bubble Set" */
             
@@ -47,16 +45,11 @@ Thanks for playing Platform Racing 2!
 
 - Jiggmin';
             
-            $db->call('message_insert', array($user_id, 1, $artifact_first_pm, '0'));            
+            $db->call('message_insert', array($user_id, 1, $artifact_first_pm, '0'));
         }
-    }
-
-    catch(Exception $e) {
+    } catch (Exception $e) {
         $message = $e->getMessage();
         echo "Error: ".$message;
         return false;
     }
-
 }
-
-?>

@@ -22,9 +22,7 @@ $db->call('tokens_delete_old');
 
 output('result=ok');
 
-function output( $str ) 
+function output($str)
 {
     echo "* $str \n";
 }
-
-?>

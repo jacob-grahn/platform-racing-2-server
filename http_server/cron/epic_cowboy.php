@@ -1,5 +1,5 @@
 <?php
-
+;
 /*
 
 require_once('../fns/all_fns.php');
@@ -110,5 +110,3 @@ function send_message($db, $user_id, $message){
 }
 
 */
-
-?>

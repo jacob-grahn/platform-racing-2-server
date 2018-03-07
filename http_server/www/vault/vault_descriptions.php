@@ -1,59 +1,46 @@
 <?php
 
 
-function describeVault( $db, $user_id, $arr ) 
+function describeVault($db, $user_id, $arr)
 {
 
     //--- gather infos
     $user = $db->grab_row('user_select_expanded', array($user_id));
     $server = $db->grab_row('server_select', array($user->server_id), 'You don\'t seem to be logged into a PR2 server.');
-    if($user->guild != 0 ) {
+    if ($user->guild != 0) {
         $guild = $db->grab_row('guild_select', array($user->guild));
-    }
-    else {
+    } else {
         $guild = false;
     }
 
     //--- collect requested descriptions
     $descriptions = array();
-    foreach( $arr as $slug ) {
-        if($slug == 'stats-boost' ) {
+    foreach ($arr as $slug) {
+        if ($slug == 'stats-boost') {
             $item = describeSuperBooster($user, $server);
-        }
-        else if($slug == 'guild-fred' ) {
+        } elseif ($slug == 'guild-fred') {
             $item = describeFred();
-        }
-        else if($slug == 'guild-ghost' ) {
+        } elseif ($slug == 'guild-ghost') {
             $item = describeGhost();
-        }
-        else if($slug == 'guild-artifact' ) {
+        } elseif ($slug == 'guild-artifact') {
             $item = describeArtifact();
-        }
-        else if($slug == 'happy-hour' ) {
+        } elseif ($slug == 'happy-hour') {
             $item = describeHappyHour($server);
-        }
-        else if($slug == 'rank-rental' ) {
+        } elseif ($slug == 'rank-rental') {
             $item = describeRankRental($db, $user);
-        }
-        else if($slug == 'king-set' ) {
+        } elseif ($slug == 'king-set') {
             $item = describeKing($user);
-        }
-        else if($slug == 'queen-set' ) {
+        } elseif ($slug == 'queen-set') {
             $item = describeQueen($user);
-        }
-        else if($slug == 'djinn-set' ) {
+        } elseif ($slug == 'djinn-set') {
             $item = describeDjinn($user);
-        }
-        else if($slug == 'server-1-day' ) {
+        } elseif ($slug == 'server-1-day') {
             $item = describePrivateServer1($user, $guild);
-        }
-        else if($slug == 'server-30-days' ) {
+        } elseif ($slug == 'server-30-days') {
             $item = describePrivateServer30($user, $guild);
-        }
-        else if($slug == 'epic-everything' ) {
+        } elseif ($slug == 'epic-everything') {
             $item = describeEpicEverything($user);
-        }
-        else {
+        } else {
             throw new Exception('Unknown item type.');
         }
 
@@ -65,7 +52,7 @@ function describeVault( $db, $user_id, $arr )
 }
 
 
-function describeSuperBooster( $user, $server ) 
+function describeSuperBooster($user, $server)
 {
     $d = new stdClass();
     $d->slug = 'stats-boost';
@@ -79,7 +66,7 @@ function describeSuperBooster( $user, $server )
     "Can I use more than one Super Booster per day if I pay for it?\n"
     ."Nope!\n\n";
 
-    if($server->tournament == 0 ) {
+    if ($server->tournament == 0) {
         $d->available = !apcu_fetch("sb-$user->user_id");
     }
 
@@ -87,7 +74,7 @@ function describeSuperBooster( $user, $server )
 }
 
 
-function describeFred() 
+function describeFred()
 {
     $d = new stdClass();
     $d->slug = 'guild-fred';
@@ -109,7 +96,7 @@ function describeFred()
 }
 
 
-function describeGhost() 
+function describeGhost()
 {
     $d = new stdClass();
     $d->slug = 'guild-ghost';
@@ -131,7 +118,7 @@ function describeGhost()
 }
 
 
-function describeArtifact() 
+function describeArtifact()
 {
     $d = new stdClass();
     $d->slug = 'guild-artifact';
@@ -153,7 +140,7 @@ function describeArtifact()
 }
 
 
-function describeHappyHour( $server ) 
+function describeHappyHour($server)
 {
     $d = new stdClass();
     $d->slug = 'happy-hour';
@@ -169,7 +156,7 @@ function describeHappyHour( $server )
     ."Can a Happy Hour be used on a private server?\n"
     ."- Yup!\n\n";
 
-    if($server->tournament == 0 ) {
+    if ($server->tournament == 0) {
         $d->available = true;
     }
 
@@ -177,7 +164,7 @@ function describeHappyHour( $server )
 }
 
 
-function describeRankRental( $db, $user ) 
+function describeRankRental($db, $user)
 {
     $rented_tokens = $db->grab('count', 'rank_token_rentals_count', array( $user->user_id, $user->guild));
     $d = new stdClass();
@@ -204,7 +191,7 @@ function describeRankRental( $db, $user )
 }
 
 
-function describeKing( $user ) 
+function describeKing($user)
 {
     $d = new stdClass();
     $d->slug = 'king-set';
@@ -221,7 +208,7 @@ function describeKing( $user )
     ."- Totally.\n\n";
 
     $heads = explode(',', $user->head_array);
-    if(array_search(28, $heads) === false ) {
+    if (array_search(28, $heads) === false) {
         $d->available = true;
     }
 
@@ -229,7 +216,7 @@ function describeKing( $user )
 }
 
 
-function describeQueen( $user ) 
+function describeQueen($user)
 {
     $d = new stdClass();
     $d->slug = 'queen-set';
@@ -246,7 +233,7 @@ function describeQueen( $user )
     ."- Totally.\n\n";
 
     $heads = explode(',', $user->head_array);
-    if(array_search(29, $heads) === false ) {
+    if (array_search(29, $heads) === false) {
         $d->available = true;
     }
 
@@ -254,7 +241,7 @@ function describeQueen( $user )
 }
 
 
-function describeDjinn( $user ) 
+function describeDjinn($user)
 {
     $d = new stdClass();
     $d->slug = 'djinn-set';
@@ -271,7 +258,7 @@ function describeDjinn( $user )
     ."- Totally.\n\n";
 
     $heads = explode(',', $user->head_array);
-    if(array_search(35, $heads) === false ) {
+    if (array_search(35, $heads) === false) {
         $d->available = true;
     }
 
@@ -279,7 +266,7 @@ function describeDjinn( $user )
 }
 
 
-function describePrivateServer1( $user, $guild ) 
+function describePrivateServer1($user, $guild)
 {
     $d = new stdClass();
     $d->slug = 'server-1-day';
@@ -300,7 +287,7 @@ function describePrivateServer1( $user, $guild )
     ."- This option is for guild owners only!\n\n";
 
 
-    if($guild && $guild->owner_id == $user->user_id ) {
+    if ($guild && $guild->owner_id == $user->user_id) {
         $d->available = true;
     }
 
@@ -308,7 +295,7 @@ function describePrivateServer1( $user, $guild )
 }
 
 
-function describePrivateServer30( $user, $guild ) 
+function describePrivateServer30($user, $guild)
 {
     $d = new stdClass();
     $d->slug = 'server-30-days';
@@ -328,7 +315,7 @@ function describePrivateServer30( $user, $guild )
     ."Why can't I create a private server?\n"
     ."- This option is for guild owners only!\n\n";
 
-    if($guild && $guild->owner_id == $user->user_id ) {
+    if ($guild && $guild->owner_id == $user->user_id) {
         $d->available = true;
     }
 
@@ -336,7 +323,7 @@ function describePrivateServer30( $user, $guild )
 }
 
 
-function describeEpicEverything( $user ) 
+function describeEpicEverything($user)
 {
     $d = new stdClass();
     $d->slug = 'epic-everything';
@@ -357,11 +344,9 @@ function describeEpicEverything( $user )
     ."- Nope!\n\n";
 
     $heads = explode(',', $user->epic_heads);
-    if(array_search('*', $heads) === false ) {
+    if (array_search('*', $heads) === false) {
         $d->available = true;
     }
 
     return( $d );
 }
-
-?>

@@ -8,7 +8,6 @@ require_once __DIR__ . '/vault_descriptions.php';
 require_once __DIR__ . '/../../fns/all_fns.php';
 
 try {
-
     //--- parse the incoming message
     $encrypted_request = $_POST['signed_request'];
     $request = parse_signed_request($encrypted_request, $KONG_API_PASS);
@@ -18,18 +17,16 @@ try {
 
     //---
     $event = $request->event;
-    if($event == 'item_order_request' ) {
+    if ($event == 'item_order_request') {
         $reply = order_request_handler($db, $request);
     }
-    if($event == 'item_order_placed' ) {
+    if ($event == 'item_order_placed') {
         $reply = order_placed_handler($db, $request);
     }
 
     //---
     echo json_encode($reply);
-}
-
-catch(Exception $e) {
+} catch (Exception $e) {
     $r = new stdClass();
     $r->error = $e->getMessage();
     error_log('caught error: ' . $r->error);
@@ -40,7 +37,7 @@ catch(Exception $e) {
 
 
 //---
-function parse_signed_request($signed_request, $secret) 
+function parse_signed_request($signed_request, $secret)
 {
     list($encoded_sig, $payload) = explode('.', $signed_request, 2);
 
@@ -61,9 +58,7 @@ function parse_signed_request($signed_request, $secret)
     return $data;
 }
 
-function base64_url_decode($input) 
+function base64_url_decode($input)
 {
     return base64_decode(strtr($input, '-_', '+/'));
 }
-
-?>

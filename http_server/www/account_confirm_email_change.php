@@ -7,7 +7,6 @@ $code = $_GET['code'];
 $ip = get_ip();
 
 try {
-    
     // sanity check: check for the code
     if (is_empty($code)) {
         throw new Exception('No code found.');
@@ -40,13 +39,8 @@ try {
     output_header('Confirm Email Change');
     echo "Great success! Your email address has been changed from \"$safe_old_email\" to \"$safe_new_email\".";
     output_footer();
-}
-
-
-catch(Exception $e){
+} catch (Exception $e) {
     output_header('Confirm Email Change');
     echo $e->getMessage();
     output_footer();
 }
-
-?>

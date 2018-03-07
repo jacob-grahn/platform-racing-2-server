@@ -10,7 +10,6 @@ $ip = get_ip();
 $safe_reporter_ip = addslashes($ip);
 
 try {
-
     // POST check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
@@ -38,7 +37,7 @@ try {
 							 	WHERE message_id = '$message_id'
 								"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not check if the message was already reported.');
     }
     $row = $result->fetch_object();
@@ -54,17 +53,17 @@ try {
 								WHERE message_id = '$message_id'
 								LIMIT 0, 1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not retrieve message.');
     }
-    if($result->num_rows <= 0) {
+    if ($result->num_rows <= 0) {
         throw new Exception("The message you tried to report ($message_id) doesn't exist.");
     }
     
     
     // make sure this user is the recipient of this message
     $row = $result->fetch_object();
-    if($row->to_user_id != $user_id) {
+    if ($row->to_user_id != $user_id) {
         throw new Exception('This message was not sent to you.');
     }
     
@@ -88,7 +87,7 @@ try {
 										message = '$safe_message'"
     );
     
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not record the reported message.');
     }
     
@@ -98,12 +97,7 @@ try {
     
     // tell it to the world
     echo 'message=The message was reported successfully!';
-
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>

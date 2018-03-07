@@ -11,7 +11,6 @@ $encrypted_data = $_POST['data'];
 $ip = get_ip();
 
 try {
-    
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -27,7 +26,7 @@ try {
     rate_limit('change-email-attempt-'.$ip, 5, 1);
 
     //--- sanity check
-    if(!isset($encrypted_data) ) {
+    if (!isset($encrypted_data)) {
         throw new Exception('No data was recieved.');
     }
 
@@ -108,13 +107,8 @@ try {
     $ret = new stdClass();
     $ret->message = 'Almost done! We just sent a confirmation email to your old email address. Until you confirm the change, your old email address will still be active.';
     echo json_encode($ret);
-}
-
-
-catch(Exception $e){
+} catch (Exception $e) {
     $ret = new stdClass();
     $ret->error = $e->getMessage();
     echo json_encode($ret);
 }
-
-?>

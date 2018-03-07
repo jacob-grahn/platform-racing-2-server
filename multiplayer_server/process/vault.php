@@ -1,24 +1,24 @@
 <?php
 
 //--- unlock a temporary perk -------------------------------------------------------------
-function process_unlock_perk($socket, $data) 
+function process_unlock_perk($socket, $data)
 {
-    if($socket->process == true ) {
+    if ($socket->process == true) {
         list( $slug, $user_id, $guild_id, $user_name ) = explode('`', $data);
 
         start_perk($slug, $user_id, $guild_id);
 
-        if($guild_id != 0 ) {
-            if($slug == Perks::GUILD_FRED ) {
+        if ($guild_id != 0) {
+            if ($slug == Perks::GUILD_FRED) {
                 send_to_guild($guild_id, "systemChat`$user_name unlocked Fred mode for your guild!");
             }
-            if($slug == PERKS::GUILD_GHOST ) {
+            if ($slug == PERKS::GUILD_GHOST) {
                 send_to_guild($guild_id, "systemChat`$user_name unlocked Ghost mode for your guild!");
             }
-            if($slug == PERKS::GUILD_ARTIFACT ) {
+            if ($slug == PERKS::GUILD_ARTIFACT) {
                 send_to_guild($guild_id, "systemChat`$user_name unlocked Artifact mode for your guild!");
             }
-            if($slug == PERKS::HAPPY_HOUR ) {
+            if ($slug == PERKS::HAPPY_HOUR) {
                 send_to_all_players("systemChat`$user_name just triggered a Happy Hour!");
             }
         }
@@ -29,12 +29,12 @@ function process_unlock_perk($socket, $data)
 
 
 //--- unlock items -------------------------------------------------------------
-function process_unlock_set_king($socket, $data) 
+function process_unlock_set_king($socket, $data)
 {
-    if($socket->process == true ) {
+    if ($socket->process == true) {
         $user_id = $data;
         $player = id_to_player($user_id, false);
-        if(isset($player) ) {
+        if (isset($player)) {
             $player->gain_part('head', 28, true);
             $player->gain_part('body', 26, true);
             $player->gain_part('feet', 24, true);
@@ -49,12 +49,12 @@ function process_unlock_set_king($socket, $data)
 
 
 //--- unlock items -------------------------------------------------------------
-function process_unlock_set_queen($socket, $data) 
+function process_unlock_set_queen($socket, $data)
 {
-    if($socket->process == true ) {
+    if ($socket->process == true) {
         $user_id = $data;
         $player = id_to_player($user_id, false);
-        if(isset($player) ) {
+        if (isset($player)) {
             $player->gain_part('head', 29, true);
             $player->gain_part('body', 27, true);
             $player->gain_part('feet', 25, true);
@@ -69,12 +69,12 @@ function process_unlock_set_queen($socket, $data)
 
 
 //--- unlock items -------------------------------------------------------------
-function process_unlock_set_djinn($socket, $data) 
+function process_unlock_set_djinn($socket, $data)
 {
-    if($socket->process == true ) {
+    if ($socket->process == true) {
         $user_id = $data;
         $player = id_to_player($user_id, false);
-        if(isset($player) ) {
+        if (isset($player)) {
             $player->gain_part('head', 35, true);
             $player->gain_part('body', 35, true);
             $player->gain_part('feet', 35, true);
@@ -89,12 +89,12 @@ function process_unlock_set_djinn($socket, $data)
 
 
 //--- unlock epic everything --------------------------------------------------
-function process_unlock_epic_everything($socket, $data) 
+function process_unlock_epic_everything($socket, $data)
 {
-    if($socket->process == true ) {
+    if ($socket->process == true) {
         $user_id = $data;
         $player = id_to_player($user_id, false);
-        if(isset($player) ) {
+        if (isset($player)) {
             $player->gain_part('eHat', '*');
             $player->gain_part('eHead', '*');
             $player->gain_part('eBody', '*');
@@ -104,5 +104,3 @@ function process_unlock_epic_everything($socket, $data)
         $socket->write('{"status":"ok"}');
     }
 }
-
-?>

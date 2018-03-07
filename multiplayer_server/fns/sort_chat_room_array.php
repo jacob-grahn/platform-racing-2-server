@@ -9,6 +9,3 @@ function sort_chat_room_array($a, $b)
     }
     return (count($a->player_array) > count($b->player_array)) ? -1 : 1;
 }
-
-
-?>

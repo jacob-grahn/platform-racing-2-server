@@ -10,7 +10,6 @@ $level_id = (int) default_val($_POST['level_id'], 0);
 $ip = get_ip();
 
 try {
-    
     // POST check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
@@ -23,7 +22,7 @@ try {
     }
     
     // sanity check
-    if(is_empty($level_id, false)) {
+    if (is_empty($level_id, false)) {
         throw new Exception('No level ID was specified.');
     }
     
@@ -51,17 +50,13 @@ try {
     
     // delete the file from s3
     $result = $s3->deleteObject('pr2levels1', $level_id.'.txt');
-    if(!$result) {
+    if (!$result) {
         throw new Exception('A server error was encountered. Your level could not be deleted.');
     }
     
     // tell the world
     echo 'success=true';
-}
-
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>

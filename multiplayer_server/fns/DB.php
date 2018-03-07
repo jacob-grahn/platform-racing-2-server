@@ -6,43 +6,42 @@ class DB
     private $mysqli;
     private $last_action;
 
-    public function __construct($conn_name='') 
+    public function __construct($conn_name = '')
     {
-        if($conn_name == '') {
+        if ($conn_name == '') {
             $this->mysqli = user_connect();
             $this->last_action = time();
-        }
-        else {
+        } else {
             throw new Exception('DB::__construct - unknown connection name');
         }
     }
 
-    public function real_escape_string($val) 
+    public function real_escape_string($val)
     {
         return $this->mysqli->real_escape_string($val);
     }
 
-    public function escape($val) 
+    public function escape($val)
     {
         return $this->mysqli->real_escape_string($val);
     }
 
-    public function get_insert_id() 
+    public function get_insert_id()
     {
         return($this->mysqli->insert_id);
     }
 
-    public function get_error() 
+    public function get_error()
     {
         return($this->mysqli->error);
     }
 
-    public function test_health() 
+    public function test_health()
     {
         $elapsed = time() - $this->last_action;
-        if($elapsed > 3) {
+        if ($elapsed > 3) {
             $connected = $this->mysqli->ping();
-            if(!$connected) {
+            if (!$connected) {
                 $this->mysqli->close();
                 $this->mysqli = user_connect();
                 $this->last_action = time();
@@ -50,7 +49,7 @@ class DB
         }
     }
 
-    public function query($query_str) 
+    public function query($query_str)
     {
         $this->test_health();
 
@@ -61,7 +60,7 @@ class DB
         $start_time = microtime(true);
 
         $result = $this->mysqli->query($query_str);
-        if(!$result) {
+        if (!$result) {
             throw new Exception('Could not perform query.');
         }
 
@@ -73,18 +72,18 @@ class DB
         return $result;
     }
 
-    public function next_result() 
+    public function next_result()
     {
         return $this->mysqli->next_result();
     }
 
-    public function format_call($func, $arg_list=null) 
+    public function format_call($func, $arg_list = null)
     {
-        if(!isset($arg_list)) {
+        if (!isset($arg_list)) {
             $arg_list = array();
         }
 
-        if(!is_string($func)) {
+        if (!is_string($func)) {
             throw new Exception('DB::call - Invalid call func');
         }
 
@@ -93,11 +92,11 @@ class DB
 
         $query_str = 'CALL '.$safe_func.'(';
 
-        for($i=0; $i<$arg_count; $i++) {
+        for ($i=0; $i<$arg_count; $i++) {
             $arg = $arg_list[$i];
             $safe_arg = $this->escape($arg);
             $query_str .= '"'.$safe_arg.'"';
-            if($i<$arg_count-1) {
+            if ($i<$arg_count-1) {
                 $query_str .= ', ';
             }
         }
@@ -107,9 +106,9 @@ class DB
         return $query_str;
     }
 
-    public function call($func, $arg_list=null, $resultmode = MYSQLI_STORE_RESULT) 
+    public function call($func, $arg_list = null, $resultmode = MYSQLI_STORE_RESULT)
     {
-        if(!isset($arg_list)) {
+        if (!isset($arg_list)) {
             $arg_list = array();
         }
         $query_str = $this->format_call($func, $arg_list);
@@ -117,36 +116,33 @@ class DB
         return $result;
     }
 
-    public function grab_row($func, $arg_list=null) 
+    public function grab_row($func, $arg_list = null)
     {
         $result = $this->call($func, $arg_list);
-        if($result->num_rows != 1) {
+        if ($result->num_rows != 1) {
             $row = null;
             throw new Exception('Found '. $result->num_rows .' rows for DB->grab_row '.$func);
-        }
-        else {
+        } else {
             $row = $result->fetch_object();
         }
         return($row);
     }
 
-    public function grab($var, $func, $arg_list=null) 
+    public function grab($var, $func, $arg_list = null)
     {
         $row = $this->grab_row($func, $arg_list);
-        if(isset($row)) {
+        if (isset($row)) {
             $val = $row->{$var};
         }
         return($val);
     }
 
-    public function to_array( $result ) 
+    public function to_array($result)
     {
         $arr = array();
-        while( $row = $result->fetch_object() ) {
+        while ($row = $result->fetch_object()) {
             $arr[] = $row;
         }
         return $arr;
     }
 }
-
-?>

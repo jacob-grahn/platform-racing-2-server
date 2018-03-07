@@ -6,7 +6,6 @@ require_once '../fns/all_fns.php';
 $ip = get_ip();
 
 try {
-    
     // check referrer
     $ref = check_ref();
     if ($ref !== true) {
@@ -33,12 +32,8 @@ try {
     
     // seeya fam
     die();
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
     die();
 }
-
-?>

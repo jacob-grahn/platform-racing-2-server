@@ -9,7 +9,6 @@ $safe_reason = addslashes($reason . ' @' . date('M j, Y g:i A'));
 $ip = get_ip();
 
 try {
-    
     // POST check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -23,9 +22,7 @@ try {
 
     // make sure you're a moderator
     $mod = check_moderator($db);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");
     echo "Error: $error";
@@ -34,9 +31,8 @@ catch(Exception $e) {
 }
 
 try {
-    
     // sanity check: are any values blank?
-    if(is_empty($ban_id, false) || is_empty($reason)) {
+    if (is_empty($ban_id, false) || is_empty($reason)) {
         throw new Exception('Some information is missing.');
     }
     
@@ -56,14 +52,13 @@ try {
 									WHERE ban_id = '$ban_id'
 									LIMIT 1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not lift ban.');
     }
 
     if ($reason != '') {
         $disp_reason = "Reason: $safe_reason";
-    }
-    else {
+    } else {
         $disp_reason = "There was no reason given";
     }
     
@@ -74,15 +69,9 @@ try {
     //redirect to a page showing the lifted ban
     header("Location: //pr2hub.com/bans/show_record.php?ban_id=$ban_id");
     die();
-    
-}
-
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Lift Ban', true);
     echo "Error: $error";
     output_footer();
 }
-
-
-?>

@@ -9,7 +9,6 @@ $target_id = find('userId');
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('guild-invite-attempt-'.$ip, 5, 2, "Please wait at least 5 seconds before attempting to invite another player to your guild.");
     
@@ -23,22 +22,22 @@ try {
     $target_account = $db->grab_row('user_select_expanded', array($target_id), 'Could not find this user.');
     
     // sanity checks
-    if($account->guild == 0) {
+    if ($account->guild == 0) {
         throw new Exception('You are not a member of a guild.');
     }
-    if($guild->owner_id != $user_id) {
+    if ($guild->owner_id != $user_id) {
         throw new Exception('You are not the owner of this guild.');
     }
-    if($target_account->guild != 0) {
+    if ($target_account->guild != 0) {
         throw new Exception('They are already in a guild.');
     }
-    if($target_account->power <= 0) {
+    if ($target_account->power <= 0) {
                 throw new Exception('Guests can\'t join guilds.');
     }
-    if($user_id == $target_id) {
+    if ($user_id == $target_id) {
         throw new Exception('Do not invite yourself, yo.');
     }
-    if(!isset($target_id)) {
+    if (!isset($target_id)) {
         throw new Exception('Who are you trying to invite?');
     }
     
@@ -61,13 +60,8 @@ try {
     $reply->success = true;
     $reply->message = 'Your invitation has been sent.';
     echo json_encode($reply);
-}
-
-
-catch(Exception $e) {
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
-
-?>

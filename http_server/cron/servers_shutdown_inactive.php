@@ -11,19 +11,16 @@ $servers = $db->to_array($db->call('servers_select_all', array()));
 
 
 //--- test all active servers at this address
-foreach( $servers as $server ) {
-
-    if($server->active == 0) {
+foreach ($servers as $server) {
+    if ($server->active == 0) {
         output("Shutting down $server->server_name ($server->server_id)");
         try {
             $reply = talk_to_server($server->address, $server->port, $server->salt, 'shut_down`', true);
             output("Reply: $reply");
-        }
-        catch(Exception $e) {
+        } catch (Exception $e) {
             output($e->getMessage());
         }
-    }
-    else {
+    } else {
         output("Ignoring $server->server_name");
     }
 
@@ -33,5 +30,3 @@ foreach( $servers as $server ) {
 
 //--- tell it to the world
 output('done');
-
-?>

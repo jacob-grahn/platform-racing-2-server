@@ -11,7 +11,6 @@ $largest_id = 0;
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('get-messages-'.$ip, 3, 2);
     rate_limit('get-messages-'.$ip, 60, 10);
@@ -36,14 +35,13 @@ try {
 									ORDER BY messages.time desc
 									LIMIT $safe_start, $safe_count"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not retrieve messages.');
     }
     
     
-    while($row = $result->fetch_object()){
-        
-        if($row->message_id > $largest_id) {
+    while ($row = $result->fetch_object()) {
+        if ($row->message_id > $largest_id) {
             $largest_id = $row->message_id;
         }
         
@@ -60,7 +58,7 @@ try {
         $messages[] = $message;
     }
     
-    if($start == 0) {
+    if ($start == 0) {
         $db->call('users_inc_read', array($user_id, $largest_id));
     }
     
@@ -68,12 +66,8 @@ try {
     $r->messages = $messages;
     $r->success = true;
     echo json_encode($r);
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $r = new stdClass();
     $r->error = $e->getMessage();
     echo json_encode($r);
 }
-
-?>

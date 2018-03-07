@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../fns/all_fns.php';
 
-try{
+try {
     //connecto!!!
     $db = new DB();
 
@@ -11,15 +11,14 @@ try{
         'select user_id, type, part
 							from part_awards'
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not retrieve part awards.');
     }
 
-    while($row = $result->fetch_object()) {
-        if($row->part == 0) {
+    while ($row = $result->fetch_object()) {
+        if ($row->part == 0) {
             $part = '*';
-        }
-        else {
+        } else {
             $part = $row->part;
         }
         $parts = array();
@@ -27,11 +26,9 @@ try{
         $parts[] = $part;
         $user_id = $row->user_id;
         try {
-
             award_parts($db, $user_id, $type, $parts, false);
             echo "user_id: $user_id, type: $type, part: $parts \n";
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             echo "Error: $e";
         }
     }
@@ -42,13 +39,10 @@ try{
         'delete from part_awards
 								 	WHERE DATE_SUB(CURDATE(),INTERVAL 5 DAY) > dateline'
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not delete old award records.');
     }
-}
-catch(Exception $e){
+} catch (Exception $e) {
     echo "Error: $e";
     exit();
 }
-
-?>

@@ -8,7 +8,6 @@ $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 output_header('PR2 Staff Team');
 
 try {
-    
     // rate limiting
     rate_limit('gui-staff-list-'.$ip, 5, 2, 'Please wait at least 10 seconds before refreshing the page again.');
     
@@ -67,11 +66,9 @@ try {
         // display the register date
         if ($register_date == "1/Jan/1970") {
             echo "<td>Age of Heroes</td>";
-        }
-        elseif (!empty($register_date)) {
+        } elseif (!empty($register_date)) {
             echo "<td>$register_date</td>";
-        }
-        else {
+        } else {
             throw new Exception("No register date received.");
         }
 
@@ -87,13 +84,10 @@ try {
 	</table>
 	</center>
 	';
-}
-catch(Exception $e){
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
 
 output_footer();
-
-?>

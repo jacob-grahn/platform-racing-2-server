@@ -9,12 +9,11 @@ $level_id = (int) default_val($_GET['courseID'], 0);
 $hash = find_no_cookie('hash', '');
 
 try {
-    
     // rate limiting
     rate_limit('level-pass-'.$ip, 3, 2);
 
     // sanity
-    if(is_empty($level_id, false) || is_empty($hash)) {
+    if (is_empty($level_id, false) || is_empty($hash)) {
         throw new Exception('Invalid input. ' . join(', ', $_GET));
     }
 
@@ -30,7 +29,7 @@ try {
     // check the pass
     $hash2 = sha1($hash . $LEVEL_PASS_SALT);
     $match = $db->grab('isMatch', 'level_check_pass', array($level_id, $hash2));
-    if(!$match) {
+    if (!$match) {
         sleep(1);
     }
 
@@ -47,8 +46,6 @@ try {
     $enc_result = $encryptor->encrypt($str_result, $LEVEL_PASS_IV);
 
     echo 'result=' . urlencode($enc_result);
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     echo 'error=' . urlencode($e->getMessage());
 }

@@ -8,7 +8,7 @@ class Room
 
     public function add_player($player)
     {
-        if(isset($player->{$this->room_name})) {
+        if (isset($player->{$this->room_name})) {
             $player->{$this->room_name}->remove_player($player);
         }
         $player->{$this->room_name} = $this;
@@ -26,8 +26,8 @@ class Room
     
     public function send_to_room($str, $from_id)
     {
-        foreach($this->player_array as $player){
-            if($player->user_id != $from_id) {
+        foreach ($this->player_array as $player) {
+            if ($player->user_id != $from_id) {
                 $player->write($str);
             }
         }
@@ -35,7 +35,7 @@ class Room
     
     public function send_to_all($str)
     {
-        foreach($this->player_array as $player){
+        foreach ($this->player_array as $player) {
             $player->write($str);
         }
     }

@@ -291,7 +291,7 @@ class Prizes
     public static $EXP_5;
 
 
-    public static function init() 
+    public static function init()
     {
 
         self::$arr = array();
@@ -572,25 +572,22 @@ class Prizes
 
 
 
-    public static function add( $prize ) 
+    public static function add($prize)
     {
         self::$arr[] = $prize;
     }
 
 
 
-    public static function find( $type, $id ) 
+    public static function find($type, $id)
     {
         $match = null;
-        foreach( self::$arr as $prize ) {
-            if($prize->get_type() == $type && $prize->get_id() == $id ) {
+        foreach (self::$arr as $prize) {
+            if ($prize->get_type() == $type && $prize->get_id() == $id) {
                 $match = $prize;
                 break;
             }
         }
         return $match;
     }
-
 }
-
-?>

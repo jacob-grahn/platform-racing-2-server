@@ -8,23 +8,17 @@ function sort_finish_array_objective($a, $b)
     $at = $a->last_objective_time;
     $bt = $b->last_objective_time;
     
-    if($ao < $bo ) {
+    if ($ao < $bo) {
         return 1;
-    }
-    else if($ao > $bo ) {
+    } elseif ($ao > $bo) {
         return -1;
-    }
-    else {
-        if($at < $bt ) {
+    } else {
+        if ($at < $bt) {
             return -1;
-        }
-        else if($at > $bt ) {
+        } elseif ($at > $bt) {
             return 1;
-        }
-        else {
+        } else {
             return 0;
         }
     }
 }
-
-?>

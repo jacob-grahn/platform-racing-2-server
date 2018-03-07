@@ -10,5 +10,3 @@ generate_level_list($db, 'best_today');
 generate_level_list($db, 'campaign');
 
 echo 'result=ok';
-
-?>

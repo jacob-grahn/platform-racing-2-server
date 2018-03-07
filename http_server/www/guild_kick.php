@@ -8,7 +8,6 @@ $target_id = find('userId');
 $ip = get_ip();
 
 try {
-    
     // check referrer
     $ref = check_ref();
     if ($ref !== true) {
@@ -28,19 +27,19 @@ try {
     $guild = $db->grab_row('guild_select', array( $account->guild ));
     
     //--- sanity check
-    if($account->guild == 0 ) {
+    if ($account->guild == 0) {
         throw new Exception('You are not a member of a guild.');
     }
-    if($guild->owner_id != $user_id ) {
+    if ($guild->owner_id != $user_id) {
         throw new Exception('You are not the owner of this guild.');
     }
-    if($target_account->guild != $account->guild ) {
+    if ($target_account->guild != $account->guild) {
         throw new Exception('They are not in your guild.');
     }
-    if($user_id == $target_id ) {
+    if ($user_id == $target_id) {
         throw new Exception('Do not kick your self, yo.');
     }
-    if(!isset($target_id) ) {
+    if (!isset($target_id)) {
         throw new Exception('Who are you trying to kick from your guild?');
     }
     
@@ -56,13 +55,8 @@ try {
     $reply->success = true;
     $reply->message = htmlspecialchars($target_account->name).' has been kicked from '.htmlspecialchars($guild->guild_name).'.';
     echo json_encode($reply);
-}
-
-
-catch(Exception $e) {
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
-
-?>

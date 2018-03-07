@@ -29,5 +29,3 @@ class RaceStats
         $this->ip = $ip;
     }
 }
-
-?>

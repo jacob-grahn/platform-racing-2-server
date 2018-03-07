@@ -7,7 +7,6 @@ $message = default_val($_GET['message'], '');
 $ip = get_ip();
 
 try {
-
     // rate limiting
     rate_limit('mod-player-search-'.$ip, 5, 3);
     
@@ -16,9 +15,7 @@ try {
 
     // make sure you're a moderator
     $mod = check_moderator($db, false);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");
     echo "Error: $error";
@@ -27,12 +24,11 @@ catch(Exception $e) {
 }
 
 try {
-    
     // header
     output_header('Player Search', true);
 
     // error message
-    if(!is_empty($message)) {
+    if (!is_empty($message)) {
         echo "<p><b>$message</b></p>";
     }
 
@@ -45,10 +41,7 @@ try {
     
     // footer
     output_footer();
-
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "Error: $error";
     output_footer();

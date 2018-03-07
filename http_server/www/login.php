@@ -27,22 +27,19 @@ try {
     $ip = get_ip();
     $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
     $country_code = $ip_info->data->geo->country_code;
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $country_code = '?';
 }
 
 try {
-
-
     // sanity checks
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
-    if(!isset($encrypted_login)) {
+    if (!isset($encrypted_login)) {
         throw new Exception('Login data not recieved.');
     }
-    if(array_search($version, $allowed_versions) === false ) {
+    if (array_search($version, $allowed_versions) === false) {
         throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to download the latest version.');
     }
 
@@ -70,13 +67,13 @@ try {
 
 
     //--- more sanity checks
-    if(array_search($version2, $allowed_versions) === false ) {
+    if (array_search($version2, $allowed_versions) === false) {
         throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to download the latest version. [Version check 2] ' . $version2);
     }
-    if($origination_domain == 'local' ) {
+    if ($origination_domain == 'local') {
         throw new Exception('Testing mode has been disabled.');
     }
-    if((is_empty($in_token) === true && is_empty($user_name) === true) || strpos($user_name, '`') !== false ) {
+    if ((is_empty($in_token) === true && is_empty($user_name) === true) || strpos($user_name, '`') !== false) {
         throw new Exception('Invalid user name entered.');
     }
 
@@ -91,30 +88,24 @@ try {
 
 
     //--- guest login
-    if(strtolower(trim($login->user_name)) == 'guest' ) {
+    if (strtolower(trim($login->user_name)) == 'guest') {
         $guest_login = true;
-        if(get_ip(false) != get_ip(true) ) {
+        if (get_ip(false) != get_ip(true)) {
             throw new Exception("You seem to be using a proxy to connect to PR2. You won't be able to connect as a guest, but you can create an account to play.");
         }
         $user = $db->grab_row('users_select_guest');
         check_if_banned($db, $user->user_id, $ip);
-    }
-
-
-    //--- account login
+    } //--- account login
     else {
-
         //--- record this attempted log in
         $db->call('login_attempt_insert', array($ip, $login->user_name));
 
         //token login
-        if(isset($in_token) && $login->user_name == '' && $login->user_pass == '') {
+        if (isset($in_token) && $login->user_name == '' && $login->user_pass == '') {
             $token = $in_token;
             $user_id = token_login($db);
             $user = $db->grab_row('user_select', array($user_id));
-        }
-
-        //or password login
+        } //or password login
         else {
             $user = pass_login($db, $user_name, $user_pass);
         }
@@ -124,11 +115,10 @@ try {
     //--- give them a login token for future requests
     $token = get_login_token($user->user_id);
     save_login_token($db, $user->user_id, $token);
-    if($remember == 'true' && !$guest_login ) {
+    if ($remember == 'true' && !$guest_login) {
         $token_expire = time() + (60*60*24*30);
         setcookie('token', $token, $token_expire);
-    }
-    else {
+    } else {
         setcookie('token', '', time()-3600);
     }
 
@@ -150,7 +140,7 @@ try {
 
 
     //---
-    if($server->guild_id != 0 && $user->guild != $server->guild_id ) {
+    if ($server->guild_id != 0 && $user->guild != $server->guild_id) {
         throw new Exception('You must be a member of this guild to join this server.');
     }
 
@@ -161,7 +151,7 @@ try {
 
 
     //--- they don't have a row yet, so make them one
-    if($pr2_result->num_rows < 1) {
+    if ($pr2_result->num_rows < 1) {
         $new_account = 'true';
         $db->call('pr2_insert', array($user_id));
 
@@ -188,20 +178,20 @@ try {
 
     //--- check if they own rank tokens
     $row = $db->grab_row('rank_token_select', array($user_id), '', true);
-    if(isset($row)) {
+    if (isset($row)) {
         $rt_available = $row->available_tokens;
         $rt_used = $row->used_tokens;
     }
 
     $rt_available += $db->grab('count', 'rank_token_rentals_count', array($user->user_id, $user->guild));
-    if($rt_available < $rt_used ) {
+    if ($rt_available < $rt_used) {
         $rt_used = $rt_available;
     }
 
 
     //--- record moderator login
     $server_name = $server->server_name;
-    if($group > 1 ) {
+    if ($group > 1) {
         $db->call('mod_action_insert', array( $user_id, "$user_name logged into $server_name from $ip", $user_id, $ip ));
     }
 
@@ -214,69 +204,69 @@ try {
 
     //--- santa set
     $date = date('F d');
-    if($date == 'December 24' || $date == 'December 25') {
-        if(add_item($hat_array, 7) ) {
+    if ($date == 'December 24' || $date == 'December 25') {
+        if (add_item($hat_array, 7)) {
             $stats->hat = 7;
         }
-        if(add_item($head_array, 34) ) {
+        if (add_item($head_array, 34)) {
             $stats->head = 34;
         }
-        if(add_item($body_array, 34) ) {
+        if (add_item($body_array, 34)) {
             $stats->body = 34;
         }
-        if(add_item($feet_array, 34) ) {
+        if (add_item($feet_array, 34)) {
             $stats->feet = 34;
         }
     }
 
     //--- bunny set
-    if($date == 'April 20' || $date == 'April 21') {
-        if(add_item($head_array, 39) ) {
+    if ($date == 'April 20' || $date == 'April 21') {
+        if (add_item($head_array, 39)) {
             $stats->head = 39;
         }
-        if(add_item($body_array, 39) ) {
+        if (add_item($body_array, 39)) {
             $stats->body = 39;
         }
-        if(add_item($feet_array, 39) ) {
+        if (add_item($feet_array, 39)) {
             $stats->feet = 39;
         }
     }
 
     //--- party hat
-    if($date == 'December 31' || $date == 'January 1') {
-        if(add_item($hat_array, 8) ) {
+    if ($date == 'December 31' || $date == 'January 1') {
+        if (add_item($hat_array, 8)) {
             $stats->hat = 8;
         }
     }
 
     //--- heart set
-    if($date == 'February 13' || $date == 'February 14') {
-        if(add_item($head_array, 38) ) {
+    if ($date == 'February 13' || $date == 'February 14') {
+        if (add_item($head_array, 38)) {
             $stats->head = 38;
         }
-        if(add_item($body_array, 38) ) {
+        if (add_item($body_array, 38)) {
             $stats->body = 38;
         }
-        if(add_item($feet_array, 38) ) {
+        if (add_item($feet_array, 38)) {
             $stats->feet = 38;
         }
     }
 
     //--- give crown hats to moderators
-    if($group > 1) {
+    if ($group > 1) {
         add_item($hat_array, 6);
     }
 
 
     //--- get their friends
     $friends_result = $db->to_array($db->call('friends_select', array($user_id)));
-    foreach( $friends_result as $fr ) {
+    foreach ($friends_result as $fr) {
         $friends[] = $fr->friend_id;
     }
 
     //--- get their ignored
     $ignored_result = $db->to_array($db->call('ignored_select', array($user_id)));
-    foreach( $ignored_result as $ir ) {
+    foreach ($ignored_result as $ir) {
         $ignored[] = $ir->ignore_id;
     }
 
@@ -293,21 +283,21 @@ try {
 
 
     //--- check if they have an email set
-    if(isset($user->email) && strlen($user->email) > 0 ) {
+    if (isset($user->email) && strlen($user->email) > 0) {
         $has_email = true;
     }
 
 
     //--- check if they have kong's ant body
-    if(array_search(20, $head_array) !== false ) {
+    if (array_search(20, $head_array) !== false) {
         $has_ant = true;
     }
 
 
     //--- see if they are in a guild
-    if($user->guild != 0 ) {
+    if ($user->guild != 0) {
         $guild = $db->grab_row('guild_select', array( $user->guild ));
-        if($guild->owner_id == $user_id ) {
+        if ($guild->owner_id == $user_id) {
             $guild_owner = 1;
         }
         $emblem = $guild->emblem;
@@ -376,10 +366,7 @@ try {
     }
     
     echo json_encode($reply);
-}
-
-
-catch(Exception $e){
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
@@ -387,15 +374,12 @@ catch(Exception $e){
 
 
 
-function add_item( &$arr, $item ) 
+function add_item(&$arr, $item)
 {
-    if(array_search($item, $arr) === false) {
+    if (array_search($item, $arr) === false) {
         $arr[] = $item;
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
-
-?>

@@ -9,7 +9,6 @@ $emblem = filter_swears(find('emblem'));
 $ip = get_ip();
 
 try {
-    
     // get and validate referrer
     $ref = check_ref();
     if ($ref !== true) {
@@ -33,31 +32,31 @@ try {
     $guild = $db->grab_row('guild_select', array( $account->guild ));
     
     // sanity checks
-    if($account->power <= 0 ) {
+    if ($account->power <= 0) {
         throw new Exception('Guests cannot edit guilds.');
     }
-    if($account->guild == 0 ) {
+    if ($account->guild == 0) {
         throw new Exception('You are not a member of a guild.');
     }
-    if($guild->owner_id != $user_id ) {
+    if ($guild->owner_id != $user_id) {
         throw new Exception('You are not the owner of this guild.');
     }
-    if(!isset($note) ) {
+    if (!isset($note)) {
         throw new Exception('Your guild needs a prose.');
     }
-    if(!isset($guild_name) ) {
+    if (!isset($guild_name)) {
         throw new Exception('Your guild needs a name.');
     }
-    if(!isset($emblem) ) {
+    if (!isset($emblem)) {
         throw new Exception('Your guild needs an emblem.');
     }
-    if(preg_match('/.jpg$/', $emblem) !== 1 || preg_match('/\.\.\//', $emblem) === 1 || preg_match('/\?/', $emblem) === 1) {
+    if (preg_match('/.jpg$/', $emblem) !== 1 || preg_match('/\.\.\//', $emblem) === 1 || preg_match('/\?/', $emblem) === 1) {
         throw new Exception('Emblem invalid');
     }
-    if(preg_match("/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
+    if (preg_match("/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
         throw new Exception('Guild name is invalid. You may only use alphanumeric characters, spaces and hyphens.');
     }
-    if(strlen(trim($guild_name)) === 0 ) {
+    if (strlen(trim($guild_name)) === 0) {
         throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
     }
     
@@ -73,13 +72,8 @@ try {
     $reply->emblem = $emblem;
     $reply->guildName = $guild_name;
     echo json_encode($reply);
-}
-
-
-catch(Exception $e){
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
-
-?>

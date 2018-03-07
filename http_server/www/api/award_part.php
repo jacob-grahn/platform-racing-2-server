@@ -11,8 +11,7 @@ $type = find('type');
 $part_id = find('part_id');
 
 try {
-
-    if($pass != $PR2_HUB_API_PASS) {
+    if ($pass != $PR2_HUB_API_PASS) {
         throw new Exception('Incorrect pass.');
     }
 
@@ -26,7 +25,7 @@ try {
     $parts = array();
     $parts[] = $part_id;
     $result = award_parts($db, $target_id, $type, $parts);
-    if(!$result) {
+    if (!$result) {
         throw new Exception('They already have the part.');
     }
 
@@ -35,13 +34,9 @@ try {
     $ret->success = true;
     $ret->message = "The part was given to $safe_name.";
     echo json_encode($ret);
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $ret = new stdClass();
     $ret->success = false;
     $ret->error = $e->getMessage();
     echo json_encode($ret);
 }
-
-?>

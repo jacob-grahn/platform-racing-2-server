@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/data_fns.php';
 
-function pr2_connect() 
+function pr2_connect()
 {
     global $DB_ADDRESS, $DB_USER, $DB_PASS, $DB_NAME, $DB_PORT;
     
@@ -20,7 +20,7 @@ function pr2_connect()
     return $mysqli;
 }
 
-function pdo_connect() 
+function pdo_connect()
 {
     try {
         global $DB_ADDRESS, $DB_USER, $DB_PASS, $DB_NAME, $DB_PORT;
@@ -32,7 +32,7 @@ function pdo_connect()
     }
 }
 
-function fah_connect() 
+function fah_connect()
 {
     global $DB_ADDRESS, $DB_FAH_USER, $DB_FAH_PASS, $DB_FAH_NAME, $DB_PORT;
     $mysqli = new mysqli($DB_ADDRESS, $DB_FAH_USER, $DB_FAH_PASS, $DB_FAH_NAME, $DB_PORT);
@@ -42,11 +42,9 @@ function fah_connect()
     return $mysqli;
 }
 
-function s3_connect() 
+function s3_connect()
 {
     global $S3_SECRET, $S3_PASS;
     $s3 = new S3($S3_SECRET, $S3_PASS);
     return($s3);
 }
-
-?>

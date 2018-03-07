@@ -12,7 +12,7 @@ $db = new DB();
 
 $users = $db->call('users_select_active');
 
-while($user = $users->fetch_object()) {
+while ($user = $users->fetch_object()) {
     output("name: $user->name, user_id: $user->user_id");
     $full_message =
     "Hi $user->name,
@@ -21,9 +21,7 @@ $message";
     $db->call('message_insert', array($user->user_id, 1, $full_message, '0'));
 }
 
-function output($str) 
+function output($str)
 {
     echo "- $str \n";
 }
-
-?>

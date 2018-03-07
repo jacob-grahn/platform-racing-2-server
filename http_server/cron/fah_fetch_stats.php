@@ -10,7 +10,7 @@ $contents = trim($contents);
 
 
 //--- give up if they're doing a stat update ------------------------------------------------------------
-if($contents == false || $contents == '' || strpos($contents, 'Stats update in progress') !== false || strpos($contents, 'The database server is currently serving too many connections.') !== false) {
+if ($contents == false || $contents == '' || strpos($contents, 'Stats update in progress') !== false || strpos($contents, 'The database server is currently serving too many connections.') !== false) {
     echo 'updating';
     exit;
 }
@@ -23,7 +23,7 @@ $db = new DB(fah_connect());
 //--- query the list of existing users and their current stats --------------------------------------------------
 $result = $db->call('stats_select_all', null, 'Could not select records. '.$db->get_error());
 $users_history = array();
-while( $row = $result->fetch_object() ) {
+while ($row = $result->fetch_object()) {
     $users_history[ strtolower($row->fah_name) ] = $row;
     $row->processed = false;
 }
@@ -69,7 +69,7 @@ $user_strs = substr($contents, $users_start_index);
 $user_array = explode('<TR ', $user_strs);
 $user_array = array_splice($user_array, 2);
 
-foreach($user_array as $user_str) {
+foreach ($user_array as $user_str) {
     $array = explode('<TD>', $user_str);
 
     $team_rank = $array[2];
@@ -82,19 +82,18 @@ foreach($user_array as $user_str) {
     $points = substr($points, 0, strlen($points)-5);
     $work_units = substr($work_units, 0, strlen($work_units)-5);
 
-    if(strlen($name) > 50 ) {
+    if (strlen($name) > 50) {
         $name = substr($name, 0, 50);
     }
 
-    if(isset($users_history[ strtolower($name) ]) ) {
+    if (isset($users_history[ strtolower($name) ])) {
         $history = $users_history[ strtolower($name) ];
-        if(($history->wu != $work_units || $history->points != $points || $history->rank != $team_rank) && !$history->processed ) {
+        if (($history->wu != $work_units || $history->points != $points || $history->rank != $team_rank) && !$history->processed) {
             output("updating $name: wu: $work_units, points: $points");
             $db->call('stats_save', array( $name, $work_units, $points, $team_rank ));
         }
         $history->processed = true;
-    }
-    else {
+    } else {
         output("creating $name: wu: $work_units, points: $points");
         $db->call('stats_save', array( $name, $work_units, $points, $team_rank ));
     }
@@ -102,9 +101,7 @@ foreach($user_array as $user_str) {
 
 
 //--- handy output function; never leave home without it! --------------------------------------------------
-function output( $str ) 
+function output($str)
 {
     echo( "* $str \n" );
 }
-
-?>

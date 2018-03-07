@@ -7,7 +7,6 @@ $message_id = (int) default_val($_GET['message_id'], 0);
 $ip = get_ip();
 
 try {
-
     // rate limiting
     rate_limit('mod-archive-message-'.$ip, 3, 2);
 
@@ -16,9 +15,7 @@ try {
     
     // make sure you're a moderator
     $mod = check_moderator($db);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");
     echo "Error: $error";
@@ -27,7 +24,6 @@ catch(Exception $e) {
 }
 
 try {
-    
     // archive the message
     $result = $db->query(
         "UPDATE messages_reported
@@ -35,7 +31,7 @@ try {
 							WHERE message_id = '$message_id'
 							LIMIT 1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not archive the message.');
     }
 
@@ -51,14 +47,10 @@ try {
     $ret->success = true;
     $ret->message_id = $message_id;
     echo json_encode($ret);
-
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $ret = new stdClass();
     $ret->success = false;
     $ret->error = $e->getMessage();
     $ret->message_id = $message_id;
     echo json_encode($ret);
 }
-
-?>

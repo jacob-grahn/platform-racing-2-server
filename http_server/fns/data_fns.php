@@ -3,96 +3,90 @@
 
 //--- tries to pull a variable from the $_GET or $_POST array. If it is not present, the default is used. ---------------
 //--- returns *
-function find($str, $default=null) 
+function find($str, $default = null)
 {
-    if(isset($_COOKIE[$str]) ) {
+    if (isset($_COOKIE[$str])) {
         $val = $_COOKIE[$str];
         return $val;
     }
-    if(isset($_POST[$str]) ) {
+    if (isset($_POST[$str])) {
         $val = $_POST[$str];
         return $val;
     }
-    if(isset($_GET[$str]) ) {
+    if (isset($_GET[$str])) {
         $val = $_GET[$str];
         return $val;
     }
-    if(!isset($val) ) {
+    if (!isset($val)) {
         $val = $default;
         return $val;
     }
 }
 
 
-function find_no_cookie($str, $default=null) 
+function find_no_cookie($str, $default = null)
 {
-    if(isset($_POST[$str]) ) {
+    if (isset($_POST[$str])) {
         $val = $_POST[$str];
         return $val;
     }
-    if(isset($_GET[$str]) ) {
+    if (isset($_GET[$str])) {
         $val = $_GET[$str];
         return $val;
     }
-    if(!isset($val) ) {
+    if (!isset($val)) {
         $val = $default;
         return $val;
     }
 }
 
 
-function default_val($val, $default=null) 
+function default_val($val, $default = null)
 {
     if (is_empty($val)) {
         return $default;
-    }
-    else {
+    } else {
         return $val;
     }
 }
 
 
 
-function format_duration( $seconds ) 
+function format_duration($seconds)
 {
-    if($seconds < 60) {
+    if ($seconds < 60) {
         $time_left = "$seconds second";
-        if($seconds != 1 ) {
+        if ($seconds != 1) {
             $time_left .= 's';
         }
-    }
-    else if($seconds < 60*60) {
+    } elseif ($seconds < 60*60) {
         $minutes = round($seconds/60, 0);
         $time_left = "$minutes minute";
-        if($minutes != 1 ) {
+        if ($minutes != 1) {
             $time_left .= 's';
         }
-    }
-    else if($seconds < 60*60*24) {
+    } elseif ($seconds < 60*60*24) {
         $hours = round($seconds/60/60, 0);
         $time_left = "$hours hour";
-        if($hours != 1 ) {
+        if ($hours != 1) {
             $time_left .= 's';
         }
-    }
-    else if($seconds < 60*60*24*30) {
+    } elseif ($seconds < 60*60*24*30) {
         $days = round($seconds/60/60/24, 0);
         $time_left = "$days day";
-        if($days != 1 ) {
+        if ($days != 1) {
             $time_left .= 's';
         }
-    }
-    else if($seconds < 60*60*24*30*12) {
+    } elseif ($seconds < 60*60*24*30*12) {
         $months = round($seconds/60/60/24/30, 0);
         $time_left = "$months month";
-        if($months != 1 ) {
+        if ($months != 1) {
             $time_left .= 's';
         }
-    }
-    else{
+    } else {
         $years = round($seconds/60/60/24/30/12, 0);
         $time_left = "$years year";
-        if($years != 1 ) {
+        if ($years != 1) {
             $time_left .= 's';
         }
     }
@@ -100,12 +94,12 @@ function format_duration( $seconds )
 }
 
 
-function get_ip() 
+function get_ip()
 {
     return $_SERVER['REMOTE_ADDR'];
 }
 
-function check_value($value, $check_for, $yes='yes', $no='no') 
+function check_value($value, $check_for, $yes = 'yes', $no = 'no')
 {
     
     /*
@@ -118,13 +112,12 @@ function check_value($value, $check_for, $yes='yes', $no='no')
     
     if ($value == $check_for) {
         return $yes;
-    }
-    else {
+    } else {
         return $no;
     }
 }
 
-function is_empty($str, $incl_zero=true) 
+function is_empty($str, $incl_zero = true)
 {
     /*
     $incl_zero: checks if the user wants to include the string "0" in the empty check.
@@ -144,8 +137,7 @@ function is_empty($str, $incl_zero=true)
         if (empty($str) && $str != '0') {
             return true;
         }
-    }
-    // if the string is empty, it's empty
+    } // if the string is empty, it's empty
     else {
         if (empty($str)) {
             return true;
@@ -154,17 +146,16 @@ function is_empty($str, $incl_zero=true)
 
     // you're still here? must mean $str isn't empty
     return false;
-    
 }
 
-function check_ref() 
+function check_ref()
 {
     $ref = $_SERVER['HTTP_REFERER'];
-    if(strpos($ref, 'http://pr2hub.com') !== 0 
-        && strpos($ref, 'https://pr2hub.com') !== 0 
-        && strpos($ref, 'http://cdn.jiggmin.com') !== 0 
-        && strpos($ref, 'http://chat.kongregate.com') !== 0 
-        && strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0 
+    if (strpos($ref, 'http://pr2hub.com') !== 0
+        && strpos($ref, 'https://pr2hub.com') !== 0
+        && strpos($ref, 'http://cdn.jiggmin.com') !== 0
+        && strpos($ref, 'http://chat.kongregate.com') !== 0
+        && strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0
         && strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') !== 0
     ) {
         return $ref;
@@ -173,11 +164,11 @@ function check_ref()
 }
 
 
-function poll_servers_strict( $db, $message, $server_ids ) 
+function poll_servers_strict($db, $message, $server_ids)
 {
     $servers = poll_servers_2($db, $message, true, $server_ids);
-    foreach( $servers as $server ) {
-        if(!isset($server->result) || $server->result->status != 'ok' ) {
+    foreach ($servers as $server) {
+        if (!isset($server->result) || $server->result->status != 'ok') {
             throw new Exception("Unexpected reply from multiplayer-server. Expected 'ok', got '" . json_encode($server) . "'. ");
         }
     }
@@ -186,14 +177,14 @@ function poll_servers_strict( $db, $message, $server_ids )
 
 //--- send a message to every server --------------------------------------------
 //--- DO NOT OUTPUT ANYTHING FROM THIS FUNCTION FOR TESTING ---
-function poll_servers_2( $db, $message, $receive=true, $server_ids=array() ) 
+function poll_servers_2($db, $message, $receive = true, $server_ids = array())
 {
 
     $servers = $db->to_array($db->call('servers_select', array()));
     $results = array();
 
-    foreach( $servers as $server ) {
-        if(count($server_ids) == 0 || array_search($server->server_id, $server_ids) !== false ) {
+    foreach ($servers as $server) {
+        if (count($server_ids) == 0 || array_search($server->server_id, $server_ids) !== false) {
             $result = talk_to_server($server->address, $server->port, $server->salt, $message, $receive);
             $server->command = $message;
             $server->result = json_decode($result);
@@ -207,7 +198,7 @@ function poll_servers_2( $db, $message, $receive=true, $server_ids=array() )
 
 
 //--- connects to the farm server and calls a function -------------------------------------
-function talk_to_server($address, $port, $key, $server_function, $receive=false)
+function talk_to_server($address, $port, $key, $server_function, $receive = false)
 {
     global $PROCESS_PASS;
 
@@ -226,22 +217,20 @@ function talk_to_server($address, $port, $key, $server_function, $receive=false)
     $reply = true;
     $fsock = @fsockopen($address, $port, $errno, $errstr, 2);
 
-    if($fsock) {
+    if ($fsock) {
         fputs($fsock, $send_str);
         stream_set_timeout($fsock, 2);
-        if($receive) {
+        if ($receive) {
             $reply = fread($fsock, 999999);
         }
         fclose($fsock);
-    }
-    else {
+    } else {
         $reply = false;
     }
 
-    if($receive && $reply == '') {
+    if ($receive && $reply == '') {
         $reply = false;
-    }
-    else {
+    } else {
         $reply = substr($reply, 0, strlen($reply)-1);
     }
 
@@ -256,8 +245,8 @@ function is_obsene($str)
     $str = strtolower($str);
     $bad_array = array('fuck', 'shit', 'nigger', 'nigga', 'whore', 'bitch', 'slut', 'cunt', 'cock', 'dick', 'penis', 'damn', 'spic');
     $obsene = false;
-    foreach($bad_array as $bad){
-        if(strpos($str, $bad) !== false) {
+    foreach ($bad_array as $bad) {
+        if (strpos($str, $bad) !== false) {
             $obsene = true;
             break;
         }
@@ -269,12 +258,11 @@ function is_obsene($str)
 
 
 //--- checks if an email address is valid --------------------------------------------------------
-function valid_email($email) 
+function valid_email($email)
 {
-    if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
@@ -282,9 +270,9 @@ function valid_email($email)
 
 
 //returns your account if you are a moderator
-function check_moderator($db, $check_ref=true, $min_power=2) 
+function check_moderator($db, $check_ref = true, $min_power = 2)
 {
-    if($check_ref) {
+    if ($check_ref) {
         $ref = check_ref();
         if ($ref !== true) {
             $safe_ref = htmlspecialchars($ref);
@@ -295,7 +283,7 @@ function check_moderator($db, $check_ref=true, $min_power=2)
     $user_id = token_login($db);
     $user = $db->grab_row('user_select_one_mod', array($user_id), 'You are not logged in');
 
-    if($user->power < $min_power) {
+    if ($user->power < $min_power) {
         throw new Exception('You lack the power. -1');
     }
 
@@ -305,14 +293,13 @@ function check_moderator($db, $check_ref=true, $min_power=2)
 
 
 //returns true if you are logged in as a moderator, false if you are not
-function is_moderator($db, $check_ref=true) 
+function is_moderator($db, $check_ref = true)
 {
     $is_mod = false;
     try {
         check_moderator($db, $check_ref);
         $is_mod = true;
-    }
-    catch (Exception $e) {
+    } catch (Exception $e) {
     }
 
     return $is_mod;
@@ -322,13 +309,13 @@ function is_moderator($db, $check_ref=true)
 
 
 //
-function format_level_list($result, $max=9)
+function format_level_list($result, $max = 9)
 {
     global $LEVEL_LIST_SALT;
 
     $num = 0;
     $str = '';
-    while($row = $result->fetch_object()){
+    while ($row = $result->fetch_object()) {
         $level_id = $row->level_id;
         $version = $row->version;
         $title = urlencode(htmlspecialchars($row->title));
@@ -342,7 +329,7 @@ function format_level_list($result, $max=9)
         $pass = isset($row->pass);
         $type = $row->type;
 
-        if($num > 0) {
+        if ($num > 0) {
             $str .= "&";
         }
         $str .= "levelID$num=$level_id"
@@ -359,12 +346,12 @@ function format_level_list($result, $max=9)
         ."&type$num=$type";
         $num++;
 
-        if($num == $max) {
+        if ($num == $max) {
             break;
         }
     }
 
-    if($str != '' ) {
+    if ($str != '') {
         $hash = md5($str . $LEVEL_LIST_SALT);
         $str .= '&hash='.$hash;
     }
@@ -375,13 +362,13 @@ function format_level_list($result, $max=9)
 
 
 
-function filter_swears( $str ) 
+function filter_swears($str)
 {
-    $damnArray = Array("dang", "dingy-goo", "condemnation");
-    $fuckArray = Array("fooey", "fingilly", "funk-master", "freak monster", "jiminy cricket");
-    $shitArray = Array("shoot", "shewet");
-    $niggerArray = Array("someone cooler than me", "ladies magnet", "cooler race");
-    $bitchArray = Array("cooler gender", "female dog");
+    $damnArray = array("dang", "dingy-goo", "condemnation");
+    $fuckArray = array("fooey", "fingilly", "funk-master", "freak monster", "jiminy cricket");
+    $shitArray = array("shoot", "shewet");
+    $niggerArray = array("someone cooler than me", "ladies magnet", "cooler race");
+    $bitchArray = array("cooler gender", "female dog");
 
     $str = str_replace('damn', $damnArray[ array_rand($damnArray) ], $str);
     $str = str_replace('fuck', $fuckArray[ array_rand($fuckArray) ], $str);
@@ -398,15 +385,15 @@ function filter_swears( $str )
 
 
 
-function rate_limit($key, $interval, $max, $error='Slow down a bit, yo.') 
+function rate_limit($key, $interval, $max, $error = 'Slow down a bit, yo.')
 {
     $unit = round(time() / $interval);
     $key .= '-'.$unit;
     $count = 0;
 
-    if(apcu_exists($key) ) {
+    if (apcu_exists($key)) {
         $count = apcu_fetch($key);
-        if($count >= $max ) {
+        if ($count >= $max) {
             throw new Exception($error);
         }
     }
@@ -416,5 +403,3 @@ function rate_limit($key, $interval, $max, $error='Slow down a bit, yo.')
 
     return( $count );
 }
-
-?>

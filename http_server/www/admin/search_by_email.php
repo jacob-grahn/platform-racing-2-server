@@ -7,7 +7,7 @@ $email = find_no_cookie('email', '');
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
 // this will echo the search box when called
-function output_search($email='', $incl_br=true) 
+function output_search($email = '', $incl_br = true)
 {
     echo "<form name='input' action='' method='get'>";
     echo "Email: <input type='text' name='email' value='$email'>&nbsp;";
@@ -19,16 +19,12 @@ function output_search($email='', $incl_br=true)
 
 // admin check try block
 try {
-    
     //connect
     $db = new DB();
     
     //make sure you're an admin
     $admin = check_moderator($db, false, 3);
-
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $message = $e->getMessage();
     output_header('Error');
     echo "Error: $message";
@@ -38,7 +34,6 @@ catch (Exception $e) {
 
 // admin validated try block
 try {
-
     output_header('Deep Email Search', true, true);
 
     // sanity check: no email in search box
@@ -71,17 +66,15 @@ try {
     output_search($disp_email);
     
     // output the number of results
-    if($row_count == 1) {
+    if ($row_count == 1) {
         $res = 'result';
-    }
-    else {
+    } else {
         $res = 'results';
     }
     echo "$row_count $res found for the email address \"$disp_email\".<br><br>";
     
     // only gonna get here if there were results
     while ($row = $result->fetch_object()) {
-
         // make nice variables for our data
         $url_name = urlencode($row->name); // url encode the name
         $safe_name = htmlspecialchars($row->name); // html friendly name
@@ -97,21 +90,15 @@ try {
 
         // display the name with the color and link to the player search page
         echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>$safe_name</a> | Last Active: $active_date<br>";
-
     }
 
     // end it all
     output_footer();
     die();
-
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $message = $e->getMessage();
     output_search($safe_email);
     echo "<i>Error: $message</i>";
     output_footer();
     die();
 }
-
-?>

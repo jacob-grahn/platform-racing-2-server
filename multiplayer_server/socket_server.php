@@ -12,14 +12,14 @@ class pr2_server extends socketServer
     public static $tournament_jumping = 65;
 
 
-    public function __construct($client_class, $bind_address = 0, $bind_port = 0, $domain = AF_INET, $type = SOCK_STREAM, $protocol = SOL_TCP) 
+    public function __construct($client_class, $bind_address = 0, $bind_port = 0, $domain = AF_INET, $type = SOCK_STREAM, $protocol = SOL_TCP)
     {
         parent::__construct($client_class, $bind_address, $bind_port, $domain, $type, $protocol);
         pr2_server::$last_read_time = time();
     }
 
 
-    public function on_timer() 
+    public function on_timer()
     {
         //once every 10 seconds
         TemporaryItems::remove_expired();
@@ -27,7 +27,7 @@ class pr2_server extends socketServer
     }
 
 
-    public function on_timer2() 
+    public function on_timer2()
     {
         //once every second
         LoiterDetector::check();
@@ -35,10 +35,10 @@ class pr2_server extends socketServer
     }
 
 
-    private function consider_shutting_down() 
+    private function consider_shutting_down()
     {
         $elapsed = time() - pr2_server::$last_read_time;
-        if($elapsed > 60*5) {
+        if ($elapsed > 60*5) {
             shutdown_server();
         }
     }
@@ -59,7 +59,7 @@ class pr2_server_client extends socketServerClient
     public $process = false;
     public $ip;
 
-    public function __construct($socket) 
+    public function __construct($socket)
     {
         parent::__construct($socket);
         global $key;
@@ -69,7 +69,7 @@ class pr2_server_client extends socketServerClient
         $this->last_user_action = $time;
     }
 
-    private function handle_request($string) 
+    private function handle_request($string)
     {
         try {
             $array = explode('`', $string);
@@ -78,8 +78,7 @@ class pr2_server_client extends socketServerClient
                 $function = "process_$call";
                 array_splice($array, 0, 1);
                 $data = join('`', $array);
-            }
-            else {
+            } else {
                 $hash = $array[0];
                 $send_num = $array[1];
                 $call = $array[2];
@@ -92,13 +91,13 @@ class pr2_server_client extends socketServerClient
                 $local_hash = md5($str_to_hash);
                 $sub_hash = substr($local_hash, 0, 3);
 
-                if($sub_hash != $hash) {
+                if ($sub_hash != $hash) {
                     $this->close();
                     $this->on_disconnect();
                     throw new Exception("the hash doesn't match. recieved: $hash, local: $sub_hash \n");
                 }
 
-                if($send_num > 2 && $send_num != $this->rec_num+1 && $send_num != 13) {
+                if ($send_num > 2 && $send_num != $this->rec_num+1 && $send_num != 13) {
                     $this->close();
                     $this->on_disconnect();
                     throw new Exception("a command was recieved out of order \n");
@@ -115,11 +114,10 @@ class pr2_server_client extends socketServerClient
 
             $time = time();
             $this->last_action = $time;
-            if($function != 'ping') {
+            if ($function != 'ping') {
                 $this->last_user_action = $time;
             }
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             echo 'Error: '.$e->getMessage()."\n";
         }
     }
@@ -129,7 +127,7 @@ class pr2_server_client extends socketServerClient
 
         pr2_server::$last_read_time = time();
 
-        if($this->read_buffer == '<policy-file-request/>'.chr(0x00)) {
+        if ($this->read_buffer == '<policy-file-request/>'.chr(0x00)) {
             $this->read_buffer = '';
             $this->write_buffer = '<cross-domain-policy><allow-access-from domain="*" to-ports="*" /></cross-domain-policy>'.chr(0x00);
             $this->do_write();
@@ -138,7 +136,7 @@ class pr2_server_client extends socketServerClient
         //breaks the buffer up into distinct commands
         //echo($this->read_buffer . "\n");
         $end_char = strpos($this->read_buffer, chr(0x04));
-        while ($end_char !== false){
+        while ($end_char !== false) {
             $info = substr($this->read_buffer, 0, $end_char);
             $this->handle_request($info);
             $this->read_buffer = substr($this->read_buffer, $end_char+1);
@@ -146,7 +144,7 @@ class pr2_server_client extends socketServerClient
         }
 
         //prevent a data attack
-        if(strlen($this->read_buffer) > 5000 && !$this->process) {
+        if (strlen($this->read_buffer) > 5000 && !$this->process) {
             echo("\nKill read buffer -------------------------------\n");
             $this->read_buffer = '';
             $this->close();
@@ -160,24 +158,21 @@ class pr2_server_client extends socketServerClient
         $this->ip = $ip;
 
         $ip_count = @pr2_server_client::$ip_array[$ip];
-        if($ip_count == null) {
+        if ($ip_count == null) {
             $ip_count = 1;
-        }
-        else {
+        } else {
             $ip_count++;
         }
         pr2_server_client::$ip_array[$ip] = $ip_count;
 
         //echo "$ip ($ip_count)\n";
 
-        if($ip_count > 5) {
+        if ($ip_count > 5) {
             //echo("too many connections from this ip\n");
             $this->close();
             $this->on_disconnect();
             $this->disconnected = true;
-        }
-
-        else {
+        } else {
             $time = time();
             $this->last_action = $time;
             $this->last_user_action = $time;
@@ -189,27 +184,27 @@ class pr2_server_client extends socketServerClient
     public function on_disconnect()
     {
         //echo "disconnect ".$this->remote_address."\n";
-        if($this->disconnected == false) {
+        if ($this->disconnected == false) {
             $this->disconnected = true;
-            if(isset($this->player)) {
+            if (isset($this->player)) {
                 $this->player->remove();
                 unset($this->player);
                 $this->player = null;
             }
         }
 
-        if($this->login_id != null) {
+        if ($this->login_id != null) {
             global $login_array;
             $login_index[$this->login_id] = null;
         }
         $this->login_id = null;
 
-        if(!$this->subtracted_ip) {
+        if (!$this->subtracted_ip) {
             $this->subtracted_ip = true;
             $ip = $this->remote_address;
-            if(pr2_server_client::$ip_array[$ip] != null) {
+            if (pr2_server_client::$ip_array[$ip] != null) {
                 pr2_server_client::$ip_array[$ip]--;
-                if(pr2_server_client::$ip_array[$ip] == 0) {
+                if (pr2_server_client::$ip_array[$ip] == 0) {
                     unset(pr2_server_client::$ip_array[$ip]);
                 }
             }
@@ -223,15 +218,15 @@ class pr2_server_client extends socketServerClient
 
     public function on_timer()
     {
-        if($this->last_action != 0) {
+        if ($this->last_action != 0) {
             $time = time();
             $action_elapsed = $time - $this->last_action;
             $user_elapsed = $time - $this->last_user_action;
-            if($action_elapsed > 35) {
+            if ($action_elapsed > 35) {
                 $this->close();
                 $this->on_disconnect();
             }
-            if($user_elapsed > 60*30) {
+            if ($user_elapsed > 60*30) {
                 $this->close();
                 $this->on_disconnect();
             }
@@ -240,13 +235,9 @@ class pr2_server_client extends socketServerClient
 
     public function get_player()
     {
-        if(!isset($this->player)) {
+        if (!isset($this->player)) {
             throw new Exception("\n error: this socket does not have a player");
         }
         return $this->player;
     }
 }
-
-
-
-?>

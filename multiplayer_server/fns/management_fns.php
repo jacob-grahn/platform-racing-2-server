@@ -4,17 +4,16 @@ require_once __DIR__ . '/data_fns.php';
 
 
 // starts a server if it is not running
-function test_server($script, $address, $port, $key, $server_id) 
+function test_server($script, $address, $port, $key, $server_id)
 {
     output('');
     output("begining test for server at $address:$port ($script)");
 
     $result = connect_to_server($address, $port, $key);
     //if it could connect
-    if($result) {
+    if ($result) {
         echo ("good, the server is working \n");
-    }
-    else{
+    } else {
         echo ("bad (or no) response from the server \n");
 
         $pid = read_pid($port);
@@ -29,7 +28,7 @@ function test_server($script, $address, $port, $key, $server_id)
 
 
 //starts the dots server
-function start_server($script, $port, $server_id) 
+function start_server($script, $port, $server_id)
 {
     output("start_server: $script, $port");
 
@@ -59,19 +58,19 @@ function shut_down_server($pid, $address, $port)
 {
     $result = false;
     $result = talk_to_server($port, 'shut_down`', $address, true);
-    if(!$result) {
+    if (!$result) {
         kill_pid($pid);
     }
 }
 
 
 //write pid to a file
-function write_pid($pid, $port) 
+function write_pid($pid, $port)
 {
     $pid_file = get_pid_file($port);
     echo ("save pid to $pid_file: $pid \n");
     $handle = fopen($pid_file, 'w');
-    if($handle ) {
+    if ($handle) {
         fwrite($handle, $pid);
         fclose($handle);
     }
@@ -79,18 +78,17 @@ function write_pid($pid, $port)
 
 
 //read pid from file
-function read_pid($port) 
+function read_pid($port)
 {
     $pid_file = get_pid_file($port);
     $pid = 0;
     echo ("reading pid from $pid_file... \n");
     $handle = fopen($pid_file, 'r');
-    if($handle !== false) {
+    if ($handle !== false) {
         $pid = fread($handle, 999);
         fclose($handle);
         echo ("pid is: $pid \n");
-    }
-    else {
+    } else {
         echo ("pid file does not exist \n");
     }
     return($pid);
@@ -100,29 +98,29 @@ function read_pid($port)
 //kills a pid
 function kill_pid($pid)
 {
-    if($pid != null && $pid != 0 && $pid != '') {
+    if ($pid != null && $pid != 0 && $pid != '') {
         system("kill ".$pid, $k);
         $pid = null;
-        if(!$k) {
+        if (!$k) {
             return true;
-        }else{
+        } else {
             return false;
         }
-    }else{
+    } else {
         output('there is no pid to kill');
         return true;
     }
 }
 
 
-function get_pid_file($port) 
+function get_pid_file($port)
 {
     $pid_file = '/home/jiggmin/pr2/pid/'.$port.'.txt';
     return($pid_file);
 }
 
 
-function talk_to_server_id( $db, $server_id, $message, $receive ) 
+function talk_to_server_id($db, $server_id, $message, $receive)
 {
     $server = $db->grab_row('server_select', array($server_id));
     $reply = talk_to_server('localhost', $server->port, $server->salt, $message, $receive);
@@ -130,7 +128,7 @@ function talk_to_server_id( $db, $server_id, $message, $receive )
 }
 
 
-function talk_to_server( $address, $port, $key, $message, $receive ) 
+function talk_to_server($address, $port, $key, $message, $receive)
 {
     global $PROCESS_PASS;
     $end = chr(0x04);
@@ -148,24 +146,22 @@ function talk_to_server( $address, $port, $key, $message, $receive )
     $reply = true;
     $fsock = @fsockopen($address, $port, $errno, $errstr, 5);
 
-    if($fsock) {
+    if ($fsock) {
         output('management_fns->talk_to_server write: '.$message);
         fputs($fsock, $send_str);
         stream_set_timeout($fsock, 5);
-        if($receive) {
+        if ($receive) {
             $reply = fread($fsock, 99999);
         }
         fclose($fsock);
-    }
-    else {
+    } else {
         $reply = false;
         output("management_fns->talk_to_server error: could not connect to $address $port $key");
     }
 
-    if($receive && $reply === '') {
+    if ($receive && $reply === '') {
         $reply = false;
-    }
-    else{
+    } else {
         $reply = substr($reply, 0, strlen($reply)-1);
     }
 
@@ -174,9 +170,7 @@ function talk_to_server( $address, $port, $key, $message, $receive )
 }
 
 
-function output($str) 
+function output($str)
 {
     echo $str . "\n";
 }
-
-?>

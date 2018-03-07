@@ -11,7 +11,6 @@ $get_members = find_no_cookie('getMembers', 'no');
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('guild-info-'.$ip, 3, 2);
     
@@ -21,32 +20,31 @@ try {
     
     
     // sanity check: was any information requested?
-    if((!is_numeric($guild_id) || $guild_id <= 0) && $guild_name == '') {
+    if ((!is_numeric($guild_id) || $guild_id <= 0) && $guild_name == '') {
         throw new Exception('No guild name or ID was provided.');
     }
     
     
     // get guild infos
-    if($guild_id > 0 ) {
+    if ($guild_id > 0) {
         $guild = $db->grab_row('guild_select', array($guild_id), 'Could not find a guild with that id.');
-    }
-    else {
+    } else {
         $guild = $db->grab_row('guild_select_by_name', array($guild_name), 'Could not find a guild by that name.');
         $guild_id = $guild->guild_id;
     }
     
     // check for .j instead of .jpg on the end of the emblem file name
-    if(substr($guild->emblem, -2) == '.j') {
-        $guild->emblem = str_replace('.j', '.jpg', $guild->emblem); 
+    if (substr($guild->emblem, -2) == '.j') {
+        $guild->emblem = str_replace('.j', '.jpg', $guild->emblem);
     }
     
     
     // get members
     $members = array();
-    if($get_members == 'yes' ) {
+    if ($get_members == 'yes') {
         $members_result = $db->call('guild_select_members', array($guild_id));
         $members = array();
-        while( $row = $members_result->fetch_object() ) {
+        while ($row = $members_result->fetch_object()) {
             $members[] = $row;
         }
     }
@@ -61,13 +59,8 @@ try {
     $reply->guild = $guild;
     $reply->members = $members;
     echo json_encode($reply);
-}
-
-
-catch(Exception $e){
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
-
-?>

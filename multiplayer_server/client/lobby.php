@@ -1,18 +1,18 @@
 <?php
 
 //--- set right room ----------------------------------------------------
-function client_set_right_room($socket, $data) 
+function client_set_right_room($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->right_room)) {
+    if (isset($player->right_room)) {
         $player->right_room->remove_player($player);
     }
-    if($data != 'none' && isset($player->game_room)) {
+    if ($data != 'none' && isset($player->game_room)) {
         $player->game_room->remove_player($player);
     }
-    if($data != 'none' && strpos($data, '`') === false) {
+    if ($data != 'none' && strpos($data, '`') === false) {
         global ${$data.'_room'};
-        if(${$data.'_room'} != null) {
+        if (${$data.'_room'} != null) {
             ${$data.'_room'}->add_player($player);
         }
     }
@@ -21,22 +21,22 @@ function client_set_right_room($socket, $data)
 
 
 //--- set the chat room -----------------------------------------------
-function client_set_chat_room($socket, $data) 
+function client_set_chat_room($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->chat_room)) {
+    if (isset($player->chat_room)) {
         $player->chat_room->remove_player($player);
     }
-    if(($data == 'mod' && $player->group < 2) || $data == 'admin' && $player->group < 3) {
+    if (($data == 'mod' && $player->group < 2) || $data == 'admin' && $player->group < 3) {
         $data = 'none';
         $player->write('message`You lack the power to enter this room.');
     }
 
-    if(is_obscene($data)) {
+    if (is_obscene($data)) {
         $data = 'none';
         $player->write('message`Keep the room names clean, pretty please. :)');
     }
-    if($data != 'none') {
+    if ($data != 'none') {
         $chat_room = get_chat_room($data);
         $chat_room->add_player($player);
     }
@@ -45,10 +45,10 @@ function client_set_chat_room($socket, $data)
 
 
 //--- set game room ------------------------------------------------------
-function client_set_game_room($socket, $data) 
+function client_set_game_room($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->remove_player($player);
     }
 }
@@ -56,11 +56,11 @@ function client_set_game_room($socket, $data)
 
 
 //--- join a slot in a course box ------------------------------------------------
-function client_fill_slot($socket, $data) 
+function client_fill_slot($socket, $data)
 {
     list($course_id, $slot) = explode('`', $data);
     $player = $socket->get_player();
-    if(isset($player->right_room)) {
+    if (isset($player->right_room)) {
         $player->right_room->fill_slot($player, $course_id, $slot);
     }
 }
@@ -68,11 +68,11 @@ function client_fill_slot($socket, $data)
 
 
 //--- confirm slot --------------------------------------------------------------------
-function client_confirm_slot($socket, $data) 
+function client_confirm_slot($socket, $data)
 {
     $player = $socket->get_player();
     $course_box = $player->course_box;
-    if(isset($course_box)) {
+    if (isset($course_box)) {
         $course_box->confirm_slot($player);
     }
 }
@@ -80,11 +80,11 @@ function client_confirm_slot($socket, $data)
 
 
 //--- clear slot --------------------------------------------------------------------
-function client_clear_slot($socket, $data) 
+function client_clear_slot($socket, $data)
 {
     $player = $socket->get_player();
     $course_box = $player->course_box;
-    if(isset($course_box)) {
+    if (isset($course_box)) {
         $course_box->clear_slot($player);
     }
 }
@@ -92,11 +92,11 @@ function client_clear_slot($socket, $data)
 
 
 //--- force the players who have not confirmed out so the rest can play -----------------
-function client_force_start($socket, $data) 
+function client_force_start($socket, $data)
 {
     $player = $socket->get_player();
     $course_box = $player->course_box;
-    if(isset($course_box)) {
+    if (isset($course_box)) {
         $course_box->force_start();
     }
 }
@@ -104,7 +104,7 @@ function client_force_start($socket, $data)
 
 
 //--- returns info for the customize page -----------------------------------------------
-function client_get_customize_info($socket, $data) 
+function client_get_customize_info($socket, $data)
 {
     $player = $socket->get_player();
     $player->send_customize_info();
@@ -113,7 +113,7 @@ function client_get_customize_info($socket, $data)
 
 
 //--- sets info for the character --------------------------------------------------------
-function client_set_customize_info($socket, $data) 
+function client_set_customize_info($socket, $data)
 {
     $player = $socket->get_player();
     $player->set_customize_info($data);
@@ -122,7 +122,7 @@ function client_set_customize_info($socket, $data)
 
 
 //--- chat ----------------------------------------------------------------
-function client_chat($socket, $data) 
+function client_chat($socket, $data)
 {
     $player = $socket->get_player();
     $player->send_chat($data);
@@ -131,10 +131,10 @@ function client_chat($socket, $data)
 
 
 //--- get a list of the players that are online ---------------------------------------------
-function client_get_online_list($socket, $data) 
+function client_get_online_list($socket, $data)
 {
     global $player_array;
-    foreach($player_array as $player){
+    foreach ($player_array as $player) {
         $socket->write('addUser`'.$player->name.'`'.$player->group.'`'.$player->active_rank.'`'.(count($player->hat_array)-1));
     }
 }
@@ -142,7 +142,7 @@ function client_get_online_list($socket, $data)
 
 
 //--- get a list of the top chat rooms ----------------------------------------------------------
-function client_get_chat_rooms($socket, $data) 
+function client_get_chat_rooms($socket, $data)
 {
     global $chat_room_array;
     $temp_array = array_merge($chat_room_array);
@@ -150,11 +150,11 @@ function client_get_chat_rooms($socket, $data)
 
     $str = 'setChatRoomList';
     $count = count($temp_array);
-    if($count > 8) {
+    if ($count > 8) {
         $count = 8;
     }
 
-    for($i=0; $i<$count; $i++){
+    for ($i=0; $i<$count; $i++) {
         $chat_room = $temp_array[$i];
         $str .= '`'.$chat_room->chat_room_name.' - '.count($chat_room->player_array).' online';
     }
@@ -165,11 +165,11 @@ function client_get_chat_rooms($socket, $data)
 
 
 //--- add a user to your ignored array ----------------------------------------------------------
-function client_ignore_user($socket, $data) 
+function client_ignore_user($socket, $data)
 {
     $player = $socket->get_player();
     $ignored_player = name_to_player($data);
-    if(isset($ignored_player)) {
+    if (isset($ignored_player)) {
         array_push($player->ignored_array, $ignored_player->user_id);
     }
 }
@@ -177,13 +177,13 @@ function client_ignore_user($socket, $data)
 
 
 //--- remove a user from your ignored array ----------------------------------------------------------
-function client_un_ignore_user($socket, $data) 
+function client_un_ignore_user($socket, $data)
 {
     $player = $socket->get_player();
     $ignored_player = name_to_player($data);
-    if(isset($player)) {
+    if (isset($player)) {
         $index = @array_search($ignored_player->user_id, $player->ignored_array);
-        if($index !== false) {
+        if ($index !== false) {
             $player->ignored_array[$index] = null;
             unset($player->ignored_array[$index]);
         }
@@ -193,7 +193,7 @@ function client_un_ignore_user($socket, $data)
 
 
 //-- award kong outfit -------------------------------------------------------------------
-function client_award_kong_outfit($socket, $data) 
+function client_award_kong_outfit($socket, $data)
 {
     $player = $socket->get_player();
     $player->award_kong_outfit();
@@ -202,7 +202,7 @@ function client_award_kong_outfit($socket, $data)
 
 
 //-- use a rank token -------------------------------------------------------------------
-function client_use_rank_token($socket, $data) 
+function client_use_rank_token($socket, $data)
 {
     $player = $socket->get_player();
     $player->use_rank_token();
@@ -211,10 +211,8 @@ function client_use_rank_token($socket, $data)
 
 
 //-- un-use a rank token ----------------------------------------------------------------
-function client_unuse_rank_token($socket, $data) 
+function client_unuse_rank_token($socket, $data)
 {
     $player = $socket->get_player();
     $player->unuse_rank_token();
 }
-
-?>

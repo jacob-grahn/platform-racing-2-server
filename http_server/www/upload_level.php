@@ -26,14 +26,13 @@ $ip = get_ip();
 
 
 try {
-    
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
     
     // sanity check
-    if($live == 1 && (is_obsene($title) || is_obsene($note))) {
+    if ($live == 1 && (is_obsene($title) || is_obsene($note))) {
         throw new Exception('Could not publish level. Check the title and note for obscenities.');
     }
 
@@ -59,7 +58,7 @@ try {
 
     //
     $account = $db->grab_row('user_select', array($user_id));
-    if($account->power <= 0) {
+    if ($account->power <= 0) {
         throw new Exception('Guests can not save levels');
     }
 
@@ -73,28 +72,24 @@ try {
 									AND time > '$safe_min_time'
 									LIMIT 1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not check previous level submissions.');
     }
-    if($result->num_rows > 0 && $live == 1) {
+    if ($result->num_rows > 0 && $live == 1) {
         throw new Exception('Please wait at least 30 seconds before trying to publish again.');
     }
 
 
     //
-    if($game_mode == 'race' ) {
+    if ($game_mode == 'race') {
         $type = 'r';
-    }
-    else if($game_mode == 'deathmatch' ) {
+    } elseif ($game_mode == 'deathmatch') {
         $type = 'd';
-    }
-    else if($game_mode == 'egg' ) {
+    } elseif ($game_mode == 'egg') {
         $type = 'e';
-    }
-    else if($game_mode == 'objective' ) {
+    } elseif ($game_mode == 'objective') {
         $type = 'o';
-    }
-    else {
+    } else {
         $type = 'r';
     }
 
@@ -104,7 +99,7 @@ try {
     $org_votes = 0;
     $org_play_count = 0;
     $levels = $db->call('levels_select_one_by_name', array($user_id, $title));
-    if($levels->num_rows == 1) {
+    if ($levels->num_rows == 1) {
         $level = $levels->fetch_object();
         $org_level_id = $level->level_id;
         $org_version = $level->version;
@@ -119,7 +114,7 @@ try {
         $org_pass_hash2 = $level->pass;
 
         //backup the file that is about to be overwritten
-        if(($time - $org_time) > (60*60*24*14) ) {
+        if (($time - $org_time) > (60*60*24*14)) {
             backup_level($db, $s3, $user_id, $org_level_id, $org_version-1, $title, $org_live, $org_rating, $org_votes, $org_note, $org_min_level, $org_song, $org_play_count);
         }
     }
@@ -128,11 +123,10 @@ try {
 
     // hash the password
     $hash2 = null;
-    if($has_pass == 1) {
-        if($pass_hash == '') {
+    if ($has_pass == 1) {
+        if ($pass_hash == '') {
             $hash2 = $org_pass_hash2;
-        }
-        else {
+        } else {
             $hash2 = sha1($pass_hash . $LEVEL_PASS_SALT);
         }
     }
@@ -160,7 +154,7 @@ try {
 
     //save this file to the new level system
     $result = $s3->putObjectString($str, 'pr2levels1', $level_id.'.txt');
-    if(!$result) {
+    if (!$result) {
         throw new Exception('A server error was encountered. Your level could not be saved.');
     }
 
@@ -172,11 +166,7 @@ try {
 
     //tell every one it's time to party
     echo 'message=The save was successful.';
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>

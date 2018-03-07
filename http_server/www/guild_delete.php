@@ -7,7 +7,6 @@ $guild_id = find_no_cookie('guild_id');
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('guild-delete-'.$ip, 5, 2);
     
@@ -41,13 +40,8 @@ try {
     $reply->success = true;
     $reply->message = 'Guild deleted.';
     echo json_encode($reply);
-}
-
-
-catch(Exception $e) {
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
-
-?>

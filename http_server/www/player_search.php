@@ -29,8 +29,7 @@ try {
     output_search($name);
     output_page($db, $user);
     output_footer();
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
     output_search($name);
     echo "<br /><i>Error: $safe_error</i>";
@@ -38,8 +37,8 @@ catch (Exception $e) {
     die();
 }
 
-function find_user($db, $name) 
-{    
+function find_user($db, $name)
+{
     // get id from name
     $user_id = name_to_id($db, $name);
     
@@ -52,7 +51,7 @@ function find_user($db, $name)
     return $user;
 }
 
-function output_search($name='') 
+function output_search($name = '')
 {
 
     // safety first
@@ -70,10 +69,9 @@ function output_search($name='')
 	<input type='submit' value='Search'>
 	</form>
 	";
-
 }
 
-function output_page($db, $user) 
+function output_page($db, $user)
 {
     
     // sanity check: is the used tokens value set?
@@ -106,8 +104,7 @@ function output_page($db, $user)
     if ($guild_id !== 0) {
         $guild = $db->grab_row('guild_select', array($guild_id));
         $guild_name = $guild->guild_name;
-    }
-    else {
+    } else {
         $guild_name = '';
     }
     
@@ -142,7 +139,4 @@ function output_page($db, $user)
 	Active: $login_date	
 	</center>
 	";
-    
 }
-
-?>

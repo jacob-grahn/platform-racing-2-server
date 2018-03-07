@@ -21,7 +21,7 @@ class ChatRoom extends Room
     }
 
 
-    public function clear() 
+    public function clear()
     {
         for ($i = 0; $i <= $this->keep_count; $i++) {
             $this->send_chat('systemChat` ');
@@ -34,17 +34,16 @@ class ChatRoom extends Room
         Room::add_player($player);
 
         $welcome_message = 'systemChat`Welcome to chat room '.$this->chat_room_name.'! ';
-        if(count($this->player_array) <= 1) {
+        if (count($this->player_array) <= 1) {
             $welcome_message .= 'You\'re the only person here!';
-        }
-        else{
+        } else {
             global $player_array;
             $welcome_message .= 'There are '.count($player_array).' people online, and '.count($this->player_array).' people in this chat room.';
         }
         $player->socket->write($welcome_message);
 
-        foreach($this->chat_array as $chat_message){
-            if($chat_message != '' && !$player->is_ignored_id($chat_message->from_id) && isset($player->socket)) {
+        foreach ($this->chat_array as $chat_message) {
+            if ($chat_message != '' && !$player->is_ignored_id($chat_message->from_id) && isset($player->socket)) {
                 $player->socket->write($chat_message->message);
             }
         }
@@ -54,13 +53,13 @@ class ChatRoom extends Room
     public function remove_player($player)
     {
         Room::remove_player($player);
-        if(count($this->player_array) <= 0 && $this->chat_room_name != "main" && $this->chat_room_name != "mod" && $this->chat_room_name != "admin") {
+        if (count($this->player_array) <= 0 && $this->chat_room_name != "main" && $this->chat_room_name != "mod" && $this->chat_room_name != "admin") {
             $this->remove();
         }
     }
 
 
-    public function send_chat($message, $user_id) 
+    public function send_chat($message, $user_id)
     {
         $chat_message = new ChatMessage($user_id, $message);
 
@@ -69,8 +68,8 @@ class ChatRoom extends Room
         $this->chat_array[0] = null;
         array_shift($this->chat_array);
 
-        foreach($this->player_array as $player){
-            if(!$player->is_ignored_id($user_id)) {
+        foreach ($this->player_array as $player) {
+            if (!$player->is_ignored_id($user_id)) {
                 $player->socket->write($message);
             }
         }
@@ -80,8 +79,8 @@ class ChatRoom extends Room
     public function get_record()
     {
         $str = '';
-        foreach($this->chat_array as $chat_message){
-            if($chat_message != '') {
+        foreach ($this->chat_array as $chat_message) {
+            if ($chat_message != '') {
                 $str .= '<br/>'.$chat_message->message;
             }
         }
@@ -89,7 +88,7 @@ class ChatRoom extends Room
     }
 
 
-    public function remove() 
+    public function remove()
     {
         global $chat_room_array;
         $chat_room_array[$this->chat_room_name] = null;

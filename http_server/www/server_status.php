@@ -6,7 +6,6 @@ require_once '../fns/output_fns.php';
 output_header('Server Status');
 
 try {
-
     $data = json_decode(file_get_contents("http://pr2hub.com/files/server_status_2.txt"));
 
     if (array_key_exists('error', $data)) {
@@ -32,7 +31,6 @@ try {
 	";
     
     foreach ($data->servers as $server) {
-    
         // echo this when it's yes/no
         $yes = "<strong>Yes</strong>";
         $no = "No";
@@ -51,16 +49,14 @@ try {
         // echo the server name (in bold if a guild-only server)
         if ($guild_id === 0) {
             echo "<td>$server_name</td>";
-        }
-        else {
+        } else {
             echo "<td><strong>$server_name</strong></td>";
         }
     
         // if open, echo the population
         if (strtolower($status) == 'open' || $population > 0) {
             echo "<td>$population online</td>";
-        }
-        else {
+        } else {
             echo "<td><strong>down</strong></td>";
         }
     
@@ -72,14 +68,10 @@ try {
     
         // end row
         echo "</tr>";
-
     }
     
     echo "</table>";
-    
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $safe_message = htmlspecialchars($e->getMessage());
     echo "Error: $safe_message";
 }
@@ -87,5 +79,3 @@ catch (Exception $e) {
 echo "</center>";
 output_footer();
 die();
-
-?>

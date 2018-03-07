@@ -7,18 +7,17 @@ $mode = find_no_cookie('mode');
 $ip = get_ip();
 
 try {
-    
-    switch($mode) {
-    case 'friends':
-        $table = 'friends';
-        $var = 'friend_id';
-        break;
-    case 'ignored':
-        $table = 'ignored';
-        $var = 'ignore_id';
-        break;
-    default:
-        throw new Exception("Invalid list mode specified.");
+    switch ($mode) {
+        case 'friends':
+            $table = 'friends';
+            $var = 'friend_id';
+            break;
+        case 'ignored':
+            $table = 'ignored';
+            $var = 'ignore_id';
+            break;
+        default:
+            throw new Exception("Invalid list mode specified.");
     }
     
     // rate limiting
@@ -47,34 +46,33 @@ try {
 									LIMIT 0, 250"
     );
     
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not retrieve player list.');
     }
     
     $num = 0;
 
     // make individual list entries
-    while($row = $result->fetch_object()){
+    while ($row = $result->fetch_object()) {
         $name = urlencode(htmlspecialchars($row->name));
         $group = $row->power;
         $status = $row->status;
         $rank = $row->rank;
         
-        if(isset($row->used_tokens)) {
+        if (isset($row->used_tokens)) {
             $used_tokens = $row->used_tokens;
-        }
-        else {
+        } else {
             $used_tokens = 0;
         }
         
         $active_rank = $rank + $used_tokens;
         $hats = count(explode(',', $row->hat_array)) - 1;
         
-        if(strpos($status, 'Playing on ') !== false) {
+        if (strpos($status, 'Playing on ') !== false) {
             $status = substr($status, 11);
         }
         
-        if($num > 0) {
+        if ($num > 0) {
             echo "&";
         }
         
@@ -85,11 +83,7 @@ try {
         ."&hats$num=$hats");
         $num++;
     }
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>

@@ -8,5 +8,3 @@ $db->call('servers_deactivate_expired');
 $db->call('servers_clean');
 
 echo 'result=ok';
-
-?>

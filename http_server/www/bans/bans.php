@@ -9,16 +9,13 @@ $count = (int) default_val($_GET['count'], 100);
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('list-bans-'.$ip, 5, 3);
 
     // connect
     $db = new DB();
     $pdo = pdo_connect();
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error');
     echo "Error: $error";
@@ -44,11 +41,10 @@ try {
 
     // retrieve the ban list
     $bans = retrieve_ban_list($pdo, $start, $count);
-    if(!$bans) {
+    if (!$bans) {
         throw new Exception('Could not retrieve the ban list.');
     }
-}
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Ban List", $is_mod);
     echo "Error: $error";
@@ -78,11 +74,11 @@ foreach ($bans as $row) {
     $duration = $expire_time - $time;
 
     $display_name = '';
-    if($account_ban == 1 ) {
+    if ($account_ban == 1) {
         $display_name .= $banned_name;
     }
-    if($ip_ban == 1 && $is_mod ) {
-        if($display_name != '' ) {
+    if ($ip_ban == 1 && $is_mod) {
+        if ($display_name != '') {
             $display_name .= ' ';
         }
         $display_name .= "[$banned_ip]";
@@ -107,21 +103,18 @@ output_pagination($start, $count);
 output_footer();
 die();
 
-function output_pagination($start, $count) 
+function output_pagination($start, $count)
 {
     $next_start_num = $start + $count;
     $last_start_num = $start - $count;
-    if($last_start_num < 0) {
+    if ($last_start_num < 0) {
         $last_start_num = 0;
     }
     echo('<p>');
-    if($start > 0) {
+    if ($start > 0) {
         echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");
-    }
-    else {
+    } else {
         echo('<- Last |');
     }
     echo(" <a href='?start=$next_start_num&count=$count'>Next -></a></p>");
 }
-
-?>

@@ -6,7 +6,6 @@ require_once '../fns/all_fns.php';
 $ip = get_ip();
 
 try {
-    
     // get and validate referrer
     $ref = check_ref();
     if ($ref !== true && $ref != '') {
@@ -26,7 +25,7 @@ try {
     
     
     // sanity check
-    if($account->guild == 0 ) {
+    if ($account->guild == 0) {
         throw new Exception('You are not a member of a guild.');
     }
     
@@ -41,13 +40,8 @@ try {
     $reply->success = true;
     $reply->message = 'You have left the guild.';
     echo json_encode($reply);
-}
-
-
-catch(Exception $e){
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
-
-?>

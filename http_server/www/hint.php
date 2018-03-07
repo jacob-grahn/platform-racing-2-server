@@ -13,17 +13,13 @@ try {
     echo "Here's what Fred can remember: " . htmlspecialchars($decode->hint) . "<br />";
     if ($decode->finder_name == "") {
         echo "<i><b><br />This artifact hasn't been found yet!</i>";
-    }
-    else {
+    } else {
         echo "<br /> The first person to find this artifact was " . htmlspecialchars($decode->finder_name) . "!!</i>";
     }
-}
-catch (Exception $msg){
+} catch (Exception $msg) {
     $error_message = htmlspecialchars("Error: " . $msg->getMessage());
     echo $error_message;
 }
 
 echo '</center>';
 output_footer();
-
-?>

@@ -15,7 +15,6 @@ $ip = get_ip();
 $safe_ip = addslashes($ip);
 
 try {
-    
     // POST check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
@@ -26,7 +25,7 @@ try {
     
     // sanity check: is the rating valid?
     $new_rating = round($new_rating);
-    if(is_nan($new_rating) || $new_rating < 1 || $new_rating > 5) {
+    if (is_nan($new_rating) || $new_rating < 1 || $new_rating > 5) {
         throw new Exception("Could not vote $new_rating.");
     }
 
@@ -47,10 +46,10 @@ try {
 									AND level_id = '$level_id'
 									LIMIT 0, 1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not check your voting status.');
     }
-    if($result->num_rows > 0) {
+    if ($result->num_rows > 0) {
         throw new Exception("You can't vote on yer own level, matey!");
     }
 
@@ -61,17 +60,17 @@ try {
 									WHERE user_id = '$user_id'
 									LIMIT 0, 1"
     );
-    if(!$rank_result) {
+    if (!$rank_result) {
         throw new Exception('Could not get your rank.');
     }
-    if($rank_result->num_rows > 0) {
+    if ($rank_result->num_rows > 0) {
         $rank_row = $rank_result->fetch_object();
         $weight = $rank_row->rank;
     }
-    if($weight > 10) {
+    if ($weight > 10) {
         $weight = 10;
     }
-    if($weight < 1) {
+    if ($weight < 1) {
         $weight = 1;
     }
 
@@ -83,11 +82,11 @@ try {
 									AND level_id = '$level_id'
 									LIMIT 0, 1"
     );
-    if(!$vote_result) {
+    if (!$vote_result) {
         throw new Exception('Could not check to see if you have voted on this course before');
     }
 
-    if($vote_result->num_rows <= 0) {
+    if ($vote_result->num_rows <= 0) {
         $vote_result = $db->query(
             "SELECT rating, weight
 										FROM pr2_ratings
@@ -95,18 +94,16 @@ try {
 										AND level_id = '$level_id'
 										LIMIT 0, 1"
         );
-        if(!$vote_result) {
+        if (!$vote_result) {
             throw new Exception('Could not check to see if you have ip voted on this course before');
         }
     }
 
     // if they have, they must wait
-    if($vote_result->num_rows > 0) {
+    if ($vote_result->num_rows > 0) {
         throw new Exception('You have already voted on this level. You can vote on it again in a week.');
-    }
-
-    // if they haven't voted
-    else{
+    } // if they haven't voted
+    else {
         $result = $db->query(
             "INSERT into pr2_ratings
 										SET rating = '$new_rating',
@@ -116,7 +113,7 @@ try {
 											time = '$time',
 											ip = '$safe_ip'"
         );
-        if(!$result) {
+        if (!$result) {
             throw new Exception('Could not add your vote');
         }
     }
@@ -128,10 +125,10 @@ try {
 									WHERE level_id = '$level_id'
 									LIMIT 0, 1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not retrieve old rating.');
     }
-    if($result->num_rows <= 0) {
+    if ($result->num_rows <= 0) {
         throw new Exception('Course not found. This is probably because the level has been modified since you started playing it.');
     }
     $row = $result->fetch_object();
@@ -143,20 +140,19 @@ try {
     $total_rating -= $weight * $old_rating;
     $total_rating += $weight * $new_rating;
     $votes += $weight - $old_weight;
-    if($votes <= 0) {
+    if ($votes <= 0) {
         $new_average_rating = 0;
-    }
-    else {
+    } else {
         $new_average_rating = $total_rating / $votes;
     }
 
-    if($new_average_rating > 5) {
+    if ($new_average_rating > 5) {
         $new_average_rating = 0;
         $votes = 0;
     }
 
     // put the final average back into the level
-    if(!is_nan($new_average_rating)) {
+    if (!is_nan($new_average_rating)) {
         $result = $db->query(
             "UPDATE pr2_levels
 										SET rating = '$new_average_rating',
@@ -164,7 +160,7 @@ try {
 										WHERE level_id = '$level_id'
 										LIMIT 1"
         );
-        if(!$result) {
+        if (!$result) {
             throw new Exception('Could not update rating.');
         }
     }
@@ -173,20 +169,15 @@ try {
     echo 'message=Thank you for voting! ';
     $old = round($average_rating, 2);
     $new = round($new_average_rating, 2);
-    if($old == 0) {
+    if ($old == 0) {
         $old = 'none';
     }
-    if($old_rating == 0) {
+    if ($old_rating == 0) {
         echo "Your vote of $new_rating changed the average rating from $old to $new.";
-    }
-    else{
+    } else {
         echo "You changed your vote from $old_rating to $new_rating, which changed the average rating from $old to $new.";
     }
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-
-?>

@@ -6,9 +6,8 @@ require_once '../../fns/all_fns.php';
 $server_id = (int) $_GET['server_id'];
 
 try {
-
     // sanity check: was there any value found for the server id?
-    if(is_empty($server_id, false)) { // is_empty($value, false) includes the number 0 as empty.
+    if (is_empty($server_id, false)) { // is_empty($value, false) includes the number 0 as empty.
         throw new Exception('Invalid server ID specified.');
     }
 
@@ -30,12 +29,11 @@ try {
 
     //--- remember that the super booster was used
     $key = "sb-$user_id";
-    if(apcu_exists($key) ) {
+    if (apcu_exists($key)) {
         throw new Exception('The Super Booster can only be used once per day.');
-    }
-    else {
+    } else {
         $result = apcu_add($key, true, 86400);
-        if(!$result ) {
+        if (!$result) {
             throw new Exception('Could not store usage.');
         }
     }
@@ -50,14 +48,8 @@ try {
     $r->success = true;
     $r->message = 'Super Booster active! You will start your next race with +10 speed, +10 jump, and +10 acceleration.';
     echo json_encode($r);
-}
-
-catch(Exception $e) {
+} catch (Exception $e) {
     $r = new stdClass();
     $r->error = $e->getMessage();
     echo json_encode($r);
 }
-
-
-
-?>

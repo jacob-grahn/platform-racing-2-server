@@ -2,4 +2,4 @@ language: php
 php:
   - '7.0'
 before_script: composer install
-script: ./vendor/bin/phpcs http_server multiplayer_server policy_server
+script: ./vendor/bin/phpcs --standard=PSR2 http_server multiplayer_server policy_server

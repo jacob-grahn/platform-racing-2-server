@@ -10,22 +10,19 @@ class ActionConstants
 }
 
 
-function output_pagination($start, $count) 
+function output_pagination($start, $count)
 {
     $next_start_num = $start + $count;
     $last_start_num = $start - $count;
-    if($last_start_num < 0) {
+    if ($last_start_num < 0) {
         $last_start_num = 0;
     }
     
     echo('<p>');
-    if($start > 0) {
+    if ($start > 0) {
         echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");
-    }
-    else {
+    } else {
         echo('<- Last |');
     }
     echo(" <a href='?start=$next_start_num&count=$count'>Next -></a></p>");
 }
-
-?>

@@ -1,10 +1,10 @@
 <?php
 
 //--- loose hat ----------------------------------------------------------------------------
-function client_loose_hat($socket, $data) 
+function client_loose_hat($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->loose_hat($player, $data);
     }
 }
@@ -12,10 +12,10 @@ function client_loose_hat($socket, $data)
 
 
 //--- pick up a lost hat ----------------------------------------------------------------------------
-function client_get_hat($socket, $data) 
+function client_get_hat($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->get_hat($player, $data);
     }
 }
@@ -23,10 +23,10 @@ function client_get_hat($socket, $data)
 
 
 //--- set pos ------------------------------------------------------------------
-function client_p($socket, $data) 
+function client_p($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->set_pos($player, $data);
     }
 }
@@ -34,10 +34,10 @@ function client_p($socket, $data)
 
 
 //--- set exact pos ----------------------------------------------------------------
-function client_exact_pos($socket, $data) 
+function client_exact_pos($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->set_exact_pos($player, $data);
     }
 }
@@ -45,10 +45,10 @@ function client_exact_pos($socket, $data)
 
 
 //--- squash another player ---------------------------------------------------------------
-function client_squash($socket, $data) 
+function client_squash($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->squash($player, $data);
     }
 }
@@ -56,10 +56,10 @@ function client_squash($socket, $data)
 
 
 //--- set variable ----------------------------------------------------------------
-function client_set_var($socket, $data) 
+function client_set_var($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->set_var($player, $data);
     }
 }
@@ -67,10 +67,10 @@ function client_set_var($socket, $data)
 
 
 //--- add an effect -------------------------------------------------------------
-function client_add_effect($socket, $data) 
+function client_add_effect($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->send_to_room('addEffect`'.$data, $player->user_id);
     }
 }
@@ -78,20 +78,20 @@ function client_add_effect($socket, $data)
 
 
 //---- use a lightning item -------------------------------------------------------
-function client_zap($socket, $data) 
+function client_zap($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->send_to_room('zap`', $player->user_id);
     }
 }
 
 
 //--- hit a block ---------------------------------------------------------------
-function client_hit($socket, $data) 
+function client_hit($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->send_to_room('hit'.$data, $player->user_id);
     }
 }
@@ -99,10 +99,10 @@ function client_hit($socket, $data)
 
 
 //--- touch a block ---------------------------------------------------------------
-function client_activate($socket, $data) 
+function client_activate($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->send_to_room('activate`'.$data.'`', $player->user_id);
     }
 }
@@ -110,10 +110,10 @@ function client_activate($socket, $data)
 
 
 //--- bump a heart block ---------------------------------
-function client_heart($socket, $data) 
+function client_heart($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->lives++;
         $player->game_room->send_to_room('heart'.$player->temp_id.'`', $player->user_id);
     }
@@ -122,10 +122,10 @@ function client_heart($socket, $data)
 
 
 //--- finish drawing ------------------------------------------------------------
-function client_finish_drawing($socket, $data) 
+function client_finish_drawing($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->finish_drawing($player, $data);
     }
 }
@@ -133,10 +133,10 @@ function client_finish_drawing($socket, $data)
 
 
 //--- finish race ------------------------------------------------------------
-function client_finish_race($socket, $data) 
+function client_finish_race($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->remote_finish_race($player, $data);
     }
 }
@@ -144,20 +144,20 @@ function client_finish_race($socket, $data)
 
 
 //--- quit race -----------------------------------------------------------------
-function client_quit_race($socket, $data) 
+function client_quit_race($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->quit_race($player);
     }
 }
 
 
 //--- grab egg -----------------------------------------------------------------
-function client_grab_egg($socket, $data) 
+function client_grab_egg($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room)) {
+    if (isset($player->game_room)) {
         $player->game_room->grab_egg($player, $data);
     }
 }
@@ -165,13 +165,10 @@ function client_grab_egg($socket, $data)
 
 
 //-- record single finish in objective mode -----------------------------------------------
-function client_objective_reached($socket, $data) 
+function client_objective_reached($socket, $data)
 {
     $player = $socket->get_player();
-    if(isset($player->game_room) ) {
+    if (isset($player->game_room)) {
         $player->game_room->objective_reached($player, $data);
     }
 }
-
-
-?>

@@ -10,7 +10,7 @@ class Prize
     private $universal;
     
     
-    public function __construct( $type, $id, $name='', $desc='', $universal=false ) 
+    public function __construct($type, $id, $name = '', $desc = '', $universal = false)
     {
         $this->type = $type;
         $this->id = $id;
@@ -21,25 +21,25 @@ class Prize
     }
     
     
-    public function get_type() 
+    public function get_type()
     {
         return( $this->type );
     }
     
     
-    public function get_id() 
+    public function get_id()
     {
         return( $this->id );
     }
     
     
-    public function is_universal() 
+    public function is_universal()
     {
         return( $this->universal );
     }
     
     
-    public function to_obj() 
+    public function to_obj()
     {
         $obj = new stdClass();
         $obj->type = $this->type;
@@ -51,13 +51,10 @@ class Prize
     }
     
     
-    public function to_str() 
+    public function to_str()
     {
         $obj = $this->to_obj();
         $str = json_encode($obj);
         return $str;
     }
-    
 }
-    
-?>

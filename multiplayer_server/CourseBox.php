@@ -18,8 +18,8 @@ class CourseBox
 
     public function fill_slot($player, $slot)
     {
-        if(!isset($this->slot_array[$slot])) {
-            if(isset($player->course_box)) {
+        if (!isset($this->slot_array[$slot])) {
+            if (isset($player->course_box)) {
                 $player->course_box->clear_slot($player);
             }
             $player->confirmed = false;
@@ -29,7 +29,7 @@ class CourseBox
             $this->room->send_to_room($this->get_fill_str($player, $slot), $player->user_id);
             $player->write($this->get_fill_str($player, $slot).'`me');
 
-            if(isset($this->force_time)) {
+            if (isset($this->force_time)) {
                 $player->write('forceTime`'.(time()-$this->force_time));
             }
         }
@@ -37,12 +37,12 @@ class CourseBox
 
     public function confirm_slot($player)
     {
-        if($player->confirmed == false) {
+        if ($player->confirmed == false) {
             $player->confirmed = true;
             $this->room->send_to_all($this->get_confirm_str($player->slot));
         }
 
-        if(!isset($this->force_time)) {
+        if (!isset($this->force_time)) {
             $this->force_time = time();
             $this->send_to_all('forceTime`0');
         }
@@ -62,24 +62,23 @@ class CourseBox
         unset($this->slot_array[$slot]);
         $this->room->send_to_all($this->get_clear_str($slot));
 
-        if($this->count_confirmed() <= 0) {
+        if ($this->count_confirmed() <= 0) {
             $this->force_time = null;
             $this->send_to_all('forceTime`-1');
         }
 
-        if(count($this->slot_array) <= 0) {
+        if (count($this->slot_array) <= 0) {
             $this->remove();
-        }
-        else{
+        } else {
             $this->check_confirmed();
         }
     }
 
     public function catch_up($to_player)
     {
-        foreach($this->slot_array as $player){
+        foreach ($this->slot_array as $player) {
             $to_player->write($this->get_fill_str($player, $player->slot));
-            if($player->confirmed) {
+            if ($player->confirmed) {
                 $to_player->write($this->get_confirm_str($player->slot));
             }
         }
@@ -103,13 +102,13 @@ class CourseBox
     private function check_confirmed()
     {
         $all_confirmed = true;
-        foreach($this->slot_array as $player){
-            if(!$player->confirmed) {
+        foreach ($this->slot_array as $player) {
+            if (!$player->confirmed) {
                 $all_confirmed = false;
                 break;
             }
         }
-        if($all_confirmed) {
+        if ($all_confirmed) {
             $this->start_game();
         }
     }
@@ -118,7 +117,7 @@ class CourseBox
     {
         $course_id = substr($this->course_id, 0, strpos($this->course_id, '_'));
         $game = new Game($course_id);
-        foreach($this->slot_array as $player){
+        foreach ($this->slot_array as $player) {
             $player->confirmed = false;
             $game->add_player($player);
             client_set_right_room($player->socket, 'none');
@@ -130,9 +129,9 @@ class CourseBox
 
     public function force_start()
     {
-        if((time() - $this->force_time) > 15) {
-            foreach($this->slot_array as $player){
-                if(!$player->confirmed) {
+        if ((time() - $this->force_time) > 15) {
+            foreach ($this->slot_array as $player) {
+                if (!$player->confirmed) {
                     $this->clear_slot($player);
                     $player->write('closeCourseMenu`');
                 }
@@ -142,15 +141,15 @@ class CourseBox
 
     private function send_to_all($str)
     {
-        foreach($this->slot_array as $player){
+        foreach ($this->slot_array as $player) {
             $player->socket->write($str);
         }
     }
 
     public function send_to_room($str, $from_id)
     {
-        foreach($this->slot_array as $player){
-            if($player->user_id != $from_id) {
+        foreach ($this->slot_array as $player) {
+            if ($player->user_id != $from_id) {
                 $player->socket->write($str);
             }
         }
@@ -159,8 +158,8 @@ class CourseBox
     private function count_confirmed()
     {
         $num = 0;
-        foreach($this->slot_array as $player){
-            if($player->confirmed) {
+        foreach ($this->slot_array as $player) {
+            if ($player->confirmed) {
                 $num++;
             }
         }
@@ -169,7 +168,7 @@ class CourseBox
 
     public function remove()
     {
-        foreach($this->slot_array as $player){
+        foreach ($this->slot_array as $player) {
             $this->clear_slot($player);
         }
 

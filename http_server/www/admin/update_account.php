@@ -7,14 +7,12 @@ $user_id = find('id');
 $action = find('action', 'lookup');
 
 try {
-
     //connect
     $db = new DB();
 
 
     //make sure you're an admin
     $admin = check_moderator($db, true, 3);
-    
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
@@ -23,25 +21,23 @@ try {
 }
 
 try {
-
     // header
     output_header('Update PR2 Account', true, true);
     
     // form
-    if($action === 'lookup') {
+    if ($action === 'lookup') {
         output_form($db, $user_id);
         output_footer();
     }
 
 
     // update
-    if($action === 'update') {
-        if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    if ($action === 'update') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
         update($db);
     }
-    
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
     output_footer();
@@ -49,7 +45,7 @@ try {
 }
 
 // page
-function output_form($db, $user_id) 
+function output_form($db, $user_id)
 {
 
     echo '<form name="input" action="update_account.php" method="post">';
@@ -63,13 +59,13 @@ function output_form($db, $user_id)
     echo 'Name: <input type="text" size="" name="name" value="'.htmlspecialchars($user->name).'"><br>';
     echo 'Email: <input type="text" name="email" value="'.htmlspecialchars($user->email).'"><br>';
     echo 'Guild: <input type="text" name="guild" value="'.htmlspecialchars($user->guild).'"><br>';
-    if($pr2) {
+    if ($pr2) {
         echo 'Hats: <input type="text" size="100" name="hats" value="'.$pr2->hat_array.'"><br>';
         echo 'Heads: <input type="text" size="100" name="heads" value="'.$pr2->head_array.'"><br>';
         echo 'Bodies: <input type="text" size="100" name="bodies" value="'.$pr2->body_array.'"><br>';
         echo 'Feet: <input type="text" size="100" name="feet" value="'.$pr2->feet_array.'"><br>';
     }
-    if($pr2_epic) {
+    if ($pr2_epic) {
         echo 'Epic Hats: <input type="text" size="100" name="eHats" value="'.$pr2_epic->epic_hats.'"><br>';
         echo 'Epic Heads: <input type="text" size="100" name="eHeads" value="'.$pr2_epic->epic_heads.'"><br>';
         echo 'Epic Bodies: <input type="text" size="100" name="eBodies" value="'.$pr2_epic->epic_bodies.'"><br>';
@@ -87,12 +83,11 @@ function output_form($db, $user_id)
     echo '---';
     echo '<br>';
     echo '<pre>When making changes, use the "Description of Changes" box to summarize what you did.<br><br>Find what each part ID is <a href="part_ids.php" target="blank">here</a>.<br><br>NOTE: Make sure the user is logged out of PR2 before trying to change parts.</pre>';
-
 }
 
 
 // update function
-function update($db) 
+function update($db)
 {
 
     global $admin;
@@ -108,7 +103,7 @@ function update($db)
     $user_name = $user->name;
     
     // adjust guild member count
-    if($user->guild != $guild_id) {
+    if ($user->guild != $guild_id) {
         if ($user->guild != 0) {
             $db->call('guild_increment_member', array($user->guild, -1));
         }
@@ -118,7 +113,7 @@ function update($db)
     }
     
     // email change logging
-    if($user->email !== $email) {
+    if ($user->email !== $email) {
         $code = 'manual-' . time();
         $db->call('changing_email_insert', array($user_id, $user->email, $email, $code, ''));
         $change_id = $db->grab('change_id', 'changing_email_select', array($code));
@@ -126,7 +121,7 @@ function update($db)
     }
     
     // check for description of changes
-    if(is_empty($account_changes)) {
+    if (is_empty($account_changes)) {
         throw new Exception('You must enter a description of your changes.');
     }
     
@@ -159,5 +154,4 @@ function update($db)
     
     header("Location: player_deep_info.php?name1=" . urlencode(find('name')));
     die();
-
 }

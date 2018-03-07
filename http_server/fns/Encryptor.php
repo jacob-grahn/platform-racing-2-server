@@ -13,7 +13,7 @@ class Encryptor
 
 
 
-    public static function init($key) 
+    public static function init($key)
     {
         $iv = self::generate_iv();
         self::set_iv($iv);
@@ -22,7 +22,7 @@ class Encryptor
 
 
 
-    public static function set_key($base64_key) 
+    public static function set_key($base64_key)
     {
         self::$base64_key = $base64_key;
         self::$binary_key = base64_decode($base64_key);
@@ -30,28 +30,28 @@ class Encryptor
 
 
 
-    public static function get_key() 
+    public static function get_key()
     {
         return(self::$base64_key);
     }
 
 
 
-    public static function get_iv() 
+    public static function get_iv()
     {
         return(self::$binary_iv);
     }
 
 
 
-    public static function get_str_iv() 
+    public static function get_str_iv()
     {
         return(self::$base64_iv);
     }
 
 
 
-    public static function generate_iv() 
+    public static function generate_iv()
     {
         $binary_iv = mcrypt_create_iv(mcrypt_get_iv_size(self::$algorithm, self::$mode), MCRYPT_RAND);
         $base64_iv = base64_encode($binary_iv);
@@ -60,7 +60,7 @@ class Encryptor
 
 
 
-    public static function set_iv($base64_iv) 
+    public static function set_iv($base64_iv)
     {
         $binary_iv = base64_decode($base64_iv);
         self::$base64_iv = $base64_iv;
@@ -69,7 +69,7 @@ class Encryptor
 
 
 
-    public static function encrypt($string, $base64_iv) 
+    public static function encrypt($string, $base64_iv)
     {
         $binary_iv = base64_decode($base64_iv);
         $binary_encrypted = mcrypt_encrypt(self::$algorithm, self::$binary_key, $string, self::$mode, $binary_iv);
@@ -79,7 +79,7 @@ class Encryptor
 
 
 
-    public static function decrypt($base64_encrypted, $base64_iv) 
+    public static function decrypt($base64_encrypted, $base64_iv)
     {
         $binary_iv = base64_decode($base64_iv);
         $binary_encrypted = base64_decode($base64_encrypted);
@@ -88,5 +88,3 @@ class Encryptor
         return $string;
     }
 }
-
-?>

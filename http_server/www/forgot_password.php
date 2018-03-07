@@ -12,7 +12,6 @@ $safe_email = addslashes($email);
 $ip = get_ip();
 
 try {
-    
     // check for post
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -28,13 +27,13 @@ try {
     rate_limit('forgot-password-attempt-'.$ip, 5, 1);
 
     // sanity check: is it a valid email address?
-    if(!valid_email($email)) {
+    if (!valid_email($email)) {
         $safe_disp_email = htmlspecialchars($email);
         throw new Exception("\"$safe_disp_email\" is not a valid email address.");
     }
     
     // easter egg: Jiggmin's luggage
-    if(strtolower($name) == 'jiggmin') {
+    if (strtolower($name) == 'jiggmin') {
         throw new Exception("The password to Jiggmin's luggage is 12345.");
     }
 
@@ -50,15 +49,15 @@ try {
 									LIMIT 0, 1"
     );
 
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not get your id from the database.');
     }
-    if($result->num_rows <= 0) {
+    if ($result->num_rows <= 0) {
         $safe_disp_name = htmlspecialchars($name);
         $safe_disp_email = htmlspecialchars($email);
         throw new Exception("No account was found with the username \"$safe_disp_name\" and the email address \"$safe_disp_email\".");
     }
-    if($result->num_rows > 1) {
+    if ($result->num_rows > 1) {
         throw new Exception('More than one result was returned. Something has gone horribly wrong and the world is about to explode.');
     }
 
@@ -79,7 +78,7 @@ try {
 									SET temp_pass_hash = '$safe_pass_hash'
 									WHERE user_id = '$user_id'"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not update your password.');
     }
 
@@ -119,13 +118,8 @@ try {
     
     // goodbye
     die();
-    
-}
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
     die();
 }
-
-
-?>

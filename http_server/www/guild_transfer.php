@@ -7,15 +7,13 @@ require_once '../fns/output_fns.php';
 $ip = get_ip();
 
 try {
-
     // rate limit
     rate_limit('gui-guild-transfer-connect-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to reload this page.');
     
     // what is the user trying to do
     if (is_empty($_POST['action'])) {
         $action = 'form';
-    }
-    else {
+    } else {
         $action = $_POST['action'];
     }
 
@@ -45,35 +43,30 @@ try {
     // check if the logged in user is the owner of their guild
     if ($user_id == $owner_id && $action === 'form') {
         output_form($user, $guild);
-    }
-    else if ($user_id != $owner_id && $action === 'form') {
+    } elseif ($user_id != $owner_id && $action === 'form') {
         $safe_guild_name = htmlspecialchars($guild->guild_name);
         throw new Exception("You aren't the owner of $safe_guild_name.");
     }
     
     // start the transfer
-    if($action === 'submit') {
+    if ($action === 'submit') {
         $ref = check_ref();
         
         if ($ref !== true) {
             $safe_ref = htmlspecialchars($ref);
             throw new Exception("Incorrect referrer. The referrer is: $safe_ref");
-        }
-        else {
+        } else {
             start_transfer($db, $user->name, $guild);
         }
-        
     }
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $message = $e->getMessage();
     echo "Error: $message";
     output_footer();
     die();
 }
 
-function output_form($user, $guild) 
+function output_form($user, $guild)
 {
     
     $safe_name = htmlspecialchars($user->name);
@@ -99,10 +92,9 @@ function output_form($user, $guild)
     echo '</form>';
     
     output_footer();
-    
 }
 
-function start_transfer($db, $old_name, $guild) 
+function start_transfer($db, $old_name, $guild)
 {
     
     // get the ip address of the requester
@@ -150,12 +142,12 @@ function start_transfer($db, $old_name, $guild)
     $current_owner = $guild->owner_id;
     
     // sanity check: make sure guests aren't getting any funny ideas
-    if($old_power < 1 || $new_power < 1) {
+    if ($old_power < 1 || $new_power < 1) {
         throw new Exception("Guests can't even really own guilds...");
     }
     
     // sanity check: check again for guild ownership
-    if($old_id != $current_owner) {
+    if ($old_id != $current_owner) {
         throw new Exception("You aren't the owner of $safe_guild_name.");
     }
     
@@ -176,7 +168,4 @@ function start_transfer($db, $old_name, $guild)
     // tell the world
     echo "Almost done! We just sent a confirmation email to the email address on your account. You'll still own your guild until you confirm the transfer.";
     output_footer();
-    
 }
-
-?>

@@ -7,7 +7,6 @@ $ban_id = (int) default_val($_GET['ban_id'], 0);
 $ip = get_ip();
 
 try {
-
     // rate limiting
     rate_limit('mod-lift-ban-'.$ip, 5, 2);
     
@@ -16,9 +15,7 @@ try {
 
     // make sure you're a moderator
     $mod = check_moderator($db);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error');
     echo "Error: $error";
@@ -27,7 +24,6 @@ catch(Exception $e) {
 }
 
 try {
-
     // output header
     output_header('Lift Ban', true);
 
@@ -38,10 +34,10 @@ try {
 									WHERE ban_id = '$ban_id'
 									LIMIT 0, 1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception("Could not get the ban's data from the database.");
     }
-    if($result->num_rows <= 0) {
+    if ($result->num_rows <= 0) {
         throw new Exception("Ban ID #$ban_id doesn't exist.");
     }
 
@@ -49,7 +45,7 @@ try {
     $row = $result->fetch_object();
     $banned_name = $row->banned_name;
     $lifted = $row->lifted;
-    if($lifted == '1') {
+    if ($lifted == '1') {
         throw new Exception('This ban has already been lifted.');
     }
 
@@ -66,9 +62,7 @@ try {
 
 
     <?php
-
-}
-catch(Exception $e){
+} catch (Exception $e) {
     // header already echoed
     $error = $e->getMessage();
     echo "Error: $error";

@@ -1,6 +1,6 @@
 <?php
 
-function begin_loadup( $server_id ) 
+function begin_loadup($server_id)
 {
     global $db;
     $db = new DB();
@@ -19,7 +19,7 @@ function begin_loadup( $server_id )
 
 
 
-function set_server( $db, $server ) 
+function set_server($db, $server)
 {
     global $port, $server_name, $uptime, $server_expire_time, $guild_id, $guild_owner, $key;
     $port = $server->port;
@@ -31,45 +31,42 @@ function set_server( $db, $server )
     $guild_owner = 0;
     $key = $server->salt;
     pr2_server::$tournament = $server->tournament;
-    if(pr2_server::$tournament ) {
+    if (pr2_server::$tournament) {
         pr2_server::$no_prizes = true;
     }
 
-    if($guild_id != 0 ) {
+    if ($guild_id != 0) {
         $guild = $db->grab_row('guild_select', array($guild_id));
         $guild_owner = $guild->owner_id;
-    }
-    else {
+    } else {
         $guild_owner = 4291976; //Fred the G. Cactus
     }
 }
 
 
 
-function set_campaign( $campaign_levels ) 
+function set_campaign($campaign_levels)
 {
     global $campaign_array;
     $campaign_array = array();
-    foreach($campaign_levels as $level) {
+    foreach ($campaign_levels as $level) {
         $campaign_array[$level->level_id] = $level;
     }
 }
 
 
 
-function set_perks( $perks ) 
+function set_perks($perks)
 {
-    foreach( $perks as $perk ) {
+    foreach ($perks as $perk) {
         $slug = $perk->product;
         $a = array( Perks::GUILD_FRED, Perks::GUILD_GHOST );
-        if(array_search($slug, $a) !== false ) {
+        if (array_search($slug, $a) !== false) {
             output("activating perk $slug for user $perk->user_id and guild $perk->guild_id");
             start_perk($slug, $perk->user_id, $perk->guild_id);
         }
-        if($slug == 'happy-hour' ) {
+        if ($slug == 'happy-hour') {
             HappyHour::activate();
         }
     }
 }
-
-?>

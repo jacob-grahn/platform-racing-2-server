@@ -1,8 +1,6 @@
 <?php
 
-function output($str) 
+function output($str)
 {
     echo "* $str\n";
 }
-
-?>

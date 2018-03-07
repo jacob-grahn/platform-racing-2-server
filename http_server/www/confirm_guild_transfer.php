@@ -7,11 +7,10 @@ $code = $_GET['code'];
 $ip = get_ip();
 
 try {
-    
     output_header('Confirm Guild Ownership Transfer');
     
     // sanity check: check for a confirmation code
-    if(!isset($code)) {
+    if (!isset($code)) {
         throw new Exception('No code found.');
     }
     
@@ -39,13 +38,8 @@ try {
     // tell the world
     echo "Great success! The new owner of $safe_guild_name is $safe_new_owner. Long live $safe_guild_name!";
     output_footer();
-}
-
-
-catch(Exception $e){
+} catch (Exception $e) {
     $message = $e->getMessage();
     echo "Error: $message";
     output_footer();
 }
-
-?>

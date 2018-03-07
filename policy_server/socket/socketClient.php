@@ -39,7 +39,7 @@ abstract class socketClient extends socket
 
     public function write($buffer, $length = 4096)
     {
-        if(substr($buffer, -1, 1) != chr(0x00)) {
+        if (substr($buffer, -1, 1) != chr(0x00)) {
             $buffer.=chr(0x00);
         }
 
@@ -84,20 +84,19 @@ abstract class socketClient extends socket
         }
     }
 
-    public function on_connect() 
+    public function on_connect()
     {
     }
-    public function on_disconnect() 
+    public function on_disconnect()
     {
     }
-    public function on_read() 
+    public function on_read()
     {
     }
-    public function on_write() 
+    public function on_write()
     {
     }
-    public function on_timer() 
+    public function on_timer()
     {
     }
 }
-?>

@@ -10,13 +10,11 @@ class server_client extends socketServerClient
     public function on_read()
     {
         //echo "recieved: ".$this->read_buffer."\n";
-        if($this->read_buffer == '<policy-file-request/>'.chr(0x00)) {
+        if ($this->read_buffer == '<policy-file-request/>'.chr(0x00)) {
             $this->read_buffer = '';
             //echo "writing... \n";
             $this->write(get_policy_file().chr(0x00));
-        }
-        
-        else if(strpos($this->read_buffer, 'status')  !== false) {
+        } elseif (strpos($this->read_buffer, 'status')  !== false) {
             $this->read_buffer = '';
             $this->write('ok'.chr(0x04));
         }
@@ -59,6 +57,3 @@ function get_policy_file()
 			
 			</cross-domain-policy>';
 }
-
-    
-?>

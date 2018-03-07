@@ -116,6 +116,3 @@ output("Starting PR2 server $server_name on port $port at on $date.");
 $daemon = new socketDaemon();
 $server = $daemon->create_server('pr2_server', 'pr2_server_client', 0, $port);
 $daemon->process();
-
-
-?>

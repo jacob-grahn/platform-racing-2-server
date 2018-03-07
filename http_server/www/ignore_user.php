@@ -8,7 +8,6 @@ $safe_ignored_name = htmlspecialchars($ignored_name);
 $ip = get_ip();
 
 try {
-    
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -34,9 +33,7 @@ try {
     
     // tell it to the world
     echo "message=$safe_ignored_name has been ignored. You won't recieve any chat or private messages from them.";
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
     exit;

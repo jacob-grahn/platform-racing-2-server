@@ -1,6 +1,6 @@
 <?php
 
-function order_placed_handler( $db, $request ) 
+function order_placed_handler($db, $request)
 {
     $event = $request->event; //item_order_placed
     $game_id = $request->game_id; //The game_id.
@@ -13,7 +13,7 @@ function order_placed_handler( $db, $request )
     //--- check that the item is available
     $descs = describeVault($db, $pr2_user_id, array($slug));
     $desc = $descs[0];
-    if($desc->available == false ) {
+    if ($desc->available == false) {
         throw new Exception('This item is no longer available');
     }
 
@@ -29,7 +29,7 @@ function order_placed_handler( $db, $request )
 
 
 
-function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id, $title ) 
+function unlock_item($db, $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id, $title)
 {
     error_log("unlock_item: $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id");
     $db->call('purchase_insert_2', array( $user_id, $guild_id, $slug, $kong_user_id, $order_id ), 'Could not record your purchase.');
@@ -37,19 +37,13 @@ function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $
     $reply = '';
     $target_servers = array();
 
-    if($slug == 'guild-fred' ) {
+    if ($slug == 'guild-fred') {
         $reply = "Fred smiles on you!";
-    }
-
-    else if($slug == 'guild-ghost' ) {
+    } elseif ($slug == 'guild-ghost') {
         $reply = "Ninja mode: engage!";
-    }
-    
-    else if($slug == 'guild-artifact' ) {
+    } elseif ($slug == 'guild-artifact') {
         $reply = "Ultimate power, courtesy of Fred!";
-    }
-
-    else if($slug == 'king-set' ) {
+    } elseif ($slug == 'king-set') {
         award_part($db, $user_id, 'head', 28);
         award_part($db, $user_id, 'body', 26);
         award_part($db, $user_id, 'feet', 24);
@@ -58,9 +52,7 @@ function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $
         award_part($db, $user_id, 'eFeet', 24);
         $command = "unlock_set_king`$user_id";
         $reply = "The Wise King set has been added your account!";
-    }
-
-    else if($slug == 'queen-set' ) {
+    } elseif ($slug == 'queen-set') {
         award_part($db, $user_id, 'head', 29);
         award_part($db, $user_id, 'body', 27);
         award_part($db, $user_id, 'feet', 25);
@@ -69,9 +61,7 @@ function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $
         award_part($db, $user_id, 'eFeet', 25);
         $command = "unlock_set_queen`$user_id";
         $reply = "The Wise Queen set has been added your account!";
-    }
-
-    else if($slug == 'djinn-set' ) {
+    } elseif ($slug == 'djinn-set') {
         award_part($db, $user_id, 'head', 35);
         award_part($db, $user_id, 'body', 35);
         award_part($db, $user_id, 'feet', 35);
@@ -80,46 +70,38 @@ function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $
         award_part($db, $user_id, 'eFeet', 35);
         $command = "unlock_set_djinn`$user_id";
         $reply = "The Frost Djinn set has been added your account!";
-    }
-
-    else if($slug == 'epic-everything' ) {
+    } elseif ($slug == 'epic-everything') {
         award_part($db, $user_id, 'eHat', '*');
         award_part($db, $user_id, 'eHead', '*');
         award_part($db, $user_id, 'eBody', '*');
         award_part($db, $user_id, 'eFeet', '*');
         $command = "unlock_epic_everything`$user_id";
         $reply = "All Epic Upgrades are yours!";
-    }
-
-    else if($slug == 'happy-hour' ) {
+    } elseif ($slug == 'happy-hour') {
         $target_servers = array( $server_id );
         $reply = "This is the happiest hour ever!";
-    }
-
-    else if($slug == 'server-1-day' || $slug == 'server-30-days' ) {
+    } elseif ($slug == 'server-1-day' || $slug == 'server-30-days') {
         $command = '';
         $seconds = 0;
-        if($slug == 'server-1-day' ) {
+        if ($slug == 'server-1-day') {
             $seconds = 60*60*24;
         }
-        if($slug == 'server-30-days' ) {
+        if ($slug == 'server-30-days') {
             $seconds = 60*60*24*30;
         }
 
         $result = create_server($db, $guild_id, $seconds);
 
-        if($result == 0 ) {
+        if ($result == 0) {
             throw new Exception('Could not start the server.');
         }
-        if($result == 1 ) {
+        if ($result == 1) {
             $reply = 'The best server ever is starting up! ETA 2 minutes.';
         }
-        if($result == 2 ) {
+        if ($result == 2) {
             $reply = 'The life of your private server has been extended! Long live your guild!';
         }
-    }
-
-    else if($slug == 'rank-rental' ) {
+    } elseif ($slug == 'rank-rental') {
         $db->call('rank_token_rental_insert', array($user_id, $guild_id));
 
         $obj = new stdClass();
@@ -129,16 +111,14 @@ function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $
 
         $command = "unlock_rank_token_rental`$data";
         $reply = 'You just got a rank token!';
-    }
-
-    else {
+    } else {
         throw new Exception("Item not found: " . strip_tags($slug, '<br>'));
     }
 
-    if($command != '' ) {
+    if ($command != '') {
         poll_servers_2($db, $command, false, $target_servers);
     }
-    if($reply != '' ) {
+    if ($reply != '') {
         $obj = new stdClass();
         $obj->user_id = $user_id;
         $obj->message = $reply;
@@ -153,7 +133,7 @@ function unlock_item( $db, $user_id, $guild_id, $server_id, $slug, $user_name, $
 
 
 
-function send_confirmation_pm( $db, $user_id, $title, $order_id ) 
+function send_confirmation_pm($db, $user_id, $title, $order_id)
 {
     $pm = "Thank you for your support! This PM is to confirm your order.
 item: $title
@@ -163,7 +143,7 @@ order id: $order_id";
 
 
 
-function create_server( $db, $guild_id, $seconds_of_life ) 
+function create_server($db, $guild_id, $seconds_of_life)
 {
     global $COMM_PASS;
     $result = $db->call('server_select_by_guild_id', array($guild_id), 'Could not check if you already have a guild server.');
@@ -175,20 +155,17 @@ function create_server( $db, $guild_id, $seconds_of_life )
     $salt = $COMM_PASS;
     $guild_id = $guild->guild_id;
 
-    if($result->num_rows <= 0 ) {
+    if ($result->num_rows <= 0) {
         $db->call('server_insert', array($server_name, $address, $port, $expire_time, $salt, $guild_id), 'Could not insert server.');
         return( 1 );
-    }
-    else {
+    } else {
         $server = $result->fetch_object();
         $server_id = $server->server_id;
         $expire_time_2 = strtotime($server->expire_date) + $seconds_of_life;
-        if($expire_time_2 > $expire_time ) {
+        if ($expire_time_2 > $expire_time) {
             $expire_time = $expire_time_2;
         }
         $db->call('server_update_expire_date', array($server_id, $expire_time, $server_name), "Could not update server. $server_id, $server_name, $expire_time");
         return( 2 );
     }
 }
-
-?>

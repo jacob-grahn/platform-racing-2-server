@@ -22,12 +22,12 @@ function check_for_name($connection, $name)
         "select name from users
 									where name = '$safe_name'"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not check if '.$name.' was in db.');
     }
-    if($result->num_rows >= 1) {
+    if ($result->num_rows >= 1) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
@@ -44,7 +44,7 @@ function get_row($connection, $table, $id_name, $id)
 									where $id_name = '$id'"
     );
 
-    if(!$result) {
+    if (!$result) {
         throw new Exception("Could not get row $table, $id_name = $id.");
     }
 
@@ -64,7 +64,7 @@ function ban_member($connection, $user_id, $duration)
 									set ban_time = '$safe_ban_time'
 									where user_id = '$safe_user_id'"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception("Could not ban user $user_id");
     }
 }
@@ -72,7 +72,7 @@ function ban_member($connection, $user_id, $duration)
 
 
 //--- lookup user_id with name ---------------------------------------------------------
-function name_to_id($connection, $name) 
+function name_to_id($connection, $name)
 {
     $safe_name = addslashes($name);
     $result = $connection->query(
@@ -81,10 +81,10 @@ function name_to_id($connection, $name)
 									where name = '$safe_name'
 									LIMIT 0,1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not look up user "'.$name.'".');
     }
-    if($result->num_rows <= 0) {
+    if ($result->num_rows <= 0) {
         throw new Exception('No user with that the name "'.$name.'" was found.');
     }
     $row = $result->fetch_object();
@@ -105,10 +105,10 @@ function id_to_name($connection, $user_id)
 									where user_id = '$safe_user_id'
 									LIMIT 0,1"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not look up user id.');
     }
-    if($result->num_rows <= 0) {
+    if ($result->num_rows <= 0) {
         throw new Exception("No user with that that id $user_id was found.");
     }
 
@@ -134,10 +134,10 @@ function insert_db_pair($connection, $db, $var1, $var2, $val1, $val2)
 									where $safe_var1 = '$safe_val1'
 									and $safe_var2 = '$safe_val2'"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not check the database.');
     }
-    if($result->num_rows > 0) {
+    if ($result->num_rows > 0) {
         throw new Exception('That entry is already in the db.');
     }
 
@@ -147,7 +147,7 @@ function insert_db_pair($connection, $db, $var1, $var2, $val1, $val2)
 									set $safe_var1 = '$safe_val1',
 										$safe_var2 = '$safe_val2'"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not add db pair: $db, $var1=$val1, $var2=$val2');
     }
 }
@@ -165,12 +165,8 @@ function query_ban_record($connection, $where)
 									and lifted != 1
 									and expire_time > '$time'"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not check your account status');
     }
     return($result);
 }
-
-
-
-?>

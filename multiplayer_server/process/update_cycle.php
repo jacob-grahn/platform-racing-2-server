@@ -1,8 +1,8 @@
 <?php
 
-function process_update_cycle($socket, $data) 
+function process_update_cycle($socket, $data)
 {
-    if($socket->process == true ) {
+    if ($socket->process == true) {
         $obj = json_decode($data);
         place_artifact($obj->artifact);
         pm_notify($obj->recent_pms);
@@ -18,5 +18,3 @@ function process_update_cycle($socket, $data)
         $socket->write(json_encode($rep));
     }
 }
-
-?>

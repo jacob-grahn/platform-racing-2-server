@@ -11,7 +11,6 @@ $mod_ip = get_ip();
 
 
 try {
-
     // rate limiting
     rate_limit('mod-reported-messages-'.$mod_ip, 5, 3);
     
@@ -20,9 +19,7 @@ try {
 
     //make sure you're a moderator
     $mod = check_moderator($db, false);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");
     echo "Error: $error";
@@ -31,7 +28,6 @@ catch(Exception $e) {
 }
 
 try {
-    
     // output header
     output_header('Reported Messages', true);
 
@@ -49,13 +45,13 @@ try {
 									ORDER by reported_time desc
 									LIMIT $start, $count"
     );
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not retrieve the list of reported messages.');
     }
 
 
     //output the messages
-    while($row = $result->fetch_object()) {
+    while ($row = $result->fetch_object()) {
         $formatted_time = date('M j, Y g:i A', $row->sent_time);
         $from_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->from_name));
         $to_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->to_name));
@@ -68,10 +64,9 @@ try {
         $html_safe_message = htmlspecialchars(filter_swears($row->message));
         $html_safe_message = str_replace("\r", '<br>', $html_safe_message);
 
-        if($archived) {
+        if ($archived) {
             $class = 'archived';
-        }
-        else {
+        } else {
             $class = 'not-archived';
         }
 
@@ -80,7 +75,7 @@ try {
 				<p><a href='player_info.php?user_id=$from_user_id&force_ip=$from_ip'>$from_name</a> sent this message to <a href='player_info.php?user_id=$to_user_id&force_ip=$reporter_ip'>$to_name</a> on $formatted_time<p>
 				<p>$html_safe_message</p> ");
 
-        if(!$archived) {
+        if (!$archived) {
             $form_id = 'f'.$next_form_id;
             $button_id = 'b'.$next_form_id;
             $div_id = 'd'.$next_form_id++;
@@ -130,9 +125,7 @@ try {
     output_pagination($start, $count);
 
     output_footer();
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Reported Messages', true);
     echo "Error: $error";
@@ -140,22 +133,19 @@ catch(Exception $e){
 }
 
 
-function output_pagination($start, $count) 
+function output_pagination($start, $count)
 {
     $next_start_num = $start + $count;
     $last_start_num = $start - $count;
-    if($last_start_num < 0) {
+    if ($last_start_num < 0) {
         $last_start_num = 0;
     }
 
     echo('<p>');
-    if($start > 0) {
+    if ($start > 0) {
         echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");
-    }
-    else {
+    } else {
         echo('<- Last |');
     }
     echo(" <a href='?start=$next_start_num&count=$count'>Next -></a></p>");
 }
-
-?>

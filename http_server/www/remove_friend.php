@@ -8,7 +8,6 @@ $safe_friend_name = htmlspecialchars($friend_name);
 $ip = get_ip();
 
 try {
-    
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -33,10 +32,8 @@ try {
     $db->call('friend_delete', array($user_id, $friend_id));
     
     // tell the world
-    echo "message=$safe_friend_name has been removed from your friends list.";                        
-}
-
-catch (Exception $e){
+    echo "message=$safe_friend_name has been removed from your friends list.";
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }

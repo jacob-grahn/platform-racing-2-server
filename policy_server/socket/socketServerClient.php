@@ -31,7 +31,7 @@ abstract class socketServerClient extends socketClient
     {
         $this->socket         = $socket;
 
-        try{
+        try {
             if (!is_resource($this->socket)) {
                 throw new socketException("Invalid socket or resource");
             } elseif (!socket_getsockname($this->socket, $this->local_addr, $this->local_port)) {
@@ -39,8 +39,7 @@ abstract class socketServerClient extends socketClient
             } elseif (!socket_getpeername($this->socket, $this->remote_address, $this->remote_port)) {
                 throw new socketException("Could not retrieve remote address & port: ".socket_strerror(socket_last_error($this->socket)));
             }
-        }
-        catch (socketException $e) {
+        } catch (socketException $e) {
             echo "Caught exception: ".$e->getMessage()."\n";
         }
 
@@ -48,4 +47,3 @@ abstract class socketServerClient extends socketClient
         $this->on_connect();
     }
 }
-?>

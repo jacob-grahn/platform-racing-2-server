@@ -8,7 +8,6 @@ $ban_id = (int) default_val($_GET['ban_id'], 0);
 $ip = get_ip();
 
 try {
-    
     // rate limiting
     rate_limit('mod-ban-edit-'.$ip, 3, 2);
 
@@ -17,9 +16,7 @@ try {
 
     //make sure you're a moderator
     $mod = check_moderator($db);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error');
     echo "Error: $error";
@@ -28,9 +25,8 @@ catch(Exception $e) {
 }
 
 try {
-    
     // sanity check: what ban id?
-    if(is_empty($ban_id, false)) {
+    if (is_empty($ban_id, false)) {
         throw new Exception('No ban ID specified.');
     }
 
@@ -43,8 +39,7 @@ try {
     // ------------------------------------------------------------------
     // --- edit an existing ban, then redirect to that ban listing
     // ------------------------------------------------------------------
-    if($action === 'edit' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    
+    if ($action === 'edit' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $safe_ban_id = $db->escape($ban_id);
         $safe_account_ban = $db->escape(0+!!find('account_ban'));
         $safe_ip_ban = $db->escape(0+!!find('ip_ban'));
@@ -68,10 +63,9 @@ try {
         $is_account_ban = check_value($safe_account_ban, 1);
         $is_ip_ban = check_value($safe_ip_ban, 1);
         
-        if(is_empty($notes)) {
+        if (is_empty($notes)) {
             $disp_notes = "no notes";
-        }
-        else {
+        } else {
             $disp_notes = "notes: $notes";
         }
     
@@ -81,11 +75,8 @@ try {
         //redirect to the ban listing
         header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
         die();
-    }
-    
-    
-    // --------------------------------------------------------------------------
-    // --- display a form containing the current ban data 
+    } // --------------------------------------------------------------------------
+    // --- display a form containing the current ban data
     // --------------------------------------------------------------------------
     else {
         $ban = $db->grab_row('ban_select', array($ban_id));
@@ -93,16 +84,14 @@ try {
         output_form($ban);
         output_footer();
     }
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Edit Ban', true);
     echo "Error: $error";
     output_footer();
 }
 
-function output_form($ban) 
+function output_form($ban)
 {
     
     //check if the boxes are checked courtesy of data_fns.php
@@ -119,8 +108,4 @@ function output_form($ban)
 	<p>Notes <textarea rows='4' cols='50' name='notes'>$ban->notes</textarea>
 	<p><input type='submit' value='submit'></p>
 	</form>";
-
 }
-
-
-?>

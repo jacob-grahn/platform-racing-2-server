@@ -8,7 +8,6 @@ require_once '../fns/classes/S3.php';
 $ip = get_ip();
 
 try {
-    
     // POST check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
@@ -44,19 +43,19 @@ try {
     $account = $db->grab_row('user_select_expanded', array($user_id));
     
     // sanity checks
-    if($account->rank < 20 ) {
+    if ($account->rank < 20) {
         throw new Exception('Must be rank 20 or above to upload an emblem.');
     }
-    if($account->power <= 0 ) {
+    if ($account->power <= 0) {
         throw new Exception('Guests can not upoad emblems.');
     }
-    if(!isset($image) ) {
+    if (!isset($image)) {
         throw new Exception('No image recieved.');
     }
-    if(strlen($image) > 20000 ) {
+    if (strlen($image) > 20000) {
         throw new Exception('Image is too large. ' . strlen($image));
     }
-    if(getimagesize($image_rendered) === false) {
+    if (getimagesize($image_rendered) === false) {
         throw new Exception('File is not an image');
     }
     
@@ -64,7 +63,7 @@ try {
     $filename = $user_id . '-' . time() . '.jpg';
     $bucket = 'pr2emblems';
     $result = $s3->putObject($image, $bucket, $filename);
-    if(!$result) {
+    if (!$result) {
         throw new Exception('Could not save image. :(');
     }
     
@@ -78,13 +77,8 @@ try {
     $reply->len = strlen($image);
     $reply->filename = $filename;
     echo json_encode($reply);
-}
-
-
-catch(Exception $e){
+} catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
-
-?>

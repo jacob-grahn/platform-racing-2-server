@@ -1,8 +1,6 @@
 <?php
 
-function client_ping($socket, $data) 
+function client_ping($socket, $data)
 {
     $socket->write('ping`' . time());
 }
-
-?>

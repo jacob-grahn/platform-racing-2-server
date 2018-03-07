@@ -8,16 +8,13 @@ $action = find('action', 'lookup');
 $ip = get_ip();
 
 try {
-    
     //connect
     $db = new DB();
 
 
     //make sure you're an admin
     $admin = check_moderator($db, true, 3);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");
     echo "Error: $error";
@@ -26,22 +23,17 @@ catch(Exception $e) {
 }
 
 try {
-    
     //lookup
-    if($action === 'lookup') {
+    if ($action === 'lookup') {
         output_form($db, $guild_id);
     }
     
     
     //update
-    if($action === 'update') {
+    if ($action === 'update') {
         update($db);
     }
-
-
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Update Guild', true, true);
     echo "Error: $error";
@@ -50,7 +42,7 @@ catch (Exception $e) {
 }
 
 
-function output_form($db, $guild_id) 
+function output_form($db, $guild_id)
 {
     
     output_header('Update Guild', true, true);
@@ -81,7 +73,7 @@ function output_form($db, $guild_id)
     output_footer();
 }
 
-function update($db) 
+function update($db)
 {
     
     global $admin, $ip;
@@ -97,7 +89,7 @@ function update($db)
     $guild = $db->grab_row('guild_select', array($guild_id));
     $guild_owner = (int) $guild->owner_id;
     
-    if($guild_owner !== $owner_id) {
+    if ($guild_owner !== $owner_id) {
         $code = 'manual-' . time();
         $db->call('guild_transfer_insert', array($guild->guild_id, $guild_owner, $owner_id, $code, $ip), 'Could not initiate the owner change.');
         $transfer_id = $db->grab('transfer_id', 'guild_transfer_select_by_code', array($code), 'Could not get the owner change ID.');
@@ -107,15 +99,13 @@ function update($db)
     //check to see if the admin is trying to delete the guild emblem
     if (!empty($_GET['delete_emblem'])) {
         $emblem = "default-emblem.jpg";
-    }
-    else {
+    } else {
         $emblem = $guild->emblem;
     }
     
     try {
-
         // check to make sure the description of changes exists
-        if(is_empty($guild_changes)) {
+        if (is_empty($guild_changes)) {
             throw new Exception('The description of changes cannot be blank.');
         }
         
@@ -129,9 +119,7 @@ function update($db)
         $disp_changes = "Changes: " . $guild_changes;
         
         $db->call('admin_action_insert', array($admin_id, "$admin_name updated guild $guild_id from $ip. $disp_changes.", $admin_id, $ip), 'Could not insert the changes to the admin log.');
-
-    }
-    catch (Exception $e) {
+    } catch (Exception $e) {
         output_header('Update Guild', true, true);
         echo 'Error: ' . $e->getMessage();
         output_footer();
@@ -140,7 +128,4 @@ function update($db)
     
     header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));
     die();
-
 }
-
-?>

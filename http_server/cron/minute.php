@@ -16,7 +16,7 @@ echo 'result=ok';
 
 
 
-function run_update_cycle( $db ) 
+function run_update_cycle($db)
 {
     output('run update cycle');
     //--- gather data to send to active servers
@@ -31,16 +31,15 @@ function run_update_cycle( $db )
     $servers = poll_servers_2($db, 'update_cycle`' . $send_str);
 
     //--- process replies
-    foreach( $servers as $server ) {
-        if($server->result != false && $server->result != null ) {
+    foreach ($servers as $server) {
+        if ($server->result != false && $server->result != null) {
             $happy_hour = (int)$server->result->happy_hour;
             output('server is up');
             save_plays($db, $server->result->plays);
             save_gp($db, $server->server_id, $server->result->gp);
             save_population($db, $server->server_id, $server->result->population);
             save_status($db, $server->server_id, $server->result->status, $happy_hour);
-        }
-        else {
+        } else {
             output('server is down: ' . json_encode($server));
             save_population($db, $server->server_id, 0);
             save_status($db, $server->server_id, 'down', 0);
@@ -50,11 +49,11 @@ function run_update_cycle( $db )
 
 
 
-function write_server_status( $db ) 
+function write_server_status($db)
 {
     $servers = $db->to_array($db->call('servers_select'));
     $displays = array();
-    foreach( $servers as $server ) {
+    foreach ($servers as $server) {
         $display = new stdClass();
         output('server id ' . $server->server_name);
         $display->server_id = $server->server_id;
@@ -81,7 +80,7 @@ function write_server_status( $db )
 
 
 
-function get_artifact( $db ) 
+function get_artifact($db)
 {
     $artifact = $db->grab_row('artifact_location_select');
     return( $artifact );
@@ -89,12 +88,12 @@ function get_artifact( $db )
 
 
 
-function get_recent_pms( $db ) 
+function get_recent_pms($db)
 {
     $file = __DIR__ . '/../cron/last-pm.txt';
     //--- get the last message id that a notifacation was sent for
     $last_message_id = file_get_contents($file);
-    if(!isset($last_message_id)) {
+    if (!isset($last_message_id)) {
         $last_message_id = 0;
     }
 
@@ -112,7 +111,7 @@ function get_recent_pms( $db )
 
 
 
-function get_recent_bans( $db ) 
+function get_recent_bans($db)
 {
     $bans = $db->to_array($db->call('bans_select_recent'));
     return $bans;
@@ -120,7 +119,7 @@ function get_recent_bans( $db )
 
 
 
-function get_campaign( $db ) 
+function get_campaign($db)
 {
     $campaign = $db->to_array($db->call('campaign_select'));
     return $campaign ;
@@ -128,21 +127,21 @@ function get_campaign( $db )
 
 
 
-function save_plays( $db, $plays ) 
+function save_plays($db, $plays)
 {
-    foreach($plays as $course => $plays) {
+    foreach ($plays as $course => $plays) {
         $db->call('level_increment_play_count', array($course, $plays));
     }
 }
 
 
 
-function save_gp( $db, $server_id, $gp_array ) 
+function save_gp($db, $server_id, $gp_array)
 {
-    foreach( $gp_array as $user_id => $gp ) {
+    foreach ($gp_array as $user_id => $gp) {
         $user = $db->grab_row('user_select', array( $user_id ));
         $guild_id = $user->guild;
-        if($guild_id > 0 && $server_id == $user->server_id ) {
+        if ($guild_id > 0 && $server_id == $user->server_id) {
             $db->call('gp_increment', array( $user_id, $guild_id, $gp ));
             $db->call('guild_increment_gp', array( $guild_id, $gp ));
         }
@@ -151,23 +150,21 @@ function save_gp( $db, $server_id, $gp_array )
 
 
 
-function save_population( $db, $server_id, $population ) 
+function save_population($db, $server_id, $population)
 {
     $db->call('server_update_population', array( $server_id, $population ));
 }
 
 
 
-function save_status( $db, $server_id, $status, $happy_hour ) 
+function save_status($db, $server_id, $status, $happy_hour)
 {
     $db->call('server_update_status', array( $server_id, $status, $happy_hour ));
 }
 
 
 
-function output($str) 
+function output($str)
 {
     echo $str . "\n";
 }
-
-?>

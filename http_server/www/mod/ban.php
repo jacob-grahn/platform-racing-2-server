@@ -9,7 +9,6 @@ $reason = find_no_cookie('reason');
 $ip = get_ip();
 
 try {
-
     // sanity check: who are you trying to ban?
     if (is_empty($user_id, false)) {
         throw new Exception("No user specified.");
@@ -23,9 +22,7 @@ try {
 
     // make sure you're a moderator
     $mod = check_moderator($db);
-    
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error');
     echo "Error: $error";
@@ -34,7 +31,6 @@ catch(Exception $e) {
 }
 
 try {
-    
     // output header w/ mod nav
     output_header('Ban User', true);
 
@@ -43,7 +39,7 @@ try {
     $name = $row->name;
     $target_ip = $row->ip;
 
-    if(isset($force_ip) && $force_ip != '' ) {
+    if (isset($force_ip) && $force_ip != '') {
         $target_ip = $force_ip;
     }
 
@@ -77,10 +73,7 @@ try {
     <?php
 
     output_footer();
-    
-}
-
-catch(Exception $e){
+} catch (Exception $e) {
     output_header("Ban User", true);
     echo 'Error: '.$e->getMessage();
     output_footer();

@@ -9,7 +9,6 @@ $level_id = (int) find('levelId', 0);
 $ip = get_ip();
 
 try {
-    
     // sanity check: is data missing?
     if (is_empty($x, false) || is_empty($y, false) || is_empty($level_id, false)) {
         throw new Exception("Some data is missing.");
@@ -37,7 +36,7 @@ try {
     }
     
     // sanity check: are they Fred?
-    if($user_id != 1 && $user_id != 4291976 ) {
+    if ($user_id != 1 && $user_id != 4291976) {
         throw new Exception('You are not Fred.');
     }
     
@@ -46,12 +45,7 @@ try {
     
     // tell the world
     echo "message=Great success! The artifact location will be updated at the top of the next minute.";
-    
-}
-
-catch (Exception $e) {
+} catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-?>
