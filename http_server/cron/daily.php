@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../fns/all_fns.php');
+require_once __DIR__ . '/../fns/all_fns.php';
 
 $db = new DB();
 
@@ -20,10 +20,11 @@ $db->call('gp_daily_reset');
 $db->call('rank_token_rentals_delete_expired');
 $db->call('tokens_delete_old');
 
-output( 'result=ok' );
+output('result=ok');
 
-function output( $str ) {
-	echo "* $str \n";
+function output( $str ) 
+{
+    echo "* $str \n";
 }
 
 ?>

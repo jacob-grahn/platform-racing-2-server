@@ -1,18 +1,18 @@
 <?php
 
-require_once('../../fns/all_fns.php');
-require_once('../../fns/output_fns.php');
+require_once '../../fns/all_fns.php';
+require_once '../../fns/output_fns.php';
 
 try {
-	
-	//connect
-	$db = new DB();
+    
+    //connect
+    $db = new DB();
 
-	//make sure you're an admin
-	$admin = check_moderator($db, false, 3);
-	
-	output_header('PR2 Part IDs', true, true);
-	echo '<pre>Platform Racing 2 Part Codes
+    //make sure you're an admin
+    $admin = check_moderator($db, false, 3);
+    
+    output_header('PR2 Part IDs', true, true);
+    echo '<pre>Platform Racing 2 Part Codes
 
 -- Hats --
 1 - None
@@ -193,14 +193,14 @@ Heads: 40+
 Bodies: 33, 40+
 Feet: 31-33, 40+</pre>';
 
-	output_footer();
+    output_footer();
 
 }
 
 catch (Exception $e) {
-	output_header('Error');
-	echo 'Error: ' . $e->getMessage();
-	output_footer();
+    output_header('Error');
+    echo 'Error: ' . $e->getMessage();
+    output_footer();
 }
 
 ?>

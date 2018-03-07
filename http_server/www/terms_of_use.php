@@ -1,8 +1,8 @@
 <?php
 
-require_once(__DIR__ . '/../fns/output_fns.php');
+require_once __DIR__ . '/../fns/output_fns.php';
 
-output_header( 'Terms of Use' );
+output_header('Terms of Use');
 
 echo "By accessing this site (\"PR2hub\") and/or Platform Racing 2 (\"PR2\"), you are agreeing to be bound by the terms and conditions of this Agreement. If you do not agree to the terms of this Agreement, do not use or access PR2hub and/or PR2.
 	<br><br>

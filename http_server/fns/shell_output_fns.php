@@ -1,7 +1,8 @@
 <?php
 
-function output($str) {
-	echo "* $str\n";
+function output($str) 
+{
+    echo "* $str\n";
 }
 
 ?>

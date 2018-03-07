@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/../fns/all_fns.php');
+require_once __DIR__ . '/../fns/all_fns.php';
 
 
 //--- load the team page for Team Jiggmin -----------------------------------------------------------------
@@ -10,9 +10,9 @@ $contents = trim($contents);
 
 
 //--- give up if they're doing a stat update ------------------------------------------------------------
-if($contents == false || $contents == '' || strpos($contents, 'Stats update in progress') !== false || strpos($contents, 'The database server is currently serving too many connections.') !== false){
-	echo 'updating';
-	exit;
+if($contents == false || $contents == '' || strpos($contents, 'Stats update in progress') !== false || strpos($contents, 'The database server is currently serving too many connections.') !== false) {
+    echo 'updating';
+    exit;
 }
 
 
@@ -21,11 +21,11 @@ $db = new DB(fah_connect());
 
 
 //--- query the list of existing users and their current stats --------------------------------------------------
-$result = $db->call( 'stats_select_all', NULL, 'Could not select records. '.$db->get_error() );
+$result = $db->call('stats_select_all', null, 'Could not select records. '.$db->get_error());
 $users_history = array();
 while( $row = $result->fetch_object() ) {
-	$users_history[ strtolower($row->fah_name) ] = $row;
-	$row->processed = false;
+    $users_history[ strtolower($row->fah_name) ] = $row;
+    $row->processed = false;
 }
 
 
@@ -60,7 +60,7 @@ $team_rank_index = strpos($contents, '<BR>', $table_3_index) + 14;
 $team_rank_end = strpos($contents, '<BR>', $team_rank_index);
 $team_rank = substr($contents, $team_rank_index, ($team_rank_end - $team_rank_index));
 
-$db->call( 'team_update', array( $team_wu, $team_score, $team_rank ) );
+$db->call('team_update', array( $team_wu, $team_score, $team_rank ));
 
 
 //--- parse user stats -------------------------------------------------------------------------------
@@ -70,40 +70,41 @@ $user_array = explode('<TR ', $user_strs);
 $user_array = array_splice($user_array, 2);
 
 foreach($user_array as $user_str) {
-	$array = explode('<TD>', $user_str);
+    $array = explode('<TD>', $user_str);
 
-	$team_rank = $array[2];
-	$name = $array[3];
-	$points = $array[4];
-	$work_units = $array[5];
+    $team_rank = $array[2];
+    $name = $array[3];
+    $points = $array[4];
+    $work_units = $array[5];
 
-	$team_rank = substr($team_rank, 0, strlen($team_rank)-5);
-	$name = substr($name, 0, strlen($name)-5);
-	$points = substr($points, 0, strlen($points)-5);
-	$work_units = substr($work_units, 0, strlen($work_units)-5);
+    $team_rank = substr($team_rank, 0, strlen($team_rank)-5);
+    $name = substr($name, 0, strlen($name)-5);
+    $points = substr($points, 0, strlen($points)-5);
+    $work_units = substr($work_units, 0, strlen($work_units)-5);
 
-	if( strlen( $name ) > 50 ) {
-		$name = substr( $name, 0, 50 );
-	}
+    if(strlen($name) > 50 ) {
+        $name = substr($name, 0, 50);
+    }
 
-	if( isset( $users_history[ strtolower($name) ] ) ) {
-		$history = $users_history[ strtolower($name) ];
-		if( ($history->wu != $work_units || $history->points != $points || $history->rank != $team_rank) && !$history->processed ) {
-			output( "updating $name: wu: $work_units, points: $points" );
-			$db->call( 'stats_save', array( $name, $work_units, $points, $team_rank ) );
-		}
-		$history->processed = true;
-	}
-	else {
-		output( "creating $name: wu: $work_units, points: $points" );
-		$db->call( 'stats_save', array( $name, $work_units, $points, $team_rank ) );
-	}
+    if(isset($users_history[ strtolower($name) ]) ) {
+        $history = $users_history[ strtolower($name) ];
+        if(($history->wu != $work_units || $history->points != $points || $history->rank != $team_rank) && !$history->processed ) {
+            output("updating $name: wu: $work_units, points: $points");
+            $db->call('stats_save', array( $name, $work_units, $points, $team_rank ));
+        }
+        $history->processed = true;
+    }
+    else {
+        output("creating $name: wu: $work_units, points: $points");
+        $db->call('stats_save', array( $name, $work_units, $points, $team_rank ));
+    }
 }
 
 
 //--- handy output function; never leave home without it! --------------------------------------------------
-function output( $str ) {
-	echo( "* $str \n" );
+function output( $str ) 
+{
+    echo( "* $str \n" );
 }
 
 ?>

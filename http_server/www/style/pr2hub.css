@@ -2,52 +2,52 @@
 /* CSS Document */
 
 html, body {
-	font-family: 'Arial', serif;
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
+    font-family: 'Arial', serif;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-	color: #000000;
-	font-size: 14px;
-	font-family: 'Arial', serif;
-	background-color: #5D92B4;
-	background-position: top center;
-	background-image: url(//pr2hub.com/img/top.jpg);
-	background-repeat: no-repeat;
+    color: #000000;
+    font-size: 14px;
+    font-family: 'Arial', serif;
+    background-color: #5D92B4;
+    background-position: top center;
+    background-image: url(//pr2hub.com/img/top.jpg);
+    background-repeat: no-repeat;
 }
 
 a {
-	color: #3300F8;
+    color: #3300F8;
 }
 
 #container {
-	min-height: 100%;
-	position: relative;
+    min-height: 100%;
+    position: relative;
 }
 
 #header {
-	width: 100%;
-	height: 175px;
-	margin-left: auto;
-	margin-right: auto;
+    width: 100%;
+    height: 175px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #body {
-	padding-bottom: 375px;
-	min-height: 300px;
+    padding-bottom: 375px;
+    min-height: 300px;
 }
 
 #footer {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	height: 375px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 375px;
   background-image: url(//pr2hub.com/img/bottom.jpg);
-	background-position: top center;
-	z-index: 1;
+    background-position: top center;
+    z-index: 1;
 }
 
 
@@ -80,25 +80,25 @@ a {
 }
 
 .content {
-	border-radius: 7px;
-	max-width: 55%;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 20px;
-	background-color: #EFF4F8;
+    border-radius: 7px;
+    max-width: 55%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    background-color: #EFF4F8;
 }
 
 .game_holder {
-	border-radius: 7px;
-	width: 100%;
-	text-align: center;
+    border-radius: 7px;
+    width: 100%;
+    text-align: center;
 }
 
 .above_game_ad {
-	text-align: center;
-	padding: 15px 0 15px 0;
-	position: relative;
-	top: -5px;
+    text-align: center;
+    padding: 15px 0 15px 0;
+    position: relative;
+    top: -5px;
 }
 
 .archived {
@@ -106,7 +106,7 @@ a {
 }
 
 .date {
-	font-color: #666666;
+    font-color: #666666;
 }
 
 table, th, td {
@@ -116,3 +116,4 @@ table, th, td {
     border: 1px solid #000000;
     border-collapse: collapse;
 }
+

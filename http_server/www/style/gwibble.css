@@ -2,10 +2,11 @@
 /* CSS Document */
 
 @font-face {
-	font-family: Gwibble;
-	src: url(//pr2hub.com/style/gwibble.ttf);
+    font-family: Gwibble;
+    src: url(//pr2hub.com/style/gwibble.ttf);
 }
 .gwibble {
-	font-family: Gwibble;
-	font-size: 30px;
+    font-family: Gwibble;
+    font-size: 30px;
 }
+
