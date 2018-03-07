@@ -8,21 +8,26 @@ $ip = get_ip();
 
 output_header("Player Search");
 
+if (is_empty($name)) {
+	output_search();
+	output_footer();
+	die();
+}
+
 try {
 	// rate limiting
 	rate_limit("gui-player-search-" . $ip, 5, 1, "Wait a bit before searching again.");
 	rate_limit("gui-player-search-" . $ip, 30, 5, "Wait a bit before searching again.");
 	
+	// db
+	$db = new DB();
+	
 	// find user
-	if (!is_empty($name)) {
-		$user = find_user($name);
-	}
+	$user = find_user($db, $name);
 	
 	// output
 	output_search($name);
-	if (isset($user)) {
-		output_page($user);
-	}
+	output_page($db, $user);
 	output_footer();
 }
 catch (Exception $e) {
@@ -33,10 +38,7 @@ catch (Exception $e) {
 	die();
 }
 
-function find_user($name) {
-	// connect
-	$db = new DB();
-	
+function find_user($db, $name) {	
 	// get id from name
 	$user_id = name_to_id($db, $name);
 	
@@ -69,7 +71,7 @@ function output_search($name='') {
 
 }
 
-function output_page($user) {
+function output_page($db, $user) {
 	
 	// sanity check: is the used tokens value set?
 	if (!isset($user->used_tokens)) {
