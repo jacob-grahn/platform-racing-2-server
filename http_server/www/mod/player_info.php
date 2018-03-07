@@ -2,6 +2,8 @@
 
 require_once '../../fns/all_fns.php';
 require_once '../../fns/output_fns.php';
+require_once '../queries/get_info/user.php'; // pdo
+require_once '../queries/get_info/pr2.php'; // pdo
 
 $user_id = (int) default_val($_GET['user_id'], 0);
 $force_ip = find_no_cookie('force_ip');
@@ -19,6 +21,7 @@ try {
     
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
     
     // make sure you're a moderator
     $mod = check_moderator($db, false);
@@ -35,26 +38,21 @@ try {
     output_header('Player Info', true);
 
     //get dem infos
-    $result = $db->query(
-        "SELECT pr2.rank, pr2.hat_array, users.power, users.status, users.name, users.ip
-									FROM users LEFT JOIN pr2
-									ON users.user_id = pr2.user_id
-									WHERE users.user_id = '$user_id'
-									LIMIT 0, 1"
-    );
+    $user = user_select_by_id($user_id);
+    $pr2 = pr2_select_by_id($user_id);
 
-    if (!$result) {
+    // sanity check
+    if ($user == false || $pr2 == false) {
         throw new Exception('Could not retrieve player info.');
     }
 
-    $row = $result->fetch_object();
-    $rank = $row->rank;
-    $hat_array = $row->hat_array;
-    $status = $row->status;
-    $ip = $row->ip;
-    $user_name = $row->name;
-
+    // make neat variables
+    $rank = $pr2->rank;
+    $hat_array = $pr2->hat_array;
     $hats = count(explode(',', $hat_array))-1;
+    $status = $user->status;
+    $ip = $user->ip;
+    $user_name = $user->name;
 
     //--- count how many times they have been banned
     $account_bans = retrieve_bans($db, $user_id, 'account');
