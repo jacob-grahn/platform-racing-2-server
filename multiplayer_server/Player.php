@@ -1207,6 +1207,7 @@ class Player
         $this->chat_ban = null;
         $this->domain = null;
         $this->temp_mod = null;
+        $this->server_owner = null;
         $this->status = null;
     }
 }
