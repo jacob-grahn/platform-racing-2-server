@@ -185,7 +185,7 @@ function client_promote_to_moderator ($socket, $data) {
 		}
 
 		if(isset($from_player->chat_room) && (isset($to_player) || $type != 'temporary')) {
-			$same_fname = htmlspecialchars($from_player->name);
+			$safe_fname = htmlspecialchars($from_player->name);
 			$from_player->chat_room->send_chat("systemChat`$safe_fname has promoted $safe_name to a $type moderator! May they reign in $reign_time of peace and prosperity! Make sure you read the moderator guidelines at https://jiggmin2.com/forums/showthread.php?tid=12", $from_player->user_id);
 		}
 	}
