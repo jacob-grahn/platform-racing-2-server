@@ -8,32 +8,46 @@ require_once __DIR__ . '/../fns/demod.php';
 //--- kick a player -------------------------------------------------------------
 function client_kick($socket, $data)
 {
-    global $guild_owner;
+    global $db, $guild_owner, $guild_id, $server_name;
     $name = $data;
-    $safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
-    $kicked_player = name_to_player($name);
-
-    $player = $socket->get_player();
+    
+    // get players
+    $kicked = name_to_player($name);
+    $mod = $socket->get_player();
+    
+    // safety first
+    $safe_kname = htmlspecialchars($name);
+    $safe_mname = htmlspecialchars($mod->name);
 
     // if the player actually has the power to do what they're trying to do, then do it
-    if ($player->group >= 2 && ($kicked_player->group < 2 || $player->server_owner == true)) {
+    if ($mod->group >= 2 && ($kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
         LocalBans::add($name);
 
-        if (isset($kicked_player)) {
-            $kicked_player->remove();
-            $player->write("message`$safe_name has been kicked from this server for 30 minutes.");
+        if (isset($kicked)) {
+            $kicked->remove();
+            $mod->write("message`$safe_kname has been kicked from this server for 30 minutes.");
             
             // let people know that the player kicked someone
-            if (isset($player->chat_room)) {
-                $safe_pname = htmlspecialchars($player->name);
-                $player->chat_room->send_chat("systemChat`$safe_pname has kicked $safe_name from this server for 30 minutes.", $player->user_id);
+            if (isset($mod->chat_room)) {
+                $mod->chat_room->send_chat("systemChat`$safe_mname has kicked $safe_kname from this server for 30 minutes.");
+            }
+            
+            // log the action if it's on a public server
+            if ($guild_id == 0) {
+                $mod_name = $mod->name;
+                $mod_ip = $mod->ip;
+                $mod_id = $mod->user_id;
+                $db->call('mod_action_insert', array($mod_id, "$mod_name kicked $name from $server_name from $mod_ip.", $mod_id, $mod_ip));
             }
         } else {
-            $player->write("message`Error: Could not find a user with the name \"$safe_name\" on this server.");
+            $mod->write("message`Error: Could not find a user with the name \"$safe_kname\" on this server.");
         }
-    } // if they don't have the power to do that, tell them
+    }// if the kicker is the server owner, tell them they're a silly goose
+    else if ($mod->server_owner == true && $kicked == $mod) {
+        $mod->write("message`Error: You can't kick yourself out of your own server, silly!");
+    }// if they don't have the power to do that, tell them
     else {
-        $player->write("message`Error: You lack the power to kick $safe_name.");
+        $mod->write("message`Error: You lack the power to kick $safe_kname.");
     }
 }
 
@@ -43,14 +57,17 @@ function client_warn($socket, $data)
 {
     global $guild_owner;
     list($name, $num) = explode("`", $data);
-    $safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
     
     // get player info
-    $warned_player = name_to_player($name);
-    $player = $socket->get_player();
+    $warned = name_to_player($name);
+    $mod = $socket->get_player();
+    
+    // safety first
+    $safe_mname = htmlspecialchars($mod->name);
+    $safe_wname = htmlspecialchars($name);
 
-    // if they're a mod, warn the user
-    if ($player->group >= 2 && ($warned_player->group < 2 || $player->server_owner == true)) {
+    // if they're a mod, and the user is on this server, warn the user
+    if ($mod->group >= 2 && isset($warned) && ($warned->group < 2 || $mod->server_owner == true)) {
         $w_str = '';
         $time = 0;
 
@@ -72,21 +89,15 @@ function client_warn($socket, $data)
                 break;
         }
 
-        if (isset($warned_player) && $warned_player->group < 2) {
-            $warned_player->chat_ban = time() + $time;
+        if (isset($mod->chat_room)) {
+            $mod->chat_room->send_chat("systemChat`$safe_mname has given $safe_wname $num $w_str. They have been banned from the chat for $time seconds.");
         }
-
-        if (isset($player->chat_room)) {
-            if (isset($warned_player)) {
-                $safe_pname = htmlspecialchars($player->name);
-                $player->chat_room->send_chat("systemChat`$safe_pname has given $safe_name $num $w_str. They have been banned from the chat for $time seconds.", $player->user_id);
-            } else {
-                $player->write("message`Error: Could not find a user named \"$safe_name\" on this server.");
-            }
-        }
+    } // if they're a mod but the user isn't online, tell them
+    else if ($mod->group >= 2 && !isset($warned)) {
+        $mod->write("message`Error: Could not find a user with the name \"$safe_wname\" on this server.");
     } // if they aren't a mod, tell them
     else {
-        $player->write("message`Error: You lack the power to warn $safe_name.");
+        $mod->write("message`Error: You lack the power to warn $safe_wname.");
     }
 }
 
@@ -98,11 +109,14 @@ function client_ban($socket, $data)
 {
     list($banned_name, $seconds, $reason) = explode("`", $data);
 
-    $player = $socket->get_player();
-    $ban_player = name_to_player($banned_name);
-    $safe_name = htmlspecialchars($banned_name); // convert name to htmlspecialchars for html exploit patch
+    // get player info
+    $mod = $socket->get_player();
+    $banned = name_to_player($banned_name);
+    
+    // safety first
+    $safe_mname = htmlspecialchars($mod->name);
+    $safe_bname = htmlspecialchars($banned_name);
     $safe_reason = htmlspecialchars($reason);
-    $mod_id = $player->user_id;
 
     // set a variable that uses seconds to make friendly times
     switch ($seconds) {
@@ -131,20 +145,18 @@ function client_ban($socket, $data)
     }
 
     // instead of overwriting the $reason variable, set a new one
+    $disp_reason = "Reason: $safe_reason";
     if ($reason == '') {
         $disp_reason = 'There was no reason was given';
     }
-    if ($reason != '') {
-        $disp_reason = 'Reason: '.$safe_reason;
-    }
 
-    if ($player->group >= 2 && isset($ban_player)) {
-        if (isset($player->chat_room)) {
-            $safe_pname = htmlspecialchars($player->name);
-            $player->chat_room->send_chat("systemChat`$safe_pname has banned $safe_name for $disp_time. $disp_reason. This ban has been recorded at https://pr2hub.com/bans.", $player->user_id);
+    // tell the world
+    if ($mod->group >= 2 && isset($banned)) {
+        if (isset($mod->chat_room)) {
+            $mod->chat_room->send_chat("systemChat`$safe_mname has banned $safe_bname for $disp_time. $disp_reason. This ban has been recorded at https://pr2hub.com/bans.");
         }
-        if (isset($ban_player) && $ban_player->group < 2) {
-            $ban_player->remove();
+        if (isset($banned) && $banned->group < 2) {
+            $banned->remove();
         }
     }
 }
@@ -154,15 +166,20 @@ function client_ban($socket, $data)
 //--- promote a player to a moderator -------------------------------------
 function client_promote_to_moderator($socket, $data)
 {
+    global $port;
     list($name, $type) = explode("`", $data);
-    $from_player = $socket->get_player();
-    $to_player = name_to_player($name); // define before if
-    $safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
+    
+    // get player info
+    $admin = $socket->get_player();
+    $promoted = name_to_player($name);
+    
+    // safety first
+    $safe_aname = htmlspecialchars($admin->name);
+    $safe_pname = htmlspecialchars($name);
 
-    // if they're an admin, continue with the promotion (1st line of defense)
-    if ($from_player->group > 2) {
-        global $port;
-        promote_mod($port, $name, $type, $from_player, $to_player);
+    // if they're an admin and not a server owner, continue with the promotion (1st line of defense)
+    if ($admin->group >= 3 && $admin->server_owner == false) {
+        $result = promote_mod($port, $name, $type, $admin, $promoted);
 
         switch ($type) {
             case 'temporary':
@@ -176,13 +193,12 @@ function client_promote_to_moderator($socket, $data)
                 break;
         }
 
-        if (isset($from_player->chat_room) && (isset($to_player) || $type != 'temporary')) {
-            $same_fname = htmlspecialchars($from_player->name);
-            $from_player->chat_room->send_chat("systemChat`$safe_fname has promoted $safe_name to a $type moderator! May they reign in $reign_time of peace and prosperity! Make sure you read the moderator guidelines at https://jiggmin2.com/forums/showthread.php?tid=12", $from_player->user_id);
+        if (isset($admin->chat_room) && (isset($promoted) || $type != 'temporary') && $result == true) {
+            $admin->chat_room->send_chat("systemChat`$safe_aname has promoted $safe_pname to a $type moderator! May they reign in $reign_time of peace and prosperity! Make sure you read the moderator guidelines at https://jiggmin2.com/forums/showthread.php?tid=12", $admin->user_id);
         }
     } // if they're not an admin, tell them
     else {
-        $from_player->write("message`Error: You lack the power to promote $safe_name to a $type moderator.");
+        $admin->write("message`Error: You lack the power to promote $safe_pname to a $type moderator.");
     }
 }
 
@@ -190,12 +206,13 @@ function client_promote_to_moderator($socket, $data)
 //-- demote a moderator ------------------------------------------------------------------
 function client_demote_moderator($socket, $name)
 {
-    $from_player = $socket->get_player();
+    global $port;
+    
+    // get player info
+    $admin = $socket->get_player();
+    $demoted = name_to_player($name);
 
-    if ($from_player->group == 3) {
-        global $port;
-        $to_player = name_to_player($name);
-
-        demote_mod($port, $name, $from_player, $to_player);
+    if ($admin->group == 3 && $admin->server_owner == false) {
+        demote_mod($port, $name, $admin, $demoted);
     }
 }
