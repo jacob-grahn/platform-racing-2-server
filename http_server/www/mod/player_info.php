@@ -38,8 +38,8 @@ try {
     output_header('Player Info', true);
 
     //get dem infos
-    $user = user_select_by_id($user_id);
-    $pr2 = pr2_select_by_id($user_id);
+    $user = user_select_by_id($pdo, $user_id);
+    $pr2 = pr2_select_by_id($pdo, $user_id);
 
     // sanity check
     if ($user == false || $pr2 == false) {
