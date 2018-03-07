@@ -18,13 +18,20 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+namespace chabot;
 
-abstract class socketServer extends socket
+abstract class SocketServer extends Socket
 {
     protected $client_class;
 
-    public function __construct($client_class, $bind_address = 0, $bind_port = 0, $domain = AF_INET, $type = SOCK_STREAM, $protocol = SOL_TCP)
-    {
+    public function __construct(
+        $client_class,
+        $bind_address = 0,
+        $bind_port = 0,
+        $domain = AF_INET,
+        $type = SOCK_STREAM,
+        $protocol = SOL_TCP
+    ) {
         parent::__construct($bind_address, $bind_port, $domain, $type, $protocol);
         $this->client_class = $client_class;
         $this->listen();
@@ -33,15 +40,18 @@ abstract class socketServer extends socket
     public function accept()
     {
         $client = new $this->client_class(parent::accept());
-        if (!is_subclass_of($client, 'socketServerClient')) {
-            throw new socketException("Invalid serverClient class specified! Has to be a subclass of socketServerClient");
+        if (!is_subclass_of($client, 'SocketServerClient')) {
+            throw new SocketException(
+                'Invalid serverClient class specified! '
+                .'Has to be a subclass of SocketServerClient'
+            );
         }
-        $this->on_accept($client);
+        $this->onAccept($client);
         return $client;
     }
 
     // override if desired
-    public function on_accept(socketServerClient $client)
+    public function onAccept(SocketServerClient $client)
     {
     }
 }

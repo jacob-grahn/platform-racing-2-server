@@ -18,7 +18,9 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-abstract class socketClient extends socket
+namespace chabot;
+
+abstract class SocketClient extends Socket
 {
     public $remote_address = null;
     public $remote_port    = null;
@@ -32,7 +34,7 @@ abstract class socketClient extends socket
         $this->connecting = true;
         try {
             parent::connect($remote_address, $remote_port);
-        } catch (socketException $e) {
+        } catch (SocketException $e) {
             echo "Caught exception: ".$e->getMessage()."\n";
         }
     }
@@ -44,10 +46,10 @@ abstract class socketClient extends socket
         }
 
         $this->write_buffer .= $buffer;
-        $this->do_write();
+        $this->doWrite();
     }
 
-    public function do_write()
+    public function doWrite()
     {
         $length = strlen($this->write_buffer);
         try {
@@ -57,14 +59,14 @@ abstract class socketClient extends socket
             } else {
                 $this->write_buffer = '';
             }
-            $this->on_write();
+            $this->onWrite();
             return true;
-        } catch (socketException $e) {
+        } catch (SocketException $e) {
             $old_socket         = (int)$this->socket;
             $this->close();
             $this->socket       = $old_socket;
             $this->disconnected = true;
-            $this->on_disconnect();
+            $this->onDisconnect();
             return false;
         }
         return false;
@@ -74,29 +76,29 @@ abstract class socketClient extends socket
     {
         try {
             $this->read_buffer .= parent::read($length);
-            $this->on_read();
-        } catch (socketException $e) {
+            $this->onRead();
+        } catch (SocketException $e) {
             $old_socket         = (int)$this->socket;
             $this->close();
             $this->socket       = $old_socket;
             $this->disconnected = true;
-            $this->on_disconnect();
+            $this->onDisconnect();
         }
     }
 
-    public function on_connect()
+    public function onConnect()
     {
     }
-    public function on_disconnect()
+    public function onDisconnect()
     {
     }
-    public function on_read()
+    public function onRead()
     {
     }
-    public function on_write()
+    public function onWrite()
     {
     }
-    public function on_timer()
+    public function onTimer()
     {
     }
 }

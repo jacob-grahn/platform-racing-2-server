@@ -18,8 +18,9 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+namespace chabot;
 
-abstract class socketServerClient extends socketClient
+abstract class SocketServerClient extends SocketClient
 {
     public $socket;
     public $remote_address;
@@ -33,17 +34,23 @@ abstract class socketServerClient extends socketClient
 
         try {
             if (!is_resource($this->socket)) {
-                throw new socketException("Invalid socket or resource");
+                throw new SocketException("Invalid socket or resource");
             } elseif (!socket_getsockname($this->socket, $this->local_addr, $this->local_port)) {
-                throw new socketException("Could not retrieve local address & port: ".socket_strerror(socket_last_error($this->socket)));
+                throw new SocketException(
+                    "Could not retrieve local address & port: "
+                    .socket_strerror(socket_last_error($this->socket))
+                );
             } elseif (!socket_getpeername($this->socket, $this->remote_address, $this->remote_port)) {
-                throw new socketException("Could not retrieve remote address & port: ".socket_strerror(socket_last_error($this->socket)));
+                throw new SocketException(
+                    "Could not retrieve remote address & port: "
+                    .socket_strerror(socket_last_error($this->socket))
+                );
             }
-        } catch (socketException $e) {
+        } catch (SocketException $e) {
             echo "Caught exception: ".$e->getMessage()."\n";
         }
 
-        $this->set_non_block();
-        $this->on_connect();
+        $this->setNonBlock();
+        $this->onConnect();
     }
 }
