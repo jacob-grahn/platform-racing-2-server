@@ -5,13 +5,14 @@ require_once('../../fns/output_fns.php');
 
 $user_id = (int) default_val($_GET['user_id'], 0);
 $force_ip = find_no_cookie('force_ip');
+$ip = find_no_cookie('ip');
 
 $mod_ip = get_ip();
 
 try {
 	
 	// sanity check
-	if (is_empty($user_id, false)) {
+	if (is_empty($user_id, false) && is_empty($force_ip) && is_empty($ip)) {
 		throw new Exception("Invalid user ID specified.");
 	}
 	
