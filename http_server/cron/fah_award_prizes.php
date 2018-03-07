@@ -122,7 +122,7 @@ function award_prize($db, $user_id, $name, $score, $row, $db_val, $min_score, $p
 		$row->{$db_val} = 1;
 
 		//give the prize
-		$user_id = (int) $user_id;
+		$int_user_id = (int) $user_id;
 		if($db_val == 'r1' || $db_val == 'r2' || $db_val == 'r3' || $db_val == 'r4' || $db_val == 'r5') {
 			if($db_val == 'r1') {
 				$tokens = 1;
@@ -140,7 +140,7 @@ function award_prize($db, $user_id, $name, $score, $row, $db_val, $min_score, $p
 				$tokens = 5;
 			}
 			$result = $db->query("INSERT INTO rank_tokens
-									SET user_id = '$safe_user_id',
+									SET user_id = '$int_user_id',
 										available_tokens = '$tokens'
 									ON DUPLICATE KEY UPDATE
 										available_tokens = '$tokens'");
@@ -151,22 +151,22 @@ function award_prize($db, $user_id, $name, $score, $row, $db_val, $min_score, $p
 		else if($db_val == 'crown_hat') {
 			$parts = array();
 			$parts[] = 6;
-			award_parts($db, $user_id, 'hat', $parts);
+			award_parts($db, $int_user_id, 'hat', $parts);
 		}
 		else if($db_val == 'cowboy_hat') {
 			$parts = array();
 			$parts[] = 5;
-			award_parts($db, $user_id, 'hat', $parts);
+			award_parts($db, $int_user_id, 'hat', $parts);
 		}
 
 		//send them a PM
 		$message = "$name, congratulations on earning $min_score points for Team Jiggmin! You have been awarded with a $prize_str. \n\nThanks for helping us take over the world! (or cure cancer)\n\n- Jiggmin";
-		$db->call('message_insert', array($user_id, 1, $message, '0'));
+		$db->call('message_insert', array($int_user_id, 1, $message, '0'));
 		
 		//remember that this prize has been given
 		$result = $db->query("UPDATE folding_at_home
 								SET $db_val = 1
-								WHERE user_id = '$user_id'
+								WHERE user_id = '$int_user_id'
 								LIMIT 1");
 		if(!$result) {
 			throw new Exception("Could not update $db_val status for $name.");
