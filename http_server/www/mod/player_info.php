@@ -10,7 +10,7 @@ $mod_ip = get_ip();
 
 try {
     // sanity check
-    if (is_empty($user_id, false)) {
+    if (is_empty($user_id, false) && is_empty($force_ip) && is_empty($ip)) {
         throw new Exception("Invalid user ID specified.");
     }
     
