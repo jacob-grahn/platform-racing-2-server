@@ -4,7 +4,7 @@ function user_select_by_name($pdo, $name)
 {
     $stmt = $pdo->prepare(
         'SELECT 
-		user_id, name, email, register_ip, ip, time, register_time, power, status, server_id, read_message_id, guild, register_date, active_date 
+		user_id, name, email, register_ip, ip, time, register_time, power, status, read_message_id, guild 
 		FROM users WHERE name = :name'
     );
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
@@ -28,7 +28,7 @@ function user_select_by_id($pdo, $user_id)
 {
     $stmt = $pdo->prepare(
         'SELECT 
-		user_id, name, email, register_ip, ip, time, register_time, power, status, server_id, read_message_id, guild, register_date, active_date 
+		user_id, name, email, register_ip, ip, time, register_time, power, status, read_message_id, guild
 		FROM users WHERE user_id = :id'
     );
     $stmt->bindValue(':id', $user_id, PDO::PARAM_INT);
