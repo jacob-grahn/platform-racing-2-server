@@ -8,43 +8,17 @@ $ip = get_ip();
 
 output_header("Player Search");
 
-// sanity check: check for a name
-if (is_empty($name)) {
-	throw new Exception("");
-}
-
 try {
-
 	// rate limiting
 	rate_limit("gui-player-search-" . $ip, 5, 1, "Wait a bit before searching again.");
 	rate_limit("gui-player-search-" . $ip, 30, 5, "Wait a bit before searching again.");
 	
-	// connect
-	$db = new DB();
-	
-	// get id from name
-	$user_id = name_to_id($db, $name);
-
-}
-catch (Exception $e) {
-	$safe_error = htmlspecialchars($e->getMessage());
-	output_search($name);
-	echo "<br /><i>Error: $safe_error</i>";
-	output_footer();
-	die();
-
-}
-
-try {
-	
 	// output functions
 	output_search($name);
-	output_page($db, $user_id);
+	if (!is_empty($name)) {
+		output_page($name);
+	}
 	output_footer();
-	
-	// seeya
-	die();	
-
 }
 catch (Exception $e) {
 	$safe_error = htmlspecialchars($e->getMessage());
@@ -74,7 +48,13 @@ function output_search($name='') {
 
 }
 
-function output_page($db, $user_id) {
+function output_page($name) {
+	
+	// connect
+	$db = new DB();
+	
+	// get id from name
+	$user_id = name_to_id($db, $name);
 	
 	// prepare the user id
 	$user_id = (int) $user_id;
