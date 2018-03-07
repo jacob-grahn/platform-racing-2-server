@@ -7,15 +7,16 @@ require_once(__DIR__ . '/../fns/demod.php');
 
 //--- kick a player -------------------------------------------------------------
 function client_kick ($socket, $data) {
-	global $guild_owner;
+	global $db, $guild_owner;
 	$name = $data;
 	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
-	$kicked_player = name_to_player($name);
+	$kicked_id = name_to_id($db, $name);
+	$kicked_player = id_to_player($kicked_id);
 
 	$player = $socket->get_player();
 
 	// if the player actually has the power to do what they're trying to do, then do it
-	if($player->group >= 2 && ($kicked_player->group < 2 || $player->server_owner == true)) {
+	if($player->group >= 2 && ($kicked_player->group < 2 || ($player->server_owner == true && $kicked_player != $player))) {
 
 		LocalBans::add($name);
 
@@ -42,12 +43,13 @@ function client_kick ($socket, $data) {
 
 //--- warn a player -------------------------------------------------------------
 function client_warn ($socket, $data) {
-	global $guild_owner;
+	global $db, $guild_owner;
 	list($name, $num) = explode("`", $data);
 	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
 	
 	// get player info
-	$warned_player = name_to_player($name);
+	$warned_id = name_to_id($db, $name);
+	$warned_player = id_to_player($warned_id);
 	$player = $socket->get_player();
 
 	// if they're a mod, warn the user
@@ -99,10 +101,12 @@ function client_warn ($socket, $data) {
 
 //--- ban a player -------------------------------------------------------
 function client_ban ($socket, $data) {
+	global $db;
 	list($banned_name, $seconds, $reason) = explode("`", $data);
 
 	$player = $socket->get_player();
-	$ban_player = name_to_player($banned_name);
+	$banned_id = name_to_id($db, $banned_name);
+	$ban_player = id_to_player($banned_id);
 	$safe_name = htmlspecialchars($banned_name); // convert name to htmlspecialchars for html exploit patch
 	$safe_reason = htmlspecialchars($reason);
 	$mod_id = $player->user_id;
@@ -156,15 +160,16 @@ function client_ban ($socket, $data) {
 
 //--- promote a player to a moderator -------------------------------------
 function client_promote_to_moderator ($socket, $data) {
+	global $db, $port;
 	list($name, $type) = explode("`", $data);
 	$from_player = $socket->get_player();
-	$to_player = name_to_player($name); // define before if
+	$to_id = name_to_id($db, $name);
+	$to_player = id_to_player($to_id); // define before if
 	$safe_name = htmlspecialchars($name); // convert name to htmlspecialchars for html exploit patch
 
 	// if they're an admin, continue with the promotion (1st line of defense)
 	if($from_player->group > 2){
 
-		global $port;
 		promote_mod($port, $name, $type, $from_player, $to_player);
 
 		switch($type) {
@@ -180,7 +185,7 @@ function client_promote_to_moderator ($socket, $data) {
 		}
 
 		if(isset($from_player->chat_room) && (isset($to_player) || $type != 'temporary')) {
-			$same_fname = htmlspecialchars($from_player->name);
+			$safe_fname = htmlspecialchars($from_player->name);
 			$from_player->chat_room->send_chat("systemChat`$safe_fname has promoted $safe_name to a $type moderator! May they reign in $reign_time of peace and prosperity! Make sure you read the moderator guidelines at https://jiggmin2.com/forums/showthread.php?tid=12", $from_player->user_id);
 		}
 	}
@@ -196,8 +201,9 @@ function client_demote_moderator ($socket, $name) {
 	$from_player = $socket->get_player();
 
 	if($from_player->group == 3){
-		global $port;
-		$to_player = name_to_player($name);
+		global $port, $db;
+		$to_id = name_to_id($db, $name);
+		$to_player = id_to_player($to_id);
 
 		demote_mod($port, $name, $from_player, $to_player);
 	}
