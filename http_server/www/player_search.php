@@ -13,12 +13,10 @@ try {
 	rate_limit("gui-player-search-" . $ip, 5, 1, "Wait a bit before searching again.");
 	rate_limit("gui-player-search-" . $ip, 30, 5, "Wait a bit before searching again.");
 	
-	// output functions
-	output_search($name);
+	// find user
 	if (!is_empty($name)) {
-		output_page($name);
+		$user = find_user($name)
 	}
-	output_footer();
 }
 catch (Exception $e) {
 	$safe_error = htmlspecialchars($e->getMessage());
@@ -26,6 +24,29 @@ catch (Exception $e) {
 	echo "<br /><i>Error: $safe_error</i>";
 	output_footer();
 	die();
+}
+
+// output
+output_search($name);
+if (isset($user)) {
+	output_page($user);
+}
+output_footer();
+
+function find_user($name) {
+	// connect
+	$db = new DB();
+	
+	// get id from name
+	$user_id = name_to_id($db, $name);
+	
+	// prepare the user id
+	$user_id = (int) $user_id;
+	
+	// get player info from id
+	$user = $db->grab_row('user_select_expanded', array($user_id));
+	
+	return $user;
 }
 
 function output_search($name='') {
@@ -48,19 +69,7 @@ function output_search($name='') {
 
 }
 
-function output_page($name) {
-	
-	// connect
-	$db = new DB();
-	
-	// get id from name
-	$user_id = name_to_id($db, $name);
-	
-	// prepare the user id
-	$user_id = (int) $user_id;
-	
-	// get player info from id
-	$user = $db->grab_row('user_select_expanded', array($user_id));
+function output_page($user) {
 	
 	// sanity check: is the used tokens value set?
 	if (!isset($user->used_tokens)) {
