@@ -1,5 +1,7 @@
 # Platform Racing 2 Server
 
+[![Build Status](https://travis-ci.org/jacob-grahn/platform-racing-2-server.svg?branch=master)](https://travis-ci.org/jacob-grahn/platform-racing-2-server)
+
 ## Guidelines for Contributors
 
 Welcome to the PR2 GitHub repo!
