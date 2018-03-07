@@ -15,7 +15,7 @@ try {
 	
 	// find user
 	if (!is_empty($name)) {
-		$user = find_user($name)
+		$user = find_user($name);
 	}
 }
 catch (Exception $e) {
