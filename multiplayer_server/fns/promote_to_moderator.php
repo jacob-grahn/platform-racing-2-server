@@ -172,11 +172,11 @@ function promote_mod($port, $name, $type, $admin, $promoted_player) {
 			if(isset($promoted_player)) {
 				$promoted_player->become_temp_mod();
 				echo $admin->name." promoted $name to a $type moderator.";
-				$admin->write("message`$safe_name has been promoted to a $type moderator!");
+				$admin->write("message`$safe_name has been promoted to a $safe_type moderator!");
 				return true;
 			}
 			else {
-				$admin->write("message`Error: Could not find a user with the name $safe_name on this server.");
+				$admin->write("message`Error: Could not find a user with the name \"$safe_name\" on this server.");
 				return false;
 			}
 			
