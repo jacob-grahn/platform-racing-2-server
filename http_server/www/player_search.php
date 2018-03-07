@@ -17,6 +17,13 @@ try {
 	if (!is_empty($name)) {
 		$user = find_user($name);
 	}
+	
+	// output
+	output_search($name);
+	if (isset($user)) {
+		output_page($user);
+	}
+	output_footer();
 }
 catch (Exception $e) {
 	$safe_error = htmlspecialchars($e->getMessage());
@@ -25,13 +32,6 @@ catch (Exception $e) {
 	output_footer();
 	die();
 }
-
-// output
-output_search($name);
-if (isset($user)) {
-	output_page($user);
-}
-output_footer();
 
 function find_user($name) {
 	// connect
