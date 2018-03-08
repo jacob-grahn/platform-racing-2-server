@@ -19,19 +19,15 @@ try {
     $is_mod = is_moderator($db, false);
     output_header('Leaderboard', $is_mod);
     
-    // navigation
-    output_pagination($start, $count);
-    echo('<p>---</p>');
-    
     // limit amount of entries to be obtained from the db at a time
     if ($is_mod === true) {
-        if (($count - $start) > 1000) {
-            $count = 1000;
+        if (($count - $start) > 100) {
+            $count = 100;
         }
     } elseif ($is_mod === false) {
         rate_limit('leaderboard-'.$ip, 60, 10, 'Please wait at least one minute before trying to view the leaderboard again.');
-        if (($count - $start) > 100) {
-            $count = 100;
+        if (($count - $start) > 50) {
+            $count = 50;
         }
     } else {
         throw new Exception("Could not determine user staff boolean.");
@@ -39,15 +35,15 @@ try {
 
     $users_result = $db->query(
         "SELECT
-						users.name,
-						users.power,
+						users.name as name,
+						users.power as power,
 						(rank_tokens.used_tokens + pr2.rank) AS active_rank,
 						pr2.hat_array AS hats
 					FROM users, pr2, rank_tokens
 					WHERE users.user_id = pr2.user_id
 					AND pr2.user_id = rank_tokens.user_id
 					AND rank > 49
-					ORDER BY active_rank DESC
+					ORDER BY active_rank DESC, name ASC
 					LIMIT $start, $count"
     );
     if (!$users_result) {
@@ -83,7 +79,8 @@ try {
         $rank = $user->active_rank;
         
         // hats
-        $hats = $user->hats;
+        $hat_array = $user->hats;
+	$hats = count(explode(',', $hat_array))-1;
         
         // player details link
         $url_name = urlencode($name);
@@ -99,10 +96,9 @@ try {
         echo "</tr>";
     }
 
-    echo "</table></center>";
-    
-    echo('<p>---</p>');
+    echo "</table>";
     output_pagination($start, $count);
+    echo "</center>";
 
     output_footer();
 } catch (Exception $e) {

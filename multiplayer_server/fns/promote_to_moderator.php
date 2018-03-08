@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/db_fns.php';
 
-function promote_mod($port, $name, $type, $admin, $promoted_player)
+function promote_mod($port, $name, $type, $admin, $promoted)
 {
     global $db, $server_name;
     
@@ -10,24 +10,21 @@ function promote_mod($port, $name, $type, $admin, $promoted_player)
     $safe_name = htmlspecialchars($name);
     $safe_type = htmlspecialchars($type);
     
-    // if the user isn't an admin on the server, kill the function (2nd line of defense)
-    if ($admin->group != 3) {
-        echo $admin->name." lacks the server power to promote $safe_name to a $safe_type moderator.";
+    // if the user isn't an admin on the server or is a server owner, kill the function (2nd line of defense)
+    if ($admin->group != 3 || $admin->server_owner == true) {
         $admin->write("message`Error: You lack the power to promote $safe_name to a $safe_type moderator.");
         return false;
     }
     
     // if the player being promoted is an admin, end the function
-    if ($promoted_player->group == 3) {
-        echo $admin->name . " lacks the power to \"promote\" another admin ($safe_name) to a $safe_type moderator.";
+    if ($promoted->group == 3) {
         $admin->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
         return false;
     }
     
-    // define variables needed
-    $user_id = name_to_id($db, $name);
+    // safety first
+    $safe_user_id = addslashes($promoted->user_id);
     $safe_admin_id = addslashes($admin->user_id);
-    $safe_user_id = addslashes($user_id);
     $safe_type = addslashes($type);
     $safe_time = addslashes(time());
     $safe_min_time = addslashes(time()-(60*60*6));
@@ -41,10 +38,9 @@ function promote_mod($port, $name, $type, $admin, $promoted_player)
     );
     $admin_row = $admin_result->fetch_object();
     
-    //check for proper permission in the db (3rd + final line of defense before promotion)
+    // check for proper permission in the db (3rd + final line of defense before promotion)
     if ($admin_row->power != 3) {
-        echo $admin->name." lacks the database power to promote $name to a $type moderator.";
-        $admin->write("message`Error: You lack the power to promote $name to a $type moderator.");
+        $admin->write("message`Error: You lack the power to promote $safe_name to a $safe_type moderator.");
         return false;
     }
     
@@ -59,21 +55,18 @@ function promote_mod($port, $name, $type, $admin, $promoted_player)
     
     // if the person being promoted doesn't exist, end the function
     if (!$user_result) {
-        echo $admin->name." tried to promote a user that doesn't exist ($name) to a $type moderator.";
-        $admin->write("message`Error: $name doesn't exist.");
+        $admin->write("message`Error: $safe_name doesn't exist.");
         return false;
     }
     
     // if the person being promoted is a guest, end the function
     if ($user_row->power < 1) {
-        echo $admin->name." tried to promote a guest ($name) to a $type moderator.";
         $admin->write("message`Error: Guests can't be promoted to moderators.");
         return false;
     }
     
     // if the person being promoted is an admin, kill the function
     if ($user_row->power == 3) {
-        echo $admin->name . " lacks the power to \"promote\" another admin ($safe_name) to a $safe_type moderator.";
         $admin->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
         return false;
     }
@@ -110,9 +103,9 @@ function promote_mod($port, $name, $type, $admin, $promoted_player)
             
             //do the power change
             $result = $db->query(
-                "update users
-											set power = 2
-											where user_id = '$safe_user_id'"
+                "UPDATE users
+											SET power = 2
+											WHERE user_id = '$safe_user_id'"
             );
             if (!$result) {
                 throw new Exception("Could not promote $name to a $type moderator.");
@@ -161,15 +154,13 @@ function promote_mod($port, $name, $type, $admin, $promoted_player)
             // log action in action log
             $db->call('admin_action_insert', array($admin_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name.", $admin_id, $ip));
             
-            if (isset($promoted_player) && $promoted_player->group != 0) {
-                $promoted_player->group = 2;
-                $promoted_player->write('setGroup`2');
+            if (isset($promoted)) {
+                $promoted->group = 2;
+                $promoted->write('setGroup`2');
             }
-            echo $admin->name." promoted $name to a $type moderator.";
-            $admin->write("message`$name has been promoted to a $type moderator!");
+	    $admin->write("message`$safe_name has been promoted to a $safe_type moderator!");
             return true;
         } catch (Exception $e) {
-            echo "Error: ".$e->getMessage();
             $admin->write('message`Error: '.$e->getMessage());
             return false;
         }
@@ -177,14 +168,15 @@ function promote_mod($port, $name, $type, $admin, $promoted_player)
     
     elseif ($type == 'temporary') {
         try {
-            if (isset($promoted_player) && $promoted_player->group != 0) {
-                $promoted_player->become_temp_mod();
-            }
-            echo $admin->name." promoted $name to a $type moderator.";
-            $admin->write("message`$name has been promoted to a $type moderator!");
-            return true;
+            if (isset($promoted)) {
+                $promoted->become_temp_mod();
+		$admin->write("message`$safe_name has been promoted to a temporary moderator!");
+                return true;
+            } else {
+	        $admin->write("message`Could not find a user named \"$safe_name\" on this server.");
+		return false;
+	    }
         } catch (Exception $e) {
-            echo "Error: ".$e->getMessage();
             $admin->write('message`Error: '.$e->getMessage());
             return false;
         }

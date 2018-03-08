@@ -11,7 +11,6 @@ class Prizes
     const TYPE_EPIC_HEAD = 'eHead';
     const TYPE_EPIC_BODY = 'eBody';
     const TYPE_EPIC_FEET = 'eFeet';
-    const TYPE_EXP = 'exp';
 
     private static $arr;
 
@@ -287,10 +286,6 @@ class Prizes
     public static $EPIC_BUNNY_FEET;
 
 
-    //---
-    public static $EXP_5;
-
-
     public static function init()
     {
 
@@ -564,10 +559,6 @@ class Prizes
         self::$EPIC_CROCODILE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::CROCODILE, 'Epic Upgrade!');
         self::$EPIC_VALENTINE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::VALENTINE, 'Epic Upgrade!');
         self::$EPIC_BUNNY_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BUNNY, 'Epic Upgrade!');
-
-
-        //---
-        self::$EXP_5 = new Prize(self::TYPE_EXP, 5, 'Exp');
     }
 
 

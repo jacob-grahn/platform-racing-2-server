@@ -58,7 +58,7 @@ function name_to_player($name)
     global $player_array;
     $return_player = null;
     foreach ($player_array as $player) {
-        if ($player->name == $name) {
+        if (strtolower($player->name) == strtolower($name)) {
             $return_player = $player;
             break;
         }
