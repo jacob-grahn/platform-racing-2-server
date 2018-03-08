@@ -80,6 +80,7 @@ class Player
 
     public $temp_mod = false;
     public $server_owner = false;
+    public $hh_warned = false;
 
     public $status = '';
 
@@ -572,6 +573,59 @@ class Player
                 } else {
                     $this->write("message`Error: Could not find a user with the name \"$safe_dc_name\" on this server."); // they're not online or don't exist
                 }
+            } // hh status for everyone, activate for admins, deactivate for admins and server owners
+            elseif (($chat_message == '/hh' || strpos($chat_message, '/hh ') === 0)) {
+                $args = explode(' ', $str);
+                array_shift($args);
+                
+                $arg = trim(substr($chat_message, 4));
+                if ($args[0] == 'status' || $chat_message == '/hh') {
+                    $hh_timeleft = HappyHour::timeLeft();
+                    if ($hh_timeleft != false) {
+                        $this->write('systemChat`There is currently a Happy Hour on this server! It will expire in ' . format_duration($hh_timeleft) . '.');
+                    } else {
+                        $this->write('systemChat`There is not currently a Happy Hour on this server.');
+                    }
+                } elseif ($args[0] == 'help') {
+                    $hhmsg_admin = '';
+                    $hhmsg_server_owner = '';
+                    $hhmsg_warning = 'WARNING: This will remove all stacked Happy Hours bought by all users on this server from the Vault of Magics, as well as ending the current one.';
+                    if ($this->group >= 3 && $this->server_owner == false) {
+                        $hhmsg_admin = "To activate a Happy Hour, type /hh activate. To deactivate the current Happy Hour, type /hh deactivate. $warning";
+                    } elseif ($this->group >= 3 && $this->server_owner == true) {
+                        $hhmsg_server_owner = "To deactivate the current Happy Hour, type /hh deactivate. $warning";
+                    }
+                    $this->write('systemChat`To find out if a Happy Hour is active and when it expires, type /hh status. '.$hhmsg_admin.$hhmsg_server_owner.$hhmsg_warning);
+                } elseif ($args[0] == 'activate' && $this->group >=3 && $this->server_owner == false) {
+                    if (HappyHour::isActive() != true) {
+                        if (!isset($args[1])) {
+                            HappyHour::activate();
+                        }
+                        else {
+                            $args[1] = (int) $args[1];
+                            if ($args[1] > 3600) {
+                                $args[1] = 3600;
+                            }
+                            HappyHour::activate($args[1]);
+                        }
+                        $player_room->send_chat('systemChat`'.htmlspecialchars($this->name).' just triggered a Happy Hour!');
+                    } else {
+                        $hh_timeleft = HappyHour::timeLeft();
+                        $this->write('systemChat`There is already a Happy Hour on this server. It will expire in ' . format_duration($hh_timeleft) . '.');
+                    }
+                } elseif ($args[0] == 'deactivate' && $this->group >= 3) {
+                    if ($this->hh_warned == false) {
+                        $this->hh_warned == true;
+                        $this->write("systemChat`WARNING: This will remove ALL stacked Happy Hours bought by ALL users on this server from the Vault of Magics, as well as ending the current one. If you're sure you want to do this, type the command again.");
+                    } elseif (HappyHour::isActive() == true && $this->hh_warned == true) {
+                        HappyHour::deactivate();
+                        $player_room->send_chat('systemChat`' . htmlspecialchars($this->name) . ' just ended the current Happy Hour.');
+                    } else {
+                        $this->write('systemChat`There isn\'t an active Happy Hour right now.');
+                    }
+                } else {
+                    $this->write('systemChat`Error: Invalid argument specified. Type /hh help for more information.');
+                }
             } // server mod command for server owners
             elseif (($chat_message == '/mod' || strpos($chat_message, '/mod ') === 0) && $this->group >= 3 && $this->server_owner == true) {
                 if ($chat_message == '/mod help') {
@@ -613,10 +667,10 @@ class Player
                             $effects = '<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
                         }
                         if ($this->group >= 3 && $this->server_owner == false) {
-                            $admin = '<br>Admin:<br>- /promote *message*<br>- /restart_server<br>- /debug *arg*';
+                            $admin = '<br>Admin:<br>- /promote *message*<br>- /restart_server<br>- /debug *arg*<br>- /hh help';
                         }
                         if ($this->server_owner == true) {
-                            $server_owner = '<br>Server Owner:<br>- /timeleft<br>- /mod help<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
+                            $server_owner = '<br>Server Owner:<br>- /timeleft<br>- /mod help<br>- /hh help<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
                         }
                     }
                     $this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population<br>- /beawesome'.$mod.$effects.$admin.$server_owner);
@@ -1204,6 +1258,7 @@ class Player
         $this->domain = null;
         $this->temp_mod = null;
         $this->server_owner = null;
+        $this->hh_warned = null;
         $this->status = null;
     }
 }
