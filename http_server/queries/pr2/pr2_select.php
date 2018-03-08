@@ -5,7 +5,7 @@ function pr2_select($pdo, $user_id)
 	$stmt = $pdo->prepare('
         SELECT *
         FROM pr2
-        WHERE user_id = p_user_id
+        WHERE user_id = :user_id
         LIMIT 1
     ');
 	$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
