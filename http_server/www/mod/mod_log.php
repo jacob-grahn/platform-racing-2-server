@@ -1,8 +1,8 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
-require_once 'mod_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/mod_fns.php';
 
 $start = (int) default_val($_GET['start'], 0);
 $count = (int) default_val($_GET['count'], 25);
@@ -11,7 +11,7 @@ $ip = get_ip();
 try {
     // rate limiting
     rate_limit('mod-action-log-'.$ip, 5, 3);
-    
+
     //connect
     $db = new DB();
 

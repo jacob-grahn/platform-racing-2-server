@@ -1,7 +1,7 @@
 <?php
 
 header("Content-type: text/plain");
-require_once '../fns/all_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
 
 $level_id = (int) $_POST['level_id'];
 $new_rating = (int) $_POST['rating'];
@@ -19,10 +19,10 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
     }
-    
+
     // rate limiting
     rate_limit('submit-rating-'.$ip, 5, 2);
-    
+
     // sanity check: is the rating valid?
     $new_rating = round($new_rating);
     if (is_nan($new_rating) || $new_rating < 1 || $new_rating > 5) {
@@ -34,7 +34,7 @@ try {
 
     // check their login
     $user_id = token_login($db, false);
-    
+
     // rate limiting
     rate_limit('submit-rating-'.$user_id, 5, 2);
 

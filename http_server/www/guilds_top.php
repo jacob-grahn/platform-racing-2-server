@@ -2,8 +2,8 @@
 
 header("Content-Type: text/plain");
 
-require_once '../fns/all_fns.php';
-require_once '../fns/pr2_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/pr2_fns.php';
 
 $sort = find('sort', 'gpToday');
 $ip = get_ip();
@@ -11,30 +11,30 @@ $ip = get_ip();
 try {
     // rate limiting
     rate_limit('guilds-top-'.$ip, 5, 3);
-    
+
     //--- connect to the db
     $db = new DB();
-    
-    
+
+
     //--- sanity check
     $allowed_sort_values = array( 'gpToday', 'gpTotal', 'members', 'activeMembers' );
     if (array_search($sort, $allowed_sort_values) === false) {
         throw new Exception('Unexpected sort value');
     }
-    
-    
+
+
     //--- select list from db
     $guilds = $db->to_array($db->call('guilds_select_by_most_gp_today'));
-    
-    
+
+
     //--- get active member count guild by guild
     //--- also disable html parsing
     foreach ($guilds as $guild) {
         $guild->active_count = guild_count_active($db, $guild->guild_id);
         $guild->guild_name = htmlspecialchars($guild->guild_name);
     }
-    
-    
+
+
     //--- tell it to the world
     $reply = new stdClass();
     $reply->success = true;

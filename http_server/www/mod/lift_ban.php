@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $ban_id = (int) default_val($_GET['ban_id'], 0);
 $ip = get_ip();
@@ -9,7 +9,7 @@ $ip = get_ip();
 try {
     // rate limiting
     rate_limit('mod-lift-ban-'.$ip, 5, 2);
-    
+
     // connect
     $db = new DB();
 

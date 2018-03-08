@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $email = find_no_cookie('email', '');
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
@@ -21,7 +21,7 @@ function output_search($email = '', $incl_br = true)
 try {
     //connect
     $db = new DB();
-    
+
     //make sure you're an admin
     $admin = check_moderator($db, false, 3);
 } catch (Exception $e) {
@@ -42,7 +42,7 @@ try {
         output_footer();
         die();
     }
-    
+
     // protect the db
     $safe_email = addslashes($email);
 
@@ -58,13 +58,13 @@ try {
     if ($row_count <= 0) {
         throw new Exception("No accounts found with the email address \"$safe_email\".");
     }
-    
+
     // protect the user
     $disp_email = htmlspecialchars($email);
-  
+
     // show the search form
     output_search($disp_email);
-    
+
     // output the number of results
     if ($row_count == 1) {
         $res = 'result';
@@ -72,7 +72,7 @@ try {
         $res = 'results';
     }
     echo "$row_count $res found for the email address \"$disp_email\".<br><br>";
-    
+
     // only gonna get here if there were results
     while ($row = $result->fetch_object()) {
         // make nice variables for our data

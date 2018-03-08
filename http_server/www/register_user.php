@@ -1,7 +1,7 @@
 <?php
 
-require_once '../fns/all_fns.php';
-require_once '../fns/to_hash.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/to_hash.php';
 
 $name = $_POST['name'];
 $password = $_POST['password'];
@@ -14,13 +14,13 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
-    
+
     // check referrer
     $ref = check_ref();
     if ($ref !== true) {
         throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only register a new account from an approved site such as pr2hub.com.");
     }
-    
+
     // rate limiting (check if the IP address is spamming)
     rate_limit('register-account-attempt-'.$ip, 10, 2, 'Please wait at least 10 seconds before trying to create another account.');
 
@@ -59,16 +59,16 @@ try {
     if ($result->num_rows >= 1) {
         throw new Exception('Sorry, that name has already been registered.');
     }
-    
+
     // more rate limiting (check if too many accounts have been made from this ip today)
     rate_limit('register-account-'.$ip, 86400, 5, 'You may create a maximum of five accounts from the same IP address per day.');
 
     // --- begin user registration --- \\
-    
+
     // user insert
     $pass_hash = to_hash($password);
     $db->call('user_insert', array($name, $pass_hash, $ip, $time, $email));
-    
+
     // pr2 insert
     $user_id = name_to_id($db, $name);
     $db->call('pr2_insert', array($user_id));
@@ -79,7 +79,7 @@ try {
                 ."If you have any questions or comments, send me an email at <a href='mailto:jacob@grahn.io?subject=Questions or Comments about PR2' target='_blank'><u><font color='#0000FF'>jacob@grahn.io</font></u></a>.\n\n"
                 ."Thanks for playing, I hope you enjoy.\n\n"
                 ."- Jacob";
-    
+
     // welcome them
     $db->call('message_insert', array($user_id, 1, $welcome_message, '0'));
 

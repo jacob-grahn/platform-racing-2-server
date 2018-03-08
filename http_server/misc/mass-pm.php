@@ -1,6 +1,6 @@
 <?php
 
-require_once '../fns/all_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
 
 $message = 'Happy Motley Monday! From now on, servers experiencing a blissful Happy Hour will be marked with a double exclamation mark (!!) on the login screen. In addition, guild leaders are marked with a crown on their guild page.
 

@@ -1,7 +1,7 @@
 <?php
 
-require_once "../fns/all_fns.php";
-require_once "../fns/output_fns.php";
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/output_fns.php';
 
 $start = (int) default_val($_GET['start'], 0);
 $count = (int) default_val($_GET['count'], 100);
@@ -14,11 +14,11 @@ try {
 
     // connect
     $db = new DB();
-    
+
     // header, also check if mod and output the mod links if so
     $is_mod = is_moderator($db, false);
     output_header('Leaderboard', $is_mod);
-    
+
     // limit amount of entries to be obtained from the db at a time
     if ($is_mod === true) {
         if (($count - $start) > 100) {
@@ -70,22 +70,22 @@ try {
         $name = $user->name;
         $safe_name = htmlspecialchars($name);
         $safe_name = str_replace(" ", "&nbsp;", $safe_name);
-        
+
         // power
         $group = (int) $user->group;
         $group_color = $group_colors[$group];
-        
+
         // rank
         $rank = $user->active_rank;
-        
+
         // hats
         $hat_array = $user->hats;
 	$hats = count(explode(',', $hat_array))-1;
-        
+
         // player details link
         $url_name = urlencode($name);
         $info_link = "player_search.php?name=$url_name";
-        
+
         // echo the row
         echo "<tr>";
 

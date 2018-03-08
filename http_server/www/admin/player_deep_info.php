@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $name1 = find('name1', '');
 $name2 = find('name2', '');
@@ -30,7 +30,7 @@ try {
     foreach (range(1, 9) as $i) {
         $name = ${"name$i"};
         echo '<input type="text" name="name'.$i.'" value="'.htmlspecialchars($name).'"><br>';
-        
+
         if ($name != '') {
             try {
                 $user = $db->grab_row('user_select_by_name', array($name));
@@ -52,7 +52,7 @@ try {
     }
     echo '<input type="submit" value="Submit">';
     echo '</form>';
-    
+
     output_footer();
 } catch (Exception $e) {
     output_header('Error');

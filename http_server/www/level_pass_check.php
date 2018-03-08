@@ -2,8 +2,8 @@
 
 header("Content-type: text/plain");
 
-require_once '../fns/all_fns.php';
-require_once '../fns/Encryptor.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/Encryptor.php';
 
 $level_id = (int) default_val($_GET['courseID'], 0);
 $hash = find_no_cookie('hash', '');
@@ -22,7 +22,7 @@ try {
 
     // check their login
     $user_id = token_login($db, false);
-    
+
     // more rate limiting
     rate_limit('level-pass-'.$user_id, 3, 2);
 

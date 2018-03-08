@@ -2,7 +2,7 @@
 
 header("Content-type: text/plain");
 
-require_once '../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
 
 $user_name = find('user_name');
 $safe_name = htmlspecialchars($user_name);

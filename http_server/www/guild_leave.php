@@ -1,7 +1,7 @@
 <?php
 
 header("Content-type: text/plain");
-require_once '../fns/all_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
 
 $ip = get_ip();
 
@@ -11,30 +11,30 @@ try {
     if ($ref !== true && $ref != '') {
         throw new Exception('It looks like you\'re using PR2 from a third-party website. For security reasons, you may only leave a guild from an approved site such as pr2hub.com.');
     }
-    
+
     // rate limiting
     rate_limit('guild-leave-attempt-'.$ip, 5, 1);
-    
+
     // connect to the db
     $db = new DB();
-    
-    
+
+
     // get their login
     $user_id = token_login($db, false);
     $account = $db->grab_row('user_select_expanded', array($user_id));
-    
-    
+
+
     // sanity check
     if ($account->guild == 0) {
         throw new Exception('You are not a member of a guild.');
     }
-    
-    
+
+
     // leave the guild
     $db->call('guild_increment_member', array( $account->guild, -1 ));
     $db->call('user_update_guild', array( $user_id, 0 ));
-    
-    
+
+
     // tell it to the world
     $reply = new stdClass();
     $reply->success = true;

@@ -2,7 +2,7 @@
 
 header("Content-type: text/plain");
 
-require_once '../fns/all_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
 
 $target_name = find_no_cookie('name');
 $friend = 0;

@@ -1,7 +1,7 @@
 <?php
 
 header("Content-type: text/plain");
-require_once '../fns/all_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
 
 $mode = find_no_cookie('mode');
 $ip = get_ip();
@@ -19,19 +19,19 @@ try {
         default:
             throw new Exception("Invalid list mode specified.");
     }
-    
+
     // rate limiting
     rate_limit("user-list-$table-$ip", 5, 2);
-    
+
     // connect
     $db = new DB();
-    
+
     // check their login
     $user_id = token_login($db);
-    
+
     // more rate limiting
     rate_limit("user-list-$table-$user_id", 5, 2);
-    
+
     // get the information from the database
     $result = $db->query(
         "SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens
@@ -45,11 +45,11 @@ try {
 									WHERE $table.user_id = '$user_id'
 									LIMIT 0, 250"
     );
-    
+
     if (!$result) {
         throw new Exception('Could not retrieve player list.');
     }
-    
+
     $num = 0;
 
     // make individual list entries
@@ -58,24 +58,24 @@ try {
         $group = $row->power;
         $status = $row->status;
         $rank = $row->rank;
-        
+
         if (isset($row->used_tokens)) {
             $used_tokens = $row->used_tokens;
         } else {
             $used_tokens = 0;
         }
-        
+
         $active_rank = $rank + $used_tokens;
         $hats = count(explode(',', $row->hat_array)) - 1;
-        
+
         if (strpos($status, 'Playing on ') !== false) {
             $status = substr($status, 11);
         }
-        
+
         if ($num > 0) {
             echo "&";
         }
-        
+
         echo ("name$num=$name"
         ."&group$num=$group"
         ."&status$num=$status"

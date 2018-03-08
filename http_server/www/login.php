@@ -2,8 +2,8 @@
 
 header("Content-type: text/plain");
 
-require_once '../fns/all_fns.php';
-require_once '../fns/Encryptor.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/Encryptor.php';
 
 $encrypted_login = $_POST['i'];
 $version = $_POST['version'];
@@ -128,8 +128,8 @@ try {
     $user_name = $user->name;
     $login->user_name = $user_name; // sanitize user input by taking name from the db to send to the server
     $group = $user->power;
-    
-    
+
+
     // name sanity checks
     if (strlen(trim($user_name)) < 2) {
         throw new Exception("Your name must be at least 2 characters long.");
@@ -161,7 +161,7 @@ try {
         ."If you have any questions or comments, send me an email at <a href='mailto:jacob@grahn.io?subject=Questions or Comments about PR2' target='_blank'><u><font color='#0000FF'>jacob@grahn.io</font></u></a>.\n\n"
         ."Thanks for playing, I hope you enjoy.\n\n"
         ."- Jacob";
-        
+
         // send the welcome PM
         $db->call('message_insert', array($user_id, 1, $welcome_message, '0'));
 
@@ -358,13 +358,13 @@ try {
     $reply->guildName = $guild_name;
     $reply->emblem = $emblem;
     $reply->userId = $user_id;
-    
+
     // allowed domain check
     $ref = check_ref();
     if ($ref !== true) {
         $reply->message = "It looks like you're using PR2 from a third-party website. For security reasons, some game features may be disabled. To access a version of the game with all features available to you, play from an approved site such as pr2hub.com.";
     }
-    
+
     echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();

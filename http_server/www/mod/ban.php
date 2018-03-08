@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $user_id = find_no_cookie('user_id', 0);
 $force_ip = find_no_cookie('force_ip');
@@ -13,10 +13,10 @@ try {
     if (is_empty($user_id, false)) {
         throw new Exception("No user specified.");
     }
-    
+
     // rate limiting
     rate_limit('mod-ban-'.$ip, 3, 2);
-    
+
     // connect
     $db = new DB();
 

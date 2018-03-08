@@ -1,25 +1,25 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $guild_id = find('guild_id', 0);
 
 try {
     //connect
     $db = new DB();
-    
-    
+
+
     //make sure you're an admin
     $mod = check_moderator($db, false, 3);
-    
+
     if ($guild_id == 0) {
         $guild_id = '';
     }
-    
+
     output_header('Guild Deep Info', true, true);
-    
-    
+
+
     echo '<form name="input" action="" method="get">';
     echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'">&nbsp;';
     echo '<input type="submit" value="Submit"><br>';
@@ -36,7 +36,7 @@ try {
             echo "<i>Error: ".$e->getMessage()."</i><br><br>";
         }
     }
-    
+
     echo '</form>';
     output_footer();
 } catch (Exception $e) {

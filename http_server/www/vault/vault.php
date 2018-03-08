@@ -2,8 +2,8 @@
 
 header("Content-type: text/plain");
 
-require_once '../../fns/all_fns.php';
-require_once 'vault_descriptions.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/vault_descriptions.php';
 
 $ip = get_ip();
 
@@ -11,20 +11,20 @@ try {
     // rate limiting
     rate_limit('vault-listing-'.$ip, 3, 1);
     rate_limit('vault-listing-'.$ip, 15, 4);
-    
+
     // connect
     $db = new DB();
-    
+
     // get login
     $user_id = token_login($db);
-    
+
     // more rate limiting
     rate_limit('vault-listing-'.$user_id, 5, 2);
     rate_limit('vault-listing-'.$user_id, 30, 10);
-    
+
     // create listing
     $raw_listings = describeVault($db, $user_id, array('stats-boost', 'epic-everything', 'guild-fred', 'guild-ghost', 'guild-artifact', 'happy-hour', 'rank-rental', 'djinn-set', 'king-set', 'queen-set', 'server-1-day', 'server-30-days'));
-    
+
     // weed out only the info we want to return
     $listings = array();
     foreach ($raw_listings as $raw) {

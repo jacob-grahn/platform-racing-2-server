@@ -2,9 +2,9 @@
 
 header("Content-type: text/plain");
 
-require_once '../fns/all_fns.php';
-require_once '../fns/Encryptor.php';
-require_once '../fns/email_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/Encryptor.php';
+require_once __DIR__ . '/../fns/email_fns.php';
 
 $encrypted_data = $_POST['data'];
 
@@ -15,13 +15,13 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
-    
+
     // check referrer
     $ref = check_ref();
     if ($ref !== true) {
         throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only change your email from an approved site such as pr2hub.com.");
     }
-    
+
     // rate limiting
     rate_limit('change-email-attempt-'.$ip, 5, 1);
 
@@ -43,15 +43,15 @@ try {
 
     // check their login
     $user_id = token_login($db, false);
-    
+
     // more rate limiting
     rate_limit('change-email-attempt-'.$user_id, 5, 1);
-    
+
     // get user info
     $user = $db->grab_row('user_select', array($user_id));
     $user_name = $user->name;
     $old_email = $user->email;
-    
+
     // make things safe
     $safe_old_email = htmlspecialchars($old_email);
     $safe_new_email = htmlspecialchars($new_email);
@@ -64,12 +64,12 @@ try {
     if ($user->power < 1) {
         throw new Exception("Guests don't even really have accounts...");
     }
-    
+
     // sanity check: check for invalid email
     if (!valid_email($new_email)) {
         throw new Exception("\"$safe_new_email\" is not a valid email address.");
     }
-    
+
     // rate limiting
     rate_limit('change-email-'.$user_id, 86400, 2, 'Your email can be changed a maximum of two times per day.');
     rate_limit('change-email-'.$ip, 86400, 2, 'Your email can be changed a maximum of two times per day.');
@@ -78,13 +78,13 @@ try {
     if (is_empty($old_email)) {
         $time = time();
         $code = "set-email-$time";
-        
+
         // log and do it
         $db->call('changing_email_insert', array($user_id, $old_email, $new_email, $code, $ip));
         $change_id = $db->grab('change_id', 'changing_email_select', array($code));
         $db->call('changing_email_complete', array($change_id, $ip));
         $db->call('user_update_email', array($user_id, $old_email, $new_email));
-        
+
         // tell the user and end the script
         $ret = new stdClass();
         $ret->message = 'Your email was changed successfully!';

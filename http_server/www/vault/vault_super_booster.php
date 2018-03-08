@@ -1,7 +1,7 @@
 <?php
 
 header("Content-type: text/plain");
-require_once '../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
 
 $server_id = (int) $_GET['server_id'];
 
@@ -13,16 +13,16 @@ try {
 
     // rate limiting
     rate_limit('super-booster-'.$ip, 60, 1, "Please wait at least one minute before attempting to use the super booster again.");
-    
+
     // connect
     $db = new DB();
 
     // get user id
     $user_id = token_login($db, false);
-    
+
     // more rate limiting
     rate_limit('super-booster-'.$user_id, 60, 1, "Please wait at least one minute before attempting to use the super booster again.");
-    
+
     // get server info
     $server = $db->grab_row('server_select', array( $server_id ));
 

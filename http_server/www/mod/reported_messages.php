@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $start = (int) default_val($_GET['start'], 0);
 $count = (int) default_val($_GET['count'], 25);
@@ -13,7 +13,7 @@ $mod_ip = get_ip();
 try {
     // rate limiting
     rate_limit('mod-reported-messages-'.$mod_ip, 5, 3);
-    
+
     //connect
     $db = new DB();
 

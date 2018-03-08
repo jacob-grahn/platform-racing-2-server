@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $user_id = find('id');
 $action = find('action', 'lookup');
@@ -23,7 +23,7 @@ try {
 try {
     // header
     output_header('Update PR2 Account', true, true);
-    
+
     // form
     if ($action === 'lookup') {
         output_form($db, $user_id);
@@ -91,17 +91,17 @@ function update($db)
 {
 
     global $admin;
-    
+
     // make some nice variables
     $guild_id = (int) find('guild');
     $user_id = (int) find('id');
     $email = find('email');
     $account_changes = find('account_changes');
-    
+
     // call user information
     $user = $db->grab_row('user_select', array($user_id));
     $user_name = $user->name;
-    
+
     // adjust guild member count
     if ($user->guild != $guild_id) {
         if ($user->guild != 0) {
@@ -111,7 +111,7 @@ function update($db)
             $db->call('guild_increment_member', array($guild_id, 1));
         }
     }
-    
+
     // email change logging
     if ($user->email !== $email) {
         $code = 'manual-' . time();
@@ -119,12 +119,12 @@ function update($db)
         $change_id = $db->grab('change_id', 'changing_email_select', array($code));
         $db->call('changing_email_complete', array($change_id, ''));
     }
-    
+
     // check for description of changes
     if (is_empty($account_changes)) {
         throw new Exception('You must enter a description of your changes.');
     }
-    
+
     // perform the action
     $db->call(
         'user_update',
@@ -143,15 +143,15 @@ function update($db)
         find('eFeet')
         )
     );
-    
+
     // log the action in the admin log
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $ip = get_ip();
     $disp_changes = "Changes: " . $account_changes;
-    
+
     $db->call('admin_action_insert', array($admin_id, "$admin_name updated player $user_name from $ip. $disp_changes.", $admin_id, $ip));
-    
+
     header("Location: player_deep_info.php?name1=" . urlencode(find('name')));
     die();
 }

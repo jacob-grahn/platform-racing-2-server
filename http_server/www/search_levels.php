@@ -1,7 +1,7 @@
 <?php
 
 header("Content-type: text/plain");
-require_once '../fns/all_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
 
 $mode = default_val($_POST['mode'], 'user');
 $search_str = default_val($_POST['search_str'], '');

@@ -2,10 +2,10 @@
 
 header("Content-type: text/plain");
 
-require_once '../fns/all_fns.php';
-require_once '../queries/users/user_select_by_name.php'; // pdo
-require_once '../queries/staff/action_log.php'; // pdo
-require_once '../queries/staff/ban_user.php'; // pdo
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // pdo
+require_once __DIR__ . '/../queries/staff/action_log.php'; // pdo
+require_once __DIR__ . '/../queries/staff/ban_user.php'; // pdo
 
 $banned_name = default_val($_POST['banned_name']);
 $duration = (int) default_val($_POST['duration'], 60);
@@ -56,7 +56,7 @@ try {
     }
     $time = (int) time();
     $expire_time = $time + $duration;
-    
+
 
     // throttle bans using PDO
     $throttle = throttle_bans($pdo, $mod_user_id);

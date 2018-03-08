@@ -1,7 +1,7 @@
 <?php
 
-require_once '../fns/all_fns.php';
-require_once '../fns/output_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/output_fns.php';
 
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
@@ -10,10 +10,10 @@ output_header('PR2 Staff Team');
 try {
     // rate limiting
     rate_limit('gui-staff-list-'.$ip, 5, 2, 'Please wait at least 10 seconds before refreshing the page again.');
-    
+
     // connect
     $db = new DB();
-    
+
     // get the data
     $staff_result = $db->query(
         '

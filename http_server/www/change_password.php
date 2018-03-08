@@ -2,8 +2,8 @@
 
 header("Content-type: text/plain");
 
-require_once '../fns/all_fns.php';
-require_once '../fns/to_hash.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/to_hash.php';
 
 // make some variables
 $name = $_POST['name'];
@@ -19,18 +19,18 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
-    
+
     // check referrer
     $ref = check_ref();
     if ($ref !== true) {
         throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only change your password from an approved site such as pr2hub.com.");
     }
-    
+
     // sanity check: was a password entered?
     if (strlen($new_pass) <= 0) {
         throw new Exception('You must enter a password, silly person.');
     }
-    
+
     // rate limiting
     rate_limit('password-change-attempt-'.$ip, 5, 1, 'Please wait at least 5 seconds before trying to change your password again.');
 
@@ -45,7 +45,7 @@ try {
     if ($power < 1) {
         throw new Exception('Guests don\'t even really have passwords...');
     }
-    
+
     // change their pass
     $pass_hash = to_hash($new_pass);
     $safe_pass_hash = addslashes($pass_hash);

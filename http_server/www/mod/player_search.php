@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $message = default_val($_GET['message'], '');
 $ip = get_ip();
@@ -9,7 +9,7 @@ $ip = get_ip();
 try {
     // rate limiting
     rate_limit('mod-player-search-'.$ip, 5, 3);
-    
+
     // connect
     $db = new DB();
 
@@ -38,7 +38,7 @@ try {
         <input type="submit" value="Search" />
     </form>
     <?php
-    
+
     // footer
     output_footer();
 } catch (Exception $e) {

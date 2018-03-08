@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $ban_id = (int) default_val($_POST['ban_id'], 0);
 $reason = default_val($_POST['reason'], 'They bribed me with skittles!');
@@ -35,7 +35,7 @@ try {
     if (is_empty($ban_id, false) || is_empty($reason)) {
         throw new Exception('Some information is missing.');
     }
-    
+
     // make some variables
     $user_id = $mod->user_id;
     $name = $mod->name;
@@ -61,7 +61,7 @@ try {
     } else {
         $disp_reason = "There was no reason given";
     }
-    
+
     //record the change
     $db->call('mod_action_insert', array($user_id, "$name lifted ban $ban_id from $ip. $disp_reason.", 0, $ip));
 

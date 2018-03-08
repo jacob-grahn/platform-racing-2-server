@@ -2,9 +2,9 @@
 
 header("Content-type: text/plain");
 
-require_once '../fns/all_fns.php';
-require_once '../fns/classes/S3.php';
-require_once '../fns/pr2_fns.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/classes/S3.php';
+require_once __DIR__ . '/../fns/pr2_fns.php';
 
 $title = $_POST['title'];
 $note = $_POST['note'];
@@ -30,7 +30,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
-    
+
     // sanity check
     if ($live == 1 && (is_obsene($title) || is_obsene($note))) {
         throw new Exception('Could not publish level. Check the title and note for obscenities.');
@@ -46,7 +46,7 @@ try {
     // check their login
     $user_id = token_login($db, false);
     $user_name = id_to_name($db, $user_id);
-    
+
     // more rate limiting
     rate_limit('upload-level-attempt-'.$user_id, 10, 3, "Please wait at least 10 seconds before trying to save again.");
 

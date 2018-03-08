@@ -2,8 +2,8 @@
 
 header("Content-type: text/plain");
 
-require_once '../fns/all_fns.php';
-require_once '../fns/to_hash.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/to_hash.php';
 
 $name = $_POST['name'];
 $email = $_POST['email'];
@@ -16,13 +16,13 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
-    
+
     // check referrer
     $ref = check_ref();
     if ($ref !== true) {
         throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only request a new password from an approved site such as pr2hub.com.");
     }
-    
+
     // rate limiting
     rate_limit('forgot-password-attempt-'.$ip, 5, 1);
 
@@ -31,7 +31,7 @@ try {
         $safe_disp_email = htmlspecialchars($email);
         throw new Exception("\"$safe_disp_email\" is not a valid email address.");
     }
-    
+
     // easter egg: Jiggmin's luggage
     if (strtolower($name) == 'jiggmin') {
         throw new Exception("The password to Jiggmin's luggage is 12345.");
@@ -64,7 +64,7 @@ try {
     // get the user id
     $row = $result->fetch_object();
     $user_id = $row->user_id;
-    
+
     // more rate limiting
     rate_limit('forgot-password-'.$user_id, 900, 1, 'You may only request a new password once every 15 minutes.');
 
@@ -115,7 +115,7 @@ try {
 
     // tell the world
     echo 'message=Great success! You should receive an email with your new password shortly.';
-    
+
     // goodbye
     die();
 } catch (Exception $e) {

@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/bans/retrieve_ban_list.php';
 
 $start = (int) default_val($_GET['start'], 0);
@@ -22,16 +22,16 @@ try {
     output_footer();
     die();
 }
-    
+
 try {
     // header, also check if mod and output the mod links if so
     $is_mod = is_moderator($db, false);
     output_header('Ban Log', $is_mod);
-    
+
     // navigation
     output_pagination($start, $count);
     echo('<p>---</p>');
-    
+
     if ($is_mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10);
         if ($count > 100) {

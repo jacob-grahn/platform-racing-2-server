@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $message_id = (int) default_val($_GET['message_id'], 0);
 $ip = get_ip();
@@ -12,7 +12,7 @@ try {
 
     // connect
     $db = new DB();
-    
+
     // make sure you're a moderator
     $mod = check_moderator($db);
 } catch (Exception $e) {

@@ -2,8 +2,8 @@
 
 header("Content-type: text/plain");
 
-require_once '../fns/all_fns.php';
-require_once '../fns/classes/S3.php';
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/classes/S3.php';
 
 $ip = get_ip();
 
@@ -12,36 +12,36 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
-    
+
     // check referrer
     $ref = check_ref();
     if ($ref !== true) {
         throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only upload a guild emblem from an approved site such as pr2hub.com.");
     }
-    
+
     // rate limiting
     rate_limit('emblem-upload-attempt-'.$ip, 15, 1, "Please wait at least 15 seconds before trying to upload a guild emblem again.");
     rate_limit('emblem-upload-attempt-'.$ip, 900, 10, "Please wait at least 15 minutes before trying to upload a guild emblem again.");
-    
+
     $image = file_get_contents("php://input");
     $image_rendered = imagecreatefromstring($image);
-    
-    
+
+
     // connect to the db
     $db = new DB();
     $s3 = s3_connect();
-    
-    
+
+
     // check their login
     $user_id = token_login($db, false);
-    
+
     // more rate limiting
     rate_limit('emblem-upload-attempt-'.$user_id, 15, 1, "Please wait at least 15 seconds before trying to upload a guild emblem again.");
     rate_limit('emblem-upload-attempt-'.$user_id, 900, 10, "Please wait at least 15 minutes before trying to upload a guild emblem again.");
-    
+
     // get user info
     $account = $db->grab_row('user_select_expanded', array($user_id));
-    
+
     // sanity checks
     if ($account->rank < 20) {
         throw new Exception('Must be rank 20 or above to upload an emblem.');
@@ -58,7 +58,7 @@ try {
     if (getimagesize($image_rendered) === false) {
         throw new Exception('File is not an image');
     }
-    
+
     //--- send the image to s3
     $filename = $user_id . '-' . time() . '.jpg';
     $bucket = 'pr2emblems';
@@ -66,11 +66,11 @@ try {
     if (!$result) {
         throw new Exception('Could not save image. :(');
     }
-    
+
     // more rate limiting
     rate_limit('emblem-upload-'.$ip, 86400, 2, "You can upload a maximum of two guild emblem images per day. Try again tomorrow.");
     rate_limit('emblem-upload-'.$user_id, 86400, 2, "You can upload a maximum of two guild emblem images per day. Try again tomorrow.");
-    
+
     //--- tell it to the world
     $reply = new stdClass();
     $reply->success = true;

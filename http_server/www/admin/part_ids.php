@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 try {
     //connect
@@ -9,7 +9,7 @@ try {
 
     //make sure you're an admin
     $admin = check_moderator($db, false, 3);
-    
+
     output_header('PR2 Part IDs', true, true);
     echo '<pre>Platform Racing 2 Part Codes
 

@@ -2,7 +2,7 @@
 
 header("Content-type: text/plain");
 
-require_once '../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
 
 $game_auth_token = find('game_auth_token');
 $kong_user_id = find('kong_user_id');

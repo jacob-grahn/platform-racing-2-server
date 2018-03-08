@@ -1,7 +1,7 @@
 <?php
 
-require_once '../../fns/all_fns.php';
-require_once '../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
 
 $ban_id = (int) $_GET['ban_id'];
 $ip = get_ip();
@@ -9,16 +9,16 @@ $ip = get_ip();
 try {
     // rate limiting
     rate_limit('show-ban-record-'.$ip, 5, 2);
-    
+
     // connect
     $db = new DB();
-    
+
     // are they a moderator
     $is_mod = is_moderator($db, false);
     if ($is_mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10, "Please wait at least one minute before trying to view another ban.");
     }
-    
+
     // output header (w/ mod nav if they're a mod)
     output_header('View Ban', $is_mod);
 
@@ -32,7 +32,7 @@ try {
         throw new Exception('Could not display the ban record.');
     }
     $row = $result->fetch_assoc();
-    
+
     // DEBUGGING
     if ($is_mod === true && ($ban_id === 0 || $ban_id === 90000)) {
         var_dump($result);
