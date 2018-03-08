@@ -28,6 +28,14 @@ class HappyHour
             return $current_hour === self::$random_hour;
         }
     }
+    
+    public static function deactivate()
+    {
+        $time = time();
+        
+        if (self::$active_until > $time) {
+            self::$active_until = $time;
+        }
 }
 
 HappyHour::$random_hour = rand(0, 36);
