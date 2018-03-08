@@ -1,37 +1,39 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/artifact/artifact_location_select.php';
+require_once __DIR__ . '/../queries/users/user_select.php';
+require_once __DIR__ . '/../queries/levels/level_select.php';
 
-$db = new DB();
+$pdo = pdo_connect();
 
-
-//--- collect data
-$artifact = $db->grab_row('artifact_location_select');
+// collect data
+$artifact = artifact_location_select($pdo);
 $level_id = $artifact->level_id;
 $updated_time = strtotime($artifact->updated_time);
 $first_finder = $artifact->first_finder;
 
-$level = $db->grab_row('level_select', array($level_id));
+$level = level_select($pdo, $level_id);
 $title = $level->title;
 $user_id = $level->user_id;
 
-$user = $db->grab_row('user_select', array($user_id));
+$user = user_select($pdo, $user_id);
 $user_name = $user->name;
 
 if ($first_finder != 0) {
-    $finder = $db->grab_row('user_select', array( $first_finder ));
+    $finder = user_select($pdo, $first_finder);
     $finder_name = $finder->name;
 } else {
     $finder_name = '';
 }
 
 
-//--- form the base string we'll be creating
+// form the base string we'll be creating
 $str = "$title by $user_name";
 $len = strlen($str);
 
 
-//--- figure out how much of the string to reveal
+// figure out how much of the string to reveal
 $elapsed = time() - $updated_time;
 $perc = $elapsed / (60*60*24*3);
 if ($perc > 1) {
@@ -45,11 +47,11 @@ output("len: $len");
 output("finder_name: $finder_name ");
 
 
-//---
+//
 Random::seed(112);
 
 
-//--- replace a percentage of characters with underscores
+// replace a percentage of characters with underscores
 $arr = str_split($str);
 $loops = 0;
 while ($hide_characters > 0) {
@@ -72,7 +74,7 @@ while ($hide_characters > 0) {
 }
 
 
-//--- tell it to the world
+// tell it to the world
 $r = new stdClass();
 $r->hint = join('', $arr);
 $r->finder_name = $finder_name;
@@ -85,14 +87,14 @@ output($r->hint);
 
 
 
-//---
+//
 function output($str)
 {
     echo "* $str \n";
 }
 
 
-//--- pseudo random number generator
+// pseudo random number generator
 class Random
 {
     // random seed
