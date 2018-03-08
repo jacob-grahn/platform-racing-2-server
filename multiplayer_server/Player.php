@@ -597,7 +597,7 @@ class Player
                     }
                     $this->write('systemChat`To find out if a Happy Hour is active and when it expires, type /hh status. '.$hhmsg_admin.$hhmsg_server_owner.$hhmsg_warning);
                 } elseif ($args[0] == 'activate' && $this->group >=3 && $this->server_owner == false) {
-                    if (HappyHour::isActive() != true) {
+                    if (HappyHour::isActive() != true && pr2_server::$tournament == false) {
                         if (!isset($args[1])) {
                             HappyHour::activate();
                         }
@@ -609,6 +609,8 @@ class Player
                             HappyHour::activate($args[1]);
                         }
                         $player_room->send_chat('systemChat`'.htmlspecialchars($this->name).' just triggered a Happy Hour!');
+                    } elseif (pr2_server::$tournament == true) {
+                        $this->write('systemChat`You can\'t activate a Happy Hour on a server with tournament mode enabled. Disable tournament mode and try again.');
                     } else {
                         $hh_timeleft = HappyHour::timeLeft();
                         $this->write('systemChat`There is already a Happy Hour on this server. It will expire in ' . format_duration($hh_timeleft) . '.');
