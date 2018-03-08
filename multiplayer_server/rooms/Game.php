@@ -510,18 +510,33 @@ class Game extends Room
             }
 
             //--- opponent bonus ---
-            for ($i = $place+1; $i < count($this->finish_array); $i++) {
-                $race_stats = $this->finish_array[$i];
-                $exp_gain = ($race_stats->rank+5) * $time_mod;
-                /*if($race_stats->ip == $player->ip) {
-                $exp_gain /= 2;
-                }*/
-                $exp_gain = ceil($this->apply_exp_curve($player, $exp_gain));
-                if (pr2_server::$no_prizes) {
-                    $exp_gain = 0;
+            // if/then with artifact check
+            if ($this->course_id != self::$artifact_level_id || $player->artifact == 1 || $player->wearing_hat(Hats::ARTIFACT) == false) {
+                for ($i = $place+1; $i < count($this->finish_array); $i++) {
+                    $race_stats = $this->finish_array[$i];
+                    $exp_gain = ($race_stats->rank+5) * $time_mod;
+                    /*if($race_stats->ip == $player->ip) {
+                    $exp_gain /= 2;
+                    }*/
+                    $exp_gain = ceil($this->apply_exp_curve($player, $exp_gain));
+                    if (pr2_server::$no_prizes) {
+                        $exp_gain = 0;
+                    }
+                    $tot_exp_gain += $exp_gain;
+                    $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
                 }
-                $tot_exp_gain += $exp_gain;
-                $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
+            }
+            else {
+                for ($i = $place+1; $i < count($this->finish_array); $i++) {
+                    $race_stats = $this->finish_array[$i];
+                    $exp_gain = ($race_stats->rank+5) * $time_mod;
+                    $exp_gain = ceil($this->apply_exp_curve($player, $exp_gain));
+                    if (pr2_server::$no_prizes) {
+                        $exp_gain = 0;
+                    }
+                    $tot_exp_gain += $exp_gain;
+                }
+                $player->write('award`Defeated Opponents`+ '.$exp_gain);
             }
 
             // hat, campaign, hh bonuses
