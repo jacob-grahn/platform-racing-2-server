@@ -114,24 +114,7 @@ function check_if_banned($connection, $user_id, $ip)
 
         //figure out what the best way to say this is
         $seconds = $expire_time - time();
-        if ($seconds < 60) {
-            $time_left = "$seconds second(s)";
-        } elseif ($seconds < 60*60) {
-            $minutes = round($seconds/60, 0);
-            $time_left = "$minutes minute(s)";
-        } elseif ($seconds < 60*60*24) {
-            $hours = round($seconds/60/60, 0);
-            $time_left = "$hours hour(s)";
-        } elseif ($seconds < 60*60*24*30) {
-            $days = round($seconds/60/60/24, 0);
-            $time_left = "$days day(s)";
-        } elseif ($seconds < 60*60*24*30*12) {
-            $months = round($seconds/60/60/24/30, 0);
-            $time_left = "$months month(s)";
-        } else {
-            $years = round($seconds/60/60/24/30/12, 0);
-            $time_left = "$years year(s)";
-        }
+        format_duration($seconds);
 
         //tell it to the world
         $output = "This account or ip address has been banned.\n"
@@ -141,6 +124,51 @@ function check_if_banned($connection, $user_id, $ip)
 
         throw new Exception($output);
     }
+}
+
+
+
+
+
+function format_duration($seconds)
+{
+    if ($seconds < 60) {
+        $time_left = "$seconds second";
+        if ($seconds != 1) {
+            $time_left .= 's';
+        }
+    } elseif ($seconds < 60*60) {
+        $minutes = round($seconds/60, 0);
+        $time_left = "$minutes minute";
+        if ($minutes != 1) {
+            $time_left .= 's';
+        }
+    } elseif ($seconds < 60*60*24) {
+        $hours = round($seconds/60/60, 0);
+        $time_left = "$hours hour";
+        if ($hours != 1) {
+            $time_left .= 's';
+        }
+    } elseif ($seconds < 60*60*24*30) {
+        $days = round($seconds/60/60/24, 0);
+        $time_left = "$days day";
+        if ($days != 1) {
+            $time_left .= 's';
+        }
+    } elseif ($seconds < 60*60*24*30*12) {
+        $months = round($seconds/60/60/24/30, 0);
+        $time_left = "$months month";
+        if ($months != 1) {
+            $time_left .= 's';
+        }
+    } else {
+        $years = round($seconds/60/60/24/30/12, 0);
+        $time_left = "$years year";
+        if ($years != 1) {
+            $time_left .= 's';
+        }
+    }
+    return $time_left;
 }
 
 
