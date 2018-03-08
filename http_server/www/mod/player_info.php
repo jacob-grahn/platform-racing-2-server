@@ -2,8 +2,8 @@
 
 require_once '../../fns/all_fns.php';
 require_once '../../fns/output_fns.php';
-require_once '../queries/get_info/user.php'; // pdo
-require_once '../queries/get_info/pr2.php'; // pdo
+require_once '../queries/users/user_select.php'; // pdo
+require_once '../queries/pr2/pr2_select.php'; // pdo
 
 $user_id = (int) default_val($_GET['user_id'], 0);
 $force_ip = find_no_cookie('force_ip');
@@ -15,14 +15,14 @@ try {
     if (is_empty($user_id, false) && is_empty($force_ip) && is_empty($ip)) {
         throw new Exception("Invalid user ID specified.");
     }
-    
+
     // rate limiting
     rate_limit('mod-player-info-'.$mod_ip, 5, 2);
-    
+
     // connect
     $db = new DB();
     $pdo = pdo_connect();
-    
+
     // make sure you're a moderator
     $mod = check_moderator($db, false);
 } catch (Exception $e) {
@@ -38,8 +38,8 @@ try {
     output_header('Player Info', true);
 
     //get dem infos
-    $user = user_select_by_id($pdo, $user_id);
-    $pr2 = pr2_select_by_id($pdo, $user_id);
+    $user = user_select($pdo, $user_id);
+    $pr2 = pr2_select($pdo, $user_id);
 
     // sanity check
     if ($user == false || $pr2 == false) {
@@ -120,7 +120,7 @@ try {
         ."<p>Currently banned: $banned</p>"
         ."<p>IP has been banned $ip_ban_count time$s2.</p> $ip_ban_list";
     }
-    
+
     // footer
     output_footer();
 } catch (Exception $e) {
