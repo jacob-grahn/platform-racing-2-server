@@ -40,8 +40,9 @@ class HappyHour
     
     public static function timeLeft()
     {   
-        if (isActive() != false) {
-            return $hh_active_until;
+        if (isActive() != false && $hh_active_until != 0) {
+            $timeleft = time() - $hh_active_until;
+            return $timeleft;
         } else {
             return false;
         }
