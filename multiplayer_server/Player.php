@@ -1078,16 +1078,16 @@ class Player
         global $port, $server_id, $db;
         
         // make sure none of the part values are blank to avoid server crashes
-        if (is_empty($this->hat, false) {
+        if (is_empty($this->hat, false)) {
             $this->gain_part('hat', 1, true);
         }
-        if (is_empty($this->head, false) {
+        if (is_empty($this->head, false)) {
             $this->gain_part('head', 1, true);
         }
-        if (is_empty($this->body, false) {
+        if (is_empty($this->body, false)) {
             $this->gain_part('body', 1, true);
         }
-        if (is_empty($this->feet, false) {
+        if (is_empty($this->feet, false)) {
             $this->gain_part('feet', 1, true);
         }
 
