@@ -1075,9 +1075,21 @@ class Player
 
     public function save_info()
     {
-        global $port;
-        global $server_id;
-        global $db;
+        global $port, $server_id, $db;
+        
+        // make sure none of the part values are blank to avoid server crashes
+        if (is_empty($this->hat, false) {
+            $this->gain_part('hat', 1, true);
+        }
+        if (is_empty($this->head, false) {
+            $this->gain_part('head', 1, true);
+        }
+        if (is_empty($this->body, false) {
+            $this->gain_part('body', 1, true);
+        }
+        if (is_empty($this->feet, false) {
+            $this->gain_part('feet', 1, true);
+        }
 
         // auto removing some hat?
         $index = array_search(27, $this->hat_array);
