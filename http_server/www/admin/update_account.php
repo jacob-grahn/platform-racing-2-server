@@ -126,16 +126,16 @@ function update($db)
     }
     
     // make sure none of the part values are blank to avoid server crashes
-    if (is_empty($hats, false) {
+    if (is_empty($hats, false)) {
         $hats = "1";
     }
-    if (is_empty($heads, false) {
+    if (is_empty($heads, false)) {
         $heads = "1";
     }
-    if (is_empty($bodies, false) {
+    if (is_empty($bodies, false)) {
         $bodies = "1";
     }
-    if (is_empty($feet, false) {
+    if (is_empty($feet, false)) {
         $feet = "1";
     }
 
