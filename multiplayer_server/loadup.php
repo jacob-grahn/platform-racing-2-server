@@ -2,8 +2,9 @@
 
 function begin_loadup($server_id)
 {
-    global $db;
+    global $db, $hh;
     $db = new DB();
+    $hh = new HappyHour();
 
     $server = $db->grab_row('server_select', array($server_id));
     $campaign = $db->to_array($db->call('campaign_select'));
@@ -14,7 +15,7 @@ function begin_loadup($server_id)
     set_campaign($campaign);
     set_perks($perks);
     place_artifact($artifact);
-    HappyHour::activate();
+    $hh->activate();
 }
 
 
