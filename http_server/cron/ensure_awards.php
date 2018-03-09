@@ -26,7 +26,7 @@ try {
         $user_id = $row->user_id;
         try {
             award_parts($db, $user_id, $type, $parts, false);
-            echo "user_id: $user_id, type: $type, part: $parts \n";
+            echo "user_id: $user_id, type: $type, part: $part} \n";
         } catch (Exception $e) {
             echo "Error: $e";
         }
