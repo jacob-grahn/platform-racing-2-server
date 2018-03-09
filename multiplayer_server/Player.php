@@ -653,8 +653,7 @@ class Player
                 }
             } // help command
             elseif ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
-                $temp_mod = '';
-                $full_mod = '';
+                $mod = '';
                 $effects = '';
                 $admin = '';
                 $server_owner = '';
