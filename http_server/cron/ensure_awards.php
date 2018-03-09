@@ -1,8 +1,8 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/part_awards/part_awards_select_list';
-require_once __DIR__ . '/../queries/part_awards/part_awards_delete_old';
+require_once __DIR__ . '/../queries/part_awards/part_awards_select_list.php';
+require_once __DIR__ . '/../queries/part_awards/part_awards_delete_old.php';
 
 try {
 
