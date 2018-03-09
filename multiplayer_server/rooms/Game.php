@@ -515,9 +515,6 @@ class Game extends Room
                 for ($i = $place+1; $i < count($this->finish_array); $i++) {
                     $race_stats = $this->finish_array[$i];
                     $exp_gain = ($race_stats->rank+5) * $time_mod;
-                    /*if($race_stats->ip == $player->ip) {
-                    $exp_gain /= 2;
-                    }*/
                     $exp_gain = ceil($this->apply_exp_curve($player, $exp_gain));
                     if (pr2_server::$no_prizes) {
                         $exp_gain = 0;
@@ -558,10 +555,6 @@ class Game extends Room
                 $tot_exp_gain += $tot_exp_gain * $hat_bonus;
             }
 
-            if (isset($prize) && $prize->get_type() == Prizes::TYPE_EXP) {
-                $tot_exp_gain += $prize->get_id();
-            }
-
             if ($finish_time >= 90 && $wearing_moon) {
                 $tot_lux_gain = count($this->finish_array) - $place - 1;
             }
@@ -571,13 +564,13 @@ class Game extends Room
                 $tot_exp_gain *= 2;
                 $tot_lux_gain *= 2;
             }
-            
+
             // campaign bonus
             if (isset($this->campaign)) {
                 $tot_exp_gain *= 2;
                 $tot_lux_gain *= 2;
             }
-            
+
             // tell the user about the hat/hh/campaign bonus(es)
             if ($hat_bonus > 0 || isset($this->campaign) || HappyHour::isActive() == true) {
                 // hat bonus only
@@ -637,11 +630,7 @@ class Game extends Room
             }
 
             //--- save
-            if (isset($prize) && $prize->get_type() != Prizes::TYPE_EXP) {
-                $player->save_info();
-            } else {
-                $player->maybe_save();
-            }
+            $player->maybe_save();
         } else {
             $this->set_finish_time($player, 'forfeit');
         }
