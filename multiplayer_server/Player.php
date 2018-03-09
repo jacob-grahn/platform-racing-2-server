@@ -594,7 +594,7 @@ class Player
                     } elseif ($this->group >= 3 && $this->server_owner == true) {
                         $hhmsg_server_owner = "To deactivate the current Happy Hour, type /hh deactivate. $hhmsg_warning";
                     }
-                    $this->write('systemChat`To find out if a Happy Hour is active and when it expires, type /hh status. '.$hhmsg_admin.$hhmsg_server_owner.$hhmsg_warning);
+                    $this->write('systemChat`To find out if a Happy Hour is active and when it expires, type /hh status. '.$hhmsg_admin.$hhmsg_server_owner);
                 } elseif ($args[0] == 'activate' && $this->group >=3 && $this->server_owner == false) {
                     if (HappyHour::isActive() != true && pr2_server::$tournament == false) {
                         if (!isset($args[1])) {
