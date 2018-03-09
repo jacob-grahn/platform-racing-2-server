@@ -97,6 +97,11 @@ function update($db)
     $user_id = (int) find('id');
     $email = find('email');
     $account_changes = find('account_changes');
+    $hats = find('hats');
+    $heads = find('heads');
+    $bodies = find('bodies');
+    $feet = find('feet');
+    
 
     // call user information
     $user = $db->grab_row('user_select', array($user_id));
@@ -119,6 +124,20 @@ function update($db)
         $change_id = $db->grab('change_id', 'changing_email_select', array($code));
         $db->call('changing_email_complete', array($change_id, ''));
     }
+    
+    // make sure none of the part values are blank to avoid server crashes
+    if (is_empty($hats, false) {
+        $hats = "1";
+    }
+    if (is_empty($heads, false) {
+        $heads = "1";
+    }
+    if (is_empty($bodies, false) {
+        $bodies = "1";
+    }
+    if (is_empty($feet, false) {
+        $feet = "1";
+    }
 
     // check for description of changes
     if (is_empty($account_changes)) {
@@ -133,10 +152,10 @@ function update($db)
         find('name'),
         find('email'),
         $guild_id,
-        find('hats'),
-        find('heads'),
-        find('bodies'),
-        find('feet'),
+        $hats,
+        $heads,
+        $bodies,
+        $feet,
         find('eHats'),
         find('eHeads'),
         find('eBodies'),
