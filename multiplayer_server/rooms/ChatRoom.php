@@ -59,7 +59,7 @@ class ChatRoom extends Room
     }
 
 
-    public function send_chat($message, $user_id)
+    public function send_chat($message, $user_id = -1)
     {
         $chat_message = new ChatMessage($user_id, $message);
 
