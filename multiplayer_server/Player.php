@@ -574,12 +574,14 @@ class Player
                     $this->write("message`Error: Could not find a user with the name \"$safe_dc_name\" on this server."); // they're not online or don't exist
                 }
             } // hh status for everyone, activate for admins, deactivate for admins and server owners
-            elseif (($chat_message == '/hh' || strpos($chat_message, '/hh ') === 0)) {
+            elseif (($chat_message == '/hh' || strpos($chat_message, '/hh ') === 0) && $this->group >= 3) {
                 $args = explode(' ', $str);
                 array_shift($args);
                 
                 $arg = trim(substr($chat_message, 4));
-                if ($args[0] == 'status' || $chat_message == '/hh') {
+                if ($chat_message == '/hh debug' && $this->group >= 3) {
+                    $this->write('message`$args: '.var_dump($args));
+                } elseif ($args[0] == 'status' || $chat_message == '/hh') {
                     $hh_timeleft = HappyHour::timeLeft();
                     if ($hh_timeleft != false) {
                         $this->write('systemChat`There is currently a Happy Hour on this server! It will expire in ' . format_duration($hh_timeleft) . '.');
