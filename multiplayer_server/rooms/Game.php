@@ -510,29 +510,22 @@ class Game extends Room
             }
 
             //--- opponent bonus ---
-            // if/then with artifact check
-            if ($this->course_id != self::$artifact_level_id || $player->artifact == 1 || $player->wearing_hat(Hats::ARTIFACT) == false) {
-                for ($i = $place+1; $i < count($this->finish_array); $i++) {
-                    $race_stats = $this->finish_array[$i];
-                    $exp_gain = ($race_stats->rank+5) * $time_mod;
-                    $exp_gain = ceil($this->apply_exp_curve($player, $exp_gain));
-                    if (pr2_server::$no_prizes) {
-                        $exp_gain = 0;
-                    }
-                    $tot_exp_gain += $exp_gain;
+            // I think artifact_mode just makes sure all of the bonus lines don't get filled up in the client
+            $artifact_mode = !($this->course_id != self::$artifact_level_id || $player->artifact == 1 || $player->wearing_hat(Hats::ARTIFACT) == false);
+
+            for ($i = $place+1; $i < count($this->finish_array); $i++) {
+                $race_stats = $this->finish_array[$i];
+                $exp_gain = ($race_stats->rank+5) * $time_mod;
+                $exp_gain = ceil($this->apply_exp_curve($player, $exp_gain));
+                if (pr2_server::$no_prizes) {
+                    $exp_gain = 0;
+                }
+                $tot_exp_gain += $exp_gain;
+                if (!$artifact_mode) {
                     $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
                 }
             }
-            else {
-                for ($i = $place+1; $i < count($this->finish_array); $i++) {
-                    $race_stats = $this->finish_array[$i];
-                    $exp_gain = ($race_stats->rank+5) * $time_mod;
-                    $exp_gain = ceil($this->apply_exp_curve($player, $exp_gain));
-                    if (pr2_server::$no_prizes) {
-                        $exp_gain = 0;
-                    }
-                    $tot_exp_gain += $exp_gain;
-                }
+            if ($artifact_mode) {
                 $player->write('award`Defeated Opponents`+ '.$exp_gain);
             }
 
