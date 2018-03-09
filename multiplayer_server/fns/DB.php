@@ -61,7 +61,7 @@ class DB
 
         $result = $this->mysqli->query($query_str);
         if (!$result) {
-            throw new Exception('Could not perform query.');
+            throw new Exception($this->mysqli->error);
         }
 
         $end_time = microtime(true);
