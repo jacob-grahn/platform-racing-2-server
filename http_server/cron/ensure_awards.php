@@ -1,21 +1,20 @@
 <?php
+
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/part_awards/part_awards_select_list';
+require_once __DIR__ . '/../queries/part_awards/part_awards_delete_old';
 
 try {
-    //connecto!!!
+
+    // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
+    // select all records, they get cleared out weekly or somesuch
+    $awards = part_awards_select_list($pdo);
 
-    //select all records and make sure those users have a top hat
-    $result = $db->query(
-        'select user_id, type, part
-							from part_awards'
-    );
-    if (!$result) {
-        throw new Exception('Could not retrieve part awards.');
-    }
-
-    while ($row = $result->fetch_object()) {
+    // give users their awards
+    foreach ($awards as $row) {
         if ($row->part == 0) {
             $part = '*';
         } else {
@@ -33,15 +32,9 @@ try {
         }
     }
 
+    // delete older records
+    part_awards_delete_old($pdo);
 
-    //delete older records
-    $result = $db->query(
-        'delete from part_awards
-								 	WHERE DATE_SUB(CURDATE(),INTERVAL 5 DAY) > dateline'
-    );
-    if (!$result) {
-        throw new Exception('Could not delete old award records.');
-    }
 } catch (Exception $e) {
     echo "Error: $e";
     exit();
