@@ -590,9 +590,9 @@ class Player
                     $hhmsg_server_owner = '';
                     $hhmsg_warning = 'WARNING: This will remove all stacked Happy Hours bought by all users on this server from the Vault of Magics, as well as ending the current one.';
                     if ($this->group >= 3 && $this->server_owner == false) {
-                        $hhmsg_admin = "To activate a Happy Hour, type /hh activate. To deactivate the current Happy Hour, type /hh deactivate. $warning";
+                        $hhmsg_admin = "To activate a Happy Hour, type /hh activate. To deactivate the current Happy Hour, type /hh deactivate. $hhmsg_warning";
                     } elseif ($this->group >= 3 && $this->server_owner == true) {
-                        $hhmsg_server_owner = "To deactivate the current Happy Hour, type /hh deactivate. $warning";
+                        $hhmsg_server_owner = "To deactivate the current Happy Hour, type /hh deactivate. $hhmsg_warning";
                     }
                     $this->write('systemChat`To find out if a Happy Hour is active and when it expires, type /hh status. '.$hhmsg_admin.$hhmsg_server_owner.$hhmsg_warning);
                 } elseif ($args[0] == 'activate' && $this->group >=3 && $this->server_owner == false) {
@@ -615,10 +615,10 @@ class Player
                         $this->write('systemChat`There is already a Happy Hour on this server. It will expire in ' . format_duration($hh_timeleft) . '.');
                     }
                 } elseif ($args[0] == 'deactivate' && $this->group >= 3) {
-                    if ($this->hh_warned == false) {
-                        $this->hh_warned == true;
+                    if (!$this->hh_warned) {
+                        $this->hh_warned = true;
                         $this->write("systemChat`WARNING: This will remove ALL stacked Happy Hours bought by ALL users on this server from the Vault of Magics, as well as ending the current one. If you're sure you want to do this, type the command again.");
-                    } elseif (HappyHour::isActive() == true && $this->hh_warned == true) {
+                    } elseif (HappyHour::isActive() && $this->hh_warned) {
                         HappyHour::deactivate();
                         $player_room->send_chat('systemChat`' . htmlspecialchars($this->name) . ' just ended the current Happy Hour.');
                     } else {
