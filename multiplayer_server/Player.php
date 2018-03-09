@@ -253,18 +253,18 @@ class Player
 
     public function send_chat($chat_message)
     {
-        
+
         // globals and variables
         global $guild_id, $guild_owner, $player_array, $port, $server_name, $server_id, $server_expire_time, $uptime, $db;
         $admin_name = $this->name;
         $admin_id = $this->user_id;
         $ip = $this->ip;
-        
+
         // sanity check: is the message more than 100 characters?
         if (strlen($chat_message) > 100) {
             $chat_message = substr($chat_message, 0, 100);
         }
-        
+
         // find what room the player is in
         if (isset($this->chat_room) && !isset($this->game_room)) {
             $room_type = "c"; // c for chat
@@ -440,7 +440,7 @@ class Player
                 if ($guild_id != '0') {
                     $is_ps = 'yes';
                 }
-                
+
                 if ($chat_message == '/debug help') {
                     $this->write("systemChat`Acceptable Arguments:<br><br>- help<br>- player *name*<br>- restart_server<br>- server");
                 } elseif ($chat_message == '/debug restart_server') {
@@ -450,7 +450,7 @@ class Player
                 } elseif (strpos($chat_message, '/debug player ') === 0) {
                     $player_name = trim(substr($chat_message, 14));
                     $player = name_to_player($player_name);
-                    
+
                     if (isset($player)) {
                         $pip = $player->ip;
                         $pname = $player->name;
@@ -491,7 +491,7 @@ class Player
                         } else {
                             $pso = 'no';
                         }
-                        
+
                         $this->write(
                             "message`"
                             ."chat_message: $chat_message<br>"
@@ -551,21 +551,21 @@ class Player
                 }
                 $dc_player = name_to_player($dc_name);
                 $safe_dc_name = htmlspecialchars($dc_player->name); // make the name safe to echo back to the user
-                
+
                 // permission checks
                 if (isset($dc_player) && ($dc_player->group < 2 || $this->server_owner == true)) {
                     $mod_id = $this->user_id;
                     $mod_name = $this->name;
                     $mod_ip = $this->ip;
-                    
+
                     // do it
                     $dc_player->remove();
-                    
+
                     // if they're an actual mod, log it
                     if ($this->server_owner != true || $this->user_id == 4291976) {
                         $db->call('mod_action_insert', array($mod_id, "$mod_name disconnected $dc_name from $server_name from $mod_ip.", $mod_id, $mod_ip));
                     }
-                    
+
                     // tell the world
                     $this->write("message`$safe_dc_name has been disconnected."); // tell the disconnector
                 } elseif (isset($dc_player) && ($dc_player->group > 2 || $this->server_owner == false)) {
@@ -575,7 +575,7 @@ class Player
                 }
             } // hh status for everyone, activate for admins, deactivate for admins and server owners
             elseif (($chat_message == '/hh' || strpos($chat_message, '/hh ') === 0)) {
-                $args = explode(' ', $str);
+                $args = explode(' ', $chat_message);
                 array_shift($args);
                 
                 $arg = trim(substr($chat_message, 4));
@@ -642,7 +642,7 @@ class Player
                     }
                     $target = name_to_player($to_name);
                     $owner = $this;
-                    
+
                     // do the appropriate action
                     if ($action == 'promote') {
                         promote_server_mod($to_name, $owner, $target);
@@ -1059,9 +1059,9 @@ class Player
         $this->temp_mod = true;
         $this->write('becomeTempMod`');
     }
-    
-    
-    
+
+
+
     // For now, I'm enabling this just for Fred the G. Cactus so I can test it out.
     // I'll have to figure out the specifics of how PR2 handles a client-side admin.
     public function become_server_owner()
