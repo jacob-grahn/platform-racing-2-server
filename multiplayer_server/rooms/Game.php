@@ -463,7 +463,7 @@ class Game extends Room
             if (isset($prize)) {
                 $autoset = ( $prize->get_type() == 'hat' );
                 $result = $player->gain_part($prize->get_type(), $prize->get_id(), $autoset);
-                if ($result != false) {
+                if ($result == true) {
                     $player->write('winPrize`' . $prize->to_str());
                 }
             }

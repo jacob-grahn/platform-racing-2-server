@@ -41,7 +41,7 @@ class HappyHour
     public static function timeLeft()
     {
         if (self::isActive()) {
-            $timeleft = time() - self::$hh_active_until;
+            $timeleft = self::$hh_active_until - time();
             return $timeleft;
         } else {
             return false;
