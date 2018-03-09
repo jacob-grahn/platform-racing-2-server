@@ -3,7 +3,7 @@
 class HappyHour
 {
 
-    public static $hh_active_until = 0;
+    private static $hh_active_until = 0;
     public static $random_hour = 0;
 
     public static function activate($duration = 3600)
@@ -40,8 +40,8 @@ class HappyHour
 
     public static function timeLeft()
     {
-        if (self::isActive() != false && $hh_active_until != 0) {
-            $timeleft = time() - $hh_active_until;
+        if (self::isActive()) {
+            $timeleft = time() - self::$hh_active_until;
             return $timeleft;
         } else {
             return false;

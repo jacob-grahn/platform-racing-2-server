@@ -577,9 +577,8 @@ class Player
             elseif (($chat_message == '/hh' || strpos($chat_message, '/hh ') === 0)) {
                 $args = explode(' ', $chat_message);
                 array_shift($args);
-                
-                $arg = trim(substr($chat_message, 4));
-                if ($args[0] == 'status' || $chat_message == '/hh') {
+
+                if ($chat_message == '/hh' || $args[0] == 'status') {
                     $hh_timeleft = HappyHour::timeLeft();
                     if ($hh_timeleft != false) {
                         $this->write('systemChat`There is currently a Happy Hour on this server! It will expire in ' . format_duration($hh_timeleft) . '.');
