@@ -9,11 +9,11 @@ class HappyHour
     public static function activate($duration = 3600)
     {
         $time = time();
-        
+
         if (self::$hh_active_until < $time) {
             self::$hh_active_until = $time;
         }
-        
+
         self::$hh_active_until += $duration;
     }
 
@@ -28,19 +28,19 @@ class HappyHour
             return $current_hour === self::$random_hour;
         }
     }
-    
+
     public static function deactivate()
     {
         $time = time();
-        
+
         if (self::$hh_active_until > $time) {
             self::$hh_active_until = 0;
         }
     }
-    
+
     public static function timeLeft()
-    {   
-        if (isActive() != false && $hh_active_until != 0) {
+    {
+        if (self::isActive() != false && $hh_active_until != 0) {
             $timeleft = time() - $hh_active_until;
             return $timeleft;
         } else {
