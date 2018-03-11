@@ -85,9 +85,12 @@ function client_warn($socket, $data)
                 $time = 60;
                 break;
             default:
-                $player->write('message`Error: Invalid warning number.');
+                $mod->write('message`Error: Invalid warning number.');
                 break;
         }
+        
+        // warn the user
+        $warned->chat_ban = time() + $time;
 
         if (isset($mod->chat_room)) {
             $mod->chat_room->send_chat("systemChat`$safe_mname has given $safe_wname $num $w_str. They have been banned from the chat for $time seconds.");
