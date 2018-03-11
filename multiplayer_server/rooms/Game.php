@@ -50,7 +50,6 @@ class Game extends Room
 
     public function add_player($player)
     {
-        if (count($this->finish_array) < 4) {
             Room::add_player($player);
             $player->socket->write('startGame`'.$this->course_id);
             $player->temp_id = $this->temp_id;
@@ -64,8 +63,7 @@ class Game extends Room
             $this->temp_id++;
             $race_stats = new RaceStats($player->temp_id, $player->name, $player->active_rank, $player->ip);
             array_push($this->finish_array, $race_stats);
-            $player->race_stats = $race_stats;
-        }
+            $player->race_stats = $race_stats;     
     }
 
 
@@ -206,7 +204,7 @@ class Game extends Room
             $this->prize = $slender_prizes[ array_rand($slender_prizes) ];
         }
 
-        if (!isset($this->prize) && $player_count >= 1) {
+        if (!isset($this->prize) && $player_count >= 2) {
             if (rand($player_count*2, 20) >= 19) {
                 $prize_array = array(
                 Prizes::$TACO_HEAD,
