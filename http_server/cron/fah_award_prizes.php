@@ -7,6 +7,7 @@ require_once __DIR__ . '/../queries/folding/folding_select_list.php';
 require_once __DIR__ . '/../queries/folding/folding_update.php';
 require_once __DIR__ . '/../queries/messages/messages_insert.php';
 require_once __DIR__ . '/../queries/rank_tokens/rank_token_upsert.php';
+require_once __DIR__ . '/../querires/users/user_select_by_name.php';
 
 $prize_array = array();
 $processed_names = array();
