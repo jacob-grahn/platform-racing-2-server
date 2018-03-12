@@ -36,7 +36,7 @@ try {
     $users_result = $db->query(
         "SELECT
 						users.name as name,
-						users.power as group,
+						users.power as power,
 						(rank_tokens.used_tokens + pr2.rank) AS active_rank,
 						pr2.hat_array AS hats
 					FROM users, pr2, rank_tokens
@@ -72,7 +72,7 @@ try {
         $safe_name = str_replace(" ", "&nbsp;", $safe_name);
 
         // group
-        $group = (int) $user->group;
+        $group = (int) $user->power;
         $group_color = $group_colors[$group];
 
         // rank
