@@ -120,17 +120,17 @@ class SocketDaemon
             if ($events > 0) {
                 foreach ($read_set as $socket) {
                     $socket = $this->getClass($socket);
-                    if (is_subclass_of($socket, 'SocketServer')) {
+                    if (is_subclass_of($socket, '\chabot\SocketServer')) {
                         $client = $socket->accept();
                         $this->clients[(int)$client->socket] = $client;
-                    } elseif (is_subclass_of($socket, 'SocketClient')) {
+                    } elseif (is_subclass_of($socket, '\chabot\SocketClient')) {
                         // regular onRead event
                         $socket->read();
                     }
                 }
                 foreach ($write_set as $socket) {
                     $socket = $this->getClass($socket);
-                    if (is_subclass_of($socket, 'SocketClient')) {
+                    if (is_subclass_of($socket, '\chabot\SocketClient')) {
                         if ($socket->connecting === true) {
                             $socket->onConnect();
                             $socket->connecting = false;
@@ -140,7 +140,7 @@ class SocketDaemon
                 }
                 foreach ($exception_set as $socket) {
                     $socket = $this->getClass($socket);
-                    if (is_subclass_of($socket, 'SocketClient')) {
+                    if (is_subclass_of($socket, '\chabot\SocketClient')) {
                         $socket->onDisconnect();
                         if (isset($this->clients[(int)$socket->socket])) {
                             unset($this->clients[(int)$socket->socket]);
