@@ -40,10 +40,10 @@ abstract class SocketServer extends Socket
     public function accept()
     {
         $client = new $this->client_class(parent::accept());
-        if (!is_subclass_of($client, 'SocketServerClient')) {
+        if (!is_subclass_of($client, '\chabot\SocketServerClient')) {
             throw new \Exception(
                 'Invalid serverClient class specified! '
-                .'Has to be a subclass of SocketServerClient'
+                .'Has to be a subclass of \chabot\SocketServerClient'
             );
         }
         $this->onAccept($client);
