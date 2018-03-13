@@ -14,5 +14,5 @@ require_once(__DIR__ . '/server_client.php');
 
 //start the socket server
 $daemon = new \chabot\SocketDaemon();
-$server = $daemon->createServer('jiggmin\ps\server', 'jiggmin\ps\server_client', 0, 843);
+$server = $daemon->createServer('jiggmin\ps\server', 'jiggmin\ps\serverClient', 0, 843);
 $daemon->process();
