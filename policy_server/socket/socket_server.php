@@ -41,7 +41,7 @@ abstract class SocketServer extends Socket
     {
         $client = new $this->client_class(parent::accept());
         if (!is_subclass_of($client, 'SocketServerClient')) {
-            throw new SocketException(
+            throw new \Exception(
                 'Invalid serverClient class specified! '
                 .'Has to be a subclass of SocketServerClient'
             );

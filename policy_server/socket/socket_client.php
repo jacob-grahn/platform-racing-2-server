@@ -34,7 +34,7 @@ abstract class SocketClient extends Socket
         $this->connecting = true;
         try {
             parent::connect($remote_address, $remote_port);
-        } catch (SocketException $e) {
+        } catch (\Exception $e) {
             echo "Caught exception: ".$e->getMessage()."\n";
         }
     }
@@ -61,7 +61,7 @@ abstract class SocketClient extends Socket
             }
             $this->onWrite();
             return true;
-        } catch (SocketException $e) {
+        } catch (\Exception $e) {
             $old_socket         = (int)$this->socket;
             $this->close();
             $this->socket       = $old_socket;
@@ -77,7 +77,7 @@ abstract class SocketClient extends Socket
         try {
             $this->read_buffer .= parent::read($length);
             $this->onRead();
-        } catch (SocketException $e) {
+        } catch (\Exception $e) {
             $old_socket         = (int)$this->socket;
             $this->close();
             $this->socket       = $old_socket;

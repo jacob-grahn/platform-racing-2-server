@@ -34,19 +34,19 @@ abstract class SocketServerClient extends SocketClient
 
         try {
             if (!is_resource($this->socket)) {
-                throw new SocketException("Invalid socket or resource");
+                throw new \Exception("Invalid socket or resource");
             } elseif (!socket_getsockname($this->socket, $this->local_addr, $this->local_port)) {
-                throw new SocketException(
+                throw new \Exception(
                     "Could not retrieve local address & port: "
                     .socket_strerror(socket_last_error($this->socket))
                 );
             } elseif (!socket_getpeername($this->socket, $this->remote_address, $this->remote_port)) {
-                throw new SocketException(
+                throw new \Exception(
                     "Could not retrieve remote address & port: "
                     .socket_strerror(socket_last_error($this->socket))
                 );
             }
-        } catch (SocketException $e) {
+        } catch (\Exception $e) {
             echo "Caught exception: ".$e->getMessage()."\n";
         }
 

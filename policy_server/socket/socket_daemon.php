@@ -29,7 +29,7 @@ class SocketDaemon
     {
         $server = new $server_class($client_class, $bind_address, $bind_port);
         if (!is_subclass_of($server, '\chabot\SocketServer')) {
-            throw new SocketException("Invalid server class specified! Has to be a subclass of \chabot\SocketServer");
+            throw new \Exception("Invalid server class specified! Has to be a subclass of \chabot\SocketServer");
         }
         $this->servers[(int)$server->socket] = $server;
         return $server;
@@ -39,7 +39,7 @@ class SocketDaemon
     {
         $client = new $client_class($bind_address, $bind_port);
         if (!is_subclass_of($client, '\chabot\SocketClient')) {
-            throw new SocketException("Invalid client class specified! Has to be a subclass of \chabot\SocketClient");
+            throw new \Exception("Invalid client class specified! Has to be a subclass of \chabot\SocketClient");
         }
         $client->setNonBlock(true);
         $client->connect($remote_address, $remote_port);
@@ -105,7 +105,7 @@ class SocketDaemon
         } elseif (isset($this->servers[(int)$socket])) {
             return $this->servers[(int)$socket];
         } else {
-            throw (new SocketException("Could not locate socket class for $socket"));
+            throw (new \Exception("Could not locate socket class for $socket"));
         }
     }
 
