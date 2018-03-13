@@ -1,9 +1,8 @@
 <?php
 
 require_once __DIR__ . '/env.php';
-require_once __DIR__ . '/multiplayer_server/fns/all_fns.php';
 require_once __DIR__ . '/multiplayer_server/fns/management_fns.php';
-require_once __DIR__ . '/http_server/fns/db_fns.php';
+require_once __DIR__ . '/http_server/fns/pdo_connect.php';
 require_once __DIR__ . '/http_server/queries/servers/servers_select_list.php';
 
 // $my_ip exec(__DIR__ . '/get_server_ip');
