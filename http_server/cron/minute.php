@@ -28,7 +28,8 @@ function run_update_cycle($db)
     $send_str = json_encode($send);
 
     //--- send the data
-    $servers = poll_servers_2($db, 'update_cycle`' . $send_str);
+    $server_list = $db->to_array($db->call('servers_select', array()));
+    $servers = poll_servers($server_list, 'update_cycle`' . $send_str);
 
     //--- process replies
     foreach ($servers as $server) {

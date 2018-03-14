@@ -101,7 +101,7 @@ function get_ip()
 
 function check_value($value, $check_for, $yes = 'yes', $no = 'no')
 {
-    
+
     /*
     Arguments:
     1. $value: the string/value you're checking
@@ -109,7 +109,7 @@ function check_value($value, $check_for, $yes = 'yes', $no = 'no')
     3. $yes: what you want to be echoed if the check is found
     4. $no: what you want to be echoed if the check isn't found
     */
-    
+
     if ($value == $check_for) {
         return $yes;
     } else {
@@ -123,7 +123,7 @@ function is_empty($str, $incl_zero = true)
     $incl_zero: checks if the user wants to include the string "0" in the empty check.
     If not, empty($str) will make this function return true.
     */
-    
+
     // if the string length is 0, it's empty
     if (strlen(trim($str)) === 0) {
         return true;
@@ -164,23 +164,10 @@ function check_ref()
 }
 
 
-function poll_servers_strict($db, $message, $server_ids)
-{
-    $servers = poll_servers_2($db, $message, true, $server_ids);
-    foreach ($servers as $server) {
-        if (!isset($server->result) || $server->result->status != 'ok') {
-            throw new Exception("Unexpected reply from multiplayer-server. Expected 'ok', got '" . json_encode($server) . "'. ");
-        }
-    }
-}
-
-
 //--- send a message to every server --------------------------------------------
 //--- DO NOT OUTPUT ANYTHING FROM THIS FUNCTION FOR TESTING ---
-function poll_servers_2($db, $message, $receive = true, $server_ids = array())
+function poll_servers($servers, $message, $receive = true, $server_ids = array())
 {
-
-    $servers = $db->to_array($db->call('servers_select', array()));
     $results = array();
 
     foreach ($servers as $server) {

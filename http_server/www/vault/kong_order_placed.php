@@ -115,15 +115,17 @@ function unlock_item($db, $user_id, $guild_id, $server_id, $slug, $user_name, $k
         throw new Exception("Item not found: " . strip_tags($slug, '<br>'));
     }
 
+    $servers = $db->to_array($db->call('servers_select', array()));
+
     if ($command != '') {
-        poll_servers_2($db, $command, false, $target_servers);
+        poll_servers($servers, $command, false, $target_servers);
     }
     if ($reply != '') {
         $obj = new stdClass();
         $obj->user_id = $user_id;
         $obj->message = $reply;
         $data = json_encode($obj);
-        poll_servers_2($db, "send_message_to_player`$data", false, array($server_id));
+        poll_servers($servers, "send_message_to_player`$data", false, array($server_id));
     }
 
     send_confirmation_pm($db, $user_id, $title, $order_id);
