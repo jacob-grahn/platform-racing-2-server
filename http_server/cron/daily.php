@@ -12,10 +12,10 @@ require_once __DIR__ . '/../queries/guilds/guilds_reset_gp_today.php';
 require_once __DIR__ . '/../queries/gp/gp_reset.php';
 require_once __DIR__ . '/../queries/rank_token_rentals/rank_token_rentals_delete_old.php';
 require_once __DIR__ . '/../queries/tokens/tokens_delete_old.php';
-require_once __DIR__ . '/../queries/servers/servers_select_list.php';
+require_once __DIR__ . '/../queries/servers/servers_select.php';
 
 $pdo = pdo_connect();
-$servers = servers_select_list($pdo);
+$servers = servers_select($pdo);
 
 exp_today_truncate($pdo);
 poll_servers($servers, 'start_new_day`');

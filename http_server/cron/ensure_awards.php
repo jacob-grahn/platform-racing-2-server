@@ -7,7 +7,6 @@ require_once __DIR__ . '/../queries/part_awards/part_awards_delete_old.php';
 try {
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // select all records, they get cleared out weekly or somesuch
@@ -20,12 +19,10 @@ try {
         } else {
             $part = $row->part;
         }
-        $parts = array();
         $type = $row->type;
-        $parts[] = $part;
         $user_id = $row->user_id;
         try {
-            award_parts($db, $user_id, $type, $parts, false);
+            award_part($pdo, $user_id, $type, $part, false);
             echo "user_id: $user_id, type: $type, part: $part \n";
         } catch (Exception $e) {
             echo "Error: $e";

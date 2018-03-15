@@ -3,7 +3,7 @@
 require_once __DIR__ . '/env.php';
 require_once __DIR__ . '/multiplayer_server/fns/management_fns.php';
 require_once __DIR__ . '/http_server/fns/pdo_connect.php';
-require_once __DIR__ . '/http_server/queries/servers/servers_select_list.php';
+require_once __DIR__ . '/http_server/queries/servers/servers_select.php';
 
 // $my_ip exec(__DIR__ . '/get_server_ip');
 // output('testing if servers are running on server '.$my_ip.'... ');
@@ -13,7 +13,7 @@ test_server(__DIR__ . '/policy_server/run_policy.php', 'localhost', 843, $COMM_P
 
 // load all active servers
 $pdo = pdo_connect();
-$servers = servers_select_list($pdo);
+$servers = servers_select($pdo);
 
 // test all active servers at this address
 foreach( $servers as $server ) {

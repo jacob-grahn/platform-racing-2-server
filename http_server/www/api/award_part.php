@@ -22,9 +22,7 @@ try {
     $target_id = name_to_id($db, $user_name);
 
     //give the player the part
-    $parts = array();
-    $parts[] = $part_id;
-    $result = award_parts($db, $target_id, $type, $parts);
+    $result = award_part($db, $target_id, $type, $part_id);
     if (!$result) {
         throw new Exception('They already have the part.');
     }

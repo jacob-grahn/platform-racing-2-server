@@ -15,6 +15,7 @@ if (is_empty($action)) {
 try {
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
 
     // make sure you're an admin
@@ -26,7 +27,7 @@ try {
         output_form($db, $message);
     } // update
     elseif ($action === 'update') {
-        update($db);
+        update($db, $pdo);
     } // this should never happen
     else {
         throw new Exception("Invalid action specified.");
@@ -171,7 +172,7 @@ function output_form($db, $message)
     output_footer();
 }
 
-function update($db)
+function update($db, $pdo)
 {
     global $admin;
     global $campaign_id;
@@ -193,7 +194,7 @@ function update($db)
     }
 
     // push the changes to the servers
-    generate_level_list($db, 'campaign');
+    generate_level_list($pdo, 'campaign');
 
     try {
         //admin log

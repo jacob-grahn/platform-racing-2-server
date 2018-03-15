@@ -1,34 +1,42 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/artifact/artifact_location_select.php';
+require_once __DIR__ . '/../queries/messages/messages_select_recent.php';
+require_once __DIR__ . '/../queries/bans/bans_select_recent.php';
+require_once __DIR__ . '/../queries/levels/levels_select_campaign.php';
+require_once __DIR__ . '/../queries/levels/level_increment_play_count.php';
+require_once __DIR__ . '/../queries/servers/servers_select.php';
+require_once __DIR__ . '/../queries/servers/server_update_status.php';
+require_once __DIR__ . '/../queries/users/user_select.php';
+require_once __DIR__ . '/../queries/gp/gp_increment.php';
+require_once __DIR__ . '/../queries/guild/guild_increment_gp.php';
 
 output('minute is starting');
 
-$db = new DB();
+$pdo = pdo_connect();
 
-generate_level_list($db, 'newest');
-run_update_cycle($db);
-write_server_status($db);
+generate_level_list($pdo, 'newest');
+run_update_cycle($pdo);
+write_server_status($pdo);
 
 echo 'result=ok';
 
 
 
-
-
-function run_update_cycle($db)
+function run_update_cycle($pdo)
 {
     output('run update cycle');
     //--- gather data to send to active servers
     $send = new stdClass();
-    $send->artifact = get_artifact($db);
-    $send->recent_pms = get_recent_pms($db);
-    $send->recent_bans = get_recent_bans($db);
-    $send->campaign = get_campaign($db);
+    $send->artifact = artifact_location_select($pdo);
+    $send->recent_pms = get_recent_pms($pdo);
+    $send->recent_bans = bans_select_recent($pdo);
+    $send->campaign = levels_select_campaign($pdo);
     $send_str = json_encode($send);
 
     //--- send the data
-    $server_list = $db->to_array($db->call('servers_select', array()));
+    $server_list = servers_select($pdo);
     $servers = poll_servers($server_list, 'update_cycle`' . $send_str);
 
     //--- process replies
@@ -36,23 +44,21 @@ function run_update_cycle($db)
         if ($server->result != false && $server->result != null) {
             $happy_hour = (int)$server->result->happy_hour;
             output('server is up');
-            save_plays($db, $server->result->plays);
-            save_gp($db, $server->server_id, $server->result->gp);
-            save_population($db, $server->server_id, $server->result->population);
-            save_status($db, $server->server_id, $server->result->status, $happy_hour);
+            save_plays($pdo, $server->result->plays);
+            save_gp($pdo, $server->server_id, $server->result->gp);
+            server_update_status($pdo, $server->server_id, $server->result->status, $server->result->population, $happy_hour);
         } else {
             output('server is down: ' . json_encode($server));
-            save_population($db, $server->server_id, 0);
-            save_status($db, $server->server_id, 'down', 0);
+            server_update_status($pdo, $server->server_id, 'down', 0, 0);
         }
     }
 }
 
 
 
-function write_server_status($db)
+function write_server_status($pdo)
 {
-    $servers = $db->to_array($db->call('servers_select'));
+    $servers = servers_select($pdo);
     $displays = array();
     foreach ($servers as $server) {
         $display = new stdClass();
@@ -81,15 +87,7 @@ function write_server_status($db)
 
 
 
-function get_artifact($db)
-{
-    $artifact = $db->grab_row('artifact_location_select');
-    return( $artifact );
-}
-
-
-
-function get_recent_pms($db)
+function get_recent_pms($pdo)
 {
     $file = __DIR__ . '/../cron/last-pm.txt';
     //--- get the last message id that a notifacation was sent for
@@ -100,8 +98,12 @@ function get_recent_pms($db)
 
     //--- select the messages
     output("last_message_id: $last_message_id");
-    $messages = $db->to_array($db->call('messages_select_recent', array($last_message_id)));
-    $last_message_id = $db->grab('message_id', 'messages_select_max_message_id', array());
+    $messages = messages_select_recent($pdo, $last_message_id);
+
+    if (count($messages) > 0) {
+        $last_message = $messages[count($messages) - 1];
+        $last_message_id = $last_message->message_id;
+    }
 
     //--- save the message id for next time
     file_put_contents($file, $last_message_id);
@@ -112,55 +114,25 @@ function get_recent_pms($db)
 
 
 
-function get_recent_bans($db)
-{
-    $bans = $db->to_array($db->call('bans_select_recent'));
-    return $bans;
-}
-
-
-
-function get_campaign($db)
-{
-    $campaign = $db->to_array($db->call('campaign_select'));
-    return $campaign ;
-}
-
-
-
-function save_plays($db, $plays)
+function save_plays($pdo, $plays)
 {
     foreach ($plays as $course => $plays) {
-        $db->call('level_increment_play_count', array($course, $plays));
+        level_increment_play_count($pdo, $course, $plays);
     }
 }
 
 
 
-function save_gp($db, $server_id, $gp_array)
+function save_gp($pdo, $server_id, $gp_array)
 {
     foreach ($gp_array as $user_id => $gp) {
-        $user = $db->grab_row('user_select', array( $user_id ));
+        $user = user_select($pdo, $user_id);
         $guild_id = $user->guild;
         if ($guild_id > 0 && $server_id == $user->server_id) {
-            $db->call('gp_increment', array( $user_id, $guild_id, $gp ));
-            $db->call('guild_increment_gp', array( $guild_id, $gp ));
+            gp_increment($pdo, $user_id, $guild_id, $gp);
+            guild_increment_gp($pdo, $guild_id, $gp);
         }
     }
-}
-
-
-
-function save_population($db, $server_id, $population)
-{
-    $db->call('server_update_population', array( $server_id, $population ));
-}
-
-
-
-function save_status($db, $server_id, $status, $happy_hour)
-{
-    $db->call('server_update_status', array( $server_id, $status, $happy_hour ));
 }
 
 

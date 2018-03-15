@@ -16,7 +16,6 @@ $name_switch_array = array();
 
 // connect to the db
 $fah_db = new DB(fah_connect());
-$pr2_db = new DB();
 $pdo = pdo_connect();
 
 
@@ -98,7 +97,6 @@ function add_prizes($pdo, $name, $score, $prize_array, $processed_names)
 
 function award_prize($pdo, $user_id, $name, $score, $row, $column_name, $min_score, $prize_str)
 {
-    global $pr2_db;
     if ($score >= $min_score && $row->{$column_name} != 1) {
         output("awarding $column_name to $name");
         $row->{$column_name} = 1;
@@ -118,13 +116,11 @@ function award_prize($pdo, $user_id, $name, $score, $row, $column_name, $min_sco
             }
             rank_token_upsert($pdo, $user_id, $tokens);
         } elseif ($column_name == 'crown_hat') {
-            $parts = array();
-            $parts[] = 6;
-            award_parts($pr2_db, $user_id, 'hat', $parts);
+            $part = 6;
+            award_part($pdo, $user_id, 'hat', $part);
         } elseif ($column_name == 'cowboy_hat') {
-            $parts = array();
-            $parts[] = 5;
-            award_parts($pr2_db, $user_id, 'hat', $parts);
+            $part = 5;
+            award_part($pdo, $user_id, 'hat', $part);
         }
 
         //send them a PM

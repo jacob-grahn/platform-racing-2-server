@@ -1,6 +1,6 @@
 <?php
 
-function servers_select_list($pdo)
+function servers_select($pdo)
 {
 	$stmt = $pdo->prepare('
         SELECT *

@@ -1,22 +1,18 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/servers/servers_select';
+require_once __DIR__ . '/../queries/servers/server_update_address';
 
-$db = new DB();
+$pdo = pdo_connect();
+$servers = servers_select($pdo);
+$addresses = array('45.76.24.255'); // todo: this should be in the db
 
-failover_servers($db);
-
-echo 'result=ok';
-
-
-function failover_servers($db)
-{
-    $servers = $db->to_array($db->call('servers_select'));
-    $addresses = array('45.76.24.255');
-    foreach ($servers as $server) {
-        if ($server->status == 'down') {
-            $fallback_address = $addresses[ array_rand($addresses) ];
-            $db->call('server_update_address', array($server->server_id, $fallback_address));
-        }
+foreach ($servers as $server) {
+    if ($server->status == 'down') {
+        $fallback_address = $addresses[ array_rand($addresses) ];
+        server_update_address($pdo, $server->server_id, $fallback_address);
     }
 }
+
+echo 'result=ok';

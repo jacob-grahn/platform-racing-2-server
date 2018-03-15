@@ -166,17 +166,14 @@ function retrieve_bans($db, $value, $ban_type = 'account')
 }
 
 
-function award_part($db, $user_id, $type, $part_id, $ensure = true)
-{
-    $parts = array();
-    $parts[] = $part_id;
-    $result = award_parts($db, $user_id, $type, $parts, $ensure);
-    return $result;
-}
+require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_select.php';
+require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_update_field.php';
+require_once __DIR__ . '/../queries/pr2/pr2_select.php';
+require_once __DIR__ . '/../queries/pr2/pr2_update_part_array.php';
+require_once __DIR__ . '/../queries/part_awards/part_awards_insert.php';
 
-
-//--- award hats ----------------------------------
-function award_parts($db, $user_id, $type, $part_ids, $ensure = true)
+// award hats
+function award_part($pdo, $user_id, $type, $part_id, $ensure = true)
 {
     $ret = false;
     $epicUpgrade = false;
@@ -185,33 +182,33 @@ function award_parts($db, $user_id, $type, $part_ids, $ensure = true)
         $epicUpgrade = true;
     }
 
-    if ($epicUpgrade) {
-        $row = $db->grab_row('epic_upgrades_select', array($user_id), '', true);
-    } else {
-        $row = $db->grab_row('pr2_select', array($user_id), '', true);
-    }
-
-    if (isset($row)) {
+    // get existing parts
+    try {
+        if ($epicUpgrade) {
+            $row = epic_upgrades_select($pdo, $user_id);
+        } else {
+            $row = pr2_select($pdo, $user_id);
+        }
         $field = type_to_db_field($type);
         $str_array = $row->{$field};
-    } else {
+    }
+    catch (Exception $e) {
         $str_array = '';
     }
 
+    // make a copy so we can check if it changes from the original
     $str_array_new = $str_array;
 
-    foreach ($part_ids as $part_id) {
-        if ($ensure) {
-            $db->call('part_awards_insert', array( $user_id, $type, $part_id ), 'Could not ensure this part award.');
-        }
-        $str_array_new = append_to_str_array($str_array_new, $part_id);
+    if ($ensure) {
+        part_awards_insert($pdo, $user_id, $type, $part_id);
     }
+    $str_array_new = append_to_str_array($str_array_new, $part_id);
 
     if ($str_array_new != $str_array) {
         if ($epicUpgrade) {
-            $db->call('epic_upgrades_update_field', array($user_id, $type, $str_array_new), 'Could not update epic field.');
+            epic_upgrades_update_field($pdo, $user_id, $type, $str_array_new);
         } else {
-            $db->call('pr2_update_part_array', array($user_id, $type, $str_array_new), 'Could not update part field.');
+            pr2_update_part_array($pdo, $user_id, $type, $str_array_new);
         }
         $ret = true;
     }
@@ -348,20 +345,22 @@ function query_if_banned($db, $user_id, $ip)
 }
 
 
+require_once __DIR__ . '/../queries/levels/levels_select_campaign.php';
+require_once __DIR__ . '/../queries/levels/levels_select_best.php';
+require_once __DIR__ . '/../queries/levels/levels_select_best_today.php';
+require_once __DIR__ . '/../queries/levels/levels_select_newest.php';
 
-
-//--- write a level list to the filesystem --------------------------------------------
-function generate_level_list($db, $mode)
+// write a level list to the filesystem
+function generate_level_list($pdo, $mode)
 {
-
     if ($mode == 'campaign') {
-        $result = $db->call('levels_select_campaign');
+        $result = levels_select_campaign($pdo);
     } elseif ($mode == 'best') {
-        $result = $db->call('levels_select_best');
+        $result = levels_select_best($pdo);
     } elseif ($mode == 'best_today') {
-        $result = $db->call('levels_select_best_today');
+        $result = levels_select_best_today($pdo);
     } elseif ($mode == 'newest') {
-        $result = $db->call('levels_select_newest');
+        $result = levels_select_newest($pdo);
     }
 
     $dir = __DIR__ . '/../www/files/lists/'.$mode.'/';
@@ -369,13 +368,11 @@ function generate_level_list($db, $mode)
 
     for ($j=0; $j<9; $j++) {
         $str = format_level_list($result, 9);
-        //echo $str;
         $filename = $dir .($j+1);
         $handle = @fopen($filename, 'w');
         if ($handle) {
             fwrite($handle, $str);
             fclose($handle);
-            //chmod($filename, 0777);
         } else {
             throw new Exception('could not write level list to '.$filename);
         }
