@@ -21,8 +21,8 @@ try {
     rate_limit('get-levels-'.$user_id, 3, 2);
 
     // get levels
-    $result = $db->call('levels_select_by_owner', array($user_id));
-    $str = format_level_list($result, $count);
+    $levels = $db->to_array( $db->call('levels_select_by_owner', array($user_id)) );
+    $str = format_level_list($levels, $count);
 
     // tell the world
     echo $str;
