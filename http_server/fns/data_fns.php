@@ -23,6 +23,15 @@ function find($str, $default = null)
     }
 }
 
+// get a variable from the $_GET array without throwing a warning if it doesn't exist
+function default_get($str, $default = null) {
+    if (isset($_GET[$str])) {
+        return $_GET[$str];
+    } else {
+        return $default;
+    }
+}
+
 
 function find_no_cookie($str, $default = null)
 {

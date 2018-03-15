@@ -4,8 +4,8 @@ require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/mod_fns.php';
 
-$start = (int) default_val($_GET['start'], 0);
-$count = (int) default_val($_GET['count'], 25);
+$start = (int) default_get('start', 0);
+$count = (int) default_get('count', 25);
 $ip = get_ip();
 
 try {
