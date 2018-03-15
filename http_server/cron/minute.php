@@ -10,7 +10,7 @@ require_once __DIR__ . '/../queries/servers/servers_select.php';
 require_once __DIR__ . '/../queries/servers/server_update_status.php';
 require_once __DIR__ . '/../queries/users/user_select.php';
 require_once __DIR__ . '/../queries/gp/gp_increment.php';
-require_once __DIR__ . '/../queries/guild/guild_increment_gp.php';
+require_once __DIR__ . '/../queries/guilds/guild_increment_gp.php';
 
 output('minute is starting');
 
