@@ -5,7 +5,7 @@ function messages_select_recent($pdo, $min_message_id)
 	$stmt = $pdo->prepare('
         SELECT to_user_id, message_id
         FROM messages
-        WHERE message_id > min_message_id
+        WHERE message_id > :min_message_id
 		ORDER BY message_id ASC
         LIMIT 50
     ');
