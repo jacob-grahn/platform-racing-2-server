@@ -10,10 +10,11 @@ $ip = get_ip();
 try {
     //connect
     $db = new DB();
+    $pdo = pdo_connect();
 
 
     //make sure you're an admin
-    $admin = check_moderator($db, true, 3);
+    $admin = check_moderator($pdo, true, 3);
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");

@@ -2,26 +2,20 @@
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/shell_output_fns.php';
-
-$day = date('w');
+require_once __DIR__ . '/../querires/servers/servers_select.php';
 
 //--- load all servers
-$db = new DB();
-$servers = $db->to_array($db->call('servers_select_all', array()));
-
+$pdo = pdo_connect();
+$servers = servers_select($pdo);
 
 //--- test all active servers at this address
 foreach ($servers as $server) {
-    if (true) { //$server->server_id % 7 == $day
-        output("Shutting down $server->server_name ($server->server_id)");
-        try {
-            $reply = talk_to_server($server->address, $server->port, $server->salt, 'shut_down`', true);
-            output("Reply: $reply");
-        } catch (Exception $e) {
-            output($e->getMessage());
-        }
-    } else {
-        output("Ignoring $server->server_name");
+    output("Shutting down $server->server_name ($server->server_id)");
+    try {
+        $reply = talk_to_server($server->address, $server->port, $server->salt, 'shut_down`', true);
+        output("Reply: $reply");
+    } catch (Exception $e) {
+        output($e->getMessage());
     }
 
     output('');

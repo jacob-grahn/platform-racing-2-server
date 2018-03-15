@@ -17,9 +17,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($db);
+    $user_id = token_login($pdo);
 
     // more rate limiting
     rate_limit('message-delete'.$user_id, 5, 2, "Please wait at least 5 seconds before trying to delete another PM.");

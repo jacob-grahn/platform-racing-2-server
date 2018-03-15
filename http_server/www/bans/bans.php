@@ -25,7 +25,7 @@ try {
 
 try {
     // header, also check if mod and output the mod links if so
-    $is_mod = is_moderator($db, false);
+    $is_mod = is_moderator($pdo, false);
     output_header('Ban Log', $is_mod);
 
     // navigation

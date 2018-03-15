@@ -79,6 +79,7 @@ try {
 
     //--- connect
     $db = new DB();
+    $pdo = pdo_connect();
 
 
 
@@ -94,7 +95,7 @@ try {
             throw new Exception("You seem to be using a proxy to connect to PR2. You won't be able to connect as a guest, but you can create an account to play.");
         }
         $user = $db->grab_row('users_select_guest');
-        check_if_banned($db, $user->user_id, $ip);
+        check_if_banned($pdo, $user->user_id, $ip);
     } //--- account login
     else {
         //--- record this attempted log in
@@ -103,11 +104,11 @@ try {
         //token login
         if (isset($in_token) && $login->user_name == '' && $login->user_pass == '') {
             $token = $in_token;
-            $user_id = token_login($db);
+            $user_id = token_login($pdo);
             $user = $db->grab_row('user_select', array($user_id));
         } //or password login
         else {
-            $user = pass_login($db, $user_name, $user_pass);
+            $user = pass_login($pdo, $user_name, $user_pass);
         }
     }
 
@@ -148,26 +149,6 @@ try {
     //--- get their info, or create a row for them if they don't have one
     $pr2_result = $db->call('pr2_select', array($user_id));
 
-
-
-    //--- they don't have a row yet, so make them one
-    if ($pr2_result->num_rows < 1) {
-        $new_account = 'true';
-        $db->call('pr2_insert', array($user_id));
-
-        // compose a welcome pm
-        $welcome_message = "Welcome to Platform Racing 2, $user_name!\n\n"
-        ."<a href='https://grahn.io' target='_blank'><u><font color='#0000FF'>Click here</font></u></a> to read about the latest Platform Racing news on my blog.\n\n"
-        ."If you have any questions or comments, send me an email at <a href='mailto:jacob@grahn.io?subject=Questions or Comments about PR2' target='_blank'><u><font color='#0000FF'>jacob@grahn.io</font></u></a>.\n\n"
-        ."Thanks for playing, I hope you enjoy.\n\n"
-        ."- Jacob";
-
-        // send the welcome PM
-        $db->call('message_insert', array($user_id, 1, $welcome_message, '0'));
-
-        // I don't feel like typing the defaults twice, so pull them from the db
-        $pr2_result = $db->call('pr2_select', array($user_id));
-    }
 
 
     //--- speed, hats, etc

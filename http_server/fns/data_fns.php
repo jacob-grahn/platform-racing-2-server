@@ -253,7 +253,7 @@ function is_obsene($str)
 
 
 
-//--- checks if an email address is valid --------------------------------------------------------
+// checks if an email address is valid
 function valid_email($email)
 {
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -265,8 +265,9 @@ function valid_email($email)
 
 
 
-//returns your account if you are a moderator
-function check_moderator($db, $check_ref = true, $min_power = 2)
+// returns your account if you are a moderator
+require_once __DIR__ . '/../queries/users/users_select_mod.php';
+function check_moderator($pdo, $check_ref = true, $min_power = 2)
 {
     if ($check_ref) {
         $ref = check_ref();
@@ -276,8 +277,8 @@ function check_moderator($db, $check_ref = true, $min_power = 2)
         }
     }
 
-    $user_id = token_login($db);
-    $user = $db->grab_row('user_select_one_mod', array($user_id), 'You are not logged in');
+    $user_id = token_login($pdo);
+    $user = user_select_mod($pdo, $user_id);
 
     if ($user->power < $min_power) {
         throw new Exception('You lack the power. -1');
@@ -288,12 +289,12 @@ function check_moderator($db, $check_ref = true, $min_power = 2)
 
 
 
-//returns true if you are logged in as a moderator, false if you are not
-function is_moderator($db, $check_ref = true)
+// returns true if you are logged in as a moderator, false if you are not
+function is_moderator($pdo, $check_ref = true)
 {
     $is_mod = false;
     try {
-        check_moderator($db, $check_ref);
+        check_moderator($pdo, $check_ref);
         $is_mod = true;
     } catch (Exception $e) {
     }

@@ -12,9 +12,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // are they a moderator
-    $is_mod = is_moderator($db, false);
+    $is_mod = is_moderator($pdo, false);
     if ($is_mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10, "Please wait at least one minute before trying to view another ban.");
     }

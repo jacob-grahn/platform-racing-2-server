@@ -18,9 +18,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
 
     // more rate limiting
     rate_limit('ignored-list-'.$user_id, 3, 2);

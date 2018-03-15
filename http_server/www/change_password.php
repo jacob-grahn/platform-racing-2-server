@@ -36,9 +36,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
-    $login = pass_login($db, $name, $old_pass);
+    $login = pass_login($pdo, $name, $old_pass);
 
     // make sure guests aren't getting any funny ideas
     $power = $login->power;

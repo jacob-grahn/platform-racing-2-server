@@ -1,8 +1,9 @@
 <?php
 
-function backup_level($db, $s3, $user_id, $level_id, $version, $title, $live = 0, $rating = 0, $votes = 0, $note = '', $min_level = 0, $song = 0, $play_count = 0)
-{
+require_once __DIR__ . '/../queries/level_backups/level_backups_insert.php';
 
+function backup_level($pdo, $s3, $user_id, $level_id, $version, $title, $live = 0, $rating = 0, $votes = 0, $note = '', $min_level = 0, $song = 0, $play_count = 0)
+{
     $filename = "$level_id.txt";
     $backup_filename = "$level_id-v$version.txt";
     $success = true;
@@ -13,10 +14,7 @@ function backup_level($db, $s3, $user_id, $level_id, $version, $title, $live = 0
             throw new Exception('Could not save a backup of your level.');
         }
 
-        $result = $db->call('level_backups_insert', array($user_id, $level_id, $title, $version, $live, $rating, $votes, $note, $min_level, $song, $play_count));
-        if (!$result) {
-            throw new Exception('Could not register a backup of your level.');
-        }
+        level_backups_insert($pdo, $user_id, $level_id, $title, $version, $live, $rating, $votes, $note, $min_level, $song, $play_count);
     } catch (Exception $e) {
         $success = false;
     }
@@ -29,20 +27,20 @@ function backup_level($db, $s3, $user_id, $level_id, $version, $title, $live = 0
 
 function send_pm($db, $from_user_id, $to_user_id, $message)
 {
-    
+
     // call user info from the db
     $account = $db->grab_row('user_select', array($from_user_id));
     $pr2_account = $db->grab_row('pr2_select', array($from_user_id));
-    
+
     // interpret user info from the db
     $account_power = $account->power;
     $account_rank = $pr2_account->rank;
-    
+
     // let admins use the [url=][/url] tags
     if ($account_power >= 3) {
         $message = preg_replace('/\[url=(.+?)\](.+?)\[\/url\]/', '<a href="\1" target="_blank"><u><font color="#0000FF">\2</font></u></a>', $message);
     }
-    
+
     // get sender ip and time of message
     $ip = get_ip();
     $time = time();

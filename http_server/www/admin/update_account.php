@@ -9,10 +9,11 @@ $action = find('action', 'lookup');
 try {
     //connect
     $db = new DB();
+    $pdo = pdo_connect();
 
 
     //make sure you're an admin
-    $admin = check_moderator($db, true, 3);
+    $admin = check_moderator($pdo, true, 3);
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
@@ -101,7 +102,7 @@ function update($db)
     $heads = find('heads');
     $bodies = find('bodies');
     $feet = find('feet');
-    
+
 
     // call user information
     $user = $db->grab_row('user_select', array($user_id));
@@ -124,7 +125,7 @@ function update($db)
         $change_id = $db->grab('change_id', 'changing_email_select', array($code));
         $db->call('changing_email_complete', array($change_id, ''));
     }
-    
+
     // make sure none of the part values are blank to avoid server crashes
     if (is_empty($hats, false)) {
         $hats = "1";

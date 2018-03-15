@@ -17,10 +17,11 @@ $name9 = find('name9', '');
 try {
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
 
     // make sure you're an admin
-    $mod = check_moderator($db, false, 3);
+    $mod = check_moderator($pdo, false, 3);
 
     // header
     output_header('Player Deep Info', true, true);

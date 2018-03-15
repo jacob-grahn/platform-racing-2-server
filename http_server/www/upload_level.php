@@ -41,10 +41,11 @@ try {
 
     // connect to the db
     $db = new DB();
+    $pdo = pdo_connect();
     $s3 = s3_connect();
 
     // check their login
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
     $user_name = id_to_name($db, $user_id);
 
     // more rate limiting
@@ -115,7 +116,7 @@ try {
 
         //backup the file that is about to be overwritten
         if (($time - $org_time) > (60*60*24*14)) {
-            backup_level($db, $s3, $user_id, $org_level_id, $org_version-1, $title, $org_live, $org_rating, $org_votes, $org_note, $org_min_level, $org_song, $org_play_count);
+            backup_level($pdo, $s3, $user_id, $org_level_id, $org_version-1, $title, $org_live, $org_rating, $org_votes, $org_note, $org_min_level, $org_song, $org_play_count);
         }
     }
 
@@ -160,7 +161,7 @@ try {
 
 
     //save the new file to the backup system
-    backup_level($db, $s3, $user_id, $level_id, $version, $title, $live, $org_rating, $org_votes, $note, $min_level, $song, $org_play_count);
+    backup_level($pdo, $s3, $user_id, $level_id, $version, $title, $live, $org_rating, $org_votes, $note, $min_level, $song, $org_play_count);
 
 
 

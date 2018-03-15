@@ -19,9 +19,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // make sure you're a moderator
-    $mod = check_moderator($db);
+    $mod = check_moderator($pdo);
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error');

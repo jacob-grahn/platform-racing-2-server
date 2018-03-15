@@ -43,7 +43,7 @@ try {
     }
 
     // check for permission
-    $mod = check_moderator($db);
+    $mod = check_moderator($pdo);
 
     // get variables from the mod variable
     $mod_user_id = (int) $mod->user_id;

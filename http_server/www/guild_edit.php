@@ -20,9 +20,10 @@ try {
 
     // connect to the db
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
 
     // more rate limiting
     rate_limit('guild-edit-attempt-'.$user_id, 10, 3, "Please wait at least 10 seconds before editing your guild again.");

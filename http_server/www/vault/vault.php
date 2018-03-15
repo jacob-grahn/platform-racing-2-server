@@ -14,9 +14,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // get login
-    $user_id = token_login($db);
+    $user_id = token_login($pdo);
 
     // more rate limiting
     rate_limit('vault-listing-'.$user_id, 5, 2);

@@ -151,22 +151,3 @@ function insert_db_pair($connection, $db, $var1, $var2, $val1, $val2)
         throw new Exception('Could not add db pair: $db, $var1=$val1, $var2=$val2');
     }
 }
-
-
-
-//--- checks if an account is banned -----------------------------------------------
-function query_ban_record($connection, $where)
-{
-    $time = time();
-    $result = $connection->query(
-        "select *
-									from bans
-									where $where
-									and lifted != 1
-									and expire_time > '$time'"
-    );
-    if (!$result) {
-        throw new Exception('Could not check your account status');
-    }
-    return($result);
-}

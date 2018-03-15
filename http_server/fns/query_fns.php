@@ -4,13 +4,15 @@ require_once __DIR__ . '/random_str.php';
 
 
 //--- checks if a login is valid -----------------------------------------------------------
-function pass_login($db, $name, $password)
+require_once __DIR__ . '/../queries/users/user_select_hash_by_name';
+require_once __DIR__ . '/../queries/users/user_apply_temp_pass';
+function pass_login($pdo, $name, $password)
 {
 
-    //get their ip
+    // get their ip
     $ip = get_ip();
 
-    //error check
+    // error check
     if (empty($name) || !is_string($password) || $password == '') {
         throw new Exception('You must enter a name and a password.');
     }
@@ -22,35 +24,31 @@ function pass_login($db, $name, $password)
     }
 
     // load the user row
-    $result = $db->call('user_select_all_by_name', array($name));
-    if ($result->num_rows < 1) {
-        throw new Exception('That account was not found.');
-    }
-    $user = $result->fetch_object();
+    $user = user_select_hash_by_name($pdo, $name);
 
     // check the password
     if (!password_verify(sha1($password), $user->pass_hash)) {
         if (password_verify(sha1($password), $user->temp_pass_hash)) {
-            $db->call('user_apply_temp_pass', array($user->user_id));
+            user_apply_temp_pass($pdo, $user->user_id);
         } else {
             throw new Exception('Incorrect password');
         }
     }
 
-    //check to see if they're banned
-    check_if_banned($db, $user->user_id, $ip);
+    // check to see if they're banned
+    check_if_banned($pdo, $user->user_id, $ip);
 
-    //respect changes to capitalization
+    // respect changes to capitalization
     $user->name = $name;
 
-    //done
-    return ($user);
+    // done
+    return $user;
 }
 
 
 
-//--- login using a token ------------------------------------------------------------
-function token_login($db, $use_cookie = true)
+// login using a token
+function token_login($pdo, $use_cookie = true)
 {
 
     $rec_token = find_no_cookie('token');
@@ -64,17 +62,18 @@ function token_login($db, $use_cookie = true)
         throw new Exception('No token found. Please log in again.');
     }
 
-    $user_id = use_login_token($db, $token, 'Could not log you in. Please log in again.');
+    $token_row = token_select($pdo, $token);
+    $user_id = $token_row->user_id;
 
     $ip = get_ip();
-    check_if_banned($db, $user_id, $ip);
+    check_if_banned($pdo, $user_id, $ip);
 
-    return($user_id);
+    return $user_id;
 }
 
 
 
-//--- lookup user_id with name ---------------------------------------------------------
+// lookup user_id with name
 function name_to_id($db, $name)
 {
     $user_id = $db->grab('user_id', 'user_select_user_id', array($name), 'Could not find a user with that name.');
@@ -83,7 +82,7 @@ function name_to_id($db, $name)
 
 
 
-//--- lookup name with user_id ---------------------------------------------------------
+// lookup name with user_id
 function id_to_name($db, $user_id)
 {
     $user_name = $db->grab('name', 'user_select', array($user_id));
@@ -92,27 +91,7 @@ function id_to_name($db, $user_id)
 
 
 
-//--- checks if an account is banned -----------------------------------------------
-function query_ban_record($db, $where)
-{
-    $time = time();
-    $result = $db->query(
-        "select *
-									from bans
-									where $where
-									and lifted != 1
-									and expire_time > '$time'
-									limit 0, 1"
-    );
-    if (!$result) {
-        throw new Exception('Could not check your account status');
-    }
-    return($result);
-}
-
-
-
-//--- count the number of bans an account has recieved -----------------
+// count the number of bans an account has recieved
 function count_bans($db, $value, $ban_type = 'account')
 {
     $safe_value = addslashes($value);
@@ -140,7 +119,7 @@ function count_bans($db, $value, $ban_type = 'account')
 
 
 
-//--- retrieve all bans of a certain type ---------------
+// retrieve all bans of a certain type
 function retrieve_bans($db, $value, $ban_type = 'account')
 {
     $safe_value = addslashes($value);
@@ -262,7 +241,7 @@ function append_to_str_array($str_arr, $val)
 
 
 
-//--- generates a login token ----------------------------------
+// generates a login token
 function get_login_token($user_id)
 {
     $token = $user_id . '-' . random_str(30);
@@ -271,23 +250,14 @@ function get_login_token($user_id)
 
 
 
-//--- save a login token ------------------------------------------
+// save a login token
 function save_login_token($db, $user_id, $token)
 {
     $db->call('token_insert', array($user_id, $token));
 }
 
 
-
-//--- uses a login token ------------------------------------------
-function use_login_token($db, $token)
-{
-    $user_id = $db->grab('user_id', 'token_select', array($token), 'You are not logged in.');
-    return $user_id;
-}
-
-
-//--- delete a login token -----------------------------------------
+// delete a login token
 function delete_login_token($db, $token)
 {
     $db->call('token_delete', array($token));
@@ -295,10 +265,10 @@ function delete_login_token($db, $token)
 
 
 
-//--- throw an exception if the user is banned ----------------------
-function check_if_banned($db, $user_id, $ip)
+// throw an exception if the user is banned
+function check_if_banned($pdo, $user_id, $ip)
 {
-    $row = query_if_banned($db, $user_id, $ip);
+    $row = query_if_banned($pdo, $user_id, $ip);
 
     if ($row !== false) {
         $ban_id = $row->ban_id;
@@ -325,23 +295,19 @@ function check_if_banned($db, $user_id, $ip)
 }
 
 
+require_once __DIR__ . '/../queries/bans/ban_select_by_user_id';
+require_once __DIR__ . '/../queries/bans/ban_select_by_ip';
 
-function query_if_banned($db, $user_id, $ip)
+function query_if_banned($pdo, $user_id, $ip)
 {
-    $ban_row = false;
+    $ban = false;
     if (isset($user_id) && $user_id != 0) {
-        $result = query_ban_record($db, "banned_user_id = '$user_id' AND account_ban = 1");
-        if ($result->num_rows > 0) {
-            $ban_row = $result->fetch_object();
-        }
+        $ban = ban_select_by_user_id($pdo, $user_id);
     }
-    if (isset($ip) && $ban_row === false) {
-        $result = query_ban_record($db, "banned_ip = '$ip' AND ip_ban = 1");
-        if ($result->num_rows > 0) {
-            $ban_row = $result->fetch_object();
-        }
+    if (!$ban && isset($ip)) {
+        $ban = ban_select_by_ip($pdo, $ip);
     }
-    return( $ban_row );
+    return $ban;
 }
 
 
@@ -384,7 +350,7 @@ function generate_level_list($pdo, $mode)
 
 
 
-//--- perform a level search ---------------------------------------------------
+// perform a level search
 function search_levels($mode, $search_str, $order, $dir, $page)
 {
 

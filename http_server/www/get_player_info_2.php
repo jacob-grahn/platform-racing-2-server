@@ -15,10 +15,11 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
     try {
-        $user_id = token_login($db);
+        $user_id = token_login($pdo);
         rate_limit('get-player-info-2-'.$user_id, 3, 2);
     } catch (Exception $e) {
         $friend = 0;

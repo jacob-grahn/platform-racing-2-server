@@ -14,7 +14,8 @@ try {
 
     // connect
     $db = new DB();
-    $user_id = token_login($db);
+    $pdo = pdo_connect();
+    $user_id = token_login($pdo);
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Level Backups");
@@ -29,7 +30,7 @@ try {
     rate_limit('level-backups-'.$user_id, 30, 5);
 
     // output mod nav if they're a mod
-    $is_mod = is_moderator($db, false);
+    $is_mod = is_moderator($pdo, false);
     output_header('Level Backups', $is_mod);
 
     //restore a backup

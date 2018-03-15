@@ -21,9 +21,10 @@ function output_search($email = '', $incl_br = true)
 try {
     //connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     //make sure you're an admin
-    $admin = check_moderator($db, false, 3);
+    $admin = check_moderator($pdo, false, 3);
 } catch (Exception $e) {
     $message = $e->getMessage();
     output_header('Error');

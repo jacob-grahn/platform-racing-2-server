@@ -24,7 +24,7 @@ try {
     $pdo = pdo_connect();
 
     // make sure you're a moderator
-    $mod = check_moderator($db, false);
+    $mod = check_moderator($pdo, false);
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");
@@ -73,7 +73,7 @@ try {
 
     //check if they are currently banned
     $banned = 'No';
-    $row = query_if_banned($db, $user_id, $ip);
+    $row = query_if_banned($pdo, $user_id, $ip);
 
     //give some more info on the current ban in effect if there is one
     if ($row !== false) {

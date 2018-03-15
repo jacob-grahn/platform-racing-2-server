@@ -12,9 +12,10 @@ try {
 
     // connect to the db
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login and make some rad variables
-    $mod = check_moderator($db);
+    $mod = check_moderator($pdo);
     $mod_name = $mod->name;
     $mod_id = $mod->user_id;
     $ip = $mod->ip;

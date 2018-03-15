@@ -31,9 +31,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
 
     // rate limiting
     rate_limit('submit-rating-'.$user_id, 5, 2);

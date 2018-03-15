@@ -11,9 +11,10 @@ try {
 
     // connect to the db
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($db);
+    $user_id = token_login($pdo);
 
     // get their username
     $user = $db->grab_row('user_select', array($user_id));

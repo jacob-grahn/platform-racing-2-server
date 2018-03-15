@@ -20,9 +20,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // variables
-    $from_user_id = token_login($db, false);
+    $from_user_id = token_login($pdo, false);
     $to_user_id = name_to_id($db, $to_name);
 
     // send it

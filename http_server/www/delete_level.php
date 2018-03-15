@@ -31,10 +31,11 @@ try {
 
     //connect
     $db = new DB();
+    $pdo = pdo_connect();
     $s3 = s3_connect();
 
     //check their login
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
 
     // more rate limiting
     rate_limit('delete-level-attempt-'.$user_id, 10, 1, 'Please wait at least 10 seconds before trying to delete another level.');
@@ -43,7 +44,7 @@ try {
 
     // save this file to the backup system
     $row = $db->grab_row('levels_select_one', array($level_id, $user_id));
-    backup_level($db, $s3, $user_id, $level_id, $row->version, $row->title, $row->live, $row->rating, $row->votes, $row->note, $row->min_level, $row->song, $row->play_count);
+    backup_level($pdo, $s3, $user_id, $level_id, $row->version, $row->title, $row->live, $row->rating, $row->votes, $row->note, $row->min_level, $row->song, $row->play_count);
 
     // delete the level in the db
     $db->call('level_delete', array($level_id, $user_id));

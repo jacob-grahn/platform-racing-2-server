@@ -14,9 +14,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // header, also check if mod and output the mod links if so
-    $is_mod = is_moderator($db, false);
+    $is_mod = is_moderator($pdo, false);
     output_header('Leaderboard', $is_mod);
 
     // limit amount of entries to be obtained from the db at a time

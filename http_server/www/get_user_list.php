@@ -25,9 +25,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($db);
+    $user_id = token_login($pdo);
 
     // more rate limiting
     rate_limit("user-list-$table-$user_id", 5, 2);

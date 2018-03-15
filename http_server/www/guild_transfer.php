@@ -21,9 +21,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // get user info
-    $user_id = token_login($db); // user id with token from cookie
+    $user_id = token_login($pdo); // user id with token from cookie
     $user = $db->grab_row('user_select', array($user_id)); // user info
 
     // get user's guild id
@@ -56,7 +57,7 @@ try {
             $safe_ref = htmlspecialchars($ref);
             throw new Exception("Incorrect referrer. The referrer is: $safe_ref");
         } else {
-            start_transfer($db, $user->name, $guild);
+            start_transfer($db, $pdo, $user->name, $guild);
         }
     }
 } catch (Exception $e) {
@@ -94,7 +95,7 @@ function output_form($user, $guild)
     output_footer();
 }
 
-function start_transfer($db, $old_name, $guild)
+function start_transfer($db, $pdo, $old_name, $guild)
 {
 
     // get the ip address of the requester
@@ -109,7 +110,7 @@ function start_transfer($db, $old_name, $guild)
     $new_name = $_POST['new_owner'];
 
     // check pass
-    $old_user = pass_login($db, $old_name, $pass);
+    $old_user = pass_login($pdo, $old_name, $pass);
     $old_id = $old_user->user_id;
     $old_name = $old_user->name;
     $old_email = $old_user->email;

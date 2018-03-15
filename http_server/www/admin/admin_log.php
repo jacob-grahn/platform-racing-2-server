@@ -10,9 +10,10 @@ $count = find('count', 25);
 try {
     //connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     //make sure you're an admin
-    $admin = check_moderator($db, false, 3);
+    $admin = check_moderator($pdo, false, 3);
 
     //get actions for this page
     $actions = $db->call('admin_actions_select', array( $start, $count ));

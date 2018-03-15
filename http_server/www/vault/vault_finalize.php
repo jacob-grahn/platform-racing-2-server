@@ -25,10 +25,11 @@ try {
 
     //--- connect
     $db = new DB();
+    $pdo = pdo_connect();
 
 
     //--- gather infos
-    $user_id = token_login($db);
+    $user_id = token_login($pdo);
     $user = $db->grab_row('user_select', array( $user_id ), 'Could not fetch your info.');
 
     if ($user->power <= 0) {

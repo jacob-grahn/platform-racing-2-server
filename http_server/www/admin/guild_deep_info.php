@@ -8,10 +8,10 @@ $guild_id = find('guild_id', 0);
 try {
     //connect
     $db = new DB();
-
+    $pdo = pdo_connect();
 
     //make sure you're an admin
-    $mod = check_moderator($db, false, 3);
+    $mod = check_moderator($pdo, false, 3);
 
     if ($guild_id == 0) {
         $guild_id = '';

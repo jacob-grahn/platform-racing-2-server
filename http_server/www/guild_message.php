@@ -25,9 +25,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // confirm login
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
 
     // confirm that they are in a guild
     $guild_id = $db->grab('guild', 'user_select', array($user_id));

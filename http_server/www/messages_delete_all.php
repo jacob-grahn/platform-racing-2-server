@@ -17,9 +17,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
 
     // more rate limiting
     rate_limit('delete-all-messages-'.$user_id, 900, 1, 'You may only delete all of your PMs once every 15 minutes. Try again later.');

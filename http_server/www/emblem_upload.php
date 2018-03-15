@@ -29,11 +29,12 @@ try {
 
     // connect to the db
     $db = new DB();
+    $pdo = pdo_connect();
     $s3 = s3_connect();
 
 
     // check their login
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
 
     // more rate limiting
     rate_limit('emblem-upload-attempt-'.$user_id, 15, 1, "Please wait at least 15 seconds before trying to upload a guild emblem again.");

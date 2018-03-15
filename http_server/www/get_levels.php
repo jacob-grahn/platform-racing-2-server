@@ -13,9 +13,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check login
-    $user_id = token_login($db);
+    $user_id = token_login($pdo);
 
     // more rate limiting
     rate_limit('get-levels-'.$user_id, 3, 2);

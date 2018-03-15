@@ -40,9 +40,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
 
     // more rate limiting
     rate_limit('change-email-attempt-'.$user_id, 5, 1);
@@ -58,7 +59,7 @@ try {
     $safe_name = htmlspecialchars($user_name);
 
     // check password
-    pass_login($db, $user_name, $pass);
+    pass_login($pdo, $user_name, $pass);
 
     // sanity check: check for guest
     if ($user->power < 1) {

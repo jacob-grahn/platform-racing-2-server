@@ -35,7 +35,7 @@ function is_empty($str, $incl_zero = true)
     $incl_zero: checks if the user wants to include the string "0" in the empty check.
     If not, empty($str) will make this function return true.
     */
-    
+
     // if the string length is 0, it's empty
     if (strlen(trim($str)) === 0) {
         return true;
@@ -118,49 +118,6 @@ function remove_resource($_target)
         return false;
     }
 }
-
-
-
-
-
-
-
-
-function check_if_banned($connection, $user_id, $ip)
-{
-    //find out if the account or ip is banned
-    $result = query_ban_record($connection, "banned_user_id = '$user_id'");
-    if ($result->num_rows <= 0) {
-        $result = query_ban_record($connection, "banned_ip = '$ip'");
-    }
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_object();
-
-        $ban_id = $row->ban_id;
-        $banned_ip = $row->banned_ip;
-        $banned_user_id = $row->banned_user_id;
-        $mod_user_id = $row->mod_user_id;
-        $expire_time = $row->expire_time;
-        $reason = $row->reason;
-        $response = $row->response;
-
-        //figure out what the best way to say this is
-        $seconds = $expire_time - time();
-        format_duration($seconds);
-
-        //tell it to the world
-        $output = "This account or ip address has been banned.\n"
-        ."Reason: $reason \n"
-        ."This ban will expire in $time_left. \n"
-        .'You can see more details about this ban at pr2hub.com/bans/show_record.php?ban_id='.$ban_id;
-
-        throw new Exception($output);
-    }
-}
-
-
-
 
 
 function format_duration($seconds)

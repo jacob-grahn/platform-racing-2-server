@@ -9,7 +9,7 @@ function user_select_by_name($pdo, $name)
         WHERE name = :name
         LIMIT 1
     ');
-	$stmt->bindValue(':name', $name, PDO::PARAM_INT);
+	$stmt->bindValue(':name', $name, PDO::PARAM_STR);
 	$stmt->execute();
     $result = $stmt->fetch(PDO::FETCH_OBJ);
 

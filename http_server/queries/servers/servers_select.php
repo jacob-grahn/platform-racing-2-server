@@ -11,8 +11,8 @@ function servers_select($pdo)
 	$result = $stmt->execute();
 
     if (!$result) {
-        throw new Exception('user pr2 row not found');
+        throw new Exception('could not select active servers');
     }
 
-    return $stmt->fetchAll(PDO::FETCH_OBJ);;
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }

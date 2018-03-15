@@ -13,9 +13,10 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // gather information
-    $user_id = token_login($db, false);
+    $user_id = token_login($pdo, false);
     $account = $db->grab_row('user_select_expanded', array($user_id));
     $guild = $db->grab_row('guild_select', array($guild_id), 'Could not find a guild with that ID.');
 
