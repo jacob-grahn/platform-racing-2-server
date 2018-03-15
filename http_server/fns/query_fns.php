@@ -367,7 +367,7 @@ function generate_level_list($pdo, $mode)
     @mkdir($dir, 0777, true);
 
     for ($j=0; $j<9; $j++) {
-        $str = format_level_list($levels, 9);
+        $str = format_level_list(array_slice($levels, $j * 9, 9));
         $filename = $dir .($j+1);
         $handle = @fopen($filename, 'w');
         if ($handle) {
@@ -450,6 +450,6 @@ function search_levels($mode, $search_str, $order, $dir, $page)
     }
 
 
-    $str = format_level_list($db->to_array($result), 999);
+    $str = format_level_list($db->to_array($result));
     return($str);
 }

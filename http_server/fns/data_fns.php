@@ -305,7 +305,7 @@ function is_moderator($db, $check_ref = true)
 
 
 //
-function format_level_list($levels, $max = 9)
+function format_level_list($levels)
 {
     global $LEVEL_LIST_SALT;
 
@@ -341,10 +341,6 @@ function format_level_list($levels, $max = 9)
         ."&pass$num=$pass"
         ."&type$num=$type";
         $num++;
-
-        if ($num == $max) {
-            break;
-        }
     }
 
     if ($str != '') {
