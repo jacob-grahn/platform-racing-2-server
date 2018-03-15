@@ -296,13 +296,13 @@ function is_moderator($db, $check_ref = true)
 
 
 //
-function format_level_list($result, $max = 9)
+function format_level_list($levels, $max = 9)
 {
     global $LEVEL_LIST_SALT;
 
     $num = 0;
     $str = '';
-    while ($row = $result->fetch_object()) {
+    foreach ($levels as $row) {
         $level_id = $row->level_id;
         $version = $row->version;
         $title = urlencode(htmlspecialchars($row->title));
