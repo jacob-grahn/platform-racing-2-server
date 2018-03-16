@@ -2,7 +2,7 @@
 
 function gp_increment($pdo, $user_id, $guild_id, $gp)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         INSERT INTO gp
         SET user_id = :user_id,
             guild_id = :guild_id,
@@ -14,11 +14,11 @@ function gp_increment($pdo, $user_id, $guild_id, $gp)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
-	$stmt->bindValue(':gp', $gp, PDO::PARAM_INT);
-	$result = $stmt->execute();
+    $stmt->bindValue(':gp', $gp, PDO::PARAM_INT);
+    $result = $stmt->execute();
 
-    if (!$result) {
-        throw new Exception('could not increment gp');
+    if ($result === false) {
+        throw new Exception('Could not increment gp');
     }
 
     return $result;
