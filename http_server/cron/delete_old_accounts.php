@@ -10,7 +10,7 @@ require_once __DIR__ . '/../queries/users/user_delete.php';
 $pdo = pdo_connect();
 $min_time = time() - (60 * 60 * 24 * 30 * 12 * 3); //three years
 
-$users = users_select_old($pdo, $min_time);
+$users = users_select_old($pdo);
 
 output(number_format(count($users)) . ' accounts have not been logged into recently.');
 
