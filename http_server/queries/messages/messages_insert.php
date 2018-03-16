@@ -2,7 +2,7 @@
 
 function messages_insert($pdo, $to_user_id, $from_user_id, $message, $ip)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         INSERT INTO messages
         SET to_user_id = :to_user_id,
             from_user_id = :from_user_id,
@@ -11,13 +11,13 @@ function messages_insert($pdo, $to_user_id, $from_user_id, $message, $ip)
             time = UNIX_TIMESTAMP(NOW())
     ');
     $stmt->bindValue(':to_user_id', $to_user_id, PDO::PARAM_INT);
-	$stmt->bindValue(':from_user_id', $from_user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':from_user_id', $from_user_id, PDO::PARAM_INT);
     $stmt->bindValue(':message', $message, PDO::PARAM_STR);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
-	$result = $stmt->execute();
+    $result = $stmt->execute();
 
-    if (!$result) {
-        throw new Exception('messages could not insert row');
+    if ($result === false) {
+        throw new Exception('Could not send message');
     }
 
     return $result;
