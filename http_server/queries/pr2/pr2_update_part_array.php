@@ -2,7 +2,7 @@
 
 function pr2_update_part_array($pdo, $user_id, $type, $part_array)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         IF (p_type = "hat") THEN
             UPDATE pr2
             SET hat_array = p_part_array
@@ -27,10 +27,10 @@ function pr2_update_part_array($pdo, $user_id, $type, $part_array)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
-	$stmt->bindValue(':part_array', $part_array, PDO::PARAM_STR);
-	$result = $stmt->execute();
-	if (!$result) {
-        throw new Exception('could update pr2 part array');
+    $stmt->bindValue(':part_array', $part_array, PDO::PARAM_STR);
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not update pr2 part array');
     }
 
     return $result;
