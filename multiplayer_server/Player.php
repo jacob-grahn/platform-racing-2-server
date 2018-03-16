@@ -673,7 +673,7 @@ class Player
                             $server_owner = '<br>Server Owner:<br>- /timeleft<br>- /mod help<br>- /hh help<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
                         }
                     }
-                    $this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /t status<br>- /population<br>- /beawesome'.$mod.$effects.$admin.$server_owner);
+                    $this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /hh status<br>- /t status<br>- /population<br>- /beawesome'.$mod.$effects.$admin.$server_owner);
                 }
             } // send chat message
             else {
