@@ -26,7 +26,7 @@ function levels_select_best($pdo)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('could not query for best levels');
+        throw new Exception('Could not perform query to select all-time best levels');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);
