@@ -3,12 +3,11 @@
 function artifact_location_select($pdo)
 {
     $stmt = $pdo->prepare('SELECT * FROM artifact_location LIMIT 1');
-    $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_OBJ);
+    $result = $stmt->execute();
 
-    if ($result == false) {
+    if ($result === false) {
         throw new Exception('Could not retrieve artifact location.');
     }
 
-    return $result;
+    return $stmt->fetch(PDO::FETCH_OBJ);
 }
