@@ -2,7 +2,7 @@
 
 function users_reset_status($pdo)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         OPTIMIZE TABLE artifact_location;
         OPTIMIZE TABLE bans;
         OPTIMIZE TABLE best_levels;
@@ -25,10 +25,10 @@ function users_reset_status($pdo)
         OPTIMIZE TABLE users;
         OPTIMIZE TABLE users_new;
     ');
-	$result = $stmt->execute();
+    $result = $stmt->execute();
 
-    if (!$result) {
-        throw new Exception('error optimizing db');
+    if ($result === false) {
+        throw new Exception('Could not optimize the db');
     }
 
     return $result;
