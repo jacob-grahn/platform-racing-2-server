@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/users/user_select.php'; // pdo
+require_once __DIR__ . '/../../queries/pr2/pr2_select.php'; // pdo
+require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php'; // pdo
 
 $user_id = find('id');
 $action = find('action', 'lookup');
@@ -10,7 +13,6 @@ try {
     //connect
     $db = new DB();
     $pdo = pdo_connect();
-
 
     //make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
@@ -27,7 +29,7 @@ try {
 
     // form
     if ($action === 'lookup') {
-        output_form($db, $user_id);
+        output_form($db, $user_id, $pdo);
         output_footer();
     }
 
@@ -37,7 +39,7 @@ try {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
-        update($db);
+        update($db, $pdo, $admin);
     }
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
@@ -46,27 +48,27 @@ try {
 }
 
 // page
-function output_form($db, $user_id)
+function output_form($db, $user_id, $pdo)
 {
 
     echo '<form name="input" action="update_account.php" method="post">';
 
-    $user = $db->grab_row('user_select', array($user_id), 'Could not find a user with that ID.');
-    $pr2 = $db->grab_row('pr2_select', array($user->user_id), '', true);
-    $pr2_epic = $db->grab_row('epic_upgrades_select', array($user->user_id), '', true);
+    $user = user_select($pdo, $user_id);
+    $pr2 = pr2_select($pdo, $user_id, true);
+    $pr2_epic = epic_upgrades_select($pdo, $user_id, true);
     echo "user_id: $user->user_id <br>---<br>";
 
 
     echo 'Name: <input type="text" size="" name="name" value="'.htmlspecialchars($user->name).'"><br>';
     echo 'Email: <input type="text" name="email" value="'.htmlspecialchars($user->email).'"><br>';
     echo 'Guild: <input type="text" name="guild" value="'.htmlspecialchars($user->guild).'"><br>';
-    if ($pr2) {
+    if ($pr2 !== false) {
         echo 'Hats: <input type="text" size="100" name="hats" value="'.$pr2->hat_array.'"><br>';
         echo 'Heads: <input type="text" size="100" name="heads" value="'.$pr2->head_array.'"><br>';
         echo 'Bodies: <input type="text" size="100" name="bodies" value="'.$pr2->body_array.'"><br>';
         echo 'Feet: <input type="text" size="100" name="feet" value="'.$pr2->feet_array.'"><br>';
     }
-    if ($pr2_epic) {
+    if ($pr2_epic !== false) {
         echo 'Epic Hats: <input type="text" size="100" name="eHats" value="'.$pr2_epic->epic_hats.'"><br>';
         echo 'Epic Heads: <input type="text" size="100" name="eHeads" value="'.$pr2_epic->epic_heads.'"><br>';
         echo 'Epic Bodies: <input type="text" size="100" name="eBodies" value="'.$pr2_epic->epic_bodies.'"><br>';
@@ -88,11 +90,8 @@ function output_form($db, $user_id)
 
 
 // update function
-function update($db)
+function update($db, $pdo, $admin)
 {
-
-    global $admin;
-
     // make some nice variables
     $guild_id = (int) find('guild');
     $user_id = (int) find('id');
@@ -105,7 +104,7 @@ function update($db)
 
 
     // call user information
-    $user = $db->grab_row('user_select', array($user_id));
+    $user = user_select($pdo, $user_id);
     $user_name = $user->name;
 
     // adjust guild member count
