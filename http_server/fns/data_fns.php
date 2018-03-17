@@ -266,7 +266,7 @@ function valid_email($email)
 
 
 // returns your account if you are a moderator
-require_once __DIR__ . '/../queries/users/users_select_mod.php';
+require_once __DIR__ . '/../queries/users/user_select_mod.php';
 function check_moderator($pdo, $check_ref = true, $min_power = 2)
 {
     if ($check_ref) {
