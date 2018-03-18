@@ -525,7 +525,7 @@ class Game extends Room
                     $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
                 }
             }
-            if ($artifact_mode) {
+            if ($artifact_mode && count($this->finish_array) != 1 && (int) $exp_gain != 0) {
                 $player->write('award`Defeated Opponents`+ '.$exp_gain);
             }
 
