@@ -7,6 +7,7 @@ require_once __DIR__ . '/../fns/Encryptor.php';
 
 $level_id = (int) default_val($_GET['courseID'], 0);
 $hash = find_no_cookie('hash', '');
+$ip = get_ip();
 
 try {
     // rate limiting
