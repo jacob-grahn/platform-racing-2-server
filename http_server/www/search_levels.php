@@ -3,11 +3,11 @@
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
 
-$mode = default_val($_POST['mode'], 'user');
-$search_str = default_val($_POST['search_str'], '');
-$order = default_val($_POST['order'], '');
-$dir = default_val($_POST['dir'], 'desc');
-$page = default_val($_POST['page'], 1);
+$mode = default_post('mode', 'user');
+$search_str = default_post('search_str', '');
+$order = default_post('order', '');
+$dir = default_post('dir', 'desc');
+$page = default_post('page', 1);
 $ip = get_ip();
 
 $page = min(25, $page);

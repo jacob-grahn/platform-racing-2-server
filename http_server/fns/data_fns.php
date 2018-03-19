@@ -24,9 +24,21 @@ function find($str, $default = null)
 }
 
 // get a variable from the $_GET array without throwing a warning if it doesn't exist
-function default_get($str, $default = null) {
+function default_get($str, $default = null)
+{
     if (isset($_GET[$str])) {
         return $_GET[$str];
+    } else {
+        return $default;
+    }
+}
+
+
+// get a variable from the $_POST array without throwing a warning if it doesn't exist
+function default_post($str, $default = null)
+{
+    if (isset($_POST[$str])) {
+        return $_POST[$str];
     } else {
         return $default;
     }
