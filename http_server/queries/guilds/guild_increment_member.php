@@ -1,6 +1,6 @@
 <?php
 
-function guild_increment_member($pdo, $guild_id, $number)
+function guild_increment_member($pdo, $guild_id, $number, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         UPDATE guilds
@@ -13,7 +13,11 @@ function guild_increment_member($pdo, $guild_id, $number)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not increment guild member count.');
+        if ($suppress_error === true) {
+            return false;
+        } else {
+            throw new Exception('Could not increment guild member count.');
+        }
     }
 
     return $result;
