@@ -1,11 +1,22 @@
 <?php
 
+// output, misc functions
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+
+// user data update/select functions
 require_once __DIR__ . '/../../queries/users/user_select.php'; // pdo
 require_once __DIR__ . '/../../queries/pr2/pr2_select.php'; // pdo
 require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php'; // pdo
+require_once __DIR__ . '/../../queries/staff/admin/admin_account_update.php'; // pdo
 
+// guild, email functions
+require_once __DIR__ . '/../../queries/guilds/guild_increment_member.php'; // pdo
+require_once __DIR__ . '/../../queries/changing_emails/changing_email_insert.php'; // pdo
+require_once __DIR__ . '/../../queries/changing_emails/changing_email_select.php'; // pdo
+require_once __DIR__ . '/../../queries/changing_emails/changing_email_complete.php'; // pdo
+
+// variables
 $user_id = find('id');
 $action = find('action', 'lookup');
 
@@ -29,7 +40,7 @@ try {
 
     // form
     if ($action === 'lookup') {
-        output_form($db, $user_id, $pdo);
+        output_form($pdo, $user_id);
         output_footer();
     }
 
@@ -48,14 +59,13 @@ try {
 }
 
 // page
-function output_form($db, $user_id, $pdo)
+function output_form($pdo, $user_id)
 {
-
     echo '<form name="input" action="update_account.php" method="post">';
 
     $user = user_select($pdo, $user_id);
     $pr2 = pr2_select($pdo, $user_id, true);
-    $pr2_epic = epic_upgrades_select($pdo, $user_id, true);
+    $epic = epic_upgrades_select($pdo, $user_id, true);
     echo "user_id: $user->user_id <br>---<br>";
 
 
@@ -68,11 +78,11 @@ function output_form($db, $user_id, $pdo)
         echo 'Bodies: <input type="text" size="100" name="bodies" value="'.$pr2->body_array.'"><br>';
         echo 'Feet: <input type="text" size="100" name="feet" value="'.$pr2->feet_array.'"><br>';
     }
-    if ($pr2_epic !== false) {
-        echo 'Epic Hats: <input type="text" size="100" name="eHats" value="'.$pr2_epic->epic_hats.'"><br>';
-        echo 'Epic Heads: <input type="text" size="100" name="eHeads" value="'.$pr2_epic->epic_heads.'"><br>';
-        echo 'Epic Bodies: <input type="text" size="100" name="eBodies" value="'.$pr2_epic->epic_bodies.'"><br>';
-        echo 'Epic Feet: <input type="text" size="100" name="eFeet" value="'.$pr2_epic->epic_feet.'"><br>';
+    if ($epic !== false) {
+        echo 'Epic Hats: <input type="text" size="100" name="eHats" value="'.$epic->epic_hats.'"><br>';
+        echo 'Epic Heads: <input type="text" size="100" name="eHeads" value="'.$epic->epic_heads.'"><br>';
+        echo 'Epic Bodies: <input type="text" size="100" name="eBodies" value="'.$epic->epic_bodies.'"><br>';
+        echo 'Epic Feet: <input type="text" size="100" name="eFeet" value="'.$epic->epic_feet.'"><br>';
     }
     echo 'Description of Changes: <input type="text" size="100" name="account_changes"><br>';
     echo '<input type="hidden" name="action" value="update">';
@@ -93,38 +103,26 @@ function output_form($db, $user_id, $pdo)
 function update($db, $pdo, $admin)
 {
     // make some nice variables
-    $guild_id = (int) find('guild');
+    $admin_ip = get_ip();
     $user_id = (int) find('id');
+    $user_name = find('name');
     $email = find('email');
-    $account_changes = find('account_changes');
+    $guild_id = (int) find('guild');
     $hats = find('hats');
     $heads = find('heads');
     $bodies = find('bodies');
     $feet = find('feet');
-
-
-    // call user information
-    $user = user_select($pdo, $user_id);
-    $user_name = $user->name;
-
-    // adjust guild member count
-    if ($user->guild != $guild_id) {
-        if ($user->guild != 0) {
-            $db->call('guild_increment_member', array($user->guild, -1));
-        }
-        if ($guild_id != 0) {
-            $db->call('guild_increment_member', array($guild_id, 1));
-        }
+    $ehats = find('eHats');
+    $eheads = find('eHeads');
+    $ebodies = find('eBodies');
+    $efeet = find('eFeet');
+    $account_changes = find('account_changes');
+    
+    // check for description of changes
+    if (is_empty($account_changes)) {
+        throw new Exception('You must enter a description of your changes.');
     }
-
-    // email change logging
-    if ($user->email !== $email) {
-        $code = 'manual-' . time();
-        $db->call('changing_email_insert', array($user_id, $user->email, $email, $code, ''));
-        $change_id = $db->grab('change_id', 'changing_email_select', array($code));
-        $db->call('changing_email_complete', array($change_id, ''));
-    }
-
+    
     // make sure none of the part values are blank to avoid server crashes
     if (is_empty($hats, false)) {
         $hats = "1";
@@ -139,38 +137,76 @@ function update($db, $pdo, $admin)
         $feet = "1";
     }
 
-    // check for description of changes
-    if (is_empty($account_changes)) {
-        throw new Exception('You must enter a description of your changes.');
+    // call user information
+    $user = user_select($pdo, $user_id);
+    $pr2 = pr2_select($pdo, $user_id, true);
+    $epic = epic_upgrades_select($pdo, $user_id, true);
+    
+    // specify what to change
+    $update_user = false;
+    $update_pr2 = false;
+    $update_epic = false;
+    if ($user->name != $user_name || $user->email != $email || $user->guild != $guild_id) {
+        $update_user = true;
+    }
+    if ($pr2->hat_array != $hats || $pr2->head_array != $heads || $pr2->body_array != $bodies || $pr2->feet_array != $feet) {
+        $update_pr2 = true;
+    }
+    if ($epic->epic_hats != $ehats || $epic->epic_heads != $eheads || $epic->epic_bodies != $ebodies || $epic->epic_feet != $efeet) {
+        $update_epic = true;
+    }
+    
+    // if there's nothing to change, no need to query the database any further
+    if ($update_user === true && $update_pr2 === true && $update_epic === true) {
+        throw new Exception('No changes to be made.');
     }
 
-    // perform the action
-    $db->call(
-        'user_update',
-        array(
-        $user_id,
-        find('name'),
-        find('email'),
-        $guild_id,
-        $hats,
-        $heads,
-        $bodies,
-        $feet,
-        find('eHats'),
-        find('eHeads'),
-        find('eBodies'),
-        find('eFeet')
-        )
-    );
+    // adjust guild member count
+    if ($user->guild != $guild_id) {
+        if ($user->guild != 0) {
+            $result = guild_increment_member($pdo, $user->guild, -1);
+            if ($result === false) {
+                throw new Exception("Could not increment guild member count in guild $user->guild.");
+            }
+        }
+        if ($guild_id != 0) {
+            $result = guild_increment_member($pdo, $user->guild, 1);
+            if ($result === false) {
+                throw new Exception("Could not increment guild member count in guild $guild_id.");
+            }
+        }
+    }
+
+    // email change logging
+    if ($user->email !== $email) {
+        $old_email = $user->email;
+        $new_email = $email;
+        $code = 'manual-' . time();
+        
+        // log it
+        changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $admin_ip);
+        $change_id = changing_email_select($pdo, $code);
+        changing_email_complete($pdo, $change_id, $admin_ip);
+    }
+
+    // update the account
+    if ($update_user === true) {
+        admin_user_update($pdo, $user_id, $user_name, $email, $guild_id);
+    }
+    if ($update_pr2 === true) {
+        admin_pr2_update($pdo, $user_id, $hats, $heads, $bodies, $feet);
+    }
+    if ($update_epic === true) {
+        admin_epic_upgrades_update($pdo, $user_id, $ehats, $eheads, $ebodies, $efeet);
+    }
 
     // log the action in the admin log
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
-    $ip = get_ip();
     $disp_changes = "Changes: " . $account_changes;
 
-    $db->call('admin_action_insert', array($admin_id, "$admin_name updated player $user_name from $ip. $disp_changes.", $admin_id, $ip));
+    $db->call('admin_action_insert', array($admin_id, "$admin_name updated player $user_name from $admin_ip. $disp_changes.", $admin_id, $admin_ip));
 
-    header("Location: player_deep_info.php?name1=" . urlencode(find('name')));
+    header("Location: player_deep_info.php?name1=" . urlencode($user_name));
     die();
 }
