@@ -4,8 +4,8 @@ require_once __DIR__ . '/random_str.php';
 
 
 //--- checks if a login is valid -----------------------------------------------------------
-require_once __DIR__ . '/../queries/users/user_select_hash_by_name';
-require_once __DIR__ . '/../queries/users/user_apply_temp_pass';
+require_once __DIR__ . '/../queries/users/user_select_hash_by_name.php';
+require_once __DIR__ . '/../queries/users/user_apply_temp_pass.php';
 function pass_login($pdo, $name, $password)
 {
 
