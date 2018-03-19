@@ -1013,17 +1013,10 @@ class Player
     }
 
 
-    private function get_rented_parts($type)
-    {
-        $arr = TemporaryItems::get_parts($type, $this->user_id, $this->guild_id);
-        return $arr;
-    }
-
-
     private function get_full_parts($type)
     {
         $perm = $this->get_owned_parts($type);
-        $temp = $this->get_rented_parts($type);
+        $temp = TemporaryItems::get_parts($type, $this->user_id, $this->guild_id);
         $full = array_merge($perm, $temp);
         return $full;
     }
@@ -1076,7 +1069,7 @@ class Player
     public function save_info()
     {
         global $port, $server_id, $db;
-        
+
         // make sure none of the part values are blank to avoid server crashes
         if (is_empty($this->hat, false)) {
             $this->gain_part('hat', 1, true);
