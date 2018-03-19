@@ -48,6 +48,8 @@ function pass_login($pdo, $name, $password)
 
 
 // login using a token
+require_once __DIR__ . '/../queries/tokens/token_select.php';
+
 function token_login($pdo, $use_cookie = true)
 {
 
