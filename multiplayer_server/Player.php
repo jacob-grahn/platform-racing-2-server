@@ -185,7 +185,7 @@ class Player
     {
         $temp_items = TemporaryItems::get_items($this->user_id, $this->guild_id);
         foreach ($temp_items as $item) {
-            $this->gain_part('e'.ucfirst($item->type), $item->part_id);
+            // $this->gain_part('e'.ucfirst($item->type), $item->part_id);
             $this->set_part($item->type, $item->part_id, true);
         }
     }
@@ -827,7 +827,7 @@ class Player
         } elseif ($type === 'eFeet') {
             $arr = &$this->epic_feet_array;
         } else {
-            echo("Player::gain_part - unknown part type \n");
+            echo("Player::gain_part - unknown part type: $type \n");
             return false;
         }
 
