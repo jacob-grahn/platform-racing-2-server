@@ -295,8 +295,8 @@ function check_if_banned($pdo, $user_id, $ip)
 }
 
 
-require_once __DIR__ . '/../queries/bans/ban_select_by_user_id';
-require_once __DIR__ . '/../queries/bans/ban_select_by_ip';
+require_once __DIR__ . '/../queries/bans/ban_select_by_user_id.php';
+require_once __DIR__ . '/../queries/bans/ban_select_by_ip.php';
 
 function query_if_banned($pdo, $user_id, $ip)
 {
