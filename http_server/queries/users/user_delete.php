@@ -2,7 +2,7 @@
 
 function user_delete($pdo, $user_id)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         DELETE FROM artifacts_found
         WHERE user_id = :user_id;
 
@@ -80,11 +80,11 @@ function user_delete($pdo, $user_id)
         DELETE FROM level_backups
         WHERE user_id = :user_id;
     ');
-	$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-	$result = $stmt->execute();
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
 
-    if (!$result) {
-        throw new Exception('error deleting user');
+    if ($result === false) {
+        throw new Exception('Could not delete user');
     }
 
     return $result;

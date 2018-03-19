@@ -2,7 +2,7 @@
 
 function epic_upgrades_update_field($pdo, $user_id, $type, $part_array)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         IF (:type = "eHat") THEN
             INSERT INTO epic_upgrades
             SET user_id = :user_id,
@@ -35,10 +35,10 @@ function epic_upgrades_update_field($pdo, $user_id, $type, $part_array)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
-	$stmt->bindValue(':part_array', $part_array, PDO::PARAM_STR);
-	$result = $stmt->execute();
-	if (!$result) {
-        throw new Exception('could update epic_upgrades');
+    $stmt->bindValue(':part_array', $part_array, PDO::PARAM_STR);
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not update epic_upgrades');
     }
 
     return $result;

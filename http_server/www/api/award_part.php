@@ -17,12 +17,13 @@ try {
 
     //connecto!!!
     $db = new DB();
+    $pdo = pdo_connect();
 
     //get the to id
     $target_id = name_to_id($db, $user_name);
 
     //give the player the part
-    $result = award_part($db, $target_id, $type, $part_id);
+    $result = award_part($pdo, $target_id, $type, $part_id);
     if (!$result) {
         throw new Exception('They already have the part.');
     }

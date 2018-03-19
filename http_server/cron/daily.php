@@ -13,6 +13,7 @@ require_once __DIR__ . '/../queries/gp/gp_reset.php';
 require_once __DIR__ . '/../queries/rank_token_rentals/rank_token_rentals_delete_old.php';
 require_once __DIR__ . '/../queries/tokens/tokens_delete_old.php';
 require_once __DIR__ . '/../queries/servers/servers_select.php';
+require_once __DIR__ . '/../queries/users/users_reset_status.php';
 
 $pdo = pdo_connect();
 $servers = servers_select($pdo);
@@ -30,6 +31,7 @@ guilds_reset_gp_today($pdo);
 gp_reset($pdo);
 rank_token_rentals_delete_old($pdo);
 tokens_delete_old($pdo);
+users_reset_status($pdo);
 
 output('result=ok');
 

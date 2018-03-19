@@ -2,14 +2,12 @@
 
 function folding_insert($pdo, $user_id)
 {
-	$stmt = $pdo->prepare('
-        INSERT IGNORE INTO folding_at_home SET user_id = :user_id
-    ');
-	$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-	$result = $stmt->execute();
+    $stmt = $pdo->prepare('INSERT IGNORE INTO folding_at_home SET user_id = :user_id');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
 
-    if (!$result) {
-        throw new Exception('folding could not insert row');
+    if ($result === false) {
+        throw new Exception('Could not insert folding_at_home row');
     }
 
     return $result;
