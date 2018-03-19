@@ -75,75 +75,23 @@ function token_login($pdo, $use_cookie = true)
 
 
 
-// lookup user_id with name
-function name_to_id($db, $name)
+require_once __DIR__ . '/../queries/users/user_select_by_name.php';
+
+// lookup user_id with name // todo: is this needed?
+function name_to_id($pdo, $name)
 {
-    $user_id = $db->grab('user_id', 'user_select_user_id', array($name), 'Could not find a user with that name.');
-    return $user_id;
+    $user = user_select_by_name($pdo, $name);
+    return $user->user_id;
 }
 
 
+require_once __DIR__ . '/../queries/users/user_select.php';
 
-// lookup name with user_id
-function id_to_name($db, $user_id)
+// lookup name with user_id // todo: is this needed?
+function id_to_name($pdo, $user_id)
 {
-    $user_name = $db->grab('name', 'user_select', array($user_id));
-    return $user_name;
-}
-
-
-
-// count the number of bans an account has recieved
-function count_bans($db, $value, $ban_type = 'account')
-{
-    $safe_value = addslashes($value);
-
-    if ($ban_type == 'account') {
-        $field = 'banned_user_id';
-    } else {
-        $field = 'banned_ip';
-    }
-
-    $result = $db->query(
-        "select count(*) as ban_count
-									from bans
-									where $field = '$safe_value'"
-    );
-    if (!$result) {
-        throw new Exception('Could not count bans for '.$ban_type);
-    }
-
-    $row = $result->fetch_object();
-    $ban_count = $row->ban_count;
-
-    return($ban_count);
-}
-
-
-
-// retrieve all bans of a certain type
-function retrieve_bans($db, $value, $ban_type = 'account')
-{
-    $safe_value = addslashes($value);
-
-    if ($ban_type == 'account') {
-        $field = 'banned_user_id';
-    } else {
-        $field = 'banned_ip';
-    }
-
-    $result = $db->query(
-        "select *
-									from bans
-									where $field = '$safe_value'
-									and ".$ban_type."_ban = 1
-									limit 0, 50"
-    );
-    if (!$result) {
-        throw new Exception('Could not retrieve bans for '.$ban_type);
-    }
-
-    return($result);
+    $user = user_select($pdo, $user_id);
+    return $user->name;
 }
 
 
@@ -252,21 +200,6 @@ function get_login_token($user_id)
 
 
 
-// save a login token
-function save_login_token($db, $user_id, $token)
-{
-    $db->call('token_insert', array($user_id, $token));
-}
-
-
-// delete a login token
-function delete_login_token($db, $token)
-{
-    $db->call('token_delete', array($token));
-}
-
-
-
 // throw an exception if the user is banned
 function check_if_banned($pdo, $user_id, $ip)
 {
@@ -297,17 +230,17 @@ function check_if_banned($pdo, $user_id, $ip)
 }
 
 
-require_once __DIR__ . '/../queries/bans/ban_select_by_user_id.php';
-require_once __DIR__ . '/../queries/bans/ban_select_by_ip.php';
+require_once __DIR__ . '/../queries/bans/ban_select_active_by_user_id.php';
+require_once __DIR__ . '/../queries/bans/ban_select_active_by_ip.php';
 
 function query_if_banned($pdo, $user_id, $ip)
 {
     $ban = false;
     if (isset($user_id) && $user_id != 0) {
-        $ban = ban_select_by_user_id($pdo, $user_id);
+        $ban = ban_select_active_by_user_id($pdo, $user_id);
     }
     if (!$ban && isset($ip)) {
-        $ban = ban_select_by_ip($pdo, $ip);
+        $ban = ban_select_active_by_ip($pdo, $ip);
     }
     return $ban;
 }
@@ -345,79 +278,4 @@ function generate_level_list($pdo, $mode)
             throw new Exception('could not write level list to '.$filename);
         }
     }
-}
-
-
-
-
-
-
-// perform a level search
-function search_levels($mode, $search_str, $order, $dir, $page)
-{
-
-    if (!isset($mode) || ($mode != 'user' && $mode != 'title')) {
-        $mode = 'title';
-    }
-    if (!isset($order) || ($order != 'rating' && $order != 'date' && $order != 'alphabetical' && $order != 'popularity')) {
-        $order = 'date';
-    }
-    if (!isset($dir) || ($dir != 'asc' && $dir != 'desc')) {
-        $dir = 'desc';
-    }
-    if (!isset($page) || !is_numeric($page) || $page < 1) {
-        $page = 1;
-    }
-
-    $start = ($page-1) * 6;
-    $count = 6;
-
-    $safe_search_str = addslashes($search_str);
-    $safe_dir = addslashes($dir);
-
-    $select_str = 'select pr2_levels.level_id, pr2_levels.version, pr2_levels.title, pr2_levels.rating, pr2_levels.play_count, pr2_levels.min_level, pr2_levels.note, pr2_levels.live, pr2_levels.type, users.name, users.power, pr2_levels.pass';
-    $from_str = 'from pr2_levels, users';
-
-
-    if ($order == 'rating') {
-        $order_by = 'order by pr2_levels.rating';
-    } elseif ($order == 'date') {
-        $order_by = 'order by pr2_levels.time';
-    } elseif ($order == 'alphabetical') {
-        $order_by = 'order by pr2_levels.title';
-    } elseif ($order == 'popularity') {
-        $order_by = 'order by pr2_levels.play_count';
-    } else {
-        $order_by = 'order by pr2_levels.time';
-    }
-
-
-    if ($mode == 'user') {
-        $query_str = "$select_str
-						$from_str
-						WHERE users.name = '$safe_search_str'
-						AND pr2_levels.user_id = users.user_id
-						AND (pr2_levels.live = 1 OR pr2_levels.pass IS NOT NULL)
-						$order_by $safe_dir
-						limit $start, $count";
-    } elseif ($mode == 'title') {
-        $query_str = "$select_str
-						$from_str
-						WHERE MATCH (title) AGAINST ('\"$safe_search_str\"' IN BOOLEAN MODE)
-						AND pr2_levels.user_id = users.user_id
-						AND live = 1
-						$order_by $safe_dir
-						limit $start, $count";
-    }
-
-
-    $db = new DB();
-    $result = $db->query($query_str, '*search_levels');
-    if (!$result) {
-        throw new Exception('Could not retrieve levels.');
-    }
-
-
-    $str = format_level_list($db->to_array($result));
-    return($str);
 }

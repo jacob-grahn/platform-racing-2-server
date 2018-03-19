@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/Encryptor.php';
+require_once __DIR__ . '/../queries/tokens/token_insert.php';
 
 $encrypted_login = $_POST['i'];
 $version = $_POST['version'];
@@ -115,7 +116,7 @@ try {
 
     //--- give them a login token for future requests
     $token = get_login_token($user->user_id);
-    save_login_token($db, $user->user_id, $token);
+    token_insert($pdo, $user->user_id, $token);
     if ($remember == 'true' && !$guest_login) {
         $token_expire = time() + (60*60*24*30);
         setcookie('token', $token, $token_expire);

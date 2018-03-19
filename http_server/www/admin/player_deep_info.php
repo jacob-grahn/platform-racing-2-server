@@ -2,6 +2,11 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/users/user_select_by_name.php';
+require_once __DIR__ . '/../../queries/pr2/pr2_select.php';
+require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php';
+require_once __DIR__ . '/../../queries/changing_emails/changing_emails_select_by_user.php';
+require_once __DIR__ . '/../../queries/recent_logins/recent_logins_select.php';
 
 $name1 = find('name1', '');
 $name2 = find('name2', '');
@@ -13,12 +18,9 @@ $name7 = find('name7', '');
 $name8 = find('name8', '');
 $name9 = find('name9', '');
 
-
 try {
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
-
 
     // make sure you're an admin
     $mod = check_moderator($pdo, false, 3);
@@ -34,11 +36,11 @@ try {
 
         if ($name != '') {
             try {
-                $user = $db->grab_row('user_select_by_name', array($name));
-                $pr2 = $db->grab_row('pr2_select', array($user->user_id), '', true);
-                $pr2_epic = $db->grab_row('epic_upgrades_select', array($user->user_id), '', true);
-                $changing_emails = $db->to_array($db->call('changing_email_select_by_user', array($user->user_id)));
-                $logins = $db->to_array($db->call('recent_logins_select', array($user->user_id)));
+                $user = user_select_by_name($pdo, $name);
+                $pr2 = pr2_select($pdo, $user->user_id);
+                $pr2_epic = epic_upgrades_select($pdo, $user->user_id, true);
+                $changing_emails = changing_emails_select_by_user($pdo, $user->user_id);
+                $logins = recent_logins_select($pdo, $user->user_id);
                 echo "user_id: $user->user_id <br/>";
                 output_object($user);
                 output_object($pr2);

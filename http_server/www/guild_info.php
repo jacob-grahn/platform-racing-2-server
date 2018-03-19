@@ -17,6 +17,7 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
 
     // sanity check: was any information requested?
@@ -51,7 +52,7 @@ try {
 
 
     // count active members
-    $guild->active_count = guild_count_active($db, $guild->guild_id);
+    $guild->active_count = guild_count_active($pdo, $guild->guild_id);
 
 
     // tell it to the world

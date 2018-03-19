@@ -20,7 +20,7 @@ try {
     $pdo = pdo_connect();
 
     //get the to id
-    $target_id = name_to_id($db, $user_name);
+    $target_id = name_to_id($pdo, $user_name);
 
     //give the player the part
     $result = award_part($pdo, $target_id, $type, $part_id);

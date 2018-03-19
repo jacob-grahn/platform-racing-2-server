@@ -20,7 +20,6 @@ try {
     rate_limit('mod-player-info-'.$mod_ip, 5, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // make sure you're a moderator
@@ -55,7 +54,7 @@ try {
     $user_name = $user->name;
 
     //--- count how many times they have been banned
-    $account_bans = retrieve_bans($db, $user_id, 'account');
+    $account_bans = bans_select_by_user_id($pdo, $user_id);
     $account_ban_count = $account_bans->num_rows;
     $account_ban_list = create_ban_list($account_bans);
     if ($account_ban_count == 1) {
@@ -92,7 +91,7 @@ try {
 
 
     //look for all historical bans given to this ip address
-    $ip_bans = retrieve_bans($db, $ip, 'ip');
+    $ip_bans = bans_select_by_ip($pdo, $ip);
     $ip_ban_count = $ip_bans->num_rows;
     $ip_ban_list = create_ban_list($ip_bans);
     if ($ip_ban_count == 1) {

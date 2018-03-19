@@ -3,20 +3,20 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../www/mod/mod_fns.php';
+require_once __DIR__ . '/../../queries/mod_actions/mod_actions_select.php';
 
 $start = find('start', 0);
 $count = find('count', 25);
 
 try {
     //connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     //make sure you're an admin
     $admin = check_moderator($pdo, false, 3);
 
     //get actions for this page
-    $actions = $db->call('admin_actions_select', array( $start, $count ));
+    $actions = admin_actions_select($pdo, $start, $count);
 
     // output header
     output_header('Admin Action Log', true, true);
@@ -27,8 +27,7 @@ try {
 
 
     //output actions
-    while ($row = $actions->fetch_object()) {
-        //$formatted_time = date('M j, Y g:i A', $row->time);
+    foreach ($actions as $row) {
         echo("<p><span class='date'>$row->time</span> -- ".htmlspecialchars($row->message)."</p>");
     }
 

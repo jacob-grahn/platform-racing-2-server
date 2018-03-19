@@ -21,9 +21,10 @@ try {
 
     // db
     $db = new DB();
+    $pdo = pdo_connect();
 
     // find user
-    $user = find_user($db, $name);
+    $user = find_user($db, $pdo, $name);
 
     // output
     output_search($name);
@@ -37,13 +38,10 @@ try {
     die();
 }
 
-function find_user($db, $name)
+function find_user($db, $pdo, $name)
 {
     // get id from name
-    $user_id = name_to_id($db, $name);
-
-    // prepare the user id
-    $user_id = (int) $user_id;
+    $user_id = name_to_id($pdo, $name);
 
     // get player info from id
     $user = $db->grab_row('user_select_expanded', array($user_id));

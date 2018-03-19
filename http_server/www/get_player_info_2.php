@@ -27,7 +27,7 @@ try {
     }
 
     //--- get the target id
-    $target_id = name_to_id($db, $target_name);
+    $target_id = name_to_id($pdo, $target_name);
 
     //--- get dem infos
     $target = $db->grab_row('user_select_expanded', array( $target_id ));

@@ -1,10 +1,9 @@
 <?php
 
-function ban_select_by_user_id($pdo, $user_id)
+function ban_select_active_by_user_id($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT *
-        FROM bans
+        SELECT * FROM bans
         WHERE banned_user_id = :user_id
         AND account_ban = 1
         AND lifted != 1
@@ -16,7 +15,7 @@ function ban_select_by_user_id($pdo, $user_id)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('could not check ban by ip');
+        throw new Exception('could not check ban by user_id');
     }
 
     return $stmt->fetch(PDO::FETCH_OBJ);

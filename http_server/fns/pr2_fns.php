@@ -24,13 +24,17 @@ function backup_level($pdo, $s3, $user_id, $level_id, $version, $title, $live = 
 
 
 
+require_once __DIR__ . '/../queries/users/user_select.php';
+require_once __DIR__ . '/../queries/pr2/pr2_select.php';
+require_once __DIR__ . '/../queries/ignored/ignored_select.php';
+require_once __DIR__ . '/../queries/messages/messages_insert.php';
 
-function send_pm($db, $from_user_id, $to_user_id, $message)
+function send_pm($pdo, $from_user_id, $to_user_id, $message)
 {
 
     // call user info from the db
-    $account = $db->grab_row('user_select', array($from_user_id));
-    $pr2_account = $db->grab_row('pr2_select', array($from_user_id));
+    $account = user_select($pdo, $from_user_id);
+    $pr2_account = pr2_select($pdo, $from_user_id);
 
     // interpret user info from the db
     $account_power = $account->power;
@@ -59,14 +63,14 @@ function send_pm($db, $from_user_id, $to_user_id, $message)
     }
 
 
-    //check the length of their message
+    // check the length of their message
     $message_len = strlen($message);
     if ($message_len > 1000) {
         throw new Exception('Could not send. The maximum message length is 1,000 characters. Your message is '. number_format($message_len) .' characters long.');
     }
 
 
-    //prevent flooding
+    // prevent flooding
     $key1 = 'pm-'.$from_user_id;
     $key2 = 'pm-'.$ip;
     $interval = 60;
@@ -76,36 +80,29 @@ function send_pm($db, $from_user_id, $to_user_id, $message)
     rate_limit($key2, $interval, $limit, $error_message);
 
 
-    //see if they've been ignored
-    $result = $db->query(
-        "select * from
-									ignored
-									where ignore_id = '$from_user_id'
-									and user_id = '$to_user_id'
-									limit 0, 1"
-    );
-    if (!$result) {
-        throw new Exception('Could not check your status.');
-    }
-    if ($result->num_rows > 0) {
+    // see if they've been ignored
+    $ignored = ignored_select($pdo, $to_user_id, $from_user_id, true);
+    if ($ignored) {
         throw new Exception('You have been ignored by this player. They won\'t recieve any chat or messages from you.');
     }
 
 
-    //add the message to the db
-    $db->call('message_insert', array( $to_user_id, $from_user_id, $message, $ip ));
+    // add the message to the db
+    messages_insert($pdo, $to_user_id, $from_user_id, $message, $ip);
 }
 
 
-function guild_count_active($db, $guild_id)
+require_once __DIR__ . '/../queries/guilds/guild_select_active_member_count.php';
+
+function guild_count_active($pdo, $guild_id)
 {
     $key = 'ga' . $guild_id;
 
     if (apcu_exists($key)) {
         $active_count = apcu_fetch($key);
     } else {
-        $active_count = $db->grab('active_member_count', 'guild_select_active_member_count', array($guild_id));
-        apcu_store($key, $active_count, 3600); //one hour
+        $active_count = guild_select_active_member_count($pdo, $guild_id);
+        apcu_store($key, $active_count, 3600); // one hour
     }
     return( $active_count );
 }

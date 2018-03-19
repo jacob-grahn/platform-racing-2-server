@@ -16,7 +16,6 @@ try {
     rate_limit('mod-do-player-search-'.$ip, 5, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // make sure you're a moderator
@@ -35,7 +34,7 @@ try {
     }
 
     // look for a player with provided name
-    $user_id = name_to_id($db, $name);
+    $user_id = name_to_id($pdo, $name);
 
     // redirect
     header("Location: player_info.php?user_id=$user_id");

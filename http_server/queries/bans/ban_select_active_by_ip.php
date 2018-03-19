@@ -1,10 +1,9 @@
 <?php
 
-function ban_select_by_ip($pdo, $ip)
+function bans_select_by_ip($pdo, $ip)
 {
     $stmt = $pdo->prepare('
-        SELECT *
-        FROM bans
+        SELECT * FROM bans
         WHERE banned_ip = :ip
         AND ip_ban = 1
         AND lifted != 1
@@ -19,5 +18,5 @@ function ban_select_by_ip($pdo, $ip)
         throw new Exception('could not check ban by ip');
     }
 
-    return $stmt->fetch(PDO::FETCH_OBJ);
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }

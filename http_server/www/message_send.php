@@ -24,7 +24,7 @@ try {
 
     // variables
     $from_user_id = token_login($pdo, false);
-    $to_user_id = name_to_id($db, $to_name);
+    $to_user_id = name_to_id($pdo, $to_name);
 
     // send it
     send_pm($db, $from_user_id, $to_user_id, $message);

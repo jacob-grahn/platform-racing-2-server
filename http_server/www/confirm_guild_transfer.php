@@ -19,6 +19,7 @@ try {
 
     // connect
     $db = new DB();
+    $pdo = pdo_connect();
 
     // get the pending change information
     $row = $db->grab_row('guild_transfer_select_by_code', [$code], 'No pending change was found.');
@@ -29,7 +30,7 @@ try {
     // get updated guild data
     $guild = $db->grab_row('guild_select', [$guild_id], 'Could not get updated guild information from the database.');
     $safe_guild_name = htmlspecialchars($guild->guild_name);
-    $safe_new_owner = htmlspecialchars(id_to_name($db, $new_owner_id));
+    $safe_new_owner = htmlspecialchars(id_to_name($pdo, $new_owner_id));
 
     // do the transfer
     $db->call('guild_transfer_complete', [$transfer_id, $ip], 'Could not confirm the transfer.');

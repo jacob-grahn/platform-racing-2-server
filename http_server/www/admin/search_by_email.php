@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/users/users_select_by_email.php';
 
 $email = find_no_cookie('email', '');
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
@@ -20,7 +21,6 @@ function output_search($email = '', $incl_br = true)
 // admin check try block
 try {
     //connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     //make sure you're an admin
@@ -44,21 +44,8 @@ try {
         die();
     }
 
-    // protect the db
-    $safe_email = addslashes($email);
-
     // if there's an email set, let's get data from the db
-    $result = $db->query(
-        "SELECT power, name, active_date
-							FROM users
-							WHERE email = '$safe_email'
-							ORDER BY active_date DESC
-							"
-    );
-    $row_count = $result->num_rows;
-    if ($row_count <= 0) {
-        throw new Exception("No accounts found with the email address \"$safe_email\".");
-    }
+    $users = users_select_by_email($pdo, $email);
 
     // protect the user
     $disp_email = htmlspecialchars($email);
@@ -67,15 +54,15 @@ try {
     output_search($disp_email);
 
     // output the number of results
-    if ($row_count == 1) {
+    if (count($users) === 1) {
         $res = 'result';
     } else {
         $res = 'results';
     }
-    echo "$row_count $res found for the email address \"$disp_email\".<br><br>";
+    echo "{count($users)} $res found for the email address \"$disp_email\".<br><br>";
 
     // only gonna get here if there were results
-    while ($row = $result->fetch_object()) {
+    foreach ($users as $row) {
         // make nice variables for our data
         $url_name = urlencode($row->name); // url encode the name
         $safe_name = htmlspecialchars($row->name); // html friendly name

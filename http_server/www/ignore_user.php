@@ -27,7 +27,7 @@ try {
     rate_limit('ignored-list-'.$user_id, 3, 2);
 
     // get the ignored user's id
-    $ignored_id = name_to_id($db, $ignored_name);
+    $ignored_id = name_to_id($pdo, $ignored_name);
 
     // create the restraining order
     $db->call('ignored_insert', array($user_id, $ignored_id));

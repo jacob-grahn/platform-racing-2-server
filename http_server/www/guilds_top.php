@@ -14,6 +14,7 @@ try {
 
     //--- connect to the db
     $db = new DB();
+    $pdo = pdo_connect();
 
 
     //--- sanity check
@@ -30,7 +31,7 @@ try {
     //--- get active member count guild by guild
     //--- also disable html parsing
     foreach ($guilds as $guild) {
-        $guild->active_count = guild_count_active($db, $guild->guild_id);
+        $guild->active_count = guild_count_active($pdo, $guild->guild_id);
         $guild->guild_name = htmlspecialchars($guild->guild_name);
     }
 

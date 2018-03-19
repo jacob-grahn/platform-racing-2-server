@@ -2,12 +2,14 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../../queries/guilds/guild_select_members.php';
+require_once __DIR__ . '/../../queries/guild_transfers/guild_transfers_select_by_guild.php';
 
 $guild_id = find('guild_id', 0);
 
 try {
     //connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     //make sure you're an admin
@@ -25,9 +27,9 @@ try {
     echo '<input type="submit" value="Submit"><br>';
     if ($guild_id != '') {
         try {
-            $guild = $db->grab_row('guild_select', array($guild_id), 'Could not find a guild with that id.');
-            $owner_transfers = $db->to_array($db->call('guild_transfers_select_by_guild', array($guild->guild_id)));
-            $members = $db->call('guild_select_members', array($guild_id));
+            $guild = guild_select($pdo, $guild_id);
+            $owner_transfers = guild_transfers_select_by_guild($pdo, $guild_id);
+            $members = guild_select_members($pdo, $guild_id);
             output_object($guild);
             output_objects($owner_transfers);
             output_objects($members);

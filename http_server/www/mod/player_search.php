@@ -11,7 +11,6 @@ try {
     rate_limit('mod-player-search-'.$ip, 5, 3);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // make sure you're a moderator

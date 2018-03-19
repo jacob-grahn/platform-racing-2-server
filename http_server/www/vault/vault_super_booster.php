@@ -2,6 +2,7 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../queries/servers/server_select.php';
 
 $server_id = (int) $_GET['server_id'];
 
@@ -15,7 +16,6 @@ try {
     rate_limit('super-booster-'.$ip, 60, 1, "Please wait at least one minute before attempting to use the super booster again.");
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // get user id
@@ -25,10 +25,9 @@ try {
     rate_limit('super-booster-'.$user_id, 60, 1, "Please wait at least one minute before attempting to use the super booster again.");
 
     // get server info
-    $server = $db->grab_row('server_select', array( $server_id ));
+    $server = server_select($pdo, $server_id);
 
-
-    //--- remember that the super booster was used
+    // remember that the super booster was used
     $key = "sb-$user_id";
     if (apcu_exists($key)) {
         throw new Exception('The Super Booster can only be used once per day.');
@@ -40,11 +39,11 @@ try {
     }
 
 
-    //--- send a message to the player's server giving them a super boost
+    // send a message to the player's server giving them a super boost
     talk_to_server($server->address, $server->port, $server->salt, "unlock_super_booster`$user_id", false);
 
 
-    //--- reply
+    // reply
     $r = new stdClass();
     $r->success = true;
     $r->message = 'Super Booster active! You will start your next race with +10 speed, +10 jump, and +10 acceleration.';

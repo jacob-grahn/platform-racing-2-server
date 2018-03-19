@@ -2,9 +2,9 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/ignored/ignored_delete.php';
 
 $target_name = $_POST['target_name'];
-$safe_name = htmlspecialchars($target_name);
 $ip = get_ip();
 
 try {
@@ -17,7 +17,6 @@ try {
     rate_limit('ignored-list-'.$ip, 3, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -27,13 +26,13 @@ try {
     rate_limit('ignored-list-'.$user_id, 3, 2);
 
     // get the id of the un-ignored player
-    $target_id = name_to_id($db, $target_name);
+    $target_id = name_to_id($pdo, $target_name);
 
     // reconcile the differences :)
-    $db->call('ignored_delete', array($user_id, $target_id));
+    ignored_delete($pdo, $user_id, $target_id);
 
     // tell the world
-    echo "message=$safe_name has been un-ignored. You will now recieve any chat or private messages they send you.";
+    echo "message={htmlspecialchars($target_name)} has been un-ignored. You will now recieve any chat or private messages they send you.";
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";

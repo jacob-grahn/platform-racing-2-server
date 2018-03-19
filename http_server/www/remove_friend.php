@@ -27,7 +27,7 @@ try {
     rate_limit('friends-list-'.$user_id, 3, 2);
 
     // get the id of the player they're removing as a friend
-    $friend_id = name_to_id($db, $friend_name);
+    $friend_id = name_to_id($pdo, $friend_name);
 
     // delete the friendship :(
     $db->call('friend_delete', array($user_id, $friend_id));

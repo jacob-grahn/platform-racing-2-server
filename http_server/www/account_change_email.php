@@ -5,6 +5,12 @@ header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/Encryptor.php';
 require_once __DIR__ . '/../fns/email_fns.php';
+require_once __DIR__ . '/../queries/users/user_select.php';
+require_once __DIR__ . '/../queries/users/user_update_email.php';
+require_once __DIR__ . '/../queries/changing_emails/changing_email_insert.php';
+require_once __DIR__ . '/../queries/changing_emails/changing_email_select.php';
+require_once __DIR__ . '/../queries/changing_emails/changing_email_complete.php';
+
 
 $encrypted_data = $_POST['data'];
 
@@ -39,7 +45,6 @@ try {
     $pass = $data->pass;
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -49,14 +54,9 @@ try {
     rate_limit('change-email-attempt-'.$user_id, 5, 1);
 
     // get user info
-    $user = $db->grab_row('user_select', array($user_id));
+    $user = user_select($pdo, $user_id);
     $user_name = $user->name;
     $old_email = $user->email;
-
-    // make things safe
-    $safe_old_email = htmlspecialchars($old_email);
-    $safe_new_email = htmlspecialchars($new_email);
-    $safe_name = htmlspecialchars($user_name);
 
     // check password
     pass_login($pdo, $user_name, $pass);
@@ -68,7 +68,7 @@ try {
 
     // sanity check: check for invalid email
     if (!valid_email($new_email)) {
-        throw new Exception("\"$safe_new_email\" is not a valid email address.");
+        throw new Exception("Invalid email address.");
     }
 
     // rate limiting
@@ -81,10 +81,10 @@ try {
         $code = "set-email-$time";
 
         // log and do it
-        $db->call('changing_email_insert', array($user_id, $old_email, $new_email, $code, $ip));
-        $change_id = $db->grab('change_id', 'changing_email_select', array($code));
-        $db->call('changing_email_complete', array($change_id, $ip));
-        $db->call('user_update_email', array($user_id, $old_email, $new_email));
+        changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $ip);
+        $change = changing_email_select($pdo, $code);
+        changing_email_complete($pdo, $change->change_id, $ip);
+        user_update_email($pdo, $user_id, $old_email, $new_email);
 
         // tell the user and end the script
         $ret = new stdClass();
@@ -95,13 +95,13 @@ try {
 
     // initiate an email change confirmation (generate code) if they do already have an email address
     $code = random_str(24);
-    $db->call('changing_email_insert', array($user_id, $old_email, $new_email, $code, $ip));
+    changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $ip);
 
     // send a confirmation email
     $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
     $to = $old_email;
     $subject = 'PR2 Email Change Confirmation';
-    $body = "Howdy $safe_name,\n\nWe received a request to change the email on your account from $safe_old_email to $safe_new_email. If you requested this change, please click the link below to change the email address on your Platform Racing 2 account.\n\nhttp://pr2hub.com/account_confirm_email_change.php?code=$code\n\nIf you didn't request this change, you may need to change your password.\n\nAll the best,\nFred";
+    $body = "Howdy {htmlspecialchars($user_name)},\n\nWe received a request to change the email on your account from {htmlspecialchars($old_email)} to {htmlspecialchars($new_email)}. If you requested this change, please click the link below to change the email address on your Platform Racing 2 account.\n\nhttp://pr2hub.com/account_confirm_email_change.php?code=$code\n\nIf you didn't request this change, you may need to change your password.\n\nAll the best,\nFred";
     send_email($from, $to, $subject, $body);
 
     // tell it to the world

@@ -71,7 +71,7 @@ try {
     $db->call('user_insert', array($name, $pass_hash, $ip, $time, $email));
 
     // pr2 insert
-    $user_id = name_to_id($db, $name);
+    $user_id = name_to_id($pdo, $name);
     $db->call('pr2_insert', array($user_id));
 
     // compose a welcome pm

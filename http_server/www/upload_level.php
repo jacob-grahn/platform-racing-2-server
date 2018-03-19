@@ -46,7 +46,7 @@ try {
 
     // check their login
     $user_id = token_login($pdo, false);
-    $user_name = id_to_name($db, $user_id);
+    $user_name = id_to_name($pdo, $user_id);
 
     // more rate limiting
     rate_limit('upload-level-attempt-'.$user_id, 10, 3, "Please wait at least 10 seconds before trying to save again.");
