@@ -827,7 +827,8 @@ class Player
         } elseif ($type === 'eFeet') {
             $arr = &$this->epic_feet_array;
         } else {
-            throw new Exception('Player::gain_part - unknown part type');
+            echo("Player::gain_part - unknown part type \n");
+            return false;
         }
 
         if (isset($arr) && array_search($id, $arr) === false) {
