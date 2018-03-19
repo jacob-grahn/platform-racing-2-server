@@ -1,23 +1,23 @@
 <?php
 
-function servers_select($pdo, $server_id)
+function server_select($pdo, $server_id)
 {
     $stmt = $pdo->prepare('
         SELECT *
-        FROM servers
-        WHERE server_id = :server_id
-        LIMIT 1
-    ');
+          FROM servers
+         WHERE server_id = :server_id
+         LIMIT 1
+        ');
     $stmt->bindValue(':server_id', $server_id, PDO::PARAM_INT);
 
     $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could not select server');
+        throw new Exception('Could not select server.');
     }
 
     $server = $stmt->fetch(PDO::FETCH_OBJ);
     if (!$server) {
-        throw new Exception('Server not found');
+        throw new Exception('Could not find a server with that ID.');
     }
 
     return $server;
