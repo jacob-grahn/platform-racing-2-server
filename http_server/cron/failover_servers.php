@@ -1,8 +1,8 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/servers/servers_select';
-require_once __DIR__ . '/../queries/servers/server_update_address';
+require_once __DIR__ . '/../queries/servers/servers_select.php';
+require_once __DIR__ . '/../queries/servers/server_update_address.php';
 
 $pdo = pdo_connect();
 $servers = servers_select($pdo);
