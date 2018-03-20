@@ -2,6 +2,10 @@
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/output_fns.php';
+require_once __DIR__ . '/../queries/guild_transfers/guild_transfer_select.php';
+require_once __DIR__ . '/../queries/guild_transfers/guild_transfer_complete.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/guilds/guild_update.php';
 
 $code = $_GET['code'];
 $ip = get_ip();
@@ -18,25 +22,24 @@ try {
     rate_limit('confirm-guild-transfer-'.$ip, 5, 1);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // get the pending change information
-    $row = $db->grab_row('guild_transfer_select_by_code', [$code], 'No pending change was found.');
+    $row = guild_transfer_select($pdo, $code);
     $guild_id = $row->guild_id;
     $new_owner_id = $row->new_owner_id;
     $transfer_id = $row->transfer_id;
 
     // get updated guild data
-    $guild = $db->grab_row('guild_select', [$guild_id], 'Could not get updated guild information from the database.');
-    $safe_guild_name = htmlspecialchars($guild->guild_name);
-    $safe_new_owner = htmlspecialchars(id_to_name($pdo, $new_owner_id));
+    $guild = guild_select($pdo, $guild_id);
 
     // do the transfer
-    $db->call('guild_transfer_complete', [$transfer_id, $ip], 'Could not confirm the transfer.');
-    $db->call('guild_update', [$guild_id, $guild->guild_name, $guild->emblem, $guild->note, $new_owner_id], 'Could not transfer guild ownership.');
+    guild_transfer_complete($pdo, $transfer_id, $ip);
+    guild_update($pdo, $guild_id, $guild->guild_name, $guild->emblem, $guild->note, $new_owner_id);
 
     // tell the world
+    $safe_guild_name = htmlspecialchars($guild->guild_name);
+    $safe_new_owner = htmlspecialchars(id_to_name($pdo, $new_owner_id));
     echo "Great success! The new owner of $safe_guild_name is $safe_new_owner. Long live $safe_guild_name!";
     output_footer();
 } catch (Exception $e) {

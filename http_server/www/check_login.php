@@ -1,8 +1,9 @@
 <?php
 
-header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/users/user_select.php';
 
+header("Content-type: text/plain");
 $ip = get_ip();
 
 try {
@@ -10,14 +11,13 @@ try {
     rate_limit('check-login-'.$ip, 10, 1);
 
     // connect to the db
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
     $user_id = token_login($pdo);
 
     // get their username
-    $user = $db->grab_row('user_select', array($user_id));
+    $user = user_select($pdo, $user_id);
 
     // sanity check: guest account?
     if ($user->power == 0) {
