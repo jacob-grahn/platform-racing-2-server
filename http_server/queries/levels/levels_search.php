@@ -43,10 +43,10 @@ function levels_search ($pdo, $search, $in_mode = 'title', $in_start = 0, $in_co
             $where = 'users.name = :search';
             break;
         case 'user':
-            $where = 'MATCH (title) AGAINST (:search IN BOOLEAN MODE)';
+            $where = 'users.name = :search';
             break;
         default:
-            $where = 'users.name = :search';
+            $where = 'MATCH (title) AGAINST (:search IN BOOLEAN MODE)';
             break;
     }
 
