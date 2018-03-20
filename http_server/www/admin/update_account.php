@@ -160,7 +160,7 @@ function update($pdo, $admin)
     }
 
     // if there's nothing to change, no need to query the database any further
-    if ($update_user === true && $update_pr2 === true && $update_epic === true) {
+    if ($update_user === false && $update_pr2 === false && $update_epic === false) {
         throw new Exception('No changes to be made.');
     }
 
