@@ -53,7 +53,8 @@ try {
         update($db, $pdo, $admin);
     }
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
+    $error = $e->getMessage();
+    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
     die();
 }
@@ -185,8 +186,8 @@ function update($db, $pdo, $admin)
         
         // log it
         changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $admin_ip);
-        $change_id = changing_email_select($pdo, $code);
-        changing_email_complete($pdo, $change_id, $admin_ip);
+        $change = changing_email_select($pdo, $code);
+        changing_email_complete($pdo, $change->change_id, $admin_ip);
     }
 
     // update the account
