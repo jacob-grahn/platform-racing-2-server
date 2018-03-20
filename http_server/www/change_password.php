@@ -49,7 +49,7 @@ try {
 
     // change their pass
     $pass_hash = to_hash($new_pass);
-    update_user_pass($pdo, $login->user_id, $pass_hash);
+    user_update_pass($pdo, $login->user_id, $pass_hash);
 
     // clear the existing token
     setcookie("token", "", time() - 3600);
