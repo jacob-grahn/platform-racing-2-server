@@ -2,29 +2,17 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/friends/friends_select.php';
+require_once __DIR__ . '/../queries/ignored/ignored_select_list.php';
 
 $mode = find_no_cookie('mode');
 $ip = get_ip();
 
 try {
-    switch ($mode) {
-        case 'friends':
-            $table = 'friends';
-            $var = 'friend_id';
-            break;
-        case 'ignored':
-            $table = 'ignored';
-            $var = 'ignore_id';
-            break;
-        default:
-            throw new Exception("Invalid list mode specified.");
-    }
-
     // rate limiting
     rate_limit("user-list-$table-$ip", 5, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -33,28 +21,20 @@ try {
     // more rate limiting
     rate_limit("user-list-$table-$user_id", 5, 2);
 
-    // get the information from the database
-    $result = $db->query(
-        "SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens
-									FROM $table
-									INNER JOIN users
-									ON users.user_id = $table.$var
-									LEFT JOIN pr2
-									ON users.user_id = pr2.user_id
-									LEFT JOIN rank_tokens
-									ON users.user_id = rank_tokens.user_id
-									WHERE $table.user_id = '$user_id'
-									LIMIT 0, 250"
-    );
-
-    if (!$result) {
-        throw new Exception('Could not retrieve player list.');
+    switch ($mode) {
+        case 'friends':
+            $users = friends_select($pdo, $user_id);
+            break;
+        case 'ignored':
+            $users = ignored_select_list($pdo, $user_id);
+            break;
+        default:
+            throw new Exception("Invalid list mode specified.");
     }
 
-    $num = 0;
-
     // make individual list entries
-    while ($row = $result->fetch_object()) {
+    $num = 0;
+    foreach ($users as $row) {
         $name = urlencode(htmlspecialchars($row->name));
         $group = $row->power;
         $status = $row->status;

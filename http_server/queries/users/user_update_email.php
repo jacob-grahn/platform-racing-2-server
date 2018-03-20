@@ -3,7 +3,7 @@
 function user_update_email($pdo, $user_id, $old_email, $new_email)
 {
     $stmt = $pdo->prepare('
-    UPDATE users
+        UPDATE users
         SET email = :new_email
         WHERE user_id = :user_id
         AND email = :old_email

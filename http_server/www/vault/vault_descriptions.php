@@ -1,14 +1,18 @@
 <?php
 
 
-function describeVault($db, $user_id, $arr)
+require_once __DIR__ . '/../../queries/users/user_select_expanded.php';
+require_once __DIR__ . '/../../queries/servers/server_select.php';
+require_once __DIR__ . '/../../queries/guild/guild_select.php';
+
+function describeVault($pdo, $user_id, $arr)
 {
 
     //--- gather infos
-    $user = $db->grab_row('user_select_expanded', array($user_id));
-    $server = $db->grab_row('server_select', array($user->server_id), 'You don\'t seem to be logged into a PR2 server.');
+    $user = user_select_expanded($pdo, $user_id);
+    $server = server_select($pdo, $user->server_id);
     if ($user->guild != 0) {
-        $guild = $db->grab_row('guild_select', array($user->guild));
+        $guild = guild_select($pdo, $user->guild);
     } else {
         $guild = false;
     }
@@ -27,7 +31,7 @@ function describeVault($db, $user_id, $arr)
         } elseif ($slug == 'happy-hour') {
             $item = describeHappyHour($server);
         } elseif ($slug == 'rank-rental') {
-            $item = describeRankRental($db, $user);
+            $item = describeRankRental($pdo, $user);
         } elseif ($slug == 'king-set') {
             $item = describeKing($user);
         } elseif ($slug == 'queen-set') {
@@ -164,15 +168,16 @@ function describeHappyHour($server)
 }
 
 
-function describeRankRental($db, $user)
+require_once __DIR__ . '/../../queries/rank_token_rentals/rank_token_rentals_count.php';
+function describeRankRental($pdo, $user)
 {
-    $rented_tokens = $db->grab('count', 'rank_token_rentals_count', array( $user->user_id, $user->guild));
+    $rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
     $d = new stdClass();
     $d->slug = 'rank-rental';
     $d->title = 'Rank Token++';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Rank-Token-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Rank-Token-40x40.png';
-    $d->price = 50 + (20*$rented_tokens);
+    $d->price = 50 + (20 * $rented_tokens);
     $d->description = 'You and your guild all gain a rank token for a week.';
     $d->available = true;
     $d->faq =

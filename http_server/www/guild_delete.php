@@ -1,7 +1,11 @@
 <?php
 
-header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/guilds/guild_delete.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php';
+
+header("Content-type: text/plain");
 
 $guild_id = find_no_cookie('guild_id');
 $ip = get_ip();
@@ -11,7 +15,6 @@ try {
     rate_limit('guild-delete-'.$ip, 5, 2);
 
     // connect to the db
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login and make some rad variables
@@ -24,17 +27,16 @@ try {
     rate_limit('guild-delete-'.$mod_id, 5, 2);
 
     // check if the guild exists and make some rad variables
-    $guild = $db->grab_row('guild_select', array($guild_id), 'Could not find a guild with that id.');
+    $guild = guild_select($pdo, $guild_id);
     $guild_name = $guild->guild_name;
     $guild_note = $guild->note;
     $guild_owner = $guild->owner_id;
 
     // edit guild in db
-    $db->call('guild_delete', array($guild_id), 'Could not delete the guild.');
+    guild_delete($pdo, $guild_id);
 
     // record the deletion in the action log
-    $db->call('mod_action_insert', array($mod_id, "$mod_name deleted guild $guild_id from $ip {guild_name: $guild_name, guild_prose: $guild_note, owner_id: $guild_owner}", $mod_id, $ip));
-
+    mod_action_insert($pdo, $mod_id, "$mod_name deleted guild $guild_id from $ip {guild_name: $guild_name, guild_prose: $guild_note, owner_id: $guild_owner}", $mod_id, $ip);
 
     // tell the world
     $reply = new stdClass();

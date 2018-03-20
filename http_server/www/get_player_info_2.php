@@ -56,7 +56,7 @@ try {
 
     if (isset($user_id)) {
         $friend = (int) (bool) friend_select($pdo, $user_id, $target_id);
-        $ignored = (int) (bool) ignored_select($pdo, $user_id, $target_id);
+        $ignored = (int) (bool) ignored_select($pdo, $user_id, $target_id, true);
     }
 
     // reply

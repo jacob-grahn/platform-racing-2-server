@@ -1,6 +1,8 @@
 <?php
 
-function order_placed_handler($db, $request)
+require_once __DIR__ . '/../../queries/users/user_select_expanded.php';
+
+function order_placed_handler($pdo, $request)
 {
     $event = $request->event; //item_order_placed
     $game_id = $request->game_id; //The game_id.
@@ -11,15 +13,15 @@ function order_placed_handler($db, $request)
     list($pr2_user_id, $slug) = explode(',', $order_info);
 
     //--- check that the item is available
-    $descs = describeVault($db, $pr2_user_id, array($slug));
+    $descs = describeVault($pdo, $pr2_user_id, array($slug));
     $desc = $descs[0];
     if ($desc->available == false) {
         throw new Exception('This item is no longer available');
     }
 
     //--- apply item to player's account
-    $user = $db->grab_row('user_select_expanded', array($pr2_user_id));
-    unlock_item($db, $pr2_user_id, $user->guild, $user->server_id, $slug, $user->name, $recipient_id, $order_id, $desc->title);
+    $user = user_select_expanded($pdo, $pr2_user_id);
+    unlock_item($pdo, $pr2_user_id, $user->guild, $user->server_id, $slug, $user->name, $recipient_id, $order_id, $desc->title);
 
     //--- tell it
     $reply = new stdClass();
@@ -29,10 +31,14 @@ function order_placed_handler($db, $request)
 
 
 
-function unlock_item($db, $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id, $title)
+require_once __DIR__ . '/../../queries/rank_token_rentals/rank_token_rental_insert.php';
+require_once __DIR__ . '/../../queries/servers/servers_select.php';
+require_once __DIR__ . '/../../queries/purchases/purchase_insert.php';
+
+function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id, $title)
 {
     error_log("unlock_item: $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id");
-    $db->call('purchase_insert_2', array( $user_id, $guild_id, $slug, $kong_user_id, $order_id ), 'Could not record your purchase.');
+    purchase_insert($pdo, $user_id, $guild_id, $slug, $kong_user_id, $order_id);
     $command = "unlock_perk`$slug`$user_id`$guild_id`$user_name";
     $reply = '';
     $target_servers = array();
@@ -44,37 +50,37 @@ function unlock_item($db, $user_id, $guild_id, $server_id, $slug, $user_name, $k
     } elseif ($slug == 'guild-artifact') {
         $reply = "Ultimate power, courtesy of Fred!";
     } elseif ($slug == 'king-set') {
-        award_part($db, $user_id, 'head', 28);
-        award_part($db, $user_id, 'body', 26);
-        award_part($db, $user_id, 'feet', 24);
-        award_part($db, $user_id, 'eHead', 28);
-        award_part($db, $user_id, 'eBody', 26);
-        award_part($db, $user_id, 'eFeet', 24);
+        award_part($pdo, $user_id, 'head', 28);
+        award_part($pdo, $user_id, 'body', 26);
+        award_part($pdo, $user_id, 'feet', 24);
+        award_part($pdo, $user_id, 'eHead', 28);
+        award_part($pdo, $user_id, 'eBody', 26);
+        award_part($pdo, $user_id, 'eFeet', 24);
         $command = "unlock_set_king`$user_id";
         $reply = "The Wise King set has been added your account!";
     } elseif ($slug == 'queen-set') {
-        award_part($db, $user_id, 'head', 29);
-        award_part($db, $user_id, 'body', 27);
-        award_part($db, $user_id, 'feet', 25);
-        award_part($db, $user_id, 'eHead', 29);
-        award_part($db, $user_id, 'eBody', 27);
-        award_part($db, $user_id, 'eFeet', 25);
+        award_part($pdo, $user_id, 'head', 29);
+        award_part($pdo, $user_id, 'body', 27);
+        award_part($pdo, $user_id, 'feet', 25);
+        award_part($pdo, $user_id, 'eHead', 29);
+        award_part($pdo, $user_id, 'eBody', 27);
+        award_part($pdo, $user_id, 'eFeet', 25);
         $command = "unlock_set_queen`$user_id";
         $reply = "The Wise Queen set has been added your account!";
     } elseif ($slug == 'djinn-set') {
-        award_part($db, $user_id, 'head', 35);
-        award_part($db, $user_id, 'body', 35);
-        award_part($db, $user_id, 'feet', 35);
-        award_part($db, $user_id, 'eHead', 35);
-        award_part($db, $user_id, 'eBody', 35);
-        award_part($db, $user_id, 'eFeet', 35);
+        award_part($pdo, $user_id, 'head', 35);
+        award_part($pdo, $user_id, 'body', 35);
+        award_part($pdo, $user_id, 'feet', 35);
+        award_part($pdo, $user_id, 'eHead', 35);
+        award_part($pdo, $user_id, 'eBody', 35);
+        award_part($pdo, $user_id, 'eFeet', 35);
         $command = "unlock_set_djinn`$user_id";
         $reply = "The Frost Djinn set has been added your account!";
     } elseif ($slug == 'epic-everything') {
-        award_part($db, $user_id, 'eHat', '*');
-        award_part($db, $user_id, 'eHead', '*');
-        award_part($db, $user_id, 'eBody', '*');
-        award_part($db, $user_id, 'eFeet', '*');
+        award_part($pdo, $user_id, 'eHat', '*');
+        award_part($pdo, $user_id, 'eHead', '*');
+        award_part($pdo, $user_id, 'eBody', '*');
+        award_part($pdo, $user_id, 'eFeet', '*');
         $command = "unlock_epic_everything`$user_id";
         $reply = "All Epic Upgrades are yours!";
     } elseif ($slug == 'happy-hour') {
@@ -90,7 +96,7 @@ function unlock_item($db, $user_id, $guild_id, $server_id, $slug, $user_name, $k
             $seconds = 60*60*24*30;
         }
 
-        $result = create_server($db, $guild_id, $seconds);
+        $result = create_server($pdo, $guild_id, $seconds);
 
         if ($result == 0) {
             throw new Exception('Could not start the server.');
@@ -102,7 +108,7 @@ function unlock_item($db, $user_id, $guild_id, $server_id, $slug, $user_name, $k
             $reply = 'The life of your private server has been extended! Long live your guild!';
         }
     } elseif ($slug == 'rank-rental') {
-        $db->call('rank_token_rental_insert', array($user_id, $guild_id));
+        rank_token_rental_insert($pdo, $user_id, $guild_id);
 
         $obj = new stdClass();
         $obj->user_id = $user_id;
@@ -115,7 +121,7 @@ function unlock_item($db, $user_id, $guild_id, $server_id, $slug, $user_name, $k
         throw new Exception("Item not found: " . strip_tags($slug, '<br>'));
     }
 
-    $servers = $db->to_array($db->call('servers_select', array()));
+    $servers = servers_select($pdo);
 
     if ($command != '') {
         poll_servers($servers, $command, false, $target_servers);
@@ -128,37 +134,43 @@ function unlock_item($db, $user_id, $guild_id, $server_id, $slug, $user_name, $k
         poll_servers($servers, "send_message_to_player`$data", false, array($server_id));
     }
 
-    send_confirmation_pm($db, $user_id, $title, $order_id);
+    send_confirmation_pm($pdo, $user_id, $title, $order_id);
 
     return $reply;
 }
 
 
+require_once __DIR__ . '/../../queries/messages/message_insert.php';
 
-function send_confirmation_pm($db, $user_id, $title, $order_id)
+function send_confirmation_pm($pdo, $user_id, $title, $order_id)
 {
     $pm = "Thank you for your support! This PM is to confirm your order.
 item: $title
 order id: $order_id";
-    $db->call('message_insert', array($user_id, 1, $pm, '0'));
+    message_insert($pdo, $user_id, 1, $pm, '0');
 }
 
 
+require_once __DIR__ . '/../../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../../queries/servers/server_select_by_guild_id.php';
+require_once __DIR__ . '/../../queries/servers/servers_select_highest_port.php';
+require_once __DIR__ . '/../../queries/servers/server_insert.php';
+require_once __DIR__ . '/../../queries/servers/server_update_expire_date.php';
 
-function create_server($db, $guild_id, $seconds_of_life)
+function create_server($pdo, $guild_id, $seconds_of_life)
 {
     global $COMM_PASS;
-    $result = $db->call('server_select_by_guild_id', array($guild_id), 'Could not check if you already have a guild server.');
-    $guild = $db->grab_row('guild_select', array($guild_id), 'Could not select your guild.');
-    $port = 1 + $db->grab('port', 'servers_select_highest_port', array(), 'Could not select port.');
+    $existing_server = server_select_by_guild_id($pdo, $guild_id);
+    $guild = guild_select($pdo, $guild_id);
+    $port = 1 + servers_select_highest_port($pdo);
     $server_name = $guild->guild_name;
     $address = 'assign';
     $expire_time = time() + $seconds_of_life;
     $salt = $COMM_PASS;
     $guild_id = $guild->guild_id;
 
-    if ($result->num_rows <= 0) {
-        $db->call('server_insert', array($server_name, $address, $port, $expire_time, $salt, $guild_id), 'Could not insert server.');
+    if ($existing_server) {
+        server_insert($pdo, $server_name, $address, $port, $expire_time, $salt, $guild_id);
         return( 1 );
     } else {
         $server = $result->fetch_object();
@@ -167,7 +179,7 @@ function create_server($db, $guild_id, $seconds_of_life)
         if ($expire_time_2 > $expire_time) {
             $expire_time = $expire_time_2;
         }
-        $db->call('server_update_expire_date', array($server_id, $expire_time, $server_name), "Could not update server. $server_id, $server_name, $expire_time");
+        server_update_expire_date($pdo, $server_id, $expire_time, $server_name);
         return( 2 );
     }
 }

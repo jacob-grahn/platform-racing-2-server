@@ -2,6 +2,7 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/friends/friend_delete.php';
 
 $friend_name = $_POST['target_name'];
 $safe_friend_name = htmlspecialchars($friend_name);
@@ -17,7 +18,6 @@ try {
     rate_limit('friends-list-'.$ip, 3, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -30,7 +30,7 @@ try {
     $friend_id = name_to_id($pdo, $friend_name);
 
     // delete the friendship :(
-    $db->call('friend_delete', array($user_id, $friend_id));
+    friend_delete($pdo, $user_id, $friend_id);
 
     // tell the world
     echo "message=$safe_friend_name has been removed from your friends list.";

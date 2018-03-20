@@ -13,15 +13,15 @@ try {
     $request = parse_signed_request($encrypted_request, $KONG_API_PASS);
 
     //--- connect
-    $db = new DB();
+    $pdo = pdo_connect();
 
     //---
     $event = $request->event;
     if ($event == 'item_order_request') {
-        $reply = order_request_handler($db, $request);
+        $reply = order_request_handler($pdo, $request);
     }
     if ($event == 'item_order_placed') {
-        $reply = order_placed_handler($db, $request);
+        $reply = order_placed_handler($pdo, $request);
     }
 
     //---
