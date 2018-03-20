@@ -2300,6 +2300,9 @@ final class S3Request
         if (in_array($this->response->code, array(200, 206)) && $this->fp !== false) {
             return fwrite($this->fp, $data);
         } else {
+            if (!property_exists($this->response, 'body')) {
+                $this->response->body = '';
+            }
             $this->response->body .= $data;
         }
         return strlen($data);
