@@ -28,7 +28,7 @@ try {
 
 try {
     // get actions for this page
-    $actions = mod_actions_select($start, $count);
+    $actions = mod_actions_select($pdo, $start, $count);
 
     // output header
     output_header('Mod Action Log', true);
