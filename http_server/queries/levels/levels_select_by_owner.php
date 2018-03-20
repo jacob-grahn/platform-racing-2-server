@@ -17,7 +17,7 @@ function levels_select_by_owner ($pdo, $level_id)
                users.user_id
         FROM pr2_levels, users
         WHERE pr2_levels.user_id = users.user_id
-        AND pr2_levels.user_id = p_user_id
+        AND pr2_levels.user_id = :level_id
         ORDER BY pr2_levels.time DESC
         LIMIT 0, 100
     ');
