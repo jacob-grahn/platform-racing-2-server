@@ -7,6 +7,7 @@ function users_select_by_ip($pdo, $ip)
           SELECT user_id, name, active_date, power
             FROM users
            WHERE ip = :ip
+              OR register_ip = :ip
         ORDER BY active_date DESC
     ');
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
