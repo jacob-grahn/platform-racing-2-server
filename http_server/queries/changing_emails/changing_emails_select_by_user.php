@@ -1,6 +1,6 @@
 <?php
 
-function changing_email_select_by_user($pdo, $user_id, $suppress_error = false)
+function changing_emails_select_by_user($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT change_id, old_email, new_email, code, date, request_ip, confirm_ip, status
