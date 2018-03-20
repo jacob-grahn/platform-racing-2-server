@@ -16,13 +16,15 @@ require_once __DIR__ . '/../../queries/changing_emails/changing_email_insert.php
 require_once __DIR__ . '/../../queries/changing_emails/changing_email_select.php'; // pdo
 require_once __DIR__ . '/../../queries/changing_emails/changing_email_complete.php'; // pdo
 
+// admin log
+require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
+
 // variables
 $user_id = find('id');
 $action = find('action', 'lookup');
 
 try {
     //connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     //make sure you're an admin
@@ -50,7 +52,7 @@ try {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
-        update($db, $pdo, $admin);
+        update($pdo, $admin);
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
@@ -101,7 +103,7 @@ function output_form($pdo, $user_id)
 
 
 // update function
-function update($db, $pdo, $admin)
+function update($pdo, $admin)
 {
     // make some nice variables
     $admin_ip = get_ip();
@@ -118,12 +120,12 @@ function update($db, $pdo, $admin)
     $ebodies = find('eBodies');
     $efeet = find('eFeet');
     $account_changes = find('account_changes');
-    
+
     // check for description of changes
     if (is_empty($account_changes)) {
         throw new Exception('You must enter a description of your changes.');
     }
-    
+
     // make sure none of the part values are blank to avoid server crashes
     if (is_empty($hats, false)) {
         $hats = "1";
@@ -142,7 +144,7 @@ function update($db, $pdo, $admin)
     $user = user_select($pdo, $user_id);
     $pr2 = pr2_select($pdo, $user_id, true);
     $epic = epic_upgrades_select($pdo, $user_id, true);
-    
+
     // specify what to change
     $update_user = false;
     $update_pr2 = false;
@@ -156,7 +158,7 @@ function update($db, $pdo, $admin)
     if ($epic->epic_hats != $ehats || $epic->epic_heads != $eheads || $epic->epic_bodies != $ebodies || $epic->epic_feet != $efeet) {
         $update_epic = true;
     }
-    
+
     // if there's nothing to change, no need to query the database any further
     if ($update_user === true && $update_pr2 === true && $update_epic === true) {
         throw new Exception('No changes to be made.');
@@ -183,7 +185,7 @@ function update($db, $pdo, $admin)
         $old_email = $user->email;
         $new_email = $email;
         $code = 'manual-' . time();
-        
+
         // log it
         changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $admin_ip);
         $change = changing_email_select($pdo, $code);
@@ -205,8 +207,7 @@ function update($db, $pdo, $admin)
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $disp_changes = "Changes: " . $account_changes;
-
-    $db->call('admin_action_insert', array($admin_id, "$admin_name updated player $user_name from $admin_ip. $disp_changes.", $admin_id, $admin_ip));
+    admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. $disp_changes.", $admin_id, $admin_ip);
 
     header("Location: player_deep_info.php?name1=" . urlencode($user_name));
     die();

@@ -13,7 +13,6 @@ try {
     rate_limit('list-bans-'.$ip, 5, 3);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 } catch (Exception $e) {
     $error = $e->getMessage();

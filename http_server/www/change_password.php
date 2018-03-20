@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/to_hash.php';
+require_once __DIR__ . '/../queries/users/user_update_pass.php';
 
 // make some variables
 $name = $_POST['name'];
@@ -35,7 +36,6 @@ try {
     rate_limit('password-change-attempt-'.$ip, 5, 1, 'Please wait at least 5 seconds before trying to change your password again.');
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -49,16 +49,7 @@ try {
 
     // change their pass
     $pass_hash = to_hash($new_pass);
-    $safe_pass_hash = addslashes($pass_hash);
-    $result = $db->query(
-        "UPDATE users
-						SET pass_hash = '$safe_pass_hash'
-						WHERE name = '$safe_name'"
-    );
-
-    if (!$result) {
-        throw new Exception('Could not update your password. Sorries.');
-    }
+    update_user_pass($pdo, $login->user_id, $pass_hash);
 
     // clear the existing token
     setcookie("token", "", time() - 3600);

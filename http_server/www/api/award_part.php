@@ -15,20 +15,19 @@ try {
         throw new Exception('Incorrect pass.');
     }
 
-    //connecto!!!
-    $db = new DB();
+    // connecto!!!
     $pdo = pdo_connect();
 
-    //get the to id
+    // get the to id
     $target_id = name_to_id($pdo, $user_name);
 
-    //give the player the part
+    // give the player the part
     $result = award_part($pdo, $target_id, $type, $part_id);
     if (!$result) {
         throw new Exception('They already have the part.');
     }
 
-    //tell the world
+    // tell the world
     $ret = new stdClass();
     $ret->success = true;
     $ret->message = "The part was given to $safe_name.";

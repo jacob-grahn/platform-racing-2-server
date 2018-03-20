@@ -2,6 +2,10 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/campaign/campaign_select_by_id.php';
+require_once __DIR__ . '/../../queries/campaign/campaign_update.php';
+require_once __DIR__ . '/../../queries/levels/level_select.php';
+require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
 
 $action = $_POST['action'];
 $message = find('message', '');
@@ -14,7 +18,6 @@ if (is_empty($action)) {
 
 try {
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
 
@@ -24,10 +27,10 @@ try {
 
     // lookup
     if ($action === 'lookup') {
-        output_form($db, $message);
+        output_form($pdo, $message);
     } // update
     elseif ($action === 'update') {
-        update($db, $pdo);
+        update($pdo, $pdo);
     } // this should never happen
     else {
         throw new Exception("Invalid action specified.");
@@ -115,10 +118,10 @@ function prize_check($type, $id, $err_prefix)
     throw new Exception("$err_prefix (an unknown error occurred).");
 }
 
-function output_form($db, $message)
+function output_form($pdo, $message)
 {
     global $campaign_id;
-    $campaign = $db->to_array($db->call('campaign_select_by_id', [$campaign_id]));
+    $campaign = campaign_select_by_id($pdo, $campaign_id);
 
     output_header('Set Campaign', true, true);
 
@@ -172,7 +175,7 @@ function output_form($db, $message)
     output_footer();
 }
 
-function update($db, $pdo)
+function update($pdo)
 {
     global $admin;
     global $campaign_id;
@@ -184,12 +187,12 @@ function update($db, $pdo)
         $prize_id = (int) find("prize_id_$id");
 
         try {
-            $level = $db->grab_row('level_select', [$level_id], "Level $id ($level_id) does not exist.");
+            $level = level_select($pdo, $level_id);
             prize_check($prize_type, $prize_id, "The prize for level $id is invalid");
-            $db->call('campaign_update', [$campaign_id, $id, $level_id, $prize_type, $prize_id]);
+            campaign_update($pdo, $campaign_id, $id, $level_id, $prize_type, $prize_id);
         } catch (Exception $e) {
             $message = "Error: " . $e->getMessage();
-            output_form($db, $message);
+            output_form($pdo, $message);
         }
     }
 
@@ -201,11 +204,10 @@ function update($db, $pdo)
         $admin_name = $admin->name;
         $admin_id = $admin->user_id;
         $ip = get_ip();
-
-        $db->call('admin_action_insert', array($admin_id, "$admin_name set a new custom campaign from $ip", $admin_id, $ip));
+        admin_action_insert($pdo, $admin_id, "$admin_name set a new custom campaign from $ip", $admin_id, $ip);
     } catch (Exception $e) {
         $message = "Error: " . $e->getMessage();
-        output_form($db, $message);
+        output_form($pdo, $message);
     }
 
     // did the script get here? great! redirect back to the script with a success message

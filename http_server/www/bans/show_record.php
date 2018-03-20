@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/bans/ban_select.php';
 
 $ban_id = (int) $_GET['ban_id'];
 $ip = get_ip();
@@ -11,7 +12,6 @@ try {
     rate_limit('show-ban-record-'.$ip, 5, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // are they a moderator
@@ -22,25 +22,7 @@ try {
 
     // output header (w/ mod nav if they're a mod)
     output_header('View Ban', $is_mod);
-
-    $result = $db->query(
-        "SELECT *
-							FROM bans
-							WHERE ban_id = '$ban_id'
-							LIMIT 0, 1"
-    );
-    if (!$result) {
-        throw new Exception('Could not display the ban record.');
-    }
-    $row = $result->fetch_assoc();
-
-    // DEBUGGING
-    if ($is_mod === true && ($ban_id === 0 || $ban_id === 90000)) {
-        var_dump($result);
-        echo "<br><br>";
-        var_dump($row);
-        die();
-    }
+    $row = ban_select($pdo, $ban_id);
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error Fetching Ban', $is_mod);
@@ -51,22 +33,22 @@ try {
 
 
 //--- output the page ---
-$ban_id = $row['ban_id'];
-$banned_ip = $row['banned_ip'];
-$mod_user_id = $row['mod_user_id'];
-$banned_user_id = $row['banned_user_id'];
-$time = $row['time'];
-$expire_time = $row['expire_time'];
-$reason = $row['reason'];
-$record = $row['record'];
-$mod_name = $row['mod_name'];
-$banned_name = $row['banned_name'];
-$lifted = $row['lifted'];
-$lifted_by = $row['lifted_by'];
-$lifted_reason = $row['lifted_reason'];
-$ip_ban = $row['ip_ban'];
-$account_ban = $row['account_ban'];
-$notes = $row['notes'];
+$ban_id = $row->ban_id;
+$banned_ip = $row->banned_ip;
+$mod_user_id = $row->mod_user_id;
+$banned_user_id = $row->banned_user_id;
+$time = $row->time;
+$expire_time = $row->expire_time;
+$reason = $row->reason;
+$record = $row->record;
+$mod_name = $row->mod_name;
+$banned_name = $row->banned_name;
+$lifted = $row->lifted;
+$lifted_by = $row->lifted_by;
+$lifted_reason = $row->lifted_reason;
+$ip_ban = $row->ip_ban;
+$account_ban = $row->account_ban;
+$notes = $row->notes;
 
 $formatted_time = date('M j, Y g:i A', $time);
 $expire_formatted_time = date('M j, Y g:i A', $expire_time);

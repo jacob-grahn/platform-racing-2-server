@@ -6,6 +6,7 @@ require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // pdo
 require_once __DIR__ . '/../queries/staff/action_log.php'; // pdo
 require_once __DIR__ . '/../queries/staff/ban_user.php'; // pdo
+require_once __DIR__ . '/../queries/tokens/tokens_delete_by_user.php';
 
 $banned_name = default_val($_POST['banned_name']);
 $duration = (int) default_val($_POST['duration'], 60);
@@ -20,8 +21,8 @@ $ip = get_ip();
 
 // if it's a month/year ban coming from PR2, correct the weird ban times
 if ($using_mod_site == 'no') {
-    $duration = str_replace('29030400', '31536000', $duration); // fix year ban
-    $duration = str_replace('2419200', '2592000', $duration); // fix month ban
+    $duration = str_replace('29030400', '31536000', $duration);
+    $duration = str_replace('2419200', '2592000', $duration);
 }
 
 try {
@@ -34,7 +35,6 @@ try {
     rate_limit('ban-'.$ip, 5, 1);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // sanity check: was a name passed to the script?
@@ -123,13 +123,8 @@ try {
         throw new Exception('Could not record ban.');
     }
 
-
     // remove login token
-    $db->call('tokens_delete_by_user', array($banned_user_id));
-
-
-
-    // --- action log stuff --- \\
+    tokens_delete_by_user($pdo, $banned_user_id);
 
     // make duration pretty
     $disp_duration = format_duration($duration);
@@ -154,11 +149,7 @@ try {
     $action_string = "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}";
 
     //record the ban in the action log
-    //$db->call('mod_action_insert', array($mod->user_id, "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}", 0, $ip));
     log_mod_action($pdo, $action_string, $mod_user_id, $ip);
-
-    // --- end action log stuff --- \\
-
 
     if ($using_mod_site == 'yes' && $redirect == 'yes') {
         header('Location: //pr2hub.com/mod/player_info.php?user_id='.$banned_user_id.'&force_ip='.$force_ip);
