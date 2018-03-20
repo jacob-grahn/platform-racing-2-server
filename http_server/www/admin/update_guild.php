@@ -47,7 +47,7 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Update Guild', true, true);
-    echo "Error: $error<br><br><a href="javascript:history.back()"><- Go Back</a>";
+    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
     die();
 }
