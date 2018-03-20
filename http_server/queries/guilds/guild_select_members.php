@@ -1,6 +1,6 @@
 <?php
 
-function guild_select_members($pdo, $guild_id)
+function guild_select_members($pdo, $guild_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT users.user_id, users.name, users.power, pr2.rank, gp.gp_today, gp.gp_total
@@ -14,7 +14,11 @@ function guild_select_members($pdo, $guild_id)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not select guild members');
+        if ($suppress_error = false) {
+            throw new Exception('Could not select guild members.');
+        } else {
+            return false;
+        }
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);
