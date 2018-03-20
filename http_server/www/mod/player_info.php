@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/users/user_select.php'; // pdo
 require_once __DIR__ . '/../../queries/pr2/pr2_select.php'; // pdo
+require_once __DIR__ . '/../../queries/bans/bans_select_by_user_id.php';
 
 $user_id = (int) default_val($_GET['user_id'], 0);
 $force_ip = find_no_cookie('force_ip');

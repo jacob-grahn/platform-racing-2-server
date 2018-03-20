@@ -1,6 +1,6 @@
 <?php
 
-function bans_select_by_ip($pdo, $user_id)
+function bans_select_by_user_id($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         SELECT * FROM bans
