@@ -4,11 +4,11 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/to_hash.php';
+require_once __DIR__ . '/../queries/users/user_select_by_name.php';
+require_once __DIR__ . '/../queries/users/user_update_temp_pass.php';
 
 $name = $_POST['name'];
 $email = $_POST['email'];
-$safe_name = addslashes($name);
-$safe_email = addslashes($email);
 $ip = get_ip();
 
 try {
@@ -38,32 +38,18 @@ try {
     }
 
     // connect to the db
-    $db = new DB();
+    $pdo = pdo_connect();
 
-    // get their user id
-    $result = $db->query(
-        "SELECT user_id
-									FROM users
-									WHERE email = '$safe_email'
-									AND name = '$safe_name'
-									LIMIT 0, 1"
-    );
+    // load the user account
+    $user = user_select_by_name($pdo, $name);
 
-    if (!$result) {
-        throw new Exception('Could not get your id from the database.');
-    }
-    if ($result->num_rows <= 0) {
-        $safe_disp_name = htmlspecialchars($name);
-        $safe_disp_email = htmlspecialchars($email);
-        throw new Exception("No account was found with the username \"$safe_disp_name\" and the email address \"$safe_disp_email\".");
-    }
-    if ($result->num_rows > 1) {
-        throw new Exception('More than one result was returned. Something has gone horribly wrong and the world is about to explode.');
+    // the email must match
+    if (strtolower($user->email) !== strtolower($email)) {
+        throw new Exception('Wrong email');
     }
 
     // get the user id
-    $row = $result->fetch_object();
-    $user_id = $row->user_id;
+    $user_id = $user->user_id;
 
     // more rate limiting
     rate_limit('forgot-password-'.$user_id, 900, 1, 'You may only request a new password once every 15 minutes.');
@@ -71,18 +57,7 @@ try {
     // give them a new pass
     $pass = random_str(12);
     $pass_hash = to_hash($pass);
-    $safe_pass_hash = addslashes($pass_hash);
-
-    $result = $db->query(
-        "UPDATE users
-									SET temp_pass_hash = '$safe_pass_hash'
-									WHERE user_id = '$user_id'"
-    );
-    if (!$result) {
-        throw new Exception('Could not update your password.');
-    }
-
-
+    user_update_temp_pass($pdo, $user_id, $pass_hash);
 
     //--- email them their new pass ---------------------------------------------------------------------
     include 'Mail.php';

@@ -1,8 +1,12 @@
 <?php
 
-header("Content-type: text/plain");
-
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/users/user_select_expanded.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/ignored/ignored_select.php';
+require_once __DIR__ . '/../queries/friends/friend_select.php';
+
+header("Content-type: text/plain");
 
 $target_name = find_no_cookie('name');
 $friend = 0;
@@ -14,7 +18,6 @@ try {
     rate_limit('get-player-info-2-'.$ip, 3, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -30,11 +33,11 @@ try {
     $target_id = name_to_id($pdo, $target_name);
 
     //--- get dem infos
-    $target = $db->grab_row('user_select_expanded', array( $target_id ));
+    $target = user_select_expanded($pdo, $target_id);
 
     if ($target->guild != 0) {
         try {
-            $guild = $db->grab_row('guild_select', array( $target->guild ));
+            $guild = guild_select($pdo, $target->guild);
             $guild_name = htmlspecialchars($guild->guild_name);
         } catch (Exception $e) {
             $guild_name = '';
@@ -52,12 +55,11 @@ try {
     $hats = count(explode(',', $target->hat_array))-1;
 
     if (isset($user_id)) {
-        $friend = $db->grab('is_friend', 'friend_check', array( $user_id, $target_id ));
-        $ignored = $db->grab('is_ignored', 'ignored_check', array( $user_id, $target_id ));
+        $friend = (int) (bool) friend_select($pdo, $user_id, $target_id);
+        $ignored = (int) (bool) ignored_select($pdo, $user_id, $target_id);
     }
 
-
-    //--- reply
+    // reply
     $r = new stdClass();
     $r->rank = $active_rank;
     $r->hats = $hats;
@@ -80,7 +82,7 @@ try {
     $r->name = $target->name;
     $r->userId = $target->user_id;
 
-    //--- epic upgrades
+    // epic upgrades
     if (!isset($target->epic_hats)) {
         $r->hatColor2 = -1;
         $r->headColor2 = -1;

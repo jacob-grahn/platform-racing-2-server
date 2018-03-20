@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/classes/S3.php';
+require_once __DIR__ . '/../queries/users/user_select_expanded.php';
 
 $ip = get_ip();
 
@@ -26,9 +27,7 @@ try {
     $image = file_get_contents("php://input");
     $image_rendered = imagecreatefromstring($image);
 
-
     // connect to the db
-    $db = new DB();
     $pdo = pdo_connect();
     $s3 = s3_connect();
 
@@ -41,7 +40,7 @@ try {
     rate_limit('emblem-upload-attempt-'.$user_id, 900, 10, "Please wait at least 15 minutes before trying to upload a guild emblem again.");
 
     // get user info
-    $account = $db->grab_row('user_select_expanded', array($user_id));
+    $account = user_select_expanded($pdo, $user_id);
 
     // sanity checks
     if ($account->rank < 20) {
