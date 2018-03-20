@@ -28,8 +28,8 @@ try {
     if ($guild_id != '') {
         try {
             $guild = guild_select($pdo, $guild_id);
-            $owner_transfers = guild_transfers_select_by_guild($pdo, $guild_id);
-            $members = guild_select_members($pdo, $guild_id);
+            $owner_transfers = guild_transfers_select_by_guild($pdo, $guild_id, true);
+            $members = guild_select_members($pdo, $guild_id, true);
             output_object($guild);
             output_objects($owner_transfers);
             output_objects($members);
