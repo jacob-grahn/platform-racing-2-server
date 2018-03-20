@@ -18,5 +18,5 @@ function ban_select_active_by_ip($pdo, $ip)
         throw new Exception('could not check ban by ip');
     }
 
-    return $stmt->fetchAll(PDO::FETCH_OBJ);
+    return $stmt->fetch(PDO::FETCH_OBJ);
 }
