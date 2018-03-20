@@ -28,8 +28,8 @@ try {
     if ($guild_id != '') {
         try {
             $guild = guild_select($pdo, $guild_id);
-            $owner_transfers = guild_transfers_select_by_guild($pdo, $guild_id);
-            $members = guild_select_members($pdo, $guild_id);
+            $owner_transfers = guild_transfers_select_by_guild($pdo, $guild_id, true);
+            $members = guild_select_members($pdo, $guild_id, true);
             output_object($guild);
             output_objects($owner_transfers);
             output_objects($members);
@@ -49,17 +49,21 @@ try {
 
 function output_objects($objs)
 {
-    foreach ($objs as $obj) {
-        output_object($obj, ', ');
-        echo '<br/>';
+    if ($objs !== false) {
+        foreach ($objs as $obj) {
+            output_object($obj, ', ');
+            echo '<br/>';
+        }
     }
 }
 
 function output_object($obj, $sep = '<br/>')
 {
-    foreach ($obj as $var => $val) {
-        if ($var != 'guild_id') {
-            echo "$var: ".htmlspecialchars($val)."$sep";
+    if ($obj !== false) {
+        foreach ($obj as $var => $val) {
+            if ($var != 'guild_id') {
+                echo "$var: ".htmlspecialchars($val)."$sep";
+            }
         }
     }
 }
