@@ -1,14 +1,15 @@
 <?php
 
-function ignored_select($pdo, $user_id, $ignore_user_id, $suppress_error = false)
+function ignored_select($pdo, $user_id, $ignore_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT * FROM ignored
-        WHERE ignore_id = :ignore_user_id
+        WHERE ignore_id = :ignore_id
         AND user_id = :user_id
         LIMIT 1'
     );
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':ignore_id', $ignore_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
