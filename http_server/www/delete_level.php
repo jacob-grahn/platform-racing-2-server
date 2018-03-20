@@ -5,6 +5,8 @@ header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/classes/S3.php';
 require_once __DIR__ . '/../fns/pr2_fns.php';
+require_once __DIR__ . '/../queries/levels/level_select.php';
+require_once __DIR__ . '/../queries/levels/level_delete.php';
 
 $level_id = (int) default_val($_POST['level_id'], 0);
 $ip = get_ip();
@@ -30,7 +32,6 @@ try {
     rate_limit('delete-level-attempt-'.$ip, 10, 1, 'Please wait at least 10 seconds before trying to delete another level.');
 
     //connect
-    $db = new DB();
     $pdo = pdo_connect();
     $s3 = s3_connect();
 
@@ -42,12 +43,17 @@ try {
     rate_limit('delete-level-'.$ip, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
     rate_limit('delete-level-'.$user_id, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 
+    // fetch level data
+    $row = level_select($pdo, $level_id);
+    if ($row->user_id !== $user_id) {
+        throw new Exception('This is not your level');
+    }
+
     // save this file to the backup system
-    $row = $db->grab_row('levels_select_one', array($level_id, $user_id));
     backup_level($pdo, $s3, $user_id, $level_id, $row->version, $row->title, $row->live, $row->rating, $row->votes, $row->note, $row->min_level, $row->song, $row->play_count);
 
     // delete the level in the db
-    $db->call('level_delete', array($level_id, $user_id));
+    level_delete($pdo, $level_id);
 
     // delete the file from s3
     $result = $s3->deleteObject('pr2levels1', $level_id.'.txt');
