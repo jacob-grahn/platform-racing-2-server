@@ -3,10 +3,10 @@
 function guild_transfers_select_by_guild($pdo, $guild_id)
 {
     $stmt = $pdo->prepare('
-        SELECT transfer_id, new_owner_id, old_owner_id, date, request_ip, confirm_ip
-        FROM guild_transfers
-        WHERE guild_id = :guild_id
-        AND status = "complete";
+        SELECT transfer_id, old_owner_id, new_owner_id, code, date, request_ip, confirm_ip, status
+          FROM guild_transfers
+         WHERE guild_id = :guild_id
+           AND status = "complete";
     ');
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
 

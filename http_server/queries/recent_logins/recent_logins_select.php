@@ -1,6 +1,6 @@
 <?php
 
-function recent_logins_select($pdo, $user_id, $count = 100)
+function recent_logins_select($pdo, $user_id, $count = 100, $suppress_error = false)
 {
     $count = (int) $count;
     $stmt = $pdo->prepare('
@@ -14,8 +14,12 @@ function recent_logins_select($pdo, $user_id, $count = 100)
     $result = $stmt->execute();
 
     if($result === false) {
-        return false;
-    } else {
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
+        if ($suppress_error === false) {
+            throw new Exception("Could not find any recent logins for this user.");
+        } else {
+            return false;
+        }
     }
+    
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }

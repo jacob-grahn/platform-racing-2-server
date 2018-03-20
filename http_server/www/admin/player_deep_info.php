@@ -37,14 +37,14 @@ try {
         if ($name != '') {
             try {
                 $user = user_select_by_name($pdo, $name);
-                $pr2 = pr2_select($pdo, $user->user_id);
-                $pr2_epic = epic_upgrades_select($pdo, $user->user_id, true);
-                $changing_emails = changing_emails_select_by_user($pdo, $user->user_id);
-                $logins = recent_logins_select($pdo, $user->user_id);
+                $pr2 = pr2_select($pdo, $user->user_id, true);
+                $epic = epic_upgrades_select($pdo, $user->user_id, true);
+                $changing_emails = changing_emails_select_by_user($pdo, $user->user_id, true);
+                $logins = recent_logins_select($pdo, $user->user_id, true);
                 echo "user_id: $user->user_id <br/>";
                 output_object($user);
                 output_object($pr2);
-                output_object($pr2_epic);
+                output_object($epic);
                 output_objects($changing_emails);
                 output_objects($logins);
                 echo '<a href="update_account.php?id='.$user->user_id.'">edit</a><br><br><br>';

@@ -1,21 +1,22 @@
 <?php
 
-function admin_actions_select($pdo, $in_start, $in_count)
+function mod_actions_select($pdo, $in_start, $in_count)
 {
     $start = max((int) $in_start, 0);
     $count = min( max((int) $in_count, 0), 100);
 
     $stmt = $pdo->prepare('
-        SELECT * FROM admin_actions
+          SELECT *
+            FROM mod_actions
         ORDER BY time DESC
-        LIMIT :start, :count
+           LIMIT :start, :count
     ');
     $stmt->bindValue(':start', $in_start, PDO::PARAM_INT);
     $stmt->bindValue(':count', $count, PDO::PARAM_INT);
 
     $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could not fetch admin actions');
+        throw new Exception('Could not fetch mod actions');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

@@ -1,19 +1,29 @@
 <?php
 
+// output/misc functions
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+
+// guild select/update functions
+require_once __DIR__ . '/../../queries/guilds/guild_select.php'; // pdo
+require_once __DIR__ . '/../../queries/guilds/guild_update.php'; // pdo
+
+// guild transfer functions
+require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_insert.php'; // pdo
+require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_select.php'; // pdo
+require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_complete.php'; // pdo
 
 $guild_id = find('guild_id');
 $action = find('action', 'lookup');
 $ip = get_ip();
 
 try {
-    //connect
+    // connect
     $db = new DB();
     $pdo = pdo_connect();
 
 
-    //make sure you're an admin
+    // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
 } catch (Exception $e) {
     $error = $e->getMessage();
@@ -24,33 +34,33 @@ try {
 }
 
 try {
-    //lookup
+    // lookup
     if ($action === 'lookup') {
-        output_form($db, $guild_id);
+        output_form($pdo, $guild_id);
     }
 
 
-    //update
+    // update
     if ($action === 'update') {
-        update($db);
+        update($db, $pdo, $admin, $ip);
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Update Guild', true, true);
-    echo "Error: $error";
+    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
     die();
 }
 
 
-function output_form($db, $guild_id)
+function output_form($pdo, $guild_id)
 {
 
     output_header('Update Guild', true, true);
 
     echo '<form name="input" action="update_guild.php" method="get">';
 
-    $guild = $db->grab_row('guild_select', array($guild_id));
+    $guild = guild_select($pdo, $guild_id);
     echo "guild_id: $guild->guild_id <br>---<br>";
 
 
@@ -74,59 +84,58 @@ function output_form($db, $guild_id)
     output_footer();
 }
 
-function update($db)
+function update($db, $pdo, $admin, $ip)
 {
-
-    global $admin, $ip;
-
+    // check to make sure the description of changes exists
+    $guild_changes = find('guild_changes');
+    if (is_empty($guild_changes)) {
+        throw new Exception('The description of changes cannot be blank.');
+    }
+    
     //make some nice-looking variables out of the information in the form
     $guild_id = (int) find('guild_id_submit');
     $guild_name = find('guild_name');
-    $note = find('note');
     $owner_id = (int) find('owner_id');
-    $guild_changes = find('guild_changes');
-
+    $note = find('note');
+    $delete_emblem = $_GET['delete_emblem'];
+    
     // call guild information
-    $guild = $db->grab_row('guild_select', array($guild_id));
-    $guild_owner = (int) $guild->owner_id;
-
-    if ($guild_owner !== $owner_id) {
-        $code = 'manual-' . time();
-        $db->call('guild_transfer_insert', array($guild->guild_id, $guild_owner, $owner_id, $code, $ip), 'Could not initiate the owner change.');
-        $transfer_id = $db->grab('transfer_id', 'guild_transfer_select_by_code', array($code), 'Could not get the owner change ID.');
-        $db->call('guild_transfer_complete', array($transfer_id, $ip), 'Could not complete the owner change.');
+    $guild = guild_select($pdo, $guild_id);
+    
+    // check if changes need to be made
+    if ($guild_name == $guild->guild_name && $owner_id == $guild->owner_id && $note == $guild->note) {
+        throw new Exception('No changes to be made.');
     }
 
-    //check to see if the admin is trying to delete the guild emblem
-    if (!empty($_GET['delete_emblem'])) {
+    // log an owner transfer
+    if ($guild->owner_id !== $owner_id) {
+        $code = 'manual-' . time();
+        $old_owner = $guild->owner_id;
+        $new_owner = $owner_id;
+        
+        guild_transfer_insert($pdo, $guild->guild_id, $guild->owner_id, $owner_id, $code, $ip);
+        $transfer = guild_transfer_select($pdo, $code);
+        guild_transfer_complete($pdo, $transfer->transfer_id, $ip);
+    }
+
+    // delete a guild emblem
+    if (!empty($delete_emblem)) {
         $emblem = "default-emblem.jpg";
     } else {
         $emblem = $guild->emblem;
     }
 
-    try {
-        // check to make sure the description of changes exists
-        if (is_empty($guild_changes)) {
-            throw new Exception('The description of changes cannot be blank.');
-        }
+    // do it
+    guild_update($pdo, $guild_id, $guild_name, $emblem, $note, $owner_id);
 
-        // do it
-        $db->call('guild_update', array($guild_id, $guild_name, $emblem, $note, $owner_id), 'Could not update the guild.');
+    // admin log
+    $admin_name = $admin->name;
+    $admin_id = $admin->user_id;
+    $disp_changes = "Changes: " . $guild_changes;
 
-        //admin log
-        $admin_name = $admin->name;
-        $admin_id = $admin->user_id;
-        $ip = get_ip();
-        $disp_changes = "Changes: " . $guild_changes;
+    $db->call('admin_action_insert', array($admin_id, "$admin_name updated guild $guild_id from $admin_ip. $disp_changes.", $admin_id, $admin_ip), 'Could not insert the changes to the admin log.');
 
-        $db->call('admin_action_insert', array($admin_id, "$admin_name updated guild $guild_id from $ip. $disp_changes.", $admin_id, $ip), 'Could not insert the changes to the admin log.');
-    } catch (Exception $e) {
-        output_header('Update Guild', true, true);
-        echo 'Error: ' . $e->getMessage();
-        output_footer();
-        die();
-    }
-
+    // redirect
     header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));
     die();
 }

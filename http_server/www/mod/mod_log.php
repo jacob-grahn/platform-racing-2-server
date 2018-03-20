@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/mod_fns.php';
+require_once __DIR__ . '/../../queries/staff/actions/mod_actions_select.php';
 
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
@@ -13,7 +14,6 @@ try {
     rate_limit('mod-action-log-'.$ip, 5, 3);
 
     //connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     //make sure you're a moderator
@@ -28,7 +28,7 @@ try {
 
 try {
     // get actions for this page
-    $actions = $db->call('mod_actions_select', array($start, $count));
+    $actions = mod_actions_select($start, $count);
 
     // output header
     output_header('Mod Action Log', true);
