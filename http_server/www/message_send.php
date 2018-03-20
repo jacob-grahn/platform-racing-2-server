@@ -19,7 +19,6 @@ try {
     rate_limit('send-pm-attempt-'.$ip, 5, 1);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // variables
@@ -27,7 +26,7 @@ try {
     $to_user_id = name_to_id($pdo, $to_name);
 
     // send it
-    send_pm($db, $from_user_id, $to_user_id, $message);
+    send_pm($pdo, $from_user_id, $to_user_id, $message);
 
     // tell the world
     echo 'message=Your message was sent successfully!';

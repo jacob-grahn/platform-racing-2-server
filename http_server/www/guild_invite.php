@@ -52,7 +52,7 @@ try {
 
 
     //--- add the invitation to the db
-    send_pm($db, $user_id, $target_id, $message);
+    send_pm($pdo, $user_id, $target_id, $message);
     $db->call('guild_invitation_insert', array($guild->guild_id, $target_id), 'Could not register the invitation.');
 
 
