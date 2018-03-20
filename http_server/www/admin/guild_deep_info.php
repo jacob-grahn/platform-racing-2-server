@@ -49,17 +49,21 @@ try {
 
 function output_objects($objs)
 {
-    foreach ($objs as $obj) {
-        output_object($obj, ', ');
-        echo '<br/>';
+    if ($objs !== false) {
+        foreach ($objs as $obj) {
+            output_object($obj, ', ');
+            echo '<br/>';
+        }
     }
 }
 
 function output_object($obj, $sep = '<br/>')
 {
-    foreach ($obj as $var => $val) {
-        if ($var != 'guild_id') {
-            echo "$var: ".htmlspecialchars($val)."$sep";
+    if ($obj !== false) {
+        foreach ($obj as $var => $val) {
+            if ($var != 'guild_id') {
+                echo "$var: ".htmlspecialchars($val)."$sep";
+            }
         }
     }
 }
