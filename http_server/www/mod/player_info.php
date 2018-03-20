@@ -57,7 +57,7 @@ try {
 
     //--- count how many times they have been banned
     $account_bans = bans_select_by_user_id($pdo, $user_id);
-    $account_ban_count = $account_bans->num_rows;
+    $account_ban_count = count($account_bans);
     $account_ban_list = create_ban_list($account_bans);
     if ($account_ban_count == 1) {
         $s1 = '';
@@ -94,7 +94,7 @@ try {
 
     //look for all historical bans given to this ip address
     $ip_bans = bans_select_by_ip($pdo, $ip);
-    $ip_ban_count = $ip_bans->num_rows;
+    $ip_ban_count = count($ip_bans);
     $ip_ban_list = create_ban_list($ip_bans);
     if ($ip_ban_count == 1) {
         $s2 = '';
@@ -131,19 +131,15 @@ try {
 }
 
 
-function create_ban_list($result)
+function create_ban_list($bans)
 {
-    if ($result->num_rows <= 0) {
-        return '';
-    } else {
-        $str = '<p><ul>';
-        while ($row = $result->fetch_object()) {
-            $ban_date = date("F j, Y, g:i a", $row->time);
-            $reason = htmlspecialchars($row->reason);
-            $ban_id = $row->ban_id;
-            $str .= "<li><a href='../bans/show_record.php?ban_id=$ban_id'>$ban_date:</a> $reason";
-        }
-        $str .= '</ul></p>';
-        return $str;
+    $str = '<p><ul>';
+    foreach ($bans as $row) {
+        $ban_date = date("F j, Y, g:i a", $row->time);
+        $reason = htmlspecialchars($row->reason);
+        $ban_id = $row->ban_id;
+        $str .= "<li><a href='../bans/show_record.php?ban_id=$ban_id'>$ban_date:</a> $reason";
     }
+    $str .= '</ul></p>';
+    return $str;
 }
