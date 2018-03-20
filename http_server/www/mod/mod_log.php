@@ -38,7 +38,7 @@ try {
     echo('<p>---</p>');
 
     //output actions
-    while ($row = $actions->fetch_object()) {
+    foreach ($actions as $row) {
         echo("<p><span class='date'>$row->time</span> -- ".htmlspecialchars($row->message)."</p>");
     }
 
