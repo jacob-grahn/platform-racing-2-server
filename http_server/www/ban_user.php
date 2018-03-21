@@ -2,12 +2,17 @@
 
 header("Content-type: text/plain");
 
+// misc functions
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // pdo
-require_once __DIR__ . '/../queries/staff/action_log.php'; // pdo
-require_once __DIR__ . '/../queries/staff/ban_user.php'; // pdo
-require_once __DIR__ . '/../queries/tokens/tokens_delete_by_user.php';
 
+// pdo queries
+require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // select user by name
+require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php'; // insert into mod action log
+require_once __DIR__ . '/../queries/staff/bans/throttle_bans.php'; // throttle mod bans per hour
+require_once __DIR__ . '/../queries/staff/bans/ban_user.php'; // ban user
+require_once __DIR__ . '/../queries/tokens/tokens_delete_by_user.php'; // delete user token
+
+// variables
 $banned_name = default_val($_POST['banned_name']);
 $duration = (int) default_val($_POST['duration'], 60);
 $reason = default_val($_POST['reason'], '');
@@ -16,7 +21,6 @@ $using_mod_site = default_val($_POST['using_mod_site'], 'no');
 $redirect = default_val($_POST['redirect'], 'no');
 $type = default_val($_POST['type'], 'both');
 $force_ip = default_val($_POST['force_ip']);
-
 $ip = get_ip();
 
 // if it's a month/year ban coming from PR2, correct the weird ban times
@@ -149,7 +153,7 @@ try {
     $action_string = "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}";
 
     //record the ban in the action log
-    log_mod_action($pdo, $action_string, $mod_user_id, $ip);
+    mod_action_insert($pdo, $mod_user_id, $action_string, 'ban', $ip);
 
     if ($using_mod_site == 'yes' && $redirect == 'yes') {
         header('Location: //pr2hub.com/mod/player_info.php?user_id='.$banned_user_id.'&force_ip='.$force_ip);
