@@ -1,6 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/fah/stats/stats_select_all.php';
+require_once __DIR__ . '/../queries/fah/stats/stats_insert.php';
+require_once __DIR__ . '/../queries/fah/team/team_update.php';
 
 
 //--- load the team page for Team Jiggmin -----------------------------------------------------------------
@@ -17,13 +20,13 @@ if ($contents == false || $contents == '' || strpos($contents, 'Stats update in 
 
 
 //--- connect to the db ----------------------------------------------------------------------------------
-$db = new DB(fah_connect());
+$pdo = pdo_fah_connect();
 
 
 //--- query the list of existing users and their current stats --------------------------------------------------
-$result = $db->call('stats_select_all', null, 'Could not select records. '.$db->get_error());
+$rows = stats_select_all($pdo);
 $users_history = array();
-while ($row = $result->fetch_object()) {
+foreach ($rows as $row) {
     $users_history[ strtolower($row->fah_name) ] = $row;
     $row->processed = false;
 }
@@ -60,7 +63,7 @@ $team_rank_index = strpos($contents, '<BR>', $table_3_index) + 14;
 $team_rank_end = strpos($contents, '<BR>', $team_rank_index);
 $team_rank = substr($contents, $team_rank_index, ($team_rank_end - $team_rank_index));
 
-$db->call('team_update', array( $team_wu, $team_score, $team_rank ));
+team_update($pdo, $team_wu, $team_score, $team_rank);
 
 
 //--- parse user stats -------------------------------------------------------------------------------
@@ -90,12 +93,12 @@ foreach ($user_array as $user_str) {
         $history = $users_history[ strtolower($name) ];
         if (($history->wu != $work_units || $history->points != $points || $history->rank != $team_rank) && !$history->processed) {
             output("updating $name: wu: $work_units, points: $points");
-            $db->call('stats_save', array( $name, $work_units, $points, $team_rank ));
+            stats_insert($pdo, $name, $work_units, $points, $team_rank);
         }
         $history->processed = true;
     } else {
         output("creating $name: wu: $work_units, points: $points");
-        $db->call('stats_save', array( $name, $work_units, $points, $team_rank ));
+        stats_insert($pdo, $name, $work_units, $points, $team_rank);
     }
 }
 

@@ -2,6 +2,8 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/messages/message_delete.php';
+
 
 $message_id = $_POST['message_id'];
 $ip = get_ip();
@@ -16,7 +18,6 @@ try {
     rate_limit('message-delete'.$ip, 5, 2, "Please wait at least 5 seconds before trying to delete another PM.");
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -26,7 +27,7 @@ try {
     rate_limit('message-delete'.$user_id, 5, 2, "Please wait at least 5 seconds before trying to delete another PM.");
 
     // delete the message from the database
-    $db->call('message_delete', array($user_id, $message_id));
+    message_delete($pdo, $user_id, $message_id);
 
     // tell the world
     echo 'success=true';

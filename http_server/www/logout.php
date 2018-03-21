@@ -1,7 +1,9 @@
 <?php
 
-header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/tokens/token_delete.php';
+
+header("Content-type: text/plain");
 
 $ip = get_ip();
 
@@ -11,13 +13,13 @@ try {
     rate_limit('logout-'.$ip, 60, 10, 'Only 10 logout requests per minute per IP are accepted.');
 
     if (isset($_COOKIE['token'])) {
-        //--- connect to the db
-        $db = new DB();
+        // connect to the db
+        $pdo = pdo_connect();
 
-        //--- delete token from db
-        $db->call('token_delete_2', array($_COOKIE['token']), 'Could not delete token from db.');
+        // delete token from db
+        token_delete($pdo, $_COOKIE['token']);
 
-        //--- delete cookie
+        // delete cookie
         setcookie("token", "", time() - 3600);
     }
 

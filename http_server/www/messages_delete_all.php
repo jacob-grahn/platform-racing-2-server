@@ -2,6 +2,7 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/messages/messages_delete_all.php';
 
 $ip = get_ip();
 
@@ -16,7 +17,6 @@ try {
     rate_limit('delete-all-messages-'.$ip, 900, 1, 'You may only delete all of your PMs once every 15 minutes. Try again later.');
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -26,7 +26,7 @@ try {
     rate_limit('delete-all-messages-'.$user_id, 900, 1, 'You may only delete all of your PMs once every 15 minutes. Try again later.');
 
     // delete their PMs
-    $db->call('messages_delete_all', array($user_id), "Could not delete your messages.");
+    messages_delete_all($pdo, $user_id);
 
     // tell the world
     echo 'message=All of your PMs have been deleted!';
