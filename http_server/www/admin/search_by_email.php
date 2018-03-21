@@ -54,12 +54,13 @@ try {
     output_search($disp_email);
 
     // output the number of results
-    if (count($users) === 1) {
+    $count = count($users);
+    if ($count == 1) {
         $res = 'result';
     } else {
         $res = 'results';
     }
-    echo "{count($users)} $res found for the email address \"$disp_email\".<br><br>";
+    echo "$count $res found for the email address \"$disp_email\".<br><br>";
 
     // only gonna get here if there were results
     foreach ($users as $row) {
