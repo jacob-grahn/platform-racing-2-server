@@ -83,7 +83,7 @@ try {
     $params['password'] = $EMAIL_PASS;
 
     // Create the mail object using the Mail::factory method
-    $mail_object =& Mail::factory('smtp', $params);
+    $mail_object = Mail::factory('smtp', $params);
 
     // Send the message
     $mail_object->send($recipients, $headers, $body);

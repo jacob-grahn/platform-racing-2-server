@@ -1,6 +1,6 @@
 <?php
 
-function guild_select_by_most_gp_today($pdo)
+function guilds_select_by_most_gp_today($pdo)
 {
     $stmt = $pdo->prepare('
         SELECT guild_id, guild_name, gp_today
