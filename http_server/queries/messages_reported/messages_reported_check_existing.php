@@ -1,6 +1,6 @@
 <?php
 
-function message_report_check_existing($pdo, $message_id)
+function messages_reported_check_existing($pdo, $message_id)
 {
     $stmt = $pdo->prepare('
         SELECT *
