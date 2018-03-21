@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/messages_reported/messages_reported_check_existing.php';
 require_once __DIR__ . '/../queries/messages_reported/messages_reported_insert.php';
 require_once __DIR__ . '/../queries/messages/message_select.php';
 
@@ -29,15 +30,24 @@ try {
     // more rate limiting
     rate_limit('message-report-'.$user_id, 5, 2, "Please wait at least 5 seconds before trying to report another PM.");
     rate_limit('message-report-'.$user_id, 60, 5);
+    
+    // check if the message was already reported
+    $repeat = messages_reported_check_existing($pdo, $message_id);
+    if ($repeat === true) {
+        throw new Exception("It seems like you've already reported this message.");
+    }
 
-    // make sure this user is the recipient of this message
-    $message = message_select($pdo, $message_id);
-    if ($message->to_user_id !== $user_id) {
+    // make sure the message exists and that this user is the recipient of the message
+    $message = message_select($pdo, $message_id, true);
+    if ($message === false) {
+		throw new Exception("The message you tried to report ($message_id) doesn't exist.");
+	}
+    if ($message->to_user_id != $user_id) {
         throw new Exception('This message was not sent to you.');
     }
 
     // insert the message into the reported messages table
-    messages_reported_insert($pdo, $row->to_user_id, $row->from_user_id, $ip, $row->ip, $row->time, $reported_time, $message_id, $row->message);
+    messages_reported_insert($pdo, $message->to_user_id, $message->from_user_id, $ip, $message->ip, $message->time, $reported_time, $message_id, $message->message);
 
     // tell it to the world
     echo 'message=The message was reported successfully!';
