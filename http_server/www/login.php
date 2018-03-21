@@ -168,7 +168,7 @@ try {
 
     //--- check if they own rank tokens
     $row = rank_token_select($pdo, $user_id);
-    if (isset($row)) {
+    if ($row) {
         $rt_available = $row->available_tokens;
         $rt_used = $row->used_tokens;
     }
