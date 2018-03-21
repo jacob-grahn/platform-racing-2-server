@@ -3,6 +3,10 @@
 header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/users/user_select_expanded.php';
+require_once __DIR__ . '/../queries/users/user_update_guild.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/guilds/guild_increment_member.php';
 
 $target_id = find('userId');
 $ip = get_ip();
@@ -18,14 +22,13 @@ try {
     rate_limit('guild-kick-attempt-'.$ip, 15, 1, 'Please wait at least 15 seconds before attempting to kick another player from your guild.');
 
     //--- connect to the db
-    $db = new DB();
     $pdo = pdo_connect();
 
     //--- gather info
     $user_id = token_login($pdo, false);
-    $account = $db->grab_row('user_select_expanded', array( $user_id ));
-    $target_account = $db->grab_row('user_select_expanded', array( $target_id ));
-    $guild = $db->grab_row('guild_select', array( $account->guild ));
+    $account = user_select_expanded($pdo, $user_id);
+    $target_account = user_select_expanded($pdo, $user_id);
+    $guild = guild_select($pdo, $account->guild);
 
     //--- sanity check
     if ($account->guild == 0) {
@@ -46,8 +49,8 @@ try {
 
 
     //--- edit guild in db
-    $db->call('user_update_guild', array( $target_id, 0 ));
-    $db->call('guild_increment_member', array( $guild->guild_id, -1 ));
+    user_update_guild($pdo, $target_id, 0);
+    guild_increment_member($pdo, $guild->guild_id, -1);
 
 
 

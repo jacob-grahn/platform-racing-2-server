@@ -10,7 +10,7 @@ $ip = get_ip();
 
 try {
     // rate limiting
-    rate_limit("user-list-$table-$ip", 5, 2);
+    rate_limit("user-list-$ip", 5, 2);
 
     // connect
     $pdo = pdo_connect();
@@ -19,7 +19,7 @@ try {
     $user_id = token_login($pdo);
 
     // more rate limiting
-    rate_limit("user-list-$table-$user_id", 5, 2);
+    rate_limit("user-list-$user_id", 5, 2);
 
     switch ($mode) {
         case 'friends':

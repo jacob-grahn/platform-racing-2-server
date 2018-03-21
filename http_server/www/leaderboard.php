@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/output_fns.php';
+require_once __DIR__ . '/../queries/users/users_select_top.php';
 
 $start = (int) default_val($_GET['start'], 0);
 $count = (int) default_val($_GET['count'], 100);
@@ -13,7 +14,6 @@ try {
     rate_limit("leaderboard-" . $ip, 5, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // header, also check if mod and output the mod links if so
@@ -34,25 +34,7 @@ try {
         throw new Exception("Could not determine user staff boolean.");
     }
 
-    $users_result = $db->query(
-        "SELECT
-						users.name as name,
-						users.power as power,
-						(rank_tokens.used_tokens + pr2.rank) AS active_rank,
-						pr2.hat_array AS hats
-					FROM users, pr2, rank_tokens
-					WHERE users.user_id = pr2.user_id
-					AND pr2.user_id = rank_tokens.user_id
-					AND rank > 49
-					ORDER BY active_rank DESC, name ASC
-					LIMIT $start, $count"
-    );
-    if (!$users_result) {
-        throw new Exception("Could not perform database query.");
-    }
-    if ($users_result->num_rows <= 0) {
-        throw new Exception("No users found.");
-    }
+    $users = users_select_top($pdo, $start, $count);
 
     echo '
 	<center>
@@ -66,7 +48,7 @@ try {
 		</tr>
 	';
 
-    while ($user = $users_result->fetch_object()) {
+    foreach ($users as $user) {
         // name
         $name = $user->name;
         $safe_name = htmlspecialchars($name);

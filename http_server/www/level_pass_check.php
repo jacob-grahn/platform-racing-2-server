@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/Encryptor.php';
+require_once __DIR__ . '/../queries/levels/level_select.php';
 
 $level_id = (int) default_val($_GET['courseID'], 0);
 $hash = find_no_cookie('hash', '');
@@ -19,7 +20,6 @@ try {
     }
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -30,7 +30,8 @@ try {
 
     // check the pass
     $hash2 = sha1($hash . $LEVEL_PASS_SALT);
-    $match = $db->grab('isMatch', 'level_check_pass', array($level_id, $hash2));
+    $level = level_select($pdo, $level_id);
+    $match = $level->pass === $hash2;
     if (!$match) {
         sleep(1);
     }

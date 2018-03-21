@@ -5,6 +5,23 @@ header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/Encryptor.php';
 require_once __DIR__ . '/../queries/tokens/token_insert.php';
+require_once __DIR__ . '/../queries/servers/server_select.php';
+require_once __DIR__ . '/../queries/users/user_select_guest.php';
+require_once __DIR__ . '/../queries/users/user_select.php';
+require_once __DIR__ . '/../queries/users/user_update_status.php';
+require_once __DIR__ . '/../queries/users/user_update_ip.php';
+require_once __DIR__ . '/../queries/pr2/pr2_select.php';
+require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_select.php';
+require_once __DIR__ . '/../queries/rank_tokens/rank_token_select.php';
+require_once __DIR__ . '/../queries/rank_token_rentals/rank_token_rentals_count.php';
+require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php';
+require_once __DIR__ . '/../queries/staff/friends/friends_select.php';
+require_once __DIR__ . '/../queries/staff/ignored/ignored_select.php';
+require_once __DIR__ . '/../queries/staff/exp_today/exp_today_select.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/artifact/artifact_check.php';
+require_once __DIR__ . '/../queries/recent_logins/recent_logins_insert.php';
+require_once __DIR__ . '/../queries/messages/messages_select_most_recent.php';
 
 $encrypted_login = $_POST['i'];
 $version = $_POST['version'];
@@ -79,13 +96,12 @@ try {
     }
 
     //--- connect
-    $db = new DB();
     $pdo = pdo_connect();
 
 
 
     //--- get the server they're connecting to
-    $server = $db->grab_row('server_select', array($server_id));
+    $server = server_select($pdo, $server_id);
 
 
 
@@ -95,18 +111,15 @@ try {
         if (get_ip(false) != get_ip(true)) {
             throw new Exception("You seem to be using a proxy to connect to PR2. You won't be able to connect as a guest, but you can create an account to play.");
         }
-        $user = $db->grab_row('users_select_guest');
+        $user = user_select_guest($pdo);
         check_if_banned($pdo, $user->user_id, $ip);
     } //--- account login
     else {
-        //--- record this attempted log in
-        $db->call('login_attempt_insert', array($ip, $login->user_name));
-
         //token login
         if (isset($in_token) && $login->user_name == '' && $login->user_pass == '') {
             $token = $in_token;
             $user_id = token_login($pdo);
-            $user = $db->grab_row('user_select', array($user_id));
+            $user = user_select($pdo, $user_id);
         } //or password login
         else {
             $user = pass_login($pdo, $user_name, $user_pass);
@@ -147,25 +160,20 @@ try {
     }
 
 
-    //--- get their info, or create a row for them if they don't have one
-    $pr2_result = $db->call('pr2_select', array($user_id));
-
-
-
-    //--- speed, hats, etc
-    $stats = $pr2_result->fetch_object();
-    $epic_upgrades = $db->grab_row('epic_upgrades_select', array($user_id), '', true);
+    // get their info speed, hats, etc
+    $stats = pr2_select($pdo, $user_id);
+    $epic_upgrades = epic_upgrades_select($pdo, $user_id, true);
 
 
 
     //--- check if they own rank tokens
-    $row = $db->grab_row('rank_token_select', array($user_id), '', true);
+    $row = rank_token_select($pdo, $user_id);
     if (isset($row)) {
         $rt_available = $row->available_tokens;
         $rt_used = $row->used_tokens;
     }
 
-    $rt_available += $db->grab('count', 'rank_token_rentals_count', array($user->user_id, $user->guild));
+    $rt_available += rank_token_rentals_count($pdo, $user->user_id, $user->guild);
     if ($rt_available < $rt_used) {
         $rt_used = $rt_available;
     }
@@ -174,7 +182,7 @@ try {
     //--- record moderator login
     $server_name = $server->server_name;
     if ($group > 1) {
-        $db->call('mod_action_insert', array( $user_id, "$user_name logged into $server_name from $ip", $user_id, $ip ));
+        mod_action_insert($pdo, $user_id, "$user_name logged into $server_name from $ip", $user_id, $ip);
     }
 
 
@@ -241,26 +249,26 @@ try {
 
 
     //--- get their friends
-    $friends_result = $db->to_array($db->call('friends_select', array($user_id)));
+    $friends_result = friends_select($pdo, $user_id);
     foreach ($friends_result as $fr) {
         $friends[] = $fr->friend_id;
     }
 
     //--- get their ignored
-    $ignored_result = $db->to_array($db->call('ignored_select', array($user_id)));
+    $ignored_result = ignored_select($pdo, $user_id);
     foreach ($ignored_result as $ir) {
         $ignored[] = $ir->ignore_id;
     }
 
 
     //--- get their rank gained today
-    $exp_today_id = $db->grab('exp', 'exp_today_select', array( 'id-'.$user_id ));
-    $exp_today_ip = $db->grab('exp', 'exp_today_select', array( 'ip-'.$ip ));
+    $exp_today_id = exp_today_select($pdo, 'id-'.$user_id);
+    $exp_today_ip = exp_today_select($pdo, 'ip-'.$ip);
     $exp_today = max($exp_today_id, $exp_today_ip);
 
 
     //--- see if they have gotten the artifact
-    $artifact = $db->grab('hasCurrentArtifact', 'artifact_check', array( $user_id ));
+    $artifact = artifact_check($pdo, $user_id);
 
 
 
@@ -278,7 +286,7 @@ try {
 
     //--- see if they are in a guild
     if ($user->guild != 0) {
-        $guild = $db->grab_row('guild_select', array( $user->guild ));
+        $guild = guild_select($pdo, $user->guild);
         if ($guild->owner_id == $user_id) {
             $guild_owner = 1;
         }
@@ -288,15 +296,15 @@ try {
 
 
     //--- get their most recent PM id
-    $last_recv_id = $db->grab('message_id', 'messages_select_most_recent', array($user_id), '', true, 0);
+    $last_recv_id = messages_select_most_recent($pdo, $user_id);
 
 
     //--- update their status
     $status = "Playing on $server->server_name";
 
-    $db->call('user_update_status', array($user_id, $status, $server_id));
-    $db->call('user_update_ip', array($user_id, $ip));
-    $db->call('recent_logins_insert', array($user_id, $ip, $country_code));
+    user_update_status($pdo, $user_id, $status, $server_id);
+    user_update_ip($pdo, $user_id, $ip);
+    recent_logins_insert($pdo, $user_id, $ip, $country_code);
 
 
     //---

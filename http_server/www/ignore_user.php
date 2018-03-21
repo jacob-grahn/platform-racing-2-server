@@ -2,6 +2,7 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/ignored/ignored_insert.php';
 
 $ignored_name = $_POST['target_name'];
 $safe_ignored_name = htmlspecialchars($ignored_name);
@@ -17,7 +18,6 @@ try {
     rate_limit('ignored-list-'.$ip, 3, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -30,7 +30,7 @@ try {
     $ignored_id = name_to_id($pdo, $ignored_name);
 
     // create the restraining order
-    $db->call('ignored_insert', array($user_id, $ignored_id));
+    ignored_insert($pdo, $user_id, $ignored_id);
 
     // tell it to the world
     echo "message=$safe_ignored_name has been ignored. You won't recieve any chat or private messages from them.";

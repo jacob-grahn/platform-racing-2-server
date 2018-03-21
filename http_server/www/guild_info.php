@@ -4,6 +4,9 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/pr2_fns.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/guilds/guild_select_by_name.php';
+require_once __DIR__ . '/../queries/guilds/guild_select_members.php';
 
 $guild_id = find_no_cookie('id', 0);
 $guild_name = find_no_cookie('name', '');
@@ -16,7 +19,6 @@ try {
 
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
 
@@ -28,9 +30,9 @@ try {
 
     // get guild infos
     if ($guild_id > 0) {
-        $guild = $db->grab_row('guild_select', array($guild_id), 'Could not find a guild with that id.');
+        $guild = guild_select($pdo, $guild_id);
     } else {
-        $guild = $db->grab_row('guild_select_by_name', array($guild_name), 'Could not find a guild by that name.');
+        $guild = guild_select_by_name($pdo, $guild_name);
         $guild_id = $guild->guild_id;
     }
 
@@ -43,11 +45,7 @@ try {
     // get members
     $members = array();
     if ($get_members == 'yes') {
-        $members_result = $db->call('guild_select_members', array($guild_id));
-        $members = array();
-        while ($row = $members_result->fetch_object()) {
-            $members[] = $row;
-        }
+        $members = guild_select_members($pdo, $guild_id);
     }
 
 

@@ -1,5 +1,7 @@
 <?php
 
+// TODO: $suppress_error doesn't make sense here? An error will only be thrown if there is a syntax error with the query
+
 function guild_select_members($pdo, $guild_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('

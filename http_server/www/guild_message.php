@@ -4,6 +4,9 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/pr2_fns.php';
+require_once __DIR__ . '/../queries/users/user_select.php';
+require_once __DIR__ . '/../queries/guilds/guild_select_members.php';
+require_once __DIR__ . '/../queries/messages/message_insert.php';
 
 $message = default_val($_POST['message']);
 $ip = get_ip();
@@ -24,14 +27,14 @@ try {
     rate_limit('guildMessage-attempt-'.$ip, 15, 1, "Please wait at least 15 seconds before trying to message your guild again.");
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // confirm login
     $user_id = token_login($pdo, false);
 
     // confirm that they are in a guild
-    $guild_id = $db->grab('guild', 'user_select', array($user_id));
+    $user = user_select($pdo, $user_id);
+    $guild_id = $user->guild;
     if ($guild_id <= 0) {
         throw new Exception('You are not in a guild.');
     }
@@ -46,9 +49,9 @@ try {
     rate_limit('guildMessage-'.$user_id, 300, 1, 'Only one guild message can be sent every five minutes.');
 
     // send message to each member
-    $members = $db->to_array($db->call('guild_select_members', array($guild_id)));
+    $members = guild_select_members($pdo, $guild_id);
     foreach ($members as $member) {
-        $db->call('message_insert', array($member->user_id, $user_id, $message, $ip));
+        message_insert($pdo, $member->user_id, $user_id, $message, $ip);
     }
 
     echo 'message=Your message was sent successfully!';

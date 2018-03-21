@@ -3,6 +3,10 @@
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/email_fns.php';
 require_once __DIR__ . '/../fns/output_fns.php';
+require_once __DIR__ . '/../queries/users/user_select.php';
+require_once __DIR__ . '/../queries/users/user_select_by_name.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/guild_transfers/guild_transfer_insert.php';
 
 $ip = get_ip();
 
@@ -20,12 +24,11 @@ try {
     output_header('Guild Ownership Transfer');
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // get user info
     $user_id = token_login($pdo); // user id with token from cookie
-    $user = $db->grab_row('user_select', array($user_id)); // user info
+    $user = user_select($pdo, $user_id);
 
     // get user's guild id
     $guild_id = (int) $user->guild;
@@ -36,7 +39,7 @@ try {
     }
 
     // get guild info
-    $guild = $db->grab_row('guild_select', array($guild_id), "Could not retrieve your guild's information from the database."); // guild data from guild id
+    $guild = guild_select($pdo, $guild_id);
 
     // get owner id from guild info
     $owner_id = $guild->owner_id;
@@ -57,7 +60,7 @@ try {
             $safe_ref = htmlspecialchars($ref);
             throw new Exception("Incorrect referrer. The referrer is: $safe_ref");
         } else {
-            start_transfer($db, $pdo, $user->name, $guild);
+            start_transfer($pdo, $user->name, $guild);
         }
     }
 } catch (Exception $e) {
@@ -95,7 +98,7 @@ function output_form($user, $guild)
     output_footer();
 }
 
-function start_transfer($db, $pdo, $old_name, $guild)
+function start_transfer($pdo, $old_name, $guild)
 {
 
     // get the ip address of the requester
@@ -127,7 +130,7 @@ function start_transfer($db, $pdo, $old_name, $guild)
     }
 
     // get new user's info
-    $new_user = $db->grab_row('user_select_by_name', [$new_name]); // new user info
+    $new_user = user_select_by_name($pdo, $new_name);
     $new_id = $new_user->user_id;
 
     // make some variables from the old user
@@ -157,7 +160,7 @@ function start_transfer($db, $pdo, $old_name, $guild)
 
     // begin a guild transfer confirmation
     $code = random_str(24);
-    $db->call('guild_transfer_insert', [$guild->guild_id, $old_id, $new_id, $code, $ip]);
+    guild_transfer_insert($pdo, $guild->guild_id, $old_id, $new_id, $code, $ip);
 
     // send a confirmation email
     $from = 'Fred the Giant Cactus <contact@jiggmin.com>';

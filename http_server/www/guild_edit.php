@@ -2,6 +2,9 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/users/user_select_expanded.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/guilds/guild_update.php';
 
 $note = filter_swears(find('note'));
 $guild_name = filter_swears(find('name'));
@@ -19,7 +22,6 @@ try {
     rate_limit('guild-edit-attempt-'.$ip, 10, 3, "Please wait at least 10 seconds before editing your guild again.");
 
     // connect to the db
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -29,8 +31,8 @@ try {
     rate_limit('guild-edit-attempt-'.$user_id, 10, 3, "Please wait at least 10 seconds before editing your guild again.");
 
     // get account and guild info
-    $account = $db->grab_row('user_select_expanded', array( $user_id ));
-    $guild = $db->grab_row('guild_select', array( $account->guild ));
+    $account = user_select_expanded($pdo, $user_id);
+    $guild = guild_select($pdo, $account->guild);
 
     // sanity checks
     if ($account->power <= 0) {
@@ -62,7 +64,7 @@ try {
     }
 
     // edit guild in db
-    $db->call('guild_update', array( $guild->guild_id, $guild_name, $emblem, $note, $guild->owner_id ), 'A guild already exists with that name.');
+    guild_update($pdo, $guild->guild_id, $guild_name, $emblem, $note, $guild->owner_id);
 
 
     // tell it to the world

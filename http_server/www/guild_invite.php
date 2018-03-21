@@ -4,6 +4,9 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/pr2_fns.php';
+require_once __DIR__ . '/../queries/users/user_select_expanded.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/guild_invitations/guild_invitation_insert.php';
 
 $target_id = find('userId');
 $ip = get_ip();
@@ -13,14 +16,13 @@ try {
     rate_limit('guild-invite-attempt-'.$ip, 5, 2, "Please wait at least 5 seconds before attempting to invite another player to your guild.");
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // gather info
     $user_id = token_login($pdo, false);
-    $account = $db->grab_row('user_select_expanded', array($user_id), 'Could not find a row for you.');
-    $guild = $db->grab_row('guild_select', array($account->guild));
-    $target_account = $db->grab_row('user_select_expanded', array($target_id), 'Could not find this user.');
+    $account = user_select_expanded($pdo, $user_id);
+    $guild = guild_select($pdo, $account->guild);
+    $target_account = user_select_expanded($pdo, $target_id);
 
     // sanity checks
     if ($account->guild == 0) {
@@ -53,7 +55,7 @@ try {
 
     //--- add the invitation to the db
     send_pm($pdo, $user_id, $target_id, $message);
-    $db->call('guild_invitation_insert', array($guild->guild_id, $target_id), 'Could not register the invitation.');
+    guild_invitation_insert($pdo, $guild->guild_id, $target_id);
 
 
     //--- tell it to the world

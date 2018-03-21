@@ -1,6 +1,12 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/users/user_select_expanded.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../queries/guilds/guild_increment_member.php';
+require_once __DIR__ . '/../queries/guild_invitations/guild_invitation_select.php';
+require_once __DIR__ . '/../queries/guild_invitations/guild_invitation_delete.php';
+require_once __DIR__ . '/../queries/users/user_update_guild.php';
 
 header("Content-type: text/plain");
 
@@ -12,30 +18,33 @@ try {
     rate_limit('guild-join-attempt-'.$ip, 30, 1, 'Please wait at least 30 seconds before trying to join this guild again.');
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // gather information
     $user_id = token_login($pdo, false);
-    $account = $db->grab_row('user_select_expanded', array($user_id));
-    $guild = $db->grab_row('guild_select', array($guild_id), 'Could not find a guild with that ID.');
+    $account = user_select_expanded($pdo, $user_id);
+    $guild = guild_select($pdo, $user_id);
 
     // sanity checks
     if ($account->guild != 0) {
         throw new Exception('You are already a member of a guild.');
     }
     if ($account->power <= 0) {
-                throw new Exception('Guests can\'t join guilds.');
+        throw new Exception('Guests can\'t join guilds.');
     }
     if ($guild->member_count >= 200) {
         throw new Exception('This guild is full.');
     }
-    $db->grab_row('guild_invitation_select', array($guild_id, $user_id), 'This invitation has expired.');
+
+    $invite = guild_invitation_select($pdo, $guild_id, $user_id);
+    if (!$invite) {
+        throw new Exception('The invitation has expired.');
+    }
 
     // join the guild
-    $db->call('guild_invitation_delete', array($guild_id, $user_id));
-    $db->call('guild_increment_member', array($guild_id, 1));
-    $db->call('user_update_guild', array($user_id, $guild_id));
+    guild_invitation_delete($pdo, $guild_id, $user_id);
+    guild_increment_member($pdo, $guild_id, 1);
+    user_update_guild($pdo, $user_id, $guild_id);
 
     // tell the world
     $reply = new stdClass();

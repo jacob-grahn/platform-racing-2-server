@@ -2,6 +2,9 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/users/user_select_expanded.php';
+require_once __DIR__ . '/../queries/users/user_update_guild.php';
+require_once __DIR__ . '/../queries/guilds/guild_increment_member.php';
 
 $ip = get_ip();
 
@@ -16,25 +19,20 @@ try {
     rate_limit('guild-leave-attempt-'.$ip, 5, 1);
 
     // connect to the db
-    $db = new DB();
     $pdo = pdo_connect();
-
 
     // get their login
     $user_id = token_login($pdo, false);
-    $account = $db->grab_row('user_select_expanded', array($user_id));
-
+    $account = user_select_expanded($pdo, $user_id);
 
     // sanity check
     if ($account->guild == 0) {
         throw new Exception('You are not a member of a guild.');
     }
 
-
     // leave the guild
-    $db->call('guild_increment_member', array( $account->guild, -1 ));
-    $db->call('user_update_guild', array( $user_id, 0 ));
-
+    guild_increment_member($pdo, $account->guild, -1);
+    user_update_guild($pdo, $user_id, 0);
 
     // tell it to the world
     $reply = new stdClass();

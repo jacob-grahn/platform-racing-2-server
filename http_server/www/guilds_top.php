@@ -4,6 +4,7 @@ header("Content-Type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/pr2_fns.php';
+require_once __DIR__ . '/../queries/guilds/guilds_select_by_most_gp_today.php';
 
 $sort = find('sort', 'gpToday');
 $ip = get_ip();
@@ -13,7 +14,6 @@ try {
     rate_limit('guilds-top-'.$ip, 5, 3);
 
     //--- connect to the db
-    $db = new DB();
     $pdo = pdo_connect();
 
 
@@ -25,7 +25,7 @@ try {
 
 
     //--- select list from db
-    $guilds = $db->to_array($db->call('guilds_select_by_most_gp_today'));
+    $guilds = guilds_select_by_most_gp_today($pdo);
 
 
     //--- get active member count guild by guild

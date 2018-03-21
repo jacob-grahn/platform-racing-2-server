@@ -1,5 +1,7 @@
 <?php
 
+// TODO: is suppress_error is needed here?
+
 function guild_increment_member($pdo, $guild_id, $number, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
