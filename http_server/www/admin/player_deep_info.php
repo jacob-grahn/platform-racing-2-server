@@ -77,6 +77,9 @@ function output_object($obj, $sep = '<br/>')
 {
     if ($obj !== false) {
         foreach ($obj as $var => $val) {
+            if ($var == 'guild') {
+                $val = "<a href='guild_deep_info.php?guild_id=$val'>$val</a>";
+            }
             if ($var == 'time' || $var == 'register_time') {
                 $val = date('M j, Y g:i A', $val);
             }
