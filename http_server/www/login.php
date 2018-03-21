@@ -16,7 +16,7 @@ require_once __DIR__ . '/../queries/rank_tokens/rank_token_select.php';
 require_once __DIR__ . '/../queries/rank_token_rentals/rank_token_rentals_count.php';
 require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php';
 require_once __DIR__ . '/../queries/friends/friends_select.php';
-require_once __DIR__ . '/../queries/ignored/ignored_select.php';
+require_once __DIR__ . '/../queries/ignored/ignored_select_list.php';
 require_once __DIR__ . '/../queries/exp_today/exp_today_select.php';
 require_once __DIR__ . '/../queries/guilds/guild_select.php';
 require_once __DIR__ . '/../queries/artifact/artifact_check.php';
@@ -139,7 +139,7 @@ try {
 
 
     // create variables from user data in db
-    $user_id = $user->user_id;
+    $user_id = (int) $user->user_id;
     $user_name = $user->name;
     $login->user_name = $user_name; // sanitize user input by taking name from the db to send to the server
     $group = $user->power;
@@ -255,7 +255,7 @@ try {
     }
 
     //--- get their ignored
-    $ignored_result = ignored_select($pdo, $user_id);
+    $ignored_result = ignored_select_list($pdo, $user_id);
     foreach ($ignored_result as $ir) {
         $ignored[] = $ir->ignore_id;
     }
