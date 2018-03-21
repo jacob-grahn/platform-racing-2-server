@@ -1,8 +1,8 @@
 <?php
 
-function order_request_handler($db, $request)
+function order_request_handler($pdo, $request)
 {
-    
+
     //--- sort incoming data
     $event = $request->event; //item_order_request
     $game_id = $request->game_id; //The game_id.
@@ -13,8 +13,8 @@ function order_request_handler($db, $request)
     list($pr2_user_id, $item_slug) = explode(',', $order_info);
 
     //---
-    $items_raw = describeVault($db, $pr2_user_id, array($item_slug));
-    
+    $items_raw = describeVault($pdo, $pr2_user_id, array($item_slug));
+
     //---
     $items = array();
     foreach ($items_raw as $raw) {

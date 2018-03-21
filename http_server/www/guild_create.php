@@ -2,6 +2,9 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/users/user_select_expanded.php';
+require_once __DIR__ . '/../queries/users/user_update_guild.php';
+require_once __DIR__ . '/../queries/guilds/guild_insert.php';
 
 $note = filter_swears(find('note'));
 $guild_name = filter_swears(find('name'));
@@ -19,7 +22,6 @@ try {
     rate_limit('guild-create-attempt-'.$ip, 10, 3, "Please wait at least 10 seconds before attempting to create a guild again.");
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -29,7 +31,7 @@ try {
     rate_limit('guild-create-attempt-'.$user_id, 10, 3, "Please wait at least 10 seconds before attempting to create a guild again.");
 
     // get user info
-    $account = $db->grab_row('user_select_expanded', array($user_id));
+    $account = user_select_expanded($pdo, $user_id);
 
     // sanity checks
     if ($account->rank < 20) {
@@ -65,8 +67,8 @@ try {
     rate_limit('guild-create-'.$user_id, 3600, 1, "You may only create one guild per hour. Try again later.");
 
     // add guild to db
-    $guild_id = $db->grab('guild_id', 'guild_insert', array( $user_id, $guild_name, $emblem, $note ), 'A guild already exists with that name.');
-    $db->call('user_update_guild', array( $user_id, $guild_id ));
+    $guild_id = guild_insert($pdo, $user_id, $guild_name, $emblem, $note);
+    user_update_guild($pdo, $user_id, $guild_id);
 
     // tell it to the world
     $reply = new stdClass();

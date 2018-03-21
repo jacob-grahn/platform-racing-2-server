@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/users/user_select.php';
 
 $user_id = find_no_cookie('user_id', 0);
 $force_ip = find_no_cookie('force_ip');
@@ -18,7 +19,6 @@ try {
     rate_limit('mod-ban-'.$ip, 3, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // make sure you're a moderator
@@ -36,7 +36,7 @@ try {
     output_header('Ban User', true);
 
     // get the user's name
-    $row = $db->grab_row('user_select', array($user_id));
+    $row = user_select($pdo, $user_id);
     $name = $row->name;
     $target_ip = $row->ip;
 

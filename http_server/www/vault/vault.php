@@ -13,7 +13,6 @@ try {
     rate_limit('vault-listing-'.$ip, 15, 4);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // get login
@@ -24,7 +23,7 @@ try {
     rate_limit('vault-listing-'.$user_id, 30, 10);
 
     // create listing
-    $raw_listings = describeVault($db, $user_id, array('stats-boost', 'epic-everything', 'guild-fred', 'guild-ghost', 'guild-artifact', 'happy-hour', 'rank-rental', 'djinn-set', 'king-set', 'queen-set', 'server-1-day', 'server-30-days'));
+    $raw_listings = describeVault($pdo, $user_id, array('stats-boost', 'epic-everything', 'guild-fred', 'guild-ghost', 'guild-artifact', 'happy-hour', 'rank-rental', 'djinn-set', 'king-set', 'queen-set', 'server-1-day', 'server-30-days'));
 
     // weed out only the info we want to return
     $listings = array();

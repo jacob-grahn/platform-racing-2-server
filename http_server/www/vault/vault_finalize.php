@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../queries/users/user_select.php';
 
 $game_auth_token = find('game_auth_token');
 $kong_user_id = find('kong_user_id');
@@ -24,13 +25,12 @@ try {
 
 
     //--- connect
-    $db = new DB();
     $pdo = pdo_connect();
 
 
     //--- gather infos
     $user_id = token_login($pdo);
-    $user = $db->grab_row('user_select', array( $user_id ), 'Could not fetch your info.');
+    $user = user_select($pdo, $user_id);
 
     if ($user->power <= 0) {
         throw new Exception('Guests can not buy things...');
@@ -48,7 +48,7 @@ try {
         $slug = $item->identifier;
         $remaining_uses = $item->remaining_uses;
         if ($remaining_uses >= 1) {
-            $reply = unlock_item($db, $user_id, $user->guild, $server_id, $slug, $user->name, $kong_user_id);
+            $reply = unlock_item($pdo, $user_id, $user->guild, $server_id, $slug, $user->name, $kong_user_id);
             $results[] = use_item($api_key, $game_auth_token, $kong_user_id, $item_id);
         }
     }
