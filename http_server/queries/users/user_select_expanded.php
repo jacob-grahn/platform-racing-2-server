@@ -20,14 +20,14 @@ function user_select_expanded ($pdo, $user_id)
         LEFT JOIN pr2 ON users.user_id = pr2.user_id
         LEFT JOIN rank_tokens ON rank_tokens.user_id = pr2.user_id
         LEFT JOIN epic_upgrades ON users.user_id = epic_upgrades.user_id
-        WHERE users.user_id = p_user_id
+        WHERE users.user_id = :user_id
         LIMIT 1
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
 
     $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could not select expanded pr2 user');
+        throw new Exception('Could not execute pdo function user_select_expanded.');
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
