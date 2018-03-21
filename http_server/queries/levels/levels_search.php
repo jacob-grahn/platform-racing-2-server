@@ -1,53 +1,34 @@
 <?php
 
-function levels_search ($pdo, $search, $in_mode = 'title', $in_start = 0, $in_count = 9, $in_order_by = 'date', $in_dir = 'desc')
+function levels_search ($pdo, $search, $in_mode = 'title', $in_start = 0, $in_count = 9, $in_order = 'date', $in_dir = 'desc')
 {
     $start = min( max( (int)$in_start, 0), 100 );
     $count = min( max( (int)$in_count, 0), 100 );
 
-    switch($in_order_by)
-    {
-        case 'rating':
-            $order_by = 'pr2_levels.rating';
-            break;
-        case 'date':
-            $order_by = 'pr2_levels.time';
-            break;
-        case 'alphabetical':
-            $order_by = 'pr2_levels.title';
-            break;
-        case 'popularity':
-            $order_by = 'pr2_levels.play_count';
-            break;
-        default:
-            $order_by = 'pr2_levels.time';
-            break;
+    // order by
+    $order_by = 'pr2_levels.';
+    if ($in_order == 'rating') {
+        $order_by .= 'rating';
+    } else if ($in_order == 'alphabetical') {
+        $order_by .= 'title';
+    } else if ($in_order == 'popularity') {
+        $order_by .= 'play_count';
+    } else {
+        $order_by .= 'time';
     }
 
-    switch ($in_dir)
-    {
-        case 'asc':
-            $dir = 'ASC';
-            break;
-        case 'desc':
-            $dir = 'DESC';
-            break;
-        default:
-            $dir = 'DESC';
-            break;
+    // direction
+    if ($in_dir == 'asc') {
+        $dir = 'ASC';
+    } else {
+        $dir = 'DESC';
     }
 
-    switch ($in_mode)
-    {
-        case 'title':
-            $where = 'users.name = :search';
-            break;
-        case 'user':
-            $where = 'users.name = :search';
-            break;
-        default:
-            $where = 'MATCH (title) AGAINST (:search IN BOOLEAN MODE)';
-            break;
+    // search mode
+    if ($in_mode == 'title') {
+        $where = 'MATCH (title) AGAINST (:search IN BOOLEAN MODE)';
+    } else {
+        $where = 'users.name = :search';
     }
 
     $stmt = $pdo->prepare("
