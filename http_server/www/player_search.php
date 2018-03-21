@@ -114,7 +114,11 @@ function output_page($db, $user)
     // safety first
     $safe_name = htmlspecialchars($user_name);
     $safe_status = htmlspecialchars($status);
-    $safe_guild = htmlspecialchars($guild_name);
+    if ($guild_name == '<i>none</i>') {
+        $safe_guild = $guild_name;
+    } else {
+        $safe_guild = htmlspecialchars($guild_name);
+    }
 
     // --- Start the Page --- \\
 
