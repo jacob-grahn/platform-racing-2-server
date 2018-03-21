@@ -3,7 +3,7 @@
 
 require_once __DIR__ . '/../../queries/users/user_select_expanded.php';
 require_once __DIR__ . '/../../queries/servers/server_select.php';
-require_once __DIR__ . '/../../queries/guild/guild_select.php';
+require_once __DIR__ . '/../../queries/guilds/guild_select.php';
 
 function describeVault($pdo, $user_id, $arr)
 {
