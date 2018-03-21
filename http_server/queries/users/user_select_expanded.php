@@ -32,7 +32,7 @@ function user_select_expanded ($pdo, $user_id)
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
     if ($user === false) {
-        throw new Exception('Could not find a user with that ID.');
+        throw new Exception('Could not find a user with that name or ID.');
     }
 
     return $user;
