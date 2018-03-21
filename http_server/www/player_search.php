@@ -103,7 +103,7 @@ function output_page($db, $user)
         $guild = $db->grab_row('guild_select', array($guild_id));
         $guild_name = $guild->guild_name;
     } else {
-        $guild_name = '<i>none</i>';
+        $guild_name = "<i>none</i>";
     }
 
     // group html change if staff
