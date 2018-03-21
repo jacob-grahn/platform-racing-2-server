@@ -3,6 +3,10 @@
 require_once __DIR__ . '/../fns/output_fns.php';
 require_once __DIR__ . '/../fns/all_fns.php';
 
+// pdo queries
+require_once __DIR__ . '/../queries/users/user_select_expanded.php'; // select expanded user data
+require_once __DIR__ . '/../queries/guilds/guild_select.php'; // select guild data
+
 $name = find_no_cookie("name", "");
 $ip = get_ip();
 
@@ -19,16 +23,15 @@ try {
     rate_limit("gui-player-search-" . $ip, 5, 1, "Wait a bit before searching again.");
     rate_limit("gui-player-search-" . $ip, 30, 5, "Wait a bit before searching again.");
 
-    // db
-    $db = new DB();
+    // connect
     $pdo = pdo_connect();
 
     // find user
-    $user = find_user($db, $pdo, $name);
+    $user = find_user($pdo, $name);
 
     // output
     output_search($name);
-    output_page($db, $user);
+    output_page($pdo, $user);
     output_footer();
 } catch (Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
@@ -38,13 +41,13 @@ try {
     die();
 }
 
-function find_user($db, $pdo, $name)
+function find_user($pdo, $name)
 {
     // get id from name
     $user_id = name_to_id($pdo, $name);
 
     // get player info from id
-    $user = $db->grab_row('user_select_expanded', array($user_id));
+    $user = user_select_expanded($pdo, $user_id);
 
     return $user;
 }
@@ -69,7 +72,7 @@ function output_search($name = '')
 	";
 }
 
-function output_page($db, $user)
+function output_page($pdo, $user)
 {
 
     // sanity check: is the used tokens value set?
@@ -100,7 +103,7 @@ function output_page($db, $user)
 
     // guild id to name
     if ($guild_id !== 0) {
-        $guild = $db->grab_row('guild_select', array($guild_id));
+        $guild = guild_select($pdo, $guild_id);
         $guild_name = $guild->guild_name;
     } else {
         $guild_name = "<i>none</i>";
