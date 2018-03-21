@@ -1,6 +1,6 @@
 <?php
 
-function recent_logins_select($pdo, $user_id, $count = 100, $suppress_error = false)
+function recent_logins_select($pdo, $user_id, $suppress_error = false, $count = 100)
 {
     $count = (int) $count;
     $stmt = $pdo->prepare('
