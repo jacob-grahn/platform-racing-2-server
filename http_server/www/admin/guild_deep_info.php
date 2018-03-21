@@ -61,6 +61,9 @@ function output_object($obj, $sep = '<br/>')
 {
     if ($obj !== false) {
         foreach ($obj as $var => $val) {
+            if ($var == 'name') {
+                $val = "<a href='player_deep_info.php?name1=$val'>$val</a>";
+            }
             if ($var != 'guild_id') {
                 echo "$var: ".htmlspecialchars($val)."$sep";
             }

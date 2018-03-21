@@ -11,6 +11,7 @@ require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php'; 
 require_once __DIR__ . '/../../queries/staff/admin/admin_account_update.php'; // pdo
 
 // guild, email functions
+require_once __DIR__ . '/../../queries/guilds/guild_select.php'; // pdo
 require_once __DIR__ . '/../../queries/guilds/guild_increment_member.php'; // pdo
 require_once __DIR__ . '/../../queries/changing_emails/changing_email_insert.php'; // pdo
 require_once __DIR__ . '/../../queries/changing_emails/changing_email_select.php'; // pdo
@@ -160,20 +161,21 @@ function update($pdo, $admin)
     }
 
     // if there's nothing to change, no need to query the database any further
-    if ($update_user === true && $update_pr2 === true && $update_epic === true) {
+    if ($update_user === false && $update_pr2 === false && $update_epic === false) {
         throw new Exception('No changes to be made.');
     }
 
     // adjust guild member count
     if ($user->guild != $guild_id) {
+        guild_select($pdo, $guild_id); // make sure the new guild exists
         if ($user->guild != 0) {
-            $result = guild_increment_member($pdo, $user->guild, -1);
+            $result = guild_increment_member($pdo, $user->guild, -1, true);
             if ($result === false) {
                 throw new Exception("Could not increment guild member count in guild $user->guild.");
             }
         }
         if ($guild_id != 0) {
-            $result = guild_increment_member($pdo, $user->guild, 1);
+            $result = guild_increment_member($pdo, $user->guild, 1, true);
             if ($result === false) {
                 throw new Exception("Could not increment guild member count in guild $guild_id.");
             }

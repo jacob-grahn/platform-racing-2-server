@@ -14,10 +14,10 @@ function mod_action_insert($pdo, $mod_id, $message, $extra, $ip)
     $stmt->bindValue(':message', $message, PDO::PARAM_STR);
     $stmt->bindValue(':extra', $extra, PDO::PARAM_STR);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
-
     $result = $stmt->execute();
+    
     if ($result === false) {
-        throw new Exception('Could not insert mod action');
+        throw new Exception('Could not record moderator action.');
     }
 
     return $result;
