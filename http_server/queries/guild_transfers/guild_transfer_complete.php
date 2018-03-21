@@ -8,7 +8,7 @@ function guild_transfer_complete($pdo, $transfer_id, $ip)
                confirm_ip = :ip
          WHERE transfer_id = :transfer_id
     ');
-    $stmt->bindValue(':transfer_id', $change_id, PDO::PARAM_INT);
+    $stmt->bindValue(':transfer_id', $transfer_id, PDO::PARAM_INT);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $result = $stmt->execute();
     
