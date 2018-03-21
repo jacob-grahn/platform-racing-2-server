@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../queries/bans/bans_select_by_ip.php';
 
 $user_id = (int) default_val($_GET['user_id'], 0);
 $force_ip = find_no_cookie('force_ip');
+$ip = find_no_cookie('ip');
 
 $mod_ip = get_ip();
 
@@ -40,7 +41,7 @@ try {
 
     //get dem infos
     $user = user_select($pdo, $user_id);
-    $pr2 = pr2_select($pdo, $user_id);
+    $pr2 = pr2_select($pdo, $user_id, true);
 
     // sanity check
     if ($user == false || $pr2 == false) {
