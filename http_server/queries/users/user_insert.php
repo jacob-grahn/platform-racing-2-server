@@ -10,16 +10,16 @@ function user_insert($pdo, $name, $pass_hash, $ip, $time, $email)
             ip = :ip,
             time = :time,
             register_time = :time,
-            email = :email;
+            email = :email
     ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':pass_hash', $pass_hash, PDO::PARAM_STR);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':time', $time, PDO::PARAM_INT);
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
-
     $result = $stmt->execute();
-    if (!$result) {
+    
+    if ($result === false) {
         throw new Exception('Could not insert new user.');
     }
 
