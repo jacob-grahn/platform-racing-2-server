@@ -3,7 +3,7 @@
 function ignored_select_list ($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens
+        SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens, ignored.ignore_id
         FROM ignored
         INNER JOIN users ON users.user_id = ignored.ignore_id
         LEFT JOIN pr2 ON users.user_id = pr2.user_id
