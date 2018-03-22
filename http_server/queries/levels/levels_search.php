@@ -1,10 +1,19 @@
 <?php
 
-function levels_search ($pdo, $search, $in_mode = 'title', $in_start = 0, $in_count = 9, $in_order = 'date', $in_dir = 'desc')
+function levels_search ($pdo, $search, $in_mode = 'user', $in_start = 0, $in_count = 9, $in_order = 'date', $in_dir = 'desc')
 {
     $start = min( max( (int)$in_start, 0), 100 );
     $count = min( max( (int)$in_count, 0), 100 );
-
+    
+    // search mode
+    if ($in_mode == 'title') {
+        $where = 'MATCH (title) AGAINST (:search IN BOOLEAN MODE)';
+        $live_cond = 'pr2_levels.live = 1'; // if title, don't show pw levels
+    } else {
+        $where = 'users.name = :search';
+        $live_cond = '(pr2_levels.live = 1 OR pr2_levels.pass IS NOT NULL)'; // if user, show pw levels
+    }
+    
     // order by
     $order_by = 'pr2_levels.';
     if ($in_order == 'rating') {
@@ -24,13 +33,7 @@ function levels_search ($pdo, $search, $in_mode = 'title', $in_start = 0, $in_co
         $dir = 'DESC';
     }
 
-    // search mode
-    if ($in_mode == 'title') {
-        $where = 'MATCH (title) AGAINST (:search IN BOOLEAN MODE)';
-    } else {
-        $where = 'users.name = :search';
-    }
-
+    // get the levels
     $stmt = $pdo->prepare("
         SELECT pr2_levels.level_id,
                pr2_levels.version,
@@ -47,7 +50,7 @@ function levels_search ($pdo, $search, $in_mode = 'title', $in_start = 0, $in_co
         FROM pr2_levels, users
         WHERE $where
         AND pr2_levels.user_id = users.user_id
-        AND (pr2_levels.live = 1 OR pr2_levels.pass IS NOT NULL)
+        AND $live_cond
         ORDER BY $order_by $dir
         LIMIT $start, $count
     ");
@@ -55,7 +58,7 @@ function levels_search ($pdo, $search, $in_mode = 'title', $in_start = 0, $in_co
 
     $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could not search levels');
+        throw new Exception('Could not search levels.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

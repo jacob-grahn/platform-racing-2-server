@@ -1,6 +1,6 @@
 <?php
 
-function message_select($pdo, $message_id)
+function message_select($pdo, $message_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT * FROM messages
@@ -11,12 +11,17 @@ function message_select($pdo, $message_id)
 
     $result = $stmt->execute();
     if (!$result) {
-        throw new Exception('could not select message');
+        throw new Exception('Could not perform query to select this message from the database.');
     }
 
     $message = $stmt->fetch(PDO::FETCH_OBJ);
-    if (!$message) {
-        throw new Exception('Message not found.');
+    if ($message === false) {
+        if ($suppress_error === false) {
+            throw new Exception('Message not found.');
+        }
+        else {
+            return false;
+        }
     }
 
     return $message;

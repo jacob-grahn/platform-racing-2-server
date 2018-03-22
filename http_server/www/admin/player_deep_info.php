@@ -79,11 +79,12 @@ function output_object($obj, $sep = '<br/>')
         foreach ($obj as $var => $val) {
             if ($var == 'guild') {
                 $val = "<a href='guild_deep_info.php?guild_id=$val'>$val</a>";
+                echo "$var: $val $sep";
             }
             if ($var == 'time' || $var == 'register_time') {
                 $val = date('M j, Y g:i A', $val);
             }
-            if ($var != 'user_id') {
+            if ($var != 'user_id' && $var != 'guild') {
                 echo "$var: ".htmlspecialchars($val)."$sep";
             }
         }

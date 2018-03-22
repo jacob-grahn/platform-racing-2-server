@@ -110,7 +110,7 @@ try {
 
 
     // permission check
-    if ($mod_power <= $banned_power || $mod_power < 2) {
+    if ($banned_power >= 2 || $mod_power < 2) {
         throw new Exception("You lack the power to ban $banned_name.");
     }
 

@@ -139,7 +139,7 @@ try {
 
 
     // create variables from user data in db
-    $user_id = $user->user_id;
+    $user_id = (int) $user->user_id;
     $user_name = $user->name;
     $login->user_name = $user_name; // sanitize user input by taking name from the db to send to the server
     $group = $user->power;

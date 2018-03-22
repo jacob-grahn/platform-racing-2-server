@@ -3,7 +3,7 @@
 function user_select_guest($pdo)
 {
     $stmt = $pdo->prepare('
-        SSELECT user_id, name, email, register_ip, ip, time, register_time, power, status, read_message_id, guild, server_id
+        SELECT user_id, name, email, register_ip, ip, time, register_time, power, status, read_message_id, guild, server_id
         FROM users
         WHERE power = 0
         AND STATUS = "offline"

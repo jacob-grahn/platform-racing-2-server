@@ -24,7 +24,7 @@ function messages_reported_insert($pdo, $to_user_id, $from_user_id, $reporter_ip
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not send message');
+        throw new Exception('Could not report the message.');
     }
 
     return $result;

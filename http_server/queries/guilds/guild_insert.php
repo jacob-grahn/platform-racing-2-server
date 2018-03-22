@@ -16,10 +16,10 @@ function guild_insert($pdo, $owner_id, $guild_name, $emblem, $note)
     $stmt->bindValue(':guild_name', $guild_name, PDO::PARAM_STR);
     $stmt->bindValue(':emblem', $emblem, PDO::PARAM_STR);
     $stmt->bindValue(':note', $note, PDO::PARAM_STR);
-
     $result = $stmt->execute();
+
     if ($result === false) {
-        throw new Exception('Could not create guild');
+        throw new Exception('Could not create guild.');
     }
 
     return $pdo->lastInsertId();

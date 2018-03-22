@@ -12,7 +12,7 @@ function guild_select_active_member_count($pdo, $guild_id)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not perform query to select active member count');
+        throw new Exception('Could not determine active guild members.');
     }
 
     $row = $stmt->fetch(PDO::FETCH_OBJ);

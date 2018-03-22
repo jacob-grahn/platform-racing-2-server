@@ -12,12 +12,12 @@ function guild_select($pdo, $guild_id)
 
     $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could not fetch guild');
+        throw new Exception('Could not perform query guild_select.');
     }
 
     $guild = $stmt->fetch(PDO::FETCH_OBJ);
     if ($guild === false) {
-        throw new Exception('Guild not found');
+        throw new Exception('Could not find a guild with that ID.');
     }
 
     return $guild;

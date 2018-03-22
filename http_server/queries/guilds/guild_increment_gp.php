@@ -4,9 +4,9 @@ function guild_increment_gp($pdo, $guild_id, $gp)
 {
     $stmt = $pdo->prepare('
         UPDATE guilds
-        SET gp_today = gp_today + p_gp,
-            gp_total = gp_total + p_gp
-        WHERE guild_id = p_guild_id
+        SET gp_today = gp_today + :gp,
+            gp_total = gp_total + :gp
+        WHERE guild_id = :guild_id
         LIMIT 1
     ');
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);

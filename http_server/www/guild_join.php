@@ -23,7 +23,7 @@ try {
     // gather information
     $user_id = token_login($pdo, false);
     $account = user_select_expanded($pdo, $user_id);
-    $guild = guild_select($pdo, $user_id);
+    $guild = guild_select($pdo, $guild_id);
 
     // sanity checks
     if ($account->guild != 0) {
