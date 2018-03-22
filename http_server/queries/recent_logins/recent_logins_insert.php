@@ -6,7 +6,7 @@ function recent_logins_insert($pdo, $user_id, $ip, $country_code)
         INSERT INTO recent_logins
                 SET user_id = :user_id,
                     ip = :ip,
-                    country_code = :country_code
+                    country = :country_code
         ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
