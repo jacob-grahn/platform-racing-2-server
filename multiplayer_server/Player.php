@@ -14,6 +14,7 @@ class Player
     public $start_exp_today;
     public $exp_today;
     public $group;
+    public $guest;
 
     public $hat_color;
     public $head_color;
@@ -80,7 +81,9 @@ class Player
 
     public $temp_mod = false;
     public $server_owner = false;
+    
     public $hh_warned = false;
+    public $server_restart_warned = false;
 
     public $status = '';
 
@@ -316,7 +319,7 @@ class Player
         // make sure they're in exactly one valid room
         if ($room_type != 'n' && $room_type != 'b' && isset($player_room)) {
             // guest check
-            if ($this->group <= 0) {
+            if ($this->group <= 0 || $this->guest == true) {
                 $this->write('systemChat`Sorries, guests can\'t send chat messages.');
             } // chat ban check (warnings, auto-warn)
             elseif ($this->chat_ban > time()) {
@@ -518,13 +521,14 @@ class Player
                     $this->write("systemChat`Enter an argument to get the data you want. For a list of acceptable arguments, type /debug help.");
                 }
             } // restart server command for admins
-            elseif (($chat_message == '/restart_server' || strpos($chat_message, '/restart_server ') === 0) && $this->group >= 3 && ($this->server_owner == false || $guild_id == 183)) {
+            elseif ($chat_message == '/restart_server' && $this->group >= 3 && ($this->server_owner == false || $guild_id == 183)) {
                 if ($room_type == 'c') {
-                    if ($chat_message == '/restart_server yes, i am sure!') {
+                    if ($this->server_owner_warned == false) {
+                        $this->server_owner_warned = true;
+                        $this->write('systemChat`WARNING: You just typed the server restart command. If you choose to proceed, this action will disconnect EVERY player on this server. Are you sure you want to disconnect ALL players and restart the server? If so, type the command again.');
+                    } else if ($this->server_owner_warned == true) {
                         $db->call('admin_action_insert', array($admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip));
                         shutdown_server();
-                    } else {
-                        $this->write('systemChat`WARNING: You just typed the server restart command. If you choose to proceed, this action will disconnect EVERY player on this server. Are you sure you want to disconnect ALL players and restart the server? If so, type: /restart_server yes, i am sure!');
                     }
                 } else {
                     $this->write('systemChat`This command cannot be used in levels.');
@@ -562,7 +566,7 @@ class Player
                     $dc_player->remove();
 
                     // if they're an actual mod, log it
-                    if ($this->server_owner != true || $this->user_id == 4291976) {
+                    if ($this->server_owner == false || $this->user_id == 4291976) {
                         $db->call('mod_action_insert', array($mod_id, "$mod_name disconnected $dc_name from $server_name from $mod_ip.", $mod_id, $mod_ip));
                     }
 
@@ -1053,8 +1057,6 @@ class Player
 
 
 
-    // For now, I'm enabling this just for Fred the G. Cactus so I can test it out.
-    // I'll have to figure out the specifics of how PR2 handles a client-side admin.
     public function become_server_owner()
     {
         $this->write('becomeTempMod`'); // to pop up the temp mod menu for server owners
@@ -1062,6 +1064,16 @@ class Player
         $this->group = 3;
         $this->write('setGroup`3');
         $this->write("message`Welcome to your private server! You have admin privileges here. To promote server mods, type /mod demote *player name here* in the chat. They'll remain modded until they log out.<br><br>For more information about what commands you can use, type /help in the chat.");
+    }
+    
+    
+    
+    public function become_guest()
+    {
+        $this->guest = true;
+        $this->group = 1;
+        $this->write('setGroup`1');
+        $this->write("message`Welcome to Platform Racing 2!<br><br>You're a guest, which means you'll have limited privileges. To gain full functionality, log out and create your own account.<br><br>Thanks for playing, I hope you enjoy!<br>-Jacob");
     }
 
 
@@ -1135,7 +1147,7 @@ class Player
             $e_server_id = 0;
         }
 
-        if ($this->group == 0) {
+        if ($this->group == 0 || $this->guest === true) {
             $rank = 0;
             $exp_points = 0;
             $hat_array = '1';
@@ -1219,6 +1231,7 @@ class Player
         $this->active_rank = null;
         $this->exp_points = null;
         $this->group = null;
+        $this->guest = null;
         $this->hat_color = null;
         $this->head_color = null;
         $this->body_color = null;
@@ -1262,6 +1275,7 @@ class Player
         $this->temp_mod = null;
         $this->server_owner = null;
         $this->hh_warned = null;
+        $this->server_restart_warned = null;
         $this->status = null;
     }
 }
