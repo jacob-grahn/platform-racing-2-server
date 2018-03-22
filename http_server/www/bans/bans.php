@@ -54,20 +54,18 @@ try {
 
 //--- output the page ---
 
-$out = '';
-
 foreach ($bans as $row) {
-    $ban_id = $row['ban_id'];
-    $banned_ip = $row['banned_ip'];
-    $mod_user_id = $row['mod_user_id'];
-    $banned_user_id = $row['banned_user_id'];
-    $time = $row['time'];
-    $expire_time = $row['expire_time'];
-    $reason = $row['reason'];
-    $mod_name = $row['mod_name'];
-    $banned_name = $row['banned_name'];
-    $ip_ban = $row['ip_ban'];
-    $account_ban = $row['account_ban'];
+    $ban_id = $row->ban_id;
+    $banned_ip = $row->banned_ip;
+    $mod_user_id = $row->mod_user_id;
+    $banned_user_id = $row->banned_user_id;
+    $time = $row->time;
+    $expire_time = $row->expire_time;
+    $reason = $row->reason;
+    $mod_name = $row->mod_name;
+    $banned_name = $row->banned_name;
+    $ip_ban = $row->ip_ban;
+    $account_ban = $row->account_ban;
 
     $formatted_time = date('M j, Y g:i A', $time);
     $duration = $expire_time - $time;
@@ -86,15 +84,12 @@ foreach ($bans as $row) {
     $reason = htmlspecialchars($reason);
     $f_duration = format_duration($duration);
 
-    $out .="<p>$formatted_time
+    echo "<p>$formatted_time
 			<a href='show_record.php?ban_id=$ban_id'>
 			".htmlspecialchars($mod_name)." banned ".htmlspecialchars($display_name)." for $f_duration.</a><br/>
 			Reason: ".htmlspecialchars($reason)."
 			</p>";
 }
-
-//end_page($out);
-echo $out;
 
 echo('<p>---</p>');
 output_pagination($start, $count);
