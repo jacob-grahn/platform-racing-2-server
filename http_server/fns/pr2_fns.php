@@ -27,7 +27,7 @@ function backup_level($pdo, $s3, $user_id, $level_id, $version, $title, $live = 
 require_once __DIR__ . '/../queries/users/user_select.php';
 require_once __DIR__ . '/../queries/pr2/pr2_select.php';
 require_once __DIR__ . '/../queries/ignored/ignored_select.php';
-require_once __DIR__ . '/../queries/messages/messages_insert.php';
+require_once __DIR__ . '/../queries/messages/message_insert.php';
 
 function send_pm($pdo, $from_user_id, $to_user_id, $message)
 {

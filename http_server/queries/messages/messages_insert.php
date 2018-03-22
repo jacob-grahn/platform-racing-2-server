@@ -1,6 +1,6 @@
 <?php
 
-function messages_insert($pdo, $to_user_id, $from_user_id, $message, $ip)
+function message_insert ($pdo, $to_user_id, $from_user_id, $message, $ip)
 {
     $stmt = $pdo->prepare('
         INSERT INTO messages
