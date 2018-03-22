@@ -2,8 +2,10 @@
 
 function guild_increment_member($pdo, $guild_id, $number, $suppress_error = false)
 {
+    $number = (int) $number;
+    
     // determine correct operation
-    if ((int) $number < 0) {
+    if ($number < 0) {
         $number = abs($number);
         $sign = '-';
     } else if ($number > 0) {
