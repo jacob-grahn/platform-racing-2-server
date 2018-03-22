@@ -46,7 +46,7 @@ try {
         $message->name = $from_user->name;
         $message->group = $from_user->power;
 
-        $messages[] = $message;
+        $messages_array[] = $message;
     }
 
     if ($start == 0) {
@@ -54,7 +54,7 @@ try {
     }
 
     $r = new stdClass();
-    $r->messages = $messages;
+    $r->messages = $messages_array;
     $r->success = true;
     echo json_encode($r);
 } catch (Exception $e) {
