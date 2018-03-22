@@ -1,15 +1,23 @@
 <?php
 
-// TODO: is suppress_error is needed here?
-
 function guild_increment_member($pdo, $guild_id, $number, $suppress_error = false)
 {
-    $stmt = $pdo->prepare('
+    // determine correct operation
+    if ((int) $number < 0) {
+        $number = abs($number);
+        $sign = '-';
+    } else if ($number > 0) {
+        $sign = '+';
+    } else {
+        return true;
+    }
+    
+    $stmt = $pdo->prepare("
         UPDATE guilds
-           SET member_count = SUM(member_count + :number),
+           SET member_count = member_count $sign :number,
          WHERE guild_id = :guild_id
          LIMIT 1
-        ');
+    ");
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
     $stmt->bindValue(':number', $number, PDO::PARAM_INT);
     $result = $stmt->execute();
