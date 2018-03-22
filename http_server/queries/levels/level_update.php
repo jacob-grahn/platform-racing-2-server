@@ -12,7 +12,7 @@ function level_update ($pdo, $level_id, $title, $note, $live, $time, $ip, $min_l
             min_level = :min_level,
             song = :song,
             version = :version,
-            pass = :hash,
+            pass = :pass,
             type = :type
         WHERE level_id = :level_id
         LIMIT 1;

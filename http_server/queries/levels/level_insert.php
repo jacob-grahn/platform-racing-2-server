@@ -12,7 +12,7 @@ function level_insert ($pdo, $title, $note, $live, $time, $ip, $min_level, $song
 			min_level = :min_level,
 			song = :song,
 			user_id = :user_id,
-			pass = :hash,
+			pass = :pass,
 			type = :type
     ');
     $stmt->bindValue(':title', $title, PDO::PARAM_STR);
