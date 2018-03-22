@@ -14,7 +14,7 @@ function guilds_select_by_most_gp_today($pdo)
 
     $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could not fetch top guilds');
+        throw new Exception('Could not perform query guilds_select_by_most_gp_today.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);
