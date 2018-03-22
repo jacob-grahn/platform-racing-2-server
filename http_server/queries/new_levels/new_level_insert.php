@@ -12,6 +12,8 @@ function new_level_insert ($pdo, $level_id, $time, $ip)
     $stmt->bindValue(':time', $time, PDO::PARAM_INT);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
 
+
+    $result = $stmt->execute();
     if ($result === false) {
         throw new Exception('Could not submit level to new.');
     }
