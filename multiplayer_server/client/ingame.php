@@ -78,7 +78,7 @@ function client_add_effect($socket, $data)
 
 
 //---- use a lightning item -------------------------------------------------------
-function client_zap($socket, $data)
+function client_zap($socket)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
@@ -110,7 +110,7 @@ function client_activate($socket, $data)
 
 
 //--- bump a heart block ---------------------------------
-function client_heart($socket, $data)
+function client_heart($socket)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
@@ -144,7 +144,7 @@ function client_finish_race($socket, $data)
 
 
 //--- quit race -----------------------------------------------------------------
-function client_quit_race($socket, $data)
+function client_quit_race($socket)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {

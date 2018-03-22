@@ -40,5 +40,7 @@ abstract class socketServer extends socket {
 	}
 
 	// override if desired
-	public function on_accept(socketServerClient $client) {}
+	public function on_accept(socketServerClient $client) {
+		return $client;
+	}
 }

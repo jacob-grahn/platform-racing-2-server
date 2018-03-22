@@ -1,7 +1,7 @@
 <?php
 
 //--- shutdown ----------------------------------------------------------------
-function process_shut_down($socket, $data)
+function process_shut_down($socket)
 {
     if ($socket->process == true) {
         output('received shut down command...');

@@ -57,15 +57,10 @@ class DB
             $this->mysqli->next_result();
         }
 
-        $start_time = microtime(true);
-
         $result = $this->mysqli->query($query_str);
         if (!$result) {
             throw new Exception($this->mysqli->error);
         }
-
-        $end_time = microtime(true);
-        $elapsed_time = $end_time - $start_time;
 
         $this->last_action = time();
 

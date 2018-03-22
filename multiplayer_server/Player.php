@@ -1068,7 +1068,7 @@ class Player
 
     public function save_info()
     {
-        global $port, $server_id, $db;
+        global $server_id, $db;
 
         // make sure none of the part values are blank to avoid server crashes
         if (is_empty($this->hat, false)) {
@@ -1092,7 +1092,6 @@ class Player
 
         $rank = $this->rank;
         $exp_points = $this->exp_points;
-        $group = $this->group;
 
         $hat_color = $this->hat_color;
         $head_color = $this->head_color;
@@ -1126,7 +1125,6 @@ class Player
         $status = $this->status;
         $e_server_id = $server_id;
 
-        $lux = $this->lux;
         $this->lux = 0;
 
         $rt_used = $this->rt_used;

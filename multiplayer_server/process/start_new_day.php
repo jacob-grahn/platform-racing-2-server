@@ -1,7 +1,7 @@
 <?php
 
 //--- clear player's daily exp levels -------------------------------------------------
-function process_start_new_day($socket, $data)
+function process_start_new_day($socket)
 {
     if ($socket->process == true) {
         global $player_array;

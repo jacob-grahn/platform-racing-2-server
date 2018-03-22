@@ -1,6 +1,6 @@
 <?php
 
-function client_check_status($socket, $data)
+function client_check_status($socket)
 {
     $socket->write('ok');
 }

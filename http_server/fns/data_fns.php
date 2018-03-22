@@ -223,7 +223,7 @@ function talk_to_server($address, $port, $key, $server_function, $receive = fals
     $send_str = $message1 . $message2;
 
     $reply = true;
-    $fsock = @fsockopen($address, $port, $errno, $errstr, 2);
+    $fsock = fsockopen($address, $port, $errno, $errstr, 2);
 
     if ($fsock) {
         fputs($fsock, $send_str);
@@ -233,6 +233,7 @@ function talk_to_server($address, $port, $key, $server_function, $receive = fals
         }
         fclose($fsock);
     } else {
+        echo "$errno $errstr \n";
         $reply = false;
     }
 
