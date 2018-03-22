@@ -41,18 +41,6 @@ try {
     output_footer();
 }
 
-function get_level_info($campaign, $levelnum)
-{
-    $campaign_array = array();
-
-    foreach ($campaign->$levelnum as $level) {
-        ${"level_id_$levelnum"} = $campaign_array[$level->level_id];
-        ${"prize_type_$levelnum"} = $campaign_array[$level->prize_type];
-        ${"prize_id_$levelnum"} = $campaign_array[$level->prize_id];
-    }
-    return $campaign_array;
-}
-
 function is_selected($prize_type, $option_value)
 {
     $prize_type = strtolower($prize_type);
@@ -129,8 +117,6 @@ function output_form($pdo, $message)
     if ($message != '') {
         echo "<p><b>$message</b></p>";
     }
-
-    $level_info = get_level_info($campaign);
 
     echo '<form name="input" action="set_campaign.php" method="post">';
 
