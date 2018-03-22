@@ -25,6 +25,10 @@ $user_id = find('id');
 $action = find('action', 'lookup');
 
 try {
+    // rate limiting
+    rate_limit('update-account-'.$ip, 60, 10);
+    rate_limit('update-account-'.$ip, 5, 2);
+    
     //connect
     $pdo = pdo_connect();
 
@@ -38,10 +42,6 @@ try {
 }
 
 try {
-    // rate limiting
-    rate_limit('update-account-'.$ip, 60, 10);
-    rate_limit('update-account-'.$ip, 5, 2);
-    
     // header
     output_header('Update PR2 Account', true, true);
 
