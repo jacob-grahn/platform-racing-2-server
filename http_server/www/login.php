@@ -268,7 +268,7 @@ try {
 
 
     //--- see if they have gotten the artifact
-    $artifact = artifact_check($pdo, $user_id);
+    $artifact = false; // artifact_check($pdo, $user_id);
 
 
 

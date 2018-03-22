@@ -2,6 +2,7 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/artifact/artifact_location_update.php';
 
 $x = (int) find('x', 0);
 $y = (int) find('y', 0);
@@ -24,7 +25,6 @@ try {
     rate_limit('place-artifact-attempt-'.$ip, 30, 1, "Please wait at least 30 seconds before trying to set a new artifact location again.");
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -42,7 +42,7 @@ try {
     }
 
     // update the artifact location in the database
-    $db->call('artifact_location_update', array( $level_id, $x, $y ));
+    artifact_location_update($pdo, $level_id, $x, $y);
 
     // tell the world
     echo "message=Great success! The artifact location will be updated at the top of the next minute.";

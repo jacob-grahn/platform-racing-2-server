@@ -4,6 +4,8 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../queries/staff/level_unpublish.php';
+require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php';
+require_once __DIR__ . '/../queries/levels/level_select.php';
 
 $level_id = (int) default_val($_POST['level_id']);
 
@@ -22,7 +24,6 @@ try {
     rate_limit('remove-level-'.$ip, 3, 1);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // make sure the user is a moderator
@@ -37,13 +38,12 @@ try {
     }
 
     // check for the level's information
-    $level = $db->grab_row('level_select', array($level_id));
+    $level = level_select($pdo, $level_id);
     $l_title = $level->title;
     $l_creator = id_to_name($pdo, $level->user_id);
     $l_note = $level->note;
 
     // unpublish the level
-    // $db->call('level_unpublish', array($level_id));
     level_unpublish($pdo, $level_id);
 
     //tell it to the world
@@ -55,7 +55,7 @@ try {
     $ip = $mod->ip;
 
     //record the change
-    $db->call('mod_action_insert', array($user_id, "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}", $user_id, $ip));
+    mod_action_insert($pdo, $user_id, "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}", $user_id, $ip);
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";

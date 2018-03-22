@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/output_fns.php';
+require_once __DIR__ . '/../queries/users/users_select_staff.php';
 
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
@@ -12,17 +13,10 @@ try {
     rate_limit('gui-staff-list-'.$ip, 5, 2, 'Please wait at least 10 seconds before refreshing the page again.');
 
     // connect
-    $db = new DB();
+    $pdo = pdo_connect();
 
     // get the data
-    $staff_result = $db->query(
-        '
-		SELECT power, status, name, active_date, register_time
-		FROM users
-		WHERE power > 1
-		ORDER BY power DESC, active_date DESC
-	'
-    );
+    $staff_list = users_select_staff($pdo);
 
     echo '
 	<center>
@@ -37,7 +31,7 @@ try {
 			<th>Last Login</th>
 		</tr>';
 
-    while ($row = $staff_result->fetch_object()) {
+    foreach ($staff_list as $row) {
         // make nice variables for our data
         $safe_name = htmlspecialchars($row->name);
         $safe_name = str_replace(' ', '&nbsp;', $safe_name);

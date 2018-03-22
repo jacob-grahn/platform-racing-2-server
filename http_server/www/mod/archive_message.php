@@ -2,6 +2,8 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
+require_once __DIR__ . '/../../queries/messages_reported/messages_reported_archive.php';
 
 $message_id = (int) default_val($_GET['message_id'], 0);
 $ip = get_ip();
@@ -11,7 +13,6 @@ try {
     rate_limit('mod-archive-message-'.$ip, 3, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // make sure you're a moderator
@@ -26,22 +27,14 @@ try {
 
 try {
     // archive the message
-    $result = $db->query(
-        "UPDATE messages_reported
-							SET archived = 1
-							WHERE message_id = '$message_id'
-							LIMIT 1"
-    );
-    if (!$result) {
-        throw new Exception('Could not archive the message.');
-    }
+    messages_reported_archive($pdo, $message_id);
 
     // action log
     $name = $mod->name;
     $ip = $mod->ip;
 
     // record the change
-    $db->call('mod_action_insert', array($mod->user_id, "$name archived the report of PM $message_id from $ip", $mod->user_id, $ip));
+    mod_action_insert($pdo, $mod->user_id, "$name archived the report of PM $message_id from $ip", $mod->user_id, $ip);
 
     // tell the sorry saps trying to debug
     $ret = new stdClass();

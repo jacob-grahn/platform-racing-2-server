@@ -49,11 +49,6 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
     $ip = get_ip();
     $time = time();
 
-    // prepare for insertion
-    $safe_message = addslashes($message);
-    $safe_ip = addslashes($ip);
-    $safe_time = addslashes($time);
-
     // make sure the user's rank is above 3 (min rank to send PMs) and they aren't a guest
     if ($account_rank < 3) {
         throw new Exception('You need to level up to rank 3 to send private messages.');

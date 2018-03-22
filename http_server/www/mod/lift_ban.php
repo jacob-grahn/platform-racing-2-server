@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/bans/ban_select.php';
 
 $ban_id = (int) default_val($_GET['ban_id'], 0);
 $ip = get_ip();
@@ -11,7 +12,6 @@ try {
     rate_limit('mod-lift-ban-'.$ip, 5, 2);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // make sure you're a moderator
@@ -29,23 +29,9 @@ try {
     output_header('Lift Ban', true);
 
     // get the ban
-    $result = $db->query(
-        "SELECT *
-								 	FROM bans
-									WHERE ban_id = '$ban_id'
-									LIMIT 0, 1"
-    );
-    if (!$result) {
-        throw new Exception("Could not get the ban's data from the database.");
-    }
-    if ($result->num_rows <= 0) {
-        throw new Exception("Ban ID #$ban_id doesn't exist.");
-    }
-
-    // get ban info
-    $row = $result->fetch_object();
-    $banned_name = $row->banned_name;
-    $lifted = $row->lifted;
+    $ban = ban_select($pdo, $ban_id);
+    $banned_name = $ban->banned_name;
+    $lifted = $ban->lifted;
     if ($lifted == '1') {
         throw new Exception('This ban has already been lifted.');
     }

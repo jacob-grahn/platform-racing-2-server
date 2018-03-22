@@ -2,6 +2,7 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../levels/levels_select_by_rand.php';
 
 $ip = get_ip();
 
@@ -10,17 +11,12 @@ try {
     rate_limit('random-level-'.$ip, 10, 1, "Please wait at least 10 seconds before generating another random level.");
 
     // connect
-    $db = new DB();
+    $pdo = pdo_connect();
 
     // get a random level
-    $results = $db->call('levels_select_by_rand');
-    $rows = $db->to_array($results);
-    echo json_encode($rows);
-
-    // end it, yo
-    die();
+    $levels = levels_select_by_rand($pdo);
+    echo json_encode($levels);
 } catch (Exception $e) {
     $message = $e->getMessage();
     echo "Error: $message";
-    die();
 }

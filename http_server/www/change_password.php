@@ -12,9 +12,6 @@ $old_pass = $_POST['old_pass'];
 $new_pass = $_POST['new_pass'];
 $ip = get_ip();
 
-// safety first
-$safe_name = addslashes($name);
-
 try {
     // check request method
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

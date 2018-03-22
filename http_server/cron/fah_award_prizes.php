@@ -8,16 +8,15 @@ require_once __DIR__ . '/../queries/folding/folding_update.php';
 require_once __DIR__ . '/../queries/messages/messages_insert.php';
 require_once __DIR__ . '/../queries/rank_tokens/rank_token_upsert.php';
 require_once __DIR__ . '/../queries/users/user_select_by_name.php';
+require_once __DIR__ . '/../queries/fah/stats_select_all.php';
 
 $prize_array = array();
 $processed_names = array();
-$name_switch_array = array();
 
 
 // connect to the db
-$fah_db = new DB(fah_connect());
+$fah_pdo = fah_pdo_connect();
 $pdo = pdo_connect();
-
 
 
 // create a list of existing users and their prizes
@@ -27,16 +26,8 @@ foreach ($folding_rows as $row) {
 }
 
 
-// create a list of name switches
-$result = $fah_db->call('pr2_name_links_select');
-while ($row = $result->fetch_object()) {
-    $name_switch_array[strtolower($row->fah_name)] = strtolower($row->pr2_name);
-}
-
-
-
 // get fah user stats
-$result = $fah_db->call('stats_select_all');
+$result = stats_select_all($fah_pdo);
 while ($user = $result->fetch_object()) {
     add_prizes($pdo, $user->fah_name, $user->points, $prize_array, $processed_names);
 }
@@ -45,7 +36,6 @@ while ($user = $result->fetch_object()) {
 
 function add_prizes($pdo, $name, $score, $prize_array, $processed_names)
 {
-    $name = replace_name($name);
     $lower_name = strtolower($name);
 
     if (!isset($processed_names[$lower_name])) {
@@ -131,23 +121,6 @@ function award_prize($pdo, $user_id, $name, $score, $row, $column_name, $min_sco
         folding_update($pdo, $user_id, $column_name);
     }
 }
-
-
-
-function replace_name($name)
-{
-    global $name_switch_array;
-    $name = str_replace('_', ' ', $name);
-    if (isset($name_switch_array[strtolower($name)])) {
-        $new_name = $name_switch_array[strtolower($name)];
-        output("replacing $name with $new_name");
-        $name = $new_name;
-    }
-    return $name;
-}
-
-
-
 
 
 

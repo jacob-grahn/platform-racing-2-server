@@ -3,8 +3,13 @@
 header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/classes/S3.php';
+require_once __DIR__ . '/../fns/S3.php';
 require_once __DIR__ . '/../fns/pr2_fns.php';
+require_once __DIR__ . '/../queries/users/user_select.php';
+require_once __DIR__ . '/../queries/levels/level_select_by_title.php';
+require_once __DIR__ . '/../queries/levels/level_insert.php';
+require_once __DIR__ . '/../queries/levels/level_update.php';
+require_once __DIR__ . '/../queries/new_levels/new_level_insert.php';
 
 $title = $_POST['title'];
 $note = $_POST['note'];
@@ -17,6 +22,7 @@ $max_time = (int) $_POST['max_time'];
 $items = $_POST['items'];
 $remote_hash = $_POST['hash'];
 $pass_hash = default_val($_POST['passHash'], '');
+$hash2 = sha1($pass_hash . $LEVEL_PASS_SALT);
 $has_pass = (int) default_val($_POST['hasPass'], 0);
 $game_mode = find('gameMode', 'race');
 $cowboy_chance = (int) default_val($_POST['cowboyChance'], 5);
@@ -40,7 +46,6 @@ try {
     rate_limit('upload-level-attempt-'.$ip, 10, 3, "Please wait at least 10 seconds before trying to save again.");
 
     // connect to the db
-    $db = new DB();
     $pdo = pdo_connect();
     $s3 = s3_connect();
 
@@ -58,28 +63,10 @@ try {
     }
 
     //
-    $account = $db->grab_row('user_select', array($user_id));
+    $account = user_select($pdo, $user_id);
     if ($account->power <= 0) {
         throw new Exception('Guests can not save levels');
     }
-
-    //limit submissions from a single ip
-    $safe_min_time = $db->escape($time - 30);
-    $safe_ip = $db->escape($ip);
-    $result = $db->query(
-        "SELECT time
-									FROM pr2_new_levels
-									WHERE ip = '$safe_ip'
-									AND time > '$safe_min_time'
-									LIMIT 1"
-    );
-    if (!$result) {
-        throw new Exception('Could not check previous level submissions.');
-    }
-    if ($result->num_rows > 0 && $live == 1) {
-        throw new Exception('Please wait at least 30 seconds before trying to publish again.');
-    }
-
 
     //
     if ($game_mode == 'race') {
@@ -94,14 +81,12 @@ try {
         $type = 'r';
     }
 
-
-    //load the existing level
+    // load the existing level
     $org_rating = 0;
     $org_votes = 0;
     $org_play_count = 0;
-    $levels = $db->call('levels_select_one_by_name', array($user_id, $title));
-    if ($levels->num_rows == 1) {
-        $level = $levels->fetch_object();
+    $level = level_select_by_title($pdo, $user_id, $title);
+    if ($level) {
         $org_level_id = $level->level_id;
         $org_version = $level->version;
         $org_rating = $level->rating;
@@ -118,28 +103,22 @@ try {
         if (($time - $org_time) > (60*60*24*14)) {
             backup_level($pdo, $s3, $user_id, $org_level_id, $org_version-1, $title, $org_live, $org_rating, $org_votes, $org_note, $org_min_level, $org_song, $org_play_count);
         }
+
+        // update existing level
+        $version = $org_version + 1;
+        level_update($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $new_version, $hash2, $type);
+    }
+    else {
+        level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $hash2, $type);
+        $level = level_select_by_title($pdo, $user_id, $title);
+        $level_id = $row->level_id;
+        $version = $row->version;
     }
 
-
-
-    // hash the password
-    $hash2 = null;
-    if ($has_pass == 1) {
-        if ($pass_hash == '') {
-            $hash2 = $org_pass_hash2;
-        } else {
-            $hash2 = sha1($pass_hash . $LEVEL_PASS_SALT);
-        }
+    // add to 'newest' level list
+    if ($live) {
+        new_level_insert($pdo, $level_id, $time, $ip);
     }
-
-
-
-    //save the level
-    $row = $db->grab_row('level_save', array($user_id, $title, $note, $live, $time, $ip, $min_level, $song, $hash2, $type));
-    $level_id = $row->level_id;
-    $version = $row->version;
-
-
 
     //create the save string
     $url_note = str_replace('&', '%26', $note);
@@ -162,7 +141,6 @@ try {
 
     //save the new file to the backup system
     backup_level($pdo, $s3, $user_id, $level_id, $version, $title, $live, $org_rating, $org_votes, $note, $min_level, $song, $org_play_count);
-
 
 
     //tell every one it's time to party

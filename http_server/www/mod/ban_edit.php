@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/bans/ban_update.php';
+require_once __DIR__ . '/../../queries/bans/ban_select.php';
+require_once __DIR__ . '/../../staff/actions/mod_action_insert.php';
 
 $action = find('action', 'none');
 $ban_id = (int) default_val($_GET['ban_id'], 0);
@@ -12,7 +15,6 @@ try {
     rate_limit('mod-ban-edit-'.$ip, 3, 2);
 
     //connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     //make sure you're a moderator
@@ -34,29 +36,17 @@ try {
     // get mod info
     $user_id = $mod->user_id;
     $name = $mod->name;
-    $safe_name = addslashes($name);
 
 
-    // ------------------------------------------------------------------
-    // --- edit an existing ban, then redirect to that ban listing
-    // ------------------------------------------------------------------
+    // edit an existing ban, then redirect to that ban listing
     if ($action === 'edit' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        $safe_ban_id = $db->escape($ban_id);
-        $safe_account_ban = $db->escape(0+!!find('account_ban'));
-        $safe_ip_ban = $db->escape(0+!!find('ip_ban'));
-        $safe_expire_time = $db->escape(find('expire_time'));
-        $safe_notes = $db->escape(find('notes'));
 
         //update the ban
-        $query = "UPDATE bans
-				SET account_ban = '$safe_account_ban',
-					ip_ban = '$safe_ip_ban',
-					expire_time = UNIX_TIMESTAMP('$safe_expire_time'),
-					notes = '$safe_notes',
-					modified_time = NOW()
-				WHERE ban_id = '$safe_ban_id'
-				LIMIT 1";
-        $db->query($query, 'ban_update', 'Could not update ban. query: ' . $query);
+        $account_ban = 0 + !!find('account_ban');
+        $ip_ban = 0 + !!find('ip_ban');
+        $expire_time = find('expire_time');
+        $notes = find('notes');
+        ban_update($pdo, $ban_id, $account_ban, $ip_ban, $expire_time, $notes);
 
         //action log
         $expire_time = find('expire_time');
@@ -71,7 +61,7 @@ try {
         }
 
         //record the change
-        $db->call('mod_action_insert', array($mod->user_id, "$mod->name edited ban $ban_id {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $expire_time, $disp_notes}", 0, get_ip()));
+        mod_action_insert($pdo, $mod->user_id, "$mod->name edited ban $ban_id {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $expire_time, $disp_notes}", 0, get_ip());
 
         //redirect to the ban listing
         header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
@@ -80,7 +70,7 @@ try {
     // --- display a form containing the current ban data
     // --------------------------------------------------------------------------
     else {
-        $ban = $db->grab_row('ban_select', array($ban_id));
+        $ban = ban_select($pdo, $ban_id);
         output_header('Edit Ban');
         output_form($ban);
         output_footer();

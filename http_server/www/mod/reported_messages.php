@@ -15,7 +15,6 @@ try {
     rate_limit('mod-reported-messages-'.$mod_ip, 5, 3);
 
     //connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     //make sure you're a moderator
@@ -36,23 +35,11 @@ try {
     output_pagination($start, $count);
     echo('<p>---</p>');
 
-
     //get the messages
-    $result = $db->query(
-        "SELECT messages_reported.*, u1.name as from_name, u2.name as to_name
-									FROM messages_reported, users u1, users u2
-									WHERE to_user_id = u2.user_id
-									AND from_user_id = u1.user_id
-									ORDER by reported_time desc
-									LIMIT $start, $count"
-    );
-    if (!$result) {
-        throw new Exception('Could not retrieve the list of reported messages.');
-    }
-
+    $messages = messages_reported_select($pdo, $start, $count);
 
     //output the messages
-    while ($row = $result->fetch_object()) {
+    foreach ($messages as $row) {
         $formatted_time = date('M j, Y g:i A', $row->sent_time);
         $from_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->from_name));
         $to_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->to_name));

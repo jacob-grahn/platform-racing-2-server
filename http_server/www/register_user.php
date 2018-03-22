@@ -2,6 +2,10 @@
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/to_hash.php';
+require_once __DIR__ . '/../queries/users/user_select_by_name.php';
+require_once __DIR__ . '/../queries/users/user_insert.php';
+require_once __DIR__ . '/../queries/pr2/pr2_insert.php';
+require_once __DIR__ . '/../queries/messages/message_insert.php';
 
 $name = $_POST['name'];
 $password = $_POST['password'];
@@ -49,15 +53,14 @@ try {
     }
 
     // connect to the db
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check if banned
     check_if_banned($pdo, -1, $ip);
 
     // check if this name has been taken already
-    $result = $db->call('users_check_name', array($name));
-    if ($result->num_rows >= 1) {
+    $existing_user = user_select_by_name($pdo, $name, true);
+    if ($existing_user) {
         throw new Exception('Sorry, that name has already been registered.');
     }
 
@@ -68,11 +71,11 @@ try {
 
     // user insert
     $pass_hash = to_hash($password);
-    $db->call('user_insert', array($name, $pass_hash, $ip, $time, $email));
+    user_insert($pdo, $name, $pass_hash, $ip, $time, $email);
 
     // pr2 insert
     $user_id = name_to_id($pdo, $name);
-    $db->call('pr2_insert', array($user_id));
+    pr2_insert($pdo, $user_id);
 
     // compose a welcome pm
     $safe_name = htmlspecialchars($name);
@@ -83,7 +86,7 @@ try {
         ."- Jacob";
 
     // welcome them
-    $db->call('message_insert', array($user_id, 1, $welcome_message, '0'));
+    message_insert($pdo, $user_id, 1, $welcome_message, '0');
 
     $ret = new stdClass();
     $ret->result = 'success';
