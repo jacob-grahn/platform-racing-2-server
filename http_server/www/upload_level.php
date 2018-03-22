@@ -112,8 +112,8 @@ try {
     else {
         level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $hash2, $type);
         $level = level_select_by_title($pdo, $user_id, $title);
-        $level_id = $row->level_id;
-        $version = $row->version;
+        $level_id = $level->level_id;
+        $version = $level->version;
     }
 
     // add to 'newest' level list
