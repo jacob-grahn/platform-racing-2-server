@@ -10,8 +10,8 @@ $count = find('count', 25);
 
 try {
     // rate limiting
-    rate_limit('email-search-'.$ip, 60, 10, 'Wait a bit before searching again.');
-    rate_limit('email-search-'.$ip, 5, 2);
+    rate_limit('admin-log-'.$ip, 60, 10, 'Wait a bit before searching again.');
+    rate_limit('admin-log-'.$ip, 5, 2);
     
     //connect
     $pdo = pdo_connect();
