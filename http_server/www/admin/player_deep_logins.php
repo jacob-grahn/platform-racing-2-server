@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/users/user_select_by_name.php';
 require_once __DIR__ . '/../../queries/recent_logins/recent_logins_select.php';
+require_once __DIR__ . '/../../queries/recent_logins/recent_logins_count_by_user.php';
 
 $name = find('name', '');
 $start = (int) default_get('start', 0);
@@ -21,8 +22,9 @@ function output_search($name = '', $incl_br = true)
 }
 
 // this will echo and control page counts when called
-function output_pagination($start, $count)
+function output_pagination($start, $count, $name = '')
 {
+    $url_name = urlencode($name);
     $next_start_num = $start + $count;
     $last_start_num = $start - $count;
     if ($last_start_num < 0) {
@@ -30,11 +32,11 @@ function output_pagination($start, $count)
     }
     echo('<p>');
     if ($start > 0) {
-        echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");
+        echo("<a href='?name=$url_name&start=$last_start_num&count=$count'><- Last</a> |");
     } else {
         echo('<- Last |');
     }
-    echo(" <a href='?start=$next_start_num&count=$count'>Next -></a></p>");
+    echo(" <a href='?name=$url_name&start=$next_start_num&count=$count'>Next -></a></p>");
 }
 
 // admin check try block
@@ -71,14 +73,14 @@ try {
 
     // if there's a name set, let's get data from the db
     $user_id = name_to_id($pdo, $name);
+    $login_count = recent_logins_count_by_user($pdo, $user_id);
     $logins = recent_logins_select($pdo, $user_id, true, $start, $count);
     
     // calculate the number of results and the grammar to go with it
-    $num_results = count($logins);
-    if ($num_results == 1) {
-        $res = 'result';
+    if ($login_count != 1) {
+        $res = 'logins';
     } else {
-        $res = 'results';
+        $res = 'login';
     }
 
     // safety first
@@ -87,16 +89,16 @@ try {
     // show the search form
     output_search($safe_name);
     
-    if ($num_results > 0) {
-        output_pagination($start, $count);
+    if ($login_count > 0) {
+        output_pagination($start, $count, $name);
         echo '<p>---</p>';
     }
     
     // output the number of results or kill the page if none
-    echo "$num_results $res logins recorded for the user \"$safe_name\".";
-    if ($num_results != 0) {
+    echo "$login_count $res recorded for the user \"$safe_name\".";
+    if ($login_count > 0) {
         $end = $start + $count;
-        echo "<br>Showing results $start-$end<br><br>";
+        echo "<br>Showing results $start - $end.<br><br>";
     } else {
         output_footer();
         die();
@@ -115,7 +117,7 @@ try {
     
     // output page navigation
     echo '<p>---</p>';
-    output_pagination($start, $count);
+    output_pagination($start, $count, $name);
 
     // end it all
     output_footer();

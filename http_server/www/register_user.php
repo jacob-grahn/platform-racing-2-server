@@ -4,6 +4,7 @@ require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/to_hash.php';
 require_once __DIR__ . '/../queries/users/user_select_by_name.php';
 require_once __DIR__ . '/../queries/users/user_insert.php';
+require_once __DIR__ . '/../queries/users_new/users_new_insert.php';
 require_once __DIR__ . '/../queries/pr2/pr2_insert.php';
 require_once __DIR__ . '/../queries/messages/message_insert.php';
 
@@ -72,6 +73,7 @@ try {
     // user insert
     $pass_hash = to_hash($password);
     user_insert($pdo, $name, $pass_hash, $ip, $time, $email);
+    users_new_insert($pdo, $name, $ip, $time);
 
     // pr2 insert
     $user_id = name_to_id($pdo, $name);
