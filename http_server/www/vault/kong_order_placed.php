@@ -4,11 +4,11 @@ require_once __DIR__ . '/../../queries/users/user_select_expanded.php';
 
 function order_placed_handler($pdo, $request)
 {
-    $event = $request->event; //item_order_placed
-    $game_id = $request->game_id; //The game_id.
-    $buyer_id = $request->buyer_id; //The id of the user making the purchase.
+    // $request->event; // item_order_placed
+    // $game_id = $request->game_id; // The game_id.
+    // $buyer_id = $request->buyer_id; // The id of the user making the purchase.
     $recipient_id = $request->recipient_id; //The id of the user to receive the items.
-    $order_id = $request->order_id; //A unique order id for this order in our database.
+    // $order_id = $request->order_id; // A unique order id for this order in our database.
     $order_info = $request->order_info; //The order info string you passed into purchaseItemsRemote
     list($pr2_user_id, $slug) = explode(',', $order_info);
 
@@ -169,13 +169,12 @@ function create_server($pdo, $guild_id, $seconds_of_life)
     $salt = $COMM_PASS;
     $guild_id = $guild->guild_id;
 
-    if ($existing_server) {
+    if (!$existing_server) {
         server_insert($pdo, $server_name, $address, $port, $expire_time, $salt, $guild_id);
         return( 1 );
     } else {
-        $server = $result->fetch_object();
-        $server_id = $server->server_id;
-        $expire_time_2 = strtotime($server->expire_date) + $seconds_of_life;
+        $server_id = $existing_server->server_id;
+        $expire_time_2 = strtotime($existing_server->expire_date) + $seconds_of_life;
         if ($expire_time_2 > $expire_time) {
             $expire_time = $expire_time_2;
         }

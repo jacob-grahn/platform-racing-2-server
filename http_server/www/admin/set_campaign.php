@@ -173,7 +173,7 @@ function update($pdo)
         $prize_id = (int) find("prize_id_$id");
 
         try {
-            $level = level_select($pdo, $level_id);
+            level_select($pdo, $level_id); // will throw error if level does not exist
             prize_check($prize_type, $prize_id, "The prize for level $id is invalid");
             campaign_update($pdo, $campaign_id, $id, $level_id, $prize_type, $prize_id);
         } catch (Exception $e) {

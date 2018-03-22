@@ -195,7 +195,7 @@ class pr2_server_client extends socketServerClient
 
         if ($this->login_id != null) {
             global $login_array;
-            $login_index[$this->login_id] = null;
+            $login_array[$this->login_id] = null;
         }
         $this->login_id = null;
 

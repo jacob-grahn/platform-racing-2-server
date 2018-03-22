@@ -28,7 +28,6 @@ class Game extends Room
     private $campaign;
 
     private $mode = self::MODE_RACE;
-    private $level_hash = '';
     private $ending_egg = false;
     private $finish_count = 0;
     private $finish_positions = array();

@@ -110,9 +110,6 @@ function update($pdo, $admin, $ip)
     // log an owner transfer
     if ($guild->owner_id !== $owner_id) {
         $code = 'manual-' . time();
-        $old_owner = $guild->owner_id;
-        $new_owner = $owner_id;
-
         guild_transfer_insert($pdo, $guild->guild_id, $guild->owner_id, $owner_id, $code, $ip);
         $transfer = guild_transfer_select($pdo, $code);
         guild_transfer_complete($pdo, $transfer->transfer_id, $ip);

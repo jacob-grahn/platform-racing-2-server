@@ -144,7 +144,7 @@ function talk_to_server($address, $port, $key, $message, $receive)
     $send_str = $message1 . $message2;
 
     $reply = true;
-    $fsock = @fsockopen($address, $port, $errno, $errstr, 5);
+    $fsock = fsockopen($address, $port, $errno, $errstr, 5);
 
     if ($fsock) {
         output('management_fns->talk_to_server write: '.$message);
@@ -156,7 +156,7 @@ function talk_to_server($address, $port, $key, $message, $receive)
         fclose($fsock);
     } else {
         $reply = false;
-        output("management_fns->talk_to_server error: could not connect to $address $port $key");
+        output("management_fns->talk_to_server error: $errno $errstr could not connect to $address $port $key.");
     }
 
     if ($receive && $reply === '') {

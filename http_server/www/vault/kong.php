@@ -50,7 +50,7 @@ function parse_signed_request($signed_request, $secret)
     }
 
     // check sig
-    $expected_sig = hash_hmac('sha256', $payload, $secret, $raw = true);
+    $expected_sig = hash_hmac('sha256', $payload, $secret, true);
     if ($sig !== $expected_sig) {
         throw new Exception('Bad Signed JSON signature!');
     }

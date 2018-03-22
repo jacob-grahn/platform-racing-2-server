@@ -208,11 +208,8 @@ function check_if_banned($pdo, $user_id, $ip)
     if ($row !== false) {
         $ban_id = $row->ban_id;
         $banned_ip = $row->banned_ip;
-        $banned_user_id = $row->banned_user_id;
-        $mod_user_id = $row->mod_user_id;
         $expire_time = $row->expire_time;
         $reason = $row->reason;
-        $response = $row->response;
 
         //figure out what the best way to say this is
         $seconds = $expire_time - time();

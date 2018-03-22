@@ -1,6 +1,6 @@
 <?php
 
-function part_awards_insert($pdo, $user_id, $type, $part_id)
+function part_awards_insert($pdo, $user_id, $type, $part)
 {
     $stmt = $pdo->prepare('
         INSERT INTO part_awards
