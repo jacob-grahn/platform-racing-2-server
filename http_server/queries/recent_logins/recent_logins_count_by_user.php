@@ -16,7 +16,7 @@ function recent_logins_count_by_user($pdo, $user_id)
     
     $count = $stmt->fetchColumn();
     
-    if ($count == 0) {
+    if ($count == 0 || $count == false) {
         return 0;
     }
     
