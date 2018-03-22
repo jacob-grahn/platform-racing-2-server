@@ -6,7 +6,7 @@ function guild_increment_member($pdo, $guild_id, $number, $suppress_error = fals
 {
     $stmt = $pdo->prepare('
         UPDATE guilds
-           SET member_count = member_count + :number,
+           SET member_count = SUM(member_count + :number),
          WHERE guild_id = :guild_id
          LIMIT 1
         ');
