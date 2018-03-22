@@ -32,7 +32,8 @@ try {
     ignored_delete($pdo, $user_id, $target_id);
 
     // tell the world
-    echo "message={htmlspecialchars($target_name)} has been un-ignored. You will now recieve any chat or private messages they send you.";
+    $safe_name = htmlspecialchars($target_name);
+    echo "message=$safe_name has been un-ignored. You will now recieve any chat or private messages they send you.";
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
