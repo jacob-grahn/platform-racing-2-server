@@ -88,7 +88,12 @@ function output_object($obj, $sep = '<br/>')
                 echo "$var: $val $sep";
             }
             if ($var == 'guild') {
-                $val = "<a href='guild_deep_info.php?guild_id=$val'>$val</a>";
+                $val = (int) $val;
+                if ($val != 0) {
+                    $val = "<a href='guild_deep_info.php?guild_id=$val'>$val</a>";
+                } else {
+                    $val = 'none';
+                }
                 echo "$var: $val $sep";
             }
             if ($var == 'time' || $var == 'register_time') {
