@@ -22,8 +22,9 @@ function output_search($name = '', $incl_br = true)
 }
 
 // this will echo and control page counts when called
-function output_pagination($start, $count)
+function output_pagination($start, $count, $name = '')
 {
+    $url_name = urlencode($name);
     $next_start_num = $start + $count;
     $last_start_num = $start - $count;
     if ($last_start_num < 0) {
@@ -31,11 +32,11 @@ function output_pagination($start, $count)
     }
     echo('<p>');
     if ($start > 0) {
-        echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");
+        echo("<a href='?name=$url_name&start=$last_start_num&count=$count'><- Last</a> |");
     } else {
         echo('<- Last |');
     }
-    echo(" <a href='?start=$next_start_num&count=$count'>Next -></a></p>");
+    echo(" <a href='?name=$url_name&start=$next_start_num&count=$count'>Next -></a></p>");
 }
 
 // admin check try block
@@ -89,7 +90,7 @@ try {
     output_search($safe_name);
     
     if ($login_count > 0) {
-        output_pagination($start, $count);
+        output_pagination($start, $count, $name);
         echo '<p>---</p>';
     }
     
@@ -116,7 +117,7 @@ try {
     
     // output page navigation
     echo '<p>---</p>';
-    output_pagination($start, $count);
+    output_pagination($start, $count, $name);
 
     // end it all
     output_footer();
