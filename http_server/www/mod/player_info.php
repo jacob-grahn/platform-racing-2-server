@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../queries/pr2/pr2_select.php'; // pdo
 require_once __DIR__ . '/../../queries/bans/bans_select_by_user_id.php';
 require_once __DIR__ . '/../../queries/bans/bans_select_by_ip.php';
 
-$user_id = (int) default_val($_GET['user_id'], 0);
+$user_id = (int) default_get('user_id', 0);
 $force_ip = find_no_cookie('force_ip');
 $ip = find_no_cookie('ip');
 
@@ -18,7 +18,7 @@ try {
     if (is_empty($user_id, false) && is_empty($force_ip) && is_empty($ip)) {
         throw new Exception("Invalid user ID specified.");
     }
-    
+
     // detect mode
     $ignore_user = false;
     if ((!is_empty($ip) || !is_empty($force_ip)) && is_empty($user_id, false)) {
