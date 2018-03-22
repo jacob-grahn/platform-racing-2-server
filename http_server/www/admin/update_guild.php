@@ -21,6 +21,10 @@ $action = find('action', 'lookup');
 $ip = get_ip();
 
 try {
+    // rate limiting
+    rate_limit('update-guild-'.$ip, 60, 10);
+    rate_limit('update-guild-'.$ip, 5, 2);
+    
     // connect
     $pdo = pdo_connect();
 
