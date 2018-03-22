@@ -654,6 +654,13 @@ class Player
                 } else {
                     $this->write("Invalid action. For more information on how to use this command, type /mod help.");
                 }
+            } 
+            elseif ($chat_message == '/rules') {
+                $message = 'systemChat`The PR2 rules can be found here: https://jiggmin2.com/forums/showthread.php?tid=385.';
+                if ($guild_id != 0) {
+                    $message .= ' Since this is a private server, your guild owner may have different rules for the chatrooms and the server. Check with them if you\'re unsure.';
+                }
+                $this->write($message);
             } // help command
             elseif ($chat_message == '/help' || $chat_message == '/commands' || $chat_message == '/?' || $chat_message == '/') {
                 $mod = '';
@@ -676,7 +683,7 @@ class Player
                             $server_owner = '<br>Server Owner:<br>- /timeleft<br>- /mod help<br>- /hh help<br>- /t (Tournament)<br>For more information on tournaments, use /t help.';
                         }
                     }
-                    $this->write('systemChat`PR2 Chat Commands:<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /hh status<br>- /t status<br>- /population<br>- /beawesome'.$mod.$effects.$admin.$server_owner);
+                    $this->write('systemChat`PR2 Chat Commands:<br>- /rules<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /hh status<br>- /t status<br>- /population<br>- /beawesome'.$mod.$effects.$admin.$server_owner);
                 }
             } // send chat message
             else {
