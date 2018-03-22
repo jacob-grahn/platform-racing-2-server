@@ -1,6 +1,6 @@
 <?php
 
-function level_update ($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $version, $pass, $type)
+function level_update ($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, $song, $version, $pass, $type)
 {
     $stmt = $pdo->prepare('
         UPDATE pr2_levels
@@ -14,9 +14,10 @@ function level_update ($pdo, $title, $note, $live, $time, $ip, $min_level, $song
             version = :version,
             pass = :hash,
             type = :type
-        WHERE level_id = _level_id
+        WHERE level_id = :level_id
         LIMIT 1;
     ');
+    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_STR);
     $stmt->bindValue(':title', $title, PDO::PARAM_STR);
     $stmt->bindValue(':note', $note, PDO::PARAM_STR);
     $stmt->bindValue(':live', $live, PDO::PARAM_INT);

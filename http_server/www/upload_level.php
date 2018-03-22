@@ -106,7 +106,7 @@ try {
 
         // update existing level
         $version = $org_version + 1;
-        level_update($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $new_version, $hash2, $type);
+        level_update($pdo, $level->level_id, $title, $note, $live, $time, $ip, $min_level, $song, $new_version, $hash2, $type);
     }
     else {
         level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $hash2, $type);
