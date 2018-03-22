@@ -83,7 +83,7 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
 
 
     // add the message to the db
-    messages_insert($pdo, $to_user_id, $from_user_id, $message, $ip);
+    message_insert($pdo, $to_user_id, $from_user_id, $message, $ip);
 }
 
 
