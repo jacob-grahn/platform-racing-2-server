@@ -5,8 +5,8 @@ require_once __DIR__ . '/../../fns/output_fns.php';
 
 try {
     // rate limiting
-    rate_limit('part-ids-'.$ip, 60, 10, 'Wait a bit before searching again.');
-    rate_limit('part-ids-'.$ip, 5, 2);
+    rate_limit('part-ids-'.$ip, 60, 5);
+    rate_limit('part-ids-'.$ip, 10, 1);
     
     //connect
     $pdo = pdo_connect();
