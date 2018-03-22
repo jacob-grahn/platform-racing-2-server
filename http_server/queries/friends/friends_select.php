@@ -3,7 +3,7 @@
 function friends_select ($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens
+        SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens, friends.friend_id
         FROM friends
         INNER JOIN users ON users.user_id = friends.friend_id
         LEFT JOIN pr2 ON users.user_id = pr2.user_id
