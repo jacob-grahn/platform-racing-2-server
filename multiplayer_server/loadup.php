@@ -14,7 +14,9 @@ function begin_loadup($server_id)
     set_campaign($campaign);
     set_perks($perks);
     place_artifact($artifact);
-    HappyHour::activate();
+    if (rand(0, 9) == 9) {
+        HappyHour::activate(1800);
+    }
 }
 
 
