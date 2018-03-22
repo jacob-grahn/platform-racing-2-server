@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/users/user_select_by_name.php';
 require_once __DIR__ . '/../../queries/recent_logins/recent_logins_select.php';
 
-$user_name = find('name', '');
+$name = find('name', '');
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 250);
 
