@@ -83,7 +83,7 @@ class Player
     public $server_owner = false;
     
     public $hh_warned = false;
-    public $server_restart_warned = false;
+    public $restart_warned = false;
 
     public $status = '';
 
@@ -523,10 +523,10 @@ class Player
             } // restart server command for admins
             elseif ($chat_message == '/restart_server' && $this->group >= 3 && ($this->server_owner == false || $guild_id == 183)) {
                 if ($room_type == 'c') {
-                    if ($this->server_owner_warned == false) {
-                        $this->server_owner_warned = true;
+                    if ($this->restart_warned == false) {
+                        $this->restart_warned = true;
                         $this->write('systemChat`WARNING: You just typed the server restart command. If you choose to proceed, this action will disconnect EVERY player on this server. Are you sure you want to disconnect ALL players and restart the server? If so, type the command again.');
-                    } else if ($this->server_owner_warned == true) {
+                    } else if ($this->restart_warned == true) {
                         $db->call('admin_action_insert', array($admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip));
                         shutdown_server();
                     }
@@ -1275,7 +1275,7 @@ class Player
         $this->temp_mod = null;
         $this->server_owner = null;
         $this->hh_warned = null;
-        $this->server_restart_warned = null;
+        $this->restart_warned = null;
         $this->status = null;
     }
 }
