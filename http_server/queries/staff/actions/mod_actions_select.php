@@ -3,7 +3,7 @@
 function mod_actions_select($pdo, $in_start, $in_count)
 {
     $start = max((int) $in_start, 0);
-    $count = min( max((int) $in_count, 0), 100);
+    $count = min(max((int) $in_count, 0), 100);
 
     $stmt = $pdo->prepare('
           SELECT *

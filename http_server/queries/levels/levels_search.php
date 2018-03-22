@@ -1,9 +1,9 @@
 <?php
 
-function levels_search ($pdo, $search, $in_mode = 'user', $in_start = 0, $in_count = 9, $in_order = 'date', $in_dir = 'desc')
+function levels_search($pdo, $search, $in_mode = 'user', $in_start = 0, $in_count = 9, $in_order = 'date', $in_dir = 'desc')
 {
-    $start = min( max( (int)$in_start, 0), 100 );
-    $count = min( max( (int)$in_count, 0), 100 );
+    $start = min(max((int)$in_start, 0), 100);
+    $count = min(max((int)$in_count, 0), 100);
     
     // search mode
     if ($in_mode == 'title') {
@@ -18,9 +18,9 @@ function levels_search ($pdo, $search, $in_mode = 'user', $in_start = 0, $in_cou
     $order_by = 'pr2_levels.';
     if ($in_order == 'rating') {
         $order_by .= 'rating';
-    } else if ($in_order == 'alphabetical') {
+    } elseif ($in_order == 'alphabetical') {
         $order_by .= 'title';
-    } else if ($in_order == 'popularity') {
+    } elseif ($in_order == 'popularity') {
         $order_by .= 'play_count';
     } else {
         $order_by .= 'time';

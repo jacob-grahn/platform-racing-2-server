@@ -120,8 +120,7 @@ function award_part($pdo, $user_id, $type, $part_id, $ensure = true)
         }
         $field = type_to_db_field($type);
         $str_array = $row->{$field};
-    }
-    catch (Exception $e) {
+    } catch (Exception $e) {
         $str_array = '';
     }
 

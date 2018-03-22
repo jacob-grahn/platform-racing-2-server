@@ -158,7 +158,7 @@ function promote_mod($port, $name, $type, $admin, $promoted)
                 $promoted->group = 2;
                 $promoted->write('setGroup`2');
             }
-	    $admin->write("message`$safe_name has been promoted to a $safe_type moderator!");
+            $admin->write("message`$safe_name has been promoted to a $safe_type moderator!");
             return true;
         } catch (Exception $e) {
             $admin->write('message`Error: '.$e->getMessage());
@@ -170,12 +170,12 @@ function promote_mod($port, $name, $type, $admin, $promoted)
         try {
             if (isset($promoted)) {
                 $promoted->become_temp_mod();
-		$admin->write("message`$safe_name has been promoted to a temporary moderator!");
+                $admin->write("message`$safe_name has been promoted to a temporary moderator!");
                 return true;
             } else {
-	        $admin->write("message`Could not find a user named \"$safe_name\" on this server.");
-		return false;
-	    }
+                $admin->write("message`Could not find a user named \"$safe_name\" on this server.");
+                return false;
+            }
         } catch (Exception $e) {
             $admin->write('message`Error: '.$e->getMessage());
             return false;

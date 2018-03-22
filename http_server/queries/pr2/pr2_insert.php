@@ -1,6 +1,6 @@
 <?php
 
-function pr2_insert ($pdo, $user_id)
+function pr2_insert($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         INSERT INTO pr2

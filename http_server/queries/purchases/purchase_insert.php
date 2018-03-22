@@ -1,6 +1,6 @@
 <?php
 
-function purchase_insert ($pdo, $user_id, $guild_id, $slug, $kong_user_id, $order_id)
+function purchase_insert($pdo, $user_id, $guild_id, $slug, $kong_user_id, $order_id)
 {
     $stmt = $pdo->prepare('
         INSERT INTO purchases

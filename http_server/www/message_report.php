@@ -40,8 +40,8 @@ try {
     // make sure the message exists and that this user is the recipient of the message
     $message = message_select($pdo, $message_id, true);
     if ($message === false) {
-		throw new Exception("The message you tried to report ($message_id) doesn't exist.");
-	}
+        throw new Exception("The message you tried to report ($message_id) doesn't exist.");
+    }
     if ($message->to_user_id != $user_id) {
         throw new Exception('This message was not sent to you.');
     }

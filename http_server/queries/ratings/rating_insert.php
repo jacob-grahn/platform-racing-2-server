@@ -1,6 +1,6 @@
 <?php
 
-function rating_insert ($pdo, $level_id, $rating, $user_id, $weight, $time, $ip)
+function rating_insert($pdo, $level_id, $rating, $user_id, $weight, $time, $ip)
 {
     $stmt = $pdo->prepare('
         INSERT INTO pr2_ratings

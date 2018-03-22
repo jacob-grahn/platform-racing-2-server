@@ -1,6 +1,6 @@
 <?php
 
-function rank_token_rentals_count ($pdo, $user_id, $guild_id)
+function rank_token_rentals_count($pdo, $user_id, $guild_id)
 {
     $stmt = $pdo->prepare('
         SELECT COUNT(*) AS count

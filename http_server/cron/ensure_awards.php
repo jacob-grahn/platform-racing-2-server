@@ -5,7 +5,6 @@ require_once __DIR__ . '/../queries/part_awards/part_awards_select_list.php';
 require_once __DIR__ . '/../queries/part_awards/part_awards_delete_old.php';
 
 try {
-
     // connect
     $pdo = pdo_connect();
 
@@ -31,7 +30,6 @@ try {
 
     // delete older records
     part_awards_delete_old($pdo);
-
 } catch (Exception $e) {
     echo "Error: $e";
     exit();

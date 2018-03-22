@@ -63,7 +63,7 @@ try {
 
         // hats
         $hat_array = $user->hats;
-	$hats = count(explode(',', $hat_array))-1;
+        $hats = count(explode(',', $hat_array))-1;
 
         // player details link
         $url_name = urlencode($name);

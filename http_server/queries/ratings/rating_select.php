@@ -1,6 +1,6 @@
 <?php
 
-function rating_select ($pdo, $level_id, $user_id, $ip)
+function rating_select($pdo, $level_id, $user_id, $ip)
 {
     $stmt = $pdo->prepare('
         SELECT rating, weight

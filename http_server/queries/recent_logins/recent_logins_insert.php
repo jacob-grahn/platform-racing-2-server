@@ -13,11 +13,9 @@ function recent_logins_insert($pdo, $user_id, $ip, $country_code)
     $stmt->bindValue(':country_code', $country_code, PDO::PARAM_STR);
     $result = $stmt->execute();
 
-    if($result === false) {
+    if ($result === false) {
         return false;
     }
     
     return true;
 }
-
-?>

@@ -1,6 +1,6 @@
 <?php
 
-function ban_update ($pdo, $ban_id, $account_ban, $ip_ban, $expire_time, $notes)
+function ban_update($pdo, $ban_id, $account_ban, $ip_ban, $expire_time, $notes)
 {
     $stmt = $pdo->prepare('
         UPDATE bans

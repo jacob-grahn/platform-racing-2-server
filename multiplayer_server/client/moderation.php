@@ -42,10 +42,10 @@ function client_kick($socket, $data)
         } else {
             $mod->write("message`Error: Could not find a user with the name \"$safe_kname\" on this server.");
         }
-    }// if the kicker is the server owner, tell them they're a silly goose
-    else if ($mod->server_owner == true && $kicked == $mod) {
+    } // if the kicker is the server owner, tell them they're a silly goose
+    elseif ($mod->server_owner == true && $kicked == $mod) {
         $mod->write("message`Error: You can't kick yourself out of your own server, silly!");
-    }// if they don't have the power to do that, tell them
+    } // if they don't have the power to do that, tell them
     else {
         $mod->write("message`Error: You lack the power to kick $safe_kname.");
     }
@@ -96,7 +96,7 @@ function client_warn($socket, $data)
             $mod->chat_room->send_chat("systemChat`$safe_mname has given $safe_wname $num $w_str. They have been banned from the chat for $time seconds.");
         }
     } // if they're a mod but the user isn't online, tell them
-    else if ($mod->group >= 2 && !isset($warned)) {
+    elseif ($mod->group >= 2 && !isset($warned)) {
         $mod->write("message`Error: Could not find a user with the name \"$safe_wname\" on this server.");
     } // if they aren't a mod, tell them
     else {

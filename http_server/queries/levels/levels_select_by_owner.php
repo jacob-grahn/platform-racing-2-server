@@ -1,6 +1,6 @@
 <?php
 
-function levels_select_by_owner ($pdo, $level_id)
+function levels_select_by_owner($pdo, $level_id)
 {
     $stmt = $pdo->prepare('
         SELECT pr2_levels.level_id,

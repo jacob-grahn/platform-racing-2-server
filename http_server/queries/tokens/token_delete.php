@@ -1,6 +1,6 @@
 <?php
 
-function token_delete ($pdo, $token)
+function token_delete($pdo, $token)
 {
     $stmt = $pdo->prepare('
         DELETE FROM tokens

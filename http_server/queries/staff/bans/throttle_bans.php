@@ -14,7 +14,7 @@ function throttle_bans($pdo, $mod_user_id)
     $result = $stmt->execute();
     
     if ($result === false) {
-    	throw new Exception("Could not query ban throttle.");
+        throw new Exception("Could not query ban throttle.");
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

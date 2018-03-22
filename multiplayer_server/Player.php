@@ -599,8 +599,7 @@ class Player
                     if (HappyHour::isActive() != true && pr2_server::$tournament == false) {
                         if (!isset($args[1])) {
                             HappyHour::activate();
-                        }
-                        else {
+                        } else {
                             $args[1] = (int) $args[1];
                             if ($args[1] > 3600) {
                                 $args[1] = 3600;

@@ -13,8 +13,7 @@ function epic_upgrades_select($pdo, $user_id, $suppress_error = false)
     if ($row === false) {
         if ($suppress_error === false) {
             throw new Exception('Could not find row in epic_upgrades');
-        }
-        else {
+        } else {
             return false;
         }
     }

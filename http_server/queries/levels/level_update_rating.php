@@ -1,6 +1,6 @@
 <?php
 
-function level_update_rating ($pdo, $level_id, $rating, $votes)
+function level_update_rating($pdo, $level_id, $rating, $votes)
 {
     $stmt = $pdo->prepare('
         UPDATE pr2_levels

@@ -11,7 +11,7 @@ function best_levels_populate($pdo)
             AND votes > 1000
             AND rating > 4.3;
             ');
-	
+    
     $result = $stmt->execute();
 
     if ($result === false) {

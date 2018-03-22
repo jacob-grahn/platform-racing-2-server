@@ -1,6 +1,6 @@
 <?php
 
-function rank_token_rental_insert ($pdo, $user_id, $guild_id)
+function rank_token_rental_insert($pdo, $user_id, $guild_id)
 {
     $stmt = $pdo->prepare('
         INSERT INTO rank_token_rentals

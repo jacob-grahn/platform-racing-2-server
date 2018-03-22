@@ -18,8 +18,7 @@ function message_select($pdo, $message_id, $suppress_error = false)
     if ($message === false) {
         if ($suppress_error === false) {
             throw new Exception('Message not found.');
-        }
-        else {
+        } else {
             return false;
         }
     }

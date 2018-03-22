@@ -108,8 +108,7 @@ try {
         $version = $level->version + 1;
         $level_id = $level->level_id;
         level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, $song, $version, $hash2, $type);
-    }
-    else {
+    } else {
         level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $hash2, $type);
         $level = level_select_by_title($pdo, $user_id, $title);
         $level_id = $level->level_id;

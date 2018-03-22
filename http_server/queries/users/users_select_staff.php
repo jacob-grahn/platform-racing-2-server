@@ -1,6 +1,6 @@
 <?php
 
-function users_select_staff ($pdo)
+function users_select_staff($pdo)
 {
     $stmt = $pdo->prepare('
         SELECT power, status, name, active_date, register_time

@@ -1,6 +1,6 @@
 <?php
 
-function level_select_by_title ($pdo, $user_id, $title)
+function level_select_by_title($pdo, $user_id, $title)
 {
     $stmt = $pdo->prepare('
         SELECT *

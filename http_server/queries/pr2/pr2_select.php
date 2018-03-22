@@ -14,8 +14,7 @@ function pr2_select($pdo, $user_id, $suppress_error = false)
     if ($row === false) {
         if ($suppress_error === false) {
             throw new Exception('Could not find a pr2 row for this user');
-        }
-        else {
+        } else {
             return false;
         }
     }

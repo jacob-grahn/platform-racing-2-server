@@ -1,6 +1,6 @@
 <?php
 
-function campaign_select_by_id ($pdo, $campaign_id)
+function campaign_select_by_id($pdo, $campaign_id)
 {
     $stmt = $pdo->prepare('
         SELECT *

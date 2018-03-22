@@ -1,6 +1,6 @@
 <?php
 
-function level_insert ($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $pass, $type)
+function level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $pass, $type)
 {
     $stmt = $pdo->prepare('
     	INSERT INTO pr2_levels

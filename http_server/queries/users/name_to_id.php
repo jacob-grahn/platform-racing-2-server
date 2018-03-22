@@ -13,5 +13,3 @@ function name_to_id($pdo, $user_name)
     
     return $result;
 }
-    
-?>

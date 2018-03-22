@@ -1,6 +1,6 @@
 <?php
 
-function level_update ($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, $song, $version, $pass, $type)
+function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, $song, $version, $pass, $type)
 {
     $stmt = $pdo->prepare('
         UPDATE pr2_levels

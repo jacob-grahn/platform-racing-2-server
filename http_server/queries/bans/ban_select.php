@@ -1,6 +1,6 @@
 <?php
 
-function ban_select ($pdo, $ban_id)
+function ban_select($pdo, $ban_id)
 {
     $stmt = $pdo->prepare('
         SELECT * FROM bans

@@ -40,7 +40,6 @@ try {
 
     // edit an existing ban, then redirect to that ban listing
     if ($action === 'edit' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-
         //update the ban
         $account_ban = 0 + !!find('account_ban');
         $ip_ban = 0 + !!find('ip_ban');

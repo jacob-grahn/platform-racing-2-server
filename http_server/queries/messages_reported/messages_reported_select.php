@@ -1,6 +1,6 @@
 <?php
 
-function messages_reported_select ($pdo, $start, $count)
+function messages_reported_select($pdo, $start, $count)
 {
     $stmt = $pdo->prepare('
         SELECT messages_reported.*, u1.name as from_name, u2.name as to_name

@@ -2,7 +2,7 @@
 
 function user_select_mod($pdo, $user_id)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
             SELECT users.user_id,
                          name,
                          email,

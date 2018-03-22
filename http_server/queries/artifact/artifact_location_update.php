@@ -1,6 +1,6 @@
 <?php
 
-function artifact_location_update ($pdo, $level_id, $x, $y)
+function artifact_location_update($pdo, $level_id, $x, $y)
 {
     $stmt = $pdo->prepare('
         UPDATE artifact_location

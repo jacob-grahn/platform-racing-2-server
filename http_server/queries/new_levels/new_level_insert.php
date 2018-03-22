@@ -1,6 +1,6 @@
 <?php
 
-function new_level_insert ($pdo, $level_id, $time, $ip)
+function new_level_insert($pdo, $level_id, $time, $ip)
 {
     $stmt = $pdo->prepare('
         REPLACE INTO pr2_new_levels

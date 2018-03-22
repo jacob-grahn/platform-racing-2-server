@@ -1,6 +1,6 @@
 <?php
 
-function ban_lift ($pdo, $ban_id, $lifted_by, $lifted_reason)
+function ban_lift($pdo, $ban_id, $lifted_by, $lifted_reason)
 {
     $stmt = $pdo->prepare('
         UPDATE bans

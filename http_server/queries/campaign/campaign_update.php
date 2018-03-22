@@ -1,6 +1,6 @@
 <?php
 
-function campaign_update ($pdo, $campaign_id, $level_num, $level_id, $prize_type, $prize_id)
+function campaign_update($pdo, $campaign_id, $level_num, $level_id, $prize_type, $prize_id)
 {
     $stmt = $pdo->prepare('
         UPDATE pr2_campaign

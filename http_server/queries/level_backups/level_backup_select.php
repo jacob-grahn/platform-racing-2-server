@@ -1,6 +1,6 @@
 <?php
 
-function level_backup_select ($pdo, $backup_id)
+function level_backup_select($pdo, $backup_id)
 {
     $stmt = $pdo->prepare('
         SELECT *

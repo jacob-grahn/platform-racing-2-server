@@ -69,5 +69,3 @@ function admin_epic_upgrades_update($pdo, $user_id, $ehats, $eheads, $ebodies, $
     
     return true;
 }
-
-?>

@@ -1,6 +1,6 @@
 <?php
 
-function user_select_expanded ($pdo, $user_id)
+function user_select_expanded($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         SELECT pr2.*,

@@ -1,6 +1,6 @@
 <?php
 
-function friends_select ($pdo, $user_id)
+function friends_select($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array, rank_tokens.used_tokens, friends.friend_id

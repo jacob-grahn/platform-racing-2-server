@@ -1,6 +1,6 @@
 <?php
 
-function user_insert ($pdo, $name, $pass_hash, $ip, $time, $email)
+function user_insert($pdo, $name, $pass_hash, $ip, $time, $email)
 {
     $stmt = $pdo->prepare('
         INSERT INTO users

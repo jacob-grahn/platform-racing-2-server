@@ -1,6 +1,6 @@
 <?php
 
-function levels_select_by_rand ($pdo)
+function levels_select_by_rand($pdo)
 {
     $stmt = $pdo->prepare('
         SELECT level_id, title, note
