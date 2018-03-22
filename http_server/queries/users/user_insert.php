@@ -11,11 +11,6 @@ function user_insert ($pdo, $name, $pass_hash, $ip, $time, $email)
             time = :time,
             register_time = :time,
             email = :email;
-
-        INSERT INTO users_new
-        SET user_name = :name,
-            ip = :ip,
-            time = :time;
     ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':pass_hash', $pass_hash, PDO::PARAM_STR);
