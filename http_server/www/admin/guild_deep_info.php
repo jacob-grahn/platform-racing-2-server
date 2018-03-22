@@ -9,6 +9,10 @@ require_once __DIR__ . '/../../queries/guild_transfers/guild_transfers_select_by
 $guild_id = find('guild_id', 0);
 
 try {
+    // rate limiting
+    rate_limit('guild-deep-info-'.$ip, 60, 10, 'Wait a bit before searching again.');
+    rate_limit('guild-deep-info-'.$ip, 5, 2);
+    
     //connect
     $pdo = pdo_connect();
 
