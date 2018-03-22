@@ -38,6 +38,10 @@ try {
 }
 
 try {
+    // rate limiting
+    rate_limit('email-search-'.$ip, 60, 10);
+    rate_limit('email-search-'.$ip, 5, 2);
+    
     // header
     output_header('Update PR2 Account', true, true);
 
