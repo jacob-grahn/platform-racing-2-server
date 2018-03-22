@@ -3,6 +3,10 @@
 header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/messages/messages_select.php';
+require_once __DIR__ . '/../queries/users/user_select.php';
+require_once __DIR__ . '/../queries/users/user_update_read.php';
+
 
 $start = (int) find('start', 0);
 $count = (int) find('count', 10);
@@ -16,7 +20,6 @@ try {
     rate_limit('get-messages-'.$ip, 60, 10);
 
     // connect
-    $db = new DB();
     $pdo = pdo_connect();
 
     // check their login
@@ -26,27 +29,14 @@ try {
     rate_limit('get-messages-'.$user_id, 3, 2);
     rate_limit('get-messages-'.$user_id, 60, 10);
 
-    $safe_user_id = $db->escape($user_id);
-    $safe_start = $db->escape($start);
-    $safe_count = $db->escape($count);
-    $result = $db->query(
-        "SELECT messages.message_id, messages.message, messages.time, messages.from_user_id
-									FROM messages
-									WHERE messages.to_user_id = '$safe_user_id'
-									ORDER BY messages.time desc
-									LIMIT $safe_start, $safe_count"
-    );
-    if (!$result) {
-        throw new Exception('Could not retrieve messages.');
-    }
+    $messages = messages_select($pdo, $user_id, $start, $count);
 
-
-    while ($row = $result->fetch_object()) {
+    foreach ($messages as $row) {
         if ($row->message_id > $largest_id) {
             $largest_id = $row->message_id;
         }
 
-        $from_user = $db->grab_row('user_select', array( $row->from_user_id ));
+        $from_user = user_select($pdo, $row->from_user_id);
 
         $message = new stdClass();
         $message->message_id = $row->message_id;
@@ -60,7 +50,7 @@ try {
     }
 
     if ($start == 0) {
-        $db->call('users_inc_read', array($user_id, $largest_id));
+        user_update_read($pdo, $user_id, $largest_id);
     }
 
     $r = new stdClass();
