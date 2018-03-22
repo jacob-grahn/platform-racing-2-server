@@ -1,6 +1,6 @@
 <?php
 
-function user_update_read($pdo, $read_user_id, $message_id)
+function user_update_read($pdo, $user_id, $read_message_id)
 {
     $stmt = $pdo->prepare('
         UPDATE users
