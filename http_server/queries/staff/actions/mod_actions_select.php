@@ -11,7 +11,7 @@ function mod_actions_select($pdo, $in_start, $in_count)
         ORDER BY time DESC
            LIMIT :start, :count
     ');
-    $stmt->bindValue(':start', $in_start, PDO::PARAM_INT);
+    $stmt->bindValue(':start', $start, PDO::PARAM_INT);
     $stmt->bindValue(':count', $count, PDO::PARAM_INT);
 
     $result = $stmt->execute();

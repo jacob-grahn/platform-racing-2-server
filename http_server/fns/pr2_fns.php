@@ -47,7 +47,6 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
 
     // get sender ip and time of message
     $ip = get_ip();
-    $time = time();
 
     // make sure the user's rank is above 3 (min rank to send PMs) and they aren't a guest
     if ($account_rank < 3) {

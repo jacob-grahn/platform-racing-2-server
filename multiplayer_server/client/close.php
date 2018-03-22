@@ -1,6 +1,6 @@
 <?php
 
-function client_close($socket, $data)
+function client_close($socket)
 {
     $socket->close();
     $socket->on_disconnect();

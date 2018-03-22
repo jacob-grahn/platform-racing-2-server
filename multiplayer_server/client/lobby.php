@@ -45,7 +45,7 @@ function client_set_chat_room($socket, $data)
 
 
 //--- set game room ------------------------------------------------------
-function client_set_game_room($socket, $data)
+function client_set_game_room($socket)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
@@ -68,7 +68,7 @@ function client_fill_slot($socket, $data)
 
 
 //--- confirm slot --------------------------------------------------------------------
-function client_confirm_slot($socket, $data)
+function client_confirm_slot($socket)
 {
     $player = $socket->get_player();
     $course_box = $player->course_box;
@@ -80,7 +80,7 @@ function client_confirm_slot($socket, $data)
 
 
 //--- clear slot --------------------------------------------------------------------
-function client_clear_slot($socket, $data)
+function client_clear_slot($socket)
 {
     $player = $socket->get_player();
     $course_box = $player->course_box;
@@ -92,7 +92,7 @@ function client_clear_slot($socket, $data)
 
 
 //--- force the players who have not confirmed out so the rest can play -----------------
-function client_force_start($socket, $data)
+function client_force_start($socket)
 {
     $player = $socket->get_player();
     $course_box = $player->course_box;
@@ -104,7 +104,7 @@ function client_force_start($socket, $data)
 
 
 //--- returns info for the customize page -----------------------------------------------
-function client_get_customize_info($socket, $data)
+function client_get_customize_info($socket)
 {
     $player = $socket->get_player();
     $player->send_customize_info();
@@ -131,7 +131,7 @@ function client_chat($socket, $data)
 
 
 //--- get a list of the players that are online ---------------------------------------------
-function client_get_online_list($socket, $data)
+function client_get_online_list($socket)
 {
     global $player_array;
     foreach ($player_array as $player) {
@@ -142,7 +142,7 @@ function client_get_online_list($socket, $data)
 
 
 //--- get a list of the top chat rooms ----------------------------------------------------------
-function client_get_chat_rooms($socket, $data)
+function client_get_chat_rooms($socket)
 {
     global $chat_room_array;
     $temp_array = array_merge($chat_room_array);
@@ -193,7 +193,7 @@ function client_un_ignore_user($socket, $data)
 
 
 //-- award kong outfit -------------------------------------------------------------------
-function client_award_kong_outfit($socket, $data)
+function client_award_kong_outfit($socket)
 {
     $player = $socket->get_player();
     $player->award_kong_outfit();
@@ -202,7 +202,7 @@ function client_award_kong_outfit($socket, $data)
 
 
 //-- use a rank token -------------------------------------------------------------------
-function client_use_rank_token($socket, $data)
+function client_use_rank_token($socket)
 {
     $player = $socket->get_player();
     $player->use_rank_token();
@@ -211,7 +211,7 @@ function client_use_rank_token($socket, $data)
 
 
 //-- un-use a rank token ----------------------------------------------------------------
-function client_unuse_rank_token($socket, $data)
+function client_unuse_rank_token($socket)
 {
     $player = $socket->get_player();
     $player->unuse_rank_token();

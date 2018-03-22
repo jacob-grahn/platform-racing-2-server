@@ -8,13 +8,13 @@ require_once __DIR__ . '/../fns/demod.php';
 //--- kick a player -------------------------------------------------------------
 function client_kick($socket, $data)
 {
-    global $db, $guild_owner, $guild_id, $server_name;
+    global $db, $guild_id, $server_name;
     $name = $data;
-    
+
     // get players
     $kicked = name_to_player($name);
     $mod = $socket->get_player();
-    
+
     // safety first
     $safe_kname = htmlspecialchars($name);
     $safe_mname = htmlspecialchars($mod->name);
@@ -26,12 +26,12 @@ function client_kick($socket, $data)
         if (isset($kicked)) {
             $kicked->remove();
             $mod->write("message`$safe_kname has been kicked from this server for 30 minutes.");
-            
+
             // let people know that the player kicked someone
             if (isset($mod->chat_room)) {
                 $mod->chat_room->send_chat("systemChat`$safe_mname has kicked $safe_kname from this server for 30 minutes.");
             }
-            
+
             // log the action if it's on a public server
             if ($guild_id == 0) {
                 $mod_name = $mod->name;
@@ -55,13 +55,12 @@ function client_kick($socket, $data)
 //--- warn a player -------------------------------------------------------------
 function client_warn($socket, $data)
 {
-    global $guild_owner;
     list($name, $num) = explode("`", $data);
-    
+
     // get player info
     $warned = name_to_player($name);
     $mod = $socket->get_player();
-    
+
     // safety first
     $safe_mname = htmlspecialchars($mod->name);
     $safe_wname = htmlspecialchars($name);
@@ -88,7 +87,7 @@ function client_warn($socket, $data)
                 $mod->write('message`Error: Invalid warning number.');
                 break;
         }
-        
+
         // warn the user
         $warned->chat_ban = time() + $time;
 
@@ -115,7 +114,7 @@ function client_ban($socket, $data)
     // get player info
     $mod = $socket->get_player();
     $banned = name_to_player($banned_name);
-    
+
     // safety first
     $safe_mname = htmlspecialchars($mod->name);
     $safe_bname = htmlspecialchars($banned_name);
@@ -169,20 +168,19 @@ function client_ban($socket, $data)
 //--- promote a player to a moderator -------------------------------------
 function client_promote_to_moderator($socket, $data)
 {
-    global $port;
     list($name, $type) = explode("`", $data);
-    
+
     // get player info
     $admin = $socket->get_player();
     $promoted = name_to_player($name);
-    
+
     // safety first
     $safe_aname = htmlspecialchars($admin->name);
     $safe_pname = htmlspecialchars($name);
 
     // if they're an admin and not a server owner, continue with the promotion (1st line of defense)
     if ($admin->group >= 3 && $admin->server_owner == false) {
-        $result = promote_mod($port, $name, $type, $admin, $promoted);
+        $result = promote_mod($name, $type, $admin, $promoted);
 
         switch ($type) {
             case 'temporary':
@@ -209,13 +207,11 @@ function client_promote_to_moderator($socket, $data)
 //-- demote a moderator ------------------------------------------------------------------
 function client_demote_moderator($socket, $name)
 {
-    global $port;
-    
     // get player info
     $admin = $socket->get_player();
     $demoted = name_to_player($name);
 
     if ($admin->group == 3 && $admin->server_owner == false) {
-        demote_mod($port, $name, $admin, $demoted);
+        demote_mod($name, $admin, $demoted);
     }
 }

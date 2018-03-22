@@ -608,8 +608,7 @@ class Game extends Room
                 $tot_exp_gain += $artifact_bonus;
                 $player->write('award`Artifact Found!`+ ' . number_format($artifact_bonus));
 
-                global $port;
-                artifact_first_check($port, $player);
+                artifact_first_check($player);
             }
 
             //---

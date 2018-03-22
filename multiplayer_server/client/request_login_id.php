@@ -1,6 +1,6 @@
 <?php
 
-function client_request_login_id($socket, $data)
+function client_request_login_id($socket)
 {
     if (!isset($socket->login_id)) {
         global $login_array;
