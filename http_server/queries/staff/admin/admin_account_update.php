@@ -1,17 +1,17 @@
 <?php
 
-function admin_user_update($pdo, $user_id, $name, $email, $guild_id)
+function admin_user_update($pdo, $user_id, $name, $email, $guild)
 {
     $stmt = $pdo->prepare('
         UPDATE users
            SET name = :name,
                email = :email,
-               guild = :guild_id
+               guild = :guild
          WHERE user_id = :user_id
         ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
-    $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
+    $stmt->bindValue(':guild', $guild, PDO::PARAM_INT);
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
     
