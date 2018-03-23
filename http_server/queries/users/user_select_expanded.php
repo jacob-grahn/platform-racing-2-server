@@ -1,6 +1,6 @@
 <?php
 
-function user_select_expanded($pdo, $user_id)
+function user_select_expanded($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT pr2.*,
@@ -32,7 +32,11 @@ function user_select_expanded($pdo, $user_id)
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
     if ($user === false) {
-        throw new Exception('user_select_expanded: Could not find a user with that ID.');
+        if ($suppress_error === false) {
+            throw new Exception('user_select_expanded: Could not find a user with that ID.');
+        } else {
+            return false;
+        }
     }
 
     return $user;
