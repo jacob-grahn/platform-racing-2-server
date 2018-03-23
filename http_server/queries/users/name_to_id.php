@@ -21,7 +21,7 @@ function name_to_id($pdo, $name, $suppress_error = false)
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
     if (!$user) {
-        throw new Exception('name_to_id: User not found.')
+        throw new Exception('name_to_id: User not found.');
     }
 
     return $row->user_id;
