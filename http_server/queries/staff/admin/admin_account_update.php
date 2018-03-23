@@ -14,11 +14,11 @@ function admin_user_update($pdo, $user_id, $name, $email, $guild)
     $stmt->bindValue(':guild', $guild, PDO::PARAM_INT);
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not update user data.");
     }
-    
+
     return true;
 }
 
@@ -38,11 +38,11 @@ function admin_pr2_update($pdo, $user_id, $hats, $heads, $bodies, $feet)
     $stmt->bindValue(':feet', $feet, PDO::PARAM_STR);
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not update PR2 data.");
     }
-    
+
     return true;
 }
 
@@ -62,10 +62,10 @@ function admin_epic_upgrades_update($pdo, $user_id, $ehats, $eheads, $ebodies, $
     $stmt->bindValue(':efeet', $efeet, PDO::PARAM_STR);
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not update epic upgrades data.");
     }
-    
+
     return true;
 }
