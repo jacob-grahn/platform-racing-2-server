@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../../S3.php';
+require_once __DIR__ . '/../../fns/s3_connect.php';
 require_once __DIR__ . '/../../queries/level_backups/level_backup_select.php';
 require_once __DIR__ . '/../../queries/level_backups/level_backups_select.php';
 require_once __DIR__ . '/../../queries/levels/level_select.php';

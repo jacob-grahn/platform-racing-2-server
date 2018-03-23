@@ -3,7 +3,7 @@
 header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../../S3.php';
+require_once __DIR__ . '/../s3_connect.php';
 require_once __DIR__ . '/../queries/users/user_select_expanded.php';
 
 $ip = get_ip();
