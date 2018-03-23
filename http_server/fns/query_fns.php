@@ -4,7 +4,6 @@ require_once __DIR__ . '/random_str.php';
 
 
 //--- checks if a login is valid -----------------------------------------------------------
-require_once __DIR__ . '/../queries/users/user_select_hash_by_name.php';
 require_once __DIR__ . '/../queries/users/user_apply_temp_pass.php';
 
 // user selection queries
@@ -42,7 +41,7 @@ function pass_login($pdo, $name, $password)
             throw new Exception('That username / password combination was not found.');
         }
     }
-    
+
     // don't save hashes to memory
     unset($user->pass_hash);
     unset($user->temp_pass_hash);
