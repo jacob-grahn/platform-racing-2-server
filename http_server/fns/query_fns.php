@@ -6,6 +6,14 @@ require_once __DIR__ . '/random_str.php';
 //--- checks if a login is valid -----------------------------------------------------------
 require_once __DIR__ . '/../queries/users/user_select_hash_by_name.php';
 require_once __DIR__ . '/../queries/users/user_apply_temp_pass.php';
+
+// user selection queries
+require_once __DIR__ . '/../queries/users/user_select.php'; // select user (no hashes) by id
+require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // select user (no hashes) by name
+require_once __DIR__ . '/../queries/users/user_select_full_by_name.php'; // select full user (with hashes) by name
+require_once __DIR__ . '/../queries/users/name_to_id.php'; // name -> id
+require_once __DIR__ . '/../queries/users/id_to_name.php'; // id -> name
+
 function pass_login($pdo, $name, $password)
 {
 
@@ -24,7 +32,7 @@ function pass_login($pdo, $name, $password)
     }
 
     // load the user row
-    $user = user_select_hash_by_name($pdo, $name);
+    $user = user_select_full_by_name($pdo, $name);
 
     // check the password
     if (!password_verify(sha1($password), $user->pass_hash)) {
@@ -34,12 +42,13 @@ function pass_login($pdo, $name, $password)
             throw new Exception('That username / password combination was not found.');
         }
     }
+    
+    // don't save hashes to memory
+    unset($user->pass_hash);
+    unset($user->temp_pass_hash);
 
     // check to see if they're banned
     check_if_banned($pdo, $user->user_id, $ip);
-
-    // respect changes to capitalization
-    $user->name = $name;
 
     // done
     return $user;
@@ -72,13 +81,6 @@ function token_login($pdo, $use_cookie = true)
 
     return $user_id;
 }
-
-
-// user selection queries
-require_once __DIR__ . '/../queries/users/user_select.php'; // select full user by id
-require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // select full user by name
-require_once __DIR__ . '/../queries/users/name_to_id.php'; // name -> id
-require_once __DIR__ . '/../queries/users/id_to_name.php'; // id -> name
 
 // part/epic upgrade queries
 require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_select.php';
