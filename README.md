@@ -21,5 +21,6 @@ To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com
 - EternalUF
 - fourst4r
 - Grovbi
+- isokissa3
 - Myst1cZ
 - Stxtics
