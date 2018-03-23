@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../queries/recent_logins/recent_logins_count_by_user
 $name = find('name', '');
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 250);
+$ip = get_ip();
 
 // this will echo the search box when called
 function output_search($name = '', $incl_br = true)
@@ -41,6 +42,10 @@ function output_pagination($start, $count, $name = '')
 
 // admin check try block
 try {
+    // rate limiting
+    rate_limit('player-deep-logins-'.$ip, 60, 10, 'Wait a bit before searching again.');
+    rate_limit('player-deep-logins-'.$ip, 5, 2);
+    
     //connect
     $pdo = pdo_connect();
 
@@ -89,15 +94,15 @@ try {
     // show the search form
     output_search($safe_name);
     
-    if ($login_count > 0) {
+    if ($login_count > 0 && count($logins) > 0) {
         output_pagination($start, $count, $name);
         echo '<p>---</p>';
     }
     
     // output the number of results or kill the page if none
     echo "$login_count $res recorded for the user \"$safe_name\".";
-    if ($login_count > 0) {
-        $end = $start + $count;
+    if ($login_count > 0 && count($logins) > 0) {
+        $end = $start + count($logins);
         echo "<br>Showing results $start - $end.<br><br>";
     } else {
         output_footer();
@@ -116,8 +121,10 @@ try {
     }
     
     // output page navigation
-    echo '<p>---</p>';
-    output_pagination($start, $count, $name);
+    if ($login_count > 0 && count($logins) > 0) {
+        output_pagination($start, $count, $name);
+        echo '<p>---</p>';
+    }
 
     // end it all
     output_footer();

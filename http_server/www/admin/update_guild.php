@@ -21,6 +21,10 @@ $action = find('action', 'lookup');
 $ip = get_ip();
 
 try {
+    // rate limiting
+    rate_limit('update-guild-'.$ip, 60, 10);
+    rate_limit('update-guild-'.$ip, 5, 2);
+    
     // connect
     $pdo = pdo_connect();
 
@@ -110,7 +114,10 @@ function update($pdo, $admin, $ip)
     // log an owner transfer
     if ($guild->owner_id !== $owner_id) {
         $code = 'manual-' . time();
-        guild_transfer_insert($pdo, $guild->guild_id, $guild->owner_id, $owner_id, $code, $ip);
+        $old_owner = $guild->owner_id;
+        $new_owner = $owner_id;
+        
+        guild_transfer_insert($pdo, $guild->guild_id, $old_owner, $new_owner, $code, $ip);
         $transfer = guild_transfer_select($pdo, $code);
         guild_transfer_complete($pdo, $transfer->transfer_id, $ip);
     }

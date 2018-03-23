@@ -15,5 +15,5 @@ function retrieve_ban_list($pdo, $start, $count)
         throw new Exception('Could not retrieve ban list');
     }
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }

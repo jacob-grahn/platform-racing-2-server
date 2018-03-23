@@ -31,7 +31,7 @@ function pass_login($pdo, $name, $password)
         if (password_verify(sha1($password), $user->temp_pass_hash)) {
             user_apply_temp_pass($pdo, $user->user_id);
         } else {
-            throw new Exception('Incorrect password');
+            throw new Exception('That username / password combination was not found.');
         }
     }
 
@@ -74,27 +74,13 @@ function token_login($pdo, $use_cookie = true)
 }
 
 
+// user selection queries
+require_once __DIR__ . '/../queries/users/user_select.php'; // select full user by id
+require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // select full user by name
+require_once __DIR__ . '/../queries/users/name_to_id.php'; // name -> id
+require_once __DIR__ . '/../queries/users/id_to_name.php'; // id -> name
 
-require_once __DIR__ . '/../queries/users/user_select_by_name.php';
-
-// lookup user_id with name // todo: is this needed?
-function name_to_id($pdo, $name)
-{
-    $user = user_select_by_name($pdo, $name);
-    return $user->user_id;
-}
-
-
-require_once __DIR__ . '/../queries/users/user_select.php';
-
-// lookup name with user_id // todo: is this needed?
-function id_to_name($pdo, $user_id)
-{
-    $user = user_select($pdo, $user_id);
-    return $user->name;
-}
-
-
+// part/epic upgrade queries
 require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_select.php';
 require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_update_field.php';
 require_once __DIR__ . '/../queries/pr2/pr2_select.php';

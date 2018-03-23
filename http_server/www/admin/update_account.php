@@ -5,17 +5,17 @@ require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 
 // user data update/select functions
-require_once __DIR__ . '/../../queries/users/user_select.php'; // pdo
-require_once __DIR__ . '/../../queries/pr2/pr2_select.php'; // pdo
-require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php'; // pdo
-require_once __DIR__ . '/../../queries/staff/admin/admin_account_update.php'; // pdo
+require_once __DIR__ . '/../../queries/users/user_select.php'; // TODO: this is loaded into query_fns.php. Is it needed here?
+require_once __DIR__ . '/../../queries/pr2/pr2_select.php'; // TODO: this is loaded into query_fns.php. Is it needed here?
+require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php'; // TODO: this is loaded into query_fns.php. Is it needed here?
+require_once __DIR__ . '/../../queries/staff/admin/admin_account_update.php';
 
 // guild, email functions
-require_once __DIR__ . '/../../queries/guilds/guild_select.php'; // pdo
-require_once __DIR__ . '/../../queries/guilds/guild_increment_member.php'; // pdo
-require_once __DIR__ . '/../../queries/changing_emails/changing_email_insert.php'; // pdo
-require_once __DIR__ . '/../../queries/changing_emails/changing_email_select.php'; // pdo
-require_once __DIR__ . '/../../queries/changing_emails/changing_email_complete.php'; // pdo
+require_once __DIR__ . '/../../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../../queries/guilds/guild_increment_member.php';
+require_once __DIR__ . '/../../queries/changing_emails/changing_email_insert.php';
+require_once __DIR__ . '/../../queries/changing_emails/changing_email_select.php';
+require_once __DIR__ . '/../../queries/changing_emails/changing_email_complete.php';
 
 // admin log
 require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
@@ -25,6 +25,10 @@ $user_id = find('id');
 $action = find('action', 'lookup');
 
 try {
+    // rate limiting
+    rate_limit('update-account-'.$ip, 60, 10);
+    rate_limit('update-account-'.$ip, 5, 2);
+    
     //connect
     $pdo = pdo_connect();
 
@@ -163,6 +167,15 @@ function update($pdo, $admin)
     // if there's nothing to change, no need to query the database any further
     if ($update_user === false && $update_pr2 === false && $update_epic === false) {
         throw new Exception('No changes to be made.');
+    }
+    
+    // make sure the name doesn't exist
+    if ($user->name != $user_name) {
+        $id_exists = name_to_id($pdo, $user_name, true);
+        if ($id_exists != false) {
+            $safe_name = htmlspecialchars($user_name);
+            throw new Exception("There is already a user with the name \"$safe_name\" (ID #$id_exists).");
+        }
     }
 
     // adjust guild member count

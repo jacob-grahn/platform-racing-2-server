@@ -17,6 +17,10 @@ if (is_empty($action)) {
 }
 
 try {
+    // rate limiting
+    rate_limit('set-campaign-'.$ip, 60, 5);
+    rate_limit('set-campaign-'.$ip, 10, 1);
+
     // connect
     $pdo = pdo_connect();
 

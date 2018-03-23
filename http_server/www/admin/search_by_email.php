@@ -20,6 +20,10 @@ function output_search($email = '', $incl_br = true)
 
 // admin check try block
 try {
+    // rate limiting
+    rate_limit('email-search-'.$ip, 60, 10, 'Wait a bit before searching again.');
+    rate_limit('email-search-'.$ip, 5, 2);
+    
     //connect
     $pdo = pdo_connect();
 
