@@ -3,7 +3,7 @@
 function user_select_hash_by_name($pdo, $name)
 {
     $stmt = $pdo->prepare('
-        SELECT pass_hash, temp_pass_hash, user_id
+        SELECT *
           FROM users
          WHERE name = :name
          LIMIT 1
