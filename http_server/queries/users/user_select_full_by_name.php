@@ -1,6 +1,6 @@
 <?php
 
-function user_select_hash_by_name($pdo, $name)
+function user_select_full_by_name($pdo, $name)
 {
     $stmt = $pdo->prepare('
         SELECT *
