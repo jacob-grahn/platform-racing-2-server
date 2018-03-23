@@ -8,9 +8,9 @@ require_once __DIR__ . '/../queries/users/user_select_hash_by_name.php';
 require_once __DIR__ . '/../queries/users/user_apply_temp_pass.php';
 
 // user selection queries
-require_once __DIR__ . '/../queries/users/user_select.php'; // select full user by id
-require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // select full user by name
-require_once __DIR__ . '/../queries/users/user_select_hash_by_name.php'; // select full user (with hashes) by name
+require_once __DIR__ . '/../queries/users/user_select.php'; // select user (no hashes) by id
+require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // select user (no hashes) by name
+require_once __DIR__ . '/../queries/users/user_select_full_by_name.php'; // select full user (with hashes) by name
 require_once __DIR__ . '/../queries/users/name_to_id.php'; // name -> id
 require_once __DIR__ . '/../queries/users/id_to_name.php'; // id -> name
 
@@ -32,7 +32,7 @@ function pass_login($pdo, $name, $password)
     }
 
     // load the user row
-    $user = user_select_hash_by_name($pdo, $name);
+    $user = user_select_full_by_name($pdo, $name);
 
     // check the password
     if (!password_verify(sha1($password), $user->pass_hash)) {
