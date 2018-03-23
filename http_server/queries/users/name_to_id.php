@@ -10,7 +10,7 @@ function name_to_id($pdo, $name, $suppress_error = false)
     ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         if ($suppress_error === false) {
             throw new Exception("Could not find a user with that name.");
@@ -18,8 +18,11 @@ function name_to_id($pdo, $name, $suppress_error = false)
             return false;
         }
     }
-    
-    $row = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
+    $user = $stmt->fetch(PDO::FETCH_OBJ);
+    if (!$user) {
+        throw new Exception('name_to_id: User not found.')
+    }
+
     return $row->user_id;
 }
