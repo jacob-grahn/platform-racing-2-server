@@ -30,7 +30,8 @@ try {
     rate_limit('get-messages-'.$user_id, 60, 10);
 
     $messages = messages_select($pdo, $user_id, $start, $count);
-
+    $messages_array = [];
+    
     foreach ($messages as $row) {
         if ($row->message_id > $largest_id) {
             $largest_id = $row->message_id;
