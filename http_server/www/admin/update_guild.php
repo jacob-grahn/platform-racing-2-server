@@ -18,7 +18,6 @@ require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
 
 $guild_id = find('guild_id');
 $action = find('action', 'lookup');
-$ip = get_ip();
 
 try {
     // rate limiting
@@ -46,7 +45,7 @@ try {
 
     // update
     if ($action === 'update') {
-        update($pdo, $admin, $ip);
+        update($pdo, $admin);
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
@@ -88,8 +87,11 @@ function output_form($pdo, $guild_id)
     output_footer();
 }
 
-function update($pdo, $admin, $ip)
+function update($pdo, $admin)
 {
+    // who's doing this
+    $admin_ip = get_ip();
+    
     // check to make sure the description of changes exists
     $guild_changes = find('guild_changes');
     if (is_empty($guild_changes)) {
@@ -117,9 +119,9 @@ function update($pdo, $admin, $ip)
         $old_owner = $guild->owner_id;
         $new_owner = $owner_id;
         
-        guild_transfer_insert($pdo, $guild->guild_id, $old_owner, $new_owner, $code, $ip);
+        guild_transfer_insert($pdo, $guild->guild_id, $old_owner, $new_owner, $code, $admin_ip);
         $transfer = guild_transfer_select($pdo, $code);
-        guild_transfer_complete($pdo, $transfer->transfer_id, $ip);
+        guild_transfer_complete($pdo, $transfer->transfer_id, $admin_ip);
     }
 
     // delete a guild emblem
@@ -136,7 +138,7 @@ function update($pdo, $admin, $ip)
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $disp_changes = "Changes: " . $guild_changes;
-    admin_action_insert($pdo, $admin_id, "$admin_name updated guild $guild_id from $admin_ip. $disp_changes.", $admin_id, $admin_ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name updated guild $guild_id from $admin_ip. $disp_changes.", 'update_guild', $admin_ip);
 
     // redirect
     header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));
