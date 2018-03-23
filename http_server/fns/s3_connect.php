@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '../vend/S3.php';
+require_once __DIR__ . '/../vend/S3.php';
 
 function s3_connect()
 {
