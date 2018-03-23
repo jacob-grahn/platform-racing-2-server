@@ -42,12 +42,13 @@ function pass_login($pdo, $name, $password)
             throw new Exception('That username / password combination was not found.');
         }
     }
+    
+    // don't save hashes to memory
+    unset($user->pass_hash);
+    unset($user->temp_pass_hash);
 
     // check to see if they're banned
     check_if_banned($pdo, $user->user_id, $ip);
-
-    // respect changes to capitalization
-    $user = user_select_hash_by_name($pdo, $user->user_id);
 
     // done
     return $user;
