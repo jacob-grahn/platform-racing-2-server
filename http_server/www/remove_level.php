@@ -3,11 +3,13 @@
 header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/staff/level_unpublish.php';
-require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php';
-require_once __DIR__ . '/../queries/levels/level_select.php';
 
-$level_id = (int) default_val($_POST['level_id']);
+require_once __DIR__ . '/../queries/levels/level_select.php';
+require_once __DIR__ . '/../queries/staff/level_unpublish.php';
+
+require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php';
+
+$level_id = (int) default_post('level_id', 0);
 
 try {
     // check for post
@@ -46,17 +48,19 @@ try {
     // unpublish the level
     level_unpublish($pdo, $level_id);
 
-    //tell it to the world
-    echo 'message=This level has been removed successfully. It may take up to 60 seconds for this change to take effect.';
-
     //action log
     $name = $mod->name;
     $user_id = $mod->user_id;
     $ip = $mod->ip;
-
+    $action_string = "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}";
+    
     //record the change
-    mod_action_insert($pdo, $user_id, "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}", $user_id, $ip);
+    mod_action_insert($pdo, $user_id, $action_string, 'remove_level', $ip);
+    
+    //tell it to the world
+    die('message=This level has been removed successfully. It may take up to 60 seconds for this change to take effect.');
+    
 } catch (Exception $e) {
     $error = $e->getMessage();
-    echo "error=$error";
+    die("error=$error");
 }

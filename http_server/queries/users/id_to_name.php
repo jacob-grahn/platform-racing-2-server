@@ -11,5 +11,5 @@ function id_to_name($pdo, $user_id)
         throw new Exception('Could not find a user with that ID.');
     }
     
-    return $result;
+    return $result->name;
 }

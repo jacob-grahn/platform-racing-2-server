@@ -1,17 +1,17 @@
 <?php
 
-function admin_user_update($pdo, $user_id, $name, $email, $guild_id)
+function admin_user_update($pdo, $user_id, $name, $email, $guild)
 {
     $stmt = $pdo->prepare('
         UPDATE users
            SET name = :name,
                email = :email,
-               guild_id = :guild_id
+               guild = :guild
          WHERE user_id = :user_id
         ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
-    $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
+    $stmt->bindValue(':guild', $guild, PDO::PARAM_INT);
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
     
@@ -49,7 +49,7 @@ function admin_pr2_update($pdo, $user_id, $hats, $heads, $bodies, $feet)
 function admin_epic_upgrades_update($pdo, $user_id, $ehats, $eheads, $ebodies, $efeet)
 {
     $stmt = $pdo->prepare('
-        UPDATE pr2
+        UPDATE epic_upgrades
            SET epic_hats = :ehats,
                epic_heads = :eheads,
                epic_bodies = :ebodies,

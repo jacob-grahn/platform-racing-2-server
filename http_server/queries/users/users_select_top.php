@@ -10,7 +10,8 @@ function users_select_top($pdo, $start, $count)
         FROM users, pr2, rank_tokens
         WHERE users.user_id = pr2.user_id
         AND pr2.user_id = rank_tokens.user_id
-        AND rank > 49
+        AND rank > 44
+        HAVING active_rank > 49
         ORDER BY active_rank DESC, name ASC
         LIMIT :start, :count
     ');
