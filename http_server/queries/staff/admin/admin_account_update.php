@@ -6,7 +6,7 @@ function admin_user_update($pdo, $user_id, $name, $email, $guild_id)
         UPDATE users
            SET name = :name,
                email = :email,
-               guild_id = :guild_id
+               guild = :guild_id
          WHERE user_id = :user_id
         ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
@@ -49,7 +49,7 @@ function admin_pr2_update($pdo, $user_id, $hats, $heads, $bodies, $feet)
 function admin_epic_upgrades_update($pdo, $user_id, $ehats, $eheads, $ebodies, $efeet)
 {
     $stmt = $pdo->prepare('
-        UPDATE pr2
+        UPDATE epic_upgrades
            SET epic_hats = :ehats,
                epic_heads = :eheads,
                epic_bodies = :ebodies,
