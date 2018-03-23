@@ -24,5 +24,5 @@ function name_to_id($pdo, $name, $suppress_error = false)
         throw new Exception('name_to_id: User not found.');
     }
 
-    return $row->user_id;
+    return $user->user_id;
 }
