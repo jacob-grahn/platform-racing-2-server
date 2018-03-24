@@ -4,10 +4,7 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 
-// user data update/select functions
-require_once __DIR__ . '/../../queries/users/user_select.php'; // TODO: this is loaded into query_fns.php. Is it needed here?
-require_once __DIR__ . '/../../queries/pr2/pr2_select.php'; // TODO: this is loaded into query_fns.php. Is it needed here?
-require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php'; // TODO: this is loaded into query_fns.php. Is it needed here?
+// user data update functions
 require_once __DIR__ . '/../../queries/staff/admin/admin_account_update.php';
 
 // guild, email functions
