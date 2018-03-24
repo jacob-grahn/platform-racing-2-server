@@ -182,16 +182,10 @@ function update($pdo, $admin)
     if ($user->guild != $guild_id) {
         guild_select($pdo, $guild_id); // make sure the new guild exists
         if ($user->guild != 0) {
-            $result = guild_increment_member($pdo, $user->guild, -1, true);
-            if ($result === false) {
-                throw new Exception("Could not increment guild member count in guild $user->guild.");
-            }
+            guild_increment_member($pdo, $user->guild, -1);
         }
         if ($guild_id != 0) {
-            $result = guild_increment_member($pdo, $user->guild, 1, true);
-            if ($result === false) {
-                throw new Exception("Could not increment guild member count in guild $guild_id.");
-            }
+            guild_increment_member($pdo, $user->guild, 1);
         }
     }
 
