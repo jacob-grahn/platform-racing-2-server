@@ -199,21 +199,27 @@ function update($pdo, $admin)
     }
 
     // update the account
+    $updated_user = 'no';
+    $updated_pr2 = 'no';
+    $updated_epic = 'no';
     if ($update_user === true) {
         admin_user_update($pdo, $user_id, $user_name, $email, $guild_id);
+        $updated_user = 'yes';
     }
     if ($update_pr2 === true) {
         admin_pr2_update($pdo, $user_id, $hats, $heads, $bodies, $feet);
+        $updated_pr2 = 'yes';
     }
     if ($update_epic === true) {
         admin_epic_upgrades_update($pdo, $user_id, $ehats, $eheads, $ebodies, $efeet);
+        $updated_epic = 'yes';
     }
 
     // log the action in the admin log
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $disp_changes = "Changes: " . $account_changes;
-    admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. $disp_changes.", $admin_id, $admin_ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. {update_user: $updated_user, update_pr2: $updated_pr2, update_epic: $updated_epic, changes: $account_changes}", 'update_account', $admin_ip);
 
     header("Location: player_deep_info.php?name1=" . urlencode($user_name));
     die();
