@@ -178,6 +178,7 @@ function check_ref()
         && strpos($ref, 'http://chat.kongregate.com') !== 0
         && strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0
         && strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') !== 0
+        && strpos($ref, 'http://game10110.konggames.com/games/Jiggmin/platform-racing-2') !== 0
     ) {
         return $ref;
     }
