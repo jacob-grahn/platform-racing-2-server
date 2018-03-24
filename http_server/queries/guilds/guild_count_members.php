@@ -16,7 +16,7 @@ function guild_count_members($pdo, $guild_id)
 
     $count = $stmt->fetchColumn();
     
-    if ((int) $count == 0 || $count == false) {
+    if ((int) $count == 0 || $count == false || empty($count)) {
         return 0;
     }
     
