@@ -18,6 +18,7 @@ function level_check_if_creator($pdo, $user_id, $level_id)
     }
     
     $level = $stmt->fetch(PDO::FETCH_OBJ);
+    $level = $level->level_id;
     
     if ((int) $level == 0) {
         return false;
