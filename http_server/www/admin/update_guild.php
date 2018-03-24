@@ -5,13 +5,14 @@ require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 
 // guild select/update functions
-require_once __DIR__ . '/../../queries/guilds/guild_select.php'; // pdo
-require_once __DIR__ . '/../../queries/guilds/guild_update.php'; // pdo
+require_once __DIR__ . '/../../queries/guilds/guild_select.php';
+require_once __DIR__ . '/../../queries/guilds/guild_count_members.php';
+require_once __DIR__ . '/../../queries/guilds/guild_update.php';
 
 // guild transfer functions
-require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_insert.php'; // pdo
-require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_select.php'; // pdo
-require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_complete.php'; // pdo
+require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_insert.php';
+require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_select.php';
+require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_complete.php';
 
 // admin action
 require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
@@ -71,6 +72,7 @@ function output_form($pdo, $guild_id)
     echo 'Guild Owner: <input type="text" size"" name="owner_id" value="'.htmlspecialchars($guild->owner_id).'"><br>';
     echo 'Prose: <textarea rows="4" name="note">'.htmlspecialchars($guild->note).'</textarea><br>';
     echo 'Delete Emblem? <input type="checkbox" name="delete_emblem"><br>';
+    echo 'Recount Members? <input type="checkbox" name="recount_members"><br>';
     echo 'Description of Changes: <input type="text" size="100" name="guild_changes"><br>';
     echo '<input type="hidden" name="action" value="update">';
     echo '<input type="hidden" name="guild_id_submit" value="'.$guild->guild_id.'">';
@@ -104,12 +106,13 @@ function update($pdo, $admin)
     $owner_id = (int) find('owner_id');
     $note = find('note');
     $delete_emblem = $_GET['delete_emblem'];
+    $recount_members = $_GET['recount_members'];
 
     // call guild information
     $guild = guild_select($pdo, $guild_id);
 
     // check if changes need to be made
-    if ($guild_name == $guild->guild_name && $owner_id == $guild->owner_id && $note == $guild->note) {
+    if ($guild_name == $guild->guild_name && $owner_id == $guild->owner_id && $note == $guild->note && empty($delete_emblem) && empty($recount_members)) {
         throw new Exception('No changes to be made.');
     }
 
@@ -130,9 +133,19 @@ function update($pdo, $admin)
     } else {
         $emblem = $guild->emblem;
     }
+    
+    // recount members
+    if (!empty($recount_members)) {
+        $member_count = guild_count_members($pdo, $guild_id);
+    } else {
+        $member_count = NULL;
+        /* this can be either $guild->member_count or NULL.
+           setting it to NULL doesn't add the sql line to update the member count
+           setting it to $guild->member_count tells the db to update the count to what it already is */
+    }
 
     // do it
-    guild_update($pdo, $guild_id, $guild_name, $emblem, $note, $owner_id);
+    guild_update($pdo, $guild_id, $guild_name, $emblem, $note, $owner_id, $member_count);
 
     // admin log
     $admin_name = $admin->name;
