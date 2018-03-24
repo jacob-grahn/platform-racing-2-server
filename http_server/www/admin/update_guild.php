@@ -117,7 +117,7 @@ function update($pdo, $admin)
     }
 
     // log an owner transfer
-    if ($guild->owner_id !== $owner_id) {
+    if ($guild->owner_id != $owner_id) {
         $code = 'manual-' . time();
         $old_owner = $guild->owner_id;
         $new_owner = $owner_id;
