@@ -5,7 +5,6 @@ header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/pr2_fns.php';
 require_once __DIR__ . '/../fns/s3_connect.php';
-require_once __DIR__ . '/../queries/users/user_select.php';
 require_once __DIR__ . '/../queries/levels/level_select_by_title.php';
 require_once __DIR__ . '/../queries/levels/level_insert.php';
 require_once __DIR__ . '/../queries/levels/level_update.php';
@@ -21,11 +20,10 @@ $gravity = $_POST['gravity'];
 $max_time = (int) $_POST['max_time'];
 $items = $_POST['items'];
 $remote_hash = $_POST['hash'];
-$pass_hash = default_val($_POST['passHash'], '');
-$hash2 = sha1($pass_hash . $LEVEL_PASS_SALT);
-$has_pass = (int) default_val($_POST['hasPass'], 0);
-$game_mode = find('gameMode', 'race');
-$cowboy_chance = (int) default_val($_POST['cowboyChance'], 5);
+$pass_hash = default_post('passHash', '');
+$has_pass = (int) default_post('hasPass', 0);
+$game_mode = default_post('gameMode', 'race');
+$cowboy_chance = (int) default_post('cowboyChance', 5);
 
 $time = time();
 $ip = get_ip();
@@ -62,13 +60,13 @@ try {
         throw new Exception('The level did not upload correctly. Maybe try again?');
     }
 
-    //
+    // sanity check: are they a guest?
     $account = user_select($pdo, $user_id);
     if ($account->power <= 0) {
         throw new Exception('Guests can not save levels');
     }
 
-    //
+    // check game mode
     if ($game_mode == 'race') {
         $type = 'r';
     } elseif ($game_mode == 'deathmatch') {
@@ -81,6 +79,17 @@ try {
         $type = 'r';
     }
 
+    // hash the password
+	$hash2 = NULL;
+	if($has_pass == 1) {
+		if($pass_hash == '') {
+			$hash2 = $org_pass_hash2;
+		}
+		else {
+			$hash2 = sha1($pass_hash . $LEVEL_PASS_SALT);
+		}
+	}
+    
     // load the existing level
     $org_rating = 0;
     $org_votes = 0;
