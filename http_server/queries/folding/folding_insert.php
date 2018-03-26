@@ -7,7 +7,7 @@ function folding_insert($pdo, $user_id)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not insert folding_at_home row');
+        throw new Exception("Could not create folding_at_home row for user #$user_id.");
     }
 
     return $result;
