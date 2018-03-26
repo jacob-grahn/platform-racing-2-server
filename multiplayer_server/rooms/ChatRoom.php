@@ -32,13 +32,16 @@ class ChatRoom extends Room
     public function add_player($player)
     {
         Room::add_player($player);
+        global $guild_id, $player_array;
 
         $welcome_message = 'systemChat`Welcome to chat room '.$this->chat_room_name.'! ';
         if (count($this->player_array) <= 1) {
             $welcome_message .= 'You\'re the only person here!';
         } else {
-            global $player_array;
             $welcome_message .= 'There are '.count($player_array).' people online, and '.count($this->player_array).' people in this chat room.';
+        }
+        if ($this->chat_room_name == 'main' && $guild_id == 0) {
+            $welcome_message .= ' Before chatting, please read the PR2 rules listed here: https://jiggmin2.com/forums/showthread.php?tid=385';
         }
         $player->socket->write($welcome_message);
 

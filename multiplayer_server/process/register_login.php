@@ -41,10 +41,10 @@ function process_register_login($server_socket, $data)
             } else {
                 $player = new Player($socket, $login_obj);
                 $socket->player = $player;
-                if ($player->user_id == $guild_owner && $guild_owner != 4291976) {
-                    $player->become_temp_mod();
-                } elseif ($player->user_id == $guild_owner && $guild_owner == 4291976) {
+                if ($player->user_id == $guild_owner) {
                     $player->become_server_owner();
+                } elseif ($player->group <= 0 && $player->user_id == 818266) { // a specific guest account to be used for testing purposes
+                    $player->become_guest();
                 }
                 
                 $socket->write('loginSuccessful`'.$group);
