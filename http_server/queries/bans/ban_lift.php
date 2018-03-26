@@ -16,7 +16,7 @@ function ban_lift($pdo, $ban_id, $lifted_by, $lifted_reason)
 
     $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could not lift ban');
+        throw new Exception("Could not lift ban #$ban_id.");
     }
 
     return $result;
