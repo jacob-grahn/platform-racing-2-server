@@ -1,6 +1,6 @@
 <?php
 
-function winners_select_by_contest($pdo, $contest_id)
+function contest_winners_select_by_contest($pdo, $contest_id)
 {
     $stmt = $pdo->prepare('
         SELECT pr2_name, time
