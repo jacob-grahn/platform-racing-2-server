@@ -17,7 +17,7 @@ function admin_action_insert($pdo, $mod_id, $message, $extra, $ip)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception('Could not add action to the admin action log.');
+        throw new Exception('Could not record admin action.');
     }
 
     return $result;
