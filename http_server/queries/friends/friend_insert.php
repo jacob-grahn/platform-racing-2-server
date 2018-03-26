@@ -4,8 +4,8 @@ function friend_insert($pdo, $user_id, $friend_id)
 {
     $stmt = $pdo->prepare('
         INSERT IGNORE INTO friends
-        SET user_id = :user_id,
-            friend_id = :friend_id
+           SET user_id = :user_id,
+               friend_id = :friend_id
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':friend_id', $friend_id, PDO::PARAM_INT);
