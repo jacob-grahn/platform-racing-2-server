@@ -1,5 +1,6 @@
 <?php
 
+// TO-DO: is this needed?
 function user_select_level_plays($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
@@ -12,7 +13,7 @@ function user_select_level_plays($pdo, $user_id)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Error counting level plays');
+        throw new Exception('Could not count the number of plays for this user.');
     }
 
     $row = $stmt->fetch(PDO::FETCH_OBJ);
