@@ -219,7 +219,7 @@ function update($pdo, $admin)
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $disp_changes = "Changes: " . $account_changes;
-    admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. {update_user: $updated_user, update_pr2: $updated_pr2, update_epic: $updated_epic, changes: $account_changes}", 'update_account', $admin_ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. (update_user: $updated_user, update_pr2: $updated_pr2, update_epic: $updated_epic, changes: $account_changes)", 'update_account', $admin_ip);
 
     header("Location: player_deep_info.php?name1=" . urlencode($user_name));
     die();
