@@ -6,8 +6,8 @@ function contests_delete_old($pdo)
     
     $stmt = $pdo->prepare("
         DELETE FROM contests
-              WHERE active = 0
-                AND updated < $year
+         WHERE active = 0
+           AND updated < $year
     ");
     $stmt->execute();
 }
