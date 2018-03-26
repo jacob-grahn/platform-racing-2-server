@@ -8,6 +8,7 @@ require_once __DIR__ . '/../queries/friends/friend_select.php';
 
 header("Content-type: text/plain");
 
+$target_id = find_no_cookie('user_id');
 $target_name = find_no_cookie('name');
 $friend = 0;
 $ignored = 0;
@@ -29,11 +30,19 @@ try {
         $ignored = 0;
     }
 
-    //--- get the target id
-    $target_id = name_to_id($pdo, $target_name);
+    // determine mode
+    if (!is_empty($target_name) && ($target_id == NULL || is_empty($target_id)) {
+        $target_id = name_to_id($pdo, $target_name, true);
+        if ($target_id == false) {
+            throw new Exception("Could not find a user with that name.");
+        }
+    }
 
-    //--- get dem infos
-    $target = user_select_expanded($pdo, $target_id);
+    // get dem infos
+    $target = user_select_expanded($pdo, $target_id, true);
+    if ($target == false) {
+        throw new Exception("Could not find a user with that ID.");
+    }
 
     if ($target->guild != 0) {
         try {

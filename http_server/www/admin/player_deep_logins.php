@@ -23,7 +23,7 @@ function output_search($name = '', $incl_br = true)
 }
 
 // this will echo and control page counts when called
-function output_pagination($start, $count, $name = '')
+function output_pagination($start, $count, $name, $is_end = false)
 {
     $url_name = urlencode($name);
     $next_start_num = $start + $count;
@@ -37,7 +37,11 @@ function output_pagination($start, $count, $name = '')
     } else {
         echo('<- Last |');
     }
-    echo(" <a href='?name=$url_name&start=$next_start_num&count=$count'>Next -></a></p>");
+    if ($is_end === true) {
+        echo(" Next ->");
+    } else {
+        echo(" <a href='?name=$url_name&start=$next_start_num&count=$count'>Next -></a></p>");
+    }
 }
 
 // admin check try block
@@ -83,9 +87,9 @@ try {
     
     // calculate the number of results and the grammar to go with it
     if ($login_count != 1) {
-        $res = 'logins';
+        $logs = 'logins';
     } else {
-        $res = 'login';
+        $logs = 'login';
     }
 
     // safety first
@@ -94,19 +98,26 @@ try {
     // show the search form
     output_search($safe_name);
     
-    if ($login_count > 0 && count($logins) > 0) {
-        output_pagination($start, $count, $name);
-        echo '<p>---</p>';
-    }
+    // make dat variable
+    $is_end = false;
     
-    // output the number of results or kill the page if none
-    echo "$login_count $res recorded for the user \"$safe_name\".";
+    // this determines if anything is shown on the page
     if ($login_count > 0 && count($logins) > 0) {
         $end = $start + count($logins);
+        echo "$login_count $logs recorded for the user \"$safe_name\".";
         echo "<br>Showing results $start - $end.<br><br>";
+        if ($end == $login_count) {
+            $is_end = true;
+        }
     } else {
+        echo "No results found for the search parameters.";
         output_footer();
         die();
+    }
+    
+    if ($login_count > 0 && count($logins) > 0) {
+        output_pagination($start, $count, $name, $is_end);
+        echo '<p>---</p>';
     }
 
     // only gonna get here if there were results
@@ -122,7 +133,7 @@ try {
     
     // output page navigation
     if ($login_count > 0 && count($logins) > 0) {
-        output_pagination($start, $count, $name);
+        output_pagination($start, $count, $name, $is_end);
         echo '<p>---</p>';
     }
 

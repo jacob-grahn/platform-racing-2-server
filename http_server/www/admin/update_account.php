@@ -4,10 +4,7 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 
-// user data update/select functions
-require_once __DIR__ . '/../../queries/users/user_select.php'; // TODO: this is loaded into query_fns.php. Is it needed here?
-require_once __DIR__ . '/../../queries/pr2/pr2_select.php'; // TODO: this is loaded into query_fns.php. Is it needed here?
-require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php'; // TODO: this is loaded into query_fns.php. Is it needed here?
+// user data update functions
 require_once __DIR__ . '/../../queries/staff/admin/admin_account_update.php';
 
 // guild, email functions
@@ -182,16 +179,10 @@ function update($pdo, $admin)
     if ($user->guild != $guild_id) {
         guild_select($pdo, $guild_id); // make sure the new guild exists
         if ($user->guild != 0) {
-            $result = guild_increment_member($pdo, $user->guild, -1, true);
-            if ($result === false) {
-                throw new Exception("Could not increment guild member count in guild $user->guild.");
-            }
+            guild_increment_member($pdo, $user->guild, -1);
         }
         if ($guild_id != 0) {
-            $result = guild_increment_member($pdo, $user->guild, 1, true);
-            if ($result === false) {
-                throw new Exception("Could not increment guild member count in guild $guild_id.");
-            }
+            guild_increment_member($pdo, $user->guild, 1);
         }
     }
 
@@ -208,21 +199,27 @@ function update($pdo, $admin)
     }
 
     // update the account
+    $updated_user = 'no';
+    $updated_pr2 = 'no';
+    $updated_epic = 'no';
     if ($update_user === true) {
         admin_user_update($pdo, $user_id, $user_name, $email, $guild_id);
+        $updated_user = 'yes';
     }
     if ($update_pr2 === true) {
         admin_pr2_update($pdo, $user_id, $hats, $heads, $bodies, $feet);
+        $updated_pr2 = 'yes';
     }
     if ($update_epic === true) {
         admin_epic_upgrades_update($pdo, $user_id, $ehats, $eheads, $ebodies, $efeet);
+        $updated_epic = 'yes';
     }
 
     // log the action in the admin log
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $disp_changes = "Changes: " . $account_changes;
-    admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. $disp_changes.", $admin_id, $admin_ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. {update_user: $updated_user, update_pr2: $updated_pr2, update_epic: $updated_epic, changes: $account_changes}", 'update_account', $admin_ip);
 
     header("Location: player_deep_info.php?name1=" . urlencode($user_name));
     die();

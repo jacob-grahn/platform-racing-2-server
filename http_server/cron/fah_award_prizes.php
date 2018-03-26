@@ -15,7 +15,7 @@ $processed_names = array();
 
 
 // connect to the db
-$fah_pdo = fah_pdo_connect();
+$fah_pdo = pdo_fah_connect();
 $pdo = pdo_connect();
 
 

@@ -12,16 +12,17 @@ function name_to_id($pdo, $name, $suppress_error = false)
     $result = $stmt->execute();
 
     if ($result === false) {
-        if ($suppress_error === false) {
-            throw new Exception("Could not find a user with that name.");
-        } else {
-            return false;
-        }
+        throw new Exception("Could not perform query name_to_id.");
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    if (!$user) {
-        throw new Exception('name_to_id: User not found.');
+    
+    if ($user === false) {
+        if ($suppress_error === false) {
+            throw new Exception('name_to_id: User not found.');
+        } else {
+            return false;
+        }
     }
 
     return $user->user_id;

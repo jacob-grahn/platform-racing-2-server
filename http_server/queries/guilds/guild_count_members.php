@@ -1,19 +1,19 @@
 <?php
 
-function recent_logins_count_by_user($pdo, $user_id)
+function guild_count_members($pdo, $guild_id)
 {
     $stmt = $pdo->prepare('
         SELECT COUNT(*)
-        FROM recent_logins
-        WHERE user_id = :user_id
+        FROM users
+        WHERE guild = :guild_id
     ');
-    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception("Could not check the total number of logins for this user.");
+        throw new Exception("Could not count the number of members in guild $guild_id.");
     }
-    
+
     $count = $stmt->fetchColumn();
     
     if ((int) $count == 0 || $count == false || empty($count)) {

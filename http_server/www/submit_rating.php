@@ -1,12 +1,14 @@
 <?php
 
 header("Content-type: text/plain");
+
+// pdo queries
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/pr2/pr2_select.php';
-require_once __DIR__ . '/../queries/ratings/rating_select.php';
-require_once __DIR__ . '/../queries/ratings/rating_insert.php';
+require_once __DIR__ . '/../queries/levels/level_check_if_creator.php';
 require_once __DIR__ . '/../queries/levels/level_select.php';
 require_once __DIR__ . '/../queries/levels/level_update_rating.php';
+require_once __DIR__ . '/../queries/ratings/rating_insert.php';
+require_once __DIR__ . '/../queries/ratings/rating_select.php';
 
 $level_id = (int) $_POST['level_id'];
 $new_rating = (int) $_POST['rating'];
@@ -41,6 +43,12 @@ try {
 
     // rate limiting
     rate_limit('submit-rating-'.$user_id, 5, 2);
+    
+    // see if they made the level
+    $is_creator = level_check_if_creator($pdo, $user_id, $level_id);
+    if ($is_creator === true) {
+        throw new Exception("You can't vote on yer own level, matey!");
+    }
 
     // get their voting weight
     $user_pr2 = pr2_select($pdo, $user_id);
@@ -52,13 +60,13 @@ try {
         $weight = 1;
     }
 
-    // see if they have voted on this level before
+    // see if they have voted on this level recently
     $prev_vote = rating_select($pdo, $level_id, $user_id, $ip);
     if ($prev_vote) {
-        throw new Exception('You have already voted on this level. You can vote on it again in a week.');
+        throw new Exception('You have recently voted on this level. You can vote on it again in a week.');
     }
 
-    // if they have, they must wait
+    // if they haven't voted, cast their vote
     rating_insert($pdo, $level_id, $new_rating, $user_id, $weight, $time, $ip);
 
     // get the average rating and votes for some math
