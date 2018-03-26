@@ -1,5 +1,22 @@
 <?php
 
+function best_levels_monthly($pdo)
+{
+    best_levels_truncate($pdo);
+    best_levels_populate($pdo);
+}
+
+function best_levels_truncate($pdo)
+{
+    $result = $pdo->exec('TRUNCATE TABLE best_levels');
+    
+    if ($result === false) {
+        throw new Exception("Could not truncate all-time best levels table.");
+    }
+    
+    return $result;
+}
+
 function best_levels_populate($pdo)
 {
     $result = $pdo->exec('
