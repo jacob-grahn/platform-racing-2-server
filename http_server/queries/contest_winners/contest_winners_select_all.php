@@ -3,10 +3,14 @@
 function contest_winners_select_all($pdo, $start, $count)
 {
     $stmt = $pdo->prepare('
-        SELECT contest_id, winner_name, win_time
-        FROM contest_winners
-        ORDER BY win_time DESC
-        LIMIT :start, :count
+        SELECT contest_winners.contest_id AS contest_id,
+               contest_winners.winner_name AS winner_name,
+               contest_winners.win_time AS win_time,
+               contests.contest_name AS contest_name
+          FROM contest_winners
+          LEFT JOIN contests ON contests.contest_id = contest_winners.contest_id
+         ORDER BY win_time DESC
+         LIMIT :start, :count
     ');
     $stmt->bindValue(':start', $start, PDO::PARAM_INT);
     $stmt->bindValue(':count', $count, PDO::PARAM_INT);
