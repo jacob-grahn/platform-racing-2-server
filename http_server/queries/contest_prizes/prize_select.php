@@ -1,6 +1,6 @@
 <?php
 
-function prize_row_select($pdo, $contest_id, $part_type, $part_id)
+function prize_select($pdo, $contest_id, $part_type, $part_id)
 {
     $stmt = $pdo->prepare('
         SELECT prize_id
