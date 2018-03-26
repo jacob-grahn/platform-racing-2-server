@@ -47,12 +47,12 @@ function levels_search($pdo, $search, $in_mode = 'user', $in_start = 0, $in_coun
                users.name,
                users.power,
                pr2_levels.pass
-        FROM pr2_levels, users
-        WHERE $where
-        AND pr2_levels.user_id = users.user_id
-        AND $live_cond
-        ORDER BY $order_by $dir
-        LIMIT $start, $count
+          FROM pr2_levels, users
+         WHERE $where
+           AND pr2_levels.user_id = users.user_id
+           AND $live_cond
+         ORDER BY $order_by $dir
+         LIMIT $start, $count
     ");
     $stmt->bindValue(':search', $search, PDO::PARAM_STR);
 
