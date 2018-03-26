@@ -16,7 +16,8 @@ function guild_increment_member($pdo, $guild_id, $number)
     
     $stmt = $pdo->prepare("
         UPDATE guilds
-           SET member_count = member_count $sign :number
+           SET member_count = member_count $sign :number,
+               active_date = NOW()
          WHERE guild_id = :guild_id
          LIMIT 1
     ");
