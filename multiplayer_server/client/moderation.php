@@ -64,42 +64,42 @@ function client_warn($socket, $data)
     // safety first
     $safe_mname = htmlspecialchars($mod->name);
     $safe_wname = htmlspecialchars($name);
+    
+    $w_str = '';
+    $time = 0;
+
+    switch ($num) {
+        case 1:
+            $w_str = 'warning';
+            $time = 15;
+            break;
+        case 2:
+            $w_str = 'warnings';
+            $time = 30;
+            break;
+        case 3:
+            $w_str = 'warnings';
+            $time = 60;
+            break;
+        default:
+            $mod->write('message`Error: Invalid warning number.');
+            break;
+    }
 
     // if they're a mod, and the user is on this server, warn the user
     if ($mod->group >= 2 && isset($warned) && ($warned->group < 2 || $mod->server_owner == true)) {
-        $w_str = '';
-        $time = 0;
-
-        switch ($num) {
-            case 1:
-                $w_str = 'warning';
-                $time = 15;
-                break;
-            case 2:
-                $w_str = 'warnings';
-                $time = 30;
-                break;
-            case 3:
-                $w_str = 'warnings';
-                $time = 60;
-                break;
-            default:
-                $mod->write('message`Error: Invalid warning number.');
-                break;
-        }
-
-        // warn the user
         $warned->chat_ban = time() + $time;
-
-        if (isset($mod->chat_room)) {
-            $mod->chat_room->send_chat("systemChat`$safe_mname has given $safe_wname $num $w_str. They have been banned from the chat for $time seconds.");
-        }
     } // if they're a mod but the user isn't online, tell them
     elseif ($mod->group >= 2 && !isset($warned)) {
         $mod->write("message`Error: Could not find a user with the name \"$safe_wname\" on this server.");
     } // if they aren't a mod, tell them
     else {
         $mod->write("message`Error: You lack the power to warn $safe_wname.");
+    }
+    
+    // tell the world
+    if (isset($mod->chat_room) && $mod->group >= 2) {
+        $mod->chat_room->send_chat("systemChat`$safe_mname has given $safe_wname $num $w_str. They have been banned from the chat for $time seconds.");
     }
 }
 
