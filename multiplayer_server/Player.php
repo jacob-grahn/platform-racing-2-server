@@ -1070,7 +1070,7 @@ class Player
         $this->server_owner = true;
         $this->group = 3;
         $this->write('setGroup`3');
-        $this->write("message`Welcome to your private server! You have admin privileges here. To promote server mods, type /mod demote *player name here* in the chat. They'll remain modded until they log out.<br><br>For more information about what commands you can use, type /help in the chat.");
+        $this->write("message`Welcome to your private server! You have admin privileges here. To promote server mods, type /mod promote *player name here* in the chat. They'll remain modded until they log out.<br><br>For more information about what commands you can use, type /help in the chat.");
     }
     
     
