@@ -6,8 +6,9 @@ require_once __DIR__ . '/../../queries/bans/ban_update.php';
 require_once __DIR__ . '/../../queries/bans/ban_select.php';
 require_once __DIR__ . '/../../staff/actions/mod_action_insert.php';
 
-$action = find('action', 'none');
+$action = default_get('action', 'none');
 $ban_id = (int) default_get('ban_id', 0);
+$ip = get_ip();
 
 // non-validated try/catch
 try {
@@ -36,7 +37,7 @@ try {
 
     // if they're trying to update
     if ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        update($pdo, $mod, $ban_id);
+        update($pdo, $mod, $ban_id, $ip);
     } else {
         $ban = ban_select($pdo, $ban_id);
         output_header('Edit Ban', true);
@@ -70,11 +71,8 @@ function output_form($ban)
 }
 
 
-function update($pdo, $mod, $ban_id)
+function update($pdo, $mod, $ban_id, $ip)
 {
-    // who's doing it?
-    $ip = get_ip();
-
     // update the ban
     $ban_id = (int) find('ban_id');
     $account_ban = (int) (bool) find('account_ban');
@@ -93,7 +91,7 @@ function update($pdo, $mod, $ban_id)
     }
 
     // record the change
-    mod_action_insert($pdo, $mod->user_id, "$mod->name edited ban $ban_id from $ip {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $expire_time, $disp_notes}", "ban_edit", $ip);
+    mod_action_insert($pdo, $mod->user_id, "$mod->name edited ban $ban_id from $ip (account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $expire_time, $disp_notes)", "ban_edit", $ip);
 
     // redirect to the ban listing
     header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
