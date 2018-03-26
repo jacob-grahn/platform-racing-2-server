@@ -13,7 +13,7 @@ function friend_delete($pdo, $user_id, $friend_id)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception('Could not remove friend from your friends list.');
+        throw new Exception('Could not remove this user from your friends list.');
     }
 
     return $result;
