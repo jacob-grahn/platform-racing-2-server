@@ -13,14 +13,14 @@ require_once __DIR__ . '/../queries/staff/bans/ban_user.php'; // ban user
 require_once __DIR__ . '/../queries/tokens/tokens_delete_by_user.php'; // delete user token
 
 // variables
-$banned_name = default_val($_POST['banned_name']);
-$duration = (int) default_val($_POST['duration'], 60);
-$reason = default_val($_POST['reason'], '');
-$record = default_val($_POST['record'], '');
-$using_mod_site = default_val($_POST['using_mod_site'], 'no');
-$redirect = default_val($_POST['redirect'], 'no');
-$type = default_val($_POST['type'], 'both');
-$force_ip = default_val($_POST['force_ip']);
+$banned_name = default_post('banned_name');
+$duration = (int) default_post('duration', 60);
+$reason = default_post('reason', '');
+$record = default_post('record', '');
+$using_mod_site = default_post('using_mod_site', 'no');
+$redirect = default_post('redirect', 'no');
+$type = default_post('type', 'both');
+$force_ip = default_post('force_ip');
 $ip = get_ip();
 
 // if it's a month/year ban coming from PR2, correct the weird ban times
@@ -150,7 +150,7 @@ try {
     $disp_expire_time = date('Y-m-d H:i:s', $expire_time);
 
     // action log string
-    $action_string = "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}";
+    $action_string = "$mod_user_name banned $banned_name from $ip (duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason)";
 
     //record the ban in the action log
     mod_action_insert($pdo, $mod_user_id, $action_string, 'ban', $ip);
