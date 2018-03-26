@@ -7,10 +7,10 @@ function messages_select($pdo, $to_user_id, $start, $count)
     
     $stmt = $pdo->prepare('
         SELECT message_id, message, time, from_user_id
-        FROM messages
-        WHERE to_user_id = :to_user_id
-        ORDER BY time desc
-        LIMIT :start, :count
+          FROM messages
+         WHERE to_user_id = :to_user_id
+         ORDER BY time desc
+         LIMIT :start, :count
     ');
     $stmt->bindValue(':to_user_id', $to_user_id, PDO::PARAM_INT);
     $stmt->bindValue(':start', $start, PDO::PARAM_INT);
