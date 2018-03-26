@@ -5,7 +5,8 @@ function guild_increment_gp($pdo, $guild_id, $gp)
     $stmt = $pdo->prepare('
         UPDATE guilds
            SET gp_today = gp_today + :gp,
-               gp_total = gp_total + :gp
+               gp_total = gp_total + :gp,
+               active_date = NOW()
          WHERE guild_id = :guild_id
          LIMIT 1
     ');
