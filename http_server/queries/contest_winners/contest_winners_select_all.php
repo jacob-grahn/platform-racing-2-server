@@ -6,6 +6,7 @@ function contest_winners_select_all($pdo, $start, $count)
         SELECT contest_winners.contest_id AS contest_id,
                contest_winners.winner_name AS winner_name,
                contest_winners.win_time AS win_time,
+               contest_winners.comment AS comment,
                contests.contest_name AS contest_name
           FROM contest_winners
           LEFT JOIN contests ON contests.contest_id = contest_winners.contest_id
