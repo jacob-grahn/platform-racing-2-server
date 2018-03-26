@@ -1,13 +1,14 @@
 <?php
 
+// TO-DO: is this needed?
 function team_update($pdo, $wu, $points, $rank)
 {
     $stmt = $pdo->prepare('
         UPDATE team
-        SET wu = :wu,
-    		points = :points,
-    		rank = :rank
-        LIMIT 1
+           SET wu = :wu,
+               points = :points,
+               rank = :rank
+         LIMIT 1
     ');
     $stmt->bindValue(':wu', $wu, PDO::PARAM_INT);
     $stmt->bindValue(':points', $points, PDO::PARAM_INT);
