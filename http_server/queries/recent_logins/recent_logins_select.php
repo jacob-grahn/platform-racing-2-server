@@ -6,10 +6,11 @@ function recent_logins_select($pdo, $user_id, $suppress_error = false, $start = 
     $count = (int) $count;
     
     $stmt = $pdo->prepare('
-        SELECT * FROM recent_logins
-        WHERE user_id = :user_id
-        ORDER BY date DESC
-        LIMIT :start , :count
+        SELECT *
+          FROM recent_logins
+         WHERE user_id = :user_id
+         ORDER BY date DESC
+         LIMIT :start , :count
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':start', $start, PDO::PARAM_INT);
