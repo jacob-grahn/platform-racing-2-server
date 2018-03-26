@@ -14,7 +14,7 @@ function guild_increment_gp($pdo, $guild_id, $gp)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not record earned GP.');
+        throw new Exception('Could not record earned GP for guild #$guild_id.');
     }
 
     return $result;
