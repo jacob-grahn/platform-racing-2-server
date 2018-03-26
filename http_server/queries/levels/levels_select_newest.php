@@ -27,7 +27,7 @@ function levels_select_newest($pdo)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('could not query for newest levels');
+        throw new Exception('Could not select newest levels.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);
