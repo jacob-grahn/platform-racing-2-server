@@ -3,7 +3,7 @@
 function prizes_select_by_contest($pdo, $contest_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT prize_type, prize_id
+        SELECT part_type, part_id
         FROM contest_prizes
         WHERE contest_id = :contest_id
     ');
