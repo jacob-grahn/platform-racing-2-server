@@ -1,6 +1,6 @@
 <?php
 
-function prizes_select_by_contest($pdo, $contest_id, $suppress_error = false)
+function contest_prizes_select_by_contest($pdo, $contest_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT part_type, part_id
