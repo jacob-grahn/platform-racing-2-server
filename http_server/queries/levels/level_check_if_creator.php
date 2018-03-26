@@ -11,18 +11,12 @@ function level_check_if_creator($pdo, $user_id, $level_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
-    $result = $stmt->execute();
     
+    $result = $stmt->execute();
     if ($result === false) {
         throw new Exception('Could not perform query level_check_if_creator.');
     }
     
     $level = $stmt->fetch(PDO::FETCH_OBJ);
-    $level = $level->level_id;
-    
-    if ((int) $level == 0) {
-        return false;
-    } else {
-        return true;
-    }
+    return (boolean) $level;
 }
