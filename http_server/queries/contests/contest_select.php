@@ -7,6 +7,7 @@ function contest_select($pdo, $contest_id, $suppress_error = false)
         FROM contests
         WHERE contest_id = :contest_id
         AND active = 1
+        LIMIT 1
     ');
     $stmt->bindValue(':contest_id', $contest_id, PDO::PARAM_INT);
     $result = $stmt->execute();
