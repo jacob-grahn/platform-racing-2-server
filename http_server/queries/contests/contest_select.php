@@ -3,7 +3,7 @@
 function contest_select($pdo, $contest_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT *
+        SELECT contest_id, contest_name, description, url, user_id
         FROM contests
         WHERE contest_id = :contest_id
         AND active = 1
