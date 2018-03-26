@@ -31,7 +31,7 @@ try {
     }
 
     // determine mode
-    if (!is_empty($target_name) && ($target_id == NULL || is_empty($target_id)) {
+    if (!is_empty($target_name) && ($target_id == NULL || is_empty($target_id))) {
         $target_id = name_to_id($pdo, $target_name, true);
         if ($target_id == false) {
             throw new Exception("Could not find a user with that name.");
