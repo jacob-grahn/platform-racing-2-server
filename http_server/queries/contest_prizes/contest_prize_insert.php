@@ -1,6 +1,6 @@
 <?php
 
-function prize_insert($pdo, $contest_id, $part_type, $part_id)
+function contest_prize_insert($pdo, $contest_id, $part_type, $part_id)
 {
     $part_type = strtolower($part_type);
 
