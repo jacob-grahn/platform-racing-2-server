@@ -1,28 +1,28 @@
 <?php
 
-function prize_row_select($pdo, $contest_id, $prize_type, $prize_id)
+function prize_row_select($pdo, $contest_id, $part_type, $part_id)
 {
     $stmt = $pdo->prepare('
-        SELECT row_id
+        SELECT prize_id
         WHERE contest_id = :contest_id
-        AND prize_type = :prize_type
-        AND prize_id = :prize_id
+        AND part_type = :part_type
+        AND part_id = :part_id
         LIMIT 1
     ');
     $stmt->bindValue(':contest_id', $contest_id, PDO::PARAM_INT);
-    $stmt->bindValue(':prize_type', $prize_type, PDO::PARAM_STR);
-    $stmt->bindValue(':prize_id', $prize_id, PDO::PARAM_INT);
+    $stmt->bindValue(':part_type', $part_type, PDO::PARAM_STR);
+    $stmt->bindValue(':part_id', $part_id, PDO::PARAM_INT);
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception('Could not select prize row.');
+        throw new Exception('Could not select prize.');
     }
     
     $row = $stmt->fetch(PDO::FETCH_OBJ);
     
     if (empty($row)) {
-        throw new Exception("Could not find a prize row for contest #$contest_id, prize type \"$prize_type\", and prize #$prize_id.");
+        throw new Exception("Could not find a prize row for contest #$contest_id, part type \"$part_type\", and part id #$part_id.");
     }
     
-    return $row->row_id;
+    return $row->prize_id;
 }
