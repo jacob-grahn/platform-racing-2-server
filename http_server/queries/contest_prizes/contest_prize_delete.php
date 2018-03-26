@@ -1,6 +1,6 @@
 <?php
 
-function prize_delete($pdo, $prize_id)
+function contest_prize_delete($pdo, $prize_id)
 {
     $stmt = $pdo->prepare('
         DELETE FROM contest_prizes
