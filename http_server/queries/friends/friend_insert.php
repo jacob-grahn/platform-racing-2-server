@@ -12,7 +12,7 @@ function friend_insert($pdo, $user_id, $friend_id)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception('Could not add friend to your friends list.');
+        throw new Exception('Could not add this user to your friends list.');
     }
 
     return $result;
