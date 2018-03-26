@@ -6,8 +6,11 @@ function contest_winners_select_by_contest($pdo, $contest_id)
         SELECT pr2_name, time
         FROM contest_winners
         WHERE contest_id = :contest_id
+        LIMIT :start, :count
     ');
     $stmt->bindValue(':contest_id', $contest_id, PDO::PARAM_INT);
+    $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+    $stmt->bindValue(':count', $count, PDO::PARAM_INT);
     $result = $stmt->execute();
     
     if ($result === false) {
