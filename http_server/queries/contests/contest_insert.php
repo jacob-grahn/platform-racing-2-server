@@ -1,6 +1,6 @@
 <?php
 
-function contest_insert($pdo, $name, $desc, $url, $host_id, $active)
+function contest_insert($pdo, $name, $desc, $url, $host_id)
 {
     $stmt = $pdo->prepare('
         INSERT INTO contests
@@ -8,7 +8,7 @@ function contest_insert($pdo, $name, $desc, $url, $host_id, $active)
                     description = :desc,
                     url = :url,
                     user_id = :host_id,
-                    active = :active,
+                    active = 1,
                     updated = :updated
     ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
