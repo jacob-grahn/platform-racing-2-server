@@ -36,7 +36,7 @@ try {
     guild_delete($pdo, $guild_id);
 
     // record the deletion in the action log
-    mod_action_insert($pdo, $mod_id, "$mod_name deleted guild $guild_id from $ip {guild_name: $guild_name, guild_prose: $guild_note, owner_id: $guild_owner}", $mod_id, $ip);
+    mod_action_insert($pdo, $mod_id, "$mod_name deleted guild $guild_id from $ip (guild_name: $guild_name, guild_prose: $guild_note, owner_id: $guild_owner)", $mod_id, $ip);
 
     // safety first
     $safe_guild_name = htmlspecialchars($guild_name);
