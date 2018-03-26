@@ -2,20 +2,19 @@
 
 function servers_select_highest_port($pdo)
 {
-    $stmt = $pdo->prepare('
-        SELECT servers.port
-        FROM servers
-        ORDER BY servers.port DESC
-        LIMIT 1
+    $result = $pdo->exec('
+        SELECT port
+          FROM servers
+         LIMIT 1
     ');
 
-    $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could not select highest server port.');
+        throw new Exception('Could not select the highest server port.');
     }
 
     $server = $stmt->fetch(PDO::FETCH_OBJ);
-    if (!$server) {
+    
+    if (empty($server)) {
         return 0;
     }
 
