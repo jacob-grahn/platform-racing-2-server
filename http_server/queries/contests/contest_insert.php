@@ -15,7 +15,6 @@ function contest_insert($pdo, $name, $desc, $url, $host_id)
     $stmt->bindValue(':desc', $desc, PDO::PARAM_STR);
     $stmt->bindValue(':url', $url, PDO::PARAM_STR);
     $stmt->bindValue(':host_id', $host_id, PDO::PARAM_INT);
-    $stmt->bindValue(':active', $active, PDO::PARAM_INT);
     $stmt->bindValue(':updated', time(), PDO::PARAM_INT);
     $result = $stmt->execute();
     
