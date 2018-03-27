@@ -98,7 +98,7 @@ function prize_check($type, $id, $err_prefix)
     }
 
     // check for a valid feet id
-    if ($type == "feet" || $type == "feet") {
+    if ($type == "feet" || $type == "eFeet") {
         if ($id < 1 || $id > 39 || ($id >= 31 && $id <= 33)) {
             throw new Exception("$err_prefix (invalid feet ID ($safe_id) specified).");
         } else {
