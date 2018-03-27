@@ -10,7 +10,7 @@ function guild_update($pdo, $guild_id, $guild_name, $emblem, $note, $owner_id, $
     }
     
     // do it
-    $stmt = $pdo->prepare('
+    $stmt = $pdo->prepare("
         UPDATE guilds
            SET guild_name = :name,
                $memcount_sql
@@ -19,7 +19,7 @@ function guild_update($pdo, $guild_id, $guild_name, $emblem, $note, $owner_id, $
                owner_id = :owner_id
          WHERE guild_id = :guild_id
          LIMIT 1
-    ');
+    ");
     $stmt->bindValue(':name', $guild_name, PDO::PARAM_STR);
     $stmt->bindValue(':emblem', $emblem, PDO::PARAM_STR);
     $stmt->bindValue(':note', $note, PDO::PARAM_STR);

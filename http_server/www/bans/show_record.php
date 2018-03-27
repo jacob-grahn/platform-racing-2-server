@@ -20,8 +20,7 @@ try {
         rate_limit('list-bans-'.$ip, 60, 10, "Please wait at least one minute before trying to view another ban.");
     }
 
-    // output header (w/ mod nav if they're a mod)
-    output_header('View Ban', $is_mod);
+    // get the ban details
     $row = ban_select($pdo, $ban_id);
 } catch (Exception $e) {
     $error = $e->getMessage();
@@ -31,6 +30,8 @@ try {
     die();
 }
 
+// output header (w/ mod nav if they're a mod)
+output_header('View Ban', $is_mod);
 
 //--- output the page ---
 $ban_id = $row->ban_id;
@@ -76,11 +77,11 @@ $html_notes = str_replace("\n", '<br>', htmlspecialchars($notes));
 
 
 if ($lifted == 1) {
-    echo     '<b><p>-----------------------------------------------------------------------------------------------</p>'
-    ."<p>--- This ban has been lifted by $html_lifted_by ---</p>"
-    ."<p>--- Reason: $html_lifted_reason ---</p>"
-    .'<p>-----------------------------------------------------------------------------------------------</p>'
-    .'<p>&nbsp;</p></b>';
+    echo '<b><p>-----------------------------------------------------------------------------------------------</p>'
+           ."<p>--- This ban has been lifted by $html_lifted_by ---</p>"
+           ."<p>--- Reason: $html_lifted_reason ---</p>"
+           .'<p>-----------------------------------------------------------------------------------------------</p>'
+           .'<p>&nbsp;</p></b>';
 }
 
 
@@ -97,11 +98,11 @@ if ($is_mod === true) {
 
 
 echo "<p>$html_mod_name banned $html_banned_name for $f_duration on $formatted_time.</p>
-		<p>Reason: $html_reason</p>
-		<p>This ban will expire on $expire_formatted_time.</p>
-		<p> --- </p>
-		<p>$html_record</p>
-		<p> --- </p>";
+        <p>Reason: $html_reason</p>
+        <p>This ban will expire on $expire_formatted_time.</p>
+        <p> --- </p>
+        <p>$html_record</p>
+        <p> --- </p>";
 
 if ($is_mod === true) {
     if (isset($notes) && $notes != '') {

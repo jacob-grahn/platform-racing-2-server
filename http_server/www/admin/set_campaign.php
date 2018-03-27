@@ -98,7 +98,7 @@ function prize_check($type, $id, $err_prefix)
     }
 
     // check for a valid feet id
-    if ($type == "feet" || $type == "feet") {
+    if ($type == "feet" || $type == "eFeet") {
         if ($id < 1 || $id > 39 || ($id >= 31 && $id <= 33)) {
             throw new Exception("$err_prefix (invalid feet ID ($safe_id) specified).");
         } else {
@@ -194,7 +194,7 @@ function update($pdo)
         $admin_name = $admin->name;
         $admin_id = $admin->user_id;
         $ip = get_ip();
-        admin_action_insert($pdo, $admin_id, "$admin_name set a new custom campaign from $ip", $admin_id, $ip);
+        admin_action_insert($pdo, $admin_id, "$admin_name set a new custom campaign from $ip.", $admin_id, $ip);
     } catch (Exception $e) {
         $message = "Error: " . $e->getMessage();
         output_form($pdo, $message);

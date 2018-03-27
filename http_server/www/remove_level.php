@@ -52,7 +52,7 @@ try {
     $name = $mod->name;
     $user_id = $mod->user_id;
     $ip = $mod->ip;
-    $action_string = "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}";
+    $action_string = "$name unpublished level $level_id from $ip (level_title: $l_title, creator: $l_creator, level_note: $l_note)";
     
     //record the change
     mod_action_insert($pdo, $user_id, $action_string, 'remove_level', $ip);
