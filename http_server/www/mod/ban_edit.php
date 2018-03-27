@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/bans/ban_update.php';
 require_once __DIR__ . '/../../queries/bans/ban_select.php';
-require_once __DIR__ . '/../../staff/actions/mod_action_insert.php';
+require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
 
 $action = default_get('action', 'none');
 $ban_id = (int) default_get('ban_id', 0);
