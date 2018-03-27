@@ -4,10 +4,7 @@
 function process_register_login($server_socket, $data)
 {
     if ($server_socket->process == true) {
-        global $login_array;
-        global $player_array;
-        global $guild_id;
-        global $guild_owner;
+        global $login_array, $player_array, $guild_id, $guild_owner, $server_id;
 
         $login_obj = json_decode($data);
         $login_id = $login_obj->login->login_id;
@@ -43,7 +40,7 @@ function process_register_login($server_socket, $data)
                 $socket->player = $player;
                 if ($player->user_id == $guild_owner) {
                     $player->become_server_owner();
-                } elseif ($player->group <= 0 && $player->user_id == 818266) { // a specific guest account to be used for testing purposes
+                } elseif ($player->group <= 0 && $server_id === 9) { // enable guests to earn badges on only Isabel for now
                     $player->become_guest();
                 }
                 
