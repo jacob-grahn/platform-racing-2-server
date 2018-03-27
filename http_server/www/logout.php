@@ -16,7 +16,7 @@ try {
         // connect to the db
         $ref_address = check_ref();
         if ($ref_address !== true){
-            throw new Exception("You appear to be trying to log out from third-party site. To prevent scripts to log you out logins are only allowed from allowed sites such as pr2hub.com");   
+            throw new Exception("You appear to be trying to log out from third-party site. To prevent scripts to log you out, logging out is only allowed from allowed sites such as pr2hub.com");   
         }
         $pdo = pdo_connect();
 
