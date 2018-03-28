@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../queries/bans/ban_update.php';
 require_once __DIR__ . '/../../queries/bans/ban_select.php';
 require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
 
-$action = default_get('action', 'none');
+$action = default_get('action', 'edit');
 $ban_id = (int) default_get('ban_id', 0);
 $ip = get_ip();
 
@@ -36,13 +36,15 @@ try {
     }
 
     // if they're trying to update
-    if ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($action == 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         update($pdo, $mod, $ban_id, $ip);
-    } else {
+    } else if ($action == 'edit') {
         $ban = ban_select($pdo, $ban_id);
         output_header('Edit Ban', true);
         output_form($ban);
         output_footer();
+    } else {
+        throw new Exception('Unknown action specified.');
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
@@ -62,7 +64,7 @@ function output_form($ban)
     echo "<form method='post'>
         <input type='hidden' value='update' name='action'>
         <input type='hidden' value='$ban->ban_id' name='ban_id'>
-        <p>Expire Date <input type='text' value='$ban->expire_time' name='expire_time'></p>
+        <p>Expire Date <input type='text' value='$ban->expire_datetime' name='expire_time'></p>
         <p>IP Ban <input type='checkbox' $ip_checked name='ip_ban'></p>
         <p>Account Ban <input type='checkbox' $acc_checked name='account_ban'></p>
         <p>Notes <textarea rows='4' cols='50' name='notes'>$ban->notes</textarea>
