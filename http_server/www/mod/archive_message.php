@@ -30,8 +30,9 @@ try {
     messages_reported_archive($pdo, $message_id);
 
     // record the change
-    $name = $mod->name;
-    mod_action_insert($pdo, $mod->user_id, "$name archived the report of PM $message_id from $ip.", 0, $ip);
+    $mod_id = $mod->user_id;
+    $mod_name = $mod->name;
+    mod_action_insert($pdo, $mod_id, "$mod_name archived the report of PM $message_id from $ip.", 0, $ip);
 
     // tell the sorry saps trying to debug
     $ret = new stdClass();
