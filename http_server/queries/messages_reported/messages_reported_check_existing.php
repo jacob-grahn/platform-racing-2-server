@@ -14,7 +14,5 @@ function messages_reported_check_existing($pdo, $message_id)
         throw new Exception("Could not check if this message has been reported already.");
     }
     
-    $count = $stmt->fetchColumn();
-    
-    return (bool) $count;
+    return (bool) $stmt->fetchColumn();
 }
