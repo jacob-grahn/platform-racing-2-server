@@ -16,9 +16,5 @@ function messages_reported_check_existing($pdo, $message_id)
     
     $count = $stmt->fetchColumn();
     
-    if ((int) $count == 0 || $count == false || empty($count)) {
-        return false;
-    }
-    
-    return true;
+    return (bool) $count;
 }
