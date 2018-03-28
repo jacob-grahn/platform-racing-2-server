@@ -116,8 +116,8 @@ try {
     }
     
     if ($login_count > 0 && count($logins) > 0) {
-        output_pagination($start, $count, $name, $is_end);
         echo '<p>---</p>';
+        output_pagination($start, $count, $name, $is_end);
     }
 
     // only gonna get here if there were results
@@ -134,7 +134,6 @@ try {
     // output page navigation
     if ($login_count > 0 && count($logins) > 0) {
         output_pagination($start, $count, $name, $is_end);
-        echo '<p>---</p>';
     }
 
     // end it all
