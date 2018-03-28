@@ -107,6 +107,7 @@ class Player
     {
         $this->socket = $socket;
         $this->ip = $socket->ip;
+        $this->last_save_time = time();
 
         $this->user_id = $login->user->user_id;
         $this->name = $login->user->name;
@@ -161,7 +162,6 @@ class Player
 
         $socket->player = $this;
         $this->active_rank = $this->rank + $this->rt_used;
-        $this->last_save_time = time();
 
         global $player_array;
         global $max_players;
@@ -232,7 +232,7 @@ class Player
     public function maybe_save()
     {
         $time = time();
-        if ($time - $this->last_save_time > 60*15) {
+        if ($time - $this->last_save_time > 60 * 2) {
             $this->last_save_time = $time;
             $this->save_info();
         }
@@ -955,7 +955,7 @@ class Player
 
         $this->verify_parts();
         $this->verify_stats();
-        $this->save_info();
+        $this->maybe_save();
     }
 
 
