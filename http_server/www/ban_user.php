@@ -139,9 +139,6 @@ try {
         $disp_reason = "no reason given";
     }
 
-    // get mod's IP
-    $ip = $mod->ip;
-
     // make account/ip ban detection pretty courtesy of data_fns.php
     $is_account_ban = check_value($safe_account_ban, 1);
     $is_ip_ban = check_value($safe_ip_ban, 1);
@@ -149,11 +146,8 @@ try {
     // make expire time pretty
     $disp_expire_time = date('Y-m-d H:i:s', $expire_time);
 
-    // action log string
-    $action_string = "$mod_user_name banned $banned_name from $ip (duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason)";
-
     //record the ban in the action log
-    mod_action_insert($pdo, $mod_user_id, $action_string, 'ban', $ip);
+    mod_action_insert($pdo, $mod_user_id, "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}", 0, $ip);
 
     if ($using_mod_site == 'yes' && $redirect == 'yes') {
         header('Location: //pr2hub.com/mod/player_info.php?user_id='.$banned_user_id.'&force_ip='.$force_ip);
