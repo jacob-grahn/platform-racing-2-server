@@ -3,12 +3,13 @@
 // call pro/demotion functions
 require_once __DIR__ . '/../fns/promote_to_moderator.php';
 require_once __DIR__ . '/../fns/demod.php';
+require_once __DIR__ . '/../../http_server/queries/staff/actions/mod_action_insert.php';
 
 
 //--- kick a player -------------------------------------------------------------
 function client_kick($socket, $data)
 {
-    global $db, $guild_id, $server_name;
+    global $pdo, $guild_id, $server_name;
     $name = $data;
 
     // get players
@@ -37,7 +38,7 @@ function client_kick($socket, $data)
                 $mod_name = $mod->name;
                 $mod_ip = $mod->ip;
                 $mod_id = $mod->user_id;
-                $db->call('mod_action_insert', array($mod_id, "$mod_name kicked $name from $server_name from $mod_ip.", $mod_id, $mod_ip));
+                mod_action_insert($pdo, $mod_id, "$mod_name kicked $name from $server_name from $mod_ip.", $mod_id, $mod_ip);
             }
         } else {
             $mod->write("message`Error: Could not find a user with the name \"$safe_kname\" on this server.");
@@ -64,7 +65,7 @@ function client_warn($socket, $data)
     // safety first
     $safe_mname = htmlspecialchars($mod->name);
     $safe_wname = htmlspecialchars($name);
-    
+
     $w_str = '';
     $time = 0;
 
@@ -96,7 +97,7 @@ function client_warn($socket, $data)
     else {
         $mod->write("message`Error: You lack the power to warn $safe_wname.");
     }
-    
+
     // tell the world
     if (isset($mod->chat_room) && $mod->group >= 2) {
         $mod->chat_room->send_chat("systemChat`$safe_mname has given $safe_wname $num $w_str. They have been banned from the chat for $time seconds.");
@@ -180,7 +181,7 @@ function client_promote_to_moderator($socket, $data)
 
     // if they're an admin and not a server owner, continue with the promotion (1st line of defense)
     if ($admin->group >= 3 && $admin->server_owner == false) {
-        $result = promote_mod($name, $type, $admin, $promoted);
+        $result = promote_to_moderator($name, $type, $admin, $promoted);
 
         switch ($type) {
             case 'temporary':

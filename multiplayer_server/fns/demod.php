@@ -1,18 +1,22 @@
 <?php
 
 require_once __DIR__ . '/db_fns.php';
+require_once __DIR__ . '/../../http_server/queries/users/user_select.php';
+require_once __DIR__ . '/../../http_server/queries/users/user_update_power.php';
+require_once __DIR__ . '/../../http_server/queries/mod_powers/mod_power_delete.php';
+require_once __DIR__ . '/../../http_server/queries/staff/actions/admin_action_insert.php';
 
 function demote_mod($user_name, $admin, $demoted_player)
 {
-    global $db, $server_name, $guild_owner;
+    global $pdo, $server_name, $guild_owner;
 
     // safety first
-    $safe_user_name = htmlspecialchars($user_name);
+    $html_user_name = htmlspecialchars($user_name);
 
     // if the user isn't an admin on the server, kill the function (2nd line of defense)
     if ($admin->group != 3) {
-        echo $admin->name." lacks the server power to demote $safe_user_name.";
-        $admin->write("message`Error: You lack the power to demote $safe_user_name.");
+        echo $admin->name." lacks the server power to demote $html_user_name.";
+        $admin->write("message`Error: You lack the power to demote $html_user_name.");
         return false;
     }
 
@@ -29,61 +33,35 @@ function demote_mod($user_name, $admin, $demoted_player)
             $demoted_player->group = 1;
             $demoted_player->write('setGroup`1');
             $demoted_player->temp_mod = false;
-            $admin->write("message`$safe_user_name has been demoted.");
+            $admin->write("message`$html_user_name has been demoted.");
             return true;
         } else {
-            $admin->write("message`$safe_user_name is not a moderator on this server.");
+            $admin->write("message`$html_user_name is not a moderator on this server.");
             return false;
         }
     }
 
     try {
-        $user_id = name_to_id($db, $user_name);
-        $safe_admin_id = addslashes($admin->user_id);
-        $safe_user_id = addslashes($user_id);
+        $user_id = $demoted_player->user_id;
+        $admin_id = $admin->user_id;
 
-
-        //check for proper permission in the db (3rd + final line of defense before promotion)
-        $result = $db->query(
-            "SELECT *
-										FROM users
-										WHERE user_id = '$safe_admin_id'
-										LIMIT 0,1"
-        );
-        $row = $result->fetch_object();
-        if ($row->power != 3) {
+        // check for proper permission in the db (3rd + final line of defense before promotion)
+        $admin_row = user_select($pdo, $admin_id);
+        if ($admin_row->power != 3) {
             throw new Exception("You lack the power to demote $user_name.");
         }
 
-
-        //check if the person being demoted is a staff member
-        $user_result = $db->query(
-            "SELECT *
-										FROM users
-										WHERE user_id = '$safe_user_id'
-										LIMIT 0,1"
-        );
-        $user_row = $user_result->fetch_object();
-
-        //delete mod entry
-        $result = $db->query(
-            "DELETE FROM mod_power
-										WHERE user_id = '$safe_user_id'"
-        );
-        if (!$result) {
-            throw new Exception("Could not delete the moderator type from the database because $user_name isn't a moderator.");
+        // check if the person being demoted is a staff member
+        $user_row = user_select($pdo, $user_id);
+        if ($user_row->power === 3) {
+            throw new Exception("You lack the power to demote $user_name, they are an admin.");
         }
 
+        // delete mod entry
+        mod_power_delete($pdo, $user_id);
 
-        //set power to 1
-        $result = $db->query(
-            "UPDATE users
-										SET power = 1
-										WHERE user_id = '$safe_user_id'"
-        );
-        if (!$result) {
-            throw new Exception("Could not demote $user_name due to a database error.");
-        }
+        // set power to 1
+        user_update_power($pdo, $user_id, 1);
 
         // demote trial/perma mod and log it in the action log
         if ($user_row->power >= 2) {
@@ -94,21 +72,21 @@ function demote_mod($user_name, $admin, $demoted_player)
             $demoted_name = $user_name;
 
             // log action in action log
-            $db->call('admin_action_insert', array($admin_id, "$admin_name demoted $demoted_name from $ip on $server_name.", $admin_id, $ip));
+            admin_action_insert($pdo, $admin_id, "$admin_name demoted $demoted_name from $ip on $server_name.", $admin_id, $ip);
 
             // do it!
             if (isset($demoted_player) && $demoted_player->group >= 2) {
                 $demoted_player->group = 1;
                 $demoted_player->write('setGroup`1');
             }
-            echo $admin->name." demoted $safe_user_name.";
-            $admin->write("message`$safe_user_name has been demoted.");
+            echo $admin->name." demoted $html_user_name.";
+            $admin->write("message`$html_user_name has been demoted.");
         } // demote temp mod
         elseif (isset($demoted_player) && $demoted_player->temp_mod === true && $demoted_player->group == 2) {
             $demoted_player->group = 1;
             $demoted_player->write('setGroup`1');
             $demoted_player->temp_mod = false;
-            $admin->write("message`$safe_user_name has been demoted.");
+            $admin->write("message`$html_user_name has been demoted.");
         } else {
             throw new Exception("$user_name isn't a moderator.");
         }

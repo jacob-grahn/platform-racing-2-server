@@ -1,8 +1,5 @@
 <?php
 
-require_once __DIR__ . '/data_fns.php';
-
-
 // starts a server if it is not running
 function test_server($script, $address, $port, $key, $server_id)
 {
@@ -117,14 +114,6 @@ function get_pid_file($port)
 {
     $pid_file = '/home/jiggmin/pr2/pid/'.$port.'.txt';
     return($pid_file);
-}
-
-
-function talk_to_server_id($db, $server_id, $message, $receive)
-{
-    $server = $db->grab_row('server_select', array($server_id));
-    $reply = talk_to_server('localhost', $server->port, $server->salt, $message, $receive);
-    return( $reply );
 }
 
 

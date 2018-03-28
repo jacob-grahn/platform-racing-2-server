@@ -1,18 +1,25 @@
 <?php
 
 require_once __DIR__ . '/all_fns.php';
+require_once __DIR__ . '/../../http_server/queries/artifacts_found/artifacts_found_insert.php';
+require_once __DIR__ . '/../../http_server/queries/artifact_locations/artifact_location_update_first_finder.php';
+require_once __DIR__ . '/../../http_server/queries/artifact_locations/artifact_location_select.php';
+require_once __DIR__ . '/../../http_server/queries/messages/message_insert.php';
 
 function artifact_first_check($player)
 {
-    global $db;
+    global $pdo;
 
     $user_id = $player->user_id;
     $safe_user_name = htmlspecialchars($player->name);
 
     try {
-        $first_finder = $db->grab('first_finder', 'artifact_find', array($user_id));
+        artifacts_found_insert($pdo, $user_id);
+        artifact_location_update_first_finder($pdo, $user_id);
+        $artifact = artifact_location_select($pdo);
+        $first_finder = $artifact->first_finder;
 
-        if ($first_finder == $user_id) {
+        if ($first_finder === $user_id) {
             /* What are we gonna tell the player when they win?
             How about display a prize window with the bubble head and the name "Bubble Set" */
 
@@ -45,7 +52,7 @@ Thanks for playing Platform Racing 2!
 
 - Jiggmin';
 
-            $db->call('message_insert', array($user_id, 1, $artifact_first_pm, '0'));
+            message_insert($pdo, $user_id, 1, $artifact_first_pm, '0');
         }
     } catch (Exception $e) {
         $message = $e->getMessage();

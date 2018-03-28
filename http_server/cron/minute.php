@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/artifact/artifact_location_select.php';
+require_once __DIR__ . '/../queries/artifact_locations/artifact_location_select.php';
 require_once __DIR__ . '/../queries/messages/messages_select_recent.php';
 require_once __DIR__ . '/../queries/bans/bans_select_recent.php';
 require_once __DIR__ . '/../queries/levels/levels_select_campaign.php';
