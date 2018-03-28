@@ -52,8 +52,8 @@ function demote_mod($user_name, $admin, $demoted_player)
 
         // check if the person being demoted is a staff member
         $user_row = user_select($pdo, $user_id);
-        if ($user_row->power === 3) {
-            throw new Exception("You lack the power to demote $user_name, they are an admin.");
+        if ((int) $user_row->power === 3) {
+            throw new Exception("You lack the power to demote $user_name, as they are an admin.");
         }
 
         // delete mod entry
@@ -63,7 +63,7 @@ function demote_mod($user_name, $admin, $demoted_player)
         user_update_power($pdo, $user_id, 1);
 
         // demote trial/perma mod and log it in the action log
-        if ($user_row->power >= 2) {
+        if ((int) $user_row->power >= 2) {
             // action log variables
             $ip = $admin->ip;
             $admin_id = $admin->user_id;
