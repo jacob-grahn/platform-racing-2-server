@@ -3,11 +3,9 @@
 header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
-
-require_once __DIR__ . '/../queries/levels/level_select.php';
-require_once __DIR__ . '/../queries/staff/level_unpublish.php';
-
-require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php';
+require_once __DIR__ . '/../queries/levels/level_select.php'; // select a level
+require_once __DIR__ . '/../queries/staff/level_unpublish.php'; // unpublish a level
+require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php'; // record the mod action
 
 $level_id = (int) default_post('level_id', 0);
 
@@ -52,10 +50,9 @@ try {
     $name = $mod->name;
     $user_id = $mod->user_id;
     $ip = $mod->ip;
-    $action_string = "$name unpublished level $level_id from $ip (level_title: $l_title, creator: $l_creator, level_note: $l_note)";
     
     //record the change
-    mod_action_insert($pdo, $user_id, $action_string, 'remove_level', $ip);
+    mod_action_insert($pdo, $user_id, "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}", 0, $ip);
     
     //tell it to the world
     die('message=This level has been removed successfully. It may take up to 60 seconds for this change to take effect.');
