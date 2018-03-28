@@ -35,7 +35,7 @@ function user_delete_from_artifacts_found($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from artifacts_found.');
     }
@@ -51,7 +51,7 @@ function user_delete_from_bans($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from bans.');
     }
@@ -67,7 +67,7 @@ function user_delete_from_bounce($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from bounce.');
     }
@@ -84,7 +84,7 @@ function user_delete_from_flagged_messages($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from flagged_messages.');
     }
@@ -100,7 +100,7 @@ function user_delete_from_folding_at_home($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from folding_at_home.');
     }
@@ -117,7 +117,7 @@ function user_delete_from_friends($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from friends.');
     }
@@ -134,7 +134,7 @@ function user_delete_from_ignored($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from ignored.');
     }
@@ -151,7 +151,7 @@ function user_delete_from_messages($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from messages.');
     }
@@ -168,7 +168,7 @@ function user_delete_from_messages_reported($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from messages_reported.');
     }
@@ -184,7 +184,7 @@ function user_delete_from_mod_power($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from mod_power.');
     }
@@ -200,7 +200,7 @@ function user_delete_from_pr2($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from pr2.');
     }
@@ -216,7 +216,7 @@ function user_delete_from_pr2_levels($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from pr2_levels.');
     }
@@ -232,7 +232,7 @@ function user_delete_from_pr2_ratings($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from pr2_ratings.');
     }
@@ -248,7 +248,7 @@ function user_delete_from_users($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from users.');
     }
@@ -258,13 +258,13 @@ function user_delete_from_users($pdo, $user_id)
 
 function user_delete_from_part_awards($pdo, $user_id)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         DELETE FROM part_awards
         WHERE user_id = :user_id
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from part_awards.');
     }
@@ -280,7 +280,7 @@ function user_delete_from_rank_tokens($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from rank_tokens.');
     }
@@ -296,7 +296,7 @@ function user_delete_from_epic_upgrades($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from epic_upgrades.');
     }
@@ -312,7 +312,7 @@ function user_delete_from_gp($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from gp.');
     }
@@ -328,7 +328,7 @@ function user_delete_from_guild_invitations($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from guild_invitations.');
     }
@@ -338,13 +338,13 @@ function user_delete_from_guild_invitations($pdo, $user_id)
 
 function user_delete_from_lux_today($pdo, $user_id)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         DELETE FROM lux_today
         WHERE user_id = :user_id
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from lux_today.');
     }
@@ -360,7 +360,7 @@ function user_delete_from_lux_total($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from lux_total.');
     }
@@ -376,7 +376,7 @@ function user_delete_from_tokens($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from tokens.');
     }
@@ -392,7 +392,7 @@ function user_delete_from_level_backups($pdo, $user_id)
     ');
         $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-	
+
     if ($result === false) {
         throw new Exception('Could not delete user from level_backups.');
     }
