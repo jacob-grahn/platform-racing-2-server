@@ -75,7 +75,7 @@ try {
         $body = str_replace($str1, $str2, $body);
         $len = strlen($body) - 32;
         $body = substr($body, 0, $len);
-        $str_to_hash = $new_version . $level_id . $body . '0kg4%dsw';
+        $str_to_hash = $new_version . $level_id . $body . $LEVEL_SALT_2;
         $hash = md5($str_to_hash);
         $body = $body . $hash;
 
