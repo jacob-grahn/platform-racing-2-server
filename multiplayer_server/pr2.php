@@ -10,8 +10,6 @@ require_once __DIR__ . '/../env.php';
 
 require_once __DIR__ . '/../http_server/fns/pdo_connect.php';
 
-require_once __DIR__ . '/fns/DB.php';
-require_once __DIR__ . '/fns/db_fns.php';
 require_once __DIR__ . '/fns/data_fns.php';
 require_once __DIR__ . '/fns/announce_tournament.php';
 require_once __DIR__ . '/fns/issue_tournament.php';

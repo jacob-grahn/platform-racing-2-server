@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/all_fns.php';
+require_once __DIR__ . '/data_fns.php';
 require_once __DIR__ . '/../../http_server/queries/artifacts_found/artifacts_found_insert.php';
 require_once __DIR__ . '/../../http_server/queries/artifact_locations/artifact_location_update_first_finder.php';
 require_once __DIR__ . '/../../http_server/queries/artifact_locations/artifact_location_select.php';
