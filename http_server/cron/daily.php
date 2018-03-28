@@ -14,6 +14,8 @@ require_once __DIR__ . '/../queries/rank_token_rentals/rank_token_rentals_delete
 require_once __DIR__ . '/../queries/tokens/tokens_delete_old.php';
 require_once __DIR__ . '/../queries/servers/servers_select.php';
 require_once __DIR__ . '/../queries/users/users_reset_status.php';
+require_once __DIR__ . '/../queries/guild_transfers/guild_transfers_expire_old.php';
+require_once __DIR__ . '/../queries/changing_emails/changing_emails_expire_old.php';
 
 $pdo = pdo_connect();
 $servers = servers_select($pdo);
@@ -32,6 +34,8 @@ gp_reset($pdo);
 rank_token_rentals_delete_old($pdo);
 tokens_delete_old($pdo);
 users_reset_status($pdo);
+guild_transfers_expire_old($pdo);
+changing_emails_expire_old($pdo);
 
 output('result=ok');
 
