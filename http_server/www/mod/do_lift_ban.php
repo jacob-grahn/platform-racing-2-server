@@ -5,8 +5,8 @@ require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/bans/ban_lift.php';
 require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
 
-$ban_id = (int) default_val($_POST['ban_id'], 0);
-$reason = default_val($_POST['reason'], 'They bribed me with skittles!');
+$ban_id = (int) default_post('ban_id', 0);
+$reason = default_post('reason', 'They bribed me with skittles!');
 $ip = get_ip();
 
 try {
@@ -43,6 +43,7 @@ try {
 
     //record the change
     $user_id = $mod->user_id;
+    $name = $mod->name;
     if ($reason != '') {
         $disp_reason = "Reason: " . htmlspecialchars($reason);
     } else {

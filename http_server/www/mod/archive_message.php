@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
 require_once __DIR__ . '/../../queries/messages_reported/messages_reported_archive.php';
 
-$message_id = (int) default_val($_GET['message_id'], 0);
+$message_id = (int) default_get('message_id', 0);
 $ip = get_ip();
 
 try {
@@ -29,12 +29,10 @@ try {
     // archive the message
     messages_reported_archive($pdo, $message_id);
 
-    // action log
-    $name = $mod->name;
-    $ip = $mod->ip;
-
     // record the change
-    mod_action_insert($pdo, $mod->user_id, "$name archived the report of PM $message_id from $ip", $mod->user_id, $ip);
+    $mod_id = $mod->user_id;
+    $mod_name = $mod->name;
+    mod_action_insert($pdo, $mod_id, "$mod_name archived the report of PM $message_id from $ip.", 0, $ip);
 
     // tell the sorry saps trying to debug
     $ret = new stdClass();

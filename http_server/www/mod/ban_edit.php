@@ -91,7 +91,9 @@ function update($pdo, $mod, $ban_id, $ip)
     }
 
     // record the change
-    mod_action_insert($pdo, $mod->user_id, "$mod->name edited ban $ban_id from $ip (account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $expire_time, $disp_notes)", "ban_edit", $ip);
+    $mod_id = $mod->user_id;
+    $mod_name = $mod->name;
+    mod_action_insert($pdo, $mod_id, "$mod_name edited ban $ban_id from $ip {account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $expire_time, $disp_notes}", 0, $ip);
 
     // redirect to the ban listing
     header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
