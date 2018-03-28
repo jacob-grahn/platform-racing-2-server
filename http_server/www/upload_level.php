@@ -27,7 +27,7 @@ $cowboy_chance = (int) default_post('cowboyChance', 5);
 
 $time = time();
 $ip = get_ip();
-
+$on_success = 'normal';
 
 try {
     // post check
@@ -80,15 +80,19 @@ try {
     }
 
     // hash the password
-	$hash2 = NULL;
-	if($has_pass == 1) {
-		if($pass_hash == '') {
-			$hash2 = $org_pass_hash2;
-		}
-		else {
-			$hash2 = sha1($pass_hash . $LEVEL_PASS_SALT);
-		}
-	}
+    $hash2 = NULL;
+    if($has_pass == 1) {
+        if ($live != 0) {
+            $live = 0;
+            $on_success = 'pass set with live';
+        }
+        if($pass_hash == '') {
+            $hash2 = $org_pass_hash2;
+        }
+        else {
+            $hash2 = sha1($pass_hash . $LEVEL_PASS_SALT);
+        }
+    }
     
     // load the existing level
     $org_rating = 0;
@@ -153,7 +157,11 @@ try {
 
 
     //tell every one it's time to party
-    echo 'message=The save was successful.';
+    if ($mode == 'pass set with live') {
+        echo 'message=The save was successful, but since you set a password, your level has been left unpublished. If you wish to publish your level, remove the password and check the box to publish the level.';
+    } else {
+        echo 'message=The save was successful.';
+    }
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
