@@ -14,7 +14,7 @@ function test_server($script, $address, $port, $key, $server_id)
         echo ("bad (or no) response from the server \n");
 
         $pid = read_pid($port);
-        shut_down_server($pid, $address, $port);
+        shut_down_server($pid, $address, $port, $key);
 
         start_server($script, $port, $server_id);
     }
@@ -51,10 +51,10 @@ function connect_to_server($address, $port, $key)
 
 
 //graceful shutdown
-function shut_down_server($pid, $address, $port)
+function shut_down_server($pid, $address, $port, $key)
 {
     $result = false;
-    $result = talk_to_server($port, 'shut_down`', $address, true);
+    $result = talk_to_server($address, $port, $key, 'shut_down`', true);
     if (!$result) {
         kill_pid($pid);
     }
