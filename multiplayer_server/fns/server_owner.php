@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/db_fns.php';
-
 function promote_server_mod($name, $owner, $promoted)
 {
     global $guild_owner;

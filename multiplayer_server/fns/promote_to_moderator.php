@@ -1,6 +1,5 @@
 <?php
 
-require_once __DIR__ . '/db_fns.php';
 require_once __DIR__ . '/../../http_server/queries/users/user_select.php';
 require_once __DIR__ . '/../../http_server/queries/users/user_update_power.php';
 require_once __DIR__ . '/../../http_server/queries/promotion_logs/promotion_log_count.php';
