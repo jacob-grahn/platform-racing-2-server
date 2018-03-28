@@ -43,6 +43,7 @@ try {
 
     //record the change
     $user_id = $mod->user_id;
+    $name = $mod->name;
     if ($reason != '') {
         $disp_reason = "Reason: " . htmlspecialchars($reason);
     } else {
