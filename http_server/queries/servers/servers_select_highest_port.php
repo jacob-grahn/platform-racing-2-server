@@ -5,6 +5,7 @@ function servers_select_highest_port($pdo)
     $result = $pdo->exec('
         SELECT port
           FROM servers
+         ORDER BY port DESC
          LIMIT 1
     ');
 
