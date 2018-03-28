@@ -6,7 +6,7 @@ require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/Encryptor.php';
 require_once __DIR__ . '/../queries/tokens/token_insert.php';
 require_once __DIR__ . '/../queries/servers/server_select.php';
-require_once __DIR__ . '/../queries/users/user_select_guest_name.php';
+require_once __DIR__ . '/../queries/users/user_select_guest.php';
 require_once __DIR__ . '/../queries/users/user_select.php';
 require_once __DIR__ . '/../queries/users/user_update_status.php';
 require_once __DIR__ . '/../queries/users/user_update_ip.php';
@@ -108,7 +108,7 @@ try {
     //--- guest login
     if (strtolower(trim($login->user_name)) == 'guest') {
         $guest_login = true;
-        $guest = user_select_guest_name($pdo);
+        $guest = user_select_guest($pdo);
         check_if_banned($pdo, $guest->user_id, $ip);
         $user = pass_login($pdo, $guest->name, $GUEST_PASS);
     } //--- account login
