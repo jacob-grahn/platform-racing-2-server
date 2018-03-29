@@ -27,7 +27,7 @@ try {
     //--- gather info
     $user_id = token_login($pdo, false);
     $account = user_select_expanded($pdo, $user_id);
-    $target_account = user_select_expanded($pdo, $user_id);
+    $target_account = user_select_expanded($pdo, $target_id);
     $guild = guild_select($pdo, $account->guild);
 
     //--- sanity check
