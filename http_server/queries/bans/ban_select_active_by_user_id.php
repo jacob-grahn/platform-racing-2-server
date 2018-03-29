@@ -15,7 +15,7 @@ function ban_select_active_by_user_id($pdo, $user_id)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('could not check ban by user_id');
+        throw new Exception('Could not perform query ban_select_active_by_user_id.');
     }
 
     return $stmt->fetch(PDO::FETCH_OBJ);

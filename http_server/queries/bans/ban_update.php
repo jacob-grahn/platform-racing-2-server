@@ -17,10 +17,10 @@ function ban_update($pdo, $ban_id, $account_ban, $ip_ban, $expire_time, $notes)
     $stmt->bindValue(':ip_ban', $ip_ban, PDO::PARAM_INT);
     $stmt->bindValue(':expire_time', $expire_time, PDO::PARAM_STR);
     $stmt->bindValue(':notes', $notes, PDO::PARAM_STR);
-
     $result = $stmt->execute();
+    
     if ($result === false) {
-        throw new Exception('Could not update ban');
+        throw new Exception("Could not update ban #$ban_id.");
     }
 
     return $result;

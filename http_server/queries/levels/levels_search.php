@@ -8,10 +8,10 @@ function levels_search($pdo, $search, $in_mode = 'user', $in_start = 0, $in_coun
     // search mode
     if ($in_mode == 'title') {
         $where = 'MATCH (title) AGAINST (:search IN BOOLEAN MODE)';
-        $live_cond = 'pr2_levels.live = 1'; // if title, don't show pw levels
+        $live_cond = '(pr2_levels.live = 1 AND pr2_levels.pass IS NULL)'; // if title, don't show pw levels
     } else {
         $where = 'users.name = :search';
-        $live_cond = '(pr2_levels.live = 1 OR pr2_levels.pass IS NOT NULL)'; // if user, show pw levels
+        $live_cond = '(pr2_levels.live = 1 OR (pr2_levels.live = 0 AND pr2_levels.pass IS NOT NULL))'; // if user, show pw levels
     }
     
     // order by
@@ -47,12 +47,12 @@ function levels_search($pdo, $search, $in_mode = 'user', $in_start = 0, $in_coun
                users.name,
                users.power,
                pr2_levels.pass
-        FROM pr2_levels, users
-        WHERE $where
-        AND pr2_levels.user_id = users.user_id
-        AND $live_cond
-        ORDER BY $order_by $dir
-        LIMIT $start, $count
+          FROM pr2_levels, users
+         WHERE $where
+           AND pr2_levels.user_id = users.user_id
+           AND $live_cond
+         ORDER BY $order_by $dir
+         LIMIT $start, $count
     ");
     $stmt->bindValue(':search', $search, PDO::PARAM_STR);
 

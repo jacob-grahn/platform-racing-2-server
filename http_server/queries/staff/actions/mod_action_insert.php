@@ -4,11 +4,11 @@ function mod_action_insert($pdo, $mod_id, $message, $extra, $ip)
 {
     $stmt = $pdo->prepare('
         INSERT INTO mod_actions
-        SET time = NOW(),
-            mod_id = :mod_id,
-            message = :message,
-            extra = :extra,
-            ip = :ip
+           SET time = NOW(),
+               mod_id = :mod_id,
+               message = :message,
+               extra = :extra,
+               ip = :ip
     ');
     $stmt->bindValue(':mod_id', $mod_id, PDO::PARAM_INT);
     $stmt->bindValue(':message', $message, PDO::PARAM_STR);

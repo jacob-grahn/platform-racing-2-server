@@ -8,15 +8,15 @@ function admin_actions_select($pdo, $in_start, $in_count)
     $stmt = $pdo->prepare('
           SELECT *
             FROM admin_actions
-        ORDER BY time DESC
+           ORDER BY time DESC
            LIMIT :start, :count
     ');
     $stmt->bindValue(':start', $start, PDO::PARAM_INT);
     $stmt->bindValue(':count', $count, PDO::PARAM_INT);
-
     $result = $stmt->execute();
+    
     if ($result === false) {
-        throw new Exception('Could not fetch admin actions');
+        throw new Exception('Could not retrieve the admin action log.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

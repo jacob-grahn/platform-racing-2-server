@@ -28,7 +28,7 @@ function levels_select_best_today($pdo)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not perform query to select today\'s best levels');
+        throw new Exception('Could not perform query to select today\'s best levels.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

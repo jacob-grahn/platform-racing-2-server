@@ -4,17 +4,17 @@ function user_select_mod($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
             SELECT users.user_id,
-                         name,
-                         email,
-                         register_ip,
-                         ip,
-                         time,
-                         register_time,
-                         power,
-                         status,
-                         read_message_id,
-                         guild,
-                         mod_power.*
+                   users.name,
+                   users.email,
+                   users.register_ip,
+                   users.ip,
+                   users.time,
+                   users.register_time,
+                   users.power,
+                   users.status,
+                   users.read_message_id,
+                   users.guild,
+                   mod_power.*
               FROM users
         INNER JOIN mod_power
                 ON users.user_id = mod_power.user_id
@@ -22,10 +22,15 @@ function user_select_mod($pdo, $user_id)
              LIMIT 1
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->execute();
+    $result = $stmt->execute();
+    
+    if ($result === false) {
+        throw new Exception('Could not perform query user_select_mod.');
+    }
+    
     $user = $stmt->fetch(PDO::FETCH_OBJ);
 
-    if ($user === false) {
+    if (empty($user)) {
         throw new Exception('Could not find a mod with that ID.');
     }
 

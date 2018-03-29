@@ -4,8 +4,8 @@ function guild_count_members($pdo, $guild_id)
 {
     $stmt = $pdo->prepare('
         SELECT COUNT(*)
-        FROM users
-        WHERE guild = :guild_id
+          FROM users
+         WHERE guild = :guild_id
     ');
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
     $result = $stmt->execute();
