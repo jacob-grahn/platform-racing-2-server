@@ -562,10 +562,10 @@ class Player
                     $dc_name = trim(substr($chat_message, 4)); // for /dc
                 }
                 $dc_player = name_to_player($dc_name);
-                $safe_dc_name = htmlspecialchars($dc_player->name); // make the name safe to echo back to the user
+                $safe_dc_name = htmlspecialchars($dc_name->name); // make the name safe to echo back to the user
 
                 // permission checks
-                if (isset($dc_player) && ($dc_player->group < 2 || $this->server_owner == true)) {
+                if (isset($dc_player) && ($dc_player->group < 2 || $this->server_owner == true || $dc_player->temp_mod == true)) {
                     $mod_id = $this->user_id;
                     $mod_name = $this->name;
                     $mod_ip = $this->ip;
