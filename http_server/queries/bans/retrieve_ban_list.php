@@ -12,7 +12,7 @@ function retrieve_ban_list($pdo, $start, $count)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not retrieve ban list');
+        throw new Exception('Could not retrieve the ban list.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

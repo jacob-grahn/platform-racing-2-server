@@ -21,15 +21,15 @@ function pr2_update_part_array($pdo, $user_id, $type, $part_array)
 
     $stmt = $pdo->prepare("
         UPDATE pr2
-        SET $field = :part_array
-        WHERE user_id = :user_id
+           SET $field = :part_array
+         WHERE user_id = :user_id
     ");
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':part_array', $part_array, PDO::PARAM_STR);
-
     $result = $stmt->execute();
+    
     if ($result === false) {
-        throw new Exception('Could not update pr2 part array');
+        throw new Exception("Could not update user #$user_id\'s PR2 player data on column $field.");
     }
 
     return $result;

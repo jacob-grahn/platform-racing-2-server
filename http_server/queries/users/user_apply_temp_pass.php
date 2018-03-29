@@ -12,7 +12,7 @@ function user_apply_temp_pass($pdo, $user_id)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not apply temporary password');
+        throw new Exception('Could not apply temporary password.');
     }
 
     return $result;

@@ -17,7 +17,7 @@ function guild_transfers_select_by_guild($pdo, $guild_id, $suppress_error = fals
     
     $transfers = $stmt->fetchAll(PDO::FETCH_OBJ);
     
-    if ($transfers === false) {
+    if (empty($transfers)) {
         if ($suppress_error === false) {
             throw new Exception('Could not find any guild transfers for this guild.');
         } else {

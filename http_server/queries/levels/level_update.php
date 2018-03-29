@@ -4,18 +4,18 @@ function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_le
 {
     $stmt = $pdo->prepare('
         UPDATE pr2_levels
-        SET title = :title,
-            note = :note,
-            live = :live,
-            time = :time,
-            ip = :ip,
-            min_level = :min_level,
-            song = :song,
-            version = :version,
-            pass = :pass,
-            type = :type
-        WHERE level_id = :level_id
-        LIMIT 1;
+           SET title = :title,
+               note = :note,
+               live = :live,
+               time = :time,
+               ip = :ip,
+               min_level = :min_level,
+               song = :song,
+               version = :version,
+               pass = :pass,
+               type = :type
+         WHERE level_id = :level_id
+         LIMIT 1;
     ');
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_STR);
     $stmt->bindValue(':title', $title, PDO::PARAM_STR);
@@ -28,8 +28,8 @@ function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_le
     $stmt->bindValue(':version', $version, PDO::PARAM_INT);
     $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
-
     $result = $stmt->execute();
+    
     if ($result === false) {
         throw new Exception('Could not update level.');
     }

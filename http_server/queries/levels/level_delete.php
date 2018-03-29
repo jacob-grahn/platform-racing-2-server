@@ -11,7 +11,7 @@ function level_delete($pdo, $level_id)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not delete level');
+        throw new Exception('Could not delete level.');
     }
 
     return $result;

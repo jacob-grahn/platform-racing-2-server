@@ -20,14 +20,15 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
           LIMIT 1
     ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
-
     $result = $stmt->execute();
-    if (!$result) {
-        throw new Exception('Could not fetch user by name.');
+    
+    if ($result === false) {
+        throw new Exception('Could not perform query user_select_by_name.');
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    if ($user === false && $suppress_error === false) {
+    
+    if (empty($user) && $suppress_error === false) {
         throw new Exception('Could not find a user with that name.');
     }
 

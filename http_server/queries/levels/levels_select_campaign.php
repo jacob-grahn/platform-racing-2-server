@@ -27,7 +27,7 @@ function levels_select_campaign($pdo)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not perform query to select campaign levels');
+        throw new Exception('Could not perform query to select campaign levels.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

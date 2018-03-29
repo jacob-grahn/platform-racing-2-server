@@ -4,8 +4,8 @@ function recent_logins_count_by_user($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         SELECT COUNT(*)
-        FROM recent_logins
-        WHERE user_id = :user_id
+          FROM recent_logins
+         WHERE user_id = :user_id
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
