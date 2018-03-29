@@ -13,11 +13,12 @@ function guild_transfer_select($pdo, $code)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception('Could fetch guild transfer request');
+        throw new Exception('Could fetch guild transfer request.');
     }
     
     $row = $stmt->fetch(PDO::FETCH_OBJ);
-    if ($row === false) {
+    
+    if (empty($row)) {
         throw new Exception('No pending guild transfer found for that code.');
     }
     

@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../fns/s3_connect.php';
 require_once __DIR__ . '/../../queries/level_backups/level_backup_select.php';
 require_once __DIR__ . '/../../queries/level_backups/level_backups_select.php';
 require_once __DIR__ . '/../../queries/levels/level_select.php';
+require_once __DIR__ . '/../../queries/levels/levels_restore_backup.php';
 
 $ip = get_ip();
 $desc = "<p><center>Welcome to PR2's level restore system!<br>You can use this tool to restore any level that was modified or deleted in the past month.</center></p>";
@@ -74,7 +75,7 @@ try {
         $body = str_replace($str1, $str2, $body);
         $len = strlen($body) - 32;
         $body = substr($body, 0, $len);
-        $str_to_hash = $new_version . $level_id . $body . '0kg4%dsw';
+        $str_to_hash = $new_version . $level_id . $body . $LEVEL_SALT_2;
         $hash = md5($str_to_hash);
         $body = $body . $hash;
 

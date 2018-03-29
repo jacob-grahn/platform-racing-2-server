@@ -7,13 +7,13 @@ function folding_select_by_user_id($pdo, $user_id)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception('Could not select a user from folding_at_home');
+        throw new Exception('Could not perform query folding_select_by_user_id.');
     }
 
     $row = $stmt->fetch(PDO::FETCH_OBJ);
 
-    if ($row === false) {
-        throw new Exception('Could not find folding_at_home row');
+    if (empty($row)) {
+        throw new Exception('Could not find a folding_at_home entry for user #$user_id.');
     }
 
     return $row;

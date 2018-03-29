@@ -16,7 +16,8 @@ function guild_update($pdo, $guild_id, $guild_name, $emblem, $note, $owner_id, $
                $memcount_sql
                emblem = :emblem,
                note = :note,
-               owner_id = :owner_id
+               owner_id = :owner_id,
+               active_date = NOW()
          WHERE guild_id = :guild_id
          LIMIT 1
     ");

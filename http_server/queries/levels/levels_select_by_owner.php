@@ -15,17 +15,17 @@ function levels_select_by_owner($pdo, $level_id)
                users.name,
                users.power,
                users.user_id
-        FROM pr2_levels, users
-        WHERE pr2_levels.user_id = users.user_id
-        AND pr2_levels.user_id = :level_id
-        ORDER BY pr2_levels.time DESC
-        LIMIT 0, 100
+          FROM pr2_levels, users
+         WHERE pr2_levels.user_id = users.user_id
+           AND pr2_levels.user_id = :level_id
+         ORDER BY pr2_levels.time DESC
+         LIMIT 0, 100
     ');
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
-
     $result = $stmt->execute();
+    
     if ($result === false) {
-        throw new Exception('Could not fetch your levels');
+        throw new Exception('Could not perform query levels_select_by_owner.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

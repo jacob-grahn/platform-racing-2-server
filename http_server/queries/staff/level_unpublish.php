@@ -13,10 +13,11 @@ function level_unpublish($pdo, $level_id, $suppress_error = false)
     
     if ($result === false) {
         if ($suppress_error === false) {
-            throw new Exception("Could not unpublish level.");
+            throw new Exception('Could not unpublish level.');
         } else {
             return false;
         }
     }
+    
     return $result;
 }

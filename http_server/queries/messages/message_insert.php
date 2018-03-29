@@ -17,7 +17,7 @@ function message_insert($pdo, $to_user_id, $from_user_id, $message, $ip)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not send message');
+        throw new Exception('Could not send message.');
     }
 
     return $result;

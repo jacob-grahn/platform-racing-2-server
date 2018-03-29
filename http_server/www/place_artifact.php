@@ -2,7 +2,7 @@
 
 header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/artifact/artifact_location_update.php';
+require_once __DIR__ . '/../queries/artifact_locations/artifact_location_update.php';
 
 $x = (int) find('x', 0);
 $y = (int) find('y', 0);

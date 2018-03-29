@@ -1,13 +1,14 @@
 <?php
 
+// TO-DO: Is this needed?
 function level_select_by_title($pdo, $user_id, $title)
 {
     $stmt = $pdo->prepare('
         SELECT *
-        FROM pr2_levels
-        WHERE user_id = :user_id
-        AND title = :title
-        LIMIT 1
+          FROM pr2_levels
+         WHERE user_id = :user_id
+           AND title = :title
+         LIMIT 1
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':title', $title, PDO::PARAM_STR);

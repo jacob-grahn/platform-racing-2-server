@@ -17,7 +17,7 @@ function server_update_status($pdo, $server_id, $status, $population, $happy_hou
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not update server status');
+        throw new Exception('Could not update server status.');
     }
 
     return $result;

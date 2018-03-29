@@ -1,5 +1,13 @@
 <?php
 
+require_once __DIR__ . '/../http_server/queries/staff/actions/admin_action_insert.php';
+require_once __DIR__ . '/../http_server/queries/staff/actions/mod_action_insert.php';
+require_once __DIR__ . '/../http_server/queries/pr2/pr2_update.php';
+require_once __DIR__ . '/../http_server/queries/epic_upgrades/epic_upgrades_upsert.php';
+require_once __DIR__ . '/../http_server/queries/users/user_update_status.php';
+require_once __DIR__ . '/../http_server/queries/rank_tokens/rank_token_update.php';
+require_once __DIR__ . '/../http_server/queries/exp_today/exp_today_add.php';
+
 class Player
 {
 
@@ -81,7 +89,7 @@ class Player
 
     public $temp_mod = false;
     public $server_owner = false;
-    
+
     public $hh_warned = false;
     public $restart_warned = false;
 
@@ -99,6 +107,7 @@ class Player
     {
         $this->socket = $socket;
         $this->ip = $socket->ip;
+        $this->last_save_time = time();
 
         $this->user_id = $login->user->user_id;
         $this->name = $login->user->name;
@@ -153,7 +162,6 @@ class Player
 
         $socket->player = $this;
         $this->active_rank = $this->rank + $this->rt_used;
-        $this->last_save_time = time();
 
         global $player_array;
         global $max_players;
@@ -224,7 +232,7 @@ class Player
     public function maybe_save()
     {
         $time = time();
-        if ($time - $this->last_save_time > 60*15) {
+        if ($time - $this->last_save_time > 60 * 2) {
             $this->last_save_time = $time;
             $this->save_info();
         }
@@ -258,7 +266,7 @@ class Player
     {
 
         // globals and variables
-        global $guild_id, $guild_owner, $player_array, $port, $server_name, $server_id, $server_expire_time, $uptime, $db;
+        global $guild_id, $guild_owner, $player_array, $port, $server_name, $server_id, $server_expire_time, $uptime, $pdo;
         $admin_name = $this->name;
         $admin_id = $this->user_id;
         $ip = $this->ip;
@@ -527,7 +535,7 @@ class Player
                         $this->restart_warned = true;
                         $this->write('systemChat`WARNING: You just typed the server restart command. If you choose to proceed, this action will disconnect EVERY player on this server. Are you sure you want to disconnect ALL players and restart the server? If so, type the command again.');
                     } else if ($this->restart_warned == true) {
-                        $db->call('admin_action_insert', array($admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip));
+                        admin_action_insert($pdo, $admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip);
                         shutdown_server();
                     }
                 } else {
@@ -567,7 +575,7 @@ class Player
 
                     // if they're an actual mod, log it
                     if ($this->server_owner == false || $this->user_id == 4291976) {
-                        $db->call('mod_action_insert', array($mod_id, "$mod_name disconnected $dc_name from $server_name from $mod_ip.", $mod_id, $mod_ip));
+                        mod_action_insert($pdo, $mod_id, "$mod_name disconnected $dc_name from $server_name from $mod_ip.", $mod_id, $mod_ip);
                     }
 
                     // tell the world
@@ -654,7 +662,7 @@ class Player
                 } else {
                     $this->write("Invalid action. For more information on how to use this command, type /mod help.");
                 }
-            } 
+            }
             elseif ($chat_message == '/rules') {
                 $message = 'systemChat`The PR2 rules can be found here: https://jiggmin2.com/forums/showthread.php?tid=385.';
                 if ($guild_id != 0) {
@@ -947,7 +955,7 @@ class Player
 
         $this->verify_parts();
         $this->verify_stats();
-        $this->save_info();
+        $this->maybe_save();
     }
 
 
@@ -1072,9 +1080,9 @@ class Player
         $this->write('setGroup`3');
         $this->write("message`Welcome to your private server! You have admin privileges here. To promote server mods, type /mod promote *player name here* in the chat. They'll remain modded until they log out.<br><br>For more information about what commands you can use, type /help in the chat.");
     }
-    
-    
-    
+
+
+
     public function become_guest()
     {
         $this->guest = true;
@@ -1087,7 +1095,7 @@ class Player
 
     public function save_info()
     {
-        global $server_id, $db;
+        global $server_id, $pdo;
 
         // make sure none of the part values are blank to avoid server crashes
         if (is_empty($this->hat, false)) {
@@ -1175,22 +1183,21 @@ class Player
             $jumping = 50;
         }
 
-        $db->call(
-            'pr2_update',
-            array( $this->user_id, $rank, $exp_points,
+        pr2_update(
+            $pdo,
+            $this->user_id, $rank, $exp_points,
             $hat_color, $head_color, $body_color, $feet_color,
             $hat_color_2, $head_color_2, $body_color_2, $feet_color_2,
-            $hat, $head, $body,
-            $feet, $hat_array, $head_array, $body_array, $feet_array,
-            $speed, $acceleration, $jumping ),
-            MYSQLI_ASYNC
+            $hat, $head, $body, $feet,
+            $hat_array, $head_array, $body_array, $feet_array,
+            $speed, $acceleration, $jumping
         );
 
-        $db->call('epic_upgrades_upsert', array( $this->user_id, $epic_hat_array, $epic_head_array, $epic_body_array, $epic_feet_array ), MYSQLI_ASYNC);
-        $db->call('user_update_status', array( $this->user_id, $status, $e_server_id ), MYSQLI_ASYNC);
-        $db->call('rank_token_update', array( $this->user_id, $rt_used ), MYSQLI_ASYNC);
-        $db->call('exp_today_add', array( 'id-' . $this->user_id, $tot_exp_gained ), MYSQLI_ASYNC); // todo $exp_today
-        $db->call('exp_today_add', array( 'ip-' . $ip, $tot_exp_gained ), MYSQLI_ASYNC);
+        epic_upgrades_upsert($pdo, $this->user_id, $epic_hat_array, $epic_head_array, $epic_body_array, $epic_feet_array);
+        user_update_status($pdo, $this->user_id, $status, $e_server_id);
+        rank_token_update($pdo, $this->user_id, $rt_used);
+        exp_today_add($pdo, 'id-' . $this->user_id, $tot_exp_gained);
+        exp_today_add($pdo, 'ip-' . $ip, $tot_exp_gained);
     }
 
 

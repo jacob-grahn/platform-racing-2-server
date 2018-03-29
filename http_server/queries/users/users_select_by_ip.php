@@ -19,7 +19,7 @@ function users_select_by_ip($pdo, $ip)
     
     $users = $stmt->fetchAll(PDO::FETCH_OBJ);
     
-    if ($users === false) {
+    if (empty($users)) {
         throw new Exception('Could not find any users with that IP.');
     }
     

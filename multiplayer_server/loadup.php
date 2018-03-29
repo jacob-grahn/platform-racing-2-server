@@ -1,16 +1,22 @@
 <?php
 
+require_once __DIR__ . '/../http_server/queries/servers/server_select.php';
+require_once __DIR__ . '/../http_server/queries/campaign/campaign_select.php';
+require_once __DIR__ . '/../http_server/queries/purchases/purchases_select_recent.php';
+require_once __DIR__ . '/../http_server/queries/artifact_locations/artifact_location_select.php';
+require_once __DIR__ . '/../http_server/queries/guilds/guild_select.php';
+
+
 function begin_loadup($server_id)
 {
-    global $db, $server_id;
-    $db = new DB();
+    global $pdo, $server_id;
 
-    $server = $db->grab_row('server_select', array($server_id));
-    $campaign = $db->to_array($db->call('campaign_select'));
-    $perks = $db->to_array($db->call('purchases_select_recent'));
-    $artifact = $db->grab_row('artifact_location_select');
+    $server = server_select($pdo, $server_id);
+    $campaign = campaign_select($pdo);
+    $perks = purchases_select_recent($pdo);
+    $artifact = artifact_location_select($pdo);
 
-    set_server($db, $server);
+    set_server($pdo, $server);
     set_campaign($campaign);
     set_perks($perks);
     place_artifact($artifact);
@@ -21,7 +27,7 @@ function begin_loadup($server_id)
 
 
 
-function set_server($db, $server)
+function set_server($pdo, $server)
 {
     global $port, $server_name, $uptime, $server_expire_time, $guild_id, $guild_owner, $key;
     $port = $server->port;
@@ -38,7 +44,7 @@ function set_server($db, $server)
     }
 
     if ($guild_id != 0) {
-        $guild = $db->grab_row('guild_select', array($guild_id));
+        $guild = guild_select($pdo, $guild_id);
         $guild_owner = $guild->owner_id;
     } else {
         $guild_owner = 4291976; //Fred the G. Cactus

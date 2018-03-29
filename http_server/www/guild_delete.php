@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/guilds/guild_delete.php';
-require_once __DIR__ . '/../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php';
-
 header("Content-type: text/plain");
+
+require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../queries/guilds/guild_select.php'; // select a guild
+require_once __DIR__ . '/../queries/guilds/guild_delete.php'; // delete a guild
+require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php'; // record the mod action
 
 $guild_id = find_no_cookie('guild_id');
 $ip = get_ip();
@@ -21,7 +21,6 @@ try {
     $mod = check_moderator($pdo);
     $mod_name = $mod->name;
     $mod_id = $mod->user_id;
-    $ip = $mod->ip;
 
     // more rate limiting
     rate_limit('guild-delete-'.$mod_id, 5, 2);
@@ -36,7 +35,7 @@ try {
     guild_delete($pdo, $guild_id);
 
     // record the deletion in the action log
-    mod_action_insert($pdo, $mod_id, "$mod_name deleted guild $guild_id from $ip (guild_name: $guild_name, guild_prose: $guild_note, owner_id: $guild_owner)", $mod_id, $ip);
+    mod_action_insert($pdo, $mod_id, "$mod_name deleted guild $guild_id from $ip {guild_name: $guild_name, guild_prose: $guild_note, owner_id: $guild_owner}", 0, $ip);
 
     // safety first
     $safe_guild_name = htmlspecialchars($guild_name);

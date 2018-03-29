@@ -1,10 +1,8 @@
 <?php
 
-require_once __DIR__ . '/db_fns.php';
-
 function promote_server_mod($name, $owner, $promoted)
 {
-    global $db, $guild_owner;
+    global $guild_owner;
 
     // safety first
     $safe_owner = htmlspecialchars($owner->name);
@@ -27,17 +25,14 @@ function promote_server_mod($name, $owner, $promoted)
         return false;
     }
 
-    // get info about the user being promoted
-    $user = $db->grab_row('user_select', array($promoted->user_id), 'Could not find a user with that ID.');
-
     // if the person being promoted is a guest, end the function
-    if ($user->power == 0) {
+    if ($promoted->group == 0) {
         $owner->write("message`Error: Guests can't be promoted to server moderators.");
         return false;
     }
 
     // if the person being promoted is an admin, kill the function
-    if ($user->power == 3) {
+    if ($promoted->group == 3) {
         $owner->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
         return false;
     }

@@ -189,16 +189,11 @@ function update($pdo)
     // push the changes to the servers
     generate_level_list($pdo, 'campaign');
 
-    try {
-        //admin log
-        $admin_name = $admin->name;
-        $admin_id = $admin->user_id;
-        $ip = get_ip();
-        admin_action_insert($pdo, $admin_id, "$admin_name set a new custom campaign from $ip.", $admin_id, $ip);
-    } catch (Exception $e) {
-        $message = "Error: " . $e->getMessage();
-        output_form($pdo, $message);
-    }
+    //admin log
+    $admin_name = $admin->name;
+    $admin_id = $admin->user_id;
+    $ip = get_ip();
+    admin_action_insert($pdo, $admin_id, "$admin_name set a new custom campaign from $ip.", 0, $ip);
 
     // did the script get here? great! redirect back to the script with a success message
     $message = "Great success! The new campaign has been set and will take effect shortly.";

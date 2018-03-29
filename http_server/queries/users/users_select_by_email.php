@@ -17,7 +17,7 @@ function users_select_by_email($pdo, $email)
     
     $users = $stmt->fetchAll(PDO::FETCH_OBJ);
     
-    if ($users === false) {
+    if (empty($users)) {
         throw new Exception('Could not find any users with that email.');
     }
     

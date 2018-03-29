@@ -19,7 +19,6 @@ require_once __DIR__ . '/../queries/friends/friends_select.php';
 require_once __DIR__ . '/../queries/ignored/ignored_select_list.php';
 require_once __DIR__ . '/../queries/exp_today/exp_today_select.php';
 require_once __DIR__ . '/../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../queries/artifact/artifact_check.php';
 require_once __DIR__ . '/../queries/recent_logins/recent_logins_insert.php';
 require_once __DIR__ . '/../queries/messages/messages_select_most_recent.php';
 
@@ -263,10 +262,6 @@ try {
     $exp_today_id = exp_today_select($pdo, 'id-'.$user_id);
     $exp_today_ip = exp_today_select($pdo, 'ip-'.$ip);
     $exp_today = max($exp_today_id, $exp_today_ip);
-
-
-    //--- see if they have gotten the artifact
-    $artifact = false; // artifact_check($pdo, $user_id);
 
 
 

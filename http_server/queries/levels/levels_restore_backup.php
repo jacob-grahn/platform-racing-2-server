@@ -37,10 +37,10 @@ function levels_restore_backup($pdo, $user_id, $title, $note, $live, $time, $ip,
     $stmt->bindValue(':votes', $votes, PDO::PARAM_INT);
     $stmt->bindValue(':rating', $rating, PDO::PARAM_STR);
     $stmt->bindValue(':version', $version, PDO::PARAM_INT);
-
     $result = $stmt->execute();
+    
     if ($result === false) {
-        throw new Exception('Could not restore level backup');
+        throw new Exception('Could not restore level backup.');
     }
 
     return $stmt->fetch(PDO::FETCH_OBJ);

@@ -13,7 +13,7 @@ function server_update_address($pdo, $server_id, $address)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not update server address');
+        throw new Exception('Could not update server address'.);
     }
 
     return $result;

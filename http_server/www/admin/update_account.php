@@ -177,12 +177,12 @@ function update($pdo, $admin)
 
     // adjust guild member count
     if ($user->guild != $guild_id) {
-        guild_select($pdo, $guild_id); // make sure the new guild exists
+        if ($guild_id != 0) {
+            guild_select($pdo, $guild_id); // make sure the new guild exists
+            guild_increment_member($pdo, $user->guild, 1);
+        }
         if ($user->guild != 0) {
             guild_increment_member($pdo, $user->guild, -1);
-        }
-        if ($guild_id != 0) {
-            guild_increment_member($pdo, $user->guild, 1);
         }
     }
 
@@ -219,7 +219,7 @@ function update($pdo, $admin)
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $disp_changes = "Changes: " . $account_changes;
-    admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. (update_user: $updated_user, update_pr2: $updated_pr2, update_epic: $updated_epic, changes: $account_changes)", 'update_account', $admin_ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. {update_user: $updated_user, update_pr2: $updated_pr2, update_epic: $updated_epic, changes: $account_changes}", 0, $admin_ip);
 
     header("Location: player_deep_info.php?name1=" . urlencode($user_name));
     die();

@@ -151,7 +151,7 @@ function update($pdo, $admin)
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $disp_changes = "Changes: " . $guild_changes;
-    admin_action_insert($pdo, $admin_id, "$admin_name updated guild $guild_id from $admin_ip. $disp_changes.", 'update_guild', $admin_ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name updated guild $guild_id from $admin_ip. $disp_changes.", 0, $admin_ip);
 
     // redirect
     header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));

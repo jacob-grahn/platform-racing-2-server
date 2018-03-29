@@ -8,10 +8,10 @@ function bans_select_by_user_id($pdo, $user_id)
         AND account_ban = 1
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-
     $result = $stmt->execute();
+    
     if ($result === false) {
-        throw new Exception('could not select bans by user_id');
+        throw new Exception('Could not select bans by user ID.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

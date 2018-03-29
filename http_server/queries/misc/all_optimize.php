@@ -1,35 +1,29 @@
 <?php
 
-function users_reset_status($pdo)
+// TO-DO: is this needed?
+function all_optimize($pdo)
 {
-    $stmt = $pdo->prepare('
-        OPTIMIZE TABLE artifact_location;
-        OPTIMIZE TABLE bans;
-        OPTIMIZE TABLE best_levels;
-        OPTIMIZE TABLE bounce;
-        OPTIMIZE TABLE flagged_messages;
-        OPTIMIZE TABLE folding_at_home;
-        OPTIMIZE TABLE friends;
-        OPTIMIZE TABLE ignored;
-        OPTIMIZE TABLE login_attempts;
-        OPTIMIZE TABLE messages;
-        OPTIMIZE TABLE messages_reported;
-        OPTIMIZE TABLE pr2;
-        OPTIMIZE TABLE pr2_campaign;
-        OPTIMIZE TABLE pr2_levels;
-        OPTIMIZE TABLE pr2_new_levels;
-        OPTIMIZE TABLE pr2_ratings;
-        OPTIMIZE TABLE promotion_log;
-        OPTIMIZE TABLE queries;
-        OPTIMIZE TABLE tokens;
-        OPTIMIZE TABLE users;
-        OPTIMIZE TABLE users_new;
-    ');
-    $result = $stmt->execute();
+    $pdo->exec('OPTIMIZE TABLE artifact_location');
+    $pdo->exec('OPTIMIZE TABLE bans');
+    $pdo->exec('OPTIMIZE TABLE best_levels');
+    $pdo->exec('OPTIMIZE TABLE bounce');
+    $pdo->exec('OPTIMIZE TABLE flagged_messages');
+    $pdo->exec('OPTIMIZE TABLE folding_at_home');
+    $pdo->exec('OPTIMIZE TABLE friends');
+    $pdo->exec('OPTIMIZE TABLE ignored');
+    $pdo->exec('OPTIMIZE TABLE login_attempts');
+    $pdo->exec('OPTIMIZE TABLE messages');
+    $pdo->exec('OPTIMIZE TABLE messages_reported');
+    $pdo->exec('OPTIMIZE TABLE pr2');
+    $pdo->exec('OPTIMIZE TABLE pr2_campaign');
+    $pdo->exec('OPTIMIZE TABLE pr2_levels');
+    $pdo->exec('OPTIMIZE TABLE pr2_new_levels');
+    $pdo->exec('OPTIMIZE TABLE pr2_ratings');
+    $pdo->exec('OPTIMIZE TABLE promotion_log');
+    $pdo->exec('OPTIMIZE TABLE queries');
+    $pdo->exec('OPTIMIZE TABLE tokens');
+    $pdo->exec('OPTIMIZE TABLE users');
+    $pdo->exec('OPTIMIZE TABLE users_new');
 
-    if ($result === false) {
-        throw new Exception('Could not optimize the db');
-    }
-
-    return $result;
+    return true;
 }
