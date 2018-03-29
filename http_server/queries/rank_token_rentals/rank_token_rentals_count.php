@@ -11,16 +11,10 @@ function rank_token_rentals_count($pdo, $user_id, $guild_id)
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not count how many rank tokens you are currently renting.');
     }
 
-    $row = $stmt->fetch(PDO::FETCH_OBJ);
-    
-    if ($row == false || empty($row) || (int) $row == 0) {
-        return 0;
-    }
-
-    return $row->count;
+    return (int) $stmt->fetchColumn();
 }
