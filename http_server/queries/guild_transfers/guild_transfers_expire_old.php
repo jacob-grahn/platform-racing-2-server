@@ -7,6 +7,7 @@ function guild_transfers_expire_old($pdo)
            SET status = "expired",
                confirm_ip = "n/a"
          WHERE DATE(date) < DATE_SUB(NOW(), INTERVAL 1 DAY)
+           AND status = "pending"
     ');
     
     if ($result === false) {
