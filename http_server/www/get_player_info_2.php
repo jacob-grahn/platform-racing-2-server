@@ -64,7 +64,7 @@ try {
     $hats = count(explode(',', $target->hat_array))-1;
 
     if (isset($user_id)) {
-        $friend = (int) (bool) friend_select($pdo, $user_id, $target_id);
+        $friend = (int) (bool) friend_select($pdo, $user_id, $target_id, true);
         $ignored = (int) (bool) ignored_select($pdo, $user_id, $target_id, true);
     }
 

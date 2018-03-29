@@ -1,7 +1,7 @@
 <?php
 
 // TO-DO: Is this needed?
-function ignored_select($pdo, $user_id, $ignore_id)
+function ignored_select ($pdo, $user_id, $ignore_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT *
@@ -19,9 +19,9 @@ function ignored_select($pdo, $user_id, $ignore_id)
     }
 
     $row = $stmt->fetch(PDO::FETCH_OBJ);
-    
-    if (empty($row)) {
-        throw new Exception("Could not find user #$friend_id on your friends list.");
+
+    if (empty($row) && !$supress_error) {
+        throw new Exception("Could not find user #$ignored_id on your ignored list.");
     }
 
     return $row;
