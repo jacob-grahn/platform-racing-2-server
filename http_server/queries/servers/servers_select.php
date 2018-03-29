@@ -2,13 +2,14 @@
 
 function servers_select($pdo)
 {
-    $result = $pdo->exec('
+    $stmt = $pdo->prepare('
         SELECT *
           FROM servers
          WHERE active = 1
          ORDER BY server_id ASC
     ');
 
+    $result = $stmt->execute();
     if ($result === false) {
         throw new Exception('Could not select active servers.');
     }
