@@ -107,11 +107,9 @@ try {
     //--- guest login
     if (strtolower(trim($login->user_name)) == 'guest') {
         $guest_login = true;
-        if (get_ip(false) != get_ip(true)) {
-            throw new Exception("You seem to be using a proxy to connect to PR2. You won't be able to connect as a guest, but you can create an account to play.");
-        }
-        $user = user_select_guest($pdo);
-        check_if_banned($pdo, $user->user_id, $ip);
+        $guest = user_select_guest($pdo);
+        check_if_banned($pdo, $guest->user_id, $ip);
+        $user = pass_login($pdo, $guest->name, $GUEST_PASS);
     } //--- account login
     else {
         //token login

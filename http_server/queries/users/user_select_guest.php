@@ -3,7 +3,7 @@
 function user_select_guest($pdo)
 {
     $stmt = $pdo->prepare('
-        SELECT user_id, name, email, register_ip, ip, time, register_time, power, status, read_message_id, guild, server_id
+        SELECT user_id, name
           FROM users
          WHERE power = 0
            AND status = "offline"
@@ -18,7 +18,7 @@ function user_select_guest($pdo)
     $guest = $stmt->fetch(PDO::FETCH_OBJ);
     
     if (empty($guest)) {
-        throw new Exception('Could not find a suitable guest account. Try again later or create a new account.');
+        throw new Exception('Could not find a suitable guest account. Try again later, or create a new account instead.');
     }
 
     return $guest;
