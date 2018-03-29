@@ -314,7 +314,6 @@ try {
     $send->stats = $stats;
     $send->friends = $friends;
     $send->ignored = $ignored;
-    $send->artifact = $artifact;
     $send->new_account = $new_account;
     $send->rt_used = $rt_used;
     $send->rt_available = $rt_available;

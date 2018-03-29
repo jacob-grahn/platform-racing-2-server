@@ -157,7 +157,6 @@ class Player
         $this->rt_used = $login->rt_used;
         $this->rt_available = $login->rt_available;
         $this->exp_today = $this->start_exp_today = $login->exp_today;
-        $this->artifact = $login->artifact;
         $this->status = $login->status;
 
         $socket->player = $this;
