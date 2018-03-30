@@ -433,7 +433,7 @@ class Game extends Room
         if ($time < 0) {
             $time = 0;
         }
-        return sprintf("%.2f", $time);
+        return round($time, 2);
     }
 
 
