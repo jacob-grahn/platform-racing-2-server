@@ -60,7 +60,7 @@ function demote_server_mod($name, $owner, $demoted)
 
     // sanity check: does the user own the server?
     if ($owner->group < 3 || $owner->server_owner == false || $owner->user_id != $guild_owner) {
-        $owner->write("message`Error: You lack the power to promote $safe_name to a server moderator.");
+        $owner->write("message`Error: You lack the power to demote $safe_name.");
         return false;
     }
 
