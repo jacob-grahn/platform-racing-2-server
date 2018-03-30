@@ -98,7 +98,6 @@ class Player
     public $lux = 0;
     public $lives = 3;
     public $items_used = 0;
-    public $artifact = 0;
     public $super_booster = false;
     public $last_save_time = 0;
 
@@ -561,7 +560,7 @@ class Player
                     $dc_name = trim(substr($chat_message, 4)); // for /dc
                 }
                 $dc_player = name_to_player($dc_name);
-                $safe_dc_name = htmlspecialchars($dc_name->name); // make the name safe to echo back to the user
+                $safe_dc_name = htmlspecialchars($dc_name); // make the name safe to echo back to the user
 
                 // permission checks
                 if (isset($dc_player) && ($dc_player->group < 2 || $this->server_owner == true || $dc_player->temp_mod == true)) {

@@ -21,7 +21,7 @@ function ignored_select ($pdo, $user_id, $ignore_id, $suppress_error = false)
     $row = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (empty($row) && !$suppress_error) {
-        throw new Exception("Could not find user #$ignored_id on your ignored list.");
+        throw new Exception("Could not find user #$ignore_id on your ignored list.");
     }
 
     return $row;

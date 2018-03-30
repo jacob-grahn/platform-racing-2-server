@@ -1,22 +1,17 @@
 <?php
 
-require_once __DIR__ . '/../fns/artifact_first_check.php';
+require_once __DIR__ . '/../fns/artifact/save_finder.php';
 
 class Game extends Room
 {
 
-    const LEVEL_BUTO = 1738847; //for jigg hat
-    const LEVEL_DELIVERANCE = 1896157; //for slender set
+    const LEVEL_BUTO = 1738847; // for jigg hat
+    const LEVEL_DELIVERANCE = 1896157; // for slender set
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
     const MODE_EGG = 'egg';
     const MODE_OBJECTIVE = 'objective';
-
-    public static $artifact_level_id = 0;
-    public static $artifact_x = 0;
-    public static $artifact_y = 0;
-    public static $artifact_updated_time = 0;
 
     private $finish_array = array();
     private $course_id;
@@ -313,19 +308,19 @@ class Game extends Room
             $this->finish_count = $this->democratize('finish_count');
             $this->cowboy_chance = $this->democratize('cowboy_chance');
 
-            //-- turn finish positions into an array
+            // turn finish positions into an array
             if ($this->finish_positions != 'all') {
                 $this->finish_positions = json_decode($this->finish_positions);
             }
 
-            //-- boot people with the wrong level hash
+            // boot people with the wrong level hash
             foreach ($this->player_array as $player) {
                 if ($this->hash !== $player->race_stats->level_hash) {
                     $this->quit_race($player);
                 }
             }
 
-            //-- jigg hat
+            // jigg hat
             if ($this->course_id == self::LEVEL_BUTO) {
                 $hat = new Hat($this->next_hat_id++, Hats::JIGG, 0xFFFFFF, -1);
                 $this->loose_hat_array[$hat->id] = $hat;
@@ -335,23 +330,23 @@ class Game extends Room
                 $this->send_to_all("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
             }
 
-            //-- artifact
-            if ($this->course_id == self::$artifact_level_id) {
+            // place artifact hat
+            if ($this->course_id == Artifact::$level_id) {
                 $hat = new Hat($this->next_hat_id++, Hats::ARTIFACT, 0xFFFFFF, -1);
                 $this->loose_hat_array[$hat->id] = $hat;
-                $x = self::$artifact_x;
-                $y = self::$artifact_y;
+                $x = Artifact::$x;
+                $y = Artifact::$y;
                 $rot = 0;
                 $this->send_to_all("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
             }
 
-            //-- eggs
+            // eggs
             if ($this->mode == self::MODE_EGG) {
                 $this->send_to_all('setEggSeed`'.rand(0, 99999));
                 $this->send_to_all('addEggs`10');
             }
 
-            //-- sfchm
+            // sfchm
             if ($this->cowboy_chance === '') {
                 $this->cowboy_chance = 5;
             }
@@ -363,10 +358,10 @@ class Game extends Room
                 $this->send_to_all('cowboyMode`');
             }
 
-            //-- hats
+            // hats
             $this->init_hats();
 
-            //-- start
+            // start
             $this->start_time = microtime(true);
             $this->send_to_all('ping`' . time());
             $this->send_to_all('beginRace`');
@@ -439,6 +434,8 @@ class Game extends Room
 
     public function finish_race($player)
     {
+        global $pdo;
+
         if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
             $finish_time = $this->ensure_time_format(microtime(true) - $this->start_time);
             $this->set_finish_time($player, $finish_time);
@@ -517,9 +514,6 @@ class Game extends Room
             }
 
             //--- opponent bonus ---
-            // I think artifact_mode just makes sure all of the bonus lines don't get filled up in the client
-            $artifact_mode = !($this->course_id != self::$artifact_level_id || $player->artifact == 1 || $player->wearing_hat(Hats::ARTIFACT) == false);
-
             for ($i = $place+1; $i < count($this->finish_array); $i++) {
                 $race_stats = $this->finish_array[$i];
                 $exp_gain = ($race_stats->rank+5) * $time_mod;
@@ -528,12 +522,7 @@ class Game extends Room
                     $exp_gain = 0;
                 }
                 $tot_exp_gain += $exp_gain;
-                if (!$artifact_mode) {
-                    $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
-                }
-            }
-            if ($artifact_mode && count($this->finish_array) != 1 && (int) $exp_gain != 0) {
-                $player->write('award`Defeated Opponents`+ '.$exp_gain);
+                $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
             }
 
             // hat, campaign, hh bonuses
@@ -604,19 +593,18 @@ class Game extends Room
             }
 
             //artifact bonus
-            if ($this->course_id == self::$artifact_level_id && $player->artifact == 0 && $player->wearing_hat(Hats::ARTIFACT)) {
-                $player->artifact = 1;
+            if ($this->course_id == Artifact::$level_id && $player->wearing_hat(Hats::ARTIFACT)) {
+                $result = save_finder($pdo, $player);
+                if ($result) {
+                    $max_artifact_bonus = 50000;
+                    $artifact_bonus = $max_artifact_bonus * $player->active_rank / 60;
+                    if ($artifact_bonus > $max_artifact_bonus) {
+                        $artifact_bonus = $max_artifact_bonus;
+                    }
 
-                $max_artifact_bonus = 50000;
-                $artifact_bonus = $max_artifact_bonus * $player->active_rank / 60;
-                if ($artifact_bonus > $max_artifact_bonus) {
-                    $artifact_bonus = $max_artifact_bonus;
+                    $tot_exp_gain += $artifact_bonus;
+                    $player->write('award`Artifact Found!`+ ' . number_format($artifact_bonus));
                 }
-
-                $tot_exp_gain += $artifact_bonus;
-                $player->write('award`Artifact Found!`+ ' . number_format($artifact_bonus));
-
-                artifact_first_check($player);
             }
 
             //---

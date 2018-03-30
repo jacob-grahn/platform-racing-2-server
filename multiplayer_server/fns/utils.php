@@ -112,7 +112,7 @@ function get_chat_room($chat_room_name)
 function apply_bans($bans)
 {
     global $player_array;
-    
+
     foreach ($bans as $ban) {
         foreach ($player_array as $player) {
             if ($player->ip == $ban->banned_ip || $player->user_id == $ban->banned_user_id) {
@@ -143,25 +143,11 @@ function pm_notify($pms)
 function place_artifact($artifact)
 {
     output("place_artifact: " . json_encode($artifact));
-    Game::$artifact_level_id = $artifact->level_id;
-    Game::$artifact_x = $artifact->x;
-    Game::$artifact_y = $artifact->y;
-    $time = strtotime($artifact->updated_time);
-    if ($time > Game::$artifact_updated_time) {
-        Game::$artifact_updated_time = $time;
-        reset_artifacts();
-    }
-}
-
-
-//---
-function reset_artifacts()
-{
-    output('reset_artifacts');
-    global $player_array;
-    foreach ($player_array as $player) {
-        $player->artifact = 0;
-    }
+    Artifact::$level_id = $artifact->level_id;
+    Artifact::$x = $artifact->x;
+    Artifact::$y = $artifact->y;
+    Artifact::$updated_time = strtotime($artifact->updated_time);
+    Artifact::$first_finder = $artifact->first_finder;
 }
 
 
@@ -171,13 +157,13 @@ function drain_plays()
 {
     global $play_count_array;
     $cup = array();
-    
+
     foreach ($play_count_array as $course => $plays) {
         $cup[ $course ] = $plays;
     }
-    
+
     $play_count_array = array();
-    
+
     return $cup;
 }
 
