@@ -300,8 +300,6 @@ class Game extends Room
 
     private function begin_race()
     {
-        global $server_id;
-        
         if (!$this->begun) {
             $this->begun = true;
             $this->mode = $this->democratize('mode');
@@ -333,7 +331,7 @@ class Game extends Room
             }
 
             // place artifact hat
-            if ($this->course_id == Artifact::$level_id && $server_id == 889) {
+            if ($this->course_id == Artifact::$level_id) {
                 $hat = new Hat($this->next_hat_id++, Hats::ARTIFACT, 0xFFFFFF, -1);
                 $this->loose_hat_array[$hat->id] = $hat;
                 $x = Artifact::$x;
@@ -428,7 +426,7 @@ class Game extends Room
 
     public function finish_race($player)
     {
-        global $pdo, $server_id;
+        global $pdo;
 
         if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
             $finish_time = microtime(true) - $this->start_time;
@@ -587,7 +585,7 @@ class Game extends Room
             }
 
             //artifact bonus
-            if ($this->course_id == Artifact::$level_id && $player->wearing_hat(Hats::ARTIFACT) && $server_id == 889) {
+            if ($this->course_id == Artifact::$level_id && $player->wearing_hat(Hats::ARTIFACT)) {
                 $result = save_finder($pdo, $player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
