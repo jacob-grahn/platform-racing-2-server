@@ -140,8 +140,8 @@ try {
     }
 
     // make account/ip ban detection pretty courtesy of data_fns.php
-    $is_account_ban = check_value($safe_account_ban, 1);
-    $is_ip_ban = check_value($safe_ip_ban, 1);
+    $is_account_ban = check_value($account_ban, 1);
+    $is_ip_ban = check_value($ip_ban, 1);
 
     // make expire time pretty
     $disp_expire_time = date('Y-m-d H:i:s', $expire_time);
