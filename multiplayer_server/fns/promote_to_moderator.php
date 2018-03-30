@@ -10,12 +10,12 @@ require_once __DIR__ . '/../../http_server/queries/staff/actions/admin_action_in
 
 function promote_to_moderator($name, $type, $admin, $promoted)
 {
-    global $pdo, $server_name, $socket;
+    global $pdo, $server_name;
 
     // safety first
     $html_name = htmlspecialchars($name);
     $html_type = htmlspecialchars($type);
-    
+
     // sanity check: is the admin valid and online?
     if (!isset($admin)) {
         output("CRITICAL FAILURE: An invalid user tried to promote $html_name to a $html_type moderator. Stopping the function.");
@@ -33,13 +33,13 @@ function promote_to_moderator($name, $type, $admin, $promoted)
         $admin->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
         return false;
     }
-    
+
     // sanity check: validate mod type
     if ($type != 'temporary' && $type != 'trial' && $type != 'permanent') {
         $admin->write('message`Error: Unknown moderator type specified.');
         return false;
     }
-    
+
     // sanity check: if promoting to a temp, make sure the user is online
     if ($type == 'temporary' && !isset($promoted)) {
         $admin->write("message`Could not find a user named \"$html_name\" on this server.");
@@ -63,7 +63,7 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     // get info about the user being promoted
     $user_row = user_select_by_name($pdo, $name);
     $user_id = $user_row->user_id;
-    
+
     // sanity check: if the user being promoted is a guest, end the function
     if ((int) $user_row->power < 1) {
         $admin->write("message`Error: Guests can't be promoted to moderators.");
@@ -122,7 +122,7 @@ function promote_to_moderator($name, $type, $admin, $promoted)
                 $promoted->group = 2;
                 $promoted->write('setGroup`2');
             }
-            
+
             // tell the world
             $admin->write("message`$html_name has been promoted to a $html_type moderator!");
             return true;

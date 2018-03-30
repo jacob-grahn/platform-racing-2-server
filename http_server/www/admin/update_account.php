@@ -25,7 +25,7 @@ try {
     // rate limiting
     rate_limit('update-account-'.$ip, 60, 10);
     rate_limit('update-account-'.$ip, 5, 2);
-    
+
     //connect
     $pdo = pdo_connect();
 
@@ -165,7 +165,7 @@ function update($pdo, $admin)
     if ($update_user === false && $update_pr2 === false && $update_epic === false) {
         throw new Exception('No changes to be made.');
     }
-    
+
     // make sure the name doesn't exist
     if ($user->name != $user_name) {
         $id_exists = name_to_id($pdo, $user_name, true);
@@ -218,7 +218,6 @@ function update($pdo, $admin)
     // log the action in the admin log
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
-    $disp_changes = "Changes: " . $account_changes;
     admin_action_insert($pdo, $admin_id, "$admin_name updated player $user_name from $admin_ip. {update_user: $updated_user, update_pr2: $updated_pr2, update_epic: $updated_epic, changes: $account_changes}", 0, $admin_ip);
 
     header("Location: player_deep_info.php?name1=" . urlencode($user_name));
