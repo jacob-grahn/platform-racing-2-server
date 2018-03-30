@@ -167,7 +167,7 @@ function update($pdo, $admin)
     }
     
     // make sure the name doesn't exist
-    if ($user->name != $user_name) {
+    if (strtolower($user->name) != strtolower($user_name)) {
         $id_exists = name_to_id($pdo, $user_name, true);
         if ($id_exists != false) {
             $safe_name = htmlspecialchars($user_name);
@@ -179,7 +179,7 @@ function update($pdo, $admin)
     if ($user->guild != $guild_id) {
         if ($guild_id != 0) {
             guild_select($pdo, $guild_id); // make sure the new guild exists
-            guild_increment_member($pdo, $user->guild, 1);
+            guild_increment_member($pdo, $guild_id, 1);
         }
         if ($user->guild != 0) {
             guild_increment_member($pdo, $user->guild, -1);
