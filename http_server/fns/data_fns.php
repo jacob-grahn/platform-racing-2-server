@@ -249,7 +249,7 @@ function talk_to_server($address, $port, $key, $server_function, $receive = fals
 
 
 
-// tests to see if a string contains obsene words
+// tests to see if a string contains obscene words
 function is_obsene($str)
 {
     $str = strtolower($str);
