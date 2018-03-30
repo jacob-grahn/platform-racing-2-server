@@ -300,6 +300,8 @@ class Game extends Room
 
     private function begin_race()
     {
+        global $server_id;
+        
         if (!$this->begun) {
             $this->begun = true;
             $this->mode = $this->democratize('mode');
@@ -331,7 +333,7 @@ class Game extends Room
             }
 
             // place artifact hat
-            if ($this->course_id == Artifact::$level_id) {
+            if ($this->course_id == Artifact::$level_id && $server_id == 889) {
                 $hat = new Hat($this->next_hat_id++, Hats::ARTIFACT, 0xFFFFFF, -1);
                 $this->loose_hat_array[$hat->id] = $hat;
                 $x = Artifact::$x;
