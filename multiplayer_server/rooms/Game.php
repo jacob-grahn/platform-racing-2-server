@@ -427,12 +427,20 @@ class Game extends Room
         }
         $this->finish_race($player);
     }
+    
+    
+    private function ensure_time_format($time) {
+        if ($time < 0) {
+            $time = 0;
+        }
+        return sprintf("%.2f", $time);
+    }
 
 
     public function finish_race($player)
     {
         if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
-            $finish_time = microtime(true) - $this->start_time;
+            $finish_time = $this->ensure_time_format(microtime(true) - $this->start_time);
             $this->set_finish_time($player, $finish_time);
 
             $time_mod = $finish_time / 120;
