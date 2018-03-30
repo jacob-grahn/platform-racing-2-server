@@ -3,15 +3,10 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 
-$name = default_val($_POST['name'], '');
+$name = find('name', '');
 $ip = get_ip();
 
 try {
-    // POST check
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception("Invalid request method.");
-    }
-
     // rate limiting
     rate_limit('mod-do-player-search-'.$ip, 5, 2);
 
