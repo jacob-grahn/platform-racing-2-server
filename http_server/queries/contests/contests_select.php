@@ -11,7 +11,7 @@ function contests_select($pdo, $active_only = true)
     }
     
     $stmt = $pdo->prepare("
-        SELECT contest_id, contest_name, description, url, user_id
+        SELECT contest_id, contest_name, description, url, user_id, active
         FROM contests
         $sql
     ");
