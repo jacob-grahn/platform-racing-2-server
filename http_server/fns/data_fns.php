@@ -250,7 +250,7 @@ function talk_to_server($address, $port, $key, $server_function, $receive = fals
 
 
 // tests to see if a string contains obscene words
-function is_obsene($str)
+function is_obscene($str)
 {
     $str = strtolower($str);
     $bad_array = array('fuck', 'shit', 'nigger', 'nigga', 'whore', 'bitch', 'slut', 'cunt', 'cock', 'dick', 'penis', 'damn', 'spic');
