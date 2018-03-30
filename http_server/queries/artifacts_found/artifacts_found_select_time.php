@@ -3,7 +3,7 @@
 function artifacts_found_select_time ($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT time
+        SELECT UNIX_TIMESTAMP(time) as timestamp
         FROM artifacts_found
         WHERE user_id = :user_id
         LIMIT 1
