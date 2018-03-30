@@ -39,6 +39,7 @@ require_once __DIR__ . '/process/unlock_super_booster.php';
 require_once __DIR__ . '/process/update_cycle.php';
 require_once __DIR__ . '/process/vault.php';
 
+require_once __DIR__ . '/Artifact.php';
 require_once __DIR__ . '/loadup.php';
 require_once __DIR__ . '/socket_server.php';
 require_once __DIR__ . '/Player.php';

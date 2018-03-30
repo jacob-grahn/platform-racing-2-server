@@ -98,7 +98,6 @@ class Player
     public $lux = 0;
     public $lives = 3;
     public $items_used = 0;
-    public $artifact = 0;
     public $super_booster = false;
     public $last_save_time = 0;
 
