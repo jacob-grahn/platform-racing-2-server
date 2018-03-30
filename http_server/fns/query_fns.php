@@ -58,7 +58,7 @@ function pass_login($pdo, $name, $password)
 // login using a token
 require_once __DIR__ . '/../queries/tokens/token_select.php';
 
-function token_login($pdo, $use_cookie = true)
+function token_login($pdo, $use_cookie = true, $suppress_error = false)
 {
 
     $rec_token = find_no_cookie('token');
@@ -69,7 +69,11 @@ function token_login($pdo, $use_cookie = true)
     }
 
     if (!isset($token)) {
-        throw new Exception('No token found. Please log in again.');
+        if ($suppress_error == false) {
+            throw new Exception('Could not find a valid login token. Please log in again.');
+        } else {
+            return false;
+        }
     }
 
     $token_row = token_select($pdo, $token);
