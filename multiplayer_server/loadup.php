@@ -19,7 +19,9 @@ function begin_loadup($server_id)
     set_server($pdo, $server);
     set_campaign($campaign);
     set_perks($perks);
-    place_artifact($artifact);
+    if ($server_id == 889) {
+        place_artifact($artifact);
+    }
     if ($server_id == 2) {
         HappyHour::activate();
     }
