@@ -43,9 +43,14 @@ try {
     
     // get the right list of contests
     if ($is_admin == true) {
+    	echo "<p><b>Admin: <a href='/admin/contests/add_contest.php'>Add New Contest</a></b></p>";
         $contests = contests_select($pdo, false);
     } else {
         $contests = contests_select($pdo, true);
+    }
+    
+    if ($contests == false) {
+    	throw new Exception('Could not find any contests. :(');
     }
     
     // url prefix for contest host links based on group
