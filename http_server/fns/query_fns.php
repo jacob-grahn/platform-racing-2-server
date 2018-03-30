@@ -55,26 +55,6 @@ function pass_login($pdo, $name, $password)
 }
 
 
-// determine if a user is staff
-function is_staff($pdo, $user_id) {
-    $power = user_select_power($pdo, $user_id);
-    $is_mod = false;
-    $is_admin = false;
-    
-    if ($power >= 2) {
-    	$is_mod = true;
-    	if ($power == 3) {
-    	    $is_admin = true;
-    	}
-    }
-    
-    $return = new stdClass();
-    $return->mod = $is_mod;
-    $return->admin = $is_admin;
-    return $return;
-}
-
-
 // login using a token
 require_once __DIR__ . '/../queries/tokens/token_select.php';
 
@@ -104,6 +84,27 @@ function token_login($pdo, $use_cookie = true, $suppress_error = false)
 
     return $user_id;
 }
+
+
+// determine if a user is staff
+function is_staff($pdo, $user_id) {
+    $power = user_select_power($pdo, $user_id);
+    $is_mod = false;
+    $is_admin = false;
+    
+    if ($power >= 2) {
+    	$is_mod = true;
+    	if ($power == 3) {
+    	    $is_admin = true;
+    	}
+    }
+    
+    $return = new stdClass();
+    $return->mod = $is_mod;
+    $return->admin = $is_admin;
+    return $return;
+}
+
 
 // part/epic upgrade queries
 require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_select.php';
