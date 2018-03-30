@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../http_server/queries/artifacts_found/artifacts_found_select_time.php';
+require_once __DIR__ . '/../../../http_server/queries/artifacts_found/artifacts_found_select_time.php';
 
 function has_found_artifact ($pdo, $player)
 {
