@@ -3,7 +3,7 @@
 function contest_winners_select_by_contest($pdo, $contest_id, $start = 0, $count = 25, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT winner_name, win_time
+        SELECT winner_name, win_time, host_ip, comment
         FROM contest_winners
         WHERE contest_id = :contest_id
         LIMIT :start, :count
