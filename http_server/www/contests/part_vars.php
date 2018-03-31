@@ -134,7 +134,7 @@ $feet_37 = "Crocodile";
 $feet_38 = "Valentine";
 $feet_39 = "Bunny";
 
-function prize_check($type, $id)
+function validate_prize($type, $id)
 {
     $type = htmlspecialchars(strtolower($type));
     $id = (int) $id;
