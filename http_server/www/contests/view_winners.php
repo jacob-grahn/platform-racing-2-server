@@ -41,9 +41,6 @@ try {
     
     // get the contest info
     $contest = contest_select($pdo, $contest_id);
-    if (empty($contest)) {
-        throw new Exception("Could not find a contest with that ID.");
-    }
     
     // make some variables
     $contest_id = $contest->contest_id;
