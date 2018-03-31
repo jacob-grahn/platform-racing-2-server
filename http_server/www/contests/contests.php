@@ -55,11 +55,11 @@ try {
     
     // url prefix for contest host links based on group
     if ($is_admin == true) {
-        $host_base_url = "https://pr2hub.com/admin/player_deep_info.php?name1=";
+        $host_base_url = "/admin/player_deep_info.php?name1=";
     } else if ($is_admin == false && $is_mod == true) {
-        $host_base_url = "https://pr2hub.com/mod/do_player_search.php?name=";
+        $host_base_url = "/mod/do_player_search.php?name=";
     } else {
-        $host_base_url = "https://pr2hub.com/player_search.php?name=";
+        $host_base_url = "/player_search.php?name=";
     }
     
     foreach ($contests as $contest) {
@@ -106,11 +106,6 @@ try {
         // admin
         if ($is_admin == true) {
             echo "<br>Admin: <a href='/admin/contests/edit_contest.php?contest_id=$contest_id'>edit</a> | ";
-            if ($active_bool == true) {
-                echo "<a href='/admin/contests/deactivate_contest.php?contest_id=$contest_id'>deactivate | ";
-            } else {
-                echo "<a href='/admin/contests/activate_contest.php?contest_id=$contest_id'>activate | ";
-            }
             echo "<a href='/admin/contests/add_prize.php?contest_id=$contest_id'>add prize</a> | ";
             echo "<a href='/admin/contests/remove_prize.php?contest_id=$contest_id'>remove prize</a><br>";
         }
