@@ -63,21 +63,29 @@ try {
     }
     
     foreach ($contests as $contest) {
-        $active_bool = check_value($contest->active, 1, true, false);
         $is_active = check_value($contest->active, 1, "Yes", "No");
-        $contest_id = $contest->contest_id;
+        $contest_id = (int) $contest->contest_id;
         $contest_name = $contest->contest_name;
         $desc = $contest->description;
-        $awarding = $contest->awarding;
         $contest_url = $contest->url;
-        $is_host = false;
         $host_id = $contest->user_id;
+        $awarding = $contest->awarding;
+        
+        // get some info
         $host = user_select_name_and_power($pdo, $host_id);
-        $html_host_name = htmlspecialchars($host->name);
-        $url_host_name = url_encode($host->name);
         $host_color = $group_colors[$host->power];
         
+        // safety first
+        $html_contest_name = htmlspecialchars($contest_name);
+        $html_desc = htmlspecialchars($desc);
+        $html_awarding = htmlspecialchars($awarding);
+        $html_contest_url = htmlspecialchars(urlencode($contest_url));
+        $html_host_name = htmlspecialchars($host->name);
+        $url_host_name = url_encode($host->name);
+        $html_url_hname = htmlspecialchars(urlencode($host->name));
+        
         // are they the host?
+        $is_host = false;
         if ($user_id == $host_id) {
             $is_host = true;
         }
@@ -86,7 +94,7 @@ try {
         echo "<p>";
         
         // contest name
-        echo "<b><a href='$contest_url' target='_blank'>$contest_name</a></b><br>";
+        echo "<b><a href='$html_contest_url' target='_blank'>$html_contest_name</a></b><br>";
         
         // admin: is it active?
         if ($is_admin == true) {
@@ -94,14 +102,14 @@ try {
         }
         
         // description
-        echo "<br>Description: $desc<br>";
+        echo "<br>Description: $html_desc<br>";
         
         // contest host
-        $host_url = $host_base_url . $url_host_name;
+        $host_url = $host_base_url . $html_url_hname;
         echo "Run by: <a href='$host_url' target='_blank' style='color: $host_color; text-decoration: underline;'>$html_host_name</a><br>";
         
         // awarding
-        echo "Awarding: $awarding<br>";
+        echo "Awarding: $html_awarding<br>";
         
         // admin
         if ($is_admin == true) {
@@ -114,7 +122,7 @@ try {
         echo "<a href='view_winners.php?contest_id=$contest_id'>-&gt; View Winners</a>";
         
         // award prize
-        if ($is_host == true) {
+        if ($is_host == true || $is_admin == true) {
             echo "<br><a href='award_prize.php?contest_id=$contest_id'>-&gt; Award Prize</a>";
         }
         
