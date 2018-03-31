@@ -75,7 +75,7 @@ try {
         $host = user_select_name_and_power($pdo, $host_id);
         $html_host_name = htmlspecialchars($host->name);
         $url_host_name = url_encode($host->name);
-        $host_color = $group_colors[$host->power);
+        $host_color = $group_colors[$host->power];
         
         // are they the host?
         if ($user_id == $host_id) {
@@ -90,7 +90,7 @@ try {
         
         // admin: is it active?
         if ($is_admin == true) {
-            echo "Active: $is_active<br>"
+            echo "Active: $is_active<br>";
         }
         
         // description
