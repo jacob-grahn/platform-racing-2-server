@@ -1,6 +1,6 @@
 <?php
 
-function contest_insert($pdo, $name, $desc, $url, $host_id, $active, $contest_id)
+function contest_update($pdo, $contest_id, $name, $desc, $url, $host_id, $awarding, $max_awards, $active)
 {
     $stmt = $pdo->prepare('
         UPDATE contests
@@ -8,6 +8,8 @@ function contest_insert($pdo, $name, $desc, $url, $host_id, $active, $contest_id
                description = :desc,
                url = :url,
                user_id = :host_id,
+               awarding = :awarding,
+               max_awards = :max_awards,
                active = :active,
                updated = :updated
          WHERE contest_id = :contest_id
@@ -16,6 +18,8 @@ function contest_insert($pdo, $name, $desc, $url, $host_id, $active, $contest_id
     $stmt->bindValue(':desc', $desc, PDO::PARAM_STR);
     $stmt->bindValue(':url', $url, PDO::PARAM_STR);
     $stmt->bindValue(':host_id', $host_id, PDO::PARAM_INT);
+    $stmt->bindValue(':awarding', $awarding, PDO::PARAM_STR);
+    $stmt->bindValue(':max_awards', $max_awards, PDO::PARAM_INT);
     $stmt->bindValue(':active', $active, PDO::PARAM_INT);
     $stmt->bindValue(':updated', time(), PDO::PARAM_INT);
     $stmt->bindValue(':contest_id', $contest_id, PDO::PARAM_INT);
