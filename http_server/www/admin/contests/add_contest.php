@@ -5,8 +5,7 @@ require_once __DIR__ . '/../../../fns/output_fns.php';
 require_once __DIR__ . '/../../../queries/contests/contest_insert.php';
 require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
 
-// variables
-$action = find('action', 'lookup');
+$action = find('action', 'form');
 
 try {
     // rate limiting
@@ -31,7 +30,7 @@ try {
 
     // form
     if ($action === 'form') {
-        output_form($pdo);
+        output_form();
         output_footer();
         die();
     } // add
@@ -52,7 +51,7 @@ try {
 }
 
 // page
-function output_form($pdo, $user_id)
+function output_form()
 {
     echo '<form action="add_contest.php" method="post">';
 
