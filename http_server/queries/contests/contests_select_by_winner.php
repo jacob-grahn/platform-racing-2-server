@@ -1,13 +1,13 @@
 <?php
 
-function contests_select_by_winner($pdo, $pr2_name)
+function contests_select_by_winner($pdo, $winner_name)
 {
     $stmt = $pdo->prepare('
         SELECT contest_id
-        FROM contest_winners
-        WHERE pr2_name = :pr2_name
+          FROM contest_winners
+         WHERE winner_name = :winner_name
     ');
-    $stmt->bindValue(':pr2_name', $pr2_name, PDO::PARAM_STR);
+    $stmt->bindValue(':winner_name', $winner_name, PDO::PARAM_STR);
     $result = $stmt->execute();
     
     if ($result === false) {
@@ -17,7 +17,8 @@ function contests_select_by_winner($pdo, $pr2_name)
     $contests = $stmt->fetchAll(PDO::FETCH_OBJ);
     
     if (empty($contests)) {
-        throw new Exception("The user \"$pr2_name\" has not won any contests.");
+        $winner_name = htmlspecialchars($winner_name);
+        throw new Exception("The user \"$winner_name\" has not won any contests.");
     }
     
     return $contests;
