@@ -1,16 +1,24 @@
 <?php
 
-function contest_winners_select_by_contest($pdo, $contest_id, $start = 0, $count = 25, $suppress_error = false)
+function contest_winners_select_by_contest($pdo, $contest_id, $limit = true, $start = 0, $count = 25, $suppress_error = false)
 {
-    $stmt = $pdo->prepare('
-        SELECT winner_name, win_time, host_ip, comment
-        FROM contest_winners
-        WHERE contest_id = :contest_id
-        LIMIT :start, :count
-    ');
+    $limit = '';
+    if ($limit == true) {
+        $limit = 'LIMIT :start, :count';
+    }
+    
+    $stmt = $pdo->prepare("
+        SELECT winner_name, win_time, host_ip, comment, awarded_by
+          FROM contest_winners
+         WHERE contest_id = :contest_id
+         ORDER BY win_time DESC
+         $limit
+    ");
+    if ($limit == true) {
+        $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+        $stmt->bindValue(':count', $count, PDO::PARAM_INT);
+    }
     $stmt->bindValue(':contest_id', $contest_id, PDO::PARAM_INT);
-    $stmt->bindValue(':start', $start, PDO::PARAM_INT);
-    $stmt->bindValue(':count', $count, PDO::PARAM_INT);
     $result = $stmt->execute();
     
     if ($result === false) {
