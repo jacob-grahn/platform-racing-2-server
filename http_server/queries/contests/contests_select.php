@@ -10,7 +10,7 @@ function contests_select($pdo, $active_only = true)
     }
     
     $stmt = $pdo->prepare("
-        SELECT contest_id, contest_name, description, url, user_id, active
+        SELECT contest_id, contest_name, description, url, user_id, awarding, active
           FROM contests
           $sql
          ORDER BY active DESC, contest_name ASC
