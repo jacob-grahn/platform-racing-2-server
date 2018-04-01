@@ -430,6 +430,7 @@ class Game extends Room
 
         if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
             $finish_time = microtime(true) - $this->start_time;
+            if ($finish_time > 31536000) $finish_time = 0; // if the race time is >1 year, set it to 0. This is just a glitch protection.
             $this->set_finish_time($player, $finish_time);
 
             $time_mod = $finish_time / 120;
