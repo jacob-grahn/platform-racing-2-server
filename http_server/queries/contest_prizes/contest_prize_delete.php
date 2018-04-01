@@ -1,6 +1,6 @@
 <?php
 
-function contest_prize_delete($pdo, $prize_id)
+function contest_prize_delete($pdo, $prize_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         DELETE FROM contest_prizes
@@ -10,7 +10,11 @@ function contest_prize_delete($pdo, $prize_id)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception('Could not delete prize.');
+        if ($suppress_error == false) {
+            throw new Exception('Could not delete prize.');
+        } else {
+            return false;
+        }
     }
     
     return true;
