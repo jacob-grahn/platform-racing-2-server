@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/contest_winners/contest_winners_select_by_contest.php';
-require_once __DIR__ . '/../../queries/users/user_select_power_by_name.php';
+require_once __DIR__ . '/../../queries/users/user_select_name_and_power.php';
 
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 $ip = get_ip();
@@ -61,10 +61,8 @@ try {
     // url prefix for contest host links based on group
     if ($is_admin == true) {
         $base_url = "/admin/player_deep_info.php?name1=";
-        $mod_url = "/mod/player_info.php?user_id=";
     } else if ($is_admin == false && $is_mod == true) {
         $base_url = "/mod/do_player_search.php?name=";
-        $mod_url = "/mod/player_info.php?user_id=";
     } else {
         $base_url = "/player_search.php?name=";
     }
@@ -83,17 +81,19 @@ try {
     echo "</tr>"; // end title row
     
     foreach ($winners as $winner) {
-        // awarder id (mods don't need fancy formatting, less db queries)
+        // awarder name and color
         if ($is_mod == true) {
             $awarder_id = (int) $winner->awarded_by;
-            $awarder_url = $mod_url . $awarder_id;
+            $awarder = user_select_name_and_power($pdo, $awarder_id);
+            $awarder_html_name = htmlspecialchars($awarder->name);
+            $awarder_url = $base_url . htmlspecialchars(urlencode($awarder->name));
         }
         
         // winner name and color
-        $winner_power = user_select_power_by_name($pdo, $winner->winner_name);
-        $winner_color = $group_colors[$winner_power];
-        $winner_html_name = htmlspecialchars($winner->winner_name);
-        $winner_url = $base_url . htmlspecialchars(url_encode($winner->winner_name));
+        $winner = user_select_name_and_power($pdo, $winner->winner_id);
+        $winner_color = $group_colors[$winner->power];
+        $winner_html_name = htmlspecialchars($winner->name);
+        $winner_url = $base_url . htmlspecialchars(url_encode($winner->name));
         
         // win time
         $win_time = (int) $winner->win_time;
@@ -109,7 +109,7 @@ try {
             ."<td class='noborder' title='Awarded at $full_win_time'>$short_win_time</td>" // date row
             ."<td class='noborder'><a href='$winner_url' style='color: $winner_color; text-decoration: underline;'>$winner_html_name</td>"; // name row
         if ($is_mod == true) {
-            echo "<td class='noborder'><a href='$awarder_url'>$awarder_id</a></td>"
+            echo "<td class='noborder'><a href='$awarder_url'>$awarder_html_name</a></td>"
                 ."<td class='noborder'>$host_ip</td>"
                 ."<td class='noborder'>$comment</td>";
         }
