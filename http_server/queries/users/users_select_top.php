@@ -12,7 +12,7 @@ function users_select_top($pdo, $start, $count)
           LEFT JOIN pr2 ON pr2.user_id = users.user_id
           LEFT JOIN rank_tokens ON rank_tokens.user_id = pr2.user_id
          WHERE rank > 44
-        HAVING SUM(pr2.rank + rank_tokens.used_tokens) > 49
+        HAVING SUM(rank + used_tokens) > 49
          ORDER BY active_rank DESC, name ASC
          LIMIT :start, :count
     ');
