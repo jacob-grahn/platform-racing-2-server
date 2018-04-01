@@ -21,5 +21,6 @@ function contest_prize_insert($pdo, $contest_id, $part_type, $part_id)
         throw new Exception("Could not add prize to contest #$contest_id.");
     }
     
-    return true;
+    // return last insert id
+    return $pdo->lastInsertId();
 }
