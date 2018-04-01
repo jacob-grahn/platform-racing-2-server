@@ -3,9 +3,9 @@
 function contest_prizes_select_by_contest($pdo, $contest_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT part_type, part_id
-        FROM contest_prizes
-        WHERE contest_id = :contest_id
+        SELECT prize_id, part_type, part_id
+          FROM contest_prizes
+         WHERE contest_id = :contest_id
     ');
     $stmt->bindValue(':contest_id', $contest_id, PDO::PARAM_INT);
     $result = $stmt->execute();
