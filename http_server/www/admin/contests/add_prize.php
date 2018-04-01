@@ -66,7 +66,7 @@ try {
 }
 
 // page
-function output_form($contest)
+function output_form($contest, $prizes)
 {
     // define prize types
     $prize_types = ['hat', 'head', 'body', 'feet', 'eHat', 'eHead', 'eBody', 'eFeet'];
