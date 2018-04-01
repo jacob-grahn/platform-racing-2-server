@@ -9,7 +9,7 @@ require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_insert.ph
 require_once __DIR__ . '/../../../queries/users/user_select_name_and_power.php';
 
 $ip = get_ip();
-$contest_id = (int) default_get('contest_id', 0);
+$contest_id = (int) find('contest_id', 0);
 $action = find('action', 'form');
 
 try {
@@ -104,7 +104,7 @@ function output_form($contest)
 function add_contest_prize($pdo, $admin, $contest)
 {
     // make some nice variables
-    $contest_id = (int) find('contest_id');
+    $contest_id = (int) $contest->contest_id;
     $part_type = find('part_type');
     $part_id = (int) find('part_id');
     $html_contest_name = htmlspecialchars($contest->contest_name);
