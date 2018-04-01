@@ -79,10 +79,9 @@ try {
         $html_contest_name = htmlspecialchars($contest_name);
         $html_desc = htmlspecialchars($desc);
         $html_awarding = htmlspecialchars($awarding);
-        $html_contest_url = htmlspecialchars(urlencode($contest_url));
+        $html_contest_url = htmlspecialchars($contest_url);
         $html_host_name = htmlspecialchars($host->name);
-        $url_host_name = url_encode($host->name);
-        $html_url_hname = htmlspecialchars(urlencode($host->name));
+        $html_url_host_name = htmlspecialchars(urlencode($host->name));
         
         // are they the host?
         $is_host = false;
@@ -105,7 +104,7 @@ try {
         echo "<br>Description: $html_desc<br>";
         
         // contest host
-        $host_url = $host_base_url . $html_url_hname;
+        $host_url = $host_base_url . $html_url_host_name;
         echo "Run by: <a href='$host_url' target='_blank' style='color: $host_color; text-decoration: underline;'>$html_host_name</a><br>";
         
         // awarding
