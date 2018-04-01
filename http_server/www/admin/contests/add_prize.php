@@ -140,7 +140,6 @@ function add_contest_prize($pdo, $admin, $contest)
     admin_action_insert($pdo, $admin_id, "$admin_name added the $full_part_name to contest $contest_name from $admin_ip. {contest_id: $contest_id, contest_name: $html_contest_name, prize_id: $contest_prize_id, part_type: $part_type, part_id: $part_id}", 0, $admin_ip);
 
     // output the page
-    output_header("Added Contest Prize", true, true);
     echo "Great success! <b>$html_contest_name</b> is now able to award the $full_part_name.";
     echo "<br><br>";
     echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Another Prize</a><br>";
