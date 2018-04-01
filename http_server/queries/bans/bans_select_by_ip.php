@@ -6,6 +6,7 @@ function bans_select_by_ip($pdo, $ip)
         SELECT * FROM bans
         WHERE banned_ip = :ip
         AND ip_ban = 1
+        ORDER BY time DESC
     ');
     $stmt->bindValue(':ip', $ip, PDO::PARAM_INT);
     $result = $stmt->execute();
