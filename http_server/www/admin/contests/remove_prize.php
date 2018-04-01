@@ -100,17 +100,17 @@ function output_form($contest)
         // make the display name
         $part_name = ${$var_type."_names_array"}[$var_id];
         $disp_type = ucfirst($prize->type);
-        $full_part_name = "$part_name $disp_type";
+        $prize_name = "$part_name $disp_type";
         if ($is_epic == true) {
-            $full_part_name = "Epic " . $full_part_name;
+            $prize_name = "Epic " . $prize_name;
         }
         
-        echo "<input type='checkbox' name='prize_$prize_id'> Remove $full_part_name<br>";    
+        echo "<input type='checkbox' name='prize_$prize_id'> Remove $prize_name<br>";
+        echo "<input type='hidden' name='prize_name_$prize_id' value='$prize_name'>";
     }
     
-    echo '<input type="hidden" name="action" value="remove"><br>';
-    echo '<input type="hidden" name="contest_id" value="'.(int) $contest->contest_id.'">';
-    echo "<input type='hidden' name='full_part_name' value='$full_part_name'>";
+    echo '<input type="hidden" name="action" value="remove">';
+    echo '<input type="hidden" name="contest_id" value="'.(int) $contest->contest_id.'"><br><br>';
     
     echo '<input type="submit" value="Remove Contest Prize(s)">&nbsp;(no confirmation!)';
     echo '</form>';
@@ -130,23 +130,23 @@ function remove_contest_prize($pdo, $admin, $contest, $prize)
     $remove_prize = (bool) $_POST["prize_$prize_id"];
     
     // some names of things
-    $full_part_name = htmlspecialchars(find('full_part_name'));
+    $prize_name = htmlspecialchars(default_post("prize_name_$prize_id", ''));
     $html_contest_name = htmlspecialchars($contest->contest_name);
     
     if ($remove_prize == true) {
         $result = contest_prize_delete($pdo, $prize_id, true);
         if ($result != false) {
-            echo "$full_part_name was deleted from $html_contest_name.<br>";
+            echo "$prize_name was deleted from $html_contest_name.<br>";
         } else {
-            echo "$full_part_name could not be deleted from $html_contest_name.<br>";
+            echo "$prize_name could not be deleted from $html_contest_name.<br>";
         }
     } else {
-        echo "$full_part_name was not deleted from $html_contest_name.<br>";
+        echo "$prize_name was not deleted from $html_contest_name.<br>";
     }
     
     // log the action in the admin log
     $admin_ip = get_ip();
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
-    admin_action_insert($pdo, $admin_id, "$admin_name removed the $full_part_name from contest $contest_name from $admin_ip. {contest_id: $contest_id, contest_name: $html_contest_name, prize_id: $prize_id}", 0, $admin_ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name removed the $prize_name from contest $contest_name from $admin_ip. {contest_id: $contest_id, contest_name: $html_contest_name, prize_id: $prize_id}", 0, $admin_ip);
 }
