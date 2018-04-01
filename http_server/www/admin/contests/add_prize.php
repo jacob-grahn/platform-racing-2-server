@@ -6,7 +6,6 @@ require_once __DIR__ . '/../../contests/part_vars.php';
 require_once __DIR__ . '/../../../queries/contests/contest_select.php';
 require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_select_id.php';
 require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_insert.php';
-require_once __DIR__ . '/../../../queries/users/user_select_name_and_power.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
@@ -97,7 +96,7 @@ function output_form($contest)
     echo '<br>';
     echo '---';
     echo '<br>';
-    echo '<pre>Find what each part ID is <a href="part_ids.php" target="blank">here</a>.</pre>';
+    echo '<pre>Find what each part ID is <a href="/admin/part_ids.php" target="blank">here</a>.</pre>';
 }
 
 // add contest prize function
