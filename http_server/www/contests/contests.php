@@ -55,11 +55,11 @@ try {
     
     // url prefix for contest host links based on group
     if ($is_admin == true) {
-        $host_base_url = "/admin/player_deep_info.php?name1=";
+        $base_url = "/admin/player_deep_info.php?name1=";
     } else if ($is_admin == false && $is_mod == true) {
-        $host_base_url = "/mod/do_player_search.php?name=";
+        $base_url = "/mod/do_player_search.php?name=";
     } else {
-        $host_base_url = "/player_search.php?name=";
+        $base_url = "/player_search.php?name=";
     }
     
     foreach ($contests as $contest) {
@@ -104,7 +104,7 @@ try {
         echo "<br>Description: $html_desc<br>";
         
         // contest host
-        $host_url = $host_base_url . $html_url_host_name;
+        $host_url = $base_url . $html_url_host_name;
         echo "Run by: <a href='$host_url' target='_blank' style='color: $host_color; text-decoration: underline;'>$html_host_name</a><br>";
         
         // awarding
