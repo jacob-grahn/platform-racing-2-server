@@ -1,6 +1,6 @@
 <?php
 
-function contest_prize_select($pdo, $contest_id, $part_type, $part_id)
+function contest_prize_select_id($pdo, $contest_id, $part_type, $part_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT prize_id
@@ -15,13 +15,17 @@ function contest_prize_select($pdo, $contest_id, $part_type, $part_id)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception('Could not select prize.');
+        throw new Exception('Could not select prize ID.');
     }
     
     $row = $stmt->fetch(PDO::FETCH_OBJ);
     
     if (empty($row)) {
-        throw new Exception("Could not find a prize row for contest #$contest_id, part type \"$part_type\", and part id #$part_id.");
+        if ($suppress_error == false) {
+            throw new Exception("Could not find a prize row for contest #$contest_id, part type \"$part_type\", and part id #$part_id.");
+        } else {
+            return false;
+        }
     }
     
     return $row->prize_id;
