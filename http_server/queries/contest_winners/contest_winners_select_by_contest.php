@@ -8,7 +8,7 @@ function contest_winners_select_by_contest($pdo, $contest_id, $limit = true, $st
     }
     
     $stmt = $pdo->prepare("
-        SELECT winner_name, win_time, awarded_by, host_ip, comment
+        SELECT winner_id, win_time, awarded_by, host_ip, comment
           FROM contest_winners
          WHERE contest_id = :contest_id
          ORDER BY win_time DESC
