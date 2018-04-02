@@ -76,6 +76,7 @@ try {
     if ($is_mod == true) {
         echo "<th class='noborder'><b>Awarder ID</b></th>" // awarder column (for staff)
             ."<th class='noborder'><b>From IP</b></th>" // from IP column (for staff)
+            ."<th class='noborder'><b>Prizes Awarded</b></th>"; // prizes awarded to this winner (for staff)
             ."<th class='noborder'><b>Comments</b></th>"; // award comments (for staff)
     }
     echo "</tr>"; // end title row
@@ -104,14 +105,29 @@ try {
         $host_ip = htmlspecialchars($winner->host_ip);
         $comment = htmlspecialchars($winner->comment);
         
+        // get awards
+        $prizes_awarded = $winner->prizes_awarded;
+        $prizes_awarded = explode(",", $prizes_awarded);
+        $last_prize = end($prizes_awarded);
+        
         // start row
         echo "<tr>"
             ."<td class='noborder' title='Awarded at $full_win_time'>$short_win_time</td>" // date row
             ."<td class='noborder'><a href='$winner_url' style='color: $winner_color; text-decoration: underline;'>$winner_html_name</td>"; // name row
         if ($is_mod == true) {
-            echo "<td class='noborder'><a href='$awarder_url'>$awarder_html_name</a></td>"
-                ."<td class='noborder'>$host_ip</td>"
-                ."<td class='noborder'>$comment</td>";
+            echo "<td class='noborder'><a href='$awarder_url'>$awarder_html_name</a></td>" // who awarded
+                ."<td class='noborder'>$host_ip</td>"; // awarder ip
+                
+                // output readable prizes
+                foreach ($prizes_awarded as $prize) {
+                    echo htmlspecialchars($prize);
+                    if ($prize != $last_prize) {
+                        echo ', '; // separator; don't echo after last prize
+                    }
+                }
+            
+                // comment
+                echo "<td class='noborder'>$comment</td>";
         }
         
         // end row
