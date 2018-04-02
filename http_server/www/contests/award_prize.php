@@ -104,14 +104,30 @@ try {
         $prizes_awarded = array();
         foreach($prizes as $prize) {
             $awarded_prize = award_contest_prize($pdo, $admin, $contest, $prize, $winner_name);
+            
+            // make readable prize
             if ($awarded_prize != false) {
-                array_push($prizes_awarded, (int) $awarded_prize);
+                $prize = validate_prize($prize->part_type, $prize->part_id);
+                $prize_type = $prize->type;
+                $prize_id = (int) $prize->id;
+                $is_epic = (bool) $prize->epic;
+        
+                // make the display name
+                $part_name = ${$var_type."_names_array"}[$var_id];
+                $disp_type = ucfirst($prize->type);
+                $prize_name = "$part_name $disp_type";
+                if ($is_epic == true) {
+                    $prize_name = "Epic " . $prize_name;
+                }
+                
+                // push to the array
+                array_push($prizes_awarded, $prize_name);
             }
         }
         
         // sanity check: were any prizes awarded?
         if (!empty($prizes_awarded)) {
-            $prizes_awarded = join(",", $awarded_prizes);
+            $prizes_awarded = join(",", $prizes_awarded);
         } else {
             throw new Exception("You must specify prizes to award.");
         }
