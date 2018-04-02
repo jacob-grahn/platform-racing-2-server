@@ -1,6 +1,6 @@
 <?php
 
-function users_select_by_ip($pdo, $ip)
+function users_select_id_by_ip($pdo, $ip)
 {
     $count = (int) $count;
     $stmt = $pdo->prepare('
