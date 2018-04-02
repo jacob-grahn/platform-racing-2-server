@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/recent_logins/recent_logins_user_select_by_ip.php';
-require_once __DIR__ . '/../../queries/users/user_select_by_ip.php';
+require_once __DIR__ . '/../../queries/users/user_select_id_by_ip.php';
 require_once __DIR__ . '/../../queries/users/user_select_name_active_power.php';
 
 $ip = find_no_cookie('ip', '');
