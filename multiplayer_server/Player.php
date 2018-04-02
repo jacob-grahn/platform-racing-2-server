@@ -95,7 +95,6 @@ class Player
 
     public $status = '';
 
-    public $lux = 0;
     public $lives = 3;
     public $items_used = 0;
     public $super_booster = false;
@@ -1149,8 +1148,6 @@ class Player
 
         $status = $this->status;
         $e_server_id = $server_id;
-
-        $this->lux = 0;
 
         $rt_used = $this->rt_used;
         $ip = $this->ip;
