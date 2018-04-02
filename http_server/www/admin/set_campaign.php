@@ -8,7 +8,7 @@ require_once __DIR__ . '/../../queries/levels/level_select.php';
 require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
 
 $action = $_POST['action'];
-$message = find('message', '');
+$message = htmlspecialchars(find('message', ''));
 $campaign_id = 6; // 1 = Original, 2 = Speed, 3 = Luna, 4 = Timeline, 5 = Legendary, 6 = Custom
 
 // if empty or not set
