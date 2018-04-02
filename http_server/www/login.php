@@ -22,15 +22,15 @@ require_once __DIR__ . '/../queries/guilds/guild_select.php';
 require_once __DIR__ . '/../queries/recent_logins/recent_logins_insert.php';
 require_once __DIR__ . '/../queries/messages/messages_select_most_recent.php';
 
+// initialize our variables
 $encrypted_login = $_POST['i'];
 $version = $_POST['version'];
 $in_token = find('token');
-
 $allowed_versions = array('24-dec-2013-v1');
 $guest_login = false;
-$has_email = false;
+$has_email = false; // is this needed?
 $has_ant = false;
-$new_account = false;
+$new_account = false; // is this needed?
 $rt_available = 0;
 $rt_used = 0;
 $guild_owner = 0;
@@ -39,13 +39,13 @@ $guild_name = '';
 $friends = array();
 $ignored = array();
 
-// get the user's ip info and run it through an ip info api (because installing geoip is not worth the hassle)
-try {
-    $ip = get_ip();
-    $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
+// get the user's IP and run it through an IP info API
+$ip = get_ip();
+$ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
+if ($ip_info !== false && !empty($ip_info)) {
     $country_code = $ip_info->data->geo->country_code;
-} catch (Exception $e) {
-    $country_code = '?';
+} else {
+    $country_code = "?"; // deal with third party failure
 }
 
 try {
@@ -60,18 +60,15 @@ try {
         throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to download the latest version.');
     }
 
-
     // rate limiting
     rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
     rate_limit('login-'.$ip, 60, 10, 'Only 10 logins per minute per IP are accepted.');
 
-
-    //--- decrypt login data
+    // decrypt login data
     $encryptor = new Encryptor();
     $encryptor->set_key($LOGIN_KEY);
     $str_login = $encryptor->decrypt($encrypted_login, $LOGIN_IV);
     $login = json_decode($str_login);
-
     $user_name = $login->user_name;
     $user_pass = $login->user_pass;
     $version2 = $login->version;
@@ -82,8 +79,7 @@ try {
     $remember = $login->remember;
     $login_code = $login->login_code;
 
-
-    //--- more sanity checks
+    // more sanity checks
     if (array_search($version2, $allowed_versions) === false) {
         throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to download the latest version. [Version check 2] ' . $version2);
     }
@@ -94,37 +90,31 @@ try {
         throw new Exception('Invalid user name entered.');
     }
 
-    //--- connect
+    // connect to the db
     $pdo = pdo_connect();
 
-
-
-    //--- get the server they're connecting to
+    // get the server they're connecting to
     $server = server_select($pdo, $server_id);
 
-
-
-    //--- guest login
+    // guest login
     if (strtolower(trim($login->user_name)) == 'guest') {
         $guest_login = true;
         $guest = user_select_guest($pdo);
-        check_if_banned($pdo, $guest->user_id, $ip);
         $user = pass_login($pdo, $guest->name, $GUEST_PASS);
-    } //--- account login
+    } // account login
     else {
-        //token login
+        // token login
         if (isset($in_token) && $login->user_name == '' && $login->user_pass == '') {
             $token = $in_token;
             $user_id = token_login($pdo);
             $user = user_select($pdo, $user_id);
-        } //or password login
+        } // or password login
         else {
             $user = pass_login($pdo, $user_name, $user_pass);
         }
     }
 
-
-    //--- give them a login token for future requests
+    // generate a login token for future requests
     $token = get_login_token($user->user_id);
     token_insert($pdo, $user->user_id, $token);
     if ($remember == 'true' && !$guest_login) {
@@ -134,63 +124,63 @@ try {
         setcookie('token', '', time()-3600);
     }
 
-
     // create variables from user data in db
     $user_id = (int) $user->user_id;
     $user_name = $user->name;
-    $login->user_name = $user_name; // sanitize user input by taking name from the db to send to the server
     $group = $user->power;
 
-
-    // name sanity checks
-    if (strlen(trim($user_name)) < 2) {
+    // sanity check: is the entered name and the one retrieved from the database identical?
+    // this won't be triggered unless some real funny business is going on
+    if (strtolower($login->user_name) !== strtolower($user_name)) {
+        throw new Exception("The names don't match. If this error persists, contact a member of the PR2 Staff Team.");
+    }
+    
+    // sanity check: is it a valid name?
+    if (strlen(trim($login->user_name)) < 2) {
         throw new Exception("Your name must be at least 2 characters long.");
     }
-    if (strlen(trim($user_name)) > 20) {
+    if (strlen(trim($login->user_name)) > 20) {
         throw new Exception("Your name cannot be more than 20 characters long.");
     }
 
-
-    //---
+    // sanity check: if a guild server, is the user in the guild?
     if ($server->guild_id != 0 && $user->guild != $server->guild_id) {
         throw new Exception('You must be a member of this guild to join this server.');
     }
 
-
-    // get their info speed, hats, etc
+    // get their pr2 and epic_upgrades info
     $stats = pr2_select($pdo, $user_id);
     $epic_upgrades = epic_upgrades_select($pdo, $user_id, true);
 
-
-
-    //--- check if they own rank tokens
+    // check if they own rank tokens
     $row = rank_token_select($pdo, $user_id);
-    if ($row) {
+    if (!empty($row)) {
         $rt_available = $row->available_tokens;
         $rt_used = $row->used_tokens;
     }
 
+    // sanity check: are more tokens used than available?
     $rt_available += rank_token_rentals_count($pdo, $user->user_id, $user->guild);
     if ($rt_available < $rt_used) {
         $rt_used = $rt_available;
     }
 
-
-    //--- record moderator login
+    // record moderator login
     $server_name = $server->server_name;
     if ($group > 1) {
         mod_action_insert($pdo, $user_id, "$user_name logged into $server_name from $ip", $user_id, $ip);
     }
 
-
+    // part arrays
     $hat_array = explode(',', $stats->hat_array);
     $head_array = explode(',', $stats->head_array);
     $body_array = explode(',', $stats->body_array);
     $feet_array = explode(',', $stats->feet_array);
 
-
-    //--- santa set
+    // give special parts based on date
     $date = date('F d');
+    
+    // santa set
     if ($date == 'December 24' || $date == 'December 25') {
         if (add_item($hat_array, 7)) {
             $stats->hat = 7;
@@ -206,8 +196,8 @@ try {
         }
     }
 
-    //--- bunny set
-    if ($date == 'April 20' || $date == 'April 21') {
+    // bunny set
+    if ($date == 'April 7' || $date == 'April 8') {
         if (add_item($head_array, 39)) {
             $stats->head = 39;
         }
@@ -219,14 +209,14 @@ try {
         }
     }
 
-    //--- party hat
+    // party hat
     if ($date == 'December 31' || $date == 'January 1') {
         if (add_item($hat_array, 8)) {
             $stats->hat = 8;
         }
     }
 
-    //--- heart set
+    // heart set
     if ($date == 'February 13' || $date == 'February 14') {
         if (add_item($head_array, 38)) {
             $stats->head = 38;
@@ -239,45 +229,39 @@ try {
         }
     }
 
-    //--- give crown hats to moderators
+    // give crown hats to moderators
     if ($group > 1) {
         add_item($hat_array, 6);
     }
 
-
-    //--- get their friends
+    // select their friends list
     $friends_result = friends_select($pdo, $user_id);
     foreach ($friends_result as $fr) {
         $friends[] = $fr->friend_id;
     }
 
-    //--- get their ignored
+    // select their ignored list
     $ignored_result = ignored_select_list($pdo, $user_id);
     foreach ($ignored_result as $ir) {
         $ignored[] = $ir->ignore_id;
     }
 
-
-    //--- get their rank gained today
+    // get their EXP gained today
     $exp_today_id = exp_today_select($pdo, 'id-'.$user_id);
     $exp_today_ip = exp_today_select($pdo, 'ip-'.$ip);
     $exp_today = max($exp_today_id, $exp_today_ip);
 
-
-
-    //--- check if they have an email set
+    // check if they have an email set
     if (isset($user->email) && strlen($user->email) > 0) {
         $has_email = true;
     }
 
-
-    //--- check if they have kong's ant body
+    // check if they have the ant set (kong login perk, checks for ant head)
     if (array_search(20, $head_array) !== false) {
         $has_ant = true;
     }
 
-
-    //--- see if they are in a guild
+    // determine if in a guild and if the guild owner
     if ($user->guild != 0) {
         $guild = guild_select($pdo, $user->guild);
         if ($guild->owner_id == $user_id) {
@@ -287,27 +271,24 @@ try {
         $guild_name = $guild->guild_name;
     }
 
-
-    //--- get their most recent PM id
+    // get their most recent PM id
     $last_recv_id = messages_select_most_recent($pdo, $user_id);
 
-
-    //--- update their status
+    // update their status
     $status = "Playing on $server->server_name";
-
     user_update_status($pdo, $user_id, $status, $server_id);
+    
+    // update their IP and record the recent login
     user_update_ip($pdo, $user_id, $ip);
     recent_logins_insert($pdo, $user_id, $ip, $country_code);
 
-
-    //---
+    // join the part arrays to send to the server
     $stats->hat_array = join(',', $hat_array);
     $stats->head_array = join(',', $head_array);
     $stats->body_array = join(',', $body_array);
     $stats->feet_array = join(',', $feet_array);
 
-
-    //--- send this info to the socket server
+    // send this info to the socket server
     $send = new stdClass();
     $send->login = $login;
     $send->user = $user;
@@ -319,14 +300,13 @@ try {
     $send->rt_available = $rt_available;
     $send->exp_today = $exp_today;
     $send->status = $status;
-    $send->server = $server; //can remove this later?
+    $send->server = $server;
     $send->epic_upgrades = $epic_upgrades;
 
     $str = "register_login`" . json_encode($send);
     talk_to_server($server_address, $server_port, $server->salt, $str, false);
 
-
-    //--- tell it to the world
+    // tell the world
     $reply = new stdClass();
     $reply->status = 'success';
     $reply->token = $token;
@@ -352,15 +332,14 @@ try {
         $str = "register_login`" . json_encode($send); // make it readable
         $reply->message = $str; // tell me
     }
-
+    
+    // tell the user
     echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
 }
-
-
 
 function add_item(&$arr, $item)
 {
