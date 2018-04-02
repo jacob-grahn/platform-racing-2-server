@@ -8,7 +8,6 @@ function users_select_by_ip($pdo, $ip)
             FROM users
            WHERE ip = :ip
               OR register_ip = :ip
-        ORDER BY active_date DESC
     ');
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $result = $stmt->execute();
