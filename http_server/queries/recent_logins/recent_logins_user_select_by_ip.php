@@ -17,7 +17,6 @@ function recent_logins_user_select_by_ip($pdo, $ip, $start = 0, $count = 100)
     if ($result === false) {
         return false;
     }
-
-    $users = $stmt->fetchAll(PDO::FETCH_OBJ);
-    return $users->user_id;
+    
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
