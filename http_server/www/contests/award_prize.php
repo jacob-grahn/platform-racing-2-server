@@ -39,8 +39,8 @@ try {
         throw new Exception("Could not find a contest with that ID.");
     }
     
-    // sanity check: is this user the contest owner or an admin?
-    if ($is_admin == false && $user_id != $contest->user_id) {
+    // sanity check: is this user the contest owner, admin, or mod?
+    if ($is_admin == false && $is_mod == false && $user_id != $contest->user_id) {
         $html_contest_name = htmlspecialchars($contest->contest_name);
         throw new Exception("You don't own $html_contest_name.");
     }
@@ -50,7 +50,7 @@ try {
         $recent_awards = throttle_awards($pdo, (int) $contest->contest_id, $user_id);
         $max_awards = (int) $contest->max_awards;
         if ($recent_awards >= $max_awards) {
-            throw new Exception("You've reached your maximum amount of awards for this week. If you need to award more, please contact an admin.");
+            throw new Exception("You've reached your maximum amount of awards for this week. If you need to award more, please contact a member of the PR2 Staff Team.");
         }
     }
 } catch (Exception $e) {
@@ -134,13 +134,6 @@ try {
         
         // record winner
         $winner_insert = contest_winner_insert($pdo, $contest->contest_id, $winner_id, $ip, $user_id, $prizes_awarded, $comment);
-
-        // if an admin, log the action in the admin log
-        if ($is_admin == true) {
-            $admin_name = $admin->name;
-            $admin_id = $admin->user_id;
-            admin_action_insert($pdo, $admin_id, "$admin_name awarded prizes for $contest_name from $ip. {contest_id: $contest_id, contest_name: $html_contest_name, prizes: $awarded_prizes, winner_id: $winner_id, winner_name: $winner_name, comment: $comment}", 0, $ip);
-        }
         
         // output the page
         echo "<br>Great success! All operations completed. The results can be seen above.";
