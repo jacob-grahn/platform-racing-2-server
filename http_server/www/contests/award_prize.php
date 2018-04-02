@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../../queries/contests/contest_select.php';
 require_once __DIR__ . '/../../../queries/contest_prizes/contest_prizes_select_by_contest.php';
 require_once __DIR__ . '/../../../queries/contest_winners/throttle_awards.php';
 require_once __DIR__ . '/../../../queries/contest_winners/contest_winner_insert.php';
+require_once __DIR__ . '/../../../queries/messages/message_insert.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
@@ -101,7 +102,7 @@ try {
         $winner_id = (int) $winner_id;
         
         // award the prizes and get the prizes that were awarded
-        $prizes_awarded = array();
+        $prizes_awarded_arr = array();
         foreach($prizes as $prize) {
             $awarded_prize = award_contest_prize($pdo, $admin, $contest, $prize, $winner_name);
             
@@ -121,19 +122,34 @@ try {
                 }
                 
                 // push to the array
-                array_push($prizes_awarded, $prize_name);
+                array_push($prizes_awarded_arr, $prize_name);
             }
         }
         
         // sanity check: were any prizes awarded?
-        if (!empty($prizes_awarded)) {
-            $prizes_awarded = join(",", $prizes_awarded);
+        if (!empty($prizes_awarded_arr)) {
+            $prizes_awarded_str = join(",", $prizes_awarded_arr);
         } else {
             throw new Exception("You must specify prizes to award.");
         }
         
         // record winner
-        $winner_insert = contest_winner_insert($pdo, $contest->contest_id, $winner_id, $ip, $user_id, $prizes_awarded, $comment);
+        $winner_insert = contest_winner_insert($pdo, $contest->contest_id, $winner_id, $ip, $user_id, $prizes_awarded_str, $comment);
+        
+        // compose a congratulatory PM
+        $pm_prizes_str = join("\n - ", $prizes_awarded_arr);
+        $winner_name = id_to_name($pdo, $winner_id);
+        $host_name = id_to_name($pdo, $user_id);
+        $contest_name = $contest->contest_name;
+        $winner_message = "Dear $winner_name,\n\n"
+                         ."I'm pleased to inform you that you won $contest_name! "
+                         ."You have been awarded with the following prizes:\n\n"
+                         ."$pm_prizes_str\n\n"
+                         ."For more information, visit pr2hub.com/contests. Thanks for playing PR2, and once again, congratulations!\n\n"
+                         ."- $host_name";
+        
+        // send the congratulatory PM
+        message_insert($pdo, $winner_id, $user_id, $winner_message, $ip);
         
         // output the page
         echo "<br>Great success! All operations completed. The results can be seen above.";
