@@ -1,6 +1,6 @@
 <?php
 
-function users_select_name_active_power($pdo, $user_id, $suppress_error = false)
+function user_select_name_active_power($pdo, $user_id, $suppress_error = false)
 {
     $count = (int) $count;
     $stmt = $pdo->prepare('
