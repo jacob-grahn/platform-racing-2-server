@@ -121,7 +121,7 @@ try {
         echo "<a href='view_winners.php?contest_id=$contest_id'>-&gt; View Winners</a>";
         
         // award prize
-        if (($is_host == true && $contest->active == 1) || $is_admin == true) {
+        if ((($is_host == true || $is_mod == true) && $contest->active == 1) || $is_admin == true) {
             echo "<br><a href='award_prize.php?contest_id=$contest_id'>-&gt; Award Prize</a>";
         }
         
