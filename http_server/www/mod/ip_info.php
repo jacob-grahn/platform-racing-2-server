@@ -1,0 +1,156 @@
+<?php
+
+require_once __DIR__ . '/../../fns/all_fns.php';
+require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../queries/bans/bans_select_by_ip.php';
+require_once __DIR__ . '/../../queries/users/users_select_by_ip.php';
+
+$ip = default_get('ip', '');
+$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
+
+// mod check try/catch
+try {
+    // rate limiting
+    rate_limit('ip-search-'.$ip, 60, 10, 'Wait a minute at most before searching again.');
+    rate_limit('ip-search-'.$ip, 30, 5);
+
+    // connect
+    $pdo = pdo_connect();
+
+    //make sure you're a mod
+    $mod = check_moderator($pdo, false);
+} catch (Exception $e) {
+    $message = $e->getMessage();
+    output_header('Error');
+    echo "Error: $message";
+    output_footer();
+    die();
+}
+
+// mod validated try/catch
+try {
+    // header
+    output_header('IP Info', true);
+    
+    // sanity check: is a value entered for IP?
+    if (empty($ip)) {
+        throw new Exception("Invalid IP address entered.");
+    }
+    
+    // get IP info
+    $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
+
+    // check if it's valid
+    $skip_fanciness = false;
+    if ($ip_info->status != 'success') {
+        $skip_fanciness = true;
+    }
+    
+    // if the data retrieval was successful, define our fancy variables
+    if ($skip_fanciness === false) {
+        $ip_info = $ip_info->data->geo;
+        
+        // make some variables
+        $host = htmlspecialchars($ip_info->host);
+        $dns = htmlspecialchars($ip_info->dns);
+        $isp = htmlspecialchars($ip_info->isp);
+        $url_isp = htmlspecialchars(urlencode($ip_info->isp));
+        $city = htmlspecialchars($ip_info->city);
+        $region = htmlspecialchars($ip_info->region);
+        $country = htmlspecialchars($ip_info->country_name);
+        $country_code = htmlspecialchars($ip_info->country_code);
+        
+        // make a location string out of the location data
+        $location = '';
+        if (!empty($city)) {
+            $location .= $city . ', '; // city
+        }
+        if (!empty($region)) {
+            $location .= $region . ', '; // region/state/province
+        }
+        if (!empty($html_country)) {
+            $location .= $country . ' (' . $country_code . ')'; // country/code
+        }
+    }
+    
+    // we can dance if we want to, we can leave your friends behind
+    $ip = htmlspecialchars($ip);
+    
+    // start
+    echo "<p>IP: $ip</p>";
+    
+    // if the data retrieval was successful, display our fancy variables
+    if ($skip_fanciness === false) {
+        if (!empty($host)) echo "<p>Host: $html_host</p>";
+        if (!empty($dns)) echo "<p>DNS: $html_dns</p>";
+        if (!empty($isp)) echo "<p>ISP: <a href='https://www.google.com/search?q=$url_isp' target='_blank'>$isp</a></p>";
+        if (!empty($location)) echo "<p>Location: $location</p>";
+    }
+    
+    // check if they are currently banned
+    $banned = 'No';
+    $row = query_if_banned($pdo, 0, $ip);
+
+    // give some more info on the current ban in effect if there is one
+    if ($row !== false) {
+        $ban_id = $row->ban_id;
+        $reason = htmlspecialchars($row->reason);
+        $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
+        $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes.</a> This IP is banned until $ban_end_date. Reason: $reason";
+    }
+    
+    // look for all historical bans given to this ip address
+    $ip_bans = bans_select_by_ip($pdo, $ip);
+    $ip_ban_count = (int) count($ip_bans);
+    $ip_ban_list = create_ban_list($ip_bans);
+    $ip_lang = 'time';
+    if ($ip_ban_count > 1) {
+        $ip_lang = 'times';
+    }
+    
+    // echo ban status
+    echo "<p>Currently banned: $banned</p>"
+        ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list";
+    
+    // get users associated with this IP
+    $users = users_select_by_ip($pdo, $ip);
+    $count = (int) $users->count;
+    if ($count === 1) {
+        $res = 'user';
+    } else {
+        $res = 'users';
+    }
+    echo "$count $res found for the IP address \"$ip\".<br><br>";
+    
+    foreach ($users as $user) {
+        $user_id = (int) $user->user_id;
+        $name = htmlspecialchars($user->name);
+        $power_color = $group_colors[(int) $user->power];
+        $active = date('j/M/Y', (int) $user->time);
+        
+        // echo results
+        echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>Name: $name</a> | Active: $active<br>";
+    }
+    
+    // end it all
+    output_footer();
+    die();
+} catch (Exception $e) {
+    $message = $e->getMessage();
+    echo "Error: $message";
+    output_footer();
+    die();
+}
+
+function create_ban_list($bans)
+{
+    $str = '<p><ul>';
+    foreach ($bans as $row) {
+        $ban_date = date("F j, Y, g:i a", $row->time);
+        $reason = htmlspecialchars($row->reason);
+        $ban_id = $row->ban_id;
+        $str .= "<li><a href='../bans/show_record.php?ban_id=$ban_id'>$ban_date:</a> $reason";
+    }
+    $str .= '</ul></p>';
+    return $str;
+}
