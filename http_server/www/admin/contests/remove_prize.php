@@ -65,7 +65,7 @@ try {
         // output the page
         echo "<br>Great success! All operations completed. The results can be seen above.";
         echo "<br><br>";
-        echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add A Prize</a><br>";
+        echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Prize</a><br>";
         echo "<a href='/contests/contests.php'>&lt;- All Contests</a>";
         output_footer();
         die();
@@ -129,19 +129,21 @@ function remove_contest_prize($pdo, $admin, $contest, $prize)
     $prize_id = (int) $prize->prize_id;
     $remove_prize = (bool) $_POST["prize_$prize_id"];
     
+    // move on if not removing this prize
+    if ($remove_prize == false) {
+        return false;
+    }
+    
     // some names of things
     $prize_name = htmlspecialchars(default_post("prize_name_$prize_id", ''));
     $html_contest_name = htmlspecialchars($contest->contest_name);
     
-    if ($remove_prize == true) {
-        $result = contest_prize_delete($pdo, $prize_id, true);
-        if ($result != false) {
-            echo "$prize_name was deleted from $html_contest_name.<br>";
-        } else {
-            echo "$prize_name could not be deleted from $html_contest_name.<br>";
-        }
+    $result = contest_prize_delete($pdo, $prize_id, true);
+    if ($result != false) {
+        echo "$prize_name was deleted from $html_contest_name.<br>";
     } else {
-        echo "$prize_name was not deleted from $html_contest_name.<br>";
+        echo "$prize_name could not be deleted from $html_contest_name.<br>";
+        return false;
     }
     
     // log the action in the admin log
@@ -149,4 +151,7 @@ function remove_contest_prize($pdo, $admin, $contest, $prize)
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     admin_action_insert($pdo, $admin_id, "$admin_name removed the $prize_name from contest $contest_name from $admin_ip. {contest_id: $contest_id, contest_name: $html_contest_name, prize_id: $prize_id}", 0, $admin_ip);
+    
+    // go to the next one
+    return true;
 }
