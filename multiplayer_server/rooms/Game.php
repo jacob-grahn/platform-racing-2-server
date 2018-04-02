@@ -15,7 +15,7 @@ class Game extends Room
 
     private $finish_array = array();
     private $course_id;
-    private $start_time = 0;
+    private $start_time;
     private $begun = false;
     private $loose_hat_array = array();
     private $next_hat_id = 0;
