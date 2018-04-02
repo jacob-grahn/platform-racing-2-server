@@ -234,17 +234,17 @@ class Game extends Room
             }
         }
 
-        if (!isset($this->prize) && $player_count >= 2) {
-            if (rand(0, 40) == 40) {
+        if (!isset($this->prize) && $player_count >= 1) {
+            if (rand(0, 50) == 50) {
                 $this->prize = Prizes::$EXP_HAT;
             }
-            if (rand(0, 45) == 45) {
+            if (rand(0, 50) == 50) {
                 $this->prize = Prizes::$SANTA_HAT;
             }
             if (rand(0, 50) == 50) {
                 $this->prize = Prizes::$PARTY_HAT;
             }
-            if (rand(0, 40) == 40 && HappyHour::isActive()) {
+            if (rand(0, 50) == 50 && HappyHour::isActive()) {
                 $this->prize = Prizes::$JUMP_START_HAT;
             }
         }
@@ -428,7 +428,10 @@ class Game extends Room
     {
         global $pdo;
 
-        if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
+        if ($player->finished_race === false && !isset($player->race_stats->finish_time)) {
+            if($this->start_time == null) {
+                $this->start_time = 0;
+            }
             $finish_time = microtime(true) - $this->start_time;
             $this->set_finish_time($player, $finish_time);
 
