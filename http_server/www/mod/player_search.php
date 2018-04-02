@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 
-$message = default_get('message', '');
+$message = htmlspecialchars(default_get('message', ''));
 $ip = get_ip();
 
 try {
