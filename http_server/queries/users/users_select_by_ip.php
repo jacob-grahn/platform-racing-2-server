@@ -4,7 +4,7 @@ function users_select_by_ip($pdo, $ip)
 {
     $count = (int) $count;
     $stmt = $pdo->prepare('
-          SELECT user_id, name, active_date, power
+          SELECT user_id
             FROM users
            WHERE ip = :ip
               OR register_ip = :ip
