@@ -4,7 +4,7 @@ function user_select_name_active_power($pdo, $user_id, $suppress_error = false)
 {
     $count = (int) $count;
     $stmt = $pdo->prepare('
-          SELECT name, active_date, power
+          SELECT name, time, power
             FROM users
            WHERE user_id = :user_id
            LIMIT 1
