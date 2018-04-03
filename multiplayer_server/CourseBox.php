@@ -18,6 +18,8 @@ class CourseBox
 
     public function fill_slot($player, $slot)
     {
+        $slot = (int) $slot;
+        if (($slot < 0) || ($slot > 3)) return;
         if (!isset($this->slot_array[$slot])) {
             if (isset($player->course_box)) {
                 $player->course_box->clear_slot($player);
