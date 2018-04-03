@@ -108,7 +108,6 @@ try {
     if (strtolower(trim($login->user_name)) == 'guest') {
         $guest_login = true;
         $guest = user_select_guest($pdo);
-        check_if_banned($pdo, $guest->user_id, $ip);
         $user = pass_login($pdo, $guest->name, $GUEST_PASS);
     } //--- account login
     else {
