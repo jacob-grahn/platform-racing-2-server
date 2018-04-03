@@ -683,7 +683,7 @@ class Player
                 } // chat ban check (warnings, auto-warn)
                 elseif ($this->chat_ban > time() && ($this->group < 2 || $this->temp_mod === true)) {
                     $chat_ban_seconds = $this->chat_ban - time();
-                    $this->write('systemChat`You have been temporarily banned from the chat. The ban will be lifted in $chat_ban_seconds seconds.');
+                    $this->write("systemChat`You have been temporarily banned from the chat. The ban will be lifted in $chat_ban_seconds seconds.");
                 } // spam check
                 elseif ($this->get_chat_count() > 6 && ($this->group < 2 || $this->temp_mod === true)) {
                     $this->chat_ban = time() + 60;
