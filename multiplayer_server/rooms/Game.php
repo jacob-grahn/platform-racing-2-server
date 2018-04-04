@@ -422,14 +422,6 @@ class Game extends Room
         }
         $this->finish_race($player);
     }
-    
-    
-    private function ensure_time_format($time) {
-        if ($time < 0) {
-            $time = 0;
-        }
-        return round($time, 2);
-    }
 
     
     private function ensure_time_format($time) {
