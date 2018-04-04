@@ -31,8 +31,8 @@ try {
     output_header('Edit Contest', true, true);
     
     // select contest
-    $contest = contest_select($pdo, $contest_id);
-    if (empty($contest)) {
+    $contest = contest_select($pdo, $contest_id, false, true);
+    if (is_empty($contest) || $contest === false) {
         throw new Exception("Could not find a contest with that ID.");
     }
 
