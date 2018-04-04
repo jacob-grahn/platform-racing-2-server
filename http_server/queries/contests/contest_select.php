@@ -2,7 +2,7 @@
 
 function contest_select($pdo, $contest_id, $active_only = true, $suppress_error = false)
 {
-    if ($active_only == true) {
+    if ($active_only === true) {
         $active_cond = 'AND active = 1';
     } else {
         $active_cond = '';
@@ -26,7 +26,7 @@ function contest_select($pdo, $contest_id, $active_only = true, $suppress_error 
     
     if (empty($contest)) {
         if ($suppress_error === false) {
-            if ($active_only == true) {
+            if ($active_only === true) {
                 throw new Exception("Could not find an active contest with that ID.");
             } else {
                 throw new Exception("Could not find a contest with that ID.");
