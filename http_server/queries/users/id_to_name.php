@@ -1,6 +1,6 @@
 <?php
 
-function id_to_name($pdo, $user_id)
+function id_to_name($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT name
@@ -18,7 +18,11 @@ function id_to_name($pdo, $user_id)
     $user = $stmt->fetch(PDO::FETCH_OBJ);
     
     if (empty($user)) {
-        throw new Exception('Could not find a user with that ID.');
+        if ($suppress_error === false) {
+            throw new Exception('id_to_name: Could not find a user with that ID.');
+        } else {
+            return false;
+        }
     }
     
     return $user->name;

@@ -7,11 +7,12 @@ require_once __DIR__ . '/random_str.php';
 require_once __DIR__ . '/../queries/users/user_apply_temp_pass.php';
 
 // user selection queries
+require_once __DIR__ . '/../queries/users/id_to_name.php'; // id -> name
+require_once __DIR__ . '/../queries/users/name_to_id.php'; // name -> id
 require_once __DIR__ . '/../queries/users/user_select.php'; // select user (no hashes) by id
 require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // select user (no hashes) by name
 require_once __DIR__ . '/../queries/users/user_select_full_by_name.php'; // select full user (with hashes) by name
-require_once __DIR__ . '/../queries/users/name_to_id.php'; // name -> id
-require_once __DIR__ . '/../queries/users/id_to_name.php'; // id -> name
+require_once __DIR__ . '/../queries/users/user_select_power.php'; // select a user's power
 
 function pass_login($pdo, $name, $password)
 {
@@ -54,11 +55,10 @@ function pass_login($pdo, $name, $password)
 }
 
 
-
 // login using a token
 require_once __DIR__ . '/../queries/tokens/token_select.php';
 
-function token_login($pdo, $use_cookie = true)
+function token_login($pdo, $use_cookie = true, $suppress_error = false)
 {
 
     $rec_token = find_no_cookie('token');
@@ -69,7 +69,11 @@ function token_login($pdo, $use_cookie = true)
     }
 
     if (!isset($token)) {
-        throw new Exception('No token found. Please log in again.');
+        if ($suppress_error == false) {
+            throw new Exception('Could not find a valid login token. Please log in again.');
+        } else {
+            return false;
+        }
     }
 
     $token_row = token_select($pdo, $token);
@@ -80,6 +84,27 @@ function token_login($pdo, $use_cookie = true)
 
     return $user_id;
 }
+
+
+// determine if a user is staff
+function is_staff($pdo, $user_id) {
+    $power = user_select_power($pdo, $user_id);
+    $is_mod = false;
+    $is_admin = false;
+    
+    if ($power >= 2) {
+    	$is_mod = true;
+    	if ($power == 3) {
+    	    $is_admin = true;
+    	}
+    }
+    
+    $return = new stdClass();
+    $return->mod = $is_mod;
+    $return->admin = $is_admin;
+    return $return;
+}
+
 
 // part/epic upgrade queries
 require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_select.php';

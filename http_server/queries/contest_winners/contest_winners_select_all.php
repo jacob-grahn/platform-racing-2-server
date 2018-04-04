@@ -4,8 +4,10 @@ function contest_winners_select_all($pdo, $start, $count)
 {
     $stmt = $pdo->prepare('
         SELECT contest_winners.contest_id AS contest_id,
-               contest_winners.winner_name AS winner_name,
+               contest_winners.winner_id AS winner_id,
                contest_winners.win_time AS win_time,
+               contest_winners.host_ip AS host_ip,
+               contest_winners.awarded_by AS awarded_by,
                contest_winners.comment AS comment,
                contests.contest_name AS contest_name
           FROM contest_winners
