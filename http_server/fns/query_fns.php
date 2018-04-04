@@ -94,7 +94,7 @@ function is_staff($pdo, $user_id) {
     // determine power and if staff
     $power = (int) user_select_power($pdo, $user_id, true);
     if ($power === false || is_empty($power, false)) {
-        return 0;
+        $power = 0;
     }
     if ($power >= 2) {
     	$is_mod = true;
