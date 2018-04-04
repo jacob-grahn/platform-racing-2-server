@@ -76,7 +76,7 @@ try {
     if ($is_mod == true) {
         echo "<th class='noborder'><b>Awarded By</b></th>" // awarder column (for staff)
             ."<th class='noborder'><b>From IP</b></th>" // from IP column (for staff)
-            ."<th class='noborder'><b>Prizes Awarded</b></th>"; // prizes awarded to this winner (for staff)
+            ."<th class='noborder'><b>Prizes Awarded</b></th>" // prizes awarded to this winner (for staff)
             ."<th class='noborder'><b>Comments</b></th>"; // award comments (for staff)
     }
     echo "</tr>"; // end title row
