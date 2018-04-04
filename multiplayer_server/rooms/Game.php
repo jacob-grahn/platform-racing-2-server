@@ -431,6 +431,12 @@ class Game extends Room
         return round($time, 2);
     }
 
+    
+    private function ensure_time_format($time) {
+        if ($time < 0) $time = 0;
+        return round($time, 2);
+    }
+    
 
     public function finish_race($player)
     {
@@ -438,6 +444,7 @@ class Game extends Room
 
         if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
             $finish_time = $this->ensure_time_format(microtime(true) - $this->start_time);
+            if ($finish_time > 31536000) $finish_time = 0; // if the race time is >1 year, set it to 0. This is just a glitch protection.
             $this->set_finish_time($player, $finish_time);
 
             $time_mod = $finish_time / 120;
@@ -447,11 +454,9 @@ class Game extends Room
 
             $place = array_search($player->race_stats, $this->finish_array);
 
-            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10) {
-                $this->give_gp($player);
-                if (pr2_server::$tournament) {
-                    $this->broadcast_results($player);
-                }
+            // announce on tournament server
+            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10 && pr2_server::$tournament) {
+                $this->broadcast_results($player, $finish_time);
             }
 
             //--- prize -----------
@@ -475,7 +480,6 @@ class Game extends Room
 
             //--- exp gain -------
             $tot_exp_gain = 0;
-            $tot_lux_gain = 0;
             $wearing_moon = false;
 
             //--- welcome back bonus ---
@@ -544,20 +548,23 @@ class Game extends Room
                 $tot_exp_gain += $tot_exp_gain * $hat_bonus;
             }
 
-            if ($finish_time >= 90 && $wearing_moon) {
-                $tot_lux_gain = count($this->finish_array) - $place - 1;
+            // gp bonus
+            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10) {
+                if ($wearing_moon === true) {
+                    $this->give_gp($player, 2);
+                } else {
+                    $this->give_gp($player);
+                }
             }
 
             // happy hour bonus
             if (HappyHour::isActive()) {
                 $tot_exp_gain *= 2;
-                $tot_lux_gain *= 2;
             }
 
             // campaign bonus
             if (isset($this->campaign)) {
                 $tot_exp_gain *= 2;
-                $tot_lux_gain *= 2;
             }
 
             // tell the user about the hat/hh/campaign bonus(es)
@@ -610,12 +617,6 @@ class Game extends Room
             //---
             $player->inc_exp($tot_exp_gain);
 
-            //lux gain
-            if ($tot_lux_gain > 0) {
-                $player->write('setLuxGain`'.$tot_lux_gain);
-                $player->lux += $tot_lux_gain;
-            }
-
             //--- save
             $player->maybe_save();
         } else {
@@ -630,9 +631,10 @@ class Game extends Room
 
 
 
-    private function broadcast_results($player)
+    private function broadcast_results($player, $finish_time)
     {
         global $chat_room_array;
+        $finish_time = date("H:i:s.u", $finish_time);
 
         if (isset($chat_room_array['main'])) {
             $main = $chat_room_array['main'];
@@ -642,7 +644,7 @@ class Game extends Room
                 $names[] = "[$race_stats->name]";
             }
             $vs_names = join(' vs ', $names);
-            $message = "$vs_names: // $player->name wins!";
+            $message = "$vs_names: // $player->name wins with a time of $finish_time!";
             $main->send_chat("systemChat`$message", -1);
         }
     }
@@ -771,11 +773,11 @@ class Game extends Room
 
 
 
-    private function give_gp($player)
+    private function give_gp($player, $multiplier = 1)
     {
         $user_id = $player->user_id;
         $prev_gp = GuildPoints::get_previous_gp($user_id, $this->course_id);
-        $earned_gp = floor($player->race_stats->finish_time / 60 * count($this->player_array) / 4);
+        $earned_gp = floor($player->race_stats->finish_time / 60 * count($this->player_array) / 4) * $multiplier;
         if ($prev_gp + $earned_gp > 10) {
             $earned_gp -= ( $prev_gp + $earned_gp ) - 10;
         }

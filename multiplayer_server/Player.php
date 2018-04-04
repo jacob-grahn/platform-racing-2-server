@@ -95,7 +95,6 @@ class Player
 
     public $status = '';
 
-    public $lux = 0;
     public $lives = 3;
     public $items_used = 0;
     public $super_booster = false;
@@ -324,27 +323,9 @@ class Player
 
         // make sure they're in exactly one valid room
         if ($room_type != 'n' && $room_type != 'b' && isset($player_room)) {
-            // guest check
-            if ($this->group <= 0 || $this->guest == true) {
-                $this->write('systemChat`Sorries, guests can\'t send chat messages.');
-            } // chat ban check (warnings, auto-warn)
-            elseif ($this->chat_ban > time()) {
-                $this->write(
-                    'systemChat`You have been temporarily banned from the chat. '
-                    .'The ban will be lifted in '.($this->chat_ban - time()).' seconds.'
-                );
-            } // spam check
-            elseif ($this->get_chat_count() > 6) {
-                $this->chat_ban = time() + 60;
-                $this->write('systemChat`Slow down a bit, yo.');
-            } // rank 3 check
-            elseif ($this->active_rank < 3) {
-                $this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
-            } // illegal character check
-            elseif (strpos($chat_message, '`') !== false) {
-                $this->write('message`Error: Illegal character in message.');
-            } // tournament mode
-            elseif (strpos($chat_message, '/t ') === 0 || strpos($chat_message, '/tournament ') === 0 || $chat_message == '/t' || $chat_message == '/tournament') {
+            // --- chat commands --- \\
+            // tournament mode
+            if (strpos($chat_message, '/t ') === 0 || strpos($chat_message, '/tournament ') === 0 || $chat_message == '/t' || $chat_message == '/tournament') {
                 // if server owner, allow them to do server owner things
                 if ($this->server_owner == true) {
                     // help
@@ -660,7 +641,7 @@ class Player
                 } else {
                     $this->write("Invalid action. For more information on how to use this command, type /mod help.");
                 }
-            }
+            } // rules command
             elseif ($chat_message == '/rules') {
                 $message = 'systemChat`The PR2 rules can be found here: https://jiggmin2.com/forums/showthread.php?tid=385.';
                 if ($guild_id != 0) {
@@ -691,11 +672,28 @@ class Player
                     }
                     $this->write('systemChat`PR2 Chat Commands:<br>- /rules<br>- /view *player*<br>- /guild *guild name*<br>- /hint (Artifact)<br>- /hh status<br>- /t status<br>- /population<br>- /beawesome'.$mod.$effects.$admin.$server_owner);
                 }
-            } // send chat message
+            } // --- send chat message --- \\
             else {
-                if (strpos($this->name, '`') !== false) {
-                    $this->write('message`Error: Illegal character in username.');
-                } else {
+                // guest check
+                if ($this->group <= 0 || $this->guest == true) {
+                    $this->write("systemChat`Sorries, guests can't send chat messages.");
+                } // rank 3 check
+                elseif ($this->active_rank < 3 && $this->group < 2) {
+                    $this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
+                } // chat ban check (warnings, auto-warn)
+                elseif ($this->chat_ban > time() && ($this->group < 2 || $this->temp_mod === true)) {
+                    $chat_ban_seconds = $this->chat_ban - time();
+                    $this->write("systemChat`You have been temporarily banned from the chat. The ban will be lifted in $chat_ban_seconds seconds.");
+                } // spam check
+                elseif ($this->get_chat_count() > 6 && ($this->group < 2 || $this->temp_mod === true)) {
+                    $this->chat_ban = time() + 60;
+                    $this->write('systemChat`Slow down a bit, yo.');
+                }
+                // illegal character in username/message check
+                elseif (strpos($this->name, '`') !== false || strpos($chat_message, '`') !== false) {
+                    $this->write('message`Error: Illegal character detected.');
+                } // if caught by NOTHING above, send the message
+                else {
                     $message = 'chat`'.$this->name.'`'.$this->group.'`'.$chat_message;
                     $this->chat_count++;
                     $this->chat_time = time();
@@ -704,13 +702,13 @@ class Player
             }
         } // this should never happen
         elseif ($room_type == 'b') {
-            $this->write('message`Error: You can\'t be in two places at once!');
+            $this->write("message`Error: You can't be in two places at once!");
         } // this should also never happen
         elseif ($room_type == 'n') {
-            $this->write('message`Error: You don\'t seem to be in a valid chatroom.');
+            $this->write("message`Error: You don't seem to be in a valid chatroom.");
         } // aaaaand this most certainly will never happen
         else {
-            $this->write('message`Error: The server encountered an error when trying to determine what chatroom you\'re in. Try rejoining the chatroom and sending your message again.');
+            $this->write("message`Error: The server encountered an error when trying to determine what chatroom you're in. Try rejoining the chatroom and sending your message again. If this error persists, contact a member of the PR2 Staff Team.");
         }
     }
 
@@ -1151,8 +1149,6 @@ class Player
 
         $status = $this->status;
         $e_server_id = $server_id;
-
-        $this->lux = 0;
 
         $rt_used = $this->rt_used;
         $ip = $this->ip;
