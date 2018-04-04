@@ -18,7 +18,7 @@ function contest_prizes_select_by_contest($pdo, $contest_id, $suppress_error = f
     
     if (empty($prizes)) {
         if ($suppress_error === false) {
-            throw new Exception('No prizes found for contest #$contest_id.');
+            throw new Exception("No prizes found for contest #$contest_id.");
         } else {
             return false;
         }
