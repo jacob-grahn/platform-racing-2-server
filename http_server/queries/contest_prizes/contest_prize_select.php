@@ -4,7 +4,8 @@ function contest_prize_select($pdo, $prize_id)
 {
     $stmt = $pdo->prepare('
         SELECT contest_id, part_type, part_id, added
-        WHERE prize_id = :prize_id
+          FROM contest_prizes
+         WHERE prize_id = :prize_id
     ');
     $stmt->bindValue(':contest_id', $contest_id, PDO::PARAM_INT);
     $stmt->bindValue(':part_type', $part_type, PDO::PARAM_STR);
