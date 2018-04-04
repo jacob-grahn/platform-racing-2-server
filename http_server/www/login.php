@@ -28,6 +28,7 @@ $version = $_POST['version'];
 $in_token = find('token');
 $allowed_versions = array('24-dec-2013-v1');
 $guest_login = false;
+$token_login = false;
 $has_email = false; // is this needed?
 $has_ant = false;
 $new_account = false; // is this needed?
@@ -105,6 +106,7 @@ try {
     else {
         // token login
         if (isset($in_token) && $login->user_name == '' && $login->user_pass == '') {
+            $token_login = true;
             $token = $in_token;
             $user_id = token_login($pdo);
             $user = user_select($pdo, $user_id);
@@ -131,7 +133,7 @@ try {
 
     // sanity check: is the entered name and the one retrieved from the database identical?
     // this won't be triggered unless some real funny business is going on
-    if (strtolower($login->user_name) !== strtolower($user_name)) {
+    if (($token_login === false || !is_empty($login->user_name)) && $strtolower($login->user_name) !== strtolower($user_name)) {
         throw new Exception("The names don't match. If this error persists, contact a member of the PR2 Staff Team.");
     }
     
