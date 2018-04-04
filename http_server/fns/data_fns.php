@@ -310,7 +310,9 @@ function is_moderator($pdo, $check_ref = true)
     try {
         check_moderator($pdo, $check_ref);
         $is_mod = true;
-    } catch {}
+    } catch (Exception $e) {
+        // TODO: remove this later
+    }
 
     return $is_mod;
 }
@@ -325,7 +327,9 @@ function is_admin($pdo, $check_ref = true)
     try {
         check_moderator($pdo, $check_ref, 3);
         $is_admin = true;
-    } catch {}
+    } catch (Exception $e) {
+        // TODO: remove this later
+    }
 
     return $is_admin;
 }
