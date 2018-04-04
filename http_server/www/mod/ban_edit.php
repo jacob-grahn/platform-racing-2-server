@@ -43,6 +43,7 @@ try {
         output_header('Edit Ban', true);
         output_form($ban);
         output_footer();
+        die();
     } else {
         throw new Exception('Unknown action specified.');
     }
@@ -51,6 +52,7 @@ try {
     output_header('Edit Ban', true);
     echo "Error: $error";
     output_footer();
+    die();
 }
 
 

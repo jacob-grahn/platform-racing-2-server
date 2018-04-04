@@ -9,7 +9,7 @@ function promote_server_mod($name, $owner, $promoted)
     $safe_name = htmlspecialchars($name);
 
     // if the user doesn't own the server, kill the function (2nd line of defense)
-    if ($owner->group < 3 || $owner->server_owner == false || $owner->user_id != $guild_owner) {
+    if ($owner->group < 3 || $owner->server_owner == false || $owner->user_id != $guild_owner || $owner->user_id == 4291976) {
         $owner->write("message`Error: You lack the power to promote $safe_name to a server moderator.");
         return false;
     }
@@ -60,7 +60,7 @@ function demote_server_mod($name, $owner, $demoted)
 
     // sanity check: does the user own the server?
     if ($owner->group < 3 || $owner->server_owner == false || $owner->user_id != $guild_owner) {
-        $owner->write("message`Error: You lack the power to promote $safe_name to a server moderator.");
+        $owner->write("message`Error: You lack the power to demote $safe_name.");
         return false;
     }
 

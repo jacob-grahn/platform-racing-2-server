@@ -41,12 +41,12 @@ try {
 	<font face="Gwibble" class="gwibble">-- Leaderboard --</font>
 	<br /><br />
 	<table>
-		<tr>
-			<th>Username</th>
-			<th>Rank</th>
-			<th>Hats</th>
-		</tr>
-	';
+        <tr>
+            <th>Username</th>
+            <th>Rank</th>
+            <th>Hats</th>
+        </tr>
+    ';
 
     foreach ($users as $user) {
         // name
@@ -59,7 +59,9 @@ try {
         $group_color = $group_colors[$group];
 
         // rank
-        $rank = $user->active_rank;
+        $pr2_rank = (int) $user->rank;
+        $used_tokens = (int) $user->used_tokens;
+        $active_rank = $pr2_rank + $used_tokens;
 
         // hats
         $hat_array = $user->hats;
@@ -73,7 +75,7 @@ try {
         echo "<tr>";
 
         echo "<td><a href='$info_link' style='color: #$group_color; text-decoration: underline;'>$safe_name</a></td>";
-        echo "<td>$rank</td>";
+        echo "<td>$active_rank</td>";
         echo "<td>$hats</td>";
 
         echo "</tr>";

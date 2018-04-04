@@ -1,8 +1,8 @@
 <?php
 
 
-//--- tries to pull a variable from the $_GET or $_POST array. If it is not present, the default is used. ---------------
-//--- returns *
+// tries to pull a variable from the $_GET or $_POST array
+// if it is not present, the default is used
 function find($str, $default = null)
 {
     if (isset($_COOKIE[$str])) {
@@ -186,8 +186,8 @@ function check_ref()
 }
 
 
-//--- send a message to every server --------------------------------------------
-//--- DO NOT OUTPUT ANYTHING FROM THIS FUNCTION FOR TESTING ---
+// send a message to every server
+// DO NOT OUTPUT ANYTHING FROM THIS FUNCTION FOR TESTING
 function poll_servers($servers, $message, $receive = true, $server_ids = array())
 {
     $results = array();
@@ -206,7 +206,7 @@ function poll_servers($servers, $message, $receive = true, $server_ids = array()
 
 
 
-//--- connects to the farm server and calls a function -------------------------------------
+// connects to the farm server and calls a function
 function talk_to_server($address, $port, $key, $server_function, $receive = false)
 {
     global $PROCESS_PASS;
@@ -249,8 +249,8 @@ function talk_to_server($address, $port, $key, $server_function, $receive = fals
 
 
 
-//--- tests to see if a string contains obsene words ---------------------------------------
-function is_obsene($str)
+// tests to see if a string contains obscene words
+function is_obscene($str)
 {
     $str = strtolower($str);
     $bad_array = array('fuck', 'shit', 'nigger', 'nigga', 'whore', 'bitch', 'slut', 'cunt', 'cock', 'dick', 'penis', 'damn', 'spic');
@@ -310,8 +310,7 @@ function is_moderator($pdo, $check_ref = true)
     try {
         check_moderator($pdo, $check_ref);
         $is_mod = true;
-    } catch (Exception $e) {
-    }
+    } catch {}
 
     return $is_mod;
 }
@@ -319,7 +318,22 @@ function is_moderator($pdo, $check_ref = true)
 
 
 
-//
+// returns true if you are logged in as an admin, false if you are not
+function is_admin($pdo, $check_ref = true)
+{
+    $is_admin = false;
+    try {
+        check_moderator($pdo, $check_ref, 3);
+        $is_admin = true;
+    } catch {}
+
+    return $is_admin;
+}
+
+
+
+
+// format the list of levels returned from the db
 function format_level_list($levels)
 {
     global $LEVEL_LIST_SALT;
@@ -369,6 +383,7 @@ function format_level_list($levels)
 
 
 
+// replace naughty words with slightly less naughty ones
 function filter_swears($str)
 {
     $damnArray = array("dang", "dingy-goo", "condemnation");
@@ -392,6 +407,7 @@ function filter_swears($str)
 
 
 
+// slow down a bit, yo.
 function rate_limit($key, $interval, $max, $error = 'Slow down a bit, yo.')
 {
     $unit = round(time() / $interval);

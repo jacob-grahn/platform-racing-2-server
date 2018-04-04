@@ -3,7 +3,8 @@
 function ban_select($pdo, $ban_id)
 {
     $stmt = $pdo->prepare('
-        SELECT * FROM bans
+        SELECT *, FROM_UNIXTIME(expire_time) AS expire_datetime
+        FROM bans
         WHERE ban_id = :ban_id
         LIMIT 1
     ');

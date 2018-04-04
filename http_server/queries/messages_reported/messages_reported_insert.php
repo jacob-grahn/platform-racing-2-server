@@ -3,15 +3,15 @@
 function messages_reported_insert($pdo, $to_user_id, $from_user_id, $reporter_ip, $from_ip, $sent_time, $reported_time, $message_id, $message)
 {
     $stmt = $pdo->prepare('
-        INSERT IGNORE INTO messages_reported
-               SET to_user_id = :to_user_id,
-                   from_user_id = :from_user_id,
-                   reporter_ip = :reporter_ip,
-                   from_ip = :from_ip,
-                   sent_time = :sent_time,
-                   reported_time = :reported_time,
-                   message_id = :message_id,
-                   message = :message
+        INSERT INTO messages_reported
+                SET to_user_id = :to_user_id,
+                    from_user_id = :from_user_id,
+                    reporter_ip = :reporter_ip,
+                    from_ip = :from_ip,
+                    sent_time = :sent_time,
+                    reported_time = :reported_time,
+                    message_id = :message_id,
+                    message = :message
     ');
     $stmt->bindValue(':to_user_id', $to_user_id, PDO::PARAM_INT);
     $stmt->bindValue(':from_user_id', $from_user_id, PDO::PARAM_INT);

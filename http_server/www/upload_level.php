@@ -36,7 +36,7 @@ try {
     }
 
     // sanity check
-    if ($live == 1 && (is_obsene($title) || is_obsene($note))) {
+    if ($live == 1 && (is_obscene($title) || is_obscene($note))) {
         throw new Exception('Could not publish level. Check the title and note for obscenities.');
     }
 

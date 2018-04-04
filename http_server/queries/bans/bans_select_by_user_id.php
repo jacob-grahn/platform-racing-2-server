@@ -6,6 +6,7 @@ function bans_select_by_user_id($pdo, $user_id)
         SELECT * FROM bans
         WHERE banned_user_id = :user_id
         AND account_ban = 1
+        ORDER BY time DESC
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();

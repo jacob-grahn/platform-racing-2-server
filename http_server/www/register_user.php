@@ -45,7 +45,7 @@ try {
     if ($email != '' && !valid_email($email)) {
         throw new Exception("'$email' is not a valid email address.");
     }
-    if (is_obsene($name)) {
+    if (is_obscene($name)) {
         throw new Exception('Keep your username clean, pretty please!');
     }
     $test_name = preg_replace("/[^a-zA-Z0-9-.:;=?~! ]/", "", $name);
