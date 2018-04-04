@@ -101,7 +101,7 @@ try {
         }
         
         // description
-        echo "<br>Description: $html_desc<br>";
+        echo "Description: $html_desc<br>";
         
         // contest host
         $host_url = $base_url . $html_url_host_name;
@@ -112,9 +112,10 @@ try {
         
         // admin
         if ($is_admin == true) {
-            echo "<br>Admin: <a href='/admin/contests/edit_contest.php?contest_id=$contest_id'>edit</a> | ";
-            echo "<a href='/admin/contests/add_prize.php?contest_id=$contest_id'>add prize</a> | ";
-            echo "<a href='/admin/contests/remove_prize.php?contest_id=$contest_id'>remove prize</a><br>";
+            echo 'Admin:'
+                ."<a href='/admin/contests/edit_contest.php?contest_id=$contest_id'>edit</a> | "
+                ."<a href='/admin/contests/add_prize.php?contest_id=$contest_id'>add prize</a> | "
+                ."<a href='/admin/contests/remove_prize.php?contest_id=$contest_id'>remove prize</a><br>";
         }
         
         // view winners
