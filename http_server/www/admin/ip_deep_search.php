@@ -2,17 +2,10 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/recent_logins/recent_logins_user_select_by_ip.php';
-require_once __DIR__ . '/../../queries/users/user_select_id_by_ip.php';
-require_once __DIR__ . '/../../queries/users/user_select_name_active_power.php';
+require_once __DIR__ . '/../../queries/staff/admin/users_select_by_ip_expanded.php';
 
 $ip = find_no_cookie('ip', '');
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
-
-// sort user ids by descending
-function sort_ids($first, $second) {
-	return strtotime($first->active_date) < strtotime($second->active_date);
-}
 
 // this will echo the search box when called
 function output_search($ip = '', $incl_br = true)
@@ -56,65 +49,17 @@ try {
     }
 
     // if there's an IP set, let's get data from the db
-    $users = users_select_by_ip($pdo, $ip);
-    $logins = recent_logins_user_select_by_ip($pdo, $ip);
-    
-    // put all the IDs in an array
-    $all_ids = array();
+    $users = users_select_by_ip_expanded($pdo, $ip);
+
     foreach ($users as $user) {
-    	$user_id = (int) $user->user_id;
-    	array_push($all_ids, $user_id);
-    }
-    foreach ($logins as $login) {
-    	$user_id = (int) $login->user_id;
-    	array_push($all_ids, $user_id);
-    }
+        $name = str_replace(' ', '&nbsp;', $user->name); // multiple spaces in name
+        $url_name = htmlspecialchars(urlencode($user->name)); // url encode the name
+        $group_color = $group_colors[(int) $user->power]; // group color
+        $active_date = date('j/M/Y', (int) $user->time); // format the last active date
+        if ($active_date == '30/Nov/-0001') $active_date = 'Never'; // show never if never logged in
     
-    // remove duplicates
-    $all_ids = array_unique($all_ids);
-
-    // protect the user
-    $disp_ip = htmlspecialchars($ip);
-
-    // show the search form
-    output_search($disp_ip);
-
-    // output the number of results
-    $count = count($users);
-    if ($count == 1) {
-        $res = 'result';
-    } else {
-        $res = 'results';
-    }
-    echo "$count $res found for the IP address \"$disp_ip\".<br><br>";
-
-    // only gonna get here if there were results
-    $all_data = array();
-    foreach ($all_ids as $user_id) {
-    	$user = user_select_name_active_power($pdo, $user_id, true);
-    	if ($user != false) {
-        	array_push($all_data, $user);
-        }
-    }
-    
-    // sort the data by time descending
-    usort($all_data, "sort_ids");
-    
-    foreach ($all_data as $user) {
-        $url_name = urlencode($user->name); // url encode the name
-        $safe_name = htmlspecialchars($user->name); // html friendly name
-        $safe_name = str_replace(' ', '&nbsp;', $safe_name); // multiple spaces in name
-        $group = (int) $user->power; // power
-        $group_color = $group_colors[$group]; // group color
-        $active_date = $user->active_date; // active date -- get data
-        $active_date = date_create($active_date); // active date -- create a date
-        $active_date = date_format($active_date, 'j/M/Y'); // active date -- format the created date
-        if ($active_date == '30/Nov/-0001') {
-            $active_date = 'Never';
-        }
-    
-    	// display the name with the color and link to the player search page
-        echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>$safe_name</a> | Last Active: $active_date<br>";
+        // display the name with the color and link to the player search page
+        echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>$name</a> | Last Active: $active_date<br>";
     }
 
     // end it all
