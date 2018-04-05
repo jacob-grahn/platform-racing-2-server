@@ -66,7 +66,7 @@ try {
 }
 
 // page
-function output_form($contest, $prizes)
+function output_form($contest)
 {
     // define prize types
     $prize_types = ['hat', 'head', 'body', 'feet', 'eHat', 'eHead', 'eBody', 'eFeet'];
@@ -103,6 +103,7 @@ function output_form($contest, $prizes)
 function add_contest_prize($pdo, $admin, $contest)
 {
     // make some nice variables
+    $contest_name = $contest->contest_name;
     $contest_id = (int) $contest->contest_id;
     $part_type = find('part_type');
     $part_id = (int) find('part_id');
@@ -126,8 +127,8 @@ function add_contest_prize($pdo, $admin, $contest)
     $is_epic = (bool) $prize->epic;
     
     // make the display name
-    $part_name = ${$var_type."_names_array"}[$var_id];
-    $disp_type = ucfirst($prize->type);
+    $part_name = ${$prize_type."_names_array"}[$prize_id];
+    $disp_type = ucfirst($prize_type);
     $full_part_name = "$part_name $disp_type";
     if ($is_epic == true) {
         $full_part_name = "Epic " . $full_part_name;
@@ -137,7 +138,7 @@ function add_contest_prize($pdo, $admin, $contest)
     $admin_ip = get_ip();
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
-    admin_action_insert($pdo, $admin_id, "$admin_name added the $full_part_name to contest $contest_name from $admin_ip. {contest_id: $contest_id, contest_name: $html_contest_name, prize_id: $contest_prize_id, part_type: $part_type, part_id: $part_id}", 0, $admin_ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name added the $full_part_name to contest $contest_name from $admin_ip. {contest_id: $contest_id, contest_name: $contest_name, prize_id: $contest_prize_id, part_type: $part_type, part_id: $part_id}", 0, $admin_ip);
 
     // output the page
     echo "Great success! <b>$html_contest_name</b> is now able to award the $full_part_name.";
