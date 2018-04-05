@@ -619,7 +619,7 @@ class Player
                     $this->write('systemChat`Error: Invalid argument specified. Type /hh help for more information.');
                 }
             } // server mod command for server owners
-            elseif (($chat_message == '/mod' || strpos($chat_message, '/mod ') === 0) && $this->group >= 3 && $this->server_owner == true && $this->user_id != self:FRED) {
+            elseif (($chat_message == '/mod' || strpos($chat_message, '/mod ') === 0) && $this->group >= 3 && $this->server_owner == true && $this->user_id != self::FRED) {
                 if ($chat_message == '/mod help') {
                     $this->write('systemChat`To promote someone to a server moderator, type "/mod promote" followed by their username. They will be a server moderator until they log out or are demoted. To demote an existing server moderator, type "/mod demote" followed by their username.');
                 } elseif (strpos($chat_message, '/mod promote ') === 0 || strpos($chat_message, '/mod demote ') === 0) {
