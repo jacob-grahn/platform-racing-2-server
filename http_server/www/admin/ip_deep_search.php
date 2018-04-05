@@ -67,14 +67,11 @@ try {
         // display the name with the color and link to the player search page
         echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>$name</a> | Last Active: $active_date<br>";
     }
-
-    // end it all
-    output_footer();
-    die();
 } catch (Exception $e) {
     $message = $e->getMessage();
     output_search($safe_ip);
     echo "<i>Error: $message</i>";
+} finally {
     output_footer();
     die();
 }
