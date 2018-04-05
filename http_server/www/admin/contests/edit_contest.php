@@ -72,7 +72,7 @@ function output_form($pdo, $contest)
     echo "Contest URL: <input type='text' name='url' maxlength='255' value='".htmlspecialchars($contest->url)."'> (link to contest homepage, max: 255 characters)<br>";
     echo "Host User ID: <input type='text' name='host_id' maxlength='10' value='".(int) $contest->user_id."'> (the user ID of the PR2 player that is hosting this contest, max: 10 numbers)<br>";
     echo "Awarding: <input type='text' name='awarding' maxlength='255' value='".htmlspecialchars($contest->awarding)."'> (summary of the prizes the contest is awarding, max: 255 characters)<br>";
-    echo "Max Awards (per week): <input type='text' name='max_awards' maxlength='2' value='".(int) $contest->max_awards."'> (max times a contest owner can award prizes per week, suggested: 1-3, min: 1, max: 50)<br>";
+    echo "Max Awards: <input type='text' name='max_awards' maxlength='2' value='".(int) $contest->max_awards."'> (max times a contest owner can award prizes per week, suggested: 1-3, min: 1, max: 50)<br>";
     echo "Active: <input type='checkbox' name='active' $active_checked> (contest visible and prizes able to be awarded)<br>";
 
     echo '<input type="hidden" name="action" value="edit">';
