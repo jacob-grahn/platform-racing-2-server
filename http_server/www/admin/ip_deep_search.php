@@ -11,7 +11,7 @@ $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 function output_search($ip = '', $incl_br = true)
 {
     echo "<form name='input' action='' method='get'>";
-    echo "Email: <input type='text' name='ip' value='$ip'>&nbsp;";
+    echo "IP: <input type='text' name='ip' value='$ip'>&nbsp;";
     echo "<input type='submit' value='Search'></form>";
     if ($incl_br) {
         echo "<br><br>";
