@@ -114,13 +114,14 @@ try {
     
     // get users associated with this IP
     $users = users_select_by_ip($pdo, $ip);
-    $count = (int) $users->count;
-    if ($count === 1) {
-        $res = 'user';
-    } else {
+    $user_count = (int) $users->count;
+    $res = 'user';
+    if ($user_count > 1) {
         $res = 'users';
     }
-    echo "$count $res found for the IP address \"$ip\".<br><br>";
+    
+    // echo user count
+    echo "$user_count $res found for the IP address \"$ip\".<br><br>";
     
     foreach ($users as $user) {
         $user_id = (int) $user->user_id;
@@ -129,7 +130,7 @@ try {
         $active = date('j/M/Y', (int) $user->time);
         
         // echo results
-        echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>Name: $name</a> | Active: $active<br>";
+        echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>$name</a> | Last Active: $active<br>";
     }
     
     // end it all
