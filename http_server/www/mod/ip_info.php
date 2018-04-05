@@ -132,13 +132,10 @@ try {
         // echo results
         echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>$name</a> | Last Active: $active<br>";
     }
-    
-    // end it all
-    output_footer();
-    die();
 } catch (Exception $e) {
     $message = $e->getMessage();
     echo "Error: $message";
+} finally {
     output_footer();
     die();
 }
