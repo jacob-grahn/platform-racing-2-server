@@ -47,7 +47,7 @@ try {
     }
 
     // insert the message into the reported messages table
-    messages_reported_insert($pdo, $message->to_user_id, $message->from_user_id, $ip, $message->ip, $message->time, $reported_time, $message_id, $message->message);
+    messages_reported_insert($pdo, $message->to_user_id, $message->from_user_id, $ip, $message->ip, $message->time, time(), $message_id, $message->message);
 
     // tell it to the world
     echo 'message=The message was reported successfully!';
