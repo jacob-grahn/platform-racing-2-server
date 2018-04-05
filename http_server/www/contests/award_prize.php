@@ -85,6 +85,13 @@ try {
             throw new Exception('Invalid request type.');
         }
         
+        // check referrer
+        $ref = check_ref();
+        if ($ref !== true) {
+            $ref = htmlspecialchars($ref);
+            throw new Exception("Incorrect referrer. The referrer is: $ref");
+        }
+        
         // make some nice variables
         $winner_name = default_post('winner_name', '');
         $comment = default_post('comment', '');
@@ -104,7 +111,7 @@ try {
         // award the prizes and get the prizes that were awarded
         $prizes_awarded_arr = array();
         foreach($prizes as $prize) {
-            $awarded_prize = award_contest_prize($pdo, $admin, $contest, $prize, $winner_name);
+            $awarded_prize = award_contest_prize($pdo, $contest, $prize, $winner_name);
             
             // make readable prize
             if ($awarded_prize != false) {
@@ -114,8 +121,8 @@ try {
                 $is_epic = (bool) $prize->epic;
         
                 // make the display name
-                $part_name = ${$var_type."_names_array"}[$var_id];
-                $disp_type = ucfirst($prize->type);
+                $part_name = ${$prize_type."_names_array"}[$prize_id];
+                $disp_type = ucfirst($prize_type);
                 $prize_name = "$part_name $disp_type";
                 if ($is_epic == true) {
                     $prize_name = "Epic " . $prize_name;
@@ -193,8 +200,8 @@ function output_form($contest, $prizes)
         $is_epic = (bool) $prize->epic;
         
         // make the display name
-        $part_name = ${$var_type."_names_array"}[$var_id];
-        $disp_type = ucfirst($prize->type);
+        $part_name = ${$prize_type."_names_array"}[$prize_id];
+        $disp_type = ucfirst($prize_type);
         $prize_name = "$part_name $disp_type";
         if ($is_epic == true) {
             $prize_name = "Epic " . $prize_name;
@@ -220,10 +227,9 @@ function output_form($contest, $prizes)
 }
 
 // award contest prize function, called inside foreach
-function award_contest_prize($pdo, $admin, $contest, $prize, $winner_name)
+function award_contest_prize($pdo, $contest, $prize, $winner_name)
 {   
     // make some variables
-    $contest_id = (int) $contest->contest_id;
     $prize_id = (int) $prize->prize_id;
     $part_type = $prize->part_type;
     $part_id = $prize->part_id;
@@ -236,7 +242,6 @@ function award_contest_prize($pdo, $admin, $contest, $prize, $winner_name)
 
     // some names of things
     $prize_name = htmlspecialchars(default_post("prize_name_$prize_id", ''));
-    $html_contest_name = htmlspecialchars($contest->contest_name);
     $html_winner_name = htmlspecialchars($winner_name);
 
     // award the prizes
