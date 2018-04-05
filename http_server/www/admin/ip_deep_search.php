@@ -47,7 +47,13 @@ try {
         output_footer();
         die();
     }
+    
+    // safety first
+    $html_ip = htmlspecialchars($ip);
 
+    // output search
+    output_search($html_ip);
+    
     // if there's an IP set, let's get data from the db
     $users = users_select_by_ip_expanded($pdo, $ip);
 
