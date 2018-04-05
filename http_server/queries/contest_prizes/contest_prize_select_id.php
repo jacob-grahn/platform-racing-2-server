@@ -4,10 +4,11 @@ function contest_prize_select_id($pdo, $contest_id, $part_type, $part_id, $suppr
 {
     $stmt = $pdo->prepare('
         SELECT prize_id
-        WHERE contest_id = :contest_id
-        AND part_type = :part_type
-        AND part_id = :part_id
-        LIMIT 1
+          FROM contest_prizes
+         WHERE contest_id = :contest_id
+           AND part_type = :part_type
+           AND part_id = :part_id
+         LIMIT 1
     ');
     $stmt->bindValue(':contest_id', $contest_id, PDO::PARAM_INT);
     $stmt->bindValue(':part_type', $part_type, PDO::PARAM_STR);

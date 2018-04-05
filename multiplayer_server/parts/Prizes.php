@@ -303,7 +303,7 @@ class Prizes
         self::$PARTY_HAT = new Prize(self::TYPE_HAT, Hats::PARTY, 'Party Hat!', 'Wear this hat to become immune to lightning!');
         self::$TOP_HAT = new Prize(self::TYPE_HAT, Hats::TOP_HAT, 'Top Hat!', 'Stroll through vanish blocks with class!', true);
         self::$JUMP_START_HAT = new Prize(self::TYPE_HAT, Hats::JUMP_START, 'Jump Start Hat!', 'Waiting is slow! Start racing right away.');
-        self::$MOON_HAT = new Prize(self::TYPE_HAT, Hats::MOON, 'Moon Hat!', 'Earn some super bright Lux!', true);
+        self::$MOON_HAT = new Prize(self::TYPE_HAT, Hats::MOON, 'Moon Hat!', 'Earn even more GP than ever!', true);
         self::$THIEF_HAT = new Prize(self::TYPE_HAT, Hats::THIEF, 'Thief Hat!', 'Steal other player\'s hats --even crowns!', true);
         self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat!', 'Jump on the heads of your opponents!', true); //buto (EXACT) by ZePHiR
         self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'Artifact Hat!');

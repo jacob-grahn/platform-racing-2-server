@@ -4,7 +4,7 @@ require_once __DIR__ . '/../fns/artifact/save_finder.php';
 
 class Game extends Room
 {
-
+    const LEVEL_COMPASS = 3236908; // for top hat
     const LEVEL_BUTO = 1738847; // for jigg hat
     const LEVEL_DELIVERANCE = 1896157; // for slender set
 
@@ -12,6 +12,9 @@ class Game extends Room
     const MODE_DEATHMATCH = 'deathmatch';
     const MODE_EGG = 'egg';
     const MODE_OBJECTIVE = 'objective';
+    
+    const PLAYER_SIR = 5321458; // sir sirlington
+    const PLAYER_CLINT = 5451130; // clint the cowboy
 
     private $finish_array = array();
     private $course_id;
@@ -142,30 +145,16 @@ class Game extends Room
 
 
 
-    // Clint the Cowboy (Epic Cowboy Upgrade)
-    private function is_clint_cowboy_here()
+    // check if a player is present
+    private function is_player_here($player_id)
     {
         $ret = false;
         foreach ($this->player_array as $player) {
-            if ($player->user_id == 5451130) {
+            if ($player->user_id == $player_id) {
                 $ret = true;
             }
         }
-        return($ret);
-    }
-
-
-
-    // Sir Sirlington (Epic Sir Parts + Epic Top Hat Upgrades)
-    private function is_sir_sirlington_here()
-    {
-        $ret = false;
-        foreach ($this->player_array as $player) {
-            if ($player->user_id == 5321458) {
-                $ret = true;
-            }
-        }
-        return($ret);
+        return $ret;
     }
 
 
@@ -179,6 +168,7 @@ class Game extends Room
             $this->campaign = $campaign_array[$this->course_id];
         }
 
+        // campaign prizes
         if (isset($this->campaign)) {
             $campaign_prize = Prizes::find($this->campaign->prize_type, $this->campaign->prize_id);
             if ($player_count >= 4 || (isset($campaign_prize) && $campaign_prize->is_universal())) {
@@ -186,20 +176,29 @@ class Game extends Room
             }
         }
 
-        if ($this->is_clint_cowboy_here()) {
-            $this->prize = Prizes::$EPIC_COWBOY_HAT;
-        }
-
-        if ($this->is_sir_sirlington_here()) {
+        // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
+        if ($this->is_player_here(self::PLAYER_SIR)) {
             $sir_prizes = array( Prizes::$EPIC_TOP_HAT, Prizes::$EPIC_SIR_HEAD, Prizes::$EPIC_SIR_BODY, Prizes::$EPIC_SIR_FEET );
             $this->prize = $sir_prizes[ array_rand($sir_prizes) ];
         }
+        
+        // Clint the Cowboy; Awards: Epic Cowboy Hat
+        if ($this->is_player_here(self::PLAYER_CLINT)) {
+            $this->prize = Prizes::$EPIC_COWBOY_HAT;
+        }
 
+        // -Deliverance- by changelings; Awards: Slender Set
         if ($this->course_id == self::LEVEL_DELIVERANCE) {
             $slender_prizes = array( Prizes::$SLENDER_HEAD, Prizes::$SLENDER_BODY, Prizes::$SLENDER_FEET );
             $this->prize = $slender_prizes[ array_rand($slender_prizes) ];
         }
+        
+        // The Golden Compass by -Shadowfax-; Awards: Top Hat
+        if ($this->course_id == self::LEVEL_COMPASS) {
+            $this->prize = Prizes::$TOP_HAT;
+        }
 
+        // random part/upgrade prizes
         if (!isset($this->prize) && $player_count >= 1) {
             if (rand($player_count*2, 20) >= 19) {
                 $prize_array = array(
@@ -234,6 +233,7 @@ class Game extends Room
             }
         }
 
+        // random hat prizes
         if (!isset($this->prize) && $player_count >= 2) {
             if (rand(0, 40) == 40) {
                 $this->prize = Prizes::$EXP_HAT;
@@ -249,12 +249,12 @@ class Game extends Room
             }
         }
 
-        //no prizes on tournament
+        // don't set prizes on servers with tournament mode enabled
         if (pr2_server::$no_prizes) {
             $this->prize = null;
         }
 
-        //tell it to the world
+        // tell the world
         if (isset($this->prize)) {
             $this->send_to_all('setPrize`'.$this->prize->to_str());
         }
@@ -436,7 +436,9 @@ class Game extends Room
 
         if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
             $finish_time = $this->ensure_time_format(microtime(true) - $this->start_time);
-            if ($finish_time > 31536000) $finish_time = 0; // if the race time is >1 year, set it to 0. This is just a glitch protection.
+            if ($finish_time > 31536000) {
+                $finish_time = 0; // if the race time > 1 year, set it to 0
+            }
             $this->set_finish_time($player, $finish_time);
 
             $time_mod = $finish_time / 120;
@@ -472,7 +474,6 @@ class Game extends Room
 
             //--- exp gain -------
             $tot_exp_gain = 0;
-            $wearing_moon = false;
 
             //--- welcome back bonus ---
             $welcome_back_bonus = 0;
@@ -523,6 +524,8 @@ class Game extends Room
 
             // hat, campaign, hh bonuses
             $hat_bonus = 0;
+            $gp_multiplier = 1;
+            $wearing_moon = false;
             foreach ($player->worn_hat_array as $hat) {
                 if ($hat->num == 2) {
                     if (isset($this->campaign)) {
@@ -534,6 +537,7 @@ class Game extends Room
                     $hat_bonus += .25;
                 } elseif ($hat->num == 11) {
                     $wearing_moon = true;
+                    $gp_multiplier += 1;
                 }
             }
             if ($hat_bonus > 0) {
@@ -541,12 +545,8 @@ class Game extends Room
             }
 
             // gp bonus
-            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10) {
-                if ($wearing_moon === true) {
-                    $this->give_gp($player, 2);
-                } else {
-                    $this->give_gp($player);
-                }
+            if (($place == 0 || $wearing_moon === true) && count($this->finish_array) > 1 && $finish_time > 10) {
+                $this->give_gp($player, $wearing_moon, $gp_multiplier);
             }
 
             // happy hour bonus
@@ -626,7 +626,12 @@ class Game extends Room
     private function broadcast_results($player, $finish_time)
     {
         global $chat_room_array;
-        $finish_time = date("H:i:s.u", $finish_time);
+        $finish_int = (int) floor($finish_time);
+        $minutes = (int) floor($finish_int / 60);
+        $seconds = str_pad(floor($finish_time - ($minutes * 60)), 2, 0, STR_PAD_LEFT);
+        $milliseconds = round(($finish_time - ($minutes * 60) - $seconds), 3);
+        $milliseconds = str_pad(substr($milliseconds, 2), 3, 0);
+        $str = $minutes . ':' . $seconds . '.' . $milliseconds;
 
         if (isset($chat_room_array['main'])) {
             $main = $chat_room_array['main'];
@@ -636,7 +641,8 @@ class Game extends Room
                 $names[] = "[$race_stats->name]";
             }
             $vs_names = join(' vs ', $names);
-            $message = "$vs_names: // $player->name wins with a time of $finish_time!";
+            $html_name = htmlspecialchars($player->name);
+            $message = "$vs_names: // $html_name wins with a time of $str!";
             $main->send_chat("systemChat`$message", -1);
         }
     }
@@ -765,13 +771,18 @@ class Game extends Room
 
 
 
-    private function give_gp($player, $multiplier = 1)
+    private function give_gp($player, $wearing_moon = false, $multiplier = 1)
     {
         $user_id = $player->user_id;
         $prev_gp = GuildPoints::get_previous_gp($user_id, $this->course_id);
         $earned_gp = floor($player->race_stats->finish_time / 60 * count($this->player_array) / 4) * $multiplier;
-        if ($prev_gp + $earned_gp > 10) {
-            $earned_gp -= ( $prev_gp + $earned_gp ) - 10;
+        if ($earned_gp <= 0 && $wearing_moon === true) {
+            $earned_gp += 1; // give at least 1 lux for moon hat users
+        }
+        if ($prev_gp + $earned_gp > 10 && $wearing_moon === false) {
+            $earned_gp -= ( $prev_gp + $earned_gp ) - 10; // limit non-moon hat gp to 10
+        } else if ($prev_gp + $earned_gp > 20 && $wearing_moon === true) {
+            $earned_gp -= ( $prev_gp + $earned_gp ) - 20; // limit moon hat gp to 20
         }
         if ($earned_gp >= 1) {
             GuildPoints::submit($user_id, $this->course_id, $earned_gp);

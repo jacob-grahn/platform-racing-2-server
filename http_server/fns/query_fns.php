@@ -88,10 +88,14 @@ function token_login($pdo, $use_cookie = true, $suppress_error = false)
 
 // determine if a user is staff
 function is_staff($pdo, $user_id) {
-    $power = user_select_power($pdo, $user_id);
     $is_mod = false;
     $is_admin = false;
     
+    // determine power and if staff
+    $power = (int) user_select_power($pdo, $user_id, true);
+    if ($power === false || is_empty($power, false)) {
+        $power = 0;
+    }
     if ($power >= 2) {
     	$is_mod = true;
     	if ($power == 3) {
@@ -99,6 +103,7 @@ function is_staff($pdo, $user_id) {
     	}
     }
     
+    // tell the world
     $return = new stdClass();
     $return->mod = $is_mod;
     $return->admin = $is_admin;

@@ -10,6 +10,7 @@ require_once __DIR__ . '/../http_server/queries/exp_today/exp_today_add.php';
 
 class Player
 {
+    const FRED = 4291976;
 
     public $socket;
     public $user_id;
@@ -553,7 +554,7 @@ class Player
                     $dc_player->remove();
 
                     // if they're an actual mod, log it
-                    if ($this->server_owner == false || $this->user_id == 4291976) {
+                    if ($this->server_owner == false || $mod_id == self::FRED) {
                         mod_action_insert($pdo, $mod_id, "$mod_name disconnected $dc_name from $server_name from $mod_ip.", $mod_id, $mod_ip);
                     }
 
@@ -618,7 +619,7 @@ class Player
                     $this->write('systemChat`Error: Invalid argument specified. Type /hh help for more information.');
                 }
             } // server mod command for server owners
-            elseif (($chat_message == '/mod' || strpos($chat_message, '/mod ') === 0) && $this->group >= 3 && $this->server_owner == true) {
+            elseif (($chat_message == '/mod' || strpos($chat_message, '/mod ') === 0) && $this->group >= 3 && $this->server_owner == true && $this->user_id != self:FRED) {
                 if ($chat_message == '/mod help') {
                     $this->write('systemChat`To promote someone to a server moderator, type "/mod promote" followed by their username. They will be a server moderator until they log out or are demoted. To demote an existing server moderator, type "/mod demote" followed by their username.');
                 } elseif (strpos($chat_message, '/mod promote ') === 0 || strpos($chat_message, '/mod demote ') === 0) {
@@ -1074,7 +1075,7 @@ class Player
         $this->server_owner = true;
         $this->group = 3;
         $this->write('setGroup`3');
-        if ($this->user_id != 4291976) {
+        if ($this->user_id != self::FRED) {
             $this->write("message`Welcome to your private server! You have admin privileges here. To promote server mods, type /mod promote *player name here* in the chat. They'll remain modded until they log out.<br><br>For more information about what commands you can use, type /help in the chat.");
         }
     }
