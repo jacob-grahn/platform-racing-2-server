@@ -112,6 +112,7 @@ try {
             $token = $in_token;
             $user_id = token_login($pdo);
             $user = user_select($pdo, $user_id);
+            $login->user_name = $user->name;
         } // or password login
         else {
             $user = pass_login($pdo, $user_name, $user_pass);
