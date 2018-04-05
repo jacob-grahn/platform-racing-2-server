@@ -102,6 +102,8 @@ try {
         $guest_login = true;
         $guest = user_select_guest($pdo);
         $user = pass_login($pdo, $guest->name, $GUEST_PASS);
+        $login->user_name = $guest->name;
+        $login->user_pass = $GUEST_PASS;
     } // account login
     else {
         // token login
