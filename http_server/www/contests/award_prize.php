@@ -182,13 +182,13 @@ function output_form($contest, $prizes)
     $html_contest_name = htmlspecialchars($contest->contest_name);
     $max_awards = (int) $contest->max_awards;
     echo "Award Prizes for <b>$html_contest_name</b><br><br>"
-        ."You can award a maximum of $max_awards sets of per week.<br>"
+        ."You can award a maximum of $max_awards sets of prizes per week.<br>"
         ."This means that you can click the \"Award Prize(s)\" button $max_awards times per week.<br>"
         ."If you have questions about how this works, please ask a member of the PR2 Staff Team for help."
         ."<br><br>"
         ."<form method='post'>";
     
-    echo "PR2 Name: <input type='text' name='winner_name' maxlength='25'> (enter the winner's PR2 name here)<br>";
+    echo "PR2 Name: <input type='text' name='winner_name' maxlength='25'> (enter the winner's PR2 name here)<br><br>";
     echo "Select Prizes to Award:<br>";
     foreach ($prizes as $prize) {
         $prize_id = (int) $prize->prize_id;
