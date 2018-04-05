@@ -51,40 +51,40 @@ try {
         $ip_info = $ip_info->data->geo;
         
         // make some variables
-        $host = htmlspecialchars($ip_info->host);
-        $dns = htmlspecialchars($ip_info->dns);
-        $isp = htmlspecialchars($ip_info->isp);
+        $html_host = htmlspecialchars($ip_info->host);
+        $html_dns = htmlspecialchars($ip_info->dns);
+        $html_isp = htmlspecialchars($ip_info->isp);
         $url_isp = htmlspecialchars(urlencode($ip_info->isp));
-        $city = htmlspecialchars($ip_info->city);
-        $region = htmlspecialchars($ip_info->region);
-        $country = htmlspecialchars($ip_info->country_name);
-        $country_code = htmlspecialchars($ip_info->country_code);
+        $html_city = htmlspecialchars($ip_info->city);
+        $html_region = htmlspecialchars($ip_info->region);
+        $html_country = htmlspecialchars($ip_info->country_name);
+        $html_country_code = htmlspecialchars($ip_info->country_code);
         
         // make a location string out of the location data
-        $location = '';
+        $html_location = '';
         if (!empty($city)) {
-            $location .= $city . ', '; // city
+            $html_location .= $html_city . ', '; // city
         }
         if (!empty($region)) {
-            $location .= $region . ', '; // region/state/province
+            $html_location .= $html_region . ', '; // region/state/province
         }
         if (!empty($html_country)) {
-            $location .= $country . ' (' . $country_code . ')'; // country/code
+            $html_location .= $html_country . ' (' . $html_country_code . ')'; // country/code
         }
     }
     
     // we can dance if we want to, we can leave your friends behind
-    $ip = htmlspecialchars($ip);
+    $html_ip = htmlspecialchars($ip);
     
     // start
-    echo "<p>IP: $ip</p>";
+    echo "<p>IP: $html_ip</p>";
     
     // if the data retrieval was successful, display our fancy variables
     if ($skip_fanciness === false) {
-        if (!empty($host)) echo "<p>Host: $html_host</p>";
-        if (!empty($dns)) echo "<p>DNS: $html_dns</p>";
-        if (!empty($isp)) echo "<p>ISP: <a href='https://www.google.com/search?q=$url_isp' target='_blank'>$isp</a></p>";
-        if (!empty($location)) echo "<p>Location: $location</p>";
+        if (!empty($html_host)) echo "<p>Host: $html_host</p>";
+        if (!empty($html_dns)) echo "<p>DNS: $html_dns</p>";
+        if (!empty($html_isp)) echo "<p>ISP: <a href='https://www.google.com/search?q=$url_isp' target='_blank'>$html_isp</a></p>";
+        if (!empty($html_location)) echo "<p>Location: $html_location</p>";
     }
     
     // check if they are currently banned
@@ -121,7 +121,7 @@ try {
     }
     
     // echo user count
-    echo "$user_count $res found for the IP address \"$ip\".<br><br>";
+    echo "$user_count $res found for the IP address \"$html_ip\".<br><br>";
     
     foreach ($users as $user) {
         $user_id = (int) $user->user_id;
