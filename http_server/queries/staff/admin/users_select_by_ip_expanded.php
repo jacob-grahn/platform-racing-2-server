@@ -13,7 +13,7 @@ function users_select_by_ip_expanded($pdo, $search_ip)
         WHERE
           :search_ip IN (u.ip, u.register_ip, rl.ip)
         ORDER BY
-          time DESC
+          u.time DESC
     ");
     $stmt->bindValue(':search_ip', $search_ip, PDO::PARAM_STR);
     $result = $stmt->execute();
