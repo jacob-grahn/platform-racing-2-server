@@ -135,10 +135,10 @@ try {
 
     // sanity check: is the entered name and the one retrieved from the database identical?
     // this won't be triggered unless some real funny business is going on
-    if (($token_login === false || !is_empty($login->user_name)) && $strtolower($login->user_name) !== strtolower($user_name)) {
+    if (($token_login === false || !is_empty($login->user_name)) && strtolower($login->user_name) !== strtolower($user_name)) {
         throw new Exception("The names don't match. If this error persists, contact a member of the PR2 Staff Team.");
     }
-    
+
     // sanity check: is it a valid name?
     if (strlen(trim($login->user_name)) < 2) {
         throw new Exception("Your name must be at least 2 characters long.");
@@ -183,7 +183,7 @@ try {
 
     // give special parts based on date
     $date = date('F d');
-    
+
     // santa set
     if ($date == 'December 24' || $date == 'December 25') {
         if (add_item($hat_array, 7)) {
@@ -281,7 +281,7 @@ try {
     // update their status
     $status = "Playing on $server->server_name";
     user_update_status($pdo, $user_id, $status, $server_id);
-    
+
     // update their IP and record the recent login
     user_update_ip($pdo, $user_id, $ip);
     recent_logins_insert($pdo, $user_id, $ip, $country_code);
@@ -336,7 +336,7 @@ try {
         $str = "register_login`" . json_encode($send); // make it readable
         $reply->message = $str; // tell me
     }
-    
+
     // tell the user
     echo json_encode($reply);
 } catch (Exception $e) {
