@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/../fns/output_fns.php';
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/guilds/guild_count_active.php';
 require_once __DIR__ . '/../queries/guilds/guild_name_to_id.php';
 require_once __DIR__ . '/../queries/guilds/guild_select.php';
 require_once __DIR__ . '/../queries/guilds/guild_select_members.php';
