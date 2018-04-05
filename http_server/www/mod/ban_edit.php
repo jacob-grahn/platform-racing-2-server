@@ -6,8 +6,8 @@ require_once __DIR__ . '/../../queries/bans/ban_update.php';
 require_once __DIR__ . '/../../queries/bans/ban_select.php';
 require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
 
-$action = default_get('action', 'edit');
-$ban_id = (int) default_get('ban_id', 0);
+$action = find_no_cookie('action', 'edit');
+$ban_id = (int) find_no_cookie('ban_id', 0);
 $ip = get_ip();
 
 // non-validated try/catch
