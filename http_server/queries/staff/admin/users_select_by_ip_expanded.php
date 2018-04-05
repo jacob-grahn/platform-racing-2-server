@@ -12,6 +12,8 @@ function users_select_by_ip_expanded($pdo, $search_ip)
           LEFT JOIN recent_logins rl ON u.user_id = rl.user_id
         WHERE
           :search_ip IN (u.ip, u.register_ip, rl.ip)
+        ORDER BY
+          time DESC
     ");
     $stmt->bindValue(':search_ip', $search_ip, PDO::PARAM_STR);
     $result = $stmt->execute();
