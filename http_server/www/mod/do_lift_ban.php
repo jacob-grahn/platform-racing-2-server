@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
 
 $ban_id = (int) default_post('ban_id', 0);
 $reason = default_post('reason', 'They bribed me with skittles!');
+$reason = $reason . ' @' . date('M j, Y g:i A'); // add time/date to lift reason
 $ip = get_ip();
 
 try {
