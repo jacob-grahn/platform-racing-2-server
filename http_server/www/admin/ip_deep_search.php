@@ -91,7 +91,7 @@ try {
     $is_end = false;
     if ($user_count > 0 && count($users) > 0) {
         $end = $start + count($users);
-        echo "$user_count $user_s found for the IP \"$ip\".";
+        echo "$user_count $user_s found associated with the IP \"$ip\".";
         echo "<br>Showing results $start - $end.<br><br>";
         if ($end == $user_count) {
             $is_end = true;
