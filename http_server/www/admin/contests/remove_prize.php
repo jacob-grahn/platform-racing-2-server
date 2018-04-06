@@ -81,7 +81,7 @@ try {
 }
 
 // page
-function output_form($contest)
+function output_form($contest, $prizes)
 {
     $html_contest_name = htmlspecialchars($contest->contest_name);
     echo "Remove Prizes from <b>$html_contest_name</b>"
@@ -98,8 +98,8 @@ function output_form($contest)
         $is_epic = (bool) $prize->epic;
         
         // make the display name
-        $part_name = ${$var_type."_names_array"}[$var_id];
-        $disp_type = ucfirst($prize->type);
+        $part_name = ${$prize_type."_names_array"}[$prize_id];
+        $disp_type = ucfirst($prize_type);
         $prize_name = "$part_name $disp_type";
         if ($is_epic == true) {
             $prize_name = "Epic " . $prize_name;
@@ -125,6 +125,7 @@ function output_form($contest)
 function remove_contest_prize($pdo, $admin, $contest, $prize)
 {
     // make some nice variables
+    $contest_name = $contest->contest_name;
     $contest_id = (int) $contest->contest_id;
     $prize_id = (int) $prize->prize_id;
     $remove_prize = (bool) $_POST["prize_$prize_id"];
@@ -136,7 +137,7 @@ function remove_contest_prize($pdo, $admin, $contest, $prize)
     
     // some names of things
     $prize_name = htmlspecialchars(default_post("prize_name_$prize_id", ''));
-    $html_contest_name = htmlspecialchars($contest->contest_name);
+    $html_contest_name = htmlspecialchars($contest_name);
     
     $result = contest_prize_delete($pdo, $prize_id, true);
     if ($result != false) {
@@ -150,7 +151,7 @@ function remove_contest_prize($pdo, $admin, $contest, $prize)
     $admin_ip = get_ip();
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
-    admin_action_insert($pdo, $admin_id, "$admin_name removed the $prize_name from contest $contest_name from $admin_ip. {contest_id: $contest_id, contest_name: $html_contest_name, prize_id: $prize_id}", 0, $admin_ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name removed the $prize_name from contest $contest_name from $admin_ip. {contest_id: $contest_id, contest_name: $contest_name, prize_id: $prize_id}", 0, $admin_ip);
     
     // go to the next one
     return true;

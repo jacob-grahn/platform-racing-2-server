@@ -38,7 +38,7 @@ try {
 
     // form
     if ($action === 'form') {
-        output_form($pdo, $contest);
+        output_form($contest);
         output_footer();
         die();
     } // add
@@ -59,7 +59,7 @@ try {
 }
 
 // page
-function output_form($pdo, $contest)
+function output_form($contest)
 {
     $active_checked = check_value($contest->active, 1, 'checked="checked"', '');
 
@@ -102,7 +102,7 @@ function edit_contest($pdo, $contest, $admin)
         $host_id == $contest->user_id &&
         $awarding == $contest->awarding &&
         $max_awards == $contest->max_awards &&
-        $active == $contest->active) {
+        $is_active == $contest->active) {
         throw new Exception('No edits to be made.');
     }
     
