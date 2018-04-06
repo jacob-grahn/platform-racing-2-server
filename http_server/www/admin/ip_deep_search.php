@@ -80,12 +80,14 @@ try {
     }
     
     // if there's an IP set, let's get data from the db
-    $user_count = users_count_from_ip_expanded($pdo, $ip);
+    $user_count = (int) users_count_from_ip_expanded($pdo, $ip);
     $users = users_select_by_ip_expanded($pdo, $ip, $start, $count);
     
     // calculate the number of results and the grammar to go with it
-    $user_s = 'users';
-    if ($user_count === 1) $user_s = 'user';
+    $user_s = 'accounts';
+    if ($user_count === 1) {
+        $user_s = 'account';
+    }
     
     // this determines if anything is shown on the page
     $is_end = false;
