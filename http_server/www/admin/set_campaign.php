@@ -26,7 +26,7 @@ try {
 
 
     // make sure you're an admin
-    $admin = check_moderator($pdo, false, 3);
+    $admin = check_moderator($pdo, true, 3);
 
 
     // lookup
