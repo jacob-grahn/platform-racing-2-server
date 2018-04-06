@@ -121,7 +121,7 @@ try {
     }
     
     // echo user count
-    echo "$user_count $res found for the IP address \"$html_ip\".<br><br>";
+    echo "$user_count $res are associated with the IP address \"$html_ip\".<br><br>";
     
     foreach ($users as $user) {
         $user_id = (int) $user->user_id;
