@@ -9,8 +9,8 @@ require_once __DIR__ . '/../queries/users/user_select_name_and_power.php';
 
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
-$guild_name = find_no_cookie('name', '');
-$guild_id = (int) find_no_cookie('id', 0);
+$guild_name = $_GET['name'];
+$guild_id = (int) default_get('id', 0);
 $ip = get_ip();
 
 try {
@@ -30,18 +30,18 @@ try {
     $pdo = pdo_connect();
 
     // if by name, get id
-    if (!is_empty($guild_name) && ($guild_id == NULL || is_empty($guild_id, false))) {
+    if (!is_empty($guild_name) && is_empty($guild_id, false)) {
         $guild_id = (int) guild_name_to_id($pdo, $guild_name);
     }
     
     // start the page
     output_header("Guild Search");
     
-    // center the page
-    echo '<center>';
-    
     // output the search box
     output_search($guild_name, $guild_id);
+    
+    // center the page
+    echo '<center>';
     
     // get guild info
     $guild = guild_select($pdo, $guild_id);
@@ -60,7 +60,7 @@ try {
     $prose = htmlspecialchars($guild->note);
     $owner_name = htmlspecialchars($owner->name);
     $owner_url_name = htmlspecialchars(urlencode($owner->name));
-    $owner_color = $group_colors[$owner->power];
+    $owner_color = $group_colors[(int) $owner->power];
     $active_count = (int) guild_count_active($pdo, $guild_id);
     $members = guild_select_members($pdo, $guild_id);
     
@@ -74,9 +74,11 @@ try {
         $member_count = 'none';
     }
     
-    // guild info
+    // display guild info
     echo "<br>-- <b>$guild_name</b> --<br>";
-    if (!is_empty($prose)) echo "<span style='font-size: 11px; color: slategray;'><i>$prose</i></span><br>";
+    if (!is_empty($prose)) {
+        echo "<span style='font-size: 11px; color: slategray;'><i>$prose</i></span><br>";
+    }
     echo '<br>'
         ."<img src='https://pr2hub.com/emblems/$emblem'>"
         .'<br><br>'
@@ -109,8 +111,14 @@ try {
         
             // start new row, name column
             echo '<tr>'
-                .'<td>'; // if the guild owner, display a crown next to their name
-            if ($member_id === $owner_id) echo '<img src="/img/vault/Crown-40x40.png" height="12">';
+                .'<td>';
+            
+            // if the guild owner, display a crown next to their name
+            if ($member_id === $owner_id) {
+                echo '<img src="/img/vault/Crown-40x40.png" height="12">';
+            }
+            
+            // member name column
             echo "<a href='player_search.php?name=$member_url_name' style='color: #$member_color; text-decoration: underline;'>$member_name</a>"
                 .'</td>';
 
