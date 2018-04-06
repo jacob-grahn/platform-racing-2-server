@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/staff/admin/users_count_from_ip_expanded.php';
 require_once __DIR__ . '/../../queries/staff/admin/users_select_by_ip_expanded.php';
 
-$ip = find_no_cookie('ip', '');
+$ip = default_get('ip', '');
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
