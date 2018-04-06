@@ -22,7 +22,7 @@ class pr2_server extends socketServer
     public function on_timer()
     {
         //once every 10 seconds
-        TemporaryItems::remove_expired();
+        \pr2\TemporaryItems::removeExpired();
         LocalBans::remove_expired();
     }
 

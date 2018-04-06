@@ -26,7 +26,7 @@ function assign_guild_part($type, $part_id, $user_id, $guild_id, $seconds_durati
 {
     global $player_array;
 
-    TemporaryItems::add($type, $part_id, $user_id, $guild_id, $seconds_duration);
+    \pr2\TemporaryItems::add($type, $part_id, $user_id, $guild_id, $seconds_duration);
 
     foreach ($player_array as $player) {
         if ($player->guild_id == $guild_id) {
