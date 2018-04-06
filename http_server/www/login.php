@@ -140,11 +140,13 @@ try {
     }
 
     // sanity check: is it a valid name?
-    if (strlen(trim($login->user_name)) < 2) {
-        throw new Exception("Your name must be at least 2 characters long.");
-    }
-    if (strlen(trim($login->user_name)) > 20) {
-        throw new Exception("Your name cannot be more than 20 characters long.");
+    if ($token_login === false) {
+        if (strlen(trim($login->user_name)) < 2) {
+            throw new Exception("Your name must be at least 2 characters long.");
+        }
+        if (strlen(trim($login->user_name)) > 20) {
+            throw new Exception("Your name cannot be more than 20 characters long.");
+        }
     }
 
     // sanity check: if a guild server, is the user in the guild?

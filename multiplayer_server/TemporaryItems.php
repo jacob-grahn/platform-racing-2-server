@@ -1,22 +1,26 @@
 <?php
 
+namespace pr2;
+
 class TemporaryItems
 {
-    
+
     private static $items = array();
-    
-    
+
+
     public static function add($type, $part_id, $user_id, $guild_id, $duration)
     {
         $match = false;
         foreach (self::$items as $item) {
-            if ($item->type == $type && $item->part_id == $part_id && ($item->guild_id == $guild_id || $item->user_id == $part_id)) {
+            if ($item->type == $type && $item->part_id == $part_id &&
+                ($item->guild_id == $guild_id || $item->user_id == $part_id)
+            ) {
                 $item->expire_time += $duration;
                 $match = true;
                 break;
             }
         }
-        
+
         if (!$match) {
             $item = new stdClass();
             $item->type = $type;
@@ -27,24 +31,27 @@ class TemporaryItems
             self::$items[] = $item;
         }
     }
-    
-    
-    public static function get_items($user_id, $guild_id)
+
+
+    public static function getItems($user_id, $guild_id)
     {
         $arr = array();
         foreach (self::$items as $item) {
-            if ($item->user_id == $user_id || ($guild_id != 0 && $item->guild_id == $guild_id) || $item->guild_id == -1) {
+            if ($item->user_id == $user_id ||
+                ($guild_id != 0 && $item->guild_id == $guild_id) ||
+                $item->guild_id == -1
+            ) {
                 $arr[] = $item;
             }
         }
         return $arr;
     }
-    
-    
-    public static function get_parts($type, $user_id, $guild_id)
+
+
+    public static function getParts($type, $user_id, $guild_id)
     {
         $parts = array();
-        $items = self::get_items($user_id, $guild_id);
+        $items = self::getItems($user_id, $guild_id);
         foreach ($items as $item) {
             if ($item->type == $type) {
                 $parts[] = $item->part_id;
@@ -52,9 +59,9 @@ class TemporaryItems
         }
         return $parts;
     }
-    
-    
-    public static function remove_expired()
+
+
+    public static function removeExpired()
     {
         $time = time();
         $len = count(self::$items);

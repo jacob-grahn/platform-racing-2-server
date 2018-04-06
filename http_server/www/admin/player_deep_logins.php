@@ -40,8 +40,9 @@ function output_pagination($start, $count, $name, $is_end = false)
     if ($is_end === true) {
         echo(" Next ->");
     } else {
-        echo(" <a href='?name=$url_name&start=$next_start_num&count=$count'>Next -></a></p>");
+        echo(" <a href='?name=$url_name&start=$next_start_num&count=$count'>Next -></a>");
     }
+    echo('</p>');
 }
 
 // admin check try block

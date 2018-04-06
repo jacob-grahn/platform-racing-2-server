@@ -40,6 +40,13 @@ try {
     $action = find('action');
 
     if ($action == 'restore') {
+        // check referrer
+        $ref = check_ref();
+        if ($ref !== true) {
+            $ref = htmlspecialchars($ref);
+            throw new Exception("Incorrect referrer. The referrer is: $ref");
+        }
+        
         // get the level_id that this backup_id points to
         $backup_id = find('backup_id');
         $row = level_backup_select($pdo, $backup_id);

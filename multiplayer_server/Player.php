@@ -192,7 +192,7 @@ class Player
 
     private function apply_temp_items()
     {
-        $temp_items = TemporaryItems::get_items($this->user_id, $this->guild_id);
+        $temp_items = \pr2\TemporaryItems::getItems($this->user_id, $this->guild_id);
         foreach ($temp_items as $item) {
             // $this->gain_part('e'.ucfirst($item->type), $item->part_id);
             $this->set_part($item->type, $item->part_id, true);
@@ -1032,7 +1032,7 @@ class Player
     private function get_full_parts($type)
     {
         $perm = $this->get_owned_parts($type);
-        $temp = TemporaryItems::get_parts($type, $this->user_id, $this->guild_id);
+        $temp = \pr2\TemporaryItems::getParts($type, $this->user_id, $this->guild_id);
         $full = array_merge($perm, $temp);
         return $full;
     }

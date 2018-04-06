@@ -6,8 +6,8 @@ function pr2_select_true_rank($pdo, $user_id)
         SELECT pr2.rank AS rank,
                rank_tokens.used_tokens AS tokens
           FROM pr2
-         WHERE pr2.user_id = :user_id
           LEFT JOIN rank_tokens ON rank_tokens.user_id = pr2.user_id
+         WHERE pr2.user_id = :user_id
          LIMIT 1
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
