@@ -104,20 +104,20 @@ try {
     $ip_ban_count = (int) count($ip_bans);
     $ip_ban_list = create_ban_list($ip_bans);
     $ip_lang = 'time';
-    if ($ip_ban_count > 1) {
+    if ($ip_ban_count !== 1) {
         $ip_lang = 'times';
     }
     
     // echo ban status
     echo "<p>Currently banned: $banned</p>"
-        ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list";
+        ."<p>This IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list";
     
     // get users associated with this IP
     $users = users_select_by_ip($pdo, $ip);
     $user_count = (int) $users->count;
-    $res = 'user';
-    if ($user_count > 1) {
-        $res = 'users';
+    $res = 'account';
+    if ($user_count !== 1) {
+        $res = 'accounts';
     }
     
     // echo user count
