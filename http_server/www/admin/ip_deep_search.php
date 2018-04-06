@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../queries/staff/admin/users_select_by_ip_expanded.p
 
 $ip = find_no_cookie('ip', '');
 $start = (int) default_get('start', 0);
-$count = (int) default_get('count', 250);
+$count = (int) default_get('count', 25);
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
 // this will echo the search box when called
