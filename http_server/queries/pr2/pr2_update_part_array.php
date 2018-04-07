@@ -29,7 +29,8 @@ function pr2_update_part_array($pdo, $user_id, $type, $part_array)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception("Could not update user #$user_id\'s PR2 player data on column $field.");
+        $user_id = (int) $user_id;
+        throw new Exception("Could not update user #$user_id's PR2 player data on column $field.");
     }
 
     return $result;
