@@ -51,6 +51,7 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
+    output_header('Edit Contest', true, true);
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
@@ -87,6 +88,7 @@ function output_form($contest)
 function edit_contest($pdo, $contest, $admin)
 {
     // make some variables
+    $contest_id = (int) $contest->contest_id;
     $contest_name = find('contest_name');
     $description = find('description');
     $contest_url = find('url');
@@ -121,7 +123,7 @@ function edit_contest($pdo, $contest, $admin)
     }
     
     // edit contest
-    contest_update($pdo, $contest->contest_id, $contest_name, $description, $contest_url, $host_id, $awarding, $max_awards, $is_active);
+    contest_update($pdo, $contest_id, $contest_name, $description, $contest_url, $host_id, $awarding, $max_awards, $is_active);
     
     // log the action in the admin log
     $admin_ip = get_ip();
