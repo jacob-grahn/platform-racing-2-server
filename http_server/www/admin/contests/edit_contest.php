@@ -6,18 +6,19 @@ require_once __DIR__ . '/../../../queries/contests/contest_select.php';
 require_once __DIR__ . '/../../../queries/contests/contest_update.php';
 require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
 
+$ip = get_ip();
 $action = find_no_cookie('action', 'form');
 $contest_id = (int) find_no_cookie('contest_id', 0);
 
 try {
     // rate limiting
-    rate_limit('edit-contest-'.$ip, 60, 10);
+    rate_limit('edit-contest-'.$ip, 30, 5);
     rate_limit('edit-contest-'.$ip, 5, 2);
-
-    //connect
+    
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're an admin
+    // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
 } catch (Exception $e) {
     output_header('Error');
@@ -27,17 +28,15 @@ try {
 }
 
 try {
-    // header
-    output_header('Edit Contest', true, true);
-    
     // select contest
     $contest = contest_select($pdo, $contest_id, false, true);
-    if (is_empty($contest) || $contest === false) {
+    if (empty($contest) || $contest === false) {
         throw new Exception("Could not find a contest with that ID.");
     }
 
     // form
     if ($action === 'form') {
+        output_header('Edit Contest', true, true);
         output_form($contest);
         output_footer();
         die();
@@ -63,7 +62,7 @@ function output_form($contest)
 {
     $active_checked = check_value($contest->active, 1, 'checked="checked"', '');
 
-    echo '<form action="edit_contest.php" method="post">';
+    echo '<form method="post">';
 
     echo "Edit Contest<br><br>";
 
@@ -107,9 +106,9 @@ function edit_contest($pdo, $contest, $admin)
     }
     
     // make sure the host exists
-    if ($host_id != $contest->user_id) {
+    if ($host_id !== (int) $contest->user_id) {
         $host_name = id_to_name($pdo, $host_id, false);
-        if ($host_name == false) {
+        if ($host_name === false) {
             throw new Exception('Could not find a user with that ID.');
         }
     }
@@ -122,7 +121,7 @@ function edit_contest($pdo, $contest, $admin)
     }
     
     // edit contest
-    contest_update($pdo, $contest_id, $contest_name, $description, $contest_url, $host_id, $awarding, $max_awards, $is_active);
+    contest_update($pdo, $contest->contest_id, $contest_name, $description, $contest_url, $host_id, $awarding, $max_awards, $is_active);
     
     // log the action in the admin log
     $admin_ip = get_ip();
