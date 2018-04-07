@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../contests/part_vars.php';
 require_once __DIR__ . '/../../../queries/contests/contest_select.php';
 require_once __DIR__ . '/../../../queries/contest_prizes/contest_prizes_select_by_contest.php';
 require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_delete.php';
+require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
@@ -21,10 +22,10 @@ try {
         throw new Exception("Invalid contest ID specified.");
     }
 
-    //connect
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're an admin
+    // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
 } catch (Exception $e) {
     output_header('Error');
@@ -59,11 +60,51 @@ try {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
+        
+        // make some variables
+        $contest_id = (int) $contest->contest_id;
+        $contest_name = $contest->contest_name;
+        $html_contest_name = htmlspecialchars($contest_name);
+        $removed = 0; // count the number of prizes removed
+        
+        // determine if we're removing these prizes
         foreach($prizes as $prize) {
-            remove_contest_prize($pdo, $admin, $contest, $prize);
+            // make some nice variables
+            $prize_id = $prize->prize_id;
+            $prize_part_id = (int) $prize->part_id;
+            $remove_prize = (bool) $_POST["prize_$prize_part_id"];
+            
+            // move on if not removing this prize
+            if ($remove_prize === false) {
+                continue;
+            }
+            
+            // some names of things
+            $prize_name = htmlspecialchars(default_post("prize_name_$prize_part_id", ''));
+            
+            // do it
+            $operation = contest_prize_delete($pdo, $prize_id, true);
+            $removed++; // increment counter
+            if ($operation !== false) {
+                echo "<b>The $prize_name was deleted from $html_contest_name.</b><br>";
+            } else {
+                echo "<span style='color: red;'>The $prize_name was not deleted from $html_contest_name.</span><br>";
+                continue;
+            }
+    
+            // log the action in the admin log
+            $admin_name = $admin->name;
+            $admin_id = $admin->user_id;
+            admin_action_insert($pdo, $admin_id, "$admin_name removed the $prize_name from contest $contest_name from $ip. {contest_id: $contest_id, contest_name: $contest_name, prize_id: $prize_id}", 0, $ip);
         }
+        
+        // if no prizes were selected to be removed, tell the user
+        if ($removed === 0) {
+            throw new Exception("No prizes were selected to be removed.");
+        }
+        
         // output the page
-        echo "<br>Great success! All operations completed. The results can be seen above.";
+        echo "<br>All operations completed. The results can be seen above.";
         echo "<br><br>";
         echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Prize</a><br>";
         echo "<a href='/contests/contests.php'>&lt;- All Contests</a>";
@@ -83,6 +124,8 @@ try {
 // page
 function output_form($contest, $prizes)
 {
+    global $hat_names_array, $head_names_array, $body_names_array, $feet_names_array;
+
     $html_contest_name = htmlspecialchars($contest->contest_name);
     echo "Remove Prizes from <b>$html_contest_name</b>"
         ."<br><br>"
@@ -119,40 +162,4 @@ function output_form($contest, $prizes)
     echo '---';
     echo '<br>';
     echo '<pre>Check the boxes of the prizes you wish to remove.<br>When you\'re done, click "Remove Contest Prize(s)".';
-}
-
-// remove contest prize function, called inside foreach
-function remove_contest_prize($pdo, $admin, $contest, $prize)
-{
-    // make some nice variables
-    $contest_name = $contest->contest_name;
-    $contest_id = (int) $contest->contest_id;
-    $prize_id = (int) $prize->prize_id;
-    $remove_prize = (bool) $_POST["prize_$prize_id"];
-    
-    // move on if not removing this prize
-    if ($remove_prize == false) {
-        return false;
-    }
-    
-    // some names of things
-    $prize_name = htmlspecialchars(default_post("prize_name_$prize_id", ''));
-    $html_contest_name = htmlspecialchars($contest_name);
-    
-    $result = contest_prize_delete($pdo, $prize_id, true);
-    if ($result != false) {
-        echo "$prize_name was deleted from $html_contest_name.<br>";
-    } else {
-        echo "$prize_name could not be deleted from $html_contest_name.<br>";
-        return false;
-    }
-    
-    // log the action in the admin log
-    $admin_ip = get_ip();
-    $admin_name = $admin->name;
-    $admin_id = $admin->user_id;
-    admin_action_insert($pdo, $admin_id, "$admin_name removed the $prize_name from contest $contest_name from $admin_ip. {contest_id: $contest_id, contest_name: $contest_name, prize_id: $prize_id}", 0, $admin_ip);
-    
-    // go to the next one
-    return true;
 }
