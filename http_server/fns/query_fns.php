@@ -162,8 +162,49 @@ function award_part($pdo, $user_id, $type, $part_id, $ensure = true)
 }
 
 
+// check to see if a user has a part
+function has_part($pdo, $user_id, $type, $part_id)
+{
+    $is_epic = false;
+    $type = strtolower($type);
+    $part_types = ['hat','head','body','feet','ehat','ehead','ebody','efeet'];
+    
+    // sanity check: is it a valid type?
+    if (!in_array($type, $part_types)) {
+        throw new Exception("Invalid part type specified.");
+    }
+    
+    // determine where in the array our value was found
+    $type_no = array_search($type, $part_types);
+    if ($type_no >= 4) {
+        $is_epic = true;
+    }
+    
+    // perform query
+    $field = type_to_db_field($type);
+    if ($is_epic === true) {
+        $data = epic_upgrades_select($pdo, $user_id);
+    } else {
+        $data = pr2_select($pdo, $user_id);
+    }
+    
+    // get data and convert to an array
+    $parts_str = $data->{$field};
+    $parts_arr = explode(",", $parts_str);
+    
+    // search for part ID in array
+    if (in_array($part_id, $parts_arr)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 function type_to_db_field($type)
 {
+    $type = strtolower($type);
+    
     if ($type == 'hat') {
         $field = 'hat_array';
     } elseif ($type == 'head') {
@@ -172,13 +213,13 @@ function type_to_db_field($type)
         $field = 'body_array';
     } elseif ($type == 'feet') {
         $field = 'feet_array';
-    } elseif ($type == 'eHat') {
+    } elseif ($type == 'ehat') {
         $field = 'epic_hats';
-    } elseif ($type == 'eHead') {
+    } elseif ($type == 'ehead') {
         $field = 'epic_heads';
-    } elseif ($type == 'eBody') {
+    } elseif ($type == 'ebody') {
         $field = 'epic_bodies';
-    } elseif ($type == 'eFeet') {
+    } elseif ($type == 'efeet') {
         $field = 'epic_feet';
     } else {
         throw new Exception('Unknown type');
