@@ -62,10 +62,10 @@ try {
         
         // make a location string out of the location data
         $html_location = '';
-        if (!empty($city)) {
+        if (!empty($html_city)) {
             $html_location .= $html_city . ', '; // city
         }
-        if (!empty($region)) {
+        if (!empty($html_region)) {
             $html_location .= $html_region . ', '; // region/state/province
         }
         if (!empty($html_country)) {
@@ -114,14 +114,14 @@ try {
     
     // get users associated with this IP
     $users = users_select_by_ip($pdo, $ip);
-    $user_count = (int) $users->count;
-    $res = 'account';
+    $user_count = count($users);
+    $res = 'account is';
     if ($user_count !== 1) {
-        $res = 'accounts';
+        $res = 'accounts are';
     }
     
     // echo user count
-    echo "$user_count $res are associated with the IP address \"$html_ip\".<br><br>";
+    echo "$user_count $res associated with the IP address \"$html_ip\".<br><br>";
     
     foreach ($users as $user) {
         $user_id = (int) $user->user_id;
