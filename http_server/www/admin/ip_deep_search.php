@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../queries/staff/admin/users_count_from_ip_expanded.
 require_once __DIR__ . '/../../queries/staff/admin/users_select_by_ip_expanded.php';
 
 $ip = default_get('ip', '');
+$html_ip = htmlspecialchars($ip);
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
@@ -17,7 +18,7 @@ function output_search($ip = '', $incl_br = true)
     echo "IP: <input type='text' name='ip' value='$ip'>&nbsp;";
     echo "<input type='submit' value='Search'></form>";
     if ($incl_br) {
-        echo "<br><br>";
+        echo "<br>";
     }
 }
 
@@ -32,14 +33,14 @@ function output_pagination($start, $count, $ip, $is_end = false)
     }
     echo('<p>');
     if ($start > 0) {
-        echo("<a href='?name=$url_name&start=$last_start_num&count=$count'><- Last</a> |");
+        echo("<a href='?ip=$url_name&start=$last_start_num&count=$count'><- Last</a> |");
     } else {
         echo('<- Last |');
     }
     if ($is_end === true) {
         echo(" Next ->");
     } else {
-        echo(" <a href='?name=$url_name&start=$next_start_num&count=$count'>Next -></a>");
+        echo(" <a href='?ip=$url_name&start=$next_start_num&count=$count'>Next -></a>");
     }
     echo('</p>');
 }
@@ -47,13 +48,13 @@ function output_pagination($start, $count, $ip, $is_end = false)
 // admin check try block
 try {
     // rate limiting
-    rate_limit('ip-deep-search-'.$ip, 60, 3, 'Wait a minute at most before searching again.');
-    rate_limit('ip-deep-search-'.$ip, 30, 2);
+    rate_limit('ip-deep-search-'.$ip, 60, 5, 'Wait a minute at most before searching again.');
+    rate_limit('ip-deep-search-'.$ip, 30, 3);
     
-    //connect
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're an admin
+    // make sure you're an admin
     $admin = check_moderator($pdo, false, 3);
 } catch (Exception $e) {
     $message = $e->getMessage();
@@ -74,6 +75,9 @@ try {
         die();
     }
     
+    // output search
+    output_search($html_ip);
+    
     // sanity check: ensure the database doesn't overload itself
     if ($count > 25) {
         $count = 25;
@@ -84,17 +88,17 @@ try {
     $users = users_select_by_ip_expanded($pdo, $ip, $start, $count);
     
     // calculate the number of results and the grammar to go with it
-    $user_s = 'accounts';
+    $user_s = 'accounts are';
     if ($user_count === 1) {
-        $user_s = 'account';
+        $user_s = 'account is';
     }
     
     // this determines if anything is shown on the page
     $is_end = false;
     if ($user_count > 0 && count($users) > 0) {
         $end = $start + count($users);
-        echo "$user_count $user_s are associated with the IP address \"$ip\".";
-        echo "<br>Showing results $start - $end.<br><br>";
+        echo "$user_count $user_s associated with the IP address \"$ip\".";
+        echo "<br>Showing results $start - $end.<br>";
         if ($end == $user_count) {
             $is_end = true;
         }
@@ -106,12 +110,8 @@ try {
     
     if ($user_count > 0 && count($users) > 0) {
         echo '<p>---</p>';
-        output_pagination($start, $count, $name, $is_end);
+        output_pagination($start, $count, $ip, $is_end);
     }
-
-    // output search
-    $html_ip = htmlspecialchars($ip);
-    output_search($html_ip);
 
     foreach ($users as $user) {
         $name = str_replace(' ', '&nbsp;', $user->name); // multiple spaces in name
@@ -130,7 +130,6 @@ try {
     }
 } catch (Exception $e) {
     $message = $e->getMessage();
-    output_search($safe_ip);
     echo "<i>Error: $message</i>";
 } finally {
     output_footer();
