@@ -97,10 +97,10 @@ function is_staff($pdo, $user_id) {
         $power = 0;
     }
     if ($power >= 2) {
-    	$is_mod = true;
-    	if ($power == 3) {
-    	    $is_admin = true;
-    	}
+        $is_mod = true;
+        if ($power == 3) {
+            $is_admin = true;
+        }
     }
     
     // tell the world
@@ -119,18 +119,26 @@ require_once __DIR__ . '/../queries/pr2/pr2_update_part_array.php';
 require_once __DIR__ . '/../queries/part_awards/part_awards_insert.php';
 
 // award hats
-function award_part($pdo, $user_id, $type, $part_id, $ensure = true)
+function award_part($pdo, $user_id, $type, $part_id)
 {
-    $ret = false;
-    $epicUpgrade = false;
-
-    if (strpos($type, 'e') === 0) {
-        $epicUpgrade = true;
+    $is_epic = false;
+    $type = strtolower($type);
+    $part_types = ['hat','head','body','feet','ehat','ehead','ebody','efeet'];
+    
+    // sanity check: is it a valid type?
+    if (!in_array($type, $part_types)) {
+        throw new Exception("Invalid part type specified.");
+    }
+    
+    // determine where in the array our value was found
+    $type_no = array_search($type, $part_types);
+    if ($type_no >= 4) {
+        $is_epic = true;
     }
 
     // get existing parts
     try {
-        if ($epicUpgrade) {
+        if ($is_epic === true) {
             $row = epic_upgrades_select($pdo, $user_id);
         } else {
             $row = pr2_select($pdo, $user_id);
@@ -141,24 +149,25 @@ function award_part($pdo, $user_id, $type, $part_id, $ensure = true)
         $str_array = '';
     }
 
-    // make a copy so we can check if it changes from the original
-    $str_array_new = $str_array;
-
-    if ($ensure) {
-        part_awards_insert($pdo, $user_id, $type, $part_id);
-    }
-    $str_array_new = append_to_str_array($str_array_new, $part_id);
-
-    if ($str_array_new != $str_array) {
-        if ($epicUpgrade) {
-            epic_upgrades_update_field($pdo, $user_id, $type, $str_array_new);
-        } else {
-            pr2_update_part_array($pdo, $user_id, $type, $str_array_new);
-        }
-        $ret = true;
+    // explode on ,
+    $part_array = explode(",", $str_array);
+    if (in_array($part_id, $part_array)) {
+        return false;
     }
 
-    return $ret;
+    // insert part award, award part
+    part_awards_insert($pdo, $user_id, $type, $part_id);
+
+    // award part
+    array_push($part_array, $part_id);
+    $new_field_str = join(",", $part_array);
+    
+    if ($is_epic === true) {
+        epic_upgrades_update_field($pdo, $user_id, $type, $new_field_str);
+    } else {
+        pr2_update_part_array($pdo, $user_id, $type, $new_field_str);
+    }
+    return true;
 }
 
 
@@ -228,7 +237,7 @@ function type_to_db_field($type)
 }
 
 
-function append_to_str_array($str_arr, $val)
+function append_to_str_array($str_arr, $val) // is this needed?
 {
     if (!isset($str_arr) || $str_arr == ',') {
         $str_arr = '';
