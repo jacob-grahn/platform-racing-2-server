@@ -123,9 +123,9 @@ try {
     token_insert($pdo, $user->user_id, $token);
     if ($remember == 'true' && !$guest_login) {
         $token_expire = time() + (60*60*24*30);
-        setcookie('token', $token, $token_expire);
+        setcookie('token', $token, $token_expire, "/", $_SERVER["SERVER_NAME"], false, true);
     } else {
-        setcookie('token', '', time()-3600);
+        setcookie('token', '', time()-3600, "/", $_SERVER["SERVER_NAME"], false, true);
     }
 
     // create variables from user data in db
