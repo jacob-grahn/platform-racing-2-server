@@ -1,5 +1,6 @@
 <?php
 
+// TO-DO: fix this
 function contest_winners_select_all($pdo, $start, $count)
 {
     $stmt = $pdo->prepare('
