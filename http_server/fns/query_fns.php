@@ -62,9 +62,9 @@ function token_login($pdo, $use_cookie = true, $suppress_error = false)
 {
 
     $rec_token = find_no_cookie('token');
-    if (isset($rec_token) && $rec_token != '') {
+    if (isset($rec_token) && !empty($rec_token)) {
         $token = $rec_token;
-    } elseif ($use_cookie && isset($_COOKIE['token']) && $_COOKIE['token'] != '') {
+    } elseif ($use_cookie && isset($_COOKIE['token']) && !empty($_COOKIE['token'])) {
         $token = $_COOKIE['token'];
     }
 
