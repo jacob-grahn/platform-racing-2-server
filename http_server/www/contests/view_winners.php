@@ -24,7 +24,7 @@ try {
     $pdo = pdo_connect();
     
     // determine the user's group
-    $user_id = token_login($pdo, true, true);
+    $user_id = (int) token_login($pdo, true, true);
     $is_staff = is_staff($pdo, $user_id);
     $is_mod = $is_staff->mod;
     $is_admin = $is_staff->admin;
@@ -43,7 +43,7 @@ try {
     $contest = contest_select($pdo, $contest_id, !$is_mod);
     
     // make some variables
-    $contest_id = $contest->contest_id;
+    $contest_id = (int) $contest->contest_id;
     $contest_name = htmlspecialchars($contest->contest_name);
     $contest_url = htmlspecialchars($contest->url);
     
