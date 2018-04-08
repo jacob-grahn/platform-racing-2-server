@@ -3,10 +3,10 @@
 function users_select_by_ip($pdo, $ip)
 {
     $stmt = $pdo->prepare('
-          SELECT COUNT(*) AS count, user_id, name, time, power
+          SELECT user_id, name, time, power
             FROM users
            WHERE ip = :ip
-              OR register_ip = :ip
+        GROUP BY user_id
         ORDER BY time DESC
     ');
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
