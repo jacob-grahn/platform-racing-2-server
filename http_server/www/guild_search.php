@@ -9,7 +9,7 @@ require_once __DIR__ . '/../queries/users/user_select_name_and_power.php';
 
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
-$guild_name = $_GET['name'];
+$guild_name = default_get('name', '');
 $guild_id = (int) default_get('id', 0);
 $ip = get_ip();
 
@@ -30,27 +30,23 @@ try {
     $pdo = pdo_connect();
 
     // if by name, get id
+    $mode = 'id';
     if (!is_empty($guild_name) && is_empty($guild_id, false)) {
+        $mode = 'name';
         $guild_id = (int) guild_name_to_id($pdo, $guild_name);
     }
     
     // start the page
     output_header("Guild Search");
     
-    // output the search box
-    output_search($guild_name, $guild_id);
-    
-    // center the page
-    echo '<center>';
-    
     // get guild info
     $guild = guild_select($pdo, $guild_id);
     
     // make some variables
     $guild_id = (int) $guild->guild_id;
-    $guild_name = htmlspecialchars($guild->name);
-    $creation_date = date('j/M/Y', $guild->creation_date);
-    $active_date = date('j/M/Y', $guild->active_date);
+    $guild_name = htmlspecialchars($guild->guild_name);
+    $creation_date = date('j/M/Y', strtotime($guild->creation_date));
+    $active_date = date('j/M/Y', strtotime($guild->active_date));
     $member_count = (int) $guild->member_count;
     $emblem = $guild->emblem;
     $gp_today = (int) $guild->gp_total;
@@ -69,10 +65,11 @@ try {
         $emblem = str_replace('.j', '.jpg', $emblem);
     }
     
-    // simple text replacement
-    if ($member_count === 0) {
-        $member_count = 'none';
-    }
+    // output the search box
+    output_search($guild_name, $guild_id, $mode);
+    
+    // center the page
+    echo '<center>';
     
     // display guild info
     echo "<br>-- <b>$guild_name</b> --<br>";
@@ -82,9 +79,9 @@ try {
     echo '<br>'
         ."<img src='https://pr2hub.com/emblems/$emblem'>"
         .'<br><br>'
-        ."Owner: <a href='player_search.php?name=$owner_url_name' style='color: $owner_color; text-decoration: underline;'>$owner_name</a><br>"
-        ."Members: $member_count ($active_count active)<br>"
-        ."GP Today: $gp_today<br>"
+        ."Owner: <a href='player_search.php?name=$owner_url_name' style='color: #$owner_color; text-decoration: underline;'>$owner_name</a><br>"
+        ."Members: $member_count | Active: $active_count<br>"
+        ."GP Today: $gp_today | "
         ."GP Total: $gp_total<br>"
         ."Created: $creation_date<br>"
         ."Last Active: $active_date<br>";
@@ -115,7 +112,7 @@ try {
             
             // if the guild owner, display a crown next to their name
             if ($member_id === $owner_id) {
-                echo '<img src="/img/vault/Crown-40x40.png" height="12">';
+                echo '<img src="img/vault/Crown-40x40.png" height="12" title="Guild Owner"> ';
             }
             
             // member name column
@@ -135,6 +132,8 @@ try {
             // end the row, move on to the next member
             echo '</tr>';
         }
+        // end the table
+        echo '</table>';
     }
 } catch(Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
@@ -145,8 +144,24 @@ try {
     die();
 }
 
-function output_search($guild_name = '', $guild_id = '') {
+function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
     $guild_id = (int) $guild_id;
+    
+    // choose which one to set after searching
+    $id_display = 'none';
+    $name_display = 'none';
+    $id_checked = '';
+    $name_checked = '';
+    switch($mode) {
+        case 'id':
+            $id_display = 'block';
+            $id_checked = 'checked="checked"';
+            break;
+        case 'name':
+            $name_display = 'block';
+            $name_checked = 'checked="checked"';
+            break;
+    }
 
     // check if values passed are empty
     if (is_empty($guild_name)) $guild_name = '';
@@ -174,25 +189,26 @@ function output_search($guild_name = '', $guild_id = '') {
 
     // search type selection
     echo 'Search by: '
-        .'<input type="radio" onclick="name_id_check()" id="nameradio" name="typeRadio"> Name '
-        .'<input type="radio" onclick="name_id_check()" id="idradio" name="typeRadio"> ID'
+        ."<input type='radio' onclick='name_id_check()' id='nameradio' name='typeRadio' $name_checked> Name "
+        ."<input type='radio' onclick='name_id_check()' id='idradio' name='typeRadio' $id_checked> ID"
         .'<br>';
     
     // name form
-    echo '<div id="nameform" style="display:none"><br>
-              <form method="get">
-                  Name: <input type="text" name="name" value="'.htmlspecialchars($guild_name).'">
-                        <input type="submit" value="Search">
+    $html_guild_name = htmlspecialchars($guild_name);
+    echo "<div id='nameform' style='display:$name_display'><br>
+              <form method='get'>
+                  Name: <input type='text' name='name' value='$html_guild_name'>
+                        <input type='submit' value='Search'>
               </form>
-          </div>';
+          </div>";
           
     // id form
-    echo '<div id="idform" style="display:none"><br>
-              <form method="get">
-                  ID: <input type="text" name="id" oninput="this.value = this.value.replace(/[^0-9.]/g, \'\').replace(/(\..*)\./g, \'$1\');" value="'.$guild_id.'">
-                      <input type="submit" value="Search">
+    echo "<div id='idform' style='display:$id_display'><br>
+              <form method='get'>
+                  ID: <input type='text' name='id' oninput=\"this.value = this.value.replace(/[^0-9.]/g, \'\').replace(/(\..*)\./g, \'$1\');\" value='$guild_id'>
+                      <input type='submit' value='Search'>
               </form>
-          </div>';
+          </div>";
     
     // end center
     echo '</center>';
