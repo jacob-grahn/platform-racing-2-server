@@ -117,7 +117,15 @@ function format_duration($seconds)
 
 function get_ip()
 {
-    return $_SERVER['REMOTE_ADDR'];
+    $ip = "";
+    if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])){
+        $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+    }
+    else
+    {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    return $ip
 }
 
 function check_value($value, $check_for, $yes = 'yes', $no = 'no')
