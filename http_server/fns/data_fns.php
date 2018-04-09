@@ -125,7 +125,7 @@ function get_ip()
     {
         $ip = $_SERVER['REMOTE_ADDR'];
     }
-    return $ip
+    return $ip;
 }
 
 function check_value($value, $check_for, $yes = 'yes', $no = 'no')
