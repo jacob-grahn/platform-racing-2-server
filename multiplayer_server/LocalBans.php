@@ -16,6 +16,21 @@ class LocalBans
     }
     
     
+    public static function remove($user_name)
+    {
+        $len = count(self::$arr);
+        for ($i=0; $i<$len; $i++) {
+            $ban = self::$arr[$i];
+            if ($ban->user_name == $user_name) {
+                array_splice(self::$arr, $i, 1);
+                return true;
+            }
+            continue;
+        }
+        return false;
+    }
+    
+    
     public static function is_banned($user_name)
     {
         $match = false;
