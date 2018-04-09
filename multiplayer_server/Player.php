@@ -535,6 +535,10 @@ class Player
             elseif (strpos($chat_message, '/kick ') === 0 && $this->group >= 2 && ($this->temp_mod === false || $this->server_owner == true)) {
                 $kicked_name = trim(substr($chat_message, 6));
                 client_kick($this->socket, $kicked_name);
+            } // unkick command
+            elseif (strpos($chat_message, '/unkick ') === 0 && $this->group >= 2 && ($this->temp_mod === false || $this->server_owner == true)) {
+                $unkicked_name = trim(substr($chat_message, 8));
+                client_unkick($this->socket, $unkicked_name);
             } // disconnect command
             elseif ((strpos($chat_message, '/dc ') === 0 || strpos($chat_message, '/disconnect ') === 0) && $this->group >= 2 && ($this->temp_mod === false || $this->server_owner == true)) {
                 $dc_name = trim(substr($chat_message, 12)); // for /disconnect
