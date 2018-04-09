@@ -132,6 +132,8 @@ try {
             // end the row, move on to the next member
             echo '</tr>';
         }
+        // end the table
+        echo '</table>';
     }
 } catch(Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
