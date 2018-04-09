@@ -665,7 +665,7 @@ class Player
                 } else {
                     if ($this->group >= 2) {
                         if ($this->temp_mod === false) {
-                            $mod = '<br>Moderator:<br>- /a (Announcement)<br>- /give *text*<br>- /kick *name*<br>- /disconnect *name*<br>- /clear';
+                            $mod = '<br>Moderator:<br>- /a (Announcement)<br>- /give *text*<br>- /kick *name*<br>- /unkick *name*<br>- /disconnect *name*<br>- /clear';
                             $effects = '<br>Chat Effects:<br>- /b (Bold)<br>- /i (Italics)<br>- /u (Underlined)<br>- /li (Bulleted)';
                         }
                         if ($this->group >= 3 && $this->server_owner == false) {
