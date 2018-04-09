@@ -117,20 +117,7 @@ function format_duration($seconds)
 
 function get_ip()
 {
-    $useripaddress = "";
-    if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])){
-        if ($_SERVER["HTTP_X_FORWARDED_FOR"] != "127.0.0.1" && $_SERVER["HTTP_X_FORWARDED_FOR"] != "localhost"){
-            $useripaddress = $_SERVER["HTTP_X_FORWARDED_FOR"];
-        }
-        else
-            $useripaddress = $_SERVER["REMOTE_ADDR"];
-        }
-    }
-    else
-    {
-        $useripaddress = $_SERVER['REMOTE_ADDR'];
-    }
-    return $useripaddress;
+    return $_SERVER["REMOTE_ADDR"];
 }
 
 function check_value($value, $check_for, $yes = 'yes', $no = 'no')
