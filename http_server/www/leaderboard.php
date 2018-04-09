@@ -4,8 +4,8 @@ require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/output_fns.php';
 require_once __DIR__ . '/../queries/users/users_select_top.php';
 
-$start = (int) default_val($_GET['start'], 0);
-$count = (int) default_val($_GET['count'], 100);
+$start = (int) default_get('start', 0);
+$count = (int) default_get('count', 100);
 $group_colors = ["7e7f7f", "047b7b", "1c369f", "870a6f"];
 $ip = get_ip();
 
@@ -59,9 +59,7 @@ try {
         $group_color = $group_colors[$group];
 
         // rank
-        $pr2_rank = (int) $user->rank;
-        $used_tokens = (int) $user->used_tokens;
-        $active_rank = $pr2_rank + $used_tokens;
+        $active_rank = (int) $user->active_rank;
 
         // hats
         $hat_array = $user->hats;
