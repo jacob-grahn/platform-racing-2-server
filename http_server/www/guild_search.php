@@ -36,19 +36,19 @@ try {
         $mode = 'name';
         $guild_id = (int) guild_name_to_id($pdo, $guild_name);
     }
-    
+
     // output the search box
     output_search($guild_name, $guild_id);
-    
+
     // center the page
     echo '<center>';
 
     // start the page
     output_header("Guild Search");
-    
+
     // get guild info
     $guild = guild_select($pdo, $guild_id);
-    
+
     // make some variables
     $guild_id = (int) $guild->guild_id;
     $guild_name = htmlspecialchars($guild->guild_name);
@@ -66,18 +66,18 @@ try {
     $owner_color = $group_colors[(int) $owner->power];
     $active_count = (int) guild_count_active($pdo, $guild_id);
     $members = guild_select_members($pdo, $guild_id);
-    
+
     // check for .j instead of .jpg on the end of the emblem file name
     if (substr($emblem, -2) == '.j') {
         $emblem = str_replace('.j', '.jpg', $emblem);
     }
-    
+
     // output the search box
     output_search($guild_name, $guild_id, $mode);
-    
+
     // center the page
     echo '<center>';
-    
+
     // display guild info
     echo "<br>-- <b>$guild_name</b> --<br>";
     if (!is_empty($prose)) {
@@ -112,16 +112,16 @@ try {
             $member_color = $group_colors[$member->power];
             $member_gp_today = (int) $member->gp_today;
             $member_gp_total = (int) $member->gp_total;
-        
+
             // start new row, name column
             echo '<tr>'
                 .'<td>';
-            
+
             // if the guild owner, display a crown next to their name
             if ($member_id === $owner_id) {
                 echo '<img src="img/vault/Crown-40x40.png" height="12" title="Guild Owner"> ';
             }
-            
+
             // member name column
             echo "<a href='player_search.php?name=$member_url_name' style='color: #$member_color; text-decoration: underline;'>$member_name</a>"
                 .'</td>';
@@ -135,7 +135,7 @@ try {
             echo '<td>'
                 ."$gp_total"
                 .'</td>';
-            
+
             // end the row, move on to the next member
             echo '</tr>';
         }
@@ -144,11 +144,10 @@ try {
     } elseif ($member_count <= 0) {
         echo '<br>'
              ."This guild contains no members.";
-      }
-
-        // end the table
-        echo '</table>';
     }
+
+    // end the table
+    echo '</table>';
 
 } catch(Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
@@ -162,7 +161,7 @@ try {
 
 function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
     $guild_id = (int) $guild_id;
-    
+
     // choose which one to set after searching
     $id_display = 'none';
     $name_display = 'none';
@@ -182,13 +181,13 @@ function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
     // check if values passed are empty
     if (is_empty($guild_name)) $guild_name = '';
     if (is_empty($guild_id, false)) $guild_id = '';
-    
+
     // center
     echo '<center>';
 
     // gwibble, spacing
     echo '<font face="Gwibble" class="gwibble">-- Guild Search --</font><br><br>';
-    
+
     // javascript to show/hide the name/id textboxes
     echo '<script>
               function name_id_check() {
@@ -208,7 +207,7 @@ function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
         ."<input type='radio' onclick='name_id_check()' id='nameradio' name='typeRadio' $name_checked> Name "
         ."<input type='radio' onclick='name_id_check()' id='idradio' name='typeRadio' $id_checked> ID"
         .'<br>';
-    
+
     // name form
     $html_guild_name = htmlspecialchars($guild_name);
     echo "<div id='nameform' style='display:$name_display'><br>
@@ -217,7 +216,7 @@ function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
                         <input type='submit' value='Search'>
               </form>
           </div>";
-          
+
     // id form
     echo "<div id='idform' style='display:$id_display'><br>
               <form method='get'>
@@ -225,7 +224,7 @@ function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
                       <input type='submit' value='Search'>
               </form>
           </div>";
-    
+
     // end center
     echo '</center>';
 }
