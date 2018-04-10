@@ -62,9 +62,9 @@ function token_login($pdo, $use_cookie = true, $suppress_error = false)
 {
 
     $rec_token = find_no_cookie('token');
-    if (isset($rec_token) && $rec_token != '') {
+    if (isset($rec_token) && !empty($rec_token)) {
         $token = $rec_token;
-    } elseif ($use_cookie && isset($_COOKIE['token']) && $_COOKIE['token'] != '') {
+    } elseif ($use_cookie && isset($_COOKIE['token']) && !empty($_COOKIE['token'])) {
         $token = $_COOKIE['token'];
     }
 
@@ -97,10 +97,10 @@ function is_staff($pdo, $user_id) {
         $power = 0;
     }
     if ($power >= 2) {
-    	$is_mod = true;
-    	if ($power == 3) {
-    	    $is_admin = true;
-    	}
+        $is_mod = true;
+        if ($power == 3) {
+            $is_admin = true;
+        }
     }
     
     // tell the world
@@ -119,18 +119,26 @@ require_once __DIR__ . '/../queries/pr2/pr2_update_part_array.php';
 require_once __DIR__ . '/../queries/part_awards/part_awards_insert.php';
 
 // award hats
-function award_part($pdo, $user_id, $type, $part_id, $ensure = true)
+function award_part($pdo, $user_id, $type, $part_id)
 {
-    $ret = false;
-    $epicUpgrade = false;
-
-    if (strpos($type, 'e') === 0) {
-        $epicUpgrade = true;
+    $is_epic = false;
+    $type = strtolower($type);
+    $part_types = ['hat','head','body','feet','ehat','ehead','ebody','efeet'];
+    
+    // sanity check: is it a valid type?
+    if (!in_array($type, $part_types)) {
+        throw new Exception("Invalid part type specified.");
+    }
+    
+    // determine where in the array our value was found
+    $type_no = array_search($type, $part_types);
+    if ($type_no >= 4) {
+        $is_epic = true;
     }
 
     // get existing parts
     try {
-        if ($epicUpgrade) {
+        if ($is_epic === true) {
             $row = epic_upgrades_select($pdo, $user_id);
         } else {
             $row = pr2_select($pdo, $user_id);
@@ -141,29 +149,71 @@ function award_part($pdo, $user_id, $type, $part_id, $ensure = true)
         $str_array = '';
     }
 
-    // make a copy so we can check if it changes from the original
-    $str_array_new = $str_array;
-
-    if ($ensure) {
-        part_awards_insert($pdo, $user_id, $type, $part_id);
-    }
-    $str_array_new = append_to_str_array($str_array_new, $part_id);
-
-    if ($str_array_new != $str_array) {
-        if ($epicUpgrade) {
-            epic_upgrades_update_field($pdo, $user_id, $type, $str_array_new);
-        } else {
-            pr2_update_part_array($pdo, $user_id, $type, $str_array_new);
-        }
-        $ret = true;
+    // explode on ,
+    $part_array = explode(",", $str_array);
+    if (in_array($part_id, $part_array)) {
+        return false;
     }
 
-    return $ret;
+    // insert part award, award part
+    part_awards_insert($pdo, $user_id, $type, $part_id);
+
+    // award part
+    array_push($part_array, $part_id);
+    $new_field_str = join(",", $part_array);
+    
+    if ($is_epic === true) {
+        epic_upgrades_update_field($pdo, $user_id, $type, $new_field_str);
+    } else {
+        pr2_update_part_array($pdo, $user_id, $type, $new_field_str);
+    }
+    return true;
+}
+
+
+// check to see if a user has a part
+function has_part($pdo, $user_id, $type, $part_id)
+{
+    $is_epic = false;
+    $type = strtolower($type);
+    $part_types = ['hat','head','body','feet','ehat','ehead','ebody','efeet'];
+    
+    // sanity check: is it a valid type?
+    if (!in_array($type, $part_types)) {
+        throw new Exception("Invalid part type specified.");
+    }
+    
+    // determine where in the array our value was found
+    $type_no = array_search($type, $part_types);
+    if ($type_no >= 4) {
+        $is_epic = true;
+    }
+    
+    // perform query
+    $field = type_to_db_field($type);
+    if ($is_epic === true) {
+        $data = epic_upgrades_select($pdo, $user_id);
+    } else {
+        $data = pr2_select($pdo, $user_id);
+    }
+    
+    // get data and convert to an array
+    $parts_str = $data->{$field};
+    $parts_arr = explode(",", $parts_str);
+    
+    // search for part ID in array
+    if (in_array($part_id, $parts_arr)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
 function type_to_db_field($type)
 {
+    $type = strtolower($type);
+    
     if ($type == 'hat') {
         $field = 'hat_array';
     } elseif ($type == 'head') {
@@ -172,13 +222,13 @@ function type_to_db_field($type)
         $field = 'body_array';
     } elseif ($type == 'feet') {
         $field = 'feet_array';
-    } elseif ($type == 'eHat') {
+    } elseif ($type == 'ehat') {
         $field = 'epic_hats';
-    } elseif ($type == 'eHead') {
+    } elseif ($type == 'ehead') {
         $field = 'epic_heads';
-    } elseif ($type == 'eBody') {
+    } elseif ($type == 'ebody') {
         $field = 'epic_bodies';
-    } elseif ($type == 'eFeet') {
+    } elseif ($type == 'efeet') {
         $field = 'epic_feet';
     } else {
         throw new Exception('Unknown type');
@@ -187,7 +237,7 @@ function type_to_db_field($type)
 }
 
 
-function append_to_str_array($str_arr, $val)
+function append_to_str_array($str_arr, $val) // is this needed?
 {
     if (!isset($str_arr) || $str_arr == ',') {
         $str_arr = '';

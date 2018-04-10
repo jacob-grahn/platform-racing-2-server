@@ -6,25 +6,26 @@ require_once __DIR__ . '/../../contests/part_vars.php';
 require_once __DIR__ . '/../../../queries/contests/contest_select.php';
 require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_select_id.php';
 require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_insert.php';
+require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
 $action = find('action', 'form');
 
 try {
-    // rate limiting
-    rate_limit('add-contest-prize-'.$ip, 60, 10);
-    rate_limit('add-contest-prize-'.$ip, 5, 2);
+     // rate limiting	
+     rate_limit('add-contest-prize-'.$ip, 30, 5);
+     rate_limit('add-contest-prize-'.$ip, 5, 2);
     
     // sanity check: is a valid contest ID specified?
     if (is_empty($contest_id, false)) {
         throw new Exception("Invalid contest ID specified.");
     }
 
-    //connect
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're an admin
+    // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
 } catch (Exception $e) {
     output_header('Error');
@@ -102,6 +103,8 @@ function output_form($contest)
 // add contest prize function
 function add_contest_prize($pdo, $admin, $contest)
 {
+	global $hat_names_array, $head_names_array, $body_names_array, $feet_names_array;
+
     // make some nice variables
     $contest_name = $contest->contest_name;
     $contest_id = (int) $contest->contest_id;

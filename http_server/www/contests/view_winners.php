@@ -6,10 +6,9 @@ require_once __DIR__ . '/../../queries/contests/contest_select.php';
 require_once __DIR__ . '/../../queries/contest_winners/contest_winners_select_by_contest.php';
 require_once __DIR__ . '/../../queries/users/user_select_name_and_power.php';
 
-$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 $ip = get_ip();
-
 $contest_id = (int) default_get('contest_id', 0);
+$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
 try {
     // rate limiting
@@ -25,7 +24,7 @@ try {
     $pdo = pdo_connect();
     
     // determine the user's group
-    $user_id = token_login($pdo, true, true);
+    $user_id = (int) token_login($pdo, true, true);
     $is_staff = is_staff($pdo, $user_id);
     $is_mod = $is_staff->mod;
     $is_admin = $is_staff->admin;
@@ -41,32 +40,32 @@ try {
     output_header("View Winners", $is_mod, $is_admin);
     
     // get the contest info
-    $contest = contest_select($pdo, $contest_id);
+    $contest = contest_select($pdo, $contest_id, !$is_mod);
     
     // make some variables
-    $contest_id = $contest->contest_id;
-    $contest_name = $contest->contest_name;
+    $contest_id = (int) $contest->contest_id;
+    $contest_name = htmlspecialchars($contest->contest_name);
+    $contest_url = htmlspecialchars($contest->url);
     
     // get the winners
-    if ($is_mod == true) {
-        $winners = contest_winners_select_by_contest($pdo, $contest_id, false);
-    } else {
-        $winners = contest_winners_select_by_contest($pdo, $contest_id);
-    }
+    $winners = contest_winners_select_by_contest($pdo, $contest_id, !$is_mod);
     
+    // sanity check: are there any winners?
     if (empty($winners)) {
-        $contest_name = htmlspecialchars($contest_name);
         throw new Exception("Could not find any winners for $contest_name. :(");
     }
     
     // url prefix for contest host links based on group
-    if ($is_admin == true) {
+    if ($is_admin === true) {
         $base_url = "/admin/player_deep_info.php?name1=";
-    } else if ($is_admin == false && $is_mod == true) {
+    } else if ($is_admin === false && $is_mod === true) {
         $base_url = "/mod/do_player_search.php?name=";
     } else {
         $base_url = "/player_search.php?name=";
     }
+    
+    // contest name
+    echo "<p>Viewing Winners for <a href='$contest_url' target='_blank'>$contest_name</a></p>";
     
     // winners table
     echo "<table class='noborder'>" // start table
@@ -83,52 +82,56 @@ try {
     echo "</tr>"; // end title row
     
     foreach ($winners as $winner) {
-        // awarder name and color
-        if ($is_mod == true) {
-            $awarder_id = (int) $winner->awarded_by;
-            $awarder = user_select_name_and_power($pdo, $awarder_id);
-            $awarder_html_name = htmlspecialchars($awarder->name);
-            $awarder_url = $base_url . htmlspecialchars(urlencode($awarder->name));
-        }
-        
-        // winner name and color
-        $winner = user_select_name_and_power($pdo, $winner->winner_id);
-        $winner_color = $group_colors[$winner->power];
-        $winner_html_name = htmlspecialchars($winner->name);
-        $winner_url = $base_url . htmlspecialchars(url_encode($winner->name));
-        
         // win time
         $win_time = (int) $winner->win_time;
         $short_win_time = date("d/M/Y", $win_time);
         $full_win_time = date("g:i:s A \o\\n l, F jS, Y", $win_time);
-        
-        // other variables
-        $host_ip = htmlspecialchars($winner->host_ip);
-        $comment = htmlspecialchars($winner->comment);
         
         // get awards
         $prizes_awarded = $winner->prizes_awarded;
         $prizes_awarded = explode(",", $prizes_awarded);
         $last_prize = end($prizes_awarded);
         
+        // other variables
+        $awarder_ip = htmlspecialchars($winner->awarder_ip);
+        $comment = htmlspecialchars($winner->comment);
+        
+        // awarder name and color (staff)
+        if ($is_mod === true) {
+            $awarder_id = (int) $winner->awarded_by;
+            $awarder = user_select_name_and_power($pdo, $awarder_id);
+            $awarder_html_name = htmlspecialchars($awarder->name);
+            $awarder_url = $base_url . htmlspecialchars(urlencode($awarder->name));
+            $awarder_color = $group_colors[(int) $awarder->power];
+        }
+        
+        // winner name and color
+        $winner = user_select_name_and_power($pdo, $winner->winner_id);
+        $winner_color = $group_colors[$winner->power];
+        $winner_html_name = htmlspecialchars($winner->name);
+        $winner_url = $base_url . htmlspecialchars(urlencode($winner->name));
+        
         // start row
         echo "<tr>"
             ."<td class='noborder' title='Awarded at $full_win_time'>$short_win_time</td>" // date row
-            ."<td class='noborder'><a href='$winner_url' style='color: $winner_color; text-decoration: underline;'>$winner_html_name</td>"; // name row
-        if ($is_mod == true) {
-            echo "<td class='noborder'><a href='$awarder_url'>$awarder_html_name</a></td>" // who awarded
-                ."<td class='noborder'>$host_ip</td>"; // awarder ip
-                
-                // output readable prizes
-                foreach ($prizes_awarded as $prize) {
-                    echo htmlspecialchars($prize);
-                    if ($prize != $last_prize) {
-                        echo ', '; // separator; don't echo after last prize
-                    }
-                }
+            ."<td class='noborder'><a href='$winner_url' style='color: #$winner_color; text-decoration: underline;'>$winner_html_name</td>"; // name row
+        if ($is_mod === true) {
+            echo "<td class='noborder'><a href='$awarder_url' style='color: #$awarder_color; text-decoration: underline;'>$awarder_html_name</a></td>" // who awarded
+                ."<td class='noborder'>$awarder_ip</td>"; // awarder ip
             
-                // comment
-                echo "<td class='noborder'>$comment</td>";
+            // output readable prizes
+            echo "<td class='noborder'>";
+            foreach ($prizes_awarded as $prize) {
+                echo htmlspecialchars($prize);
+                if ($prize != $last_prize) {
+                    echo ', '; // separator; don't echo after last prize
+                }
+            }
+            echo "</td>";
+            
+            
+            // comment
+            echo "<td class='noborder'>$comment</td>";
         }
         
         // end row

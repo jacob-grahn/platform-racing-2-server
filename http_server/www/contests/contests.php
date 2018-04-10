@@ -4,20 +4,21 @@ require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/contests/contests_select.php';
 require_once __DIR__ . '/../../queries/users/user_select_name_and_power.php';
+require_once __DIR__ . '/../../queries/contest_winners/throttle_awards.php';
 
 $ip = get_ip();
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
 try {
     // rate limiting
-    rate_limit("contests-list-".$ip, 60, 15, "Wait a bit before trying to view the contests list again.");
+    rate_limit("contests-list-".$ip, 60, 10, "Wait a bit before trying to view the contests list again.");
     rate_limit("contests-list-".$ip, 5, 2);
 
     // connect
     $pdo = pdo_connect();
     
     // determine the user's group
-    $user_id = token_login($pdo, true, true);
+    $user_id = (int) token_login($pdo, true, true);
     $is_staff = is_staff($pdo, $user_id);
     $is_mod = $is_staff->mod;
     $is_admin = $is_staff->admin;
@@ -41,22 +42,21 @@ try {
     <br>To learn how to host your own contest, <a href='https://jiggmin2.com/forums/showthread.php?tid=28' target='_blank'>click here</a>.
     </p></center>";
     
-    // get the right list of contests
-    if ($is_admin == true) {
-    	echo "<p><b>Admin: <a href='/admin/contests/add_contest.php'>Add New Contest</a></b></p>";
-        $contests = contests_select($pdo, false);
-    } else {
-        $contests = contests_select($pdo, true);
+    // show the link to create a new contest if an admin
+    if ($is_admin === true) {
+        echo "<p><b>Admin: <a href='/admin/contests/add_contest.php'>Add New Contest</a></b></p>";
     }
     
-    if ($contests == false) {
-    	throw new Exception('Could not find any contests. :(');
+    // get the right list of contests
+    $contests = contests_select($pdo, !$is_admin);
+    if ($contests === false) {
+        throw new Exception('Could not find any contests. :(');
     }
     
     // url prefix for contest host links based on group
-    if ($is_admin == true) {
+    if ($is_admin === true) {
         $base_url = "/admin/player_deep_info.php?name1=";
-    } else if ($is_admin == false && $is_mod == true) {
+    } else if ($is_admin === false && $is_mod === true) {
         $base_url = "/mod/do_player_search.php?name=";
     } else {
         $base_url = "/player_search.php?name=";
@@ -68,12 +68,12 @@ try {
         $contest_name = $contest->contest_name;
         $desc = $contest->description;
         $contest_url = $contest->url;
-        $host_id = $contest->user_id;
+        $host_id = (int) $contest->user_id;
         $awarding = $contest->awarding;
         
         // get some info
         $host = user_select_name_and_power($pdo, $host_id);
-        $host_color = $group_colors[$host->power];
+        $host_color = $group_colors[(int) $host->power];
         
         // safety first
         $html_contest_name = htmlspecialchars($contest_name);
@@ -85,7 +85,7 @@ try {
         
         // are they the host?
         $is_host = false;
-        if ($user_id == $host_id) {
+        if ($user_id === $host_id) {
             $is_host = true;
         }
         
@@ -96,7 +96,7 @@ try {
         echo "<b><a href='$html_contest_url' target='_blank'>$html_contest_name</a></b><br>";
         
         // admin: is it active?
-        if ($is_admin == true) {
+        if ($is_admin === true) {
             echo "Active: $is_active<br>";
         }
         
@@ -105,14 +105,22 @@ try {
         
         // contest host
         $host_url = $base_url . $html_url_host_name;
-        echo "Run by: <a href='$host_url' target='_blank' style='color: $host_color; text-decoration: underline;'>$html_host_name</a><br>";
+        echo "Run by: <a href='$host_url' target='_blank' style='color: #$host_color; text-decoration: underline;'>$html_host_name</a><br>";
         
         // awarding
         echo "Awarding: $html_awarding<br>";
         
+        // mod
+        if ($is_mod === true || $is_host === true) {
+            $max_awards = (int) $contest->max_awards;
+            $used_awards = (int) throttle_awards($pdo, $contest_id, $host_id);
+            echo "Used Awards (this week): $used_awards<br>"
+                ."Max Awards (per week): $max_awards<br>";
+        }
+        
         // admin
-        if ($is_admin == true) {
-            echo 'Admin:'
+        if ($is_admin === true) {
+            echo 'Admin: '
                 ."<a href='/admin/contests/edit_contest.php?contest_id=$contest_id'>edit</a> | "
                 ."<a href='/admin/contests/add_prize.php?contest_id=$contest_id'>add prize</a> | "
                 ."<a href='/admin/contests/remove_prize.php?contest_id=$contest_id'>remove prize</a><br>";
@@ -122,7 +130,7 @@ try {
         echo "<a href='view_winners.php?contest_id=$contest_id'>-&gt; View Winners</a>";
         
         // award prize
-        if ((($is_host == true || $is_mod == true) && $contest->active == 1) || $is_admin == true) {
+        if ((($is_host === true || $is_mod === true) && (int) $contest->active === 1) || $is_admin === true) {
             echo "<br><a href='award_prize.php?contest_id=$contest_id'>-&gt; Award Prize</a>";
         }
         
@@ -138,5 +146,3 @@ try {
     output_footer();
     die();
 }
-    
-    

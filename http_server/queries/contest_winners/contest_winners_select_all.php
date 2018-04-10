@@ -6,8 +6,9 @@ function contest_winners_select_all($pdo, $start, $count)
         SELECT contest_winners.contest_id AS contest_id,
                contest_winners.winner_id AS winner_id,
                contest_winners.win_time AS win_time,
-               contest_winners.host_ip AS host_ip,
+               contest_winners.awarder_ip AS awarder_ip,
                contest_winners.awarded_by AS awarded_by,
+               contest_winners.prizes_awarded AS prizes_awarded,
                contest_winners.comment AS comment,
                contests.contest_name AS contest_name
           FROM contest_winners

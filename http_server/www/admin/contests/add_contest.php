@@ -5,17 +5,18 @@ require_once __DIR__ . '/../../../fns/output_fns.php';
 require_once __DIR__ . '/../../../queries/contests/contest_insert.php';
 require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
 
+$ip = get_ip();
 $action = find('action', 'form');
 
 try {
     // rate limiting
-    rate_limit('add-contest-'.$ip, 60, 10);
+    rate_limit('add-contest-'.$ip, 30, 5);
     rate_limit('add-contest-'.$ip, 5, 2);
-
-    //connect
+    
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're an admin
+    // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
 } catch (Exception $e) {
     output_header('Error');
@@ -25,11 +26,9 @@ try {
 }
 
 try {
-    // header
-    output_header('Add Contest', true, true);
-
     // form
     if ($action === 'form') {
+        output_header('Add Contest', true, true);
         output_form();
         output_footer();
         die();

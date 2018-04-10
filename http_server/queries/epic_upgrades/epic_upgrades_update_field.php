@@ -2,17 +2,18 @@
 
 function epic_upgrades_update_field($pdo, $user_id, $type, $part_array)
 {
+    $type = strtolower($type);
     switch ($type) {
-        case 'eHat':
+        case 'ehat':
             $field = 'epic_hats';
             break;
-        case 'eHead':
+        case 'ehead':
             $field = 'epic_heads';
             break;
-        case 'eBody':
+        case 'ebody':
             $field = 'epic_bodies';
             break;
-        case 'eFeet':
+        case 'efeet':
             $field = 'epic_feet';
             break;
         default:
@@ -31,7 +32,8 @@ function epic_upgrades_update_field($pdo, $user_id, $type, $part_array)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception("Could not update user #$user_id\'s epic_upgrades data on column $field.");
+        $user_id = (int) $user_id;
+        throw new Exception("Could not update user #$user_id's epic_upgrades data on column $field.");
     }
 
     return $result;
