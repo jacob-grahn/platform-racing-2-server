@@ -13,6 +13,8 @@ $guild_name = default_get('name', '');
 $guild_id = (int) default_get('id', 0);
 $ip = get_ip();
 
+output_header("Guild Search");
+
 try {
     // rate limiting
     rate_limit("gui-guild-search-" . $ip, 5, 1, "Wait a bit before searching again.");
@@ -20,7 +22,9 @@ try {
 
     // sanity check: is any data entered?
     if (is_empty($guild_name) && is_empty($guild_id, false)) {
-        throw new Exception('No guild name or id.');
+        output_search();
+        output_footer();
+        die();
     }
 
     // connect
@@ -59,17 +63,11 @@ try {
         $emblem = str_replace('.j', '.jpg', $emblem);
     }
 
-    //
-    output_header("Guild Search");
-
     // center the page
     echo '<center>';
 
     // output the search box
     output_search($guild_name, $guild_id, $mode);
-
-    // center the page
-    echo '<center>';
 
     // display guild info
     echo "<br>-- <b>$guild_name</b> --<br>";
@@ -145,7 +143,6 @@ try {
 
 } catch(Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
-    output_header("Guild Search");
     output_search($guild_name, $guild_id);
     echo "<br><i>Error: $safe_error</i><br>";
     output_footer();
