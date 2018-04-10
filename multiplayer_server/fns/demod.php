@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../../http_server/queries/users/name_to_id.php';
 require_once __DIR__ . '/../../http_server/queries/users/user_select.php';
 require_once __DIR__ . '/../../http_server/queries/users/user_update_power.php';
 require_once __DIR__ . '/../../http_server/queries/mod_powers/mod_power_delete.php';
@@ -27,8 +28,8 @@ function demote_mod($user_name, $admin, $demoted_player)
     }
 
     // let the server owner demote temps
-    if ($admin->server_owner == true) {
-        if (isset($demoted_player) && $demoted_player->temp_mod == true) {
+    if ($admin->server_owner === true) {
+        if (isset($demoted_player) && $demoted_player->temp_mod === true) {
             $demoted_player->group = 1;
             $demoted_player->write('setGroup`1');
             $demoted_player->temp_mod = false;
@@ -41,8 +42,13 @@ function demote_mod($user_name, $admin, $demoted_player)
     }
 
     try {
-        $user_id = $demoted_player->user_id;
+        // get user ids
         $admin_id = $admin->user_id;
+        if (isset($demoted_player)) {
+            $user_id = $demoted_player->user_id;
+        } else {
+            $user_id = name_to_id($pdo, $user_name);
+        }
 
         // check for proper permission in the db (3rd + final line of defense before promotion)
         $admin_row = user_select($pdo, $admin_id);
