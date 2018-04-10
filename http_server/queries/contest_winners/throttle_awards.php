@@ -7,7 +7,7 @@ function throttle_awards($pdo, $contest_id, $host_id)
           FROM contest_winners
          WHERE contest_id = :contest_id
            AND awarded_by = :host_id
-           AND win_time > UNIX_TIMESTAMP(NOW(), INTERVAL 6 DAYS)
+           AND win_time > UNIX_TIMESTAMP(NOW() - INTERVAL 6 DAYS)
     ");
     $stmt->bindValue(':contest_id', $contest_id, PDO::PARAM_INT);
     $stmt->bindValue(':host_id', $host_id, PDO::PARAM_INT);
