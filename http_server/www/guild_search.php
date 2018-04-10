@@ -50,7 +50,7 @@ try {
     $owner_name = htmlspecialchars($owner->name);
     $owner_url_name = htmlspecialchars(urlencode($owner->name));
     $owner_color = $group_colors[(int) $owner->power];
-    $active_count = (int) guild_count_active($pdo, $guild_id);
+    // $active_count = (int) guild_count_active($pdo, $guild_id);
     $members = guild_select_members($pdo, $guild_id);
     $member_count = count($members);
 
@@ -80,9 +80,8 @@ try {
         ."<img src='https://pr2hub.com/emblems/$emblem'>"
         .'<br><br>'
         ."Owner: <a href='player_search.php?name=$owner_url_name' style='color: #$owner_color; text-decoration: underline;'>$owner_name</a><br>"
-        ."Members: $member_count | Active: $active_count<br>"
-        ."GP Today: $gp_today | "
-        ."GP Total: $gp_total<br>"
+        ."Members: $member_count <br>" // | Active: $active_count
+        ."GP Today: $gp_today | GP Total: $gp_total<br>"
         ."Created: $creation_date<br>"
         ."Last Active: $active_date<br>";
 
