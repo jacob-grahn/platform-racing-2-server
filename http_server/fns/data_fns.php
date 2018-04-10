@@ -117,7 +117,7 @@ function format_duration($seconds)
 
 function get_ip()
 {
-    return $_SERVER['REMOTE_ADDR'];
+    return $_SERVER["REMOTE_ADDR"];
 }
 
 function check_value($value, $check_for, $yes = 'yes', $no = 'no')

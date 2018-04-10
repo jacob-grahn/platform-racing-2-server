@@ -18,9 +18,9 @@ To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com
 - aaaaaa123456789
 - bls1999
 - BrokenBulb78
+- Dex472
 - EternalUF
 - fourst4r
 - Grovbi
 - isokissa3
-- Myst1cZ
 - Stxtics
