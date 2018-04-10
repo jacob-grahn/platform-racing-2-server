@@ -53,6 +53,34 @@ function client_kick($socket, $data)
 }
 
 
+//--- unkick a player -------------------------------------------------------------
+function client_unkick($socket, $data)
+{
+    global $pdo, $guild_id, $server_name;
+    $name = $data;
+
+    // get some info
+    $mod = $socket->get_player();
+    $unkicked_name = htmlspecialchars($name);
+
+    // if the player actually has the power to do what they're trying to do, then do it
+    if (($mod->group >= 2 && $mod->temp_mod === false) || $mod->server_owner === true) {
+        LocalBans::remove($name);
+        
+        // unkick them, yo
+        $mod->write("message`$unkicked_name has been unkicked! Hooray for second chances!");
+
+        // log the action if it's on a public server
+        if ((int) $guild_id === 0) {
+            $mod_name = $mod->name;
+            $mod_ip = $mod->ip;
+            $mod_id = $mod->user_id;
+            mod_action_insert($pdo, $mod_id, "$mod_name unkicked $name from $server_name from $mod_ip.", $mod_id, $mod_ip);
+        }
+    }
+}
+
+
 //--- warn a player -------------------------------------------------------------
 function client_warn($socket, $data)
 {

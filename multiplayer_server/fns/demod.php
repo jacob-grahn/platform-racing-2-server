@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../http_server/queries/users/user_select.php';
+require_once __DIR__ . '/../../http_server/queries/users/user_select_by_name.php';
 require_once __DIR__ . '/../../http_server/queries/users/user_update_power.php';
 require_once __DIR__ . '/../../http_server/queries/mod_powers/mod_power_delete.php';
 require_once __DIR__ . '/../../http_server/queries/staff/actions/admin_action_insert.php';
@@ -27,8 +28,8 @@ function demote_mod($user_name, $admin, $demoted_player)
     }
 
     // let the server owner demote temps
-    if ($admin->server_owner == true) {
-        if (isset($demoted_player) && $demoted_player->temp_mod == true) {
+    if ($admin->server_owner === true) {
+        if (isset($demoted_player) && $demoted_player->temp_mod === true) {
             $demoted_player->group = 1;
             $demoted_player->write('setGroup`1');
             $demoted_player->temp_mod = false;
@@ -41,19 +42,22 @@ function demote_mod($user_name, $admin, $demoted_player)
     }
 
     try {
-        $user_id = $demoted_player->user_id;
+        // get user ids
         $admin_id = $admin->user_id;
 
         // check for proper permission in the db (3rd + final line of defense before promotion)
         $admin_row = user_select($pdo, $admin_id);
         if ($admin_row->power != 3) {
-            throw new Exception("You lack the power to demote $user_name.");
+            throw new Exception("You lack the power to demote $html_user_name.");
         }
 
-        // check if the person being demoted is a staff member
-        $user_row = user_select($pdo, $user_id);
+        // get user info
+        $user_row = user_select_by_name($pdo, $user_name);
+        $user_id = (int) $user_row->user_id;
+        
+        // check if the person being demoted is an admin
         if ((int) $user_row->power === 3) {
-            throw new Exception("You lack the power to demote $user_name, as they are an admin.");
+            throw new Exception("You lack the power to demote $html_user_name, as they are an admin.");
         }
 
         // delete mod entry
