@@ -864,9 +864,18 @@ class Game extends Room
 
     public function send_chat($message, $user_id)
     {
+        if (strpos($message, 'chat`') !== 0) {
+            $player->socket->write('message`Error: Illegal character in message.');
+            return false;
+        }
+        $chat_message = substr($chat_message, 5);
+        if (strpos($chat_message, '`') !== false) {
+            $player->socket->write('message`Error: Illegal character in message.');
+            return false;
+        }
         foreach ($this->player_array as $player) {
             if (!$player->is_ignored_id($user_id)) {
-                $player->socket->write($message);
+                $player->socket->write("chat`$chat_message");
             }
         }
     }
