@@ -13,18 +13,19 @@ $guild_name = default_get('name', '');
 $guild_id = (int) default_get('id', 0);
 $ip = get_ip();
 
+output_header("Guild Search");
+
+// sanity check: is any data entered?
+if (is_empty($guild_name) && is_empty($guild_id, false)) {
+    output_search();
+    output_footer();
+    die();
+}
+
 try {
     // rate limiting
     rate_limit("gui-guild-search-" . $ip, 5, 1, "Wait a bit before searching again.");
     rate_limit("gui-guild-search-" . $ip, 30, 5, "Wait a bit before searching again.");
-
-    // sanity check: is any data entered?
-    if (is_empty($guild_name) && is_empty($guild_id, false)) {
-        output_header("Guild Search");
-        output_search();
-        output_footer();
-        die();
-    }
 
     // connect
     $pdo = pdo_connect();
@@ -36,6 +37,12 @@ try {
         $guild_id = (int) guild_name_to_id($pdo, $guild_name);
     }
     
+    // output the search box
+    output_search($guild_name, $guild_id);
+    
+    // center the page
+    echo '<center>';
+
     // start the page
     output_header("Guild Search");
     
@@ -132,11 +139,20 @@ try {
             // end the row, move on to the next member
             echo '</tr>';
         }
+
+    // if there are no members in the guild, show "This guild contains no members."
+    } elseif ($member_count <= 0) {
+        echo '<br>'
+             ."This guild contains no members.";
+      }
+
         // end the table
         echo '</table>';
     }
+
 } catch(Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
+    output_search($guild_name, $guild_id);
     echo "<br><i>Error: $safe_error</i><br>";
 } finally {
     echo '</center>';
