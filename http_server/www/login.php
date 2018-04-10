@@ -338,7 +338,7 @@ try {
     if ($ref !== true) {
         $reply->message = "It looks like you're using PR2 from a third-party website. For security reasons, some game features may be disabled. To access a version of the game with all features available to you, play from an approved site such as pr2hub.com.";
     } // DEBUGGING
-    else if ($user->user_id == 5653330 || $is_bls === true) {
+    else if ($is_bls === true) {
         $server->salt = "pepper"; // i prefer pepper with my data
         $send->server = $server; // put the updated val back in the $server var
         $str = "register_login`" . json_encode($send); // make it readable
