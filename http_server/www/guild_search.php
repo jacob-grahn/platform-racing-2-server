@@ -13,19 +13,15 @@ $guild_name = default_get('name', '');
 $guild_id = (int) default_get('id', 0);
 $ip = get_ip();
 
-output_header("Guild Search");
-
-// sanity check: is any data entered?
-if (is_empty($guild_name) && is_empty($guild_id, false)) {
-    output_search();
-    output_footer();
-    die();
-}
-
 try {
     // rate limiting
     rate_limit("gui-guild-search-" . $ip, 5, 1, "Wait a bit before searching again.");
     rate_limit("gui-guild-search-" . $ip, 30, 5, "Wait a bit before searching again.");
+
+    // sanity check: is any data entered?
+    if (is_empty($guild_name) && is_empty($guild_id, false)) {
+        throw new Exception('No guild name or id.');
+    }
 
     // connect
     $pdo = pdo_connect();
@@ -37,15 +33,6 @@ try {
         $guild_id = (int) guild_name_to_id($pdo, $guild_name);
     }
 
-    // output the search box
-    output_search($guild_name, $guild_id);
-
-    // center the page
-    echo '<center>';
-
-    // start the page
-    output_header("Guild Search");
-
     // get guild info
     $guild = guild_select($pdo, $guild_id);
 
@@ -54,7 +41,6 @@ try {
     $guild_name = htmlspecialchars($guild->guild_name);
     $creation_date = date('j/M/Y', strtotime($guild->creation_date));
     $active_date = date('j/M/Y', strtotime($guild->active_date));
-    $member_count = (int) $guild->member_count;
     $emblem = $guild->emblem;
     $gp_today = (int) $guild->gp_total;
     $gp_total = (int) $guild->gp_today;
@@ -66,11 +52,18 @@ try {
     $owner_color = $group_colors[(int) $owner->power];
     $active_count = (int) guild_count_active($pdo, $guild_id);
     $members = guild_select_members($pdo, $guild_id);
+    $member_count = count($members);
 
     // check for .j instead of .jpg on the end of the emblem file name
     if (substr($emblem, -2) == '.j') {
         $emblem = str_replace('.j', '.jpg', $emblem);
     }
+
+    //
+    output_header("Guild Search");
+
+    // center the page
+    echo '<center>';
 
     // output the search box
     output_search($guild_name, $guild_id, $mode);
@@ -141,7 +134,7 @@ try {
         }
 
     // if there are no members in the guild, show "This guild contains no members."
-    } elseif ($member_count <= 0) {
+    } else {
         echo '<br>'
              ."This guild contains no members.";
     }
@@ -149,14 +142,14 @@ try {
     // end the table
     echo '</table>';
 
+    output_footer();
+
 } catch(Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
+    output_header("Guild Search");
     output_search($guild_name, $guild_id);
     echo "<br><i>Error: $safe_error</i><br>";
-} finally {
-    echo '</center>';
     output_footer();
-    die();
 }
 
 function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
