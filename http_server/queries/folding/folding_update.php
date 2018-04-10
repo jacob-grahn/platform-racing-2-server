@@ -2,12 +2,17 @@
 
 function folding_update($pdo, $user_id, $column_name)
 {
-    $stmt = $pdo->prepare('
+    $columns = ['r1', 'r2', 'r3', 'r4', 'r5', 'crown_hat', 'cowboy_hat'];
+    if (array_search($column_name, $columns) === false) {
+        throw new Exception('Invalid column name in folding_update');
+    }
+
+    $stmt = $pdo->prepare("
         UPDATE folding_at_home
-           SET :column_name = 1
+           SET $column_name = 1
          WHERE user_id = :user_id
          LIMIT 1
-    ');
+    ");
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':column_name', $column_name, PDO::PARAM_STR);
     $result = $stmt->execute();
