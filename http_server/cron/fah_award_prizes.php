@@ -27,8 +27,8 @@ foreach ($folding_rows as $row) {
 
 
 // get fah user stats
-$result = stats_select_all($fah_pdo);
-while ($user = $result->fetch_object()) {
+$stats = stats_select_all($fah_pdo);
+foreach ($stats as $user) {
     add_prizes($pdo, $user->fah_name, $user->points, $prize_array, $processed_names);
 }
 
