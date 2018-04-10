@@ -41,7 +41,7 @@ class ChatRoom extends Room
             $welcome_message .= 'There are '.count($player_array).' people online, and '.count($this->player_array).' people in this chat room.';
         }
         if ($this->chat_room_name == 'main' && $guild_id == 0) {
-            $welcome_message .= ' Before chatting, please read the PR2 rules listed here: https://jiggmin2.com/forums/showthread.php?tid=385';
+            $welcome_message .= ' Before chatting, please read the PR2 rules listed at pr2hub.com/rules.';
         }
         $player->socket->write($welcome_message);
 
