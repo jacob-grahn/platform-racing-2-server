@@ -107,10 +107,11 @@ try {
     foreach ($backups as $row) {
         echo "<p>$row->date: <b>".htmlspecialchars($row->title)."</b> v$row->version <a href='?action=restore&backup_id=$row->backup_id'>restore</a></p>";
     }
-    
-    output_footer();
+
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "Error: $error";
+} finally {
     output_footer();
+    die();
 }
