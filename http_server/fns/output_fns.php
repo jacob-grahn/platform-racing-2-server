@@ -64,22 +64,22 @@ function output_mod_navigation($formatting_for_admins = true)
 
     <p>
         <b>
-            <a href="//pr2hub.com/mod/reported_messages.php">Reported Messages</a>
+            <a href="//pr2hub.com/mod/reported_messages.php" target="_blank">Reported Messages</a>
             -
-            <a href="//pr2hub.com/mod/player_search.php">Player Search</a>
+            <a href="//pr2hub.com/mod/player_search.php" target="_blank">Player Search</a>
             -
-            <a href="//pr2hub.com/bans/bans.php">Ban Log</a>
+            <a href="//pr2hub.com/bans/bans.php" target="_blank">Ban Log</a>
             -
-            <a href="//pr2hub.com/mod/mod_log.php">Mod Action Log</a>
+            <a href="//pr2hub.com/mod/mod_log.php" target="_blank">Mod Action Log</a>
     <?php if ($formatting_for_admins) { ?>
             <br>
-            <a href="//pr2hub.com/admin/player_deep_info.php">Update Account</a>
+            <a href="//pr2hub.com/admin/player_deep_info.php" target="_blank">Update Account</a>
             -
-            <a href="//pr2hub.com/admin/guild_deep_info.php">Update Guild</a>
+            <a href="//pr2hub.com/admin/guild_deep_info.php" target="_blank">Update Guild</a>
             -
-            <a href="//pr2hub.com/admin/set_campaign.php">Set Custom Campaign</a>
+            <a href="//pr2hub.com/admin/set_campaign.php" target="_blank">Set Custom Campaign</a>
             -
-            <a href="//pr2hub.com/admin/admin_log.php">Admin Action Log</a>
+            <a href="//pr2hub.com/admin/admin_log.php" target="_blank">Admin Action Log</a>
     <?php } ?>
             
         </b>
