@@ -110,5 +110,7 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "Error: $error";
+} finally {
     output_footer();
+    die();
 }
