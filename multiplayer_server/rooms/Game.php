@@ -868,7 +868,7 @@ class Game extends Room
             $player->socket->write('message`Error: Illegal character in message.');
             return false;
         }
-        $chat_message = substr($chat_message, 5);
+        $chat_message = substr($message, 5);
         if (strpos($chat_message, '`') !== false) {
             $player->socket->write('message`Error: Illegal character in message.');
             return false;

@@ -648,7 +648,7 @@ class Player
                 }
             } // rules command
             elseif ($chat_message == '/rules') {
-                $message = 'systemChat`The PR2 rules can be found here: https://jiggmin2.com/forums/showthread.php?tid=385.';
+                $message = 'systemChat`The PR2 rules can be found at pr2hub.com/rules.';
                 if ($guild_id != 0) {
                     $message .= ' Since this is a private server, your guild owner may have different rules for the chatrooms and the server. Check with them if you\'re unsure.';
                 }
