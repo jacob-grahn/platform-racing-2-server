@@ -107,7 +107,7 @@ function client_force_start($socket)
 function client_get_customize_info($socket)
 {
     $player = $socket->getPlayer();
-    $player->send_customize_info();
+    $player->sendCustomizeInfo();
 }
 
 
@@ -116,7 +116,7 @@ function client_get_customize_info($socket)
 function client_set_customize_info($socket, $data)
 {
     $player = $socket->getPlayer();
-    $player->set_customize_info($data);
+    $player->setCustomizeInfo($data);
 }
 
 
@@ -193,10 +193,10 @@ function client_un_ignore_user($socket, $data)
 
 
 //-- award kong outfit -------------------------------------------------------------------
-function client_award_kong_outfit($socket)
+function client_awardKongOutfit($socket)
 {
     $player = $socket->getPlayer();
-    $player->award_kong_outfit();
+    $player->awardKongOutfit();
 }
 
 

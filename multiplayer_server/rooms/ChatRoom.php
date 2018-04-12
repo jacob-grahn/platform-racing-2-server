@@ -40,7 +40,9 @@ class ChatRoom extends Room
         if (count($this->player_array) <= 1) {
             $welcome_message .= 'You\'re the only person here!';
         } else {
-            $welcome_message .= 'There are '.count($player_array).' people online, and '.count($this->player_array).' people in this chat room.';
+            $welcome_message .= 'There are '.count($player_array).
+            ' people online, and '.count($this->player_array).
+            ' people in this chat room.';
         }
         if ($this->chat_room_name == 'main' && $guild_id == 0) {
             $welcome_message .= ' Before chatting, please read the PR2 rules listed at pr2hub.com/rules.';
@@ -48,7 +50,7 @@ class ChatRoom extends Room
         $player->socket->write($welcome_message);
 
         foreach ($this->chat_array as $chat_message) {
-            if ($chat_message != '' && !$player->is_ignored_id($chat_message->from_id) && isset($player->socket)) {
+            if ($chat_message != '' && !$player->isIgnoredId($chat_message->from_id) && isset($player->socket)) {
                 $player->socket->write($chat_message->message);
             }
         }
@@ -58,7 +60,11 @@ class ChatRoom extends Room
     public function removePlayer($player)
     {
         Room::removePlayer($player);
-        if (count($this->player_array) <= 0 && $this->chat_room_name != "main" && $this->chat_room_name != "mod" && $this->chat_room_name != "admin") {
+        if (count($this->player_array) <= 0 &&
+            $this->chat_room_name != "main" &&
+            $this->chat_room_name != "mod" &&
+            $this->chat_room_name != "admin"
+        ) {
             $this->remove();
         }
     }
@@ -74,22 +80,10 @@ class ChatRoom extends Room
         array_shift($this->chat_array);
 
         foreach ($this->player_array as $player) {
-            if (!$player->is_ignored_id($user_id)) {
+            if (!$player->isIgnoredId($user_id)) {
                 $player->socket->write($message);
             }
         }
-    }
-
-
-    public function get_record()
-    {
-        $str = '';
-        foreach ($this->chat_array as $chat_message) {
-            if ($chat_message != '') {
-                $str .= '<br/>'.$chat_message->message;
-            }
-        }
-        return $str;
     }
 
 

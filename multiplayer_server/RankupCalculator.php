@@ -20,7 +20,7 @@ class RankupCalculator
     }
 
 
-    public static function get_exp_required($rank)
+    public static function getExpRequired($rank)
     {
         if (!is_numeric($rank) || $rank < 0 || $rank >= count(self::$exp_req)) {
             $rank = count(self::$exp_req) - 1;

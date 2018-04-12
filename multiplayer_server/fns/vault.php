@@ -30,9 +30,9 @@ function assign_guild_part($type, $part_id, $user_id, $guild_id, $seconds_durati
 
     foreach ($player_array as $player) {
         if ($player->guild_id == $guild_id) {
-            // $player->gain_part('e'.ucfirst($type), $part_id);
-            $player->set_part($type, $part_id);
-            $player->send_customize_info();
+            // $player->gainPart('e'.ucfirst($type), $part_id);
+            $player->setPart($type, $part_id);
+            $player->sendCustomizeInfo();
         }
     }
 }

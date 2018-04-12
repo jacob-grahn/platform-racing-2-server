@@ -133,7 +133,7 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     } // end if trial/permanent
 
     elseif ($type == 'temporary') {
-        $promoted->become_temp_mod();
+        $promoted->becomeTempMod();
         $admin->write("message`$html_name has been promoted to a temporary moderator!");
         return true;
     } // end if temp

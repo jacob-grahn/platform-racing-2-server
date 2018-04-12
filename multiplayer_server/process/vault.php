@@ -35,13 +35,13 @@ function process_unlock_set_king($socket, $data)
         $user_id = $data;
         $player = id_to_player($user_id, false);
         if (isset($player)) {
-            $player->gain_part('head', 28, true);
-            $player->gain_part('body', 26, true);
-            $player->gain_part('feet', 24, true);
-            $player->gain_part('eHead', 28);
-            $player->gain_part('eBody', 26);
-            $player->gain_part('eFeet', 24);
-            $player->send_customize_info();
+            $player->gainPart('head', 28, true);
+            $player->gainPart('body', 26, true);
+            $player->gainPart('feet', 24, true);
+            $player->gainPart('eHead', 28);
+            $player->gainPart('eBody', 26);
+            $player->gainPart('eFeet', 24);
+            $player->sendCustomizeInfo();
         }
         $socket->write('{"status":"ok"}');
     }
@@ -55,13 +55,13 @@ function process_unlock_set_queen($socket, $data)
         $user_id = $data;
         $player = id_to_player($user_id, false);
         if (isset($player)) {
-            $player->gain_part('head', 29, true);
-            $player->gain_part('body', 27, true);
-            $player->gain_part('feet', 25, true);
-            $player->gain_part('eHead', 29);
-            $player->gain_part('eBody', 27);
-            $player->gain_part('eFeet', 25);
-            $player->send_customize_info();
+            $player->gainPart('head', 29, true);
+            $player->gainPart('body', 27, true);
+            $player->gainPart('feet', 25, true);
+            $player->gainPart('eHead', 29);
+            $player->gainPart('eBody', 27);
+            $player->gainPart('eFeet', 25);
+            $player->sendCustomizeInfo();
         }
         $socket->write('{"status":"ok"}');
     }
@@ -75,13 +75,13 @@ function process_unlock_set_djinn($socket, $data)
         $user_id = $data;
         $player = id_to_player($user_id, false);
         if (isset($player)) {
-            $player->gain_part('head', 35, true);
-            $player->gain_part('body', 35, true);
-            $player->gain_part('feet', 35, true);
-            $player->gain_part('eHead', 35);
-            $player->gain_part('eBody', 35);
-            $player->gain_part('eFeet', 35);
-            $player->send_customize_info();
+            $player->gainPart('head', 35, true);
+            $player->gainPart('body', 35, true);
+            $player->gainPart('feet', 35, true);
+            $player->gainPart('eHead', 35);
+            $player->gainPart('eBody', 35);
+            $player->gainPart('eFeet', 35);
+            $player->sendCustomizeInfo();
         }
         $socket->write('{"status":"ok"}');
     }
@@ -95,11 +95,11 @@ function process_unlock_epic_everything($socket, $data)
         $user_id = $data;
         $player = id_to_player($user_id, false);
         if (isset($player)) {
-            $player->gain_part('eHat', '*');
-            $player->gain_part('eHead', '*');
-            $player->gain_part('eBody', '*');
-            $player->gain_part('eFeet', '*');
-            $player->send_customize_info();
+            $player->gainPart('eHat', '*');
+            $player->gainPart('eHead', '*');
+            $player->gainPart('eBody', '*');
+            $player->gainPart('eFeet', '*');
+            $player->sendCustomizeInfo();
         }
         $socket->write('{"status":"ok"}');
     }

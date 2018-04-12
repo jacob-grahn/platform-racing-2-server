@@ -82,7 +82,9 @@ class PR2Client extends \chabot\SocketServerClient
     {
         if ($this->read_buffer == '<policy-file-request/>'.chr(0x00)) {
             $this->read_buffer = '';
-            $this->write_buffer = '<cross-domain-policy><allow-access-from domain="*" to-ports="*" /></cross-domain-policy>'.chr(0x00);
+            $this->write_buffer = '<cross-domain-policy>'.
+                '<allow-access-from domain="*" to-ports="*" />'.
+                '</cross-domain-policy>'.chr(0x00);
             $this->do_write();
         }
 

@@ -28,7 +28,8 @@ function process_register_login($server_socket, $data)
                 $existing_player->write('message`You were disconnected because you logged in somewhere else.');
                 $existing_player->remove();
 
-                $socket->write('message`Your account was already running on this server. It has been logged out to save your data. Please log in again.');
+                $socket->write('message`Your account was already running on this server. '.
+                    'It has been logged out to save your data. Please log in again.');
                 $socket->close();
                 $socket->onDisconnect();
             } elseif (\pr2\multi\LocalBans::is_banned($login_obj->user->name)) {
@@ -39,9 +40,9 @@ function process_register_login($server_socket, $data)
                 $player = new \pr2\multi\Player($socket, $login_obj);
                 $socket->player = $player;
                 if ($player->user_id == $guild_owner) {
-                    $player->become_server_owner();
-                } elseif ($player->group <= 0 && $server_id === 9) { // enable guests to earn badges on only Isabel for now
-                    $player->become_guest();
+                    $player->becomeServerOwner();
+                } elseif ($player->group <= 0) {
+                    $player->becomeGuest();
                 }
 
                 $socket->write('loginSuccessful`'.$group);

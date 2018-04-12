@@ -17,10 +17,10 @@ function save_first_finder($pdo, $player)
         return;
     }
 
-    // give all parts of the bubble set using the gain_part function from Player.php
-    $player->gain_part("head", 27, true);
-    $player->gain_part("body", 21, true);
-    $player->gain_part("feet", 28, true);
+    // give all parts of the bubble set using the gainPart function from Player.php
+    $player->gainPart("head", 27, true);
+    $player->gainPart("body", 21, true);
+    $player->gainPart("feet", 28, true);
 
     // tell the world
     $player->write('winPrize`' . json_encode(

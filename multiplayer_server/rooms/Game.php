@@ -100,8 +100,8 @@ class Game extends Room
         //send character info
         foreach ($this->player_array as $player) {
             $player->finished_race = false;
-            $player->socket->write($player->get_local_info());
-            $this->sendToRoom($player->get_remote_info(), $player->user_id);
+            $player->socket->write($player->getLocalInfo());
+            $this->sendToRoom($player->getRemoteInfo(), $player->user_id);
         }
 
         //super booster
@@ -393,7 +393,7 @@ class Game extends Room
                     $this->next_hat_id++,
                     $hat_id,
                     $player->hat_color,
-                    $player->get_second_color('hat', $hat_id)
+                    $player->getSecondColor('hat', $hat_id)
                 );
                 $player->worn_hat_array[0] = $hat;
             }
@@ -471,7 +471,7 @@ class Game extends Room
             //--- prize -----------
             $prize = null;
 
-            if ($this->course_id == self::LEVEL_BUTO && $player->wearing_hat(Hats::JIGG)) {
+            if ($this->course_id == self::LEVEL_BUTO && $player->wearingHat(Hats::JIGG)) {
                 $prize = Prizes::$JIGG_HAT;
             }
             if (isset($this->prize) && ($place == 0 || $this->prize->is_universal())) {
@@ -480,7 +480,7 @@ class Game extends Room
 
             if (isset($prize)) {
                 $autoset = ( $prize->get_type() == 'hat' );
-                $result = $player->gain_part($prize->get_type(), $prize->get_id(), $autoset);
+                $result = $player->gainPart($prize->get_type(), $prize->get_id(), $autoset);
                 if ($result == true) {
                     $player->write('winPrize`' . $prize->to_str());
                 }
@@ -607,7 +607,7 @@ class Game extends Room
             }
 
             //artifact bonus
-            if ($this->course_id == Artifact::$level_id && $player->wearing_hat(Hats::ARTIFACT)) {
+            if ($this->course_id == Artifact::$level_id && $player->wearingHat(Hats::ARTIFACT)) {
                 $result = save_finder($pdo, $player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
@@ -884,7 +884,7 @@ class Game extends Room
         // send the message
         if ($command === 'chat') {
             foreach ($this->player_array as $player) {
-                if (!$player->is_ignored_id($user_id)) {
+                if (!$player->isIgnoredId($user_id)) {
                     $player->socket->write("$command`$name`$power`$text");
                 }
             }

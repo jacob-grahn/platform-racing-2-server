@@ -18,5 +18,4 @@ class PR2SocketServer extends \chabot\SocketServer
         LocalBans::remove_expired();
         LoiterDetector::check();
     }
-
 }
