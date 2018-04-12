@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/socket.php';
-require_once __DIR__ . '/socket_client.php';
-require_once __DIR__ . '/socket_server.php';
-require_once __DIR__ . '/socket_server_client.php';
-require_once __DIR__ . '/socket_daemon.php';
+require_once __DIR__ . '/Socket.php';
+require_once __DIR__ . '/SocketClient.php';
+require_once __DIR__ . '/SocketServer.php';
+require_once __DIR__ . '/SocketServerClient.php';
+require_once __DIR__ . '/SocketDaemon.php';
