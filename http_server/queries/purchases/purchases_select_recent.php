@@ -1,6 +1,6 @@
 <?php
 
-function purchases_select_recent ($pdo)
+function purchases_select_recent($pdo)
 {
     $stmt = $pdo->prepare('
         SELECT *

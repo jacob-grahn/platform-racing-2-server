@@ -1,7 +1,7 @@
 <?php
 
 // TO-DO: Is this needed?
-function ignored_select ($pdo, $user_id, $ignore_id, $suppress_error = false)
+function ignored_select($pdo, $user_id, $ignore_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT *

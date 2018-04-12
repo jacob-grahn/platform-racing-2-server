@@ -4,7 +4,8 @@ require_once __DIR__ . '/../../../http_server/queries/artifact_locations/artifac
 require_once __DIR__ . '/../../../http_server/queries/artifact_locations/artifact_location_select.php';
 require_once __DIR__ . '/../../../http_server/queries/messages/message_insert.php';
 
-function save_first_finder ($pdo, $player) {
+function save_first_finder($pdo, $player)
+{
     $user_id = $player->user_id;
 
     artifact_location_update_first_finder($pdo, $user_id);

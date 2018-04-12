@@ -87,7 +87,8 @@ function token_login($pdo, $use_cookie = true, $suppress_error = false)
 
 
 // determine if a user is staff
-function is_staff($pdo, $user_id) {
+function is_staff($pdo, $user_id)
+{
     $is_mod = false;
     $is_admin = false;
     

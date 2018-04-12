@@ -58,7 +58,7 @@ try {
     // url prefix for contest host links based on group
     if ($is_admin === true) {
         $base_url = "/admin/player_deep_info.php?name1=";
-    } else if ($is_admin === false && $is_mod === true) {
+    } elseif ($is_admin === false && $is_mod === true) {
         $base_url = "/mod/do_player_search.php?name=";
     } else {
         $base_url = "/player_search.php?name=";

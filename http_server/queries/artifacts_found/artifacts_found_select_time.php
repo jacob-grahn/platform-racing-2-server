@@ -1,6 +1,6 @@
 <?php
 
-function artifacts_found_select_time ($pdo, $user_id)
+function artifacts_found_select_time($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         SELECT UNIX_TIMESTAMP(time) as timestamp

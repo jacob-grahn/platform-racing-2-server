@@ -1,6 +1,6 @@
 <?php
 
-function epic_upgrades_upsert ($pdo, $user_id, $epic_hats, $epic_heads, $epic_bodies, $epic_feet)
+function epic_upgrades_upsert($pdo, $user_id, $epic_hats, $epic_heads, $epic_bodies, $epic_feet)
 {
     $stmt = $pdo->prepare('
         INSERT INTO epic_upgrades

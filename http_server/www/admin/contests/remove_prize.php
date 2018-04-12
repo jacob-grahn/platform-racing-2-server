@@ -56,7 +56,7 @@ try {
         output_footer();
         die();
     } // add
-    else if ($action === 'remove') {
+    elseif ($action === 'remove') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
@@ -68,7 +68,7 @@ try {
         $removed = 0; // count the number of prizes removed
         
         // determine if we're removing these prizes
-        foreach($prizes as $prize) {
+        foreach ($prizes as $prize) {
             // make some nice variables
             $prize_id = $prize->prize_id;
             $prize_part_id = (int) $prize->part_id;

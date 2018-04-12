@@ -81,10 +81,18 @@ try {
     
     // if the data retrieval was successful, display our fancy variables
     if ($skip_fanciness === false) {
-        if (!empty($html_host)) echo "<p>Host: $html_host</p>";
-        if (!empty($html_dns)) echo "<p>DNS: $html_dns</p>";
-        if (!empty($html_isp)) echo "<p>ISP: <a href='https://www.google.com/search?q=$url_isp' target='_blank'>$html_isp</a></p>";
-        if (!empty($html_location)) echo "<p>Location: $html_location</p>";
+        if (!empty($html_host)) {
+            echo "<p>Host: $html_host</p>";
+        }
+        if (!empty($html_dns)) {
+            echo "<p>DNS: $html_dns</p>";
+        }
+        if (!empty($html_isp)) {
+            echo "<p>ISP: <a href='https://www.google.com/search?q=$url_isp' target='_blank'>$html_isp</a></p>";
+        }
+        if (!empty($html_location)) {
+            echo "<p>Location: $html_location</p>";
+        }
     }
     
     // check if they are currently banned

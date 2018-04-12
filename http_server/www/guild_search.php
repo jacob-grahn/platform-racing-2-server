@@ -137,15 +137,15 @@ try {
     echo '</table>';
 
     output_footer();
-
-} catch(Exception $e) {
+} catch (Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
     output_search($guild_name, $guild_id);
     echo "<br><i>Error: $safe_error</i><br>";
     output_footer();
 }
 
-function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
+function output_search($guild_name = '', $guild_id = '', $mode = null)
+{
     $guild_id = (int) $guild_id;
 
     // choose which one to set after searching
@@ -153,7 +153,7 @@ function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
     $name_display = 'none';
     $id_checked = '';
     $name_checked = '';
-    switch($mode) {
+    switch ($mode) {
         case 'id':
             $id_display = 'block';
             $id_checked = 'checked="checked"';
@@ -165,8 +165,12 @@ function output_search($guild_name = '', $guild_id = '', $mode = NULL) {
     }
 
     // check if values passed are empty
-    if (is_empty($guild_name)) $guild_name = '';
-    if (is_empty($guild_id, false)) $guild_id = '';
+    if (is_empty($guild_name)) {
+        $guild_name = '';
+    }
+    if (is_empty($guild_id, false)) {
+        $guild_id = '';
+    }
 
     // center
     echo '<center>';

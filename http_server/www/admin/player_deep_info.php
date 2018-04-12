@@ -63,7 +63,7 @@ try {
     output_footer();
 }
 
-function output_objects($objs, $is_logins = false, $user = NULL)
+function output_objects($objs, $is_logins = false, $user = null)
 {
     if ($objs !== false) {
         foreach ($objs as $obj) {

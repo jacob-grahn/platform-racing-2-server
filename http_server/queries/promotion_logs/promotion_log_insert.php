@@ -1,6 +1,6 @@
 <?php
 
-function promotion_log_insert ($pdo, $message, $time)
+function promotion_log_insert($pdo, $message, $time)
 {
     $stmt = $pdo->prepare('
         INSERT INTO promotion_log

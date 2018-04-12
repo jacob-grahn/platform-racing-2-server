@@ -56,7 +56,6 @@ try {
     
     //tell it to the world
     die('message=This level has been removed successfully. It may take up to 60 seconds for this change to take effect.');
-    
 } catch (Exception $e) {
     $error = $e->getMessage();
     die("error=$error");

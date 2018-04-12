@@ -13,7 +13,7 @@ $contest_id = (int) find('contest_id', 0);
 $action = find('action', 'form');
 
 try {
-     // rate limiting	
+     // rate limiting
      rate_limit('add-contest-prize-'.$ip, 30, 5);
      rate_limit('add-contest-prize-'.$ip, 5, 2);
     
@@ -50,7 +50,7 @@ try {
         output_footer();
         die();
     } // add
-    else if ($action === 'add') {
+    elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
@@ -103,7 +103,7 @@ function output_form($contest)
 // add contest prize function
 function add_contest_prize($pdo, $admin, $contest)
 {
-	global $hat_names_array, $head_names_array, $body_names_array, $feet_names_array;
+    global $hat_names_array, $head_names_array, $body_names_array, $feet_names_array;
 
     // make some nice variables
     $contest_name = $contest->contest_name;

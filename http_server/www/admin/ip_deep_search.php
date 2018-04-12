@@ -118,7 +118,9 @@ try {
         $url_name = htmlspecialchars(urlencode($user->name)); // url encode the name
         $group_color = $group_colors[(int) $user->power]; // group color
         $active_date = date('j/M/Y', (int) $user->time); // format the last active date
-        if ($active_date == '30/Nov/-0001') $active_date = 'Never'; // show never if never logged in
+        if ($active_date == '30/Nov/-0001') {
+            $active_date = 'Never'; // show never if never logged in
+        }
     
         // display the name with the color and link to the player search page
         echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>$name</a> | Last Active: $active_date<br>";

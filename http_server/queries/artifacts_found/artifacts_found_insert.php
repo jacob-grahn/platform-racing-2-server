@@ -2,7 +2,7 @@
 
 // time here is actually a datetime field, not a unix timestamp
 
-function artifacts_found_insert ($pdo, $user_id)
+function artifacts_found_insert($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         INSERT INTO artifacts_found

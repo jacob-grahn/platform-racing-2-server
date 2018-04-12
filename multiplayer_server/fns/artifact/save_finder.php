@@ -4,7 +4,7 @@ require_once __DIR__ . '/has_found_artifact.php';
 require_once __DIR__ . '/save_first_finder.php';
 require_once __DIR__ . '/../../../http_server/queries/artifacts_found/artifacts_found_insert.php';
 
-function save_finder ($pdo, $player)
+function save_finder($pdo, $player)
 {
     try {
         // does not count if you have found this artifact already
@@ -21,8 +21,7 @@ function save_finder ($pdo, $player)
         }
 
         return true;
-    }
-    catch (Exception $e) {
+    } catch (Exception $e) {
         return false;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-function promotion_log_count ($pdo, $min_time)
+function promotion_log_count($pdo, $min_time)
 {
     $stmt = $pdo->prepare('
         SELECT COUNT(*)

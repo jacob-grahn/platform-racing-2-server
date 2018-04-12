@@ -1,6 +1,6 @@
 <?php
 
-function rank_token_update ($pdo, $user_id, $used_tokens)
+function rank_token_update($pdo, $user_id, $used_tokens)
 {
     $stmt = $pdo->prepare('
         UPDATE rank_tokens

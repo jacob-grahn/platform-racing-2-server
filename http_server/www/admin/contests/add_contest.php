@@ -33,7 +33,7 @@ try {
         output_footer();
         die();
     } // add
-    else if ($action === 'add') {
+    elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
@@ -69,7 +69,6 @@ function output_form()
     echo '<br>';
     echo '<input type="submit" value="Add Contest">&nbsp;(no confirmation!)';
     echo '</form>';
-
 }
 
 // add contest function
@@ -86,7 +85,7 @@ function add_contest($pdo, $admin)
 
     if ($max_awards > 50) {
         throw new Exception('Too many awards per week.');
-    } else if ($max_awards <= 0) {
+    } elseif ($max_awards <= 0) {
         throw new Exception('Too few awards per week.');
     }
 

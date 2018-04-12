@@ -138,7 +138,7 @@ function update($pdo, $admin)
     if (!empty($recount_members)) {
         $member_count = guild_count_members($pdo, $guild_id);
     } else {
-        $member_count = NULL;
+        $member_count = null;
         /* this can be either $guild->member_count or NULL.
            setting it to NULL doesn't add the sql line to update the member count
            setting it to $guild->member_count tells the db to update the count to what it already is */

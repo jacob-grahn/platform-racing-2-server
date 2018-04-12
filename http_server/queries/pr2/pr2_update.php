@@ -1,12 +1,30 @@
 <?php
 
-function pr2_update ($pdo, $user_id, $rank, $exp_points,
-    $hat_color, $head_color, $body_color, $feet_color,
-    $hat_color_2, $head_color_2, $body_color_2, $feet_color_2,
-    $hat, $head, $body, $feet,
-    $hat_array, $head_array, $body_array, $feet_array,
-    $speed, $acceleration, $jumping)
-{
+function pr2_update(
+    $pdo,
+    $user_id,
+    $rank,
+    $exp_points,
+    $hat_color,
+    $head_color,
+    $body_color,
+    $feet_color,
+    $hat_color_2,
+    $head_color_2,
+    $body_color_2,
+    $feet_color_2,
+    $hat,
+    $head,
+    $body,
+    $feet,
+    $hat_array,
+    $head_array,
+    $body_array,
+    $feet_array,
+    $speed,
+    $acceleration,
+    $jumping
+) {
     $stmt = $pdo->prepare('
         UPDATE pr2
         SET rank = :rank,

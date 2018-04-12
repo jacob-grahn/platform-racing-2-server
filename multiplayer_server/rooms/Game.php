@@ -426,8 +426,11 @@ class Game extends Room
     }
 
 
-    private function ensure_time_format($time) {
-        if ($time < 0) $time = 0;
+    private function ensure_time_format($time)
+    {
+        if ($time < 0) {
+            $time = 0;
+        }
         return round($time, 2);
     }
 
@@ -783,7 +786,7 @@ class Game extends Room
         }
         if ($prev_gp + $earned_gp > 10 && $wearing_moon === false) {
             $earned_gp -= ( $prev_gp + $earned_gp ) - 10; // limit non-moon hat gp to 10
-        } else if ($prev_gp + $earned_gp > 20 && $wearing_moon === true) {
+        } elseif ($prev_gp + $earned_gp > 20 && $wearing_moon === true) {
             $earned_gp -= ( $prev_gp + $earned_gp ) - 20; // limit moon hat gp to 20
         }
         if ($earned_gp >= 1) {
@@ -882,7 +885,7 @@ class Game extends Room
             }
         } catch (Exception $e) {
             $err = $e->getMessage();
-            foreach($this->player_array as $player) {
+            foreach ($this->player_array as $player) {
                 if ($player->user_id == $user_id) {
                     $player->socket->write("message`Error: $err");
                     $player->socket->remove();

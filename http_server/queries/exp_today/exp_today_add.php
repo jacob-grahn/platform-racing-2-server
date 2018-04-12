@@ -1,6 +1,6 @@
 <?php
 
-function exp_today_add ($pdo, $look, $exp)
+function exp_today_add($pdo, $look, $exp)
 {
     $stmt = $pdo->prepare('
         INSERT INTO exp_today

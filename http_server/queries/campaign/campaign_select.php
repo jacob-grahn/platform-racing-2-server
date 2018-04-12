@@ -1,6 +1,6 @@
 <?php
 
-function campaign_select ($pdo)
+function campaign_select($pdo)
 {
     $stmt = $pdo->prepare('
         SELECT level_id, campaign, level_num, prize, prize_type, prize_id

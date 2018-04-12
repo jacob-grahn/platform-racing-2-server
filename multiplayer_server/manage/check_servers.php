@@ -16,15 +16,13 @@ $pdo = pdo_connect();
 $servers = servers_select($pdo);
 
 // test all active servers at this address
-foreach( $servers as $server ) {
-	output( $server->server_name );
-	output( $server->address );
-	if($server->address == $SERVER_IP) {
-		test_server(__DIR__ . '/../pr2.php', 'localhost', $server->port, $server->salt, $server->server_id);
-	}
+foreach ($servers as $server) {
+    output($server->server_name);
+    output($server->address);
+    if ($server->address == $SERVER_IP) {
+        test_server(__DIR__ . '/../pr2.php', 'localhost', $server->port, $server->salt, $server->server_id);
+    }
 }
 
 // tell it to the world
 output('done!');
-
-?>

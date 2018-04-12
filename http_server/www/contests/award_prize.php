@@ -87,7 +87,7 @@ try {
         output_footer();
         die();
     } // award
-    else if ($action === 'award') {
+    elseif ($action === 'award') {
         // validate request method
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
@@ -122,12 +122,12 @@ try {
         // check if the player has the part already
         $prizes_to_award = array();
         $errors = 0;
-        foreach($prizes as $prize) {
+        foreach ($prizes as $prize) {
             // make some variables
             $prize_id = (int) $prize->prize_id;
             $part_type = $prize->part_type;
             $part_id = $prize->part_id;
-            $award_prize = (bool) default_post("prize_$prize_id", NULL);
+            $award_prize = (bool) default_post("prize_$prize_id", null);
     
             // sanity check: if we're not awarding anything, move on
             if ($award_prize === false || is_null($award_prize)) {
@@ -168,7 +168,7 @@ try {
             throw new Exception("One or more checks returned an error. The results can be seen above. If the user already has one of the parts, go back and uncheck that part. If you need help, ask a member of the PR2 Staff Team.");
         } else {
             // if no prizes are being awarded, stop
-               if (empty($prizes_to_award)) {
+            if (empty($prizes_to_award)) {
                 throw new Exception("You must specify prizes to award.");
             }
         }
@@ -176,7 +176,7 @@ try {
         // award prizes
         $prizes_awarded_arr = array();
         $errors = 0;
-        foreach($prizes_to_award as $prize_id) {
+        foreach ($prizes_to_award as $prize_id) {
             $prize = contest_prize_select($pdo, $prize_id);
             $part_type = $prize->part_type;
             $part_id = $prize->part_id;
@@ -196,11 +196,11 @@ try {
                $part_name = ${$part_type."_names_array"}[$part_id];
                $disp_type = ucfirst($part_type);
             $prize_name = "$part_name $disp_type";
-               if ($is_epic === true) {
+            if ($is_epic === true) {
                 $prize_name = "Epic " . $prize_name;
             }
             
-            array_push($prizes_awarded_arr, $prize_name);    
+            array_push($prizes_awarded_arr, $prize_name);
             echo "<span style='color: green; font-weight: bold;'>The $prize_name was successfully awarded to $html_winner_name.</span><br>";
         }
         

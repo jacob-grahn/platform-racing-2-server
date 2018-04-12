@@ -1,6 +1,6 @@
 <?php
 
-function mod_power_insert ($pdo, $user_id, $max_ban, $bans_per_hour, $can_unpublish_level)
+function mod_power_insert($pdo, $user_id, $max_ban, $bans_per_hour, $can_unpublish_level)
 {
     $stmt = $pdo->prepare('
         INSERT INTO mod_power

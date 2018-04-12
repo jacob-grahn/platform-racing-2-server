@@ -80,16 +80,15 @@ try {
     }
 
     // hash the password
-    $hash2 = NULL;
-    if($has_pass == 1) {
+    $hash2 = null;
+    if ($has_pass == 1) {
         if ($live != 0) {
             $live = 0;
             $on_success = 'pass set with live';
         }
-        if($pass_hash == '') {
+        if ($pass_hash == '') {
             $hash2 = $org_pass_hash2;
-        }
-        else {
+        } else {
             $hash2 = sha1($pass_hash . $LEVEL_PASS_SALT);
         }
     }

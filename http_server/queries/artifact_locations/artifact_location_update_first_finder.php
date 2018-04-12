@@ -1,6 +1,6 @@
 <?php
 
-function artifact_location_update_first_finder ($pdo, $user_id)
+function artifact_location_update_first_finder($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         UPDATE artifact_location

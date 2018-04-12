@@ -1,6 +1,6 @@
 <?php
 
-function user_update_power ($pdo, $user_id, $power)
+function user_update_power($pdo, $user_id, $power)
 {
     $stmt = $pdo->prepare('
         UPDATE users

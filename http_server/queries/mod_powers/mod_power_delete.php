@@ -1,6 +1,6 @@
 <?php
 
-function mod_power_delete ($pdo, $user_id)
+function mod_power_delete($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         DELETE FROM mod_power

@@ -18,15 +18,15 @@ function guild_delete_from_guilds($pdo, $guild_id)
     $result = $stmt->execute();
     
     if ($result === false) {
-    	throw new Exception("Could not perform query guild_delete_from_guilds.");
+        throw new Exception("Could not perform query guild_delete_from_guilds.");
     }
 
-	return $result;
+    return $result;
 }
 
 function guild_delete_from_users($pdo, $guild_id)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         UPDATE users
         SET guild = 0
         WHERE guild = :guild_id
@@ -35,15 +35,15 @@ function guild_delete_from_users($pdo, $guild_id)
     $result = $stmt->execute();
     
     if ($result === false) {
-    	throw new Exception("Could not perform query guild_delete_from_users.");
+        throw new Exception("Could not perform query guild_delete_from_users.");
     }
 
-	return $result;
+    return $result;
 }
 
 function guild_delete_from_gp($pdo, $guild_id)
 {
-	$stmt = $pdo->prepare('
+    $stmt = $pdo->prepare('
         DELETE FROM gp
         WHERE guild_id = :guild_id
     ');

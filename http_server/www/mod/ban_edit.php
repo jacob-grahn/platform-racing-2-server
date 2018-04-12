@@ -38,7 +38,7 @@ try {
     // if they're trying to update
     if ($action == 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         update($pdo, $mod, $ban_id, $ip);
-    } else if ($action == 'edit') {
+    } elseif ($action == 'edit') {
         $ban = ban_select($pdo, $ban_id);
         output_header('Edit Ban', true);
         output_form($ban);

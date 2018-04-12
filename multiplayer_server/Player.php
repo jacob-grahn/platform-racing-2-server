@@ -516,7 +516,7 @@ class Player
                     if ($this->restart_warned == false) {
                         $this->restart_warned = true;
                         $this->write('systemChat`WARNING: You just typed the server restart command. If you choose to proceed, this action will disconnect EVERY player on this server. Are you sure you want to disconnect ALL players and restart the server? If so, type the command again.');
-                    } else if ($this->restart_warned == true) {
+                    } elseif ($this->restart_warned == true) {
                         admin_action_insert($pdo, $admin_id, "$admin_name restarted $server_name from $ip.", $admin_id, $ip);
                         shutdown_server();
                     }
@@ -695,8 +695,7 @@ class Player
                 elseif ($this->get_chat_count() > 6 && ($this->group < 2 || $this->temp_mod === true)) {
                     $this->chat_ban = time() + 60;
                     $this->write('systemChat`Slow down a bit, yo.');
-                }
-                // illegal character in username/message check
+                } // illegal character in username/message check
                 elseif (strpos($this->name, '`') !== false || strpos($chat_message, '`') !== false) {
                     $this->write('message`Error: Illegal character detected.');
                 } // if caught by NOTHING above, send the message
@@ -1188,12 +1187,28 @@ class Player
 
         pr2_update(
             $pdo,
-            $this->user_id, $rank, $exp_points,
-            $hat_color, $head_color, $body_color, $feet_color,
-            $hat_color_2, $head_color_2, $body_color_2, $feet_color_2,
-            $hat, $head, $body, $feet,
-            $hat_array, $head_array, $body_array, $feet_array,
-            $speed, $acceleration, $jumping
+            $this->user_id,
+            $rank,
+            $exp_points,
+            $hat_color,
+            $head_color,
+            $body_color,
+            $feet_color,
+            $hat_color_2,
+            $head_color_2,
+            $body_color_2,
+            $feet_color_2,
+            $hat,
+            $head,
+            $body,
+            $feet,
+            $hat_array,
+            $head_array,
+            $body_array,
+            $feet_array,
+            $speed,
+            $acceleration,
+            $jumping
         );
 
         epic_upgrades_upsert($pdo, $this->user_id, $epic_hat_array, $epic_head_array, $epic_body_array, $epic_feet_array);

@@ -1,10 +1,10 @@
 <?php
 
-function guild_update($pdo, $guild_id, $guild_name, $emblem, $note, $owner_id, $member_count = NULL)
+function guild_update($pdo, $guild_id, $guild_name, $emblem, $note, $owner_id, $member_count = null)
 {
     // check for member count passed to this function
     $memcount_sql = '';
-    if ($member_count != NULL) {
+    if ($member_count != null) {
         $member_count = (int) $member_count;
         $memcount_sql = 'member_count = :member_count,';
     }
@@ -26,7 +26,7 @@ function guild_update($pdo, $guild_id, $guild_name, $emblem, $note, $owner_id, $
     $stmt->bindValue(':note', $note, PDO::PARAM_STR);
     $stmt->bindValue(':owner_id', $owner_id, PDO::PARAM_INT);
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
-    if ($member_count != NULL) {
+    if ($member_count != null) {
         $stmt->bindValue(':member_count', $member_count, PDO::PARAM_INT);
     }
     $result = $stmt->execute();

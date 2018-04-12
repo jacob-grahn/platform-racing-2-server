@@ -8,7 +8,7 @@ function guild_increment_member($pdo, $guild_id, $number)
     if ($number < 0) {
         $number = abs($number);
         $sign = '-';
-    } else if ($number > 0) {
+    } elseif ($number > 0) {
         $sign = '+';
     } else {
         return true;
