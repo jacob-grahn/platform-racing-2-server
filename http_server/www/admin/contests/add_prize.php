@@ -16,7 +16,7 @@ try {
      // rate limiting
      rate_limit('add-contest-prize-'.$ip, 30, 5);
      rate_limit('add-contest-prize-'.$ip, 5, 2);
-    
+
     // sanity check: is a valid contest ID specified?
     if (is_empty($contest_id, false)) {
         throw new Exception("Invalid contest ID specified.");
@@ -37,13 +37,13 @@ try {
 try {
     // header
     output_header('Add Contest Prize', true, true);
-    
+
     // get contest info
     $contest = contest_select($pdo, $contest_id, false, true);
     if ($contest == false || empty($contest)) {
         throw new Exception("Could not find a contest with that ID.");
     }
-    
+
     // form
     if ($action === 'form') {
         output_form($contest);
@@ -75,16 +75,16 @@ function output_form($contest)
     foreach ($prize_types as $pt) {
         $options_html .= "<option value='$pt'>$pt</option>";
     }
-    
+
     echo '<form action="add_prize.php" method="post">';
-    
+
     echo 'Add Contest Prize for <b>'.htmlspecialchars($contest->contest_name).'</b><br><br>';
-    
+
     $part_type_sel = "<select name='part_type'>
                         <option value='' selected='selected'>Choose a type...</option>
                         $options_html
                     </select>";
-    
+
     echo "Prize Type: $part_type_sel<br>";
     echo "Prize ID: <input type='text' name='part_id' maxlength='2'>";
 
@@ -93,7 +93,7 @@ function output_form($contest)
 
     echo '<input type="submit" value="Add Contest Prize">&nbsp;(no confirmation!)';
     echo '</form>';
-    
+
     echo '<br>';
     echo '---';
     echo '<br>';
@@ -103,32 +103,30 @@ function output_form($contest)
 // add contest prize function
 function add_contest_prize($pdo, $admin, $contest)
 {
-    global $hat_names_array, $head_names_array, $body_names_array, $feet_names_array;
-
     // make some nice variables
     $contest_name = $contest->contest_name;
     $contest_id = (int) $contest->contest_id;
     $part_type = find('part_type');
     $part_id = (int) find('part_id');
     $html_contest_name = htmlspecialchars($contest->contest_name);
-    
+
     // validate the prize and get a nice stdClass back
     $prize = validate_prize($part_type, $part_id);
-    
+
     // check if the prize already exists for this contest
     $prize_exists = contest_prize_select_id($pdo, $contest_id, $part_type, $part_id, true);
     if ($prize_exists != false) {
         throw new Exception("<b>$html_contest_name</b> already awards this prize.");
     }
-    
+
     // add contest prize
     $contest_prize_id = (int) contest_prize_insert($pdo, $contest_id, $part_type, $part_id);
-    
+
     // build variable name
     $prize_type = $prize->type;
     $prize_id = (int) $prize->id;
     $is_epic = (bool) $prize->epic;
-    
+
     // make the display name
     $part_name = ${$prize_type."_names_array"}[$prize_id];
     $disp_type = ucfirst($prize_type);
@@ -136,7 +134,7 @@ function add_contest_prize($pdo, $admin, $contest)
     if ($is_epic == true) {
         $full_part_name = "Epic " . $full_part_name;
     }
-    
+
     // log the action in the admin log
     $admin_ip = get_ip();
     $admin_name = $admin->name;

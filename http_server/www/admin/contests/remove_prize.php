@@ -16,7 +16,7 @@ try {
     // rate limiting
     rate_limit('remove-contest-prize-'.$ip, 60, 10);
     rate_limit('remove-contest-prize-'.$ip, 5, 2);
-    
+
     // sanity check: is a valid contest ID specified?
     if (is_empty($contest_id, false)) {
         throw new Exception("Invalid contest ID specified.");
@@ -37,19 +37,19 @@ try {
 try {
     // header
     output_header('Remove Contest Prize', true, true);
-    
+
     // get contest info
     $contest = contest_select($pdo, $contest_id, false, true);
     if ($contest == false || empty($contest)) {
         throw new Exception("Could not find a contest with that ID.");
     }
-    
+
     // get prizes info for this contest
     $prizes = contest_prizes_select_by_contest($pdo, $contest->contest_id);
     if ($prizes == false || empty($prizes)) {
         throw new Exception("This contest doesn't currently have any prizes.");
     }
-    
+
     // form
     if ($action === 'form') {
         output_form($contest, $prizes);
@@ -60,28 +60,28 @@ try {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
-        
+
         // make some variables
         $contest_id = (int) $contest->contest_id;
         $contest_name = $contest->contest_name;
         $html_contest_name = htmlspecialchars($contest_name);
         $removed = 0; // count the number of prizes removed
-        
+
         // determine if we're removing these prizes
         foreach ($prizes as $prize) {
             // make some nice variables
             $prize_id = $prize->prize_id;
             $prize_part_id = (int) $prize->part_id;
             $remove_prize = (bool) $_POST["prize_$prize_part_id"];
-            
+
             // move on if not removing this prize
             if ($remove_prize === false) {
                 continue;
             }
-            
+
             // some names of things
             $prize_name = htmlspecialchars(default_post("prize_name_$prize_part_id", ''));
-            
+
             // do it
             $operation = contest_prize_delete($pdo, $prize_id, true);
             $removed++; // increment counter
@@ -91,18 +91,18 @@ try {
                 echo "<span style='color: red;'>The $prize_name was not deleted from $html_contest_name.</span><br>";
                 continue;
             }
-    
+
             // log the action in the admin log
             $admin_name = $admin->name;
             $admin_id = $admin->user_id;
             admin_action_insert($pdo, $admin_id, "$admin_name removed the $prize_name from contest $contest_name from $ip. {contest_id: $contest_id, contest_name: $contest_name, prize_id: $prize_id}", 0, $ip);
         }
-        
+
         // if no prizes were selected to be removed, tell the user
         if ($removed === 0) {
             throw new Exception("No prizes were selected to be removed.");
         }
-        
+
         // output the page
         echo "<br>All operations completed. The results can be seen above.";
         echo "<br><br>";
@@ -124,22 +124,20 @@ try {
 // page
 function output_form($contest, $prizes)
 {
-    global $hat_names_array, $head_names_array, $body_names_array, $feet_names_array;
-
     $html_contest_name = htmlspecialchars($contest->contest_name);
     echo "Remove Prizes from <b>$html_contest_name</b>"
         ."<br><br>"
         ."<form method='post'>";
-    
+
     foreach ($prizes as $prize) {
         $prize_id = (int) $prize->prize_id;
-    
+
         // build variable name
         $prize = validate_prize($prize->part_type, $prize->part_id);
         $prize_type = $prize->type;
         $prize_id = (int) $prize->id;
         $is_epic = (bool) $prize->epic;
-        
+
         // make the display name
         $part_name = ${$prize_type."_names_array"}[$prize_id];
         $disp_type = ucfirst($prize_type);
@@ -147,17 +145,17 @@ function output_form($contest, $prizes)
         if ($is_epic == true) {
             $prize_name = "Epic " . $prize_name;
         }
-        
+
         echo "<input type='checkbox' name='prize_$prize_id'> Remove $prize_name<br>";
         echo "<input type='hidden' name='prize_name_$prize_id' value='$prize_name'>";
     }
-    
+
     echo '<input type="hidden" name="action" value="remove">';
     echo '<input type="hidden" name="contest_id" value="'.(int) $contest->contest_id.'"><br><br>';
-    
+
     echo '<input type="submit" value="Remove Contest Prize(s)">&nbsp;(no confirmation!)';
     echo '</form>';
-    
+
     echo '<br>';
     echo '---';
     echo '<br>';
