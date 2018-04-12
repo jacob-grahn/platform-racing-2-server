@@ -18,11 +18,11 @@ function process_register_login($server_socket, $data)
             if (!$server_socket->process) {
                 $socket->write('message`Login verify failed.');
                 $socket->close();
-                $socket->on_disconnect();
+                $socket->onDisconnect();
             } elseif ($guild_id != 0 && $guild_id != $login_obj->user->guild) {
                 $socket->write('message`You are not a member of this guild.');
                 $socket->close();
-                $socket->on_disconnect();
+                $socket->onDisconnect();
             } elseif (isset($player_array[$user_id])) {
                 $existing_player = $player_array[$user_id];
                 $existing_player->write('message`You were disconnected because you logged in somewhere else.');
@@ -30,11 +30,11 @@ function process_register_login($server_socket, $data)
 
                 $socket->write('message`Your account was already running on this server. It has been logged out to save your data. Please log in again.');
                 $socket->close();
-                $socket->on_disconnect();
+                $socket->onDisconnect();
             } elseif (\pr2\multi\LocalBans::is_banned($login_obj->user->name)) {
                 $socket->write('message`You have been kicked from this server for 30 minutes.');
                 $socket->close();
-                $socket->on_disconnect();
+                $socket->onDisconnect();
             } else {
                 $player = new \pr2\multi\Player($socket, $login_obj);
                 $socket->player = $player;

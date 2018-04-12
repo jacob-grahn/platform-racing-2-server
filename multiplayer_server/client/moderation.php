@@ -14,7 +14,7 @@ function client_kick($socket, $data)
 
     // get players
     $kicked = name_to_player($name);
-    $mod = $socket->get_player();
+    $mod = $socket->getPlayer();
 
     // safety first
     $safe_kname = htmlspecialchars($name);
@@ -60,7 +60,7 @@ function client_unkick($socket, $data)
     $name = $data;
 
     // get some info
-    $mod = $socket->get_player();
+    $mod = $socket->getPlayer();
     $unkicked_name = htmlspecialchars($name);
 
     // if the player actually has the power to do what they're trying to do, then do it
@@ -94,7 +94,7 @@ function client_warn($socket, $data)
 
     // get player info
     $warned = name_to_player($name);
-    $mod = $socket->get_player();
+    $mod = $socket->getPlayer();
 
     // safety first
     $safe_mname = htmlspecialchars($mod->name);
@@ -147,7 +147,7 @@ function client_ban($socket, $data)
     list($banned_name, $seconds, $reason) = explode("`", $data);
 
     // get player info
-    $mod = $socket->get_player();
+    $mod = $socket->getPlayer();
     $banned = name_to_player($banned_name);
 
     // safety first
@@ -206,7 +206,7 @@ function client_promote_to_moderator($socket, $data)
     list($name, $type) = explode("`", $data);
 
     // get player info
-    $admin = $socket->get_player();
+    $admin = $socket->getPlayer();
     $promoted = name_to_player($name);
 
     // safety first
@@ -243,7 +243,7 @@ function client_promote_to_moderator($socket, $data)
 function client_demote_moderator($socket, $name)
 {
     // get player info
-    $admin = $socket->get_player();
+    $admin = $socket->getPlayer();
     $demoted = name_to_player($name);
 
     if ($admin->group == 3 && $admin->server_owner == false) {

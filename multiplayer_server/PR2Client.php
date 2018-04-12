@@ -25,7 +25,7 @@ class PR2Client extends \chabot\SocketServerClient
         $this->last_user_action = $time;
     }
 
-    private function handle_request($string)
+    private function handleRequest($string)
     {
         try {
             $array = explode('`', $string);
@@ -49,13 +49,13 @@ class PR2Client extends \chabot\SocketServerClient
 
                 if ($sub_hash != $hash) {
                     $this->close();
-                    $this->on_disconnect();
+                    $this->onDisconnect();
                     throw new Exception("the hash doesn't match. recieved: $hash, local: $sub_hash \n");
                 }
 
                 if ($send_num > 2 && $send_num != $this->rec_num+1 && $send_num != 13) {
                     $this->close();
-                    $this->on_disconnect();
+                    $this->onDisconnect();
                     throw new Exception("a command was recieved out of order \n");
                 }
 
@@ -78,37 +78,33 @@ class PR2Client extends \chabot\SocketServerClient
         }
     }
 
-    public function on_read()
+    public function onRead()
     {
-
-        PR2SocketServer::$last_read_time = time();
-
         if ($this->read_buffer == '<policy-file-request/>'.chr(0x00)) {
             $this->read_buffer = '';
             $this->write_buffer = '<cross-domain-policy><allow-access-from domain="*" to-ports="*" /></cross-domain-policy>'.chr(0x00);
             $this->do_write();
         }
 
-        //breaks the buffer up into distinct commands
-        //echo($this->read_buffer . "\n");
+        // breaks the buffer up into distinct commands
         $end_char = strpos($this->read_buffer, chr(0x04));
         while ($end_char !== false) {
             $info = substr($this->read_buffer, 0, $end_char);
-            $this->handle_request($info);
+            $this->handleRequest($info);
             $this->read_buffer = substr($this->read_buffer, $end_char+1);
             $end_char = strpos($this->read_buffer, chr(0x04));
         }
 
-        //prevent a data attack
+        // prevent a data attack
         if (strlen($this->read_buffer) > 5000 && !$this->process) {
             echo("\nKill read buffer -------------------------------\n");
             $this->read_buffer = '';
             $this->close();
-            $this->on_disconnect();
+            $this->onDisconnect();
         }
     }
 
-    public function on_connect()
+    public function onConnect()
     {
         $ip = $this->remote_address;
         $this->ip = $ip;
@@ -126,7 +122,7 @@ class PR2Client extends \chabot\SocketServerClient
         if ($ip_count > 5) {
             //echo("too many connections from this ip\n");
             $this->close();
-            $this->on_disconnect();
+            $this->onDisconnect();
             $this->disconnected = true;
         } else {
             $time = time();
@@ -137,7 +133,7 @@ class PR2Client extends \chabot\SocketServerClient
     }
 
 
-    public function on_disconnect()
+    public function onDisconnect()
     {
         //echo "disconnect ".$this->remote_address."\n";
         if ($this->disconnected == false) {
@@ -167,12 +163,8 @@ class PR2Client extends \chabot\SocketServerClient
         }
     }
 
-    public function on_write()
-    {
-        //echo "write \n";
-    }
-
-    public function on_timer()
+    // once every 2 seconds
+    public function onTimer()
     {
         if ($this->last_action != 0) {
             $time = time();
@@ -180,16 +172,16 @@ class PR2Client extends \chabot\SocketServerClient
             $user_elapsed = $time - $this->last_user_action;
             if ($action_elapsed > 35) {
                 $this->close();
-                $this->on_disconnect();
+                $this->onDisconnect();
             }
             if ($user_elapsed > 60*30) {
                 $this->close();
-                $this->on_disconnect();
+                $this->onDisconnect();
             }
         }
     }
 
-    public function get_player()
+    public function getPlayer()
     {
         if (!isset($this->player)) {
             throw new Exception("\n error: this socket does not have a player");

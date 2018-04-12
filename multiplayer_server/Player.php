@@ -1223,7 +1223,7 @@ class Player
             unset($this->socket->player);
             if ($this->socket->disconnected === false) {
                 $this->socket->close();
-                $this->socket->on_disconnect();
+                $this->socket->onDisconnect();
             }
         }
 

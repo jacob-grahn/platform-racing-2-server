@@ -153,6 +153,9 @@ class SocketDaemon
                 foreach ($this->clients as $socket) {
                     $socket->onTimer();
                 }
+                foreach($this->servers as $server) {
+					$server->onTimer();
+				}
                 $event_time = time();
             }
             $this->cleanSockets();
