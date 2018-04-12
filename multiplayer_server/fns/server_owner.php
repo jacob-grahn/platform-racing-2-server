@@ -43,11 +43,11 @@ function promote_server_mod($name, $owner, $promoted)
         $promoted->become_temp_mod();
         $owner->write("message`$name has been promoted to a server moderator! They'll remain a moderator until you type /demod *their name* or until they log out.");
         if (isset($owner->chat_room)) {
-            $owner->chat_room->send_chat("systemChat`$safe_owner has promoted $safe_name to a server moderator! Your private peace-keeping is greatly appreciated! You'll have your mod powers until you log out or are demoted.");
+            $owner->chat_room->sendChat("systemChat`$safe_owner has promoted $safe_name to a server moderator! Your private peace-keeping is greatly appreciated! You'll have your mod powers until you log out or are demoted.");
         }
         return true;
     }
-    
+
     return false;
 }
 
@@ -84,6 +84,6 @@ function demote_server_mod($name, $owner, $demoted)
         $owner->write("message`$safe_name has been demoted.");
         return true;
     }
-    
+
     return false;
 }

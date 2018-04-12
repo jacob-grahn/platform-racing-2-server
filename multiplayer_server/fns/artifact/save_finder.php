@@ -16,7 +16,7 @@ function save_finder($pdo, $player)
         artifacts_found_insert($pdo, $player->user_id);
 
         // check if you were the very first
-        if (!Artifact::$first_finder) {
+        if (!\pr2\multi\Artifact::$first_finder) {
             save_first_finder($pdo, $player);
         }
 

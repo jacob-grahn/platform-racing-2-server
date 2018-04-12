@@ -61,7 +61,7 @@ function client_fill_slot($socket, $data)
     list($course_id, $slot) = explode('`', $data);
     $player = $socket->get_player();
     if (isset($player->right_room)) {
-        $player->right_room->fill_slot($player, $course_id, $slot);
+        $player->right_room->fillSlot($player, $course_id, $slot);
     }
 }
 
@@ -125,7 +125,7 @@ function client_set_customize_info($socket, $data)
 function client_chat($socket, $data)
 {
     $player = $socket->get_player();
-    $player->send_chat($data);
+    $player->sendChat($data);
 }
 
 

@@ -18,7 +18,7 @@ class CourseBox
         $room->course_array[$course_id] = $this;
     }
 
-    public function fill_slot($player, $slot)
+    public function fillSlot($player, $slot)
     {
         $slot = (int) $slot;
         if (($slot < 0) || ($slot > 3)) {
@@ -122,7 +122,7 @@ class CourseBox
     private function start_game()
     {
         $course_id = substr($this->course_id, 0, strpos($this->course_id, '_'));
-        $game = new \pr2\multi\Game($course_id);
+        $game = new Game($course_id);
         foreach ($this->slot_array as $player) {
             $player->confirmed = false;
             $game->addPlayer($player);

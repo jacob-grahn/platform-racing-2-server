@@ -38,9 +38,9 @@ function set_server($pdo, $server)
     $guild_id = $server->guild_id;
     $guild_owner = 0;
     $key = $server->salt;
-    PR2SocketServer::$tournament = $server->tournament;
-    if (PR2SocketServer::$tournament) {
-        PR2SocketServer::$no_prizes = true;
+    \pr2\multi\PR2SocketServer::$tournament = $server->tournament;
+    if (\pr2\multi\PR2SocketServer::$tournament) {
+        \pr2\multi\PR2SocketServer::$no_prizes = true;
     }
 
     if ($guild_id != 0) {
@@ -68,7 +68,7 @@ function set_perks($perks)
 {
     foreach ($perks as $perk) {
         $slug = $perk->product;
-        $a = array( Perks::GUILD_FRED, Perks::GUILD_GHOST );
+        $a = [\pr2\multi\Perks::GUILD_FRED, \pr2\multi\Perks::GUILD_GHOST];
         if (array_search($slug, $a) !== false) {
             output("activating perk $slug for user $perk->user_id and guild $perk->guild_id");
             start_perk($slug, $perk->user_id, $perk->guild_id);

@@ -2,10 +2,10 @@
 
 function issue_tournament($str)
 {
-    
+
     // if nothing was passed to the function, disable tournament mode
     if (!isset($str) || $str == '') {
-        PR2SocketServer::$tournament = false;
+        \pr2\multi\PR2SocketServer::$tournament = false;
     } else {
         $arr = explode(' ', $str); // add an array item on every space
         array_shift($arr); // don't include /t in the array
@@ -23,15 +23,15 @@ function issue_tournament($str)
                 $arr[3] = "65";
             }
         }
-        
+
         // did the user say /t off? if so, let's turn off the tournament
         if (!isset($arr[0]) || $arr[0] == 'off' || $arr[0] == '') {
-            PR2SocketServer::$tournament = false;
+            \pr2\multi\PR2SocketServer::$tournament = false;
         } // if not /t off
         else {
             if (isset($arr[0]) && isset($arr[1]) && isset($arr[2]) && isset($arr[3]) && !isset($arr[4])) {
-                PR2SocketServer::$tournament = true;
-                
+                \pr2\multi\PR2SocketServer::$tournament = true;
+
                 // make array values easier to work with
                 $hat = $arr[0];
                 $speed = (int) $arr[1];
@@ -41,33 +41,33 @@ function issue_tournament($str)
                 throw new Exception("It looks like you left out a stat value or the hat name, or added too many arguments.");
             }
         }
-        
+
         // if tournament mode was determined to be on, let's set the values
-        if (PR2SocketServer::$tournament) {
+        if (\pr2\multi\PR2SocketServer::$tournament) {
             if (isset($hat)) {
-                if (Hats::str_to_id($hat) <= 14) {
-                    PR2SocketServer::$tournament_hat = limit(Hats::str_to_id($hat), 1, 14);
+                if (\pr2\multi\Hats::str_to_id($hat) <= 14) {
+                    \pr2\multi\PR2SocketServer::$tournament_hat = limit(\pr2\multi\Hats::str_to_id($hat), 1, 14);
                 } else {
                     throw new Exception("The hat you entered isn't a valid hat name.");
                 }
             }
             if (isset($speed)) {
                 if ($speed >= 0 && $speed <= 100) {
-                    PR2SocketServer::$tournament_speed = limit($speed, 0, 100);
+                    \pr2\multi\PR2SocketServer::$tournament_speed = limit($speed, 0, 100);
                 } else {
                     throw new Exception("Stat values can only be between 0 and 100.");
                 }
             }
             if (isset($accel)) {
                 if ($accel >= 0 && $accel <= 100) {
-                    PR2SocketServer::$tournament_acceleration = limit($accel, 0, 100);
+                    \pr2\multi\PR2SocketServer::$tournament_acceleration = limit($accel, 0, 100);
                 } else {
                     throw new Exception("Stat values can only be between 0 and 100.");
                 }
             }
             if (isset($jump)) {
                 if ($jump >= 0 && $jump <= 100) {
-                    PR2SocketServer::$tournament_jumping = limit($jump, 0, 100);
+                    \pr2\multi\PR2SocketServer::$tournament_jumping = limit($jump, 0, 100);
                 } else {
                     throw new Exception("Stat values can only be between 0 and 100.");
                 }

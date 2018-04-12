@@ -26,7 +26,7 @@ class ChatRoom extends Room
     public function clear()
     {
         for ($i = 0; $i <= $this->keep_count; $i++) {
-            $this->send_chat('systemChat` ');
+            $this->sendChat('systemChat` ');
         }
     }
 
@@ -64,7 +64,7 @@ class ChatRoom extends Room
     }
 
 
-    public function send_chat($message, $user_id = -1)
+    public function sendChat($message, $user_id = -1)
     {
         $chat_message = new ChatMessage($user_id, $message);
 

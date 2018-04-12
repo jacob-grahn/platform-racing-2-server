@@ -30,7 +30,7 @@ function client_kick($socket, $data)
 
             // let people know that the player kicked someone
             if (isset($mod->chat_room)) {
-                $mod->chat_room->send_chat("systemChat`$safe_mname has kicked $safe_kname from this server for 30 minutes.");
+                $mod->chat_room->sendChat("systemChat`$safe_mname has kicked $safe_kname from this server for 30 minutes.");
             }
 
             // log the action if it's on a public server
@@ -134,7 +134,7 @@ function client_warn($socket, $data)
 
     // tell the world
     if (isset($mod->chat_room) && $mod->group >= 2) {
-        $mod->chat_room->send_chat("systemChat`$safe_mname has given $safe_wname $num $w_str. They have been banned from the chat for $time seconds.");
+        $mod->chat_room->sendChat("systemChat`$safe_mname has given $safe_wname $num $w_str. They have been banned from the chat for $time seconds.");
     }
 }
 
@@ -190,7 +190,7 @@ function client_ban($socket, $data)
     // tell the world
     if ($mod->group >= 2 && isset($banned)) {
         if (isset($mod->chat_room)) {
-            $mod->chat_room->send_chat("systemChat`$safe_mname has banned $safe_bname for $disp_time. $disp_reason. This ban has been recorded at https://pr2hub.com/bans.");
+            $mod->chat_room->sendChat("systemChat`$safe_mname has banned $safe_bname for $disp_time. $disp_reason. This ban has been recorded at https://pr2hub.com/bans.");
         }
         if (isset($banned) && $banned->group < 2) {
             $banned->remove();
@@ -230,7 +230,7 @@ function client_promote_to_moderator($socket, $data)
         }
 
         if (isset($admin->chat_room) && (isset($promoted) || $type != 'temporary') && $result == true) {
-            $admin->chat_room->send_chat("systemChat`$safe_aname has promoted $safe_pname to a $type moderator! May they reign in $reign_time of peace and prosperity! Make sure you read the moderator guidelines at https://jiggmin2.com/forums/showthread.php?tid=12", $admin->user_id);
+            $admin->chat_room->sendChat("systemChat`$safe_aname has promoted $safe_pname to a $type moderator! May they reign in $reign_time of peace and prosperity! Make sure you read the moderator guidelines at https://jiggmin2.com/forums/showthread.php?tid=12", $admin->user_id);
         }
     } // if they're not an admin, tell them
     else {

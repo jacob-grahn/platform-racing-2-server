@@ -2,8 +2,6 @@
 
 namespace pr2\multi;
 
-require_once __DIR__ . '/../fns/artifact/save_finder.php';
-
 class Game extends Room
 {
     const LEVEL_COMPASS = 3236908; // for top hat
@@ -73,13 +71,13 @@ class Game extends Room
     {
         Room::removePlayer($player);
 
-        $this->finish_drawing($player);
+        $this->finishDrawing($player);
         $player->race_stats->still_here = false;
 
         if (!isset($player->race_stats->finish_time)) {
-            $this->set_finish_time($player, 'forfeit');
+            $this->setFinishTime($player, 'forfeit');
         } else {
-            $this->broadcast_finish_times();
+            $this->broadcastFinishTimes();
         }
 
         $player->race_stats = null;
@@ -96,8 +94,8 @@ class Game extends Room
     public function init()
     {
 
-        $this->record_plays();
-        $this->determine_prize();
+        $this->recordPlays();
+        $this->determinePrize();
 
         //send character info
         foreach ($this->player_array as $player) {
@@ -129,7 +127,7 @@ class Game extends Room
 
 
 
-    private function record_plays()
+    private function recordPlays()
     {
         global $play_count_array;
         $player_count = count($this->player_array);
@@ -148,7 +146,7 @@ class Game extends Room
 
 
     // check if a player is present
-    private function is_player_here($player_id)
+    private function isPlayerHere($player_id)
     {
         $ret = false;
         foreach ($this->player_array as $player) {
@@ -161,7 +159,7 @@ class Game extends Room
 
 
 
-    private function determine_prize()
+    private function determinePrize()
     {
         $player_count = count($this->player_array);
 
@@ -179,13 +177,18 @@ class Game extends Room
         }
 
         // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
-        if ($this->is_player_here(self::PLAYER_SIR)) {
-            $sir_prizes = array( Prizes::$EPIC_TOP_HAT, Prizes::$EPIC_SIR_HEAD, Prizes::$EPIC_SIR_BODY, Prizes::$EPIC_SIR_FEET );
+        if ($this->isPlayerHere(self::PLAYER_SIR)) {
+            $sir_prizes = [
+                Prizes::$EPIC_TOP_HAT,
+                Prizes::$EPIC_SIR_HEAD,
+                Prizes::$EPIC_SIR_BODY,
+                Prizes::$EPIC_SIR_FEET
+            ];
             $this->prize = $sir_prizes[ array_rand($sir_prizes) ];
         }
 
         // Clint the Cowboy; Awards: Epic Cowboy Hat
-        if ($this->is_player_here(self::PLAYER_CLINT)) {
+        if ($this->isPlayerHere(self::PLAYER_CLINT)) {
             $this->prize = Prizes::$EPIC_COWBOY_HAT;
         }
 
@@ -264,7 +267,7 @@ class Game extends Room
 
 
 
-    public function finish_drawing($player, $data = null)
+    public function finishDrawing($player, $data = null)
     {
         if ($player->race_stats->drawing === true) {
             $arr = explode('`', $data);
@@ -279,12 +282,12 @@ class Game extends Room
             }
             $this->sendToAll('finishDrawing`'.$player->temp_id);
         }
-        $this->maybe_begin_race();
+        $this->maybeBeginRace();
     }
 
 
 
-    private function maybe_begin_race()
+    private function maybeBeginRace()
     {
         $begin_race = true;
         foreach ($this->player_array as $player) {
@@ -295,12 +298,12 @@ class Game extends Room
         }
 
         if ($begin_race && !$this->begun) {
-            $this->begin_race();
+            $this->beginRace();
         }
     }
 
 
-    private function begin_race()
+    private function beginRace()
     {
         if (!$this->begun) {
             $this->begun = true;
@@ -318,7 +321,7 @@ class Game extends Room
             // boot people with the wrong level hash
             foreach ($this->player_array as $player) {
                 if ($this->hash !== $player->race_stats->level_hash) {
-                    $this->quit_race($player);
+                    $this->quitRace($player);
                 }
             }
 
@@ -361,7 +364,7 @@ class Game extends Room
             }
 
             // hats
-            $this->init_hats();
+            $this->initHats();
 
             // start
             $this->start_time = microtime(true);
@@ -372,7 +375,7 @@ class Game extends Room
 
 
 
-    private function init_hats()
+    private function initHats()
     {
         foreach ($this->player_array as $player) {
             $player->worn_hat_array = array();
@@ -386,11 +389,16 @@ class Game extends Room
             }
 
             if ($hat_id != 1) {
-                $hat = new Hat($this->next_hat_id++, $hat_id, $player->hat_color, $player->get_second_color('hat', $hat_id));
+                $hat = new Hat(
+                    $this->next_hat_id++,
+                    $hat_id,
+                    $player->hat_color,
+                    $player->get_second_color('hat', $hat_id)
+                );
                 $player->worn_hat_array[0] = $hat;
             }
 
-            $this->sendToAll($this->get_hat_str($player));
+            $this->sendToAll($this->getHatStr($player));
         }
     }
 
@@ -416,17 +424,17 @@ class Game extends Room
     }
 
 
-    public function remote_finish_race($player, $data)
+    public function remoteFinishRace($player, $data)
     {
         if ($this->mode == self::MODE_RACE) {
             list($finish_id, $x, $y) = explode('`', $data);
-            $this->verify_finish_position($x, $y, $finish_id);
+            $this->verifyFinishPosition($x, $y, $finish_id);
         }
-        $this->finish_race($player);
+        $this->finishRace($player);
     }
 
 
-    private function ensure_time_format($time)
+    private function ensureTimeFormat($time)
     {
         if ($time < 0) {
             $time = 0;
@@ -435,16 +443,18 @@ class Game extends Room
     }
 
 
-    public function finish_race($player)
+    public function finishRace($player)
     {
         global $pdo;
 
-        if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
-            $finish_time = $this->ensure_time_format(microtime(true) - $this->start_time);
+        if ($player->finished_race === false && !isset($player->race_stats->finish_time) &&
+            $player->race_stats->drawing === false && $this->begun === true
+        ) {
+            $finish_time = $this->ensureTimeFormat(microtime(true) - $this->start_time);
             if ($finish_time > 31536000) {
                 $finish_time = 0; // if the race time > 1 year, set it to 0
             }
-            $this->set_finish_time($player, $finish_time);
+            $this->setFinishTime($player, $finish_time);
 
             $time_mod = $finish_time / 120;
             if ($time_mod > 1) {
@@ -455,7 +465,7 @@ class Game extends Room
 
             // announce on tournament server
             if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10 && PR2SocketServer::$tournament) {
-                $this->broadcast_results($player, $finish_time);
+                $this->broadcastResults($player, $finish_time);
             }
 
             //--- prize -----------
@@ -486,7 +496,7 @@ class Game extends Room
                 $welcome_back_bonus = 1000;
             } //--- level bonus ---
             else {
-                $level_bonus = $this->apply_exp_curve($player, 25 * $time_mod);
+                $level_bonus = $this->appyExpCurve($player, 25 * $time_mod);
 
                 $completed_perc = 0;
                 if ($this->mode == self::MODE_OBJECTIVE && $this->finish_count > 0) {
@@ -519,7 +529,7 @@ class Game extends Room
             for ($i = $place+1; $i < count($this->finish_array); $i++) {
                 $race_stats = $this->finish_array[$i];
                 $exp_gain = ($race_stats->rank+5) * $time_mod;
-                $exp_gain = ceil($this->apply_exp_curve($player, $exp_gain));
+                $exp_gain = ceil($this->appyExpCurve($player, $exp_gain));
                 if (PR2SocketServer::$no_prizes) {
                     $exp_gain = 0;
                 }
@@ -551,7 +561,7 @@ class Game extends Room
 
             // gp bonus
             if (($place == 0 || $wearing_moon === true) && count($this->finish_array) > 1 && $finish_time > 10) {
-                $this->give_gp($player, $wearing_moon, $gp_multiplier);
+                $this->giveGp($player, $wearing_moon, $gp_multiplier);
             }
 
             // happy hour bonus
@@ -617,18 +627,18 @@ class Game extends Room
             //--- save
             $player->maybe_save();
         } else {
-            $this->set_finish_time($player, 'forfeit');
+            $this->setFinishTime($player, 'forfeit');
         }
 
         $player->finished_race = true;
 
         // everyone finishes at the same time in egg mode
-        $this->maybe_end_egg();
+        $this->maybeEndEgg();
     }
 
 
 
-    private function broadcast_results($player, $finish_time)
+    private function broadcastResults($player, $finish_time)
     {
         global $chat_room_array;
         $finish_int = (int) floor($finish_time);
@@ -648,13 +658,13 @@ class Game extends Room
             $vs_names = join(' vs ', $names);
             $html_name = htmlspecialchars($player->name);
             $message = "$vs_names: // $html_name wins with a time of $str!";
-            $main->send_chat("systemChat`$message", -1);
+            $main->sendChat("systemChat`$message", -1);
         }
     }
 
 
 
-    private function maybe_end_deathmatch()
+    private function maybeEndDeathmatch()
     {
         if ($this->mode == self::MODE_DEATHMATCH) {
             $unfinished = 0;
@@ -672,7 +682,7 @@ class Game extends Room
                 if (isset($last_player)) {
                     $last_player->auto_win_deathmatch = true;
                     $this->start_time -= 1;
-                    $this->finish_race($last_player);
+                    $this->finishRace($last_player);
                     unset($last_player->auto_win_deathmatch);
                 }
             }
@@ -681,7 +691,7 @@ class Game extends Room
 
 
 
-    private function maybe_end_egg()
+    private function maybeEndEgg()
     {
         if ($this->mode === self::MODE_EGG && !$this->ending_egg) {
             $someone_finished = false;
@@ -705,7 +715,7 @@ class Game extends Room
                 $this->ending_egg = true;
                 foreach ($this->player_array as $player) {
                     if (!$player->finished_race) {
-                        $this->finish_race($player);
+                        $this->finishRace($player);
                     }
                 }
             }
@@ -714,27 +724,27 @@ class Game extends Room
 
 
 
-    public function quit_race($player)
+    public function quitRace($player)
     {
-        $this->finish_drawing($player);
+        $this->finishDrawing($player);
         if ($player->finished_race == false) {
             $player->quit_race = true;
             if ($this->mode == self::MODE_DEATHMATCH && $this->begun) {
-                $this->finish_race($player);
+                $this->finishRace($player);
             } elseif ($this->mode == self::MODE_OBJECTIVE && $this->begun) {
-                $this->finish_race($player);
+                $this->finishRace($player);
             } elseif ($this->mode === self::MODE_EGG) {
-                $this->maybe_end_egg();
+                $this->maybeEndEgg();
             } elseif ($this->mode === self::MODE_RACE) {
                 $player->finished_race = true;
-                $this->set_finish_time($player, 'forfeit');
+                $this->setFinishTime($player, 'forfeit');
             }
         }
     }
 
 
 
-    private function set_finish_time($player, $finish_time)
+    private function setFinishTime($player, $finish_time)
     {
         if (!isset($player->race_stats->finish_time)) {
             $player->race_stats->finish_time = $finish_time;
@@ -750,15 +760,15 @@ class Game extends Room
         }
         usort($this->finish_array, $sort_func);
 
-        $this->broadcast_finish_times();
+        $this->broadcastFinishTimes();
 
         $this->sendToAll('var'.$player->temp_id.'`beginRemove`1');
-        $this->maybe_end_deathmatch();
+        $this->maybeEndDeathmatch();
     }
 
 
 
-    private function broadcast_finish_times()
+    private function broadcastFinishTimes()
     {
         $str = 'finishTimes';
         foreach ($this->finish_array as $race_stats) {
@@ -776,7 +786,7 @@ class Game extends Room
 
 
 
-    private function give_gp($player, $wearing_moon = false, $multiplier = 1)
+    private function giveGp($player, $wearing_moon = false, $multiplier = 1)
     {
         $user_id = $player->user_id;
         $prev_gp = GuildPoints::get_previous_gp($user_id, $this->course_id);
@@ -797,7 +807,7 @@ class Game extends Room
 
 
 
-    public function set_pos($player, $data)
+    public function setPos($player, $data)
     {
         $this->sendToRoom('p'.$player->temp_id.'`'.$data, $player->user_id);
         list($moved_x, $moved_y) = explode('`', $data);
@@ -807,7 +817,7 @@ class Game extends Room
 
 
 
-    public function set_exact_pos($player, $data)
+    public function setExactPos($player, $data)
     {
         $this->sendToRoom('exactPos'.$player->temp_id.'`'.$data, $player->user_id);
         list($player->pos_x, $player->pos_y) = explode('`', $data);
@@ -820,7 +830,7 @@ class Game extends Room
         list($target_id, $x, $y) = explode('`', $data);
         $player->pos_x = (int)$x;
         $player->pos_y = (int)$y;
-        $target = $this->id_to_player($target_id);
+        $target = $this->idToPlayer($target_id);
         if (isset($target)
             && $target->pos_y < $player->pos_y + 105
             && $target->pos_y > $player->pos_y + 0
@@ -834,7 +844,7 @@ class Game extends Room
 
 
 
-    private function id_to_player($temp_id)
+    private function idToPlayer($temp_id)
     {
         $player = null;
         foreach ($this->player_array as $other_player) {
@@ -848,7 +858,7 @@ class Game extends Room
 
 
 
-    public function set_var($player, $data)
+    public function setVar($player, $data)
     {
         if (!$player->finished_race) {
             $this->sendToRoom('var'.$player->temp_id.'`'.$data, $player->user_id);
@@ -856,7 +866,7 @@ class Game extends Room
             if ($data === 'state`bumped' && $this->mode === self::MODE_DEATHMATCH) {
                 $player->lives--;
                 if ($player->lives <= 0) {
-                    $this->finish_race($player);
+                    $this->finishRace($player);
                 }
             }
             if (substr($data, 4) === 'item') {
@@ -864,13 +874,13 @@ class Game extends Room
             }
         }
     }
-    
-    
-    public function send_chat($message, $user_id)
+
+
+    public function sendChat($message, $user_id)
     {
         try {
             $chat_message = substr($message, 5);
-            
+
             // check if trying to execute a socket command other than chat
             if (strpos($message, 'chat`') !== 0) {
                 throw new Exception('Illegal operation.');
@@ -896,34 +906,36 @@ class Game extends Room
 
 
 
-    public function grab_egg($player, $data)
+    public function grabEgg($player, $data)
     {
         if (!$player->finished_race) {
             $player->race_stats->eggs++;
             $this->sendToRoom("removeEgg$data`", $player->user_id);
-            //$this->sendToAll( 'eggCount`'.$player->temp_id.'`'.$player->race_stats->eggs );
-            $this->broadcast_finish_times();
+            $this->broadcastFinishTimes();
             $this->sendToAll('addEggs`1');
         }
     }
 
 
-    public function loose_hat($player, $info)
+    public function looseHat($player, $info)
     {
         if (count($player->worn_hat_array) > 0) {
             $hat = array_pop($player->worn_hat_array);
             $this->loose_hat_array[$hat->id] = $hat;
-            $this->sendToAll('addEffect`Hat`'.$info.'`'.$hat->num.'`'.$hat->color.'`'.$hat->color2.'`'.$hat->id, $player->user_id);
-            $this->sendToAll($this->get_hat_str($player));
+            $this->sendToAll(
+                'addEffect`Hat`'.$info.'`'.$hat->num.'`'.$hat->color.'`'.$hat->color2.'`'.$hat->id,
+                $player->user_id
+            );
+            $this->sendToAll($this->getHatStr($player));
         }
     }
 
 
-    public function objective_reached($player, $data)
+    public function objectiveReached($player, $data)
     {
         list($finish_id, $x, $y) = explode('`', $data);
 
-        $this->verify_finish_position($x, $y, $finish_id);
+        $this->verifyFinishPosition($x, $y, $finish_id);
 
         if (isset($player->race_stats->objectives_reached[$finish_id])) {
             throw new Exception('This objective has already been reached.');
@@ -932,12 +944,12 @@ class Game extends Room
         $player->race_stats->objectives_reached[$finish_id] = 1;
         $player->race_stats->last_objective_time = time();
         if (count($player->race_stats->objectives_reached) >= $this->finish_count) {
-            $this->finish_race($player);
+            $this->finishRace($player);
         }
     }
 
 
-    private function verify_finish_position($x, $y, $id)
+    private function verifyFinishPosition($x, $y, $id)
     {
         if (!is_numeric($id) || $id < 0 || $id > $this->finish_count) {
             throw new Exception('finish id is out of range');
@@ -957,24 +969,24 @@ class Game extends Room
     }
 
 
-    public function get_hat($player, $hat_id)
+    public function getHat($player, $hat_id)
     {
         $hat = @$this->loose_hat_array[$hat_id];
         if (isset($hat)) {
             $this->loose_hat_array[$hat_id] = null;
             $this->sendToAll('removeHat'.$hat_id.'`');
             if ($hat->num == 12) {//thief hat
-                $this->commit_thievery($player, $hat);
+                $this->commitThievery($player, $hat);
             } elseif ($hat->num == Hats::ARTIFACT) {
-                $this->assign_artifact($player, $hat);
+                $this->assignArtifact($player, $hat);
             } else {
-                $this->assign_hat($player, $hat);
+                $this->assignHat($player, $hat);
             }
         }
     }
 
 
-    private function commit_thievery($player, $hat)
+    private function commitThievery($player, $hat)
     {
         $candidates = array();
         foreach ($this->player_array as $other_player) {
@@ -988,33 +1000,33 @@ class Game extends Room
             $index = array_rand($candidates);
             $target = $candidates[$index];
             $hat2 = array_pop($target->worn_hat_array);
-            $this->assign_hat($target, $hat);
-            $this->assign_hat($player, $hat2);
+            $this->assignHat($target, $hat);
+            $this->assignHat($player, $hat2);
         } else {
-            $this->assign_hat($player, $hat);
+            $this->assignHat($player, $hat);
         }
     }
 
 
-    private function assign_artifact($player, $hat)
+    private function assignArtifact($player, $hat)
     {
         $this->loose_hat_array = array();
         foreach ($this->player_array as $other_player) {
             $other_player->worn_hat_array = array();
-            $this->sendToAll($this->get_hat_str($other_player));
+            $this->sendToAll($this->getHatStr($other_player));
         }
-        $this->assign_hat($player, $hat);
+        $this->assignHat($player, $hat);
     }
 
 
-    private function assign_hat($player, $hat)
+    private function assignHat($player, $hat)
     {
         array_push($player->worn_hat_array, $hat);
-        $this->sendToAll($this->get_hat_str($player));
+        $this->sendToAll($this->getHatStr($player));
     }
 
 
-    private function get_hat_str($player)
+    private function getHatStr($player)
     {
         $str = 'setHats'.$player->temp_id.'`';
         $len = count($player->worn_hat_array);
@@ -1029,7 +1041,7 @@ class Game extends Room
     }
 
 
-    private function apply_exp_curve($player, $exp)
+    private function appyExpCurve($player, $exp)
     {
         if ($player->exp_today < 5000) {
             $tier = 2.0;

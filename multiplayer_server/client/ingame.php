@@ -5,7 +5,7 @@ function client_loose_hat($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->loose_hat($player, $data);
+        $player->game_room->looseHat($player, $data);
     }
 }
 
@@ -16,7 +16,7 @@ function client_get_hat($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->get_hat($player, $data);
+        $player->game_room->getHat($player, $data);
     }
 }
 
@@ -27,7 +27,7 @@ function client_p($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->set_pos($player, $data);
+        $player->game_room->setPos($player, $data);
     }
 }
 
@@ -38,7 +38,7 @@ function client_exact_pos($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->set_exact_pos($player, $data);
+        $player->game_room->setExactPos($player, $data);
     }
 }
 
@@ -60,7 +60,7 @@ function client_set_var($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->set_var($player, $data);
+        $player->game_room->setVar($player, $data);
     }
 }
 
@@ -126,7 +126,7 @@ function client_finish_drawing($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->finish_drawing($player, $data);
+        $player->game_room->finishDrawing($player, $data);
     }
 }
 
@@ -137,7 +137,7 @@ function client_finish_race($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->remote_finish_race($player, $data);
+        $player->game_room->remoteFinishRace($player, $data);
     }
 }
 
@@ -148,7 +148,7 @@ function client_quit_race($socket)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->quit_race($player);
+        $player->game_room->quitRace($player);
     }
 }
 
@@ -158,7 +158,7 @@ function client_grab_egg($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->grab_egg($player, $data);
+        $player->game_room->grabEgg($player, $data);
     }
 }
 
@@ -169,6 +169,6 @@ function client_objective_reached($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->objective_reached($player, $data);
+        $player->game_room->objectiveReached($player, $data);
     }
 }

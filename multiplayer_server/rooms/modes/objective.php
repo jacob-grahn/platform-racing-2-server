@@ -7,7 +7,7 @@ function sort_finish_array_objective($a, $b)
     $bo = count($b->objectives_reached);
     $at = $a->last_objective_time;
     $bt = $b->last_objective_time;
-    
+
     if ($ao < $bo) {
         return 1;
     } elseif ($ao > $bo) {

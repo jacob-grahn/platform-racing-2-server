@@ -9,16 +9,16 @@ function process_unlock_perk($socket, $data)
         start_perk($slug, $user_id, $guild_id);
 
         if ($guild_id != 0) {
-            if ($slug == Perks::GUILD_FRED) {
+            if ($slug == \pr2\multi\Perks::GUILD_FRED) {
                 send_to_guild($guild_id, "systemChat`$user_name unlocked Fred mode for your guild!");
             }
-            if ($slug == PERKS::GUILD_GHOST) {
+            if ($slug == \pr2\multi\Perks::GUILD_GHOST) {
                 send_to_guild($guild_id, "systemChat`$user_name unlocked Ghost mode for your guild!");
             }
-            if ($slug == PERKS::GUILD_ARTIFACT) {
+            if ($slug == \pr2\multi\Perks::GUILD_ARTIFACT) {
                 send_to_guild($guild_id, "systemChat`$user_name unlocked Artifact mode for your guild!");
             }
-            if ($slug == PERKS::HAPPY_HOUR) {
+            if ($slug == \pr2\multi\Perks::HAPPY_HOUR) {
                 sendToAll_players("systemChat`$user_name just triggered a Happy Hour!");
             }
         }

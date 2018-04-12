@@ -34,16 +34,16 @@ class LevelListRoom extends Room
     }
 
 
-    public function fill_slot($player, $course_id, $slot)
+    public function fillSlot($player, $course_id, $slot)
     {
         if (!is_numeric($slot) || $slot < 0 || $slot > 3) {
             $slot = 0;
         }
         if (isset($this->course_array[$course_id])) {
-            $this->course_array[$course_id]->fill_slot($player, $slot);
+            $this->course_array[$course_id]->fillSlot($player, $slot);
         } else {
             $course = new CourseBox($course_id, $this);
-            $course->fill_slot($player, $slot);
+            $course->fillSlot($player, $slot);
         }
     }
 }

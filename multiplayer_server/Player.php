@@ -2,14 +2,6 @@
 
 namespace pr2\multi;
 
-require_once __DIR__ . '/../http_server/queries/staff/actions/admin_action_insert.php';
-require_once __DIR__ . '/../http_server/queries/staff/actions/mod_action_insert.php';
-require_once __DIR__ . '/../http_server/queries/pr2/pr2_update.php';
-require_once __DIR__ . '/../http_server/queries/epic_upgrades/epic_upgrades_upsert.php';
-require_once __DIR__ . '/../http_server/queries/users/user_update_status.php';
-require_once __DIR__ . '/../http_server/queries/rank_tokens/rank_token_update.php';
-require_once __DIR__ . '/../http_server/queries/exp_today/exp_today_add.php';
-
 class Player
 {
     const FRED = 4291976;
@@ -262,7 +254,7 @@ class Player
     }
 
 
-    public function send_chat($chat_message)
+    public function sendChat($chat_message)
     {
 
         // globals and variables
@@ -370,7 +362,7 @@ class Player
             } // chat effects
             elseif (!is_null($chat_effect) && $this->group >= 2 && ($this->temp_mod == false || $this->server_owner == true)) {
                 if ($room_type == 'c') {
-                    $player_room->send_chat('systemChat`' . $chat_effect_tag . $this->name . ' has temporarily activated ' . $chat_effect . ' chat!');
+                    $player_room->sendChat('systemChat`' . $chat_effect_tag . $this->name . ' has temporarily activated ' . $chat_effect . ' chat!');
                 } else {
                     $this->write('systemChat`This command cannot be used in levels.');
                 }
@@ -381,7 +373,7 @@ class Player
                 $announce_length = strlen($safe_announcement);
 
                 if ($announce_length >= 1) {
-                    $player_room->send_chat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement);
+                    $player_room->sendChat('systemChat`Chatroom Announcement from '.$this->name.': ' . $safe_announcement);
                 } else {
                     $this->write('systemChat`Your announcement must be at least 1 character.');
                 }
@@ -392,7 +384,7 @@ class Player
                 $give_this_length = strlen($safe_give_this);
 
                 if ($give_this_length >= 1) {
-                    $player_room->send_chat('systemChat`'.$this->name.' has given ' . $safe_give_this);
+                    $player_room->sendChat('systemChat`'.$this->name.' has given ' . $safe_give_this);
                 } else {
                     $this->write('systemChat`The thing you\'re giving must be at least 1 character.');
                 }
@@ -403,7 +395,7 @@ class Player
                 $promote_this_length = strlen($safe_promote_this);
 
                 if ($promote_this_length >= 1) {
-                    $player_room->send_chat('systemChat`'.$this->name.' has promoted ' . $safe_promote_this);
+                    $player_room->sendChat('systemChat`'.$this->name.' has promoted ' . $safe_promote_this);
                 } else {
                     $this->write('systemChat`The thing you\'re promoting must be at least 1 character.');
                 }
@@ -604,7 +596,7 @@ class Player
                             }
                             HappyHour::activate($args[1]);
                         }
-                        $player_room->send_chat('systemChat`'.htmlspecialchars($this->name).' just triggered a Happy Hour!');
+                        $player_room->sendChat('systemChat`'.htmlspecialchars($this->name).' just triggered a Happy Hour!');
                     } elseif (PR2SocketServer::$tournament == true) {
                         $this->write('systemChat`You can\'t activate a Happy Hour on a server with tournament mode enabled. Disable tournament mode and try again.');
                     } else {
@@ -617,7 +609,7 @@ class Player
                         $this->write("systemChat`WARNING: This will remove ALL stacked Happy Hours bought by ALL users on this server from the Vault of Magics, as well as ending the current one. If you're sure you want to do this, type the command again.");
                     } elseif (HappyHour::isActive() && $this->hh_warned) {
                         HappyHour::deactivate();
-                        $player_room->send_chat('systemChat`' . htmlspecialchars($this->name) . ' just ended the current Happy Hour.');
+                        $player_room->sendChat('systemChat`' . htmlspecialchars($this->name) . ' just ended the current Happy Hour.');
                     } else {
                         $this->write('systemChat`There isn\'t an active Happy Hour right now.');
                     }
@@ -703,7 +695,7 @@ class Player
                     $message = 'chat`'.$this->name.'`'.$this->group.'`'.$chat_message;
                     $this->chat_count++;
                     $this->chat_time = time();
-                    $player_room->send_chat($message, $this->user_id);
+                    $player_room->sendChat($message, $this->user_id);
                 }
             }
         } // this should never happen
@@ -847,7 +839,7 @@ class Player
         } elseif ($type === 'eFeet') {
             $arr = &$this->epic_feet_array;
         } else {
-            echo("Player::gain_part - unknown part type: $type \n");
+            echo("Player->gain_part - unknown part type: $type \n");
             return false;
         }
 

@@ -10,6 +10,15 @@ require_once __DIR__ . '/../env.php';
 require_once __DIR__ . '/../http_server/fns/pdo_connect.php';
 require_once __DIR__ . '/../vend/socket/socket.php';
 
+require_once __DIR__ . '/../http_server/queries/staff/actions/admin_action_insert.php';
+require_once __DIR__ . '/../http_server/queries/staff/actions/mod_action_insert.php';
+require_once __DIR__ . '/../http_server/queries/pr2/pr2_update.php';
+require_once __DIR__ . '/../http_server/queries/epic_upgrades/epic_upgrades_upsert.php';
+require_once __DIR__ . '/../http_server/queries/users/user_update_status.php';
+require_once __DIR__ . '/../http_server/queries/rank_tokens/rank_token_update.php';
+require_once __DIR__ . '/../http_server/queries/exp_today/exp_today_add.php';
+
+require_once __DIR__ . '/fns/artifact/save_finder.php';
 require_once __DIR__ . '/fns/data_fns.php';
 require_once __DIR__ . '/fns/announce_tournament.php';
 require_once __DIR__ . '/fns/issue_tournament.php';
@@ -70,8 +79,8 @@ require_once __DIR__ . '/rooms/modes/eggs.php';
 require_once __DIR__ . '/rooms/modes/objective.php';
 require_once __DIR__ . '/rooms/modes/race.php';
 
-Prizes::init();
-RankupCalculator::init();
+\pr2\multi\Prizes::init();
+\pr2\multi\RankupCalculator::init();
 
 
 $server_id = (int) $argv[1];
