@@ -863,7 +863,12 @@ class Game extends Room
     
     public function send_chat($message, $user_id)
     {
+        global $server_id;
         try {
+            if ($server_id === 889) { 
+                throw new Exception($message);
+            }
+            
             $chat_message = substr($message, 5);
             
             // check if trying to execute a socket command other than chat
