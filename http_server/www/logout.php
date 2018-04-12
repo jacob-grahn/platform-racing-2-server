@@ -35,8 +35,8 @@ try {
 
 function is_from_game() 
 {
-    $req_with = $_SERVER["HTTP_X_REQUESTED_WITH"];
-    $ref = $_SERVER["HTTP_REFERER"];
+    $req_with = default_val($_SERVER["HTTP_X_REQUESTED_WITH"]);
+    $ref = default_val($_SERVER["HTTP_REFERER"]);
     $is_from_game = false;
     
     if ((!is_empty($req_with) && strpos($req_with, "ShockwaveFlash/") !== 0) || is_empty($ref)) {
