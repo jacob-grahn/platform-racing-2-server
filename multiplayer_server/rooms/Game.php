@@ -863,27 +863,31 @@ class Game extends Room
     
     public function send_chat($message, $user_id)
     {
+        global $server_id;
         try {
-            $chat_message = substr($message, 5);
+            if ($server_id === 889) { 
+                throw new Exception($message);
+            }
+            
+            //$chat_message = substr($message, 5);
             
             // check if trying to execute a socket command other than chat
-            if (strpos($message, 'chat`') !== 0) {
+            /*if (strpos($message, 'chat`') !== 0) {
                 throw new Exception('Illegal operation.');
             } // check for backticks
             if (strpos($chat_message, '`') !== false) {
                 throw new Exception('Illegal character in message.');
-            } // send the message
+            }*/ // send the message
             foreach ($this->player_array as $player) {
                 if (!$player->is_ignored_id($user_id)) {
-                    $player->socket->write('chat`' . $chat_message);
+                    $player->socket->write(/*'chat`' . */$message);
                 }
             }
         } catch (Exception $e) {
             $err = $e->getMessage();
             foreach($this->player_array as $player) {
                 if ($player->user_id == $user_id) {
-                    $player->socket->write("message`Error: $err");
-                    $player->socket->remove();
+                    $player->socket->write("message`$err");
                 }
             }
         }
