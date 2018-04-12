@@ -7,6 +7,9 @@ header("Content-type: text/plain");
 
 function is_from_game(){
  if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && !empty($_SERVER["HTTP_X_REQUESTED_WITH"])){
+  if (!isset($_SERVER["HTTP_REFERER"]) || $_SERVER["HTTP_REFERER"] === ""){
+   return true;
+  }
   if (strpos($_SERVER["HTTP_X_REQUESTED_WITH"], "ShockwaveFlash/") !== 0){
    return true;
   }
