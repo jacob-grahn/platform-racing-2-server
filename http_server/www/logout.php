@@ -37,10 +37,14 @@ function is_from_game()
 {
     $is_from_game = false;
     
-    if ((!is_empty($_SERVER["HTTP_X_REQUESTED_WITH"]) &&
-        strpos($_SERVER["HTTP_X_REQUESTED_WITH"], "ShockwaveFlash/") !== 0) ||
-        is_empty($_SERVER["HTTP_REFERER"])) {
-        $is_from_game = true;
+    if (
+           (
+           !is_empty($_SERVER["HTTP_X_REQUESTED_WITH"]) &&
+           strpos($_SERVER["HTTP_X_REQUESTED_WITH"], "ShockwaveFlash/") !== 0
+           ) ||
+       is_empty($_SERVER["HTTP_REFERER"])
+    ) {
+         $is_from_game = true;
     }
     
     return $is_from_game;
