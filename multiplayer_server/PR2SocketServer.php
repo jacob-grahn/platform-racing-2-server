@@ -12,7 +12,7 @@ class PR2SocketServer extends \chabot\SocketServer
     public static $tournament_jumping = 65;
 
     // once every 2 seconds
-    public static function onTimer()
+    public function onTimer()
     {
         TemporaryItems::removeExpired();
         LocalBans::remove_expired();
