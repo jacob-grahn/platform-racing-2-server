@@ -2,7 +2,7 @@
 
 namespace pr2\multi;
 
-class PR2Client extends \chatot\socketServerClient
+class PR2Client extends \chabot\SocketServerClient
 {
 
     public static $ip_array = array();

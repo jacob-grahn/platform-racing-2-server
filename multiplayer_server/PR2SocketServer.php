@@ -2,7 +2,7 @@
 
 namespace pr2\multi;
 
-class PR2SocketServer extends \chabot\socketServer
+class PR2SocketServer extends \chabot\SocketServer
 {
 
     public static $last_read_time = 0;

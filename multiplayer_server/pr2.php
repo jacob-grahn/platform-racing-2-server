@@ -8,7 +8,7 @@ set_time_limit(0);
 
 require_once __DIR__ . '/../env.php';
 require_once __DIR__ . '/../http_server/fns/pdo_connect.php';
-require_once __DIR__ . '/../vend/socket/socket.php';
+require_once __DIR__ . '/../vend/socket/index.php';
 
 require_once __DIR__ . '/../http_server/queries/staff/actions/admin_action_insert.php';
 require_once __DIR__ . '/../http_server/queries/staff/actions/mod_action_insert.php';
@@ -122,6 +122,6 @@ begin_loadup($server_id);
 //start the socket server
 $date = date('r');
 output("Starting PR2 server $server_name on port $port at on $date.");
-$daemon = new socketDaemon();
-$server = $daemon->create_server('\pr2\multi\PR2SocketServer', '\pr2\multi\PR2Client', 0, $port);
+$daemon = new \chabot\SocketDaemon();
+$server = $daemon->createServer('\pr2\multi\PR2SocketServer', '\pr2\multi\PR2Client', 0, $port);
 $daemon->process();
