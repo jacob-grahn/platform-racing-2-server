@@ -172,10 +172,10 @@ function is_empty($str, $incl_zero = true)
 function check_ref()
 {
     $ref = $_SERVER['HTTP_REFERER'];
-    if (strpos($ref, 'http://pr2hub.com') !== 0
-        && strpos($ref, 'https://pr2hub.com') !== 0
-        && strpos($ref, 'http://cdn.jiggmin.com') !== 0
-        && strpos($ref, 'http://chat.kongregate.com') !== 0
+    if (strpos($ref, 'http://pr2hub.com/') !== 0
+        && strpos($ref, 'https://pr2hub.com/') !== 0
+        && strpos($ref, 'http://cdn.jiggmin.com/') !== 0
+        && strpos($ref, 'http://chat.kongregate.com/') !== 0
         && strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0
         && strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') !== 0
         && strpos($ref, 'http://game10110.konggames.com/games/Jiggmin/platform-racing-2') !== 0

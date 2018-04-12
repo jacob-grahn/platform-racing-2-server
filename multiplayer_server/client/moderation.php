@@ -65,18 +65,24 @@ function client_unkick($socket, $data)
 
     // if the player actually has the power to do what they're trying to do, then do it
     if (($mod->group >= 2 && $mod->temp_mod === false) || $mod->server_owner === true) {
-        \pr2\multi\LocalBans::remove($name);
+        if (\pr2\multi\LocalBans::is_banned($name) === true) {
+            \pr2\multi\LocalBans::remove($name);
 
-        // unkick them, yo
-        $mod->write("message`$unkicked_name has been unkicked! Hooray for second chances!");
+            // unkick them, yo
+            $mod->write("message`$unkicked_name has been unkicked! Hooray for second chances!");
 
-        // log the action if it's on a public server
-        if ((int) $guild_id === 0) {
-            $mod_name = $mod->name;
-            $mod_ip = $mod->ip;
-            $mod_id = $mod->user_id;
-            mod_action_insert($pdo, $mod_id, "$mod_name unkicked $name from $server_name from $mod_ip.", $mod_id, $mod_ip);
+            // log the action if it's on a public server
+            if ((int) $guild_id === 0) {
+                $mod_name = $mod->name;
+                $mod_ip = $mod->ip;
+                $mod_id = $mod->user_id;
+                mod_action_insert($pdo, $mod_id, "$mod_name unkicked $name from $server_name from $mod_ip.", $mod_id, $mod_ip);
+            }
+        } else {
+            $mod->write("message`Error: $unkicked_name isn't kicked.");
         }
+    } else {
+        $mod->write("message`Error: You lack the power to unkick $unkicked_name.");
     }
 }
 
