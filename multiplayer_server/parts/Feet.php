@@ -1,8 +1,10 @@
 <?php
 
+namespace pr2\multi;
+
 class Feet
 {
-    
+
     const CLASSIC = 1;
     const HEEL = 2;
     const LOAFER = 3;

@@ -21,7 +21,7 @@ function begin_loadup($server_id)
     set_perks($perks);
     place_artifact($artifact);
     if ($server_id == 2) {
-        HappyHour::activate();
+        \pr2\multi\HappyHour::activate();
     }
 }
 
@@ -38,9 +38,9 @@ function set_server($pdo, $server)
     $guild_id = $server->guild_id;
     $guild_owner = 0;
     $key = $server->salt;
-    pr2_server::$tournament = $server->tournament;
-    if (pr2_server::$tournament) {
-        pr2_server::$no_prizes = true;
+    PR2SocketServer::$tournament = $server->tournament;
+    if (PR2SocketServer::$tournament) {
+        PR2SocketServer::$no_prizes = true;
     }
 
     if ($guild_id != 0) {
@@ -74,7 +74,7 @@ function set_perks($perks)
             start_perk($slug, $perk->user_id, $perk->guild_id);
         }
         if ($slug == 'happy-hour') {
-            HappyHour::activate();
+            \pr2\multi\HappyHour::activate();
         }
     }
 }

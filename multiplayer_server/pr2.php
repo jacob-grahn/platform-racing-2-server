@@ -7,8 +7,8 @@ error_reporting(E_ALL | E_STRICT);
 set_time_limit(0);
 
 require_once __DIR__ . '/../env.php';
-
 require_once __DIR__ . '/../http_server/fns/pdo_connect.php';
+require_once __DIR__ . '/../vend/socket/socket.php';
 
 require_once __DIR__ . '/fns/data_fns.php';
 require_once __DIR__ . '/fns/announce_tournament.php';
@@ -18,8 +18,6 @@ require_once __DIR__ . '/fns/server_owner.php';
 require_once __DIR__ . '/fns/shutdown_server.php';
 require_once __DIR__ . '/fns/utils.php';
 require_once __DIR__ . '/fns/vault.php';
-
-require_once __DIR__ . '/socket/socket.php';
 
 require_once __DIR__ . '/client/become_process.php';
 require_once __DIR__ . '/client/check_status.php';
@@ -41,8 +39,9 @@ require_once __DIR__ . '/process/vault.php';
 
 require_once __DIR__ . '/Artifact.php';
 require_once __DIR__ . '/loadup.php';
-require_once __DIR__ . '/socket_server.php';
 require_once __DIR__ . '/Player.php';
+require_once __DIR__ . '/PR2SocketServer.php';
+require_once __DIR__ . '/PR2Client.php';
 require_once __DIR__ . '/CourseBox.php';
 require_once __DIR__ . '/ChatMessage.php';
 require_once __DIR__ . '/GuildPoints.php';
@@ -93,11 +92,11 @@ $chat_room_array = array();
 $campaign_array = array();
 $play_count_array = array();
 
-$campaign_room = new LevelListRoom();
-$best_room = new LevelListRoom();
-$best_today_room = new LevelListRoom();
-$newest_room = new LevelListRoom();
-$search_room = new LevelListRoom();
+$campaign_room = new \pr2\multi\LevelListRoom();
+$best_room = new \pr2\multi\LevelListRoom();
+$best_today_room = new \pr2\multi\LevelListRoom();
+$newest_room = new \pr2\multi\LevelListRoom();
+$search_room = new \pr2\multi\LevelListRoom();
 
 $max_players = 200;
 $min_version = .60;
@@ -115,5 +114,5 @@ begin_loadup($server_id);
 $date = date('r');
 output("Starting PR2 server $server_name on port $port at on $date.");
 $daemon = new socketDaemon();
-$server = $daemon->create_server('pr2_server', 'pr2_server_client', 0, $port);
+$server = $daemon->create_server('\pr2\multi\PR2SocketServer', '\pr2\multi\PR2Client', 0, $port);
 $daemon->process();

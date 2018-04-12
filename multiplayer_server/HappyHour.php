@@ -1,5 +1,7 @@
 <?php
 
+namespace pr2\multi;
+
 class HappyHour
 {
 
@@ -19,7 +21,7 @@ class HappyHour
 
     public static function isActive()
     {
-        if (pr2_server::$tournament) {
+        if (PR2SocketServer::$tournament) {
             return false;
         } elseif (self::$hh_active_until >= time()) {
             return true;

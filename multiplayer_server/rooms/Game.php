@@ -1,5 +1,7 @@
 <?php
 
+namespace pr2\multi;
+
 require_once __DIR__ . '/../fns/artifact/save_finder.php';
 
 class Game extends Room
@@ -12,7 +14,7 @@ class Game extends Room
     const MODE_DEATHMATCH = 'deathmatch';
     const MODE_EGG = 'egg';
     const MODE_OBJECTIVE = 'objective';
-    
+
     const PLAYER_SIR = 5321458; // sir sirlington
     const PLAYER_CLINT = 5451130; // clint the cowboy
 
@@ -40,15 +42,15 @@ class Game extends Room
     public function __construct($course_id)
     {
         $this->course_id = $course_id;
-        $this->tournament = pr2_server::$tournament;
+        $this->tournament = PR2SocketServer::$tournament;
         $this->start_time = microtime(true);
     }
 
 
-    public function add_player($player)
+    public function addPlayer($player)
     {
         if (count($this->finish_array) < 4) {
-            Room::add_player($player);
+            Room::addPlayer($player);
             $player->socket->write('startGame`'.$this->course_id);
             $player->temp_id = $this->temp_id;
             $player->pos_x = 0;
@@ -67,9 +69,9 @@ class Game extends Room
 
 
 
-    public function remove_player($player)
+    public function removePlayer($player)
     {
-        Room::remove_player($player);
+        Room::removePlayer($player);
 
         $this->finish_drawing($player);
         $player->race_stats->still_here = false;
@@ -101,7 +103,7 @@ class Game extends Room
         foreach ($this->player_array as $player) {
             $player->finished_race = false;
             $player->socket->write($player->get_local_info());
-            $this->send_to_room($player->get_remote_info(), $player->user_id);
+            $this->sendToRoom($player->get_remote_info(), $player->user_id);
         }
 
         //super booster
@@ -109,14 +111,14 @@ class Game extends Room
             foreach ($this->player_array as $player) {
                 if ($player->super_booster) {
                     $player->super_booster = false;
-                    $this->send_to_room('superBooster`' . $player->temp_id, -1);
+                    $this->sendToRoom('superBooster`' . $player->temp_id, -1);
                 }
             }
         }
 
         //happy hour
         if (HappyHour::isActive()) {
-            $this->send_to_all('happyHour`');
+            $this->sendToAll('happyHour`');
         }
 
         //tournament
@@ -181,7 +183,7 @@ class Game extends Room
             $sir_prizes = array( Prizes::$EPIC_TOP_HAT, Prizes::$EPIC_SIR_HEAD, Prizes::$EPIC_SIR_BODY, Prizes::$EPIC_SIR_FEET );
             $this->prize = $sir_prizes[ array_rand($sir_prizes) ];
         }
-        
+
         // Clint the Cowboy; Awards: Epic Cowboy Hat
         if ($this->is_player_here(self::PLAYER_CLINT)) {
             $this->prize = Prizes::$EPIC_COWBOY_HAT;
@@ -192,7 +194,7 @@ class Game extends Room
             $slender_prizes = array( Prizes::$SLENDER_HEAD, Prizes::$SLENDER_BODY, Prizes::$SLENDER_FEET );
             $this->prize = $slender_prizes[ array_rand($slender_prizes) ];
         }
-        
+
         // The Golden Compass by -Shadowfax-; Awards: Top Hat
         if ($this->course_id == self::LEVEL_COMPASS) {
             $this->prize = Prizes::$TOP_HAT;
@@ -250,13 +252,13 @@ class Game extends Room
         }
 
         // don't set prizes on servers with tournament mode enabled
-        if (pr2_server::$no_prizes) {
+        if (PR2SocketServer::$no_prizes) {
             $this->prize = null;
         }
 
         // tell the world
         if (isset($this->prize)) {
-            $this->send_to_all('setPrize`'.$this->prize->to_str());
+            $this->sendToAll('setPrize`'.$this->prize->to_str());
         }
     }
 
@@ -275,7 +277,7 @@ class Game extends Room
                 $rs->finish_count = $arr[3];
                 $rs->cowboy_chance = $arr[4];
             }
-            $this->send_to_all('finishDrawing`'.$player->temp_id);
+            $this->sendToAll('finishDrawing`'.$player->temp_id);
         }
         $this->maybe_begin_race();
     }
@@ -327,7 +329,7 @@ class Game extends Room
                 $x = 13450;
                 $y = -6200;
                 $rot = 0;
-                $this->send_to_all("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
+                $this->sendToAll("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
             }
 
             // place artifact hat
@@ -337,13 +339,13 @@ class Game extends Room
                 $x = Artifact::$x;
                 $y = Artifact::$y;
                 $rot = 0;
-                $this->send_to_all("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
+                $this->sendToAll("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
             }
 
             // eggs
             if ($this->mode == self::MODE_EGG) {
-                $this->send_to_all('setEggSeed`'.rand(0, 99999));
-                $this->send_to_all('addEggs`10');
+                $this->sendToAll('setEggSeed`'.rand(0, 99999));
+                $this->sendToAll('addEggs`10');
             }
 
             // sfchm
@@ -355,7 +357,7 @@ class Game extends Room
             }
             if (!isset($this->campaign) && rand(1, 100) <= $this->cowboy_chance) {
                 $this->cowboy_mode = true;
-                $this->send_to_all('cowboyMode`');
+                $this->sendToAll('cowboyMode`');
             }
 
             // hats
@@ -363,8 +365,8 @@ class Game extends Room
 
             // start
             $this->start_time = microtime(true);
-            $this->send_to_all('ping`' . time());
-            $this->send_to_all('beginRace`');
+            $this->sendToAll('ping`' . time());
+            $this->sendToAll('beginRace`');
         }
     }
 
@@ -377,7 +379,7 @@ class Game extends Room
             $hat_id = $player->hat;
 
             if ($this->tournament) {
-                $hat_id = pr2_server::$tournament_hat;
+                $hat_id = PR2SocketServer::$tournament_hat;
             }
             if ($this->cowboy_mode) {
                 $hat_id = 5;
@@ -388,7 +390,7 @@ class Game extends Room
                 $player->worn_hat_array[0] = $hat;
             }
 
-            $this->send_to_all($this->get_hat_str($player));
+            $this->sendToAll($this->get_hat_str($player));
         }
     }
 
@@ -423,12 +425,12 @@ class Game extends Room
         $this->finish_race($player);
     }
 
-    
+
     private function ensure_time_format($time) {
         if ($time < 0) $time = 0;
         return round($time, 2);
     }
-    
+
 
     public function finish_race($player)
     {
@@ -449,7 +451,7 @@ class Game extends Room
             $place = array_search($player->race_stats, $this->finish_array);
 
             // announce on tournament server
-            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10 && pr2_server::$tournament) {
+            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10 && PR2SocketServer::$tournament) {
                 $this->broadcast_results($player, $finish_time);
             }
 
@@ -495,7 +497,7 @@ class Game extends Room
 
                 $level_bonus = round($level_bonus);
 
-                if (pr2_server::$no_prizes) {
+                if (PR2SocketServer::$no_prizes) {
                     $level_bonus = 0;
                 }
 
@@ -515,7 +517,7 @@ class Game extends Room
                 $race_stats = $this->finish_array[$i];
                 $exp_gain = ($race_stats->rank+5) * $time_mod;
                 $exp_gain = ceil($this->apply_exp_curve($player, $exp_gain));
-                if (pr2_server::$no_prizes) {
+                if (PR2SocketServer::$no_prizes) {
                     $exp_gain = 0;
                 }
                 $tot_exp_gain += $exp_gain;
@@ -747,7 +749,7 @@ class Game extends Room
 
         $this->broadcast_finish_times();
 
-        $this->send_to_all('var'.$player->temp_id.'`beginRemove`1');
+        $this->sendToAll('var'.$player->temp_id.'`beginRemove`1');
         $this->maybe_end_deathmatch();
     }
 
@@ -766,7 +768,7 @@ class Game extends Room
                 $str .= '`'.$race_stats->name.'`'.$finish_time.'`'.$race_stats->still_here;
             }
         }
-        $this->send_to_all($str);
+        $this->sendToAll($str);
     }
 
 
@@ -794,7 +796,7 @@ class Game extends Room
 
     public function set_pos($player, $data)
     {
-        $this->send_to_room('p'.$player->temp_id.'`'.$data, $player->user_id);
+        $this->sendToRoom('p'.$player->temp_id.'`'.$data, $player->user_id);
         list($moved_x, $moved_y) = explode('`', $data);
         $player->pos_x += $moved_x;
         $player->pos_y += $moved_y;
@@ -804,7 +806,7 @@ class Game extends Room
 
     public function set_exact_pos($player, $data)
     {
-        $this->send_to_room('exactPos'.$player->temp_id.'`'.$data, $player->user_id);
+        $this->sendToRoom('exactPos'.$player->temp_id.'`'.$data, $player->user_id);
         list($player->pos_x, $player->pos_y) = explode('`', $data);
     }
 
@@ -822,8 +824,8 @@ class Game extends Room
             && $target->pos_x > $player->pos_x - 50
             && $target->pos_x < $player->pos_x + 50
         ) {
-            $this->send_to_room('exactPos'.$player->temp_id.'`'.$target->pos_x.'`'.$target->pos_y-40, $player->user_id);
-            $this->send_to_room('squash'.$target->temp_id.'`', $player->user_id);
+            $this->sendToRoom('exactPos'.$player->temp_id.'`'.$target->pos_x.'`'.$target->pos_y-40, $player->user_id);
+            $this->sendToRoom('squash'.$target->temp_id.'`', $player->user_id);
         }
     }
 
@@ -846,7 +848,7 @@ class Game extends Room
     public function set_var($player, $data)
     {
         if (!$player->finished_race) {
-            $this->send_to_room('var'.$player->temp_id.'`'.$data, $player->user_id);
+            $this->sendToRoom('var'.$player->temp_id.'`'.$data, $player->user_id);
 
             if ($data === 'state`bumped' && $this->mode === self::MODE_DEATHMATCH) {
                 $player->lives--;
@@ -886,10 +888,10 @@ class Game extends Room
     {
         if (!$player->finished_race) {
             $player->race_stats->eggs++;
-            $this->send_to_room("removeEgg$data`", $player->user_id);
-            //$this->send_to_all( 'eggCount`'.$player->temp_id.'`'.$player->race_stats->eggs );
+            $this->sendToRoom("removeEgg$data`", $player->user_id);
+            //$this->sendToAll( 'eggCount`'.$player->temp_id.'`'.$player->race_stats->eggs );
             $this->broadcast_finish_times();
-            $this->send_to_all('addEggs`1');
+            $this->sendToAll('addEggs`1');
         }
     }
 
@@ -899,8 +901,8 @@ class Game extends Room
         if (count($player->worn_hat_array) > 0) {
             $hat = array_pop($player->worn_hat_array);
             $this->loose_hat_array[$hat->id] = $hat;
-            $this->send_to_all('addEffect`Hat`'.$info.'`'.$hat->num.'`'.$hat->color.'`'.$hat->color2.'`'.$hat->id, $player->user_id);
-            $this->send_to_all($this->get_hat_str($player));
+            $this->sendToAll('addEffect`Hat`'.$info.'`'.$hat->num.'`'.$hat->color.'`'.$hat->color2.'`'.$hat->id, $player->user_id);
+            $this->sendToAll($this->get_hat_str($player));
         }
     }
 
@@ -948,7 +950,7 @@ class Game extends Room
         $hat = @$this->loose_hat_array[$hat_id];
         if (isset($hat)) {
             $this->loose_hat_array[$hat_id] = null;
-            $this->send_to_all('removeHat'.$hat_id.'`');
+            $this->sendToAll('removeHat'.$hat_id.'`');
             if ($hat->num == 12) {//thief hat
                 $this->commit_thievery($player, $hat);
             } elseif ($hat->num == Hats::ARTIFACT) {
@@ -987,7 +989,7 @@ class Game extends Room
         $this->loose_hat_array = array();
         foreach ($this->player_array as $other_player) {
             $other_player->worn_hat_array = array();
-            $this->send_to_all($this->get_hat_str($other_player));
+            $this->sendToAll($this->get_hat_str($other_player));
         }
         $this->assign_hat($player, $hat);
     }
@@ -996,7 +998,7 @@ class Game extends Room
     private function assign_hat($player, $hat)
     {
         array_push($player->worn_hat_array, $hat);
-        $this->send_to_all($this->get_hat_str($player));
+        $this->sendToAll($this->get_hat_str($player));
     }
 
 

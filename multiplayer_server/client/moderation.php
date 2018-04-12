@@ -22,7 +22,7 @@ function client_kick($socket, $data)
 
     // if the player actually has the power to do what they're trying to do, then do it
     if ($mod->group >= 2 && ($kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
-        LocalBans::add($name);
+        \pr2\multi\LocalBans::add($name);
 
         if (isset($kicked)) {
             $kicked->remove();
@@ -65,8 +65,8 @@ function client_unkick($socket, $data)
 
     // if the player actually has the power to do what they're trying to do, then do it
     if (($mod->group >= 2 && $mod->temp_mod === false) || $mod->server_owner === true) {
-        LocalBans::remove($name);
-        
+        \pr2\multi\LocalBans::remove($name);
+
         // unkick them, yo
         $mod->write("message`$unkicked_name has been unkicked! Hooray for second chances!");
 

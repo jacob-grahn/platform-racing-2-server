@@ -36,14 +36,14 @@ function process_register_login($server_socket, $data)
                 $socket->close();
                 $socket->on_disconnect();
             } else {
-                $player = new Player($socket, $login_obj);
+                $player = new \pr2\multi\Player($socket, $login_obj);
                 $socket->player = $player;
                 if ($player->user_id == $guild_owner) {
                     $player->become_server_owner();
                 } elseif ($player->group <= 0 && $server_id === 9) { // enable guests to earn badges on only Isabel for now
                     $player->become_guest();
                 }
-                
+
                 $socket->write('loginSuccessful`'.$group);
                 $socket->write('setRank`'.$player->active_rank);
                 $socket->write('ping`' . time());

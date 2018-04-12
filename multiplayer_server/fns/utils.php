@@ -1,6 +1,6 @@
 <?php
 
-function send_to_all_players($str)
+function sendToAll_players($str)
 {
     global $player_array;
     foreach ($player_array as $player) {
@@ -102,7 +102,7 @@ function get_chat_room($chat_room_name)
     if (isset($chat_room_array[$chat_room_name])) {
         return $chat_room_array[$chat_room_name];
     } else {
-        $chat_room = new ChatRoom($chat_room_name);
+        $chat_room = new \pr2\multi\ChatRoom($chat_room_name);
         return $chat_room;
     }
 }
@@ -143,11 +143,11 @@ function pm_notify($pms)
 function place_artifact($artifact)
 {
     output("place_artifact: " . json_encode($artifact));
-    Artifact::$level_id = $artifact->level_id;
-    Artifact::$x = $artifact->x;
-    Artifact::$y = $artifact->y;
-    Artifact::$updated_time = strtotime($artifact->updated_time);
-    Artifact::$first_finder = $artifact->first_finder;
+    \pr2\multi\Artifact::$level_id = $artifact->level_id;
+    \pr2\multi\Artifact::$x = $artifact->x;
+    \pr2\multi\Artifact::$y = $artifact->y;
+    \pr2\multi\Artifact::$updated_time = strtotime($artifact->updated_time);
+    \pr2\multi\Artifact::$first_finder = $artifact->first_finder;
 }
 
 

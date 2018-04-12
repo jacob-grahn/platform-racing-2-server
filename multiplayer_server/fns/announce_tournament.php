@@ -2,28 +2,28 @@
 
 function announce_tournament($chat)
 {
-    if (pr2_server::$tournament) {
-        $chat->send_to_all(
+    if (PR2SocketServer::$tournament) {
+        $chat->sendToAll(
             'systemChat`Tournament mode is on!<br/>'
-            .'Hat: '.Hats::id_to_str(pr2_server::$tournament_hat).'<br/>'
-            .'Speed: '.pr2_server::$tournament_speed.'<br/>'
-            .'Accel: '.pr2_server::$tournament_acceleration.'<br/>'
-            .'Jump: '.pr2_server::$tournament_jumping
+            .'Hat: '.Hats::id_to_str(PR2SocketServer::$tournament_hat).'<br/>'
+            .'Speed: '.PR2SocketServer::$tournament_speed.'<br/>'
+            .'Accel: '.PR2SocketServer::$tournament_acceleration.'<br/>'
+            .'Jump: '.PR2SocketServer::$tournament_jumping
         );
     } else {
-        $chat->send_to_all('systemChat`Tournament mode is off.');
+        $chat->sendToAll('systemChat`Tournament mode is off.');
     }
 }
 
 function tournament_status($requester)
 {
-    if (pr2_server::$tournament) {
+    if (PR2SocketServer::$tournament) {
         $requester->write(
             'systemChat`Tournament mode is on!<br/>'
-            .'Hat: '.Hats::id_to_str(pr2_server::$tournament_hat).'<br/>'
-            .'Speed: '.pr2_server::$tournament_speed.'<br/>'
-            .'Accel: '.pr2_server::$tournament_acceleration.'<br/>'
-            .'Jump: '.pr2_server::$tournament_jumping
+            .'Hat: '.Hats::id_to_str(PR2SocketServer::$tournament_hat).'<br/>'
+            .'Speed: '.PR2SocketServer::$tournament_speed.'<br/>'
+            .'Accel: '.PR2SocketServer::$tournament_acceleration.'<br/>'
+            .'Jump: '.PR2SocketServer::$tournament_jumping
         );
     } else {
         $requester->write('systemChat`Tournament mode is off.');

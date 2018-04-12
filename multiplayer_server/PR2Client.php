@@ -1,52 +1,8 @@
 <?php
 
-class pr2_server extends socketServer
-{
+namespace pr2\multi;
 
-    public static $last_read_time = 0;
-    public static $tournament = false;
-    public static $no_prizes = false;
-    public static $tournament_hat = 1;
-    public static $tournament_speed = 65;
-    public static $tournament_acceleration = 65;
-    public static $tournament_jumping = 65;
-
-
-    public function __construct($client_class, $bind_address = 0, $bind_port = 0, $domain = AF_INET, $type = SOCK_STREAM, $protocol = SOL_TCP)
-    {
-        parent::__construct($client_class, $bind_address, $bind_port, $domain, $type, $protocol);
-        pr2_server::$last_read_time = time();
-    }
-
-
-    public function on_timer()
-    {
-        //once every 10 seconds
-        \pr2\TemporaryItems::removeExpired();
-        LocalBans::remove_expired();
-    }
-
-
-    public function on_timer2()
-    {
-        //once every second
-        LoiterDetector::check();
-        $this->consider_shutting_down();
-    }
-
-
-    private function consider_shutting_down()
-    {
-        $elapsed = time() - pr2_server::$last_read_time;
-        if ($elapsed > 60*5) {
-            shutdown_server();
-        }
-    }
-}
-
-
-
-class pr2_server_client extends socketServerClient
+class PR2Client extends \chatot\socketServerClient
 {
 
     public static $ip_array = array();
@@ -125,7 +81,7 @@ class pr2_server_client extends socketServerClient
     public function on_read()
     {
 
-        pr2_server::$last_read_time = time();
+        PR2SocketServer::$last_read_time = time();
 
         if ($this->read_buffer == '<policy-file-request/>'.chr(0x00)) {
             $this->read_buffer = '';
@@ -157,13 +113,13 @@ class pr2_server_client extends socketServerClient
         $ip = $this->remote_address;
         $this->ip = $ip;
 
-        $ip_count = @pr2_server_client::$ip_array[$ip];
+        $ip_count = @PR2Client::$ip_array[$ip];
         if ($ip_count == null) {
             $ip_count = 1;
         } else {
             $ip_count++;
         }
-        pr2_server_client::$ip_array[$ip] = $ip_count;
+        PR2Client::$ip_array[$ip] = $ip_count;
 
         //echo "$ip ($ip_count)\n";
 
@@ -202,10 +158,10 @@ class pr2_server_client extends socketServerClient
         if (!$this->subtracted_ip) {
             $this->subtracted_ip = true;
             $ip = $this->remote_address;
-            if (pr2_server_client::$ip_array[$ip] != null) {
-                pr2_server_client::$ip_array[$ip]--;
-                if (pr2_server_client::$ip_array[$ip] == 0) {
-                    unset(pr2_server_client::$ip_array[$ip]);
+            if (PR2Client::$ip_array[$ip] != null) {
+                PR2Client::$ip_array[$ip]--;
+                if (PR2Client::$ip_array[$ip] == 0) {
+                    unset(PR2Client::$ip_array[$ip]);
                 }
             }
         }

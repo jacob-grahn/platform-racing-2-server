@@ -16,7 +16,7 @@ function start_perk($slug, $user_id, $guild_id)
         assign_guild_part('hat', 14, $user_id, $guild_id, $seconds_duration);
         assign_guild_part('eHat', 14, $user_id, $guild_id, $seconds_duration);
     } elseif ($slug == PERKS::HAPPY_HOUR) {
-        HappyHour::activate();
+        \pr2\multi\HappyHour::activate();
     }
 }
 
@@ -26,7 +26,7 @@ function assign_guild_part($type, $part_id, $user_id, $guild_id, $seconds_durati
 {
     global $player_array;
 
-    \pr2\TemporaryItems::add($type, $part_id, $user_id, $guild_id, $seconds_duration);
+    TemporaryItems::add($type, $part_id, $user_id, $guild_id, $seconds_duration);
 
     foreach ($player_array as $player) {
         if ($player->guild_id == $guild_id) {

@@ -1,15 +1,17 @@
 <?php
 
+namespace pr2\multi;
+
 class Prize
 {
-    
+
     private $type;
     private $id;
     private $name;
     private $desc;
     private $universal;
-    
-    
+
+
     public function __construct($type, $id, $name = '', $desc = '', $universal = false)
     {
         $this->type = $type;
@@ -19,26 +21,26 @@ class Prize
         $this->universal = $universal;
         Prizes::add($this);
     }
-    
-    
+
+
     public function get_type()
     {
         return( $this->type );
     }
-    
-    
+
+
     public function get_id()
     {
         return( $this->id );
     }
-    
-    
+
+
     public function is_universal()
     {
         return( $this->universal );
     }
-    
-    
+
+
     public function to_obj()
     {
         $obj = new stdClass();
@@ -49,8 +51,8 @@ class Prize
         $obj->universal = $this->universal;
         return( $obj );
     }
-    
-    
+
+
     public function to_str()
     {
         $obj = $this->to_obj();

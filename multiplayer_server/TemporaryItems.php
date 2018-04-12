@@ -1,6 +1,6 @@
 <?php
 
-namespace pr2;
+namespace pr2\multi;
 
 class TemporaryItems
 {

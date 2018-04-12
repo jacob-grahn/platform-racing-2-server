@@ -1,5 +1,7 @@
 <?php
 
+namespace pr2\multi;
+
 class Hat
 {
 
@@ -7,7 +9,7 @@ class Hat
     public $num;
     public $color;
     public $color2;
-    
+
     public function __construct($id, $num, $color, $color2)
     {
         $this->id = $id;

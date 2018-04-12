@@ -1,5 +1,7 @@
 <?php
 
+namespace pr2\multi;
+
 class CourseBox
 {
 
@@ -28,7 +30,7 @@ class CourseBox
             $player->slot = $slot;
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
-            $this->room->send_to_room($this->get_fill_str($player, $slot), $player->user_id);
+            $this->room->sendToRoom($this->get_fill_str($player, $slot), $player->user_id);
             $player->write($this->get_fill_str($player, $slot).'`me');
 
             if (isset($this->force_time)) {
@@ -41,12 +43,12 @@ class CourseBox
     {
         if ($player->confirmed == false) {
             $player->confirmed = true;
-            $this->room->send_to_all($this->get_confirm_str($player->slot));
+            $this->room->sendToAll($this->get_confirm_str($player->slot));
         }
 
         if (!isset($this->force_time)) {
             $this->force_time = time();
-            $this->send_to_all('forceTime`0');
+            $this->sendToAll('forceTime`0');
         }
 
         $this->check_confirmed();
@@ -62,11 +64,11 @@ class CourseBox
 
         $this->slot_array[$slot] = null;
         unset($this->slot_array[$slot]);
-        $this->room->send_to_all($this->get_clear_str($slot));
+        $this->room->sendToAll($this->get_clear_str($slot));
 
         if ($this->count_confirmed() <= 0) {
             $this->force_time = null;
-            $this->send_to_all('forceTime`-1');
+            $this->sendToAll('forceTime`-1');
         }
 
         if (count($this->slot_array) <= 0) {
@@ -118,10 +120,10 @@ class CourseBox
     private function start_game()
     {
         $course_id = substr($this->course_id, 0, strpos($this->course_id, '_'));
-        $game = new Game($course_id);
+        $game = new \pr2\multi\Game($course_id);
         foreach ($this->slot_array as $player) {
             $player->confirmed = false;
-            $game->add_player($player);
+            $game->addPlayer($player);
             client_set_right_room($player->socket, 'none');
             client_set_chat_room($player->socket, 'none');
         }
@@ -141,14 +143,14 @@ class CourseBox
         }
     }
 
-    private function send_to_all($str)
+    private function sendToAll($str)
     {
         foreach ($this->slot_array as $player) {
             $player->socket->write($str);
         }
     }
 
-    public function send_to_room($str, $from_id)
+    public function sendToRoom($str, $from_id)
     {
         foreach ($this->slot_array as $player) {
             if ($player->user_id != $from_id) {

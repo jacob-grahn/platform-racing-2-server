@@ -1,12 +1,13 @@
 <?php
 
+namespace pr2\multi;
 
 class LocalBans
 {
-    
+
     private static $arr = array();
-    
-    
+
+
     public static function add($user_name, $duration = 1800)
     {
         $ban = new stdClass();
@@ -14,8 +15,8 @@ class LocalBans
         $ban->expire_time = time() + $duration;
         self::$arr[] = $ban;
     }
-    
-    
+
+
     public static function remove($user_name)
     {
         $len = count(self::$arr);
@@ -29,8 +30,8 @@ class LocalBans
         }
         return false;
     }
-    
-    
+
+
     public static function is_banned($user_name)
     {
         $match = false;
@@ -42,8 +43,8 @@ class LocalBans
         }
         return( $match );
     }
-    
-    
+
+
     public static function remove_expired()
     {
         $time = time();

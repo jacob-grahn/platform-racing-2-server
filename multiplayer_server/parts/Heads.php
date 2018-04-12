@@ -1,8 +1,10 @@
 <?php
 
+namespace pr2\multi;
+
 class Heads
 {
-    
+
     const CLASSIC = 1;
     const TIRED = 2;
     const SMILER = 3;

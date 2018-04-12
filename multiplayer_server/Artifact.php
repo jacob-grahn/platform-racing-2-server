@@ -1,5 +1,7 @@
 <?php
 
+namespace pr2\multi;
+
 class Artifact {
     public static $level_id = 0;
     public static $x = 0;

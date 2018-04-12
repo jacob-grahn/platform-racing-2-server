@@ -1,8 +1,10 @@
 <?php
 
+namespace pr2\multi;
+
 class Bodies
 {
-    
+
     const CLASSIC = 1;
     const STRAP = 2;
     const DRESS = 3;

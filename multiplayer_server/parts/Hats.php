@@ -1,5 +1,7 @@
 <?php
 
+namespace pr2\multi;
+
 class Hats
 {
 
@@ -17,12 +19,12 @@ class Hats
     const THIEF = 12;
     const JIGG = 13;
     const ARTIFACT = 14;
-    
-    
+
+
     public static function id_to_str($id)
     {
         $str = 'Unknown';
-        
+
         if ($id == Hats::NONE) {
             $str = 'None';
         } elseif ($id == Hats::EXP) {
@@ -52,16 +54,16 @@ class Hats
         } elseif ($id == Hats::ARTIFACT) {
             $str = 'Artifact';
         }
-        
+
         return( $str );
     }
-    
-    
+
+
     public static function str_to_id($str)
     {
         $str = strtolower($str);
         $id = 1;
-        
+
         if ($str == 'none' || $str == 'n' || $str == '' || $str == Hats::NONE) {
             $id = Hats::NONE;
         } elseif ($str == 'exp' || $str == 'experience' || $str == 'e' || $str == Hats::EXP) {
@@ -91,7 +93,7 @@ class Hats
         } elseif ($str == 'artifact' || $str == 'a' || $str == Hats::ARTIFACT) {
             $id = Hats::ARTIFACT;
         }
-        
+
         return( $id );
     }
 }

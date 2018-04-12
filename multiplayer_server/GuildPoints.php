@@ -1,11 +1,13 @@
 <?php
 
+namespace pr2\multi;
+
 class GuildPoints
 {
-    
+
     private static $arr = array();
-    
-    
+
+
     public static function submit($user_id, $level_id, $gp)
     {
         $obj = self::id_to_obj($user_id);
@@ -16,8 +18,8 @@ class GuildPoints
             $obj->levels[ $level_id ] = $gp;
         }
     }
-    
-    
+
+
     public static function get_previous_gp($user_id, $level_id)
     {
         $obj = self::id_to_obj($user_id);
@@ -27,8 +29,8 @@ class GuildPoints
         }
         return $prev_gp;
     }
-    
-    
+
+
     public static function drain()
     {
         $cup = array();
@@ -40,14 +42,14 @@ class GuildPoints
         }
         return $cup;
     }
-    
-    
+
+
     public static function clear()
     {
         self::$arr = array();
     }
-    
-    
+
+
     private static function id_to_obj($user_id)
     {
         if (!isset(self::$arr[ $user_id ])) {

@@ -1,5 +1,7 @@
 <?php
 
+namespace pr2\multi;
+
 class RaceStats
 {
 

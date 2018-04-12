@@ -19,7 +19,7 @@ function process_unlock_perk($socket, $data)
                 send_to_guild($guild_id, "systemChat`$user_name unlocked Artifact mode for your guild!");
             }
             if ($slug == PERKS::HAPPY_HOUR) {
-                send_to_all_players("systemChat`$user_name just triggered a Happy Hour!");
+                sendToAll_players("systemChat`$user_name just triggered a Happy Hour!");
             }
         }
 

@@ -5,15 +5,15 @@ function client_set_right_room($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->right_room)) {
-        $player->right_room->remove_player($player);
+        $player->right_room->removePlayer($player);
     }
     if ($data != 'none' && isset($player->game_room)) {
-        $player->game_room->remove_player($player);
+        $player->game_room->removePlayer($player);
     }
     if ($data != 'none' && strpos($data, '`') === false) {
         global ${$data.'_room'};
         if (${$data.'_room'} != null) {
-            ${$data.'_room'}->add_player($player);
+            ${$data.'_room'}->addPlayer($player);
         }
     }
 }
@@ -25,7 +25,7 @@ function client_set_chat_room($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->chat_room)) {
-        $player->chat_room->remove_player($player);
+        $player->chat_room->removePlayer($player);
     }
     if (($data == 'mod' && $player->group < 2) || ($data == 'admin' && ($player->group < 3 || $player->user_id == 4291976))) {
         $data = 'none';
@@ -38,7 +38,7 @@ function client_set_chat_room($socket, $data)
     }
     if ($data != 'none') {
         $chat_room = get_chat_room($data);
-        $chat_room->add_player($player);
+        $chat_room->addPlayer($player);
     }
 }
 
@@ -49,7 +49,7 @@ function client_set_game_room($socket)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->remove_player($player);
+        $player->game_room->removePlayer($player);
     }
 }
 

@@ -71,7 +71,7 @@ function client_add_effect($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->send_to_room('addEffect`'.$data, $player->user_id);
+        $player->game_room->sendToRoom('addEffect`'.$data, $player->user_id);
     }
 }
 
@@ -82,7 +82,7 @@ function client_zap($socket)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->send_to_room('zap`', $player->user_id);
+        $player->game_room->sendToRoom('zap`', $player->user_id);
     }
 }
 
@@ -92,7 +92,7 @@ function client_hit($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->send_to_room('hit'.$data, $player->user_id);
+        $player->game_room->sendToRoom('hit'.$data, $player->user_id);
     }
 }
 
@@ -103,7 +103,7 @@ function client_activate($socket, $data)
 {
     $player = $socket->get_player();
     if (isset($player->game_room)) {
-        $player->game_room->send_to_room('activate`'.$data.'`', $player->user_id);
+        $player->game_room->sendToRoom('activate`'.$data.'`', $player->user_id);
     }
 }
 
@@ -115,7 +115,7 @@ function client_heart($socket)
     $player = $socket->get_player();
     if (isset($player->game_room)) {
         $player->lives++;
-        $player->game_room->send_to_room('heart'.$player->temp_id.'`', $player->user_id);
+        $player->game_room->sendToRoom('heart'.$player->temp_id.'`', $player->user_id);
     }
 }
 

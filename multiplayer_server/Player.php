@@ -1,5 +1,7 @@
 <?php
 
+namespace pr2\multi;
+
 require_once __DIR__ . '/../http_server/queries/staff/actions/admin_action_insert.php';
 require_once __DIR__ . '/../http_server/queries/staff/actions/mod_action_insert.php';
 require_once __DIR__ . '/../http_server/queries/pr2/pr2_update.php';
@@ -192,7 +194,7 @@ class Player
 
     private function apply_temp_items()
     {
-        $temp_items = \pr2\TemporaryItems::getItems($this->user_id, $this->guild_id);
+        $temp_items = TemporaryItems::getItems($this->user_id, $this->guild_id);
         foreach ($temp_items as $item) {
             // $this->gain_part('e'.ucfirst($item->type), $item->part_id);
             $this->set_part($item->type, $item->part_id, true);
@@ -592,7 +594,7 @@ class Player
                     }
                     $this->write('systemChat`To find out if a Happy Hour is active and when it expires, type /hh status. '.$hhmsg_admin.$hhmsg_server_owner);
                 } elseif ($args[0] == 'activate' && $this->group >=3 && $this->server_owner == false) {
-                    if (HappyHour::isActive() != true && pr2_server::$tournament == false) {
+                    if (HappyHour::isActive() != true && PR2SocketServer::$tournament == false) {
                         if (!isset($args[1])) {
                             HappyHour::activate();
                         } else {
@@ -603,7 +605,7 @@ class Player
                             HappyHour::activate($args[1]);
                         }
                         $player_room->send_chat('systemChat`'.htmlspecialchars($this->name).' just triggered a Happy Hour!');
-                    } elseif (pr2_server::$tournament == true) {
+                    } elseif (PR2SocketServer::$tournament == true) {
                         $this->write('systemChat`You can\'t activate a Happy Hour on a server with tournament mode enabled. Disable tournament mode and try again.');
                     } else {
                         $hh_timeleft = HappyHour::timeLeft();
@@ -889,10 +891,10 @@ class Player
             $speed = 100;
             $accel = 100;
             $jump = 100;
-        } elseif (pr2_server::$tournament) {
-            $speed = pr2_server::$tournament_speed;
-            $accel = pr2_server::$tournament_acceleration;
-            $jump = pr2_server::$tournament_jumping;
+        } elseif (PR2SocketServer::$tournament) {
+            $speed = PR2SocketServer::$tournament_speed;
+            $accel = PR2SocketServer::$tournament_acceleration;
+            $jump = PR2SocketServer::$tournament_jumping;
         } else {
             $speed = $this->speed;
             $accel = $this->acceleration;
@@ -1036,7 +1038,7 @@ class Player
     private function get_full_parts($type)
     {
         $perm = $this->get_owned_parts($type);
-        $temp = \pr2\TemporaryItems::getParts($type, $this->user_id, $this->guild_id);
+        $temp = TemporaryItems::getParts($type, $this->user_id, $this->guild_id);
         $full = array_merge($perm, $temp);
         return $full;
     }
@@ -1220,13 +1222,13 @@ class Player
 
         //get out of whatever you're in
         if (isset($this->right_room)) {
-            $this->right_room->remove_player($this);
+            $this->right_room->removePlayer($this);
         }
         if (isset($this->chat_room)) {
-            $this->chat_room->remove_player($this);
+            $this->chat_room->removePlayer($this);
         }
         if (isset($this->game_room)) {
-            $this->game_room->remove_player($this);
+            $this->game_room->removePlayer($this);
         }
         if (isset($this->course_box)) {
             $this->course_box->clear_slot($this);

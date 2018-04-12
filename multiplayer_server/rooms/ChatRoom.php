@@ -1,5 +1,7 @@
 <?php
 
+namespace pr2\multi;
+
 class ChatRoom extends Room
 {
 
@@ -29,9 +31,9 @@ class ChatRoom extends Room
     }
 
 
-    public function add_player($player)
+    public function addPlayer($player)
     {
-        Room::add_player($player);
+        Room::addPlayer($player);
         global $guild_id, $player_array;
 
         $welcome_message = 'systemChat`Welcome to chat room '.$this->chat_room_name.'! ';
@@ -53,9 +55,9 @@ class ChatRoom extends Room
     }
 
 
-    public function remove_player($player)
+    public function removePlayer($player)
     {
-        Room::remove_player($player);
+        Room::removePlayer($player);
         if (count($this->player_array) <= 0 && $this->chat_room_name != "main" && $this->chat_room_name != "mod" && $this->chat_room_name != "admin") {
             $this->remove();
         }
