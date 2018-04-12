@@ -5,25 +5,6 @@ require_once __DIR__ . '/../queries/tokens/token_delete.php';
 
 header("Content-type: text/plain");
 
-function is_from_game(){
- if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && !empty($_SERVER["HTTP_X_REQUESTED_WITH"])){
-  if (!isset($_SERVER["HTTP_REFERER"]) || $_SERVER["HTTP_REFERER"] === ""){
-   return true;
-  }
-  if (strpos($_SERVER["HTTP_X_REQUESTED_WITH"], "ShockwaveFlash/") !== 0){
-   return true;
-  }
-     else
-  {
-      return false;   
-  }
- }
- else
- {
-    return false;
- }
-}
-
 $ip = get_ip();
 
 try {
@@ -50,4 +31,17 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+}
+
+function is_from_game() 
+{
+    $is_from_game = false;
+    
+    if ((!is_empty($_SERVER["HTTP_X_REQUESTED_WITH"]) &&
+        strpos($_SERVER["HTTP_X_REQUESTED_WITH"], "ShockwaveFlash/") !== 0) ||
+        is_empty($_SERVER["HTTP_REFERER"])) {
+        $is_from_game = true;
+    }
+    
+    return $is_from_game;
 }
