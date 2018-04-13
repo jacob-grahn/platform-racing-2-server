@@ -205,7 +205,7 @@ function client_award_kong_outfit($socket)
 function client_use_rank_token($socket)
 {
     $player = $socket->getPlayer();
-    $player->use_rank_token();
+    $player->useRankToken();
 }
 
 
@@ -214,5 +214,5 @@ function client_use_rank_token($socket)
 function client_unuse_rank_token($socket)
 {
     $player = $socket->getPlayer();
-    $player->unuse_rank_token();
+    $player->unuseRankToken();
 }

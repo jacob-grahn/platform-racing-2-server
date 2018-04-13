@@ -109,15 +109,15 @@ class PR2Client extends \chabot\SocketServerClient
 
     public function write($buffer, $length = 4096)
     {
-        if(!$this->process){
-			$buffer = $this->send_num.'`'.$buffer;
-			$str_to_hash = $this->key . $buffer;
-			$hash_bit = substr(md5($str_to_hash), 0, 3);
-			$buffer = $hash_bit.'`'.$buffer;
-		}
-		$buffer .= chr(0x04);
-		parent::write($buffer, $length);
-		$this->send_num++;
+        if (!$this->process) {
+            $buffer = $this->send_num.'`'.$buffer;
+            $str_to_hash = $this->key . $buffer;
+            $hash_bit = substr(md5($str_to_hash), 0, 3);
+            $buffer = $hash_bit.'`'.$buffer;
+        }
+        $buffer .= chr(0x04);
+        parent::write($buffer, $length);
+        $this->send_num++;
     }
 
     public function onConnect()

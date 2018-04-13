@@ -622,10 +622,10 @@ class Game extends Room
             }
 
             //---
-            $player->inc_exp($tot_exp_gain);
+            $player->incExp($tot_exp_gain);
 
             //--- save
-            $player->maybe_save();
+            $player->maybeSave();
         } else {
             $this->setFinishTime($player, 'forfeit');
         }
