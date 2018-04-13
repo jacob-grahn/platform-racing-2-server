@@ -26,14 +26,14 @@ class CourseBox
         }
         if (!isset($this->slot_array[$slot])) {
             if (isset($player->course_box)) {
-                $player->course_box->clear_slot($player);
+                $player->course_box->clearSlot($player);
             }
             $player->confirmed = false;
             $player->slot = $slot;
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
-            $this->room->sendToRoom($this->get_fill_str($player, $slot), $player->user_id);
-            $player->write($this->get_fill_str($player, $slot).'`me');
+            $this->room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
+            $player->write($this->getFillStr($player, $slot).'`me');
 
             if (isset($this->force_time)) {
                 $player->write('forceTime`'.(time()-$this->force_time));
@@ -41,11 +41,11 @@ class CourseBox
         }
     }
 
-    public function confirm_slot($player)
+    public function confirmSlot($player)
     {
         if ($player->confirmed == false) {
             $player->confirmed = true;
-            $this->room->sendToAll($this->get_confirm_str($player->slot));
+            $this->room->sendToAll($this->getConfirmStr($player->slot));
         }
 
         if (!isset($this->force_time)) {
@@ -53,10 +53,10 @@ class CourseBox
             $this->sendToAll('forceTime`0');
         }
 
-        $this->check_confirmed();
+        $this->checkConfirmed();
     }
 
-    public function clear_slot($player)
+    public function clearSlot($player)
     {
         $slot = $player->slot;
 
@@ -66,9 +66,9 @@ class CourseBox
 
         $this->slot_array[$slot] = null;
         unset($this->slot_array[$slot]);
-        $this->room->sendToAll($this->get_clear_str($slot));
+        $this->room->sendToAll($this->getClearStr($slot));
 
-        if ($this->count_confirmed() <= 0) {
+        if ($this->countConfirmed() <= 0) {
             $this->force_time = null;
             $this->sendToAll('forceTime`-1');
         }
@@ -76,36 +76,36 @@ class CourseBox
         if (count($this->slot_array) <= 0) {
             $this->remove();
         } else {
-            $this->check_confirmed();
+            $this->checkConfirmed();
         }
     }
 
-    public function catch_up($to_player)
+    public function catchUp($to_player)
     {
         foreach ($this->slot_array as $player) {
-            $to_player->write($this->get_fill_str($player, $player->slot));
+            $to_player->write($this->getFillStr($player, $player->slot));
             if ($player->confirmed) {
-                $to_player->write($this->get_confirm_str($player->slot));
+                $to_player->write($this->getConfirmStr($player->slot));
             }
         }
     }
 
-    private function get_fill_str($player, $slot)
+    private function getFillStr($player, $slot)
     {
         return 'fillSlot'.$this->course_id.'`'.$slot.'`'.$player->name.'`'.$player->active_rank;
     }
 
-    private function get_confirm_str($slot)
+    private function getConfirmStr($slot)
     {
         return 'confirmSlot'.$this->course_id.'`'.$slot;
     }
 
-    private function get_clear_str($slot)
+    private function getClearStr($slot)
     {
         return 'clearSlot'.$this->course_id.'`'.$slot;
     }
 
-    private function check_confirmed()
+    private function checkConfirmed()
     {
         $all_confirmed = true;
         foreach ($this->slot_array as $player) {
@@ -115,11 +115,11 @@ class CourseBox
             }
         }
         if ($all_confirmed) {
-            $this->start_game();
+            $this->startGame();
         }
     }
 
-    private function start_game()
+    private function startGame()
     {
         $course_id = substr($this->course_id, 0, strpos($this->course_id, '_'));
         $game = new Game($course_id);
@@ -133,12 +133,12 @@ class CourseBox
         $this->remove();
     }
 
-    public function force_start()
+    public function forceStart()
     {
         if ((time() - $this->force_time) > 15) {
             foreach ($this->slot_array as $player) {
                 if (!$player->confirmed) {
-                    $this->clear_slot($player);
+                    $this->clearSlot($player);
                     $player->write('closeCourseMenu`');
                 }
             }
@@ -161,7 +161,7 @@ class CourseBox
         }
     }
 
-    private function count_confirmed()
+    private function countConfirmed()
     {
         $num = 0;
         foreach ($this->slot_array as $player) {
@@ -175,7 +175,7 @@ class CourseBox
     public function remove()
     {
         foreach ($this->slot_array as $player) {
-            $this->clear_slot($player);
+            $this->clearSlot($player);
         }
 
         $this->slot_array = null;

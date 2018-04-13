@@ -1,9 +1,5 @@
 <?php
 
-require_once __DIR__ . '/has_found_artifact.php';
-require_once __DIR__ . '/save_first_finder.php';
-require_once __DIR__ . '/../../../http_server/queries/artifacts_found/artifacts_found_insert.php';
-
 function save_finder($pdo, $player)
 {
     try {

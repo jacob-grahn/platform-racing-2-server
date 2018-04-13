@@ -27,7 +27,9 @@ function client_set_chat_room($socket, $data)
     if (isset($player->chat_room)) {
         $player->chat_room->removePlayer($player);
     }
-    if (($data == 'mod' && $player->group < 2) || ($data == 'admin' && ($player->group < 3 || $player->user_id == 4291976))) {
+    if (($data == 'mod' && $player->group < 2) ||
+        ($data == 'admin' && ($player->group < 3 || $player->user_id == 4291976))
+    ) {
         $data = 'none';
         $player->write('message`You lack the power to enter this room.');
     }
@@ -73,7 +75,7 @@ function client_confirm_slot($socket)
     $player = $socket->getPlayer();
     $course_box = $player->course_box;
     if (isset($course_box)) {
-        $course_box->confirm_slot($player);
+        $course_box->confirmSlot($player);
     }
 }
 
@@ -85,7 +87,7 @@ function client_clear_slot($socket)
     $player = $socket->getPlayer();
     $course_box = $player->course_box;
     if (isset($course_box)) {
-        $course_box->clear_slot($player);
+        $course_box->clearSlot($player);
     }
 }
 
@@ -97,7 +99,7 @@ function client_force_start($socket)
     $player = $socket->getPlayer();
     $course_box = $player->course_box;
     if (isset($course_box)) {
-        $course_box->force_start();
+        $course_box->forceStart();
     }
 }
 
@@ -135,7 +137,8 @@ function client_get_online_list($socket)
 {
     global $player_array;
     foreach ($player_array as $player) {
-        $socket->write('addUser`'.$player->name.'`'.$player->group.'`'.$player->active_rank.'`'.(count($player->hat_array)-1));
+        $socket->write('addUser`'.$player->name.'`'.$player->group.'`'.
+            $player->active_rank.'`'.(count($player->hat_array)-1));
     }
 }
 

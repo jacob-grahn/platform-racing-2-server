@@ -1,12 +1,6 @@
 <?php
 
-// call pro/demotion functions
-require_once __DIR__ . '/../fns/promote_to_moderator.php';
-require_once __DIR__ . '/../fns/demod.php';
-require_once __DIR__ . '/../../http_server/queries/staff/actions/mod_action_insert.php';
-
-
-//--- kick a player -------------------------------------------------------------
+// kick a player
 function client_kick($socket, $data)
 {
     global $pdo, $guild_id, $server_name;
@@ -30,7 +24,8 @@ function client_kick($socket, $data)
 
             // let people know that the player kicked someone
             if (isset($mod->chat_room)) {
-                $mod->chat_room->sendChat("systemChat`$safe_mname has kicked $safe_kname from this server for 30 minutes.");
+                $mod->chat_room->sendChat("systemChat`$safe_mname has kicked ".
+                    "$safe_kname from this server for 30 minutes.");
             }
 
             // log the action if it's on a public server
@@ -38,7 +33,13 @@ function client_kick($socket, $data)
                 $mod_name = $mod->name;
                 $mod_ip = $mod->ip;
                 $mod_id = $mod->user_id;
-                mod_action_insert($pdo, $mod_id, "$mod_name kicked $name from $server_name from $mod_ip.", $mod_id, $mod_ip);
+                mod_action_insert(
+                    $pdo,
+                    $mod_id,
+                    "$mod_name kicked $name from $server_name from $mod_ip.",
+                    $mod_id,
+                    $mod_ip
+                );
             }
         } else {
             $mod->write("message`Error: Could not find a user with the name \"$safe_kname\" on this server.");
@@ -76,7 +77,8 @@ function client_unkick($socket, $data)
                 $mod_name = $mod->name;
                 $mod_ip = $mod->ip;
                 $mod_id = $mod->user_id;
-                mod_action_insert($pdo, $mod_id, "$mod_name unkicked $name from $server_name from $mod_ip.", $mod_id, $mod_ip);
+                mod_action_insert($pdo, $mod_id, "$mod_name unkicked $name ".
+                    "from $server_name from $mod_ip.", $mod_id, $mod_ip);
             }
         } else {
             $mod->write("message`Error: $unkicked_name isn't kicked.");
@@ -134,7 +136,9 @@ function client_warn($socket, $data)
 
     // tell the world
     if (isset($mod->chat_room) && $mod->group >= 2) {
-        $mod->chat_room->sendChat("systemChat`$safe_mname has given $safe_wname $num $w_str. They have been banned from the chat for $time seconds.");
+        $mod->chat_room->sendChat("systemChat`$safe_mname has given ".
+            "$safe_wname $num $w_str. They have been banned from the chat ".
+            "for $time seconds.");
     }
 }
 
@@ -190,7 +194,9 @@ function client_ban($socket, $data)
     // tell the world
     if ($mod->group >= 2 && isset($banned)) {
         if (isset($mod->chat_room)) {
-            $mod->chat_room->sendChat("systemChat`$safe_mname has banned $safe_bname for $disp_time. $disp_reason. This ban has been recorded at https://pr2hub.com/bans.");
+            $mod->chat_room->sendChat("systemChat`$safe_mname has banned ".
+                "$safe_bname for $disp_time. $disp_reason. This ban has been ".
+                "recorded at https://pr2hub.com/bans.");
         }
         if (isset($banned) && $banned->group < 2) {
             $banned->remove();
@@ -230,7 +236,13 @@ function client_promote_to_moderator($socket, $data)
         }
 
         if (isset($admin->chat_room) && (isset($promoted) || $type != 'temporary') && $result == true) {
-            $admin->chat_room->sendChat("systemChat`$safe_aname has promoted $safe_pname to a $type moderator! May they reign in $reign_time of peace and prosperity! Make sure you read the moderator guidelines at https://jiggmin2.com/forums/showthread.php?tid=12", $admin->user_id);
+            $admin->chat_room->sendChat(
+                "systemChat`$safe_aname has promoted ".
+                "$safe_pname to a $type moderator! May they reign in ".
+                "$reign_time of peace and prosperity! Make sure you read the ".
+                "moderator guidelines at https://jiggmin2.com/forums/showthread.php?tid=12",
+                $admin->user_id
+            );
         }
     } // if they're not an admin, tell them
     else {

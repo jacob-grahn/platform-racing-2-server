@@ -14,7 +14,12 @@ try {
     }
 
     // rate limiting
-    rate_limit('super-booster-'.$ip, 60, 1, "Please wait at least one minute before attempting to use the super booster again.");
+    rate_limit(
+        'super-booster-'.$ip,
+        60,
+        1,
+        "Please wait at least one minute before attempting to use the super booster again."
+    );
 
     // connect
     $pdo = pdo_connect();
@@ -23,7 +28,12 @@ try {
     $user_id = token_login($pdo, false);
 
     // more rate limiting
-    rate_limit('super-booster-'.$user_id, 60, 1, "Please wait at least one minute before attempting to use the super booster again.");
+    rate_limit(
+        'super-booster-'.$user_id,
+        60,
+        1,
+        "Please wait at least one minute before attempting to use the super booster again."
+    );
 
     // get server info
     $server = server_select($pdo, $server_id);

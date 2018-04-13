@@ -4,7 +4,7 @@
 function process_register_login($server_socket, $data)
 {
     if ($server_socket->process == true) {
-        global $login_array, $player_array, $guild_id, $guild_owner, $server_id;
+        global $login_array, $player_array, $guild_id, $guild_owner;
 
         $login_obj = json_decode($data);
         $login_id = $login_obj->login->login_id;

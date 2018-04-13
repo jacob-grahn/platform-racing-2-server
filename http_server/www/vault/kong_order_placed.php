@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../../queries/users/user_select_expanded.php';
-
 function order_placed_handler($pdo, $request)
 {
     $recipient_id = $request->recipient_id; //The id of the user to receive the items.
@@ -18,7 +16,17 @@ function order_placed_handler($pdo, $request)
 
     //--- apply item to player's account
     $user = user_select_expanded($pdo, $pr2_user_id);
-    unlock_item($pdo, $pr2_user_id, $user->guild, $user->server_id, $slug, $user->name, $recipient_id, $order_id, $desc->title);
+    unlock_item(
+        $pdo,
+        $pr2_user_id,
+        $user->guild,
+        $user->server_id,
+        $slug,
+        $user->name,
+        $recipient_id,
+        $order_id,
+        $desc->title
+    );
 
     //--- tell it
     $reply = new stdClass();
@@ -26,11 +34,6 @@ function order_placed_handler($pdo, $request)
     return( $reply );
 }
 
-
-
-require_once __DIR__ . '/../../queries/rank_token_rentals/rank_token_rental_insert.php';
-require_once __DIR__ . '/../../queries/servers/servers_select.php';
-require_once __DIR__ . '/../../queries/purchases/purchase_insert.php';
 
 function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id, $title)
 {
@@ -137,8 +140,6 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
 }
 
 
-require_once __DIR__ . '/../../queries/messages/message_insert.php';
-
 function send_confirmation_pm($pdo, $user_id, $title, $order_id)
 {
     $pm = "Thank you for your support! This PM is to confirm your order.
@@ -147,12 +148,6 @@ order id: $order_id";
     message_insert($pdo, $user_id, 1, $pm, '0');
 }
 
-
-require_once __DIR__ . '/../../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../../queries/servers/server_select_by_guild_id.php';
-require_once __DIR__ . '/../../queries/servers/servers_select_highest_port.php';
-require_once __DIR__ . '/../../queries/servers/server_insert.php';
-require_once __DIR__ . '/../../queries/servers/server_update_expire_date.php';
 
 function create_server($pdo, $guild_id, $seconds_of_life)
 {

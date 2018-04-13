@@ -1,9 +1,140 @@
 <?php
 
+function make_listing($desc)
+{
+    $obj = new stdClass();
+    $obj->slug = $desc->slug;
+    $obj->title = $desc->title;
+    $obj->imgUrl = $desc->imgUrl;
+    $obj->price = $desc->price;
+    $obj->description = $desc->description;
+    $obj->longDescription = $desc->faq;
+    $obj->available = $desc->available;
+    if (isset($desc->discount)) {
+        $obj->discount = $desc->discount;
+    }
+    return $obj;
+}
 
-require_once __DIR__ . '/../../queries/users/user_select_expanded.php';
-require_once __DIR__ . '/../../queries/servers/server_select.php';
-require_once __DIR__ . '/../../queries/guilds/guild_select.php';
+//
+function parse_signed_request($signed_request, $secret)
+{
+    list($encoded_sig, $payload) = explode('.', $signed_request, 2);
+
+    // decode the data
+    $sig = base64_url_decode($encoded_sig);
+    $data = json_decode(base64_url_decode($payload));
+
+    if (strtoupper($data->algorithm) !== 'HMAC-SHA256') {
+        throw new Exception('Unknown algorithm. Expected HMAC-SHA256');
+    }
+
+    // check sig
+    $expected_sig = hash_hmac('sha256', $payload, $secret, true);
+    if ($sig !== $expected_sig) {
+        throw new Exception('Bad Signed JSON signature!');
+    }
+
+    return $data;
+}
+
+function base64_url_decode($input)
+{
+    return base64_decode(strtr($input, '-_', '+/'));
+}
+
+
+function get_owned_items($api_key, $kong_user_id)
+{
+    $url = 'http://www.kongregate.com/api/user_items.json';
+    $get = array( 'api_key'=>$api_key, 'user_id'=>$kong_user_id );
+    $item_str = curl_get($url, $get);
+    $item_result = json_decode($item_str);
+
+    if (!$item_result->success) {
+        throw new Exception('Could not retrieve a list of your purchased items.');
+    }
+
+    return $item_result->items;
+}
+
+
+
+
+
+function use_item($api_key, $game_auth_token, $kong_user_id, $item_id)
+{
+    $url = 'http://www.kongregate.com/api/use_item.json';
+    $post = array( 'api_key'=>$api_key, 'game_auth_token'=>$game_auth_token, 'user_id'=>$kong_user_id, 'id'=>$item_id );
+    $use_result_str = curl_post($url, $post);
+    $use_result = json_decode($use_result_str);
+
+    if (!$use_result->success) {
+        throw new Exception('Could not use the item.');
+    }
+
+    return $use_result;
+}
+
+
+
+/**
+ * Send a POST requst using cURL
+ *
+ * @param  string $url     to request
+ * @param  array  $post    values to send
+ * @param  array  $options for cURL
+ * @return string
+ */
+function curl_post($url, array $post = null, array $options = array())
+{
+    $defaults = array(
+        CURLOPT_POST => 1,
+        CURLOPT_HEADER => 0,
+        CURLOPT_URL => $url,
+        CURLOPT_FRESH_CONNECT => 1,
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_FORBID_REUSE => 1,
+        CURLOPT_TIMEOUT => 4,
+        CURLOPT_POSTFIELDS => http_build_query($post)
+    );
+
+    $ch = curl_init();
+    curl_setopt_array($ch, ($options + $defaults));
+    if (! $result = curl_exec($ch)) {
+        trigger_error(curl_error($ch));
+    }
+    curl_close($ch);
+    return $result;
+}
+
+
+/**
+ * Send a GET requst using cURL
+ *
+ * @param  string $url     to request
+ * @param  array  $get     values to send
+ * @param  array  $options for cURL
+ * @return string
+ */
+function curl_get($url, array $get = null, array $options = array())
+{
+    $defaults = array(
+        CURLOPT_URL => $url. (strpos($url, '?') === false ? '?' : ''). http_build_query($get),
+        CURLOPT_HEADER => 0,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 4
+    );
+
+    $ch = curl_init();
+    curl_setopt_array($ch, ($options + $defaults));
+    if (! $result = curl_exec($ch)) {
+        trigger_error(curl_error($ch));
+    }
+    curl_close($ch);
+    return $result;
+}
+
 
 function describeVault($pdo, $user_id, $arr)
 {
@@ -94,7 +225,8 @@ function describeFred()
     ."Do I get to run around as a giant cactus?\n"
     ."- Yes. Yes you do.\n\n"
     ."How does Guild de Fred work?\n"
-    ."- A Giant Cactus body is temporarily added to your account. You can switch between the Giant Cactus body and your other bodies normally.\n\n";
+    ."- A Giant Cactus body is temporarily added to your account. You can "
+    ."switch between the Giant Cactus body and your other bodies normally.\n\n";
 
     return( $d );
 }
@@ -116,7 +248,8 @@ function describeGhost()
     ."Is the Guild de Ghost power-up useful?\n"
     ."- It may actually be a massive disadvantage!\n\n"
     ."How does Guild de Ghost work?\n"
-    ."- A very invisible head, body, and feet are temporarily added to your account. You can switch between these parts and your other parts normally.\n\n";
+    ."- A very invisible head, body, and feet are temporarily added to your "
+    ."account. You can switch between these parts and your other parts normally.\n\n";
 
     return( $d );
 }
@@ -138,7 +271,9 @@ function describeArtifact()
     ."Is the Guild de Artifact power-up useful?\n"
     ."- It may actually be a massive disadvantage!\n\n"
     ."How does Guild de Artifact work?\n"
-    ."- Fred has harnessed the power of the artifact for your control! The artifact will temporarily be added to your account, and you'll still be able switch between it and your other hats normally.\n\n";
+    ."- Fred has harnessed the power of the artifact for your control! The "
+    ."artifact will temporarily be added to your account, and you'll still be "
+    ."able switch between it and your other hats normally.\n\n";
 
     return( $d );
 }
@@ -156,7 +291,8 @@ function describeHappyHour($server)
     $d->available = false;
     $d->faq =
     "What's a Happy Hour?\n"
-    ."- During a Happy Hour everyone on this server will receive double experience points, and everyone's speed, acceleration, and jumping are increased to 100.\n\n"
+    ."- During a Happy Hour everyone on this server will receive double "
+    ."experience points, and everyone's speed, acceleration, and jumping are increased to 100.\n\n"
     ."Can a Happy Hour be used on a private server?\n"
     ."- Yup!\n\n";
 
@@ -168,7 +304,6 @@ function describeHappyHour($server)
 }
 
 
-require_once __DIR__ . '/../../queries/rank_token_rentals/rank_token_rentals_count.php';
 function describeRankRental($pdo, $user)
 {
     $rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
@@ -182,7 +317,8 @@ function describeRankRental($pdo, $user)
     $d->available = true;
     $d->faq =
     "What's a Rank Token?\n"
-    ."- You can use rank tokens to increase or decrease your rank at will. A rank 40 account with 3 rank tokens could become a rank 43 account, for example.\n\n"
+    ."- You can use rank tokens to increase or decrease your rank at will. "
+    ."A rank 40 account with 3 rank tokens could become a rank 43 account, for example.\n\n"
     ."Why does the price change?\n"
     ."- The price of a new Rank Token++ depends on how many you currently have.\n"
     ."  1st: 50 kreds\n"

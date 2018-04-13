@@ -52,7 +52,7 @@ class LoiterDetector
             foreach ($level_list->player_array as $player) {
                 if ($player->ip === $ip) {
                     if (isset($player->course_box)) {
-                        $player->course_box->clear_slot($player);
+                        $player->course_box->clearSlot($player);
                     }
                 }
             }

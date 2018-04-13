@@ -19,7 +19,7 @@ class LevelListRoom extends Room
     {
         Room::addPlayer($player);
         foreach ($this->course_array as $course) {
-            $course->catch_up($player);
+            $course->catchUp($player);
         }
     }
 
@@ -28,7 +28,7 @@ class LevelListRoom extends Room
     {
         if (isset($player->course_id)) {
             $course = $this->course_array[$player->course_id];
-            $course->clear_slot($player);
+            $course->clearSlot($player);
         }
         Room::removePlayer($player);
     }

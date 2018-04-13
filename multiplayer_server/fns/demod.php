@@ -1,11 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../../http_server/queries/users/user_select.php';
-require_once __DIR__ . '/../../http_server/queries/users/user_select_by_name.php';
-require_once __DIR__ . '/../../http_server/queries/users/user_update_power.php';
-require_once __DIR__ . '/../../http_server/queries/mod_powers/mod_power_delete.php';
-require_once __DIR__ . '/../../http_server/queries/staff/actions/admin_action_insert.php';
-
 function demote_mod($user_name, $admin, $demoted_player)
 {
     global $pdo, $server_name, $guild_owner;
@@ -54,7 +48,7 @@ function demote_mod($user_name, $admin, $demoted_player)
         // get user info
         $user_row = user_select_by_name($pdo, $user_name);
         $user_id = (int) $user_row->user_id;
-        
+
         // check if the person being demoted is an admin
         if ((int) $user_row->power === 3) {
             throw new Exception("You lack the power to demote $html_user_name, as they are an admin.");
@@ -75,7 +69,13 @@ function demote_mod($user_name, $admin, $demoted_player)
             $demoted_name = $user_name;
 
             // log action in action log
-            admin_action_insert($pdo, $admin_id, "$admin_name demoted $demoted_name from $ip on $server_name.", $admin_id, $ip);
+            admin_action_insert(
+                $pdo,
+                $admin_id,
+                "$admin_name demoted $demoted_name from $ip on $server_name.",
+                $admin_id,
+                $ip
+            );
 
             // do it!
             if (isset($demoted_player) && $demoted_player->group >= 2) {

@@ -38,7 +38,8 @@ function issue_tournament($str)
                 $accel = (int) $arr[2];
                 $jump = (int) $arr[3];
             } else {
-                throw new Exception("It looks like you left out a stat value or the hat name, or added too many arguments.");
+                throw new Exception("It looks like you left out a stat value ".
+                    "or the hat name, or added too many arguments.");
             }
         }
 

@@ -65,7 +65,21 @@ function is_empty($str, $incl_zero = true)
 function is_obscene($str)
 {
     $str = strtolower($str);
-    $bad_array = array('fuck', 'shit', 'nigger', 'nigga', 'whore', 'bitch', 'slut', 'cunt', 'cock', 'dick', 'penis', 'damn', 'spic');
+    $bad_array = array(
+        'fuck',
+        'shit',
+        'nigger',
+        'nigga',
+        'whore',
+        'bitch',
+        'slut',
+        'cunt',
+        'cock',
+        'dick',
+        'penis',
+        'damn',
+        'spic'
+    );
     $obscene = false;
     foreach ($bad_array as $bad) {
         if (strpos($str, $bad) !== false) {

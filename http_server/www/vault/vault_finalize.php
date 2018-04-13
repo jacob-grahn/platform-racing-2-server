@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../queries/users/user_select.php';
+require_once __DIR__ . '/valult_fns.php';
 
 $game_auth_token = find('game_auth_token');
 $kong_user_id = find('kong_user_id');
@@ -64,98 +65,4 @@ try {
     $r = new stdClass();
     $r->error = $e->getMessage();
     echo json_encode($r);
-}
-
-
-
-
-function get_owned_items($api_key, $kong_user_id)
-{
-    $url = 'http://www.kongregate.com/api/user_items.json';
-    $get = array( 'api_key'=>$api_key, 'user_id'=>$kong_user_id );
-    $item_str = curl_get($url, $get);
-    $item_result = json_decode($item_str);
-
-    if (!$item_result->success) {
-        throw new Exception('Could not retrieve a list of your purchased items.');
-    }
-
-    return $item_result->items;
-}
-
-
-
-
-
-function use_item($api_key, $game_auth_token, $kong_user_id, $item_id)
-{
-    $url = 'http://www.kongregate.com/api/use_item.json';
-    $post = array( 'api_key'=>$api_key, 'game_auth_token'=>$game_auth_token, 'user_id'=>$kong_user_id, 'id'=>$item_id );
-    $use_result_str = curl_post($url, $post);
-    $use_result = json_decode($use_result_str);
-
-    if (!$use_result->success) {
-        throw new Exception('Could not use the item.');
-    }
-
-    return $use_result;
-}
-
-
-
-/**
- * Send a POST requst using cURL
- *
- * @param  string $url     to request
- * @param  array  $post    values to send
- * @param  array  $options for cURL
- * @return string
- */
-function curl_post($url, array $post = null, array $options = array())
-{
-    $defaults = array(
-        CURLOPT_POST => 1,
-        CURLOPT_HEADER => 0,
-        CURLOPT_URL => $url,
-        CURLOPT_FRESH_CONNECT => 1,
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_FORBID_REUSE => 1,
-        CURLOPT_TIMEOUT => 4,
-        CURLOPT_POSTFIELDS => http_build_query($post)
-    );
-
-    $ch = curl_init();
-    curl_setopt_array($ch, ($options + $defaults));
-    if (! $result = curl_exec($ch)) {
-        trigger_error(curl_error($ch));
-    }
-    curl_close($ch);
-    return $result;
-}
-
-
-/**
- * Send a GET requst using cURL
- *
- * @param  string $url     to request
- * @param  array  $get     values to send
- * @param  array  $options for cURL
- * @return string
- */
-function curl_get($url, array $get = null, array $options = array())
-{
-    $defaults = array(
-        CURLOPT_URL => $url. (strpos($url, '?') === false ? '?' : ''). http_build_query($get),
-        CURLOPT_HEADER => 0,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 4
-    );
-
-    $ch = curl_init();
-    curl_setopt_array($ch, ($options + $defaults));
-    if (! $result = curl_exec($ch)) {
-        trigger_error(curl_error($ch));
-    }
-    curl_close($ch);
-    return $result;
 }

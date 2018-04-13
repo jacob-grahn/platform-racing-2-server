@@ -1,13 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../../http_server/queries/users/user_select.php';
-require_once __DIR__ . '/../../http_server/queries/users/user_select_by_name.php';
-require_once __DIR__ . '/../../http_server/queries/users/user_update_power.php';
-require_once __DIR__ . '/../../http_server/queries/promotion_logs/promotion_log_count.php';
-require_once __DIR__ . '/../../http_server/queries/promotion_logs/promotion_log_insert.php';
-require_once __DIR__ . '/../../http_server/queries/mod_powers/mod_power_insert.php';
-require_once __DIR__ . '/../../http_server/queries/staff/actions/admin_action_insert.php';
-
 function promote_to_moderator($name, $type, $admin, $promoted)
 {
     global $pdo, $server_name;
@@ -18,11 +10,13 @@ function promote_to_moderator($name, $type, $admin, $promoted)
 
     // sanity check: is the admin valid and online?
     if (!isset($admin)) {
-        output("CRITICAL FAILURE: An invalid user tried to promote $html_name to a $html_type moderator. Stopping the function.");
+        output("CRITICAL FAILURE: An invalid user tried to promote $html_name ".
+            "to a $html_type moderator. Stopping the function.");
         return false;
     }
 
-    // sanity check: if the user isn't an admin on the server or is a server owner, kill the function (2nd line of defense)
+    // sanity check: if the user isn't an admin on the server or is a server owner,
+    // kill the function (2nd line of defense)
     if ((int) $admin->group !== 3 || $admin->server_owner == true) {
         $admin->write("message`Error: You lack the power to promote $html_name to a $html_type moderator.");
         return false;
@@ -30,7 +24,8 @@ function promote_to_moderator($name, $type, $admin, $promoted)
 
     // sanity check: if the user being promoted is an admin, end the function
     if ((int) $promoted->group === 3) {
-        $admin->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
+        $admin->write("message`Error: I'm not sure what would happen if you ".
+            "promoted an admin to a moderator, but it would probably make the world explode.");
         return false;
     }
 
@@ -54,7 +49,8 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     // get info about the user promoting
     $admin_row = user_select($pdo, $admin_id);
 
-    // sanity check: if the user doesn't have proper permission in the db, kill the function (3rd + final line of defense)
+    // sanity check: if the user doesn't have proper permission in the db,
+    // kill the function (3rd + final line of defense)
     if ((int) $admin_row->power !== 3) {
         $admin->write("message`Error: You lack the power to promote $html_name to a $html_type moderator.");
         return false;
@@ -72,7 +68,9 @@ function promote_to_moderator($name, $type, $admin, $promoted)
 
     // sanity check: if the user being promoted is an admin, kill the function
     if ((int) $user_row->power === 3) {
-        $admin->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
+        $admin->write("message`Error: I'm not sure what would happen if you ".
+            "promoted an admin to a moderator, but it would probably make ".
+            "the world explode.");
         return false;
     }
 
@@ -83,7 +81,8 @@ function promote_to_moderator($name, $type, $admin, $promoted)
             // throttle mod promotions
             $recent_promotion_count = promotion_log_count($pdo, $min_time);
             if ($recent_promotion_count > 0) {
-                throw new Exception('Someone has already been promoted to a moderator recently. Wait a bit before trying to promote again.');
+                throw new Exception('Someone has already been promoted to a '.
+                    'moderator recently. Wait a bit before trying to promote again.');
             }
 
             // log the power change
@@ -115,7 +114,13 @@ function promote_to_moderator($name, $type, $admin, $promoted)
             $promoted_name = $name;
 
             // log action in action log
-            admin_action_insert($pdo, $admin_id, "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name.", $admin_id, $ip);
+            admin_action_insert(
+                $pdo,
+                $admin_id,
+                "$admin_name promoted $promoted_name to a $type moderator from $ip on $server_name.",
+                $admin_id,
+                $ip
+            );
 
             // make the server reflect the changes
             if (isset($promoted)) {

@@ -50,12 +50,19 @@ try {
     $name = $mod->name;
     $user_id = $mod->user_id;
     $ip = $mod->ip;
-    
+
     //record the change
-    mod_action_insert($pdo, $user_id, "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}", 0, $ip);
-    
+    mod_action_insert(
+        $pdo,
+        $user_id,
+        "$name unpublished level $level_id from $ip {level_title: $l_title, creator: $l_creator, level_note: $l_note}",
+        0,
+        $ip
+    );
+
     //tell it to the world
-    die('message=This level has been removed successfully. It may take up to 60 seconds for this change to take effect.');
+    die('message=This level has been removed successfully. It may take up to 60 '.
+        'seconds for this change to take effect.');
 } catch (Exception $e) {
     $error = $e->getMessage();
     die("error=$error");

@@ -1,9 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../../../http_server/queries/artifact_locations/artifact_location_update_first_finder.php';
-require_once __DIR__ . '/../../../http_server/queries/artifact_locations/artifact_location_select.php';
-require_once __DIR__ . '/../../../http_server/queries/messages/message_insert.php';
-
 function save_first_finder($pdo, $player)
 {
     $user_id = $player->user_id;
@@ -36,7 +32,8 @@ function save_first_finder($pdo, $player)
     // pm the user (finishing touch!)
     $html_user_name = htmlspecialchars($player->name);
     $artifact_first_pm = "Dear $html_user_name,\n\n"
-        ."Congratulations for finding the artifact first! To commemorate this momentous occasion, you've been awarded with your very own bubble set.\n\n"
+        ."Congratulations for finding the artifact first! To commemorate this "
+        ."momentous occasion, you've been awarded with your very own bubble set.\n\n"
         ."Thanks for playing Platform Racing 2!\n\n"
         ."- Jiggmin";
 

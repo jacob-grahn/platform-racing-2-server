@@ -18,11 +18,18 @@ try {
     // check referrer
     $ref = check_ref();
     if ($ref !== true && $ref != '') {
-        throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only set the artifact from an approved site such as pr2hub.com.");
+        throw new Exception("It looks like you're using PR2 from a third-party ".
+            "website. For security reasons, you may only set the artifact ".
+            "from an approved site such as pr2hub.com.");
     }
 
     // rate limiting
-    rate_limit('place-artifact-attempt-'.$ip, 30, 1, "Please wait at least 30 seconds before trying to set a new artifact location again.");
+    rate_limit(
+        'place-artifact-attempt-'.$ip,
+        30,
+        1,
+        "Please wait at least 30 seconds before trying to set a new artifact location again."
+    );
 
     // connect
     $pdo = pdo_connect();
@@ -32,8 +39,18 @@ try {
 
     // more rate limiting
     if ($user_id != 1) {
-        rate_limit('place-artifact-'.$ip, 3600, 10, "The artifact can only be placed a maximum of 10 times per hour. Try again later.");
-        rate_limit('place-artifact-'.$user_id, 3600, 10, "The artifact can only be placed a maximum of 10 times per hour. Try again later.");
+        rate_limit(
+            'place-artifact-'.$ip,
+            3600,
+            10,
+            "The artifact can only be placed a maximum of 10 times per hour. Try again later."
+        );
+        rate_limit(
+            'place-artifact-'.$user_id,
+            3600,
+            10,
+            "The artifact can only be placed a maximum of 10 times per hour. Try again later."
+        );
     }
 
     // sanity check: are they Fred?

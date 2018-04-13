@@ -43,7 +43,7 @@ try {
 
     // rate limiting
     rate_limit('submit-rating-'.$user_id, 5, 2);
-    
+
     // see if they made the level
     $is_creator = level_check_if_creator($pdo, $user_id, $level_id);
     if ($is_creator === true) {
@@ -105,7 +105,8 @@ try {
     if ($old_rating == 0) {
         echo "Your vote of $new_rating changed the average rating from $old to $new.";
     } else {
-        echo "You changed your vote from $old_rating to $new_rating, which changed the average rating from $old to $new.";
+        echo "You changed your vote from $old_rating to $new_rating, which ".
+            "changed the average rating from $old to $new.";
     }
 } catch (Exception $e) {
     $error = $e->getMessage();

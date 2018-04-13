@@ -1409,7 +1409,7 @@ class Player
             $this->game_room->removePlayer($this);
         }
         if (isset($this->course_box)) {
-            $this->course_box->clear_slot($this);
+            $this->course_box->clearSlot($this);
         }
 
         //save info

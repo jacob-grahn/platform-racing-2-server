@@ -113,7 +113,21 @@ try {
 
         //backup the file that is about to be overwritten
         if (($time - $org_time) > (60*60*24*14)) {
-            backup_level($pdo, $s3, $user_id, $org_level_id, $org_version-1, $title, $org_live, $org_rating, $org_votes, $org_note, $org_min_level, $org_song, $org_play_count);
+            backup_level(
+                $pdo,
+                $s3,
+                $user_id,
+                $org_level_id,
+                $org_version-1,
+                $title,
+                $org_live,
+                $org_rating,
+                $org_votes,
+                $org_note,
+                $org_min_level,
+                $org_song,
+                $org_play_count
+            );
         }
 
         // update existing level
@@ -135,7 +149,8 @@ try {
     //create the save string
     $url_note = str_replace('&', '%26', $note);
     $url_title = str_replace('&', '%26', $title);
-    $str = "level_id=$level_id&version=$version&user_id=$user_id&credits=&cowboyChance=$cowboy_chance&title=$url_title&time=$time"
+    $str = "level_id=$level_id&version=$version&user_id=$user_id&credits="
+    ."&cowboyChance=$cowboy_chance&title=$url_title&time=$time"
     ."&note=$url_note&min_level=$min_level&song=$song&gravity=$gravity&max_time=$max_time"
     ."&has_pass=$has_pass&live=$live&items=$items&gameMode=$game_mode"
     ."&data=$data";
@@ -152,12 +167,29 @@ try {
 
 
     //save the new file to the backup system
-    backup_level($pdo, $s3, $user_id, $level_id, $version, $title, $live, $org_rating, $org_votes, $note, $min_level, $song, $org_play_count);
+    backup_level(
+        $pdo,
+        $s3,
+        $user_id,
+        $level_id,
+        $version,
+        $title,
+        $live,
+        $org_rating,
+        $org_votes,
+        $note,
+        $min_level,
+        $song,
+        $org_play_count
+    );
 
 
     //tell every one it's time to party
     if ($on_success == 'pass set with live') {
-        echo 'message=The save was successful, but since you set a password, your level has been left unpublished. If you wish to publish your level, remove the password and check the box to publish the level.';
+        echo 'message=The save was successful, but since you set a password, '.
+            'your level has been left unpublished. If you wish to publish '.
+            'your level, remove the password and check the box to publish '.
+            'the level.';
     } else {
         echo 'message=The save was successful.';
     }
