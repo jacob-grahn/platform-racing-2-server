@@ -9,7 +9,7 @@ class LoiterDetector
     private static $level_lists = array();
 
 
-    public static function add_level_list($level_list)
+    public static function addLevelList($level_list)
     {
         array_push(self::$level_lists, $level_list);
     }
@@ -35,7 +35,7 @@ class LoiterDetector
                             }
                             self::$loitering_ips[$ip] += 2;
                             if (self::$loitering_ips[$ip] > 30) {
-                                self::stop_loiterer($ip);
+                                self::stopLoiterer($ip);
                             }
                         }
                     }
@@ -45,9 +45,9 @@ class LoiterDetector
     }
 
 
-    public static function stop_loiterer($ip)
+    public static function stopLoiterer($ip)
     {
-        output("LoiterDetector::stop_loiterer $ip");
+        output("LoiterDetector::stopLoiterer $ip");
         foreach (self::$level_lists as $level_list) {
             foreach ($level_list->player_array as $player) {
                 if ($player->ip === $ip) {

@@ -171,7 +171,7 @@ class Game extends Room
         // campaign prizes
         if (isset($this->campaign)) {
             $campaign_prize = Prizes::find($this->campaign->prize_type, $this->campaign->prize_id);
-            if ($player_count >= 4 || (isset($campaign_prize) && $campaign_prize->is_universal())) {
+            if ($player_count >= 4 || (isset($campaign_prize) && $campaign_prize->isUniversal())) {
                 $this->prize = $campaign_prize;
             }
         }
@@ -261,7 +261,7 @@ class Game extends Room
 
         // tell the world
         if (isset($this->prize)) {
-            $this->sendToAll('setPrize`'.$this->prize->to_str());
+            $this->sendToAll('setPrize`'.$this->prize->toStr());
         }
     }
 
@@ -474,15 +474,15 @@ class Game extends Room
             if ($this->course_id == self::LEVEL_BUTO && $player->wearingHat(Hats::JIGG)) {
                 $prize = Prizes::$JIGG_HAT;
             }
-            if (isset($this->prize) && ($place == 0 || $this->prize->is_universal())) {
+            if (isset($this->prize) && ($place == 0 || $this->prize->isUniversal())) {
                 $prize = $this->prize;
             }
 
             if (isset($prize)) {
-                $autoset = ( $prize->get_type() == 'hat' );
-                $result = $player->gainPart($prize->get_type(), $prize->get_id(), $autoset);
+                $autoset = ( $prize->getType() == 'hat' );
+                $result = $player->gainPart($prize->getType(), $prize->getId(), $autoset);
                 if ($result == true) {
-                    $player->write('winPrize`' . $prize->to_str());
+                    $player->write('winPrize`' . $prize->toStr());
                 }
             }
 
@@ -789,7 +789,7 @@ class Game extends Room
     private function giveGp($player, $wearing_moon = false, $multiplier = 1)
     {
         $user_id = $player->user_id;
-        $prev_gp = GuildPoints::get_previous_gp($user_id, $this->course_id);
+        $prev_gp = GuildPoints::getPreviousGP($user_id, $this->course_id);
         $earned_gp = floor($player->race_stats->finish_time / 60 * count($this->player_array) / 4) * $multiplier;
         if ($earned_gp <= 0 && $wearing_moon === true) {
             $earned_gp += 1; // give at least 1 lux for moon hat users

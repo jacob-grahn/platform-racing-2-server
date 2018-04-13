@@ -23,25 +23,25 @@ class Prize
     }
 
 
-    public function get_type()
+    public function getType()
     {
         return( $this->type );
     }
 
 
-    public function get_id()
+    public function getId()
     {
         return( $this->id );
     }
 
 
-    public function is_universal()
+    public function isUniversal()
     {
         return( $this->universal );
     }
 
 
-    public function to_obj()
+    public function toObj()
     {
         $obj = new stdClass();
         $obj->type = $this->type;
@@ -53,9 +53,9 @@ class Prize
     }
 
 
-    public function to_str()
+    public function toStr()
     {
-        $obj = $this->to_obj();
+        $obj = $this->toObj();
         $str = json_encode($obj);
         return $str;
     }

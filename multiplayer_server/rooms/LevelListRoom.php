@@ -11,7 +11,7 @@ class LevelListRoom extends Room
 
     public function __construct()
     {
-        LoiterDetector::add_level_list($this);
+        LoiterDetector::addLevelList($this);
     }
 
 

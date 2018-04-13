@@ -9,7 +9,11 @@ function promote_server_mod($name, $owner, $promoted)
     $safe_name = htmlspecialchars($name);
 
     // if the user doesn't own the server, kill the function (2nd line of defense)
-    if ($owner->group < 3 || $owner->server_owner == false || $owner->user_id != $guild_owner || $owner->user_id == 4291976) {
+    if ($owner->group < 3 ||
+        $owner->server_owner == false ||
+        $owner->user_id != $guild_owner ||
+        $owner->user_id == 4291976
+    ) {
         $owner->write("message`Error: You lack the power to promote $safe_name to a server moderator.");
         return false;
     }
@@ -22,7 +26,9 @@ function promote_server_mod($name, $owner, $promoted)
 
     // sanity check: is the user being promoted already a staff member?
     if ($promoted->group >= 2 && $promoted->temp_mod == false) {
-        $owner->write("message`Error: I'm not sure what would happen if you promoted a staff member to a server moderator, but it would probably make the world explode.");
+        $owner->write("message`Error: I'm not sure what would happen if you ".
+            "promoted a staff member to a server moderator, but it would ".
+            "probably make the world explode.");
         return false;
     }
 
@@ -34,16 +40,23 @@ function promote_server_mod($name, $owner, $promoted)
 
     // if the person being promoted is an admin, kill the function
     if ($promoted->group == 3) {
-        $owner->write("message`Error: I'm not sure what would happen if you promoted an admin to a moderator, but it would probably make the world explode.");
+        $owner->write("message`Error: I'm not sure what would happen if you ".
+            "promoted an admin to a moderator, but it would probably make ".
+            "the world explode.");
         return false;
     }
 
     // if they're the server owner and have gotten this far, promote the user to a server mod
     if ($owner->server_owner == true) {
         $promoted->becomeTempMod();
-        $owner->write("message`$name has been promoted to a server moderator! They'll remain a moderator until you type /demod *their name* or until they log out.");
+        $owner->write("message`$name has been promoted to a server moderator! ".
+            "They'll remain a moderator until you type /demod *their name* ".
+            "or until they log out.");
         if (isset($owner->chat_room)) {
-            $owner->chat_room->sendChat("systemChat`$safe_owner has promoted $safe_name to a server moderator! Your private peace-keeping is greatly appreciated! You'll have your mod powers until you log out or are demoted.");
+            $owner->chat_room->sendChat("systemChat`$safe_owner has promoted ".
+                "$safe_name to a server moderator! Your private peace-keeping is ".
+                "greatly appreciated! You'll have your mod powers until you log ".
+                "out or are demoted.");
         }
         return true;
     }

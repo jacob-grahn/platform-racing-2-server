@@ -32,7 +32,7 @@ class LocalBans
     }
 
 
-    public static function is_banned($user_name)
+    public static function isBanned($user_name)
     {
         $match = false;
         foreach (self::$arr as $ban) {
@@ -45,7 +45,7 @@ class LocalBans
     }
 
 
-    public static function remove_expired()
+    public static function removeExpired()
     {
         $time = time();
         $len = count(self::$arr);

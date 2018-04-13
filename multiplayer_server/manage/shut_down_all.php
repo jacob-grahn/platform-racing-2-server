@@ -24,7 +24,10 @@ $servers = servers_select($pdo);
 foreach ($servers as $server) {
     output($server->server_name);
 
-    if ((($mode == 'inactive' && $server->active == 0) || ($mode == 'active' && $server->active == 1) || ($mode == 'all'))) {
+    if (($mode == 'inactive' && $server->active == 0) ||
+        ($mode == 'active' && $server->active == 1) ||
+        ($mode == 'all')
+    ) {
         echo "Shutting down $server->server_name ($server->server_id)";
         try {
             $reply = talk_to_server('localhost', $server->port, $server->salt, 'shut_down`', true);

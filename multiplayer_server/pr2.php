@@ -10,13 +10,18 @@ require_once __DIR__ . '/../env.php';
 require_once __DIR__ . '/../http_server/fns/pdo_connect.php';
 require_once __DIR__ . '/../vend/socket/index.php';
 
+require_once __DIR__ . '/../http_server/queries/artifact_locations/artifact_location_select.php';
+require_once __DIR__ . '/../http_server/queries/campaign/campaign_select.php';
+require_once __DIR__ . '/../http_server/queries/epic_upgrades/epic_upgrades_upsert.php';
+require_once __DIR__ . '/../http_server/queries/exp_today/exp_today_add.php';
+require_once __DIR__ . '/../http_server/queries/guilds/guild_select.php';
+require_once __DIR__ . '/../http_server/queries/pr2/pr2_update.php';
+require_once __DIR__ . '/../http_server/queries/purchases/purchases_select_recent.php';
+require_once __DIR__ . '/../http_server/queries/rank_tokens/rank_token_update.php';
 require_once __DIR__ . '/../http_server/queries/staff/actions/admin_action_insert.php';
 require_once __DIR__ . '/../http_server/queries/staff/actions/mod_action_insert.php';
-require_once __DIR__ . '/../http_server/queries/pr2/pr2_update.php';
-require_once __DIR__ . '/../http_server/queries/epic_upgrades/epic_upgrades_upsert.php';
+require_once __DIR__ . '/../http_server/queries/servers/server_select.php';
 require_once __DIR__ . '/../http_server/queries/users/user_update_status.php';
-require_once __DIR__ . '/../http_server/queries/rank_tokens/rank_token_update.php';
-require_once __DIR__ . '/../http_server/queries/exp_today/exp_today_add.php';
 
 require_once __DIR__ . '/fns/artifact/save_finder.php';
 require_once __DIR__ . '/fns/data_fns.php';
@@ -109,6 +114,8 @@ $search_room = new \pr2\multi\LevelListRoom();
 
 $max_players = 200;
 $min_version = .60;
+
+HappyHour::$random_hour = rand(0, 36);
 
 $pdo = pdo_connect();
 

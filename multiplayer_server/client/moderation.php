@@ -65,7 +65,7 @@ function client_unkick($socket, $data)
 
     // if the player actually has the power to do what they're trying to do, then do it
     if (($mod->group >= 2 && $mod->temp_mod === false) || $mod->server_owner === true) {
-        if (\pr2\multi\LocalBans::is_banned($name) === true) {
+        if (\pr2\multi\LocalBans::isBanned($name) === true) {
             \pr2\multi\LocalBans::remove($name);
 
             // unkick them, yo

@@ -21,7 +21,7 @@ class Hats
     const ARTIFACT = 14;
 
 
-    public static function id_to_str($id)
+    public static function idToStr($id)
     {
         $str = 'Unknown';
 
@@ -59,10 +59,11 @@ class Hats
     }
 
 
-    public static function str_to_id($str)
+    public static function strToId($str)
     {
         $str = strtolower($str);
         $id = 1;
+        $jump_start = ['start', 'jump', 'jumpstart', 'jump_start', Hats::JUMP_START];
 
         if ($str == 'none' || $str == 'n' || $str == '' || $str == Hats::NONE) {
             $id = Hats::NONE;
@@ -82,7 +83,7 @@ class Hats
             $id = Hats::PARTY;
         } elseif ($str == 'top' || $str == 'top_hat' || $str == 'tophat' || $str == Hats::TOP_HAT) {
             $id = Hats::TOP_HAT;
-        } elseif ($str == 'start' || $str == 'jump' || $str == 'jumpstart' || $str == 'jump_start' || $str == Hats::JUMP_START) {
+        } elseif (array_search($str, $jump_start) !== false) {
             $id = Hats::JUMP_START;
         } elseif ($str == 'moon' || $str == 'm' || $str == 'luna' || $str == Hats::MOON) {
             $id = Hats::MOON;

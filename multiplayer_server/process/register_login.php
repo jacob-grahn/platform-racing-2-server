@@ -32,7 +32,7 @@ function process_register_login($server_socket, $data)
                     'It has been logged out to save your data. Please log in again.');
                 $socket->close();
                 $socket->onDisconnect();
-            } elseif (\pr2\multi\LocalBans::is_banned($login_obj->user->name)) {
+            } elseif (\pr2\multi\LocalBans::isBanned($login_obj->user->name)) {
                 $socket->write('message`You have been kicked from this server for 30 minutes.');
                 $socket->close();
                 $socket->onDisconnect();

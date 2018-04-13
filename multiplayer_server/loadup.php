@@ -1,11 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../http_server/queries/servers/server_select.php';
-require_once __DIR__ . '/../http_server/queries/campaign/campaign_select.php';
-require_once __DIR__ . '/../http_server/queries/purchases/purchases_select_recent.php';
-require_once __DIR__ . '/../http_server/queries/artifact_locations/artifact_location_select.php';
-require_once __DIR__ . '/../http_server/queries/guilds/guild_select.php';
-
 
 function begin_loadup($server_id)
 {

@@ -10,7 +10,7 @@ class GuildPoints
 
     public static function submit($user_id, $level_id, $gp)
     {
-        $obj = self::id_to_obj($user_id);
+        $obj = self::idToObj($user_id);
         $obj->gp += $gp;
         if (isset($obj->levels[ $level_id ])) {
             $obj->levels[ $level_id ] += $gp;
@@ -20,9 +20,9 @@ class GuildPoints
     }
 
 
-    public static function get_previous_gp($user_id, $level_id)
+    public static function getPreviousGP($user_id, $level_id)
     {
-        $obj = self::id_to_obj($user_id);
+        $obj = self::idToObj($user_id);
         $prev_gp = 0;
         if (isset($obj->levels[ $level_id ])) {
             $prev_gp = $obj->levels[ $level_id ];
@@ -50,7 +50,7 @@ class GuildPoints
     }
 
 
-    private static function id_to_obj($user_id)
+    private static function idToObj($user_id)
     {
         if (!isset(self::$arr[ $user_id ])) {
             $obj = new stdClass();
