@@ -78,6 +78,7 @@ while ($hide_characters > 0) {
 $r = new stdClass();
 $r->hint = join('', $arr);
 $r->finder_name = $finder_name;
+$r->updated_time = $updated_time;
 $r_str = json_encode($r);
 
 file_put_contents(__DIR__ . '/../www/files/artifact_hint.txt', $r_str);
