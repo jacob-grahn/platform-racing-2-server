@@ -41,10 +41,6 @@ abstract class SocketClient extends Socket
 
     public function write($buffer, $length = 4096)
     {
-        if (substr($buffer, -1, 1) != chr(0x00)) {
-            $buffer.=chr(0x00);
-        }
-
         $this->write_buffer .= $buffer;
         $this->doWrite();
     }

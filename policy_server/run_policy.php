@@ -12,7 +12,7 @@ require_once(__DIR__ . '../vend/socket/index.php');
 require_once(__DIR__ . '/server.php');
 require_once(__DIR__ . '/server_client.php');
 
-//start the socket server
+// start the socket server
 $daemon = new \chabot\SocketDaemon();
 $server = $daemon->createServer('jiggmin\ps\server', 'jiggmin\ps\serverClient', 0, 843);
 $daemon->process();

@@ -193,7 +193,7 @@ function client_un_ignore_user($socket, $data)
 
 
 //-- award kong outfit -------------------------------------------------------------------
-function client_awardKongOutfit($socket)
+function client_award_kong_outfit($socket)
 {
     $player = $socket->getPlayer();
     $player->awardKongOutfit();

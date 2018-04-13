@@ -7,10 +7,8 @@ class ServerClient extends \chabot\SocketServerClient
 
     public function onRead()
     {
-        //echo "recieved: ".$this->read_buffer."\n";
         if ($this->read_buffer == '<policy-file-request/>'.chr(0x00)) {
             $this->read_buffer = '';
-            //echo "writing... \n";
             $this->write(get_policy_file().chr(0x00));
         } elseif (strpos($this->read_buffer, 'status')  !== false) {
             $this->read_buffer = '';

@@ -9,6 +9,7 @@ class PR2Client extends \chabot\SocketServerClient
     private $subtracted_ip = false;
 
     private $rec_num = -1;
+    private $send_num = 0;
     public $last_user_action = 0;
     public $last_action = 0;
     public $login_id;
@@ -85,7 +86,7 @@ class PR2Client extends \chabot\SocketServerClient
             $this->write_buffer = '<cross-domain-policy>'.
                 '<allow-access-from domain="*" to-ports="*" />'.
                 '</cross-domain-policy>'.chr(0x00);
-            $this->do_write();
+            $this->doWrite();
         }
 
         // breaks the buffer up into distinct commands
@@ -104,6 +105,19 @@ class PR2Client extends \chabot\SocketServerClient
             $this->close();
             $this->onDisconnect();
         }
+    }
+
+    public function write($buffer, $length = 4096)
+    {
+        if(!$this->process){
+			$buffer = $this->send_num.'`'.$buffer;
+			$str_to_hash = $this->key . $buffer;
+			$hash_bit = substr(md5($str_to_hash), 0, 3);
+			$buffer = $hash_bit.'`'.$buffer;
+		}
+		$buffer .= chr(0x04);
+		parent::write($buffer, $length);
+		$this->send_num++;
     }
 
     public function onConnect()
