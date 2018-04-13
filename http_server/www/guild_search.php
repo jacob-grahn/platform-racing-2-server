@@ -22,7 +22,7 @@ try {
 
     // sanity check: is any data entered?
     if (is_empty($guild_name) && is_empty($guild_id, false)) {
-        output_search();
+        output_guild_search();
         output_footer();
         die();
     }
@@ -64,7 +64,7 @@ try {
     }
 
     // output the search box
-    output_search($guild_name, $guild_id, $mode);
+    output_guild_search($guild_name, $guild_id, $mode);
 
     // display guild info
     echo "<br>-- <b>$guild_name</b> --<br>";
@@ -74,7 +74,9 @@ try {
     echo '<br>'
         ."<img src='https://pr2hub.com/emblems/$emblem'>"
         .'<br><br>'
-        ."Owner: <a href='player_search.php?name=$owner_url_name' style='color: #$owner_color; text-decoration: underline;'>$owner_name</a><br>"
+        ."Owner: <a href='player_search.php?name=$owner_url_name'
+                    style='color: #$owner_color; text-decoration: underline;'>$owner_name
+                 </a><br>"
         ."Members: $member_count <br>" // | Active: $active_count
         ."GP Today: $gp_today | GP Total: $gp_total<br>"
         ."Created: $creation_date<br>"
@@ -110,8 +112,10 @@ try {
             }
 
             // member name column
-            echo "<a href='player_search.php?name=$member_url_name' style='color: #$member_color; text-decoration: underline;'>$member_name</a>"
-                .'</td>';
+            echo "<a href='player_search.php?name=$member_url_name'
+                     style='color: #$member_color; text-decoration: underline;'>
+                     $member_name
+                 </a></td>";
 
             // gp today column
             echo '<td>'
@@ -139,82 +143,7 @@ try {
     output_footer();
 } catch (Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
-    output_search($guild_name, $guild_id);
+    output_guild_search($guild_name, $guild_id);
     echo "<br><i>Error: $safe_error</i><br>";
     output_footer();
-}
-
-function output_search($guild_name = '', $guild_id = '', $mode = null)
-{
-    $guild_id = (int) $guild_id;
-
-    // choose which one to set after searching
-    $id_display = 'none';
-    $name_display = 'none';
-    $id_checked = '';
-    $name_checked = '';
-    switch ($mode) {
-        case 'id':
-            $id_display = 'block';
-            $id_checked = 'checked="checked"';
-            break;
-        case 'name':
-            $name_display = 'block';
-            $name_checked = 'checked="checked"';
-            break;
-    }
-
-    // check if values passed are empty
-    if (is_empty($guild_name)) {
-        $guild_name = '';
-    }
-    if (is_empty($guild_id, false)) {
-        $guild_id = '';
-    }
-
-    // center
-    echo '<center>';
-
-    // gwibble, spacing
-    echo '<font face="Gwibble" class="gwibble">-- Guild Search --</font><br><br>';
-
-    // javascript to show/hide the name/id textboxes
-    echo '<script>
-              function name_id_check() {
-                  if (document.getElementById("nameradio").checked) {
-                      document.getElementById("nameform").style.display = "block";
-                      document.getElementById("idform").style.display = "none";
-                  }
-                  else if (document.getElementById("idradio").checked) {
-                  document.getElementById("idform").style.display = "block";
-                  document.getElementById("nameform").style.display = "none";
-                  }
-              }
-          </script>';
-
-    // search type selection
-    echo 'Search by: '
-        ."<input type='radio' onclick='name_id_check()' id='nameradio' name='typeRadio' $name_checked> Name "
-        ."<input type='radio' onclick='name_id_check()' id='idradio' name='typeRadio' $id_checked> ID"
-        .'<br>';
-
-    // name form
-    $html_guild_name = htmlspecialchars($guild_name);
-    echo "<div id='nameform' style='display:$name_display'><br>
-              <form method='get'>
-                  Name: <input type='text' name='name' value='$html_guild_name'>
-                        <input type='submit' value='Search'>
-              </form>
-          </div>";
-
-    // id form
-    echo "<div id='idform' style='display:$id_display'><br>
-              <form method='get'>
-                  ID: <input type='text' name='id' oninput=\"this.value = this.value.replace(/[^0-9.]/g, \'\').replace(/(\..*)\./g, \'$1\');\" value='$guild_id'>
-                      <input type='submit' value='Search'>
-              </form>
-          </div>";
-
-    // end center
-    echo '</center>';
 }

@@ -64,7 +64,8 @@ try {
         throw new Exception('Login data not recieved.');
     }
     if (array_search($version, $allowed_versions) === false) {
-        throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to download the latest version.');
+        throw new Exception('Platform Racing 2 has recently been updated.
+            Please refresh your browser to download the latest version.');
     }
 
     // rate limiting
@@ -88,7 +89,9 @@ try {
 
     // more sanity checks
     if (array_search($version2, $allowed_versions) === false) {
-        throw new Exception('Platform Racing 2 has recently been updated. Please refresh your browser to download the latest version. [Version check 2] ' . $version2);
+        throw new Exception('Platform Racing 2 has recently been updated.
+            Please refresh your browser to download the latest version.
+            [Version check 2] ' . $version2);
     }
     if ($origination_domain == 'local') {
         throw new Exception('Testing mode has been disabled.');
@@ -141,7 +144,9 @@ try {
 
     // sanity check: is the entered name and the one retrieved from the database identical?
     // this won't be triggered unless some real funny business is going on
-    if (($token_login === false || !is_empty($login->user_name)) && strtolower($login->user_name) !== strtolower($user_name)) {
+    if (($token_login === false || !is_empty($login->user_name)) &&
+        strtolower($login->user_name) !== strtolower($user_name)
+    ) {
         throw new Exception("The names don't match. If this error persists, contact a member of the PR2 Staff Team.");
     }
 
@@ -334,16 +339,7 @@ try {
     $reply->userId = $user_id;
 
     // allowed domain check
-    $ref = check_ref();
-    if ($ref !== true) {
-        $reply->message = "It looks like you're using PR2 from a third-party website. For security reasons, some game features may be disabled. To access a version of the game with all features available to you, play from an approved site such as pr2hub.com.";
-    } // DEBUGGING
-    elseif ($is_bls === true) {
-        $server->salt = "pepper"; // i prefer pepper with my data
-        $send->server = $server; // put the updated val back in the $server var
-        $str = "register_login`" . json_encode($send); // make it readable
-        $reply->message = $str; // tell me
-    }
+    require_trusted_ref();
 
     // tell the user
     echo json_encode($reply);
@@ -351,14 +347,4 @@ try {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
-}
-
-function add_item(&$arr, $item)
-{
-    if (array_search($item, $arr) === false) {
-        $arr[] = $item;
-        return true;
-    } else {
-        return false;
-    }
 }

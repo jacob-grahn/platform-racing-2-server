@@ -1,5 +1,28 @@
 <?php
 
+// check if player has an epic color option for a part
+function test_epic($color, $arr_str, $part)
+{
+    $ret = -1;
+    if (isset($arr_str) && strlen($arr_str) > 0) {
+        $arr = explode(',', $arr_str);
+        if (array_search($part, $arr) !== false || array_search('*', $arr) !== false) {
+            $ret = $color;
+        }
+    }
+    return $ret;
+}
+
+
+function add_item(&$arr, $item)
+{
+    if (array_search($item, $arr) === false) {
+        $arr[] = $item;
+        return true;
+    } else {
+        return false;
+    }
+}
 
 // tries to pull a variable from the $_GET or $_POST array
 // if it is not present, the default is used
@@ -169,20 +192,27 @@ function is_empty($str, $incl_zero = true)
     return false;
 }
 
-function check_ref()
+function is_trusted_ref()
 {
     $ref = $_SERVER['HTTP_REFERER'];
-    if (strpos($ref, 'http://pr2hub.com/') !== 0
-        && strpos($ref, 'https://pr2hub.com/') !== 0
-        && strpos($ref, 'http://cdn.jiggmin.com/') !== 0
-        && strpos($ref, 'http://chat.kongregate.com/') !== 0
-        && strpos($ref, 'http://external.kongregate-games.com/gamez/') !== 0
-        && strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') !== 0
-        && strpos($ref, 'http://game10110.konggames.com/games/Jiggmin/platform-racing-2') !== 0
-    ) {
-        return $ref;
+    return (strpos($ref, 'http://pr2hub.com/') === 0
+        || strpos($ref, 'https://pr2hub.com/') === 0
+        || strpos($ref, 'http://cdn.jiggmin.com/') === 0
+        || strpos($ref, 'http://chat.kongregate.com/') === 0
+        || strpos($ref, 'http://external.kongregate-games.com/gamez/') === 0
+        || strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') === 0
+        || strpos($ref, 'http://game10110.konggames.com/games/Jiggmin/platform-racing-2') === 0
+    );
+}
+
+
+function require_trusted_ref()
+{
+    if (!is_trusted_ref()) {
+        throw new Exception("It looks like you're using PR2 from a third-party
+            website. For security reasons, you may only message your guild
+            from an approved site such as pr2hub.com.");
     }
-    return true;
 }
 
 
@@ -284,11 +314,7 @@ require_once __DIR__ . '/../queries/users/user_select_mod.php';
 function check_moderator($pdo, $check_ref = true, $min_power = 2)
 {
     if ($check_ref) {
-        $ref = check_ref();
-        if ($ref !== true) {
-            $safe_ref = htmlspecialchars($ref);
-            throw new Exception("Incorrect referrer. The referrer is: $safe_ref");
-        }
+        require_trusted_ref();
     }
 
     $user_id = token_login($pdo);

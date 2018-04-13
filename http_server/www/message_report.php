@@ -30,7 +30,7 @@ try {
     // more rate limiting
     rate_limit('message-report-'.$user_id, 5, 2, "Please wait at least 5 seconds before trying to report another PM.");
     rate_limit('message-report-'.$user_id, 60, 5);
-    
+
     // check if the message was already reported
     $repeat = messages_reported_check_existing($pdo, $message_id);
     if ($repeat === true) {
@@ -47,7 +47,17 @@ try {
     }
 
     // insert the message into the reported messages table
-    messages_reported_insert($pdo, $message->to_user_id, $message->from_user_id, $ip, $message->ip, $message->time, time(), $message_id, $message->message);
+    messages_reported_insert(
+        $pdo,
+        $message->to_user_id,
+        $message->from_user_id,
+        $ip,
+        $message->ip,
+        $message->time,
+        time(),
+        $message_id,
+        $message->message
+    );
 
     // tell it to the world
     echo 'message=The message was reported successfully!';

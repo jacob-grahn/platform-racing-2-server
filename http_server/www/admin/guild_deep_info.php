@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/guilds/guild_select.php';
 require_once __DIR__ . '/../../queries/guilds/guild_select_members.php';
 require_once __DIR__ . '/../../queries/guild_transfers/guild_transfers_select_by_guild.php';
+require_once __DIR__ . '/guild_deep_info_fns.php';
 
 $guild_id = find('guild_id', 0);
 
@@ -12,7 +13,7 @@ try {
     // rate limiting
     rate_limit('guild-deep-info-'.$ip, 60, 10, 'Wait a bit before searching again.');
     rate_limit('guild-deep-info-'.$ip, 5, 2);
-    
+
     //connect
     $pdo = pdo_connect();
 
@@ -49,31 +50,4 @@ try {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
     output_footer();
-}
-
-function output_objects($objs)
-{
-    if ($objs !== false) {
-        foreach ($objs as $obj) {
-            output_object($obj, ', ');
-            echo '<br/>';
-        }
-    }
-}
-
-function output_object($obj, $sep = '<br/>')
-{
-    if ($obj !== false) {
-        foreach ($obj as $var => $val) {
-            if ($var == 'name') {
-                $safe_val = htmlspecialchars($val);
-                $url_val = urlencode($val);
-                $val = "<a href='player_deep_info.php?name1=$url_val'>$safe_val</a>";
-                echo "$var: $val".$sep;
-            }
-            if ($var != 'guild_id' && $var != 'name') {
-                echo "$var: ".htmlspecialchars($val)."$sep";
-            }
-        }
-    }
 }

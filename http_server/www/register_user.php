@@ -21,11 +21,7 @@ try {
     }
 
     // check referrer
-    $ref = check_ref();
-    if ($ref !== true) {
-        throw new Exception("It looks like you're using PR2 from a third-party website. ".
-            "For security reasons, you may only register a new account from an approved site such as pr2hub.com.");
-    }
+    require_trusted_ref();
 
     // rate limiting (check if the IP address is spamming)
     rate_limit(

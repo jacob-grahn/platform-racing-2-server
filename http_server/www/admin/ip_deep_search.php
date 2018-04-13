@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/staff/admin/users_count_from_ip_expanded.php';
 require_once __DIR__ . '/../../queries/staff/admin/users_select_by_ip_expanded.php';
+require_once __DIR__ . '/ip_deep_search_fns.php';
 
 $ip = default_get('ip', '');
 $html_ip = htmlspecialchars($ip);
@@ -11,46 +12,13 @@ $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
-// this will echo the search box when called
-function output_search($ip = '', $incl_br = true)
-{
-    echo "<form name='input' action='' method='get'>";
-    echo "IP: <input type='text' name='ip' value='$ip'>&nbsp;";
-    echo "<input type='submit' value='Search'></form>";
-    if ($incl_br) {
-        echo "<br>";
-    }
-}
-
-// this will echo and control page counts when called
-function output_pagination($start, $count, $ip, $is_end = false)
-{
-    $url_name = htmlspecialchars(urlencode($ip));
-    $next_start_num = $start + $count;
-    $last_start_num = $start - $count;
-    if ($last_start_num < 0) {
-        $last_start_num = 0;
-    }
-    echo('<p>');
-    if ($start > 0) {
-        echo("<a href='?ip=$url_name&start=$last_start_num&count=$count'><- Last</a> |");
-    } else {
-        echo('<- Last |');
-    }
-    if ($is_end === true) {
-        echo(" Next ->");
-    } else {
-        echo(" <a href='?ip=$url_name&start=$next_start_num&count=$count'>Next -></a>");
-    }
-    echo('</p>');
-}
 
 // admin check try block
 try {
     // rate limiting
     rate_limit('ip-deep-search-'.$ip, 60, 5, 'Wait a minute at most before searching again.');
     rate_limit('ip-deep-search-'.$ip, 30, 3);
-    
+
     // connect
     $pdo = pdo_connect();
 
@@ -74,25 +42,25 @@ try {
         output_footer();
         die();
     }
-    
+
     // output search
     output_search($html_ip);
-    
+
     // sanity check: ensure the database doesn't overload itself
     if ($count > 25) {
         $count = 25;
     }
-    
+
     // if there's an IP set, let's get data from the db
     $user_count = (int) users_count_from_ip_expanded($pdo, $ip);
     $users = users_select_by_ip_expanded($pdo, $ip, $start, $count);
-    
+
     // calculate the number of results and the grammar to go with it
     $user_s = 'accounts are';
     if ($user_count === 1) {
         $user_s = 'account is';
     }
-    
+
     // this determines if anything is shown on the page
     $is_end = false;
     if ($user_count > 0 && count($users) > 0) {
@@ -107,10 +75,11 @@ try {
         output_footer();
         die();
     }
-    
+
     if ($user_count > 0 && count($users) > 0) {
         echo '<p>---</p>';
-        output_pagination($start, $count, $ip, $is_end);
+        $html_ip = htmlspecialchars(urlencode($ip));
+        output_pagination($start, $count, "&ip=$html_ip", $is_end);
     }
 
     foreach ($users as $user) {
@@ -121,14 +90,16 @@ try {
         if ($active_date == '30/Nov/-0001') {
             $active_date = 'Never'; // show never if never logged in
         }
-    
+
         // display the name with the color and link to the player search page
-        echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>$name</a> | Last Active: $active_date<br>";
+        echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>
+            $name</a> | Last Active: $active_date<br>";
     }
-    
+
     // output page navigation
     if ($user_count > 0 && count($users) > 0) {
-        output_pagination($start, $count, $ip, $is_end);
+        $html_ip = htmlspecialchars(urlencode($ip));
+        output_pagination($start, $count, "&ip=$html_ip", $is_end);
     }
 } catch (Exception $e) {
     $message = $e->getMessage();

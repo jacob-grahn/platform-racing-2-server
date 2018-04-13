@@ -9,7 +9,8 @@ require_once __DIR__ . '/../../queries/levels/level_select.php';
 require_once __DIR__ . '/../../queries/levels/levels_restore_backup.php';
 
 $ip = get_ip();
-$desc = "<p><center>Welcome to PR2's level restore system!<br>You can use this tool to restore any level that was modified or deleted in the past month.</center></p>";
+$desc = "<p><center>Welcome to PR2's level restore system!<br>
+    You can use this tool to restore any level that was modified or deleted in the past month.</center></p>";
 
 try {
     // rate limiting
@@ -41,12 +42,8 @@ try {
 
     if ($action == 'restore') {
         // check referrer
-        $ref = check_ref();
-        if ($ref !== true) {
-            $ref = htmlspecialchars($ref);
-            throw new Exception("Incorrect referrer. The referrer is: $ref");
-        }
-        
+        require_trusted_ref();
+
         // get the level_id that this backup_id points to
         $backup_id = find('backup_id');
         $row = level_backup_select($pdo, $backup_id);
@@ -72,7 +69,22 @@ try {
         $body = $file->body;
 
         // restore this backup to the db
-        levels_restore_backup($pdo, $user_id, $title, $row->note, $row->live, $time, $ip, $row->min_level, $row->song, $level_id, $row->play_count, $row->votes, $row->rating, $version);
+        levels_restore_backup(
+            $pdo,
+            $user_id,
+            $title,
+            $row->note,
+            $row->live,
+            $time,
+            $ip,
+            $row->min_level,
+            $row->song,
+            $level_id,
+            $row->play_count,
+            $row->votes,
+            $row->rating,
+            $version
+        );
         $restored_level = level_select($pdo, $level_id);
         $new_version = $restored_level->version;
 
@@ -105,7 +117,8 @@ try {
     echo '<br/>';
     $backups = level_backups_select($pdo, $user_id);
     foreach ($backups as $row) {
-        echo "<p>$row->date: <b>".htmlspecialchars($row->title)."</b> v$row->version <a href='?action=restore&backup_id=$row->backup_id'>restore</a></p>";
+        echo "<p>$row->date: <b>".htmlspecialchars($row->title)
+            ."</b> v$row->version <a href='?action=restore&backup_id=$row->backup_id'>restore</a></p>";
     }
 } catch (Exception $e) {
     $error = $e->getMessage();

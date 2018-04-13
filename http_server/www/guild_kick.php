@@ -13,13 +13,15 @@ $ip = get_ip();
 
 try {
     // check referrer
-    $ref = check_ref();
-    if ($ref !== true) {
-        throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only kick players from a guild from an approved site such as pr2hub.com.");
-    }
+    require_trusted_ref();
 
     // rate limiting
-    rate_limit('guild-kick-attempt-'.$ip, 15, 1, 'Please wait at least 15 seconds before attempting to kick another player from your guild.');
+    rate_limit(
+        'guild-kick-attempt-'.$ip,
+        15,
+        1,
+        'Please wait at least 15 seconds before attempting to kick another player from your guild.'
+    );
 
     //--- connect to the db
     $pdo = pdo_connect();
@@ -53,11 +55,11 @@ try {
     guild_increment_member($pdo, $guild->guild_id, -1);
 
 
-
     //--- tell it to the world
     $reply = new stdClass();
     $reply->success = true;
-    $reply->message = htmlspecialchars($target_account->name).' has been kicked from '.htmlspecialchars($guild->guild_name).'.';
+    $reply->message = htmlspecialchars($target_account->name)
+        .' has been kicked from '.htmlspecialchars($guild->guild_name).'.';
     echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();

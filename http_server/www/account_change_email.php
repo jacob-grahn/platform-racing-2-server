@@ -23,10 +23,7 @@ try {
     }
 
     // check referrer
-    $ref = check_ref();
-    if ($ref !== true) {
-        throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only change your email from an approved site such as pr2hub.com.");
-    }
+    require_trusted_ref();
 
     // rate limiting
     rate_limit('change-email-attempt-'.$ip, 5, 1);
@@ -101,7 +98,7 @@ try {
     $safe_user_name = htmlspecialchars($user_name);
     $safe_old_email = htmlspecialchars($old_email);
     $safe_new_email = htmlspecialchars($new_email);
-    
+
     // send a confirmation email
     $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
     $to = $old_email;

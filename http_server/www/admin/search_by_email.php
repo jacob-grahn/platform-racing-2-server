@@ -3,27 +3,17 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/users/users_select_by_email.php';
+require_once __DIR__ . '/search_by_email_fns.php';
 
 $email = find_no_cookie('email', '');
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
-
-// this will echo the search box when called
-function output_search($email = '', $incl_br = true)
-{
-    echo "<form name='input' action='' method='get'>";
-    echo "Email: <input type='text' name='email' value='$email'>&nbsp;";
-    echo "<input type='submit' value='Search'></form>";
-    if ($incl_br) {
-        echo "<br><br>";
-    }
-}
 
 // admin check try block
 try {
     // rate limiting
     rate_limit('email-search-'.$ip, 60, 10, 'Wait a bit before searching again.');
     rate_limit('email-search-'.$ip, 5, 2);
-    
+
     //connect
     $pdo = pdo_connect();
 
@@ -82,7 +72,8 @@ try {
         }
 
         // display the name with the color and link to the player search page
-        echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>$safe_name</a> | Last Active: $active_date<br>";
+        echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>
+            $safe_name</a> | Last Active: $active_date<br>";
     }
 
     // end it all

@@ -31,12 +31,12 @@ try {
 try {
     // header
     output_header('IP Info', true);
-    
+
     // sanity check: is a value entered for IP?
     if (empty($ip)) {
         throw new Exception("Invalid IP address entered.");
     }
-    
+
     // get IP info
     $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
 
@@ -45,11 +45,11 @@ try {
     if ($ip_info->status != 'success') {
         $skip_fanciness = true;
     }
-    
+
     // if the data retrieval was successful, define our fancy variables
     if ($skip_fanciness === false) {
         $ip_info = $ip_info->data->geo;
-        
+
         // make some variables
         $html_host = htmlspecialchars($ip_info->host);
         $html_dns = htmlspecialchars($ip_info->dns);
@@ -59,7 +59,7 @@ try {
         $html_region = htmlspecialchars($ip_info->region);
         $html_country = htmlspecialchars($ip_info->country_name);
         $html_country_code = htmlspecialchars($ip_info->country_code);
-        
+
         // make a location string out of the location data
         $html_location = '';
         if (!empty($html_city)) {
@@ -72,13 +72,13 @@ try {
             $html_location .= $html_country . ' (' . $html_country_code . ')'; // country/code
         }
     }
-    
+
     // we can dance if we want to, we can leave your friends behind
     $html_ip = htmlspecialchars($ip);
-    
+
     // start
     echo "<p>IP: $html_ip</p>";
-    
+
     // if the data retrieval was successful, display our fancy variables
     if ($skip_fanciness === false) {
         if (!empty($html_host)) {
@@ -94,7 +94,7 @@ try {
             echo "<p>Location: $html_location</p>";
         }
     }
-    
+
     // check if they are currently banned
     $banned = 'No';
     $row = query_if_banned($pdo, 0, $ip);
@@ -104,9 +104,10 @@ try {
         $ban_id = $row->ban_id;
         $reason = htmlspecialchars($row->reason);
         $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
-        $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes.</a> This IP is banned until $ban_end_date. Reason: $reason";
+        $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes.</a>
+            This IP is banned until $ban_end_date. Reason: $reason";
     }
-    
+
     // look for all historical bans given to this ip address
     $ip_bans = bans_select_by_ip($pdo, $ip);
     $ip_ban_count = (int) count($ip_bans);
@@ -115,11 +116,11 @@ try {
     if ($ip_ban_count !== 1) {
         $ip_lang = 'times';
     }
-    
+
     // echo ban status
     echo "<p>Currently banned: $banned</p>"
         ."<p>This IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list";
-    
+
     // get users associated with this IP
     $users = users_select_by_ip($pdo, $ip);
     $user_count = count($users);
@@ -127,18 +128,19 @@ try {
     if ($user_count !== 1) {
         $res = 'accounts are';
     }
-    
+
     // echo user count
     echo "$user_count $res associated with the IP address \"$html_ip\".<br><br>";
-    
+
     foreach ($users as $user) {
         $user_id = (int) $user->user_id;
         $name = htmlspecialchars($user->name);
         $power_color = $group_colors[(int) $user->power];
         $active = date('j/M/Y', (int) $user->time);
-        
+
         // echo results
-        echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>$name</a> | Last Active: $active<br>";
+        echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>$name</a>
+            | Last Active: $active<br>";
     }
 } catch (Exception $e) {
     $message = $e->getMessage();
@@ -146,17 +148,4 @@ try {
 } finally {
     output_footer();
     die();
-}
-
-function create_ban_list($bans)
-{
-    $str = '<p><ul>';
-    foreach ($bans as $row) {
-        $ban_date = date("F j, Y, g:i a", $row->time);
-        $reason = htmlspecialchars($row->reason);
-        $ban_id = $row->ban_id;
-        $str .= "<li><a href='../bans/show_record.php?ban_id=$ban_id'>$ban_date:</a> $reason";
-    }
-    $str .= '</ul></p>';
-    return $str;
 }

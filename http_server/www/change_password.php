@@ -19,10 +19,7 @@ try {
     }
 
     // check referrer
-    $ref = check_ref();
-    if ($ref !== true) {
-        throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only change your password from an approved site such as pr2hub.com.");
-    }
+    require_trusted_ref();
 
     // sanity check: was a password entered?
     if (strlen($new_pass) <= 0) {
@@ -30,7 +27,12 @@ try {
     }
 
     // rate limiting
-    rate_limit('password-change-attempt-'.$ip, 5, 1, 'Please wait at least 5 seconds before trying to change your password again.');
+    rate_limit(
+        'password-change-attempt-'.$ip,
+        5,
+        1,
+        'Please wait at least 5 seconds before trying to change your password again.'
+    );
 
     // connect
     $pdo = pdo_connect();

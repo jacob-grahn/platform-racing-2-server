@@ -52,7 +52,43 @@ try {
 
     // form
     if ($action === 'form') {
-        output_form($contest, $prizes);
+        $html_contest_name = htmlspecialchars($contest->contest_name);
+        echo "Remove Prizes from <b>$html_contest_name</b>"
+            ."<br><br>"
+            ."<form method='post'>";
+
+        foreach ($prizes as $prize) {
+            $prize_id = (int) $prize->prize_id;
+
+            // build variable name
+            $prize = validate_prize($prize->part_type, $prize->part_id);
+            $prize_type = $prize->type;
+            $prize_id = (int) $prize->id;
+            $is_epic = (bool) $prize->epic;
+
+            // make the display name
+            $part_name = ${$prize_type."_names_array"}[$prize_id];
+            $disp_type = ucfirst($prize_type);
+            $prize_name = "$part_name $disp_type";
+            if ($is_epic == true) {
+                $prize_name = "Epic " . $prize_name;
+            }
+
+            echo "<input type='checkbox' name='prize_$prize_id'> Remove $prize_name<br>";
+            echo "<input type='hidden' name='prize_name_$prize_id' value='$prize_name'>";
+        }
+
+        echo '<input type="hidden" name="action" value="remove">';
+        echo '<input type="hidden" name="contest_id" value="'.(int) $contest->contest_id.'"><br><br>';
+
+        echo '<input type="submit" value="Remove Contest Prize(s)">&nbsp;(no confirmation!)';
+        echo '</form>';
+
+        echo '<br>';
+        echo '---';
+        echo '<br>';
+        echo '<pre>Check the boxes of the prizes you wish to remove.<br>
+            When you\'re done, click "Remove Contest Prize(s)".';
         output_footer();
         die();
     } // add
@@ -95,7 +131,16 @@ try {
             // log the action in the admin log
             $admin_name = $admin->name;
             $admin_id = $admin->user_id;
-            admin_action_insert($pdo, $admin_id, "$admin_name removed the $prize_name from contest $contest_name from $ip. {contest_id: $contest_id, contest_name: $contest_name, prize_id: $prize_id}", 0, $ip);
+            admin_action_insert(
+                $pdo,
+                $admin_id,
+                "$admin_name removed the $prize_name from contest $contest_name from $ip. {
+                    contest_id: $contest_id,
+                    contest_name: $contest_name,
+                    prize_id: $prize_id}",
+                0,
+                $ip
+            );
         }
 
         // if no prizes were selected to be removed, tell the user
@@ -119,45 +164,4 @@ try {
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
     die();
-}
-
-// page
-function output_form($contest, $prizes)
-{
-    $html_contest_name = htmlspecialchars($contest->contest_name);
-    echo "Remove Prizes from <b>$html_contest_name</b>"
-        ."<br><br>"
-        ."<form method='post'>";
-
-    foreach ($prizes as $prize) {
-        $prize_id = (int) $prize->prize_id;
-
-        // build variable name
-        $prize = validate_prize($prize->part_type, $prize->part_id);
-        $prize_type = $prize->type;
-        $prize_id = (int) $prize->id;
-        $is_epic = (bool) $prize->epic;
-
-        // make the display name
-        $part_name = ${$prize_type."_names_array"}[$prize_id];
-        $disp_type = ucfirst($prize_type);
-        $prize_name = "$part_name $disp_type";
-        if ($is_epic == true) {
-            $prize_name = "Epic " . $prize_name;
-        }
-
-        echo "<input type='checkbox' name='prize_$prize_id'> Remove $prize_name<br>";
-        echo "<input type='hidden' name='prize_name_$prize_id' value='$prize_name'>";
-    }
-
-    echo '<input type="hidden" name="action" value="remove">';
-    echo '<input type="hidden" name="contest_id" value="'.(int) $contest->contest_id.'"><br><br>';
-
-    echo '<input type="submit" value="Remove Contest Prize(s)">&nbsp;(no confirmation!)';
-    echo '</form>';
-
-    echo '<br>';
-    echo '---';
-    echo '<br>';
-    echo '<pre>Check the boxes of the prizes you wish to remove.<br>When you\'re done, click "Remove Contest Prize(s)".';
 }

@@ -18,10 +18,7 @@ try {
     }
 
     // check referrer
-    $ref = check_ref();
-    if ($ref !== true) {
-        throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only delete a level from an approved site such as pr2hub.com.");
-    }
+    require_trusted_ref();
 
     // sanity check
     if (is_empty($level_id, false)) {
@@ -29,7 +26,12 @@ try {
     }
 
     // rate limiting
-    rate_limit('delete-level-attempt-'.$ip, 10, 1, 'Please wait at least 10 seconds before trying to delete another level.');
+    rate_limit(
+        'delete-level-attempt-'.$ip,
+        10,
+        1,
+        'Please wait at least 10 seconds before trying to delete another level.'
+    );
 
     //connect
     $pdo = pdo_connect();
@@ -39,7 +41,12 @@ try {
     $user_id = token_login($pdo, false);
 
     // more rate limiting
-    rate_limit('delete-level-attempt-'.$user_id, 10, 1, 'Please wait at least 10 seconds before trying to delete another level.');
+    rate_limit(
+        'delete-level-attempt-'.$user_id,
+        10,
+        1,
+        'Please wait at least 10 seconds before trying to delete another level.'
+    );
     rate_limit('delete-level-'.$ip, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
     rate_limit('delete-level-'.$user_id, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 
@@ -50,7 +57,21 @@ try {
     }
 
     // save this file to the backup system
-    backup_level($pdo, $s3, $user_id, $level_id, $row->version, $row->title, $row->live, $row->rating, $row->votes, $row->note, $row->min_level, $row->song, $row->play_count);
+    backup_level(
+        $pdo,
+        $s3,
+        $user_id,
+        $level_id,
+        $row->version,
+        $row->title,
+        $row->live,
+        $row->rating,
+        $row->votes,
+        $row->note,
+        $row->min_level,
+        $row->song,
+        $row->play_count
+    );
 
     // delete the level in the db
     level_delete($pdo, $level_id);

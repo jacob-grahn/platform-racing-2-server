@@ -13,13 +13,15 @@ $ip = get_ip();
 
 try {
     // get and validate referrer
-    $ref = check_ref();
-    if ($ref !== true) {
-        throw new Exception('It looks like you\'re using PR2 from a third-party website. For security reasons, you may only create a guild from an approved site such as pr2hub.com.');
-    }
+    require_trusted_ref();
 
     // rate limiting
-    rate_limit('guild-create-attempt-'.$ip, 10, 3, "Please wait at least 10 seconds before attempting to create a guild again.");
+    rate_limit(
+        'guild-create-attempt-'.$ip,
+        10,
+        3,
+        "Please wait at least 10 seconds before attempting to create a guild again."
+    );
 
     // connect
     $pdo = pdo_connect();
@@ -28,7 +30,12 @@ try {
     $user_id = token_login($pdo, false);
 
     // more rate limiting
-    rate_limit('guild-create-attempt-'.$user_id, 10, 3, "Please wait at least 10 seconds before attempting to create a guild again.");
+    rate_limit(
+        'guild-create-attempt-'.$user_id,
+        10,
+        3,
+        "Please wait at least 10 seconds before attempting to create a guild again."
+    );
 
     // get user info
     $account = user_select_expanded($pdo, $user_id);
@@ -52,14 +59,18 @@ try {
     if (!isset($emblem)) {
         throw new Exception('Your guild needs an emblem.');
     }
-    if (preg_match('/.jpg$/', $emblem) !== 1 || preg_match('/\.\.\//', $emblem) === 1 || preg_match('/\?/', $emblem) === 1) {
+    if (preg_match('/.jpg$/', $emblem) !== 1
+        || preg_match('/\.\.\//', $emblem) === 1
+        || preg_match('/\?/', $emblem) === 1
+    ) {
         throw new Exception('Guild emblem is invalid.');
     }
     if (preg_match("/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
         throw new Exception('Guild name is invalid. You may only use alphanumeric characters, spaces, and hyphens.');
     }
     if (strlen(trim($guild_name)) === 0) {
-        throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
+        throw new Exception('I\'m not sure what would happen if you didn\'t
+            enter a guild name, but it would probably destroy the world.');
     }
 
     // more rate limiting

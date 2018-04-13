@@ -109,16 +109,3 @@ try {
 }
 
 echo json_encode($r);
-
-
-function test_epic($color, $arr_str, $part)
-{
-    $ret = -1;
-    if (isset($arr_str) && strlen($arr_str) > 0) {
-        $arr = explode(',', $arr_str);
-        if (array_search($part, $arr) !== false || array_search('*', $arr) !== false) {
-            $ret = $color;
-        }
-    }
-    return $ret;
-}

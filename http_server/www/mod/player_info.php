@@ -63,9 +63,10 @@ try {
         } elseif ($row->account_ban == 1) {
             $ban_type = 'account is';
         }
-        $banned = "<a href='../bans/show_record.php?ban_id=$ban_id'>Yes.</a> This $ban_type banned until $ban_end_date. Reason: $reason";
+        $banned = "<a href='../bans/show_record.php?ban_id=$ban_id'>Yes.</a>
+            This $ban_type banned until $ban_end_date. Reason: $reason";
     }
-    
+
     // get dem infos
     $user = user_select($pdo, $user_id);
     $pr2 = pr2_select($pdo, $user_id, true);
@@ -134,18 +135,4 @@ try {
     echo "Error: $error";
     output_footer();
     die();
-}
-
-
-function create_ban_list($bans)
-{
-    $str = '<p><ul>';
-    foreach ($bans as $row) {
-        $ban_date = date("F j, Y, g:i a", $row->time);
-        $reason = htmlspecialchars($row->reason);
-        $ban_id = $row->ban_id;
-        $str .= "<li><a href='../bans/show_record.php?ban_id=$ban_id'>$ban_date:</a> $reason";
-    }
-    $str .= '</ul></p>';
-    return $str;
 }

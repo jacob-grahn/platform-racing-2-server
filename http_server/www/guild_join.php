@@ -15,7 +15,12 @@ $ip = get_ip();
 
 try {
     // rate limiting
-    rate_limit('guild-join-attempt-'.$ip, 30, 1, 'Please wait at least 30 seconds before trying to join this guild again.');
+    rate_limit(
+        'guild-join-attempt-'.$ip,
+        30,
+        1,
+        'Please wait at least 30 seconds before trying to join this guild again.'
+    );
 
     // connect
     $pdo = pdo_connect();

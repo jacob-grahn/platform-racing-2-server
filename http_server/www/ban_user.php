@@ -122,7 +122,19 @@ try {
     }
 
     // add the ban using pdo
-    $result = ban_user($pdo, $banned_ip, $banned_user_id, $mod_user_id, $expire_time, $reason, $record, $banned_name, $mod_user_name, $ip_ban, $account_ban);
+    $result = ban_user(
+        $pdo,
+        $banned_ip,
+        $banned_user_id,
+        $mod_user_id,
+        $expire_time,
+        $reason,
+        $record,
+        $banned_name,
+        $mod_user_name,
+        $ip_ban,
+        $account_ban
+    );
     if ($result === false) {
         throw new Exception('Could not record ban.');
     }
@@ -147,7 +159,18 @@ try {
     $disp_expire_time = date('Y-m-d H:i:s', $expire_time);
 
     //record the ban in the action log
-    mod_action_insert($pdo, $mod_user_id, "$mod_user_name banned $banned_name from $ip {duration: $disp_duration, account_ban: $is_account_ban, ip_ban: $is_ip_ban, expire_time: $disp_expire_time, $disp_reason}", 0, $ip);
+    mod_action_insert(
+        $pdo,
+        $mod_user_id,
+        "$mod_user_name banned $banned_name from $ip {
+            duration: $disp_duration,
+            account_ban: $is_account_ban,
+            ip_ban: $is_ip_ban,
+            expire_time: $disp_expire_time,
+            $disp_reason}",
+        0,
+        $ip
+    );
 
     if ($using_mod_site == 'yes' && $redirect == 'yes') {
         header('Location: //pr2hub.com/mod/player_info.php?user_id='.$banned_user_id.'&force_ip='.$force_ip);

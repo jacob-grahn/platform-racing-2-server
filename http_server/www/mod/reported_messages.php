@@ -60,7 +60,12 @@ try {
 
         echo("	<br/>
 				<div class='$class'>
-				<p><a href='player_info.php?user_id=$from_user_id&force_ip=$from_ip'>$from_name</a> sent this message to <a href='player_info.php?user_id=$to_user_id&force_ip=$reporter_ip'>$to_name</a> on $formatted_time<p>
+				<p>
+                    <a href='player_info.php?user_id=$from_user_id&force_ip=$from_ip'>$from_name</a>
+                    sent this message to
+                    <a href='player_info.php?user_id=$to_user_id&force_ip=$reporter_ip'>$to_name</a>
+                    on $formatted_time
+                <p>
 				<p>$html_safe_message</p> ");
 
         if (!$archived) {
@@ -118,22 +123,4 @@ try {
     output_header('Reported Messages', true);
     echo "Error: $error";
     output_footer();
-}
-
-
-function output_pagination($start, $count)
-{
-    $next_start_num = $start + $count;
-    $last_start_num = $start - $count;
-    if ($last_start_num < 0) {
-        $last_start_num = 0;
-    }
-
-    echo('<p>');
-    if ($start > 0) {
-        echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");
-    } else {
-        echo('<- Last |');
-    }
-    echo(" <a href='?start=$next_start_num&count=$count'>Next -></a></p>");
 }

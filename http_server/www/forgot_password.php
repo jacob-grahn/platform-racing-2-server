@@ -18,10 +18,7 @@ try {
     }
 
     // check referrer
-    $ref = check_ref();
-    if ($ref !== true) {
-        throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only request a new password from an approved site such as pr2hub.com.");
-    }
+    require_trusted_ref();
 
     // rate limiting
     rate_limit('forgot-password-attempt-'.$ip, 5, 1);
@@ -71,7 +68,8 @@ try {
 
     $body = "Hi $name,\n\n"
                 ."It seems you forgot your password. Here's a new one: $pass\n\n"
-                ."If you didn't request this email, then just ignore it. Your old password will still work as long as you don't log in with this one.\n\n"
+                ."If you didn't request this email, then just ignore it. "
+                ."Your old password will still work as long as you don't log in with this one.\n\n"
                 ."All the best,\n"
                 ."Fred";
 

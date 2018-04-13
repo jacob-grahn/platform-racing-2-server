@@ -15,14 +15,21 @@ try {
     }
 
     // check referrer
-    $ref = check_ref();
-    if ($ref !== true) {
-        throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only upload a guild emblem from an approved site such as pr2hub.com.");
-    }
+    require_trusted_ref();
 
     // rate limiting
-    rate_limit('emblem-upload-attempt-'.$ip, 15, 1, "Please wait at least 15 seconds before trying to upload a guild emblem again.");
-    rate_limit('emblem-upload-attempt-'.$ip, 900, 10, "Please wait at least 15 minutes before trying to upload a guild emblem again.");
+    rate_limit(
+        'emblem-upload-attempt-'.$ip,
+        15,
+        1,
+        "Please wait at least 15 seconds before trying to upload a guild emblem again."
+    );
+    rate_limit(
+        'emblem-upload-attempt-'.$ip,
+        900,
+        10,
+        "Please wait at least 15 minutes before trying to upload a guild emblem again."
+    );
 
     $image = file_get_contents("php://input");
     $image_rendered = imagecreatefromstring($image);
@@ -36,8 +43,18 @@ try {
     $user_id = token_login($pdo, false);
 
     // more rate limiting
-    rate_limit('emblem-upload-attempt-'.$user_id, 15, 1, "Please wait at least 15 seconds before trying to upload a guild emblem again.");
-    rate_limit('emblem-upload-attempt-'.$user_id, 900, 10, "Please wait at least 15 minutes before trying to upload a guild emblem again.");
+    rate_limit(
+        'emblem-upload-attempt-'.$user_id,
+        15,
+        1,
+        "Please wait at least 15 seconds before trying to upload a guild emblem again."
+    );
+    rate_limit(
+        'emblem-upload-attempt-'.$user_id,
+        900,
+        10,
+        "Please wait at least 15 minutes before trying to upload a guild emblem again."
+    );
 
     // get user info
     $account = user_select_expanded($pdo, $user_id);
@@ -68,8 +85,18 @@ try {
     }
 
     // more rate limiting
-    rate_limit('emblem-upload-'.$ip, 86400, 2, "You can upload a maximum of two guild emblem images per day. Try again tomorrow.");
-    rate_limit('emblem-upload-'.$user_id, 86400, 2, "You can upload a maximum of two guild emblem images per day. Try again tomorrow.");
+    rate_limit(
+        'emblem-upload-'.$ip,
+        86400,
+        2,
+        "You can upload a maximum of two guild emblem images per day. Try again tomorrow."
+    );
+    rate_limit(
+        'emblem-upload-'.$user_id,
+        86400,
+        2,
+        "You can upload a maximum of two guild emblem images per day. Try again tomorrow."
+    );
 
     //--- tell it to the world
     $reply = new stdClass();

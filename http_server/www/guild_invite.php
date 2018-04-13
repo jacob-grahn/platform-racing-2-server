@@ -13,7 +13,12 @@ $ip = get_ip();
 
 try {
     // rate limiting
-    rate_limit('guild-invite-attempt-'.$ip, 5, 2, "Please wait at least 5 seconds before attempting to invite another player to your guild.");
+    rate_limit(
+        'guild-invite-attempt-'.$ip,
+        5,
+        2,
+        "Please wait at least 5 seconds before attempting to invite another player to your guild."
+    );
 
     // connect
     $pdo = pdo_connect();
@@ -45,12 +50,25 @@ try {
     }
 
     // rate limiting
-    rate_limit('guild-invite-'.$ip, 3600, 10, 'You can only invite up to 10 players to your guild per hour. Try again later.');
-    rate_limit('guild-invite-'.$user_id, 3600, 10, 'You can only invite up to 10 players to your guild per hour. Try again later.');
+    rate_limit(
+        'guild-invite-'.$ip,
+        3600,
+        10,
+        'You can only invite up to 10 players to your guild per hour. Try again later.'
+    );
+    rate_limit(
+        'guild-invite-'.$user_id,
+        3600,
+        10,
+        'You can only invite up to 10 players to your guild per hour. Try again later.'
+    );
 
     //--- compose an eloquent invitation
     $pm_safe_guild_name = preg_replace("/[^a-zA-Z0-9 ]/", "_", $guild->guild_name);
-    $message = "Hi $target_account->name, You've been invited to join our guild, [guildlink=$guild->guild_id]". $pm_safe_guild_name ."[/guildlink]. Click [invitelink=$guild->guild_id]here[/invitelink] to accept.";
+    $message = "Hi $target_account->name, You've been invited to join our
+        guild, [guildlink=$guild->guild_id]". $pm_safe_guild_name
+        ."[/guildlink]. Click [invitelink=$guild->guild_id]here[/invitelink]
+        to accept.";
 
 
     //--- add the invitation to the db

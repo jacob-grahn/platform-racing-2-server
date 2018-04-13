@@ -18,13 +18,15 @@ try {
     }
 
     // check referrer
-    $ref = check_ref();
-    if ($ref !== true) {
-        throw new Exception("It looks like you're using PR2 from a third-party website. For security reasons, you may only message your guild from an approved site such as pr2hub.com.");
-    }
+    require_ref();
 
     // rate limit
-    rate_limit('guildMessage-attempt-'.$ip, 15, 1, "Please wait at least 15 seconds before trying to message your guild again.");
+    rate_limit(
+        'guildMessage-attempt-'.$ip,
+        15,
+        1,
+        "Please wait at least 15 seconds before trying to message your guild again."
+    );
 
     // connect
     $pdo = pdo_connect();

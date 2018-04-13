@@ -26,7 +26,12 @@ try {
             $count = 100;
         }
     } elseif ($is_mod === false) {
-        rate_limit('leaderboard-'.$ip, 60, 10, 'Please wait at least one minute before trying to view the leaderboard again.');
+        rate_limit(
+            'leaderboard-'.$ip,
+            60,
+            10,
+            'Please wait at least one minute before trying to view the leaderboard again.'
+        );
         if (($count - $start) > 50) {
             $count = 50;
         }
@@ -89,20 +94,4 @@ try {
     $safe_error = htmlspecialchars($error);
     echo "Error: $safe_error";
     output_footer();
-}
-
-function output_pagination($start, $count)
-{
-    $next_start_num = $start + $count;
-    $last_start_num = $start - $count;
-    if ($last_start_num < 0) {
-        $last_start_num = 0;
-    }
-    echo('<p>');
-    if ($start > 0) {
-        echo("<a href='?start=$last_start_num&count=$count'><- Last</a> |");
-    } else {
-        echo('<- Last |');
-    }
-    echo(" <a href='?start=$next_start_num&count=$count'>Next -></a></p>");
 }
