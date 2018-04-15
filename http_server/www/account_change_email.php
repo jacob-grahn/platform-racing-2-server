@@ -43,6 +43,11 @@ try {
     $data = json_decode($str_data);
     $new_email = $data->email;
     $pass = $data->pass;
+    
+    // sanitize email
+    $problematic_chars = array('&', '"', "'", "<", ">");
+    $new_email = filter_var($new_email, FILTER_SANITIZE_EMAIL);
+    $new_email = str_replace($problematic_chars, '', $email);
 
     // connect
     $pdo = pdo_connect();
