@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../queries/users/user_select_expanded.php';
 require_once __DIR__ . '/../queries/users/user_update_guild.php';
+require_once __DIR__ . '/../queries/guilds/guild_name_to_id.php';
 require_once __DIR__ . '/../queries/guilds/guild_insert.php';
 
 $note = filter_swears(find('note'));
@@ -60,6 +61,12 @@ try {
     }
     if (strlen(trim($guild_name)) === 0) {
         throw new Exception('I\'m not sure what would happen if you didn\'t enter a guild name, but it would probably destroy the world.');
+    }
+    
+    // check if guild exists
+    $guild_exists = guild_name_to_id($pdo, $guild_name, true);
+    if ($guild_exists !== false) {
+        throw new Exception('A guild with this name already exists. Please choose a new name.');
     }
 
     // more rate limiting
