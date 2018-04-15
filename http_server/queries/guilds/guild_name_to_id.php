@@ -1,6 +1,6 @@
 <?php
 
-function guild_name_to_id($pdo, $guild_name)
+function guild_name_to_id($pdo, $guild_name, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT guild_id
@@ -18,7 +18,11 @@ function guild_name_to_id($pdo, $guild_name)
     $guild = $stmt->fetch(PDO::FETCH_OBJ);
     
     if (empty($guild)) {
-        throw new Exception('Could not find a guild with that name.');
+        if ($suppress_error === false) {
+            throw new Exception('Could not find a guild with that name.');
+        } else {
+            return false;
+        }
     }
     
     return $guild->guild_id;
