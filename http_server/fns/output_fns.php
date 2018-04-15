@@ -44,12 +44,6 @@ function output_footer()
         </div>
     </div>
 
-    <script>
-       window.onbeforeunload = function() {
-          return "Are you sure you want to leave this page? All unsaved data will be lost.";
-       };
-    </script>
-
     <div id="footer">
         <ul class="footer_links">
             <li><a href="//pr2hub.com/backups">Backups</a></li>
