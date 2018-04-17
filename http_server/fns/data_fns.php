@@ -1,13 +1,13 @@
 <?php
 
-// requests from a flash client will unclude this header
+// requests from a flash client will include this header
 function is_from_game()
 {
     $req_with = default_server("HTTP_X_REQUESTED_WITH");
     $ref = default_server("HTTP_REFERER");
     $is_from_game = false;
 
-    if ((isset($req_with) && strpos($req_with, "ShockwaveFlash/") !== 0) || !isset($ref)) {
+    if ((!is_empty($req_with) && strpos($req_with, "ShockwaveFlash/") !== 0) || is_empty($ref)) {
          $is_from_game = true;
     }
 
