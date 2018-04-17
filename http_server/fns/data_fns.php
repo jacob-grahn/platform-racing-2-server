@@ -235,8 +235,8 @@ function require_trusted_ref($action = 'perform this action', $mod = false)
 {
     if (!is_trusted_ref() && $mod === false) {
         throw new Exception(
-            "It looks like you're using PR2 from a third-party website. "
-           ."For security reasons, you may only $action from an approved site such as pr2hub.com."
+            "It looks like you're using PR2 from a third-party website. ".
+            "For security reasons, you may only $action from an approved site such as pr2hub.com."
         );
     } elseif (!is_trusted_ref() && $mod === true) {
         $err = "Incorrect Referrer. $action";
