@@ -1,6 +1,6 @@
 <?php
 
-namespace \pr2\http;
+namespace pr2\http;
 
 class Encryptor
 {
