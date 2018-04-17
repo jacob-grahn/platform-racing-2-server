@@ -63,7 +63,8 @@ try {
         } elseif ($row->account_ban == 1) {
             $ban_type = 'account is';
         }
-        $banned = "<a href='../bans/show_record.php?ban_id=$ban_id'>Yes.</a> This $ban_type banned until $ban_end_date. Reason: $reason";
+        $banned = "<a href='../bans/show_record.php?ban_id=$ban_id'>Yes.</a>"
+                 ."This $ban_type banned until $ban_end_date. Reason: $reason";
     }
     
     // get dem infos
@@ -71,8 +72,10 @@ try {
     $pr2 = pr2_select($pdo, $user_id, true);
 
     // make neat variables
-    $rank = (int) pr2_select_true_rank($pdo, $user_id);
-    $hats = count(explode(',', $pr2->hat_array)) - 1;
+    if ($pr2 !== false) {
+        $rank = (int) pr2_select_true_rank($pdo, $user_id);
+        $hats = count(explode(',', $pr2->hat_array)) - 1;
+    }
     $status = $user->status;
     $ip = $user->ip;
     $user_name = $user->name;
@@ -112,10 +115,16 @@ try {
         $html_user_name = htmlspecialchars($user_name);
         echo "<p>Name: <b>$html_user_name</b></p>"
             ."<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>"
-            ."<p>Status: $status</p>"
-            ."<p>Rank: $rank<p>"
-            ."<p>Hats: $hats<p>"
-            ."<p>Currently banned: $banned</p>"
+            ."<p>Status: $status</p>";
+        
+        // display pr2 info
+        if ($pr2 !== false) {
+            echo "<p>Rank: $rank<p>"
+                ."<p>Hats: $hats<p>";
+        }
+        
+        // display ban info
+        echo "<p>Currently banned: $banned</p>"
             ."<p>Account has been banned $account_ban_count $acc_lang.</p> $account_ban_list"
             ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list"
             .'<p>---</p>'
@@ -125,13 +134,10 @@ try {
         ."<p>Currently banned: $banned</p>"
         ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list";
     }
-
-    // footer
-    output_footer();
-    die();
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "Error: $error";
+} finally {
     output_footer();
     die();
 }
