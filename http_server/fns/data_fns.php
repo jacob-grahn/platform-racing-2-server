@@ -231,13 +231,16 @@ function is_trusted_ref()
 }
 
 
-function require_trusted_ref($action = 'perform this action')
+function require_trusted_ref($action = 'perform this action', $mod = false)
 {
-    if (!is_trusted_ref()) {
+    if (!is_trusted_ref() && $mod === false) {
         throw new Exception(
             "It looks like you're using PR2 from a third-party website. "
            ."For security reasons, you may only $action from an approved site such as pr2hub.com."
         );
+    } elseif (!is_trusted_ref() && $mod === true) {
+        $err = "Incorrect Referrer. $action";
+        throw new Exception(trim($err));
     }
 }
 
@@ -353,14 +356,14 @@ function valid_email($email)
 function check_moderator($pdo, $check_ref = true, $min_power = 2)
 {
     if ($check_ref) {
-        require_trusted_ref();
+        require_trusted_ref('', true);
     }
 
     $user_id = token_login($pdo);
     $user = user_select_mod($pdo, $user_id);
 
     if ($user->power < $min_power) {
-        throw new Exception('You lack the power. -1');
+        throw new Exception('You lack the power to access this resource.');
     }
 
     return $user;
