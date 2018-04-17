@@ -18,7 +18,7 @@ try {
     }
 
     // check referrer
-    require_trusted_ref();
+    require_trusted_ref('message your guild');
 
     // rate limit
     rate_limit(
