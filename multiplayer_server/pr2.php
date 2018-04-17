@@ -1,6 +1,6 @@
 <?php
 
-namespace \pr2\multi;
+namespace pr2\multi;
 
 ini_set('mbstring.func_overload', '0');
 ini_set('output_handler', '');
