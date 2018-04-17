@@ -18,7 +18,7 @@ try {
     }
 
     // check referrer
-    require_ref();
+    require_trusted_ref();
 
     // rate limit
     rate_limit(

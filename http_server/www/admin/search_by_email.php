@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/users/users_select_by_email.php';
 require_once __DIR__ . '/search_by_email_fns.php';
 
+$ip = get_ip();
 $email = find_no_cookie('email', '');
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 

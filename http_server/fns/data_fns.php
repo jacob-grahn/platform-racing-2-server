@@ -3,11 +3,11 @@
 // requests from a flash client will unclude this header
 function is_from_game()
 {
-    $req_with = default_val($_SERVER["HTTP_X_REQUESTED_WITH"]);
-    $ref = default_val($_SERVER["HTTP_REFERER"]);
+    $req_with = default_server("HTTP_X_REQUESTED_WITH");
+    $ref = default_server("HTTP_REFERER");
     $is_from_game = false;
 
-    if ((!is_empty($req_with) && strpos($req_with, "ShockwaveFlash/") !== 0) || is_empty($ref)) {
+    if ((isset($req_with) && strpos($req_with, "ShockwaveFlash/") !== 0) || !isset($ref)) {
          $is_from_game = true;
     }
 
@@ -76,6 +76,17 @@ function default_post($str, $default = null)
 {
     if (isset($_POST[$str])) {
         return $_POST[$str];
+    } else {
+        return $default;
+    }
+}
+
+
+// get a variable from the $_SERVER array without throwing a warning if it doesn't exist
+function default_server($str, $default = null)
+{
+    if (isset($_SERVER[$str])) {
+        return $_SERVER[$str];
     } else {
         return $default;
     }
