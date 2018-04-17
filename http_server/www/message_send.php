@@ -14,6 +14,9 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
     }
+    
+    // ref check
+    require_trusted_ref('send PMs');
 
     // rate limiting
     rate_limit('send-pm-attempt-'.$ip, 5, 1);
