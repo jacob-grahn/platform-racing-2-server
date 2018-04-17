@@ -159,7 +159,7 @@ try {
         }
 
         // check referrer
-        require_trusted_ref();
+        require_trusted_ref('award prizes');
 
         // make some nice variables
         $winner_name = default_post('winner_name', '');
