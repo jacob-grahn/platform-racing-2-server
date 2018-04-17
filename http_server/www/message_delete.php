@@ -13,6 +13,9 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
     }
+    
+    // referrer check
+    require_trusted_ref('delete PMs');
 
     // rate limiting
     rate_limit('message-delete'.$ip, 5, 2, "Please wait at least 5 seconds before trying to delete another PM.");
