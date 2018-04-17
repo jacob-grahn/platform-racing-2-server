@@ -433,13 +433,9 @@ class Game extends Room
         $this->finishRace($player);
     }
 
-
-    private function ensureTimeFormat($time)
-    {
-        if ($time < 0) {
-            $time = 0;
-        }
-        return round($time, 2);
+    private function timeFormat($time, $digits = 2) {
+        if ($time < 0) $time = 0;
+        return round($time, $digits);
     }
 
 
@@ -447,10 +443,13 @@ class Game extends Room
     {
         global $pdo;
 
-        if ($player->finished_race === false && !isset($player->race_stats->finish_time) &&
-            $player->race_stats->drawing === false && $this->begun === true
-        ) {
-            $finish_time = $this->ensureTimeFormat(microtime(true) - $this->start_time);
+        if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
+            $finish_microtime = microtime(true);
+            $full_time = $finish_microtime - $this->start_time;
+
+            // get/format/validate/set finish time
+            $finish_time = $this->timeFormat($full_time);
+            $broadcast_time = $this->timeFormat($full_time, 3);
             if ($finish_time > 31536000) {
                 $finish_time = 0; // if the race time > 1 year, set it to 0
             }
@@ -465,7 +464,7 @@ class Game extends Room
 
             // announce on tournament server
             if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10 && PR2SocketServer::$tournament) {
-                $this->broadcastResults($player, $finish_time);
+                $this->broadcastResults($player, $broadcast_time);
             }
 
             //--- prize -----------

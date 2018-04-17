@@ -40,6 +40,16 @@ try {
     $data = json_decode($str_data);
     $new_email = $data->email;
     $pass = $data->pass;
+    
+    // sanitize email
+    $problematic_chars = array('&', '"', "'", "<", ">");
+    $new_email = filter_var($new_email, FILTER_SANITIZE_EMAIL);
+    $new_email = str_replace($problematic_chars, '', $email);
+    
+    // sanity check: check for invalid email
+    if (!valid_email($new_email)) {
+        throw new Exception("Invalid email address.");
+    }
 
     // connect
     $pdo = pdo_connect();
@@ -61,11 +71,6 @@ try {
     // sanity check: check for guest
     if ($user->power < 1) {
         throw new Exception("Guests don't even really have accounts...");
-    }
-
-    // sanity check: check for invalid email
-    if (!valid_email($new_email)) {
-        throw new Exception("Invalid email address.");
     }
 
     // rate limiting
