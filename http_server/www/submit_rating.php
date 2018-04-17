@@ -25,6 +25,9 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
     }
+    
+    // ref check
+    require_trusted_ref('rate levels');
 
     // rate limiting
     rate_limit('submit-rating-'.$ip, 5, 2);
