@@ -53,7 +53,7 @@ class GuildPoints
     private static function idToObj($user_id)
     {
         if (!isset(self::$arr[ $user_id ])) {
-            $obj = new stdClass();
+            $obj = new \stdClass();
             $obj->levels = array();
             $obj->gp = 0;
             $obj->user_id = $user_id;

@@ -43,7 +43,7 @@ class Prize
 
     public function toObj()
     {
-        $obj = new stdClass();
+        $obj = new \stdClass();
         $obj->type = $this->type;
         $obj->id = $this->id;
         $obj->name = $this->name;

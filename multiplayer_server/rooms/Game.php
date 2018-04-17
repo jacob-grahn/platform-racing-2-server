@@ -924,7 +924,7 @@ class Game extends Room
         $this->verifyFinishPosition($x, $y, $finish_id);
 
         if (isset($player->race_stats->objectives_reached[$finish_id])) {
-            throw new Exception('This objective has already been reached.');
+            throw new \Exception('This objective has already been reached.');
         }
 
         $player->race_stats->objectives_reached[$finish_id] = 1;
@@ -938,7 +938,7 @@ class Game extends Room
     private function verifyFinishPosition($x, $y, $id)
     {
         if (!is_numeric($id) || $id < 0 || $id > $this->finish_count) {
-            throw new Exception('finish id is out of range');
+            throw new \Exception('finish id is out of range');
         }
         if ($this->finish_positions !== 'all' &&  is_array($this->finish_positions)) {
             $match = false;
@@ -949,7 +949,7 @@ class Game extends Room
                 }
             }
             if (!$match) {
-                throw new Exception('No matching finish');
+                throw new \Exception('No matching finish');
             }
         }
     }

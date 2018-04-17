@@ -22,7 +22,7 @@ class TemporaryItems
         }
 
         if (!$match) {
-            $item = new stdClass();
+            $item = new \stdClass();
             $item->type = $type;
             $item->part_id = $part_id;
             $item->user_id = $user_id;

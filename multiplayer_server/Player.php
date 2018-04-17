@@ -345,7 +345,7 @@ class Player
 
                             // attempt to start a tournament using the specified parameters
                             issue_tournament($safe_chat_message);
-                        } catch (Exception $e) {
+                        } catch (\Exception $e) {
                             $caught_exception = true;
                             $err = $e->getMessage();
                             $err_supl = " Make sure you typed everything ".

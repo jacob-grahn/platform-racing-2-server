@@ -10,7 +10,7 @@ class LocalBans
 
     public static function add($user_name, $duration = 1800)
     {
-        $ban = new stdClass();
+        $ban = new \stdClass();
         $ban->user_name = $user_name;
         $ban->expire_time = time() + $duration;
         self::$arr[] = $ban;
