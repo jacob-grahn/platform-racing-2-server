@@ -1,5 +1,7 @@
 <?php
 
+namespace \pr2\multi;
+
 ini_set('mbstring.func_overload', '0');
 ini_set('output_handler', '');
 error_reporting(E_ALL | E_STRICT);
@@ -101,9 +103,9 @@ require_once __DIR__ . '/rooms/modes/eggs.php';
 require_once __DIR__ . '/rooms/modes/objective.php';
 require_once __DIR__ . '/rooms/modes/race.php';
 
-\pr2\multi\Prizes::init();
-\pr2\multi\RankupCalculator::init();
-
+Prizes::init();
+RankupCalculator::init();
+HappyHour::$random_hour = rand(0, 36);
 
 $server_id = (int) $argv[1];
 
@@ -123,27 +125,22 @@ $chat_room_array = array();
 $campaign_array = array();
 $play_count_array = array();
 
-$campaign_room = new \pr2\multi\LevelListRoom();
-$best_room = new \pr2\multi\LevelListRoom();
-$best_today_room = new \pr2\multi\LevelListRoom();
-$newest_room = new \pr2\multi\LevelListRoom();
-$search_room = new \pr2\multi\LevelListRoom();
+$campaign_room = new LevelListRoom();
+$best_room = new LevelListRoom();
+$best_today_room = new LevelListRoom();
+$newest_room = new LevelListRoom();
+$search_room = new LevelListRoom();
 
 $max_players = 200;
 $min_version = .60;
 
-HappyHour::$random_hour = rand(0, 36);
-
 $pdo = pdo_connect();
 
-
-//load in startup info
+// load in startup info
 output('requesting startup info...');
 begin_loadup($server_id);
 
-
-
-//start the socket server
+// start the socket server
 $date = date('r');
 output("Starting PR2 server $server_name on port $port at on $date.");
 $daemon = new \chabot\SocketDaemon();
