@@ -10,9 +10,13 @@ require_once __DIR__ . '/../queries/messages/message_insert.php';
 
 $name = $_POST['name'];
 $password = $_POST['password'];
-$email = $_POST['email'];
 $time = time();
 $ip = get_ip();
+
+// sanitize email
+$problematic_chars = array('&', '"', "'", "<", ">");
+$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+$email = str_replace($problematic_chars, '', $email);
 
 try {
     // POST check
