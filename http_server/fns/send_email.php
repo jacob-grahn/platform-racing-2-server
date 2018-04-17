@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Mail.php';
-
 function send_email($from, $to, $subject, $body)
 {
     global $EMAIL_HOST, $EMAIL_USER, $EMAIL_PASS;

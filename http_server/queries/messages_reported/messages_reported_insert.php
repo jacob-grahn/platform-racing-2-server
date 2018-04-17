@@ -1,7 +1,16 @@
 <?php
 
-function messages_reported_insert($pdo, $to_user_id, $from_user_id, $reporter_ip, $from_ip, $sent_time, $reported_time, $message_id, $message)
-{
+function messages_reported_insert(
+    $pdo,
+    $to_user_id,
+    $from_user_id,
+    $reporter_ip,
+    $from_ip,
+    $sent_time,
+    $reported_time,
+    $message_id,
+    $message
+) {
     $stmt = $pdo->prepare('
         INSERT INTO messages_reported
                 SET to_user_id = :to_user_id,

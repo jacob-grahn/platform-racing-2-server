@@ -73,8 +73,8 @@ try {
     rate_limit('login-'.$ip, 60, 10, 'Only 10 logins per minute per IP are accepted.');
 
     // decrypt login data
-    $encryptor = new Encryptor();
-    $encryptor->set_key($LOGIN_KEY);
+    $encryptor = new \pr2\http\Encryptor();
+    $encryptor->setKey($LOGIN_KEY);
     $str_login = $encryptor->decrypt($encrypted_login, $LOGIN_IV);
     $login = json_decode($str_login);
     $user_name = $login->user_name;

@@ -13,7 +13,11 @@ $contents = trim($contents);
 
 
 //--- give up if they're doing a stat update ------------------------------------------------------------
-if ($contents == false || $contents == '' || strpos($contents, 'Stats update in progress') !== false || strpos($contents, 'The database server is currently serving too many connections.') !== false) {
+if ($contents == false
+    || $contents == ''
+    || strpos($contents, 'Stats update in progress') !== false
+    || strpos($contents, 'The database server is currently serving too many connections.') !== false
+) {
     echo 'updating';
     exit;
 }
@@ -91,20 +95,15 @@ foreach ($user_array as $user_str) {
 
     if (isset($users_history[ strtolower($name) ])) {
         $history = $users_history[ strtolower($name) ];
-        if (($history->wu != $work_units || $history->points != $points || $history->rank != $team_rank) && !$history->processed) {
-            output("updating $name: wu: $work_units, points: $points");
+        if (($history->wu != $work_units || $history->points != $points || $history->rank != $team_rank)
+            && !$history->processed
+        ) {
+            echo("* updating $name: wu: $work_units, points: $points \n");
             stats_insert($pdo, $name, $work_units, $points, $team_rank);
         }
         $history->processed = true;
     } else {
-        output("creating $name: wu: $work_units, points: $points");
+        echo("* creating $name: wu: $work_units, points: $points \n");
         stats_insert($pdo, $name, $work_units, $points, $team_rank);
     }
-}
-
-
-//--- handy output function; never leave home without it! --------------------------------------------------
-function output($str)
-{
-    echo( "* $str \n" );
 }

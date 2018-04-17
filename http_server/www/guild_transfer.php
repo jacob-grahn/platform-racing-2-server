@@ -1,7 +1,8 @@
 <?php
 
+require_once 'Mail.php';
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/email_fns.php';
+require_once __DIR__ . '/../fns/send_email.php';
 require_once __DIR__ . '/../fns/output_fns.php';
 require_once __DIR__ . '/../queries/users/user_select.php';
 require_once __DIR__ . '/../queries/users/user_select_by_name.php';

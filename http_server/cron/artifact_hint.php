@@ -1,6 +1,8 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/echo_line.php';
+require_once __DIR__ . '/../fns/PseudoRandom.php';
 require_once __DIR__ . '/../queries/artifact_locations/artifact_location_select.php';
 require_once __DIR__ . '/../queries/users/user_select.php';
 require_once __DIR__ . '/../queries/levels/level_select.php';
@@ -41,21 +43,21 @@ if ($perc > 1) {
 }
 $hide_perc = 1 - $perc;
 $hide_characters = round($len * $hide_perc);
-output("hide_perc: $hide_perc");
-output("hide_characters: $hide_characters");
-output("len: $len");
-output("finder_name: $finder_name ");
+echo_line("hide_perc: $hide_perc");
+echo_line("hide_characters: $hide_characters");
+echo_line("len: $len");
+echo_line("finder_name: $finder_name ");
 
 
 //
-Random::seed(112);
+\pr2\http\PseudoRandom::seed(112);
 
 
 // replace a percentage of characters with underscores
 $arr = str_split($str);
 $loops = 0;
 while ($hide_characters > 0) {
-    $index = Random::num(0, $len-1);
+    $index = \pr2\http\PseudoRandom::num(0, $len-1);
 
     while ($arr[$index] == '_') {
         $index++;
@@ -65,7 +67,7 @@ while ($hide_characters > 0) {
 
         $loops++;
         if ($loops > 100) {
-            output('infinite loop');
+            echo_line('infinite loop');
             break;
         }
     }
@@ -82,37 +84,4 @@ $r->updated_time = $updated_time;
 $r_str = json_encode($r);
 
 file_put_contents(__DIR__ . '/../www/files/artifact_hint.txt', $r_str);
-output($r->hint);
-
-
-
-
-
-//
-function output($str)
-{
-    echo "* $str \n";
-}
-
-
-// pseudo random number generator
-class Random
-{
-    // random seed
-    private static $RSeed = 0;
-    // set seed
-    public static function seed($s = 0)
-    {
-        self::$RSeed = abs(intval($s)) % 9999999 + 1;
-        self::num();
-    }
-    // generate random number
-    public static function num($min = 0, $max = 9999999)
-    {
-        if (self::$RSeed == 0) {
-            self::seed(mt_rand());
-        }
-        self::$RSeed = (self::$RSeed * 125) % 2796203;
-        return self::$RSeed % ($max - $min + 1) + $min;
-    }
-}
+echo_line($r->hint);

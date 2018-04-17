@@ -1,5 +1,19 @@
 <?php
 
+// requests from a flash client will unclude this header
+function is_from_game()
+{
+    $req_with = default_val($_SERVER["HTTP_X_REQUESTED_WITH"]);
+    $ref = default_val($_SERVER["HTTP_REFERER"]);
+    $is_from_game = false;
+
+    if ((!is_empty($req_with) && strpos($req_with, "ShockwaveFlash/") !== 0) || is_empty($ref)) {
+         $is_from_game = true;
+    }
+
+    return $is_from_game;
+}
+
 // check if player has an epic color option for a part
 function test_epic($color, $arr_str, $part)
 {
@@ -283,7 +297,21 @@ function talk_to_server($address, $port, $key, $server_function, $receive = fals
 function is_obscene($str)
 {
     $str = strtolower($str);
-    $bad_array = array('fuck', 'shit', 'nigger', 'nigga', 'whore', 'bitch', 'slut', 'cunt', 'cock', 'dick', 'penis', 'damn', 'spic');
+    $bad_array = [
+        'fuck',
+        'shit',
+        'nigger',
+        'nigga',
+        'whore',
+        'bitch',
+        'slut',
+        'cunt',
+        'cock',
+        'dick',
+        'penis',
+        'damn',
+        'spic'
+    ];
     $obsene = false;
     foreach ($bad_array as $bad) {
         if (strpos($str, $bad) !== false) {
@@ -310,7 +338,6 @@ function valid_email($email)
 
 
 // returns your account if you are a moderator
-require_once __DIR__ . '/../queries/users/user_select_mod.php';
 function check_moderator($pdo, $check_ref = true, $min_power = 2)
 {
     if ($check_ref) {

@@ -433,8 +433,11 @@ class Game extends Room
         $this->finishRace($player);
     }
 
-    private function timeFormat($time, $digits = 2) {
-        if ($time < 0) $time = 0;
+    private function timeFormat($time, $digits = 2)
+    {
+        if ($time < 0) {
+            $time = 0;
+        }
         return round($time, $digits);
     }
 
@@ -443,7 +446,11 @@ class Game extends Room
     {
         global $pdo;
 
-        if ($player->finished_race === false && !isset($player->race_stats->finish_time) && $player->race_stats->drawing === false && $this->begun === true) {
+        if ($player->finished_race === false
+            && !isset($player->race_stats->finish_time)
+            && $player->race_stats->drawing === false
+            && $this->begun === true
+        ) {
             $finish_microtime = microtime(true);
             $full_time = $finish_microtime - $this->start_time;
 

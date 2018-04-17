@@ -4,7 +4,7 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/pr2_fns.php';
-require_once __DIR__ . '/../fns/s3_connect.php';
+require_once __DIR__ . '/../fns/s3.php';
 require_once __DIR__ . '/../queries/levels/level_select_by_title.php';
 require_once __DIR__ . '/../queries/levels/level_insert.php';
 require_once __DIR__ . '/../queries/levels/level_update.php';

@@ -44,8 +44,8 @@ try {
     $str_result = json_encode($result);
 
     // set up encryptor
-    $encryptor = new Encryptor();
-    $encryptor->set_key($LEVEL_PASS_KEY);
+    $encryptor = new \pr2\http\Encryptor();
+    $encryptor->setKey($LEVEL_PASS_KEY);
     $enc_result = $encryptor->encrypt($str_result, $LEVEL_PASS_IV);
 
     echo 'result=' . urlencode($enc_result);

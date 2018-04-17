@@ -1,7 +1,21 @@
 <?php
 
-function levels_restore_backup($pdo, $user_id, $title, $note, $live, $time, $ip, $min_level, $song, $level_id, $play_count, $votes, $rating, $version)
-{
+function levels_restore_backup(
+    $pdo,
+    $user_id,
+    $title,
+    $note,
+    $live,
+    $time,
+    $ip,
+    $min_level,
+    $song,
+    $level_id,
+    $play_count,
+    $votes,
+    $rating,
+    $version
+) {
     $stmt = $pdo->prepare('
         INSERT INTO pr2_levels
         SET level_id = :level_id,
@@ -38,7 +52,7 @@ function levels_restore_backup($pdo, $user_id, $title, $note, $live, $time, $ip,
     $stmt->bindValue(':rating', $rating, PDO::PARAM_STR);
     $stmt->bindValue(':version', $version, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not restore level backup.');
     }

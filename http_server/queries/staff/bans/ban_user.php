@@ -1,7 +1,18 @@
 <?php
 
-function ban_user($pdo, $banned_ip, $banned_user_id, $mod_user_id, $expire_time, $reason, $record, $banned_name, $mod_name, $ip_ban, $account_ban)
-{
+function ban_user(
+    $pdo,
+    $banned_ip,
+    $banned_user_id,
+    $mod_user_id,
+    $expire_time,
+    $reason,
+    $record,
+    $banned_name,
+    $mod_name,
+    $ip_ban,
+    $account_ban
+) {
     $stmt = $pdo->prepare('
         INSERT INTO bans
 	   SET banned_ip = :banned_ip,
@@ -32,6 +43,6 @@ function ban_user($pdo, $banned_ip, $banned_user_id, $mod_user_id, $expire_time,
     if ($result === false) {
         throw new Exception('Could not ban user.');
     }
-    
+
     return $result;
 }

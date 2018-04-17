@@ -1,19 +1,28 @@
 <?php
 
-function levels_search($pdo, $search, $in_mode = 'user', $in_start = 0, $in_count = 9, $in_order = 'date', $in_dir = 'desc')
-{
+function levels_search(
+    $pdo,
+    $search,
+    $in_mode = 'user',
+    $in_start = 0,
+    $in_count = 9,
+    $in_order = 'date',
+    $in_dir = 'desc'
+) {
     $start = min(max((int)$in_start, 0), 100);
     $count = min(max((int)$in_count, 0), 100);
-    
+
     // search mode
     if ($in_mode == 'title') {
         $where = 'MATCH (title) AGAINST (:search IN BOOLEAN MODE)';
-        $live_cond = '(pr2_levels.live = 1 AND pr2_levels.pass IS NULL)'; // if title, don't show pw levels
+        // if title, don't show pw levels
+        $live_cond = '(pr2_levels.live = 1 AND pr2_levels.pass IS NULL)';
     } else {
         $where = 'users.name = :search';
-        $live_cond = '(pr2_levels.live = 1 OR (pr2_levels.live = 0 AND pr2_levels.pass IS NOT NULL))'; // if user, show pw levels
+        // if user, show pw levels
+        $live_cond = '(pr2_levels.live = 1 OR (pr2_levels.live = 0 AND pr2_levels.pass IS NOT NULL))';
     }
-    
+
     // order by
     $order_by = 'pr2_levels.';
     if ($in_order == 'rating') {

@@ -1,7 +1,19 @@
 <?php
 
-function level_backups_insert($pdo, $user_id, $level_id, $title, $version, $live, $rating, $votes, $note, $min_level, $song, $play_count)
-{
+function level_backups_insert(
+    $pdo,
+    $user_id,
+    $level_id,
+    $title,
+    $version,
+    $live,
+    $rating,
+    $votes,
+    $note,
+    $min_level,
+    $song,
+    $play_count
+) {
     $stmt = $pdo->prepare('
         INSERT INTO level_backups
         SET user_id = :user_id,

@@ -12,7 +12,7 @@ $min_time = time() - (60 * 60 * 24 * 30 * 12 * 3); //three years
 
 $users = users_select_old($pdo);
 
-output(number_format(count($users)) . ' accounts have not been logged into recently.');
+echo(number_format(count($users)) . " accounts have not been logged into recently. \n");
 
 foreach ($users as $row) {
     $user_id = $row->user_id;
@@ -22,15 +22,9 @@ foreach ($users as $row) {
 
     $str = "$user_id plays: $play_count rank: $rank.";
     if ($play_count > 100 || $rank > 15) {
-        output("$str SPARE");
+        echo("$str SPARE \n");
     } else {
-        output("$str DELETE");
+        echo("$str DELETE \n");
         user_delete($pdo, $user_id);
     }
-}
-
-
-function output($str)
-{
-    echo "$str\n";
 }

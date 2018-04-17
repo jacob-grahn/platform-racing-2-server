@@ -1,19 +1,5 @@
 <?php
 
-require_once __DIR__ . '/random_str.php';
-
-
-//--- checks if a login is valid -----------------------------------------------------------
-require_once __DIR__ . '/../queries/users/user_apply_temp_pass.php';
-
-// user selection queries
-require_once __DIR__ . '/../queries/users/id_to_name.php'; // id -> name
-require_once __DIR__ . '/../queries/users/name_to_id.php'; // name -> id
-require_once __DIR__ . '/../queries/users/user_select.php'; // select user (no hashes) by id
-require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // select user (no hashes) by name
-require_once __DIR__ . '/../queries/users/user_select_full_by_name.php'; // select full user (with hashes) by name
-require_once __DIR__ . '/../queries/users/user_select_power.php'; // select a user's power
-
 function pass_login($pdo, $name, $password)
 {
 
@@ -56,8 +42,6 @@ function pass_login($pdo, $name, $password)
 
 
 // login using a token
-require_once __DIR__ . '/../queries/tokens/token_select.php';
-
 function token_login($pdo, $use_cookie = true, $suppress_error = false)
 {
 
@@ -91,7 +75,7 @@ function is_staff($pdo, $user_id)
 {
     $is_mod = false;
     $is_admin = false;
-    
+
     // determine power and if staff
     $power = (int) user_select_power($pdo, $user_id, true);
     if ($power === false || is_empty($power, false)) {
@@ -103,7 +87,7 @@ function is_staff($pdo, $user_id)
             $is_admin = true;
         }
     }
-    
+
     // tell the world
     $return = new stdClass();
     $return->mod = $is_mod;
@@ -112,25 +96,18 @@ function is_staff($pdo, $user_id)
 }
 
 
-// part/epic upgrade queries
-require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_select.php';
-require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_update_field.php';
-require_once __DIR__ . '/../queries/pr2/pr2_select.php';
-require_once __DIR__ . '/../queries/pr2/pr2_update_part_array.php';
-require_once __DIR__ . '/../queries/part_awards/part_awards_insert.php';
-
 // award hats
 function award_part($pdo, $user_id, $type, $part_id)
 {
     $is_epic = false;
     $type = strtolower($type);
     $part_types = ['hat','head','body','feet','ehat','ehead','ebody','efeet'];
-    
+
     // sanity check: is it a valid type?
     if (!in_array($type, $part_types)) {
         throw new Exception("Invalid part type specified.");
     }
-    
+
     // determine where in the array our value was found
     $type_no = array_search($type, $part_types);
     if ($type_no >= 4) {
@@ -162,7 +139,7 @@ function award_part($pdo, $user_id, $type, $part_id)
     // award part
     array_push($part_array, $part_id);
     $new_field_str = join(",", $part_array);
-    
+
     if ($is_epic === true) {
         epic_upgrades_update_field($pdo, $user_id, $type, $new_field_str);
     } else {
@@ -178,18 +155,18 @@ function has_part($pdo, $user_id, $type, $part_id)
     $is_epic = false;
     $type = strtolower($type);
     $part_types = ['hat','head','body','feet','ehat','ehead','ebody','efeet'];
-    
+
     // sanity check: is it a valid type?
     if (!in_array($type, $part_types)) {
         throw new Exception("Invalid part type specified.");
     }
-    
+
     // determine where in the array our value was found
     $type_no = array_search($type, $part_types);
     if ($type_no >= 4) {
         $is_epic = true;
     }
-    
+
     // perform query
     $field = type_to_db_field($type);
     if ($is_epic === true) {
@@ -197,11 +174,11 @@ function has_part($pdo, $user_id, $type, $part_id)
     } else {
         $data = pr2_select($pdo, $user_id);
     }
-    
+
     // get data and convert to an array
     $parts_str = $data->{$field};
     $parts_arr = explode(",", $parts_str);
-    
+
     // search for part ID in array
     if (in_array($part_id, $parts_arr)) {
         return true;
@@ -214,7 +191,7 @@ function has_part($pdo, $user_id, $type, $part_id)
 function type_to_db_field($type)
 {
     $type = strtolower($type);
-    
+
     if ($type == 'hat') {
         $field = 'hat_array';
     } elseif ($type == 'head') {
@@ -286,15 +263,13 @@ function check_if_banned($pdo, $user_id, $ip)
         ."Reason: $reason \n"
         ."This ban will expire in $time_left. \n"
         ."You can see more details about this ban at pr2hub.com/bans/show_record.php?ban_id=$ban_id. \n\n"
-        ."If you feel that this ban is unjust, you can dispute it. Follow the instructions outlined at jiggmin2.com/forums/showthread.php?tid=110.";
+        ."If you feel that this ban is unjust, you can dispute it. Follow the "
+        ."instructions outlined at jiggmin2.com/forums/showthread.php?tid=110.";
 
         throw new Exception($output);
     }
 }
 
-
-require_once __DIR__ . '/../queries/bans/ban_select_active_by_user_id.php';
-require_once __DIR__ . '/../queries/bans/ban_select_active_by_ip.php';
 
 function query_if_banned($pdo, $user_id, $ip)
 {
@@ -308,11 +283,6 @@ function query_if_banned($pdo, $user_id, $ip)
     return $ban;
 }
 
-
-require_once __DIR__ . '/../queries/levels/levels_select_campaign.php';
-require_once __DIR__ . '/../queries/levels/levels_select_best.php';
-require_once __DIR__ . '/../queries/levels/levels_select_best_today.php';
-require_once __DIR__ . '/../queries/levels/levels_select_newest.php';
 
 // write a level list to the filesystem
 function generate_level_list($pdo, $mode)

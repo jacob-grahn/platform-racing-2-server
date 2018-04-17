@@ -21,17 +21,18 @@ function users_select_by_ip_expanded($pdo, $search_ip, $start = 0, $count = 25)
     $stmt->bindValue(':start', $start, PDO::PARAM_INT);
     $stmt->bindValue(':count', $count, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query users_select_by_ip_expanded.');
     }
-    
+
     $users = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
+
     if (empty($users)) {
         $search_ip = htmlspecialchars($search_ip);
-        throw new Exception("Could not find any users associated for that IP address ($search_ip) with those search parameters.");
+        throw new Exception("Could not find any users associated for that IP "
+            ."address ($search_ip) with those search parameters.");
     }
-    
+
     return $users;
 }
