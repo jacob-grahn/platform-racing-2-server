@@ -63,7 +63,7 @@ try {
         } elseif ($row->account_ban == 1) {
             $ban_type = 'account is';
         }
-        $banned = "<a href='../bans/show_record.php?ban_id=$ban_id'>Yes.</a>".
+        $banned = "<a href='../bans/show_record.php?ban_id=$ban_id'>Yes.</a>"
                  ."This $ban_type banned until $ban_end_date. Reason: $reason";
     }
     
