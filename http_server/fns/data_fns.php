@@ -231,12 +231,13 @@ function is_trusted_ref()
 }
 
 
-function require_trusted_ref()
+function require_trusted_ref($action = 'perform this action')
 {
     if (!is_trusted_ref()) {
-        throw new Exception("It looks like you're using PR2 from a third-party
-            website. For security reasons, you may only message your guild
-            from an approved site such as pr2hub.com.");
+        throw new Exception(
+            "It looks like you're using PR2 from a third-party website. "
+           ."For security reasons, you may only $action from an approved site such as pr2hub.com."
+        );
     }
 }
 
