@@ -14,7 +14,7 @@ $ip = get_ip();
 
 try {
     // get and validate referrer
-    require_trusted_ref();
+    require_trusted_ref('create a guild');
 
     // rate limiting
     rate_limit(
