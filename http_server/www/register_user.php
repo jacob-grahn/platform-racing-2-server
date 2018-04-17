@@ -25,7 +25,7 @@ try {
     }
 
     // check referrer
-    require_trusted_ref();
+    require_trusted_ref('create new accounts');
 
     // rate limiting (check if the IP address is spamming)
     rate_limit(
