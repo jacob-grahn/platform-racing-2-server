@@ -18,18 +18,17 @@ try {
     // get the data
     $staff_list = users_select_staff($pdo);
 
-    echo '
-	<center>
-	<font face="Gwibble" class="gwibble">-- PR2 Staff Team --</font>
-	<br>
-	<br>
-	<table>
-		<tr>
-			<th>Username</th>
-			<th>Status</th>
-			<th>Register Date</th>
-			<th>Last Login</th>
-		</tr>';
+    echo '<center>
+            <font face="Gwibble" class="gwibble">-- PR2 Staff Team --</font>
+            <br>
+            <br>
+            <table>
+                <tr>
+                    <th>Username</th>
+                    <th>Status</th>
+                    <th>Register Date</th>
+                    <th>Last Login</th>
+                </tr>';
 
     foreach ($staff_list as $row) {
         // make nice variables for our data
@@ -75,14 +74,13 @@ try {
     }
 
     // end the table
-    echo '
-	</table>
-	</center>
-	';
+    echo '</table>';
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
     echo json_encode($reply);
+} finally {
+    echo '</center>';
+    output_footer();
+    die();
 }
-
-output_footer();
