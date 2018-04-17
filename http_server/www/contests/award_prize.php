@@ -113,7 +113,7 @@ try {
             $is_epic = (bool) $prize->epic;
 
             // make the display name
-            $part_name = ${$part_type."_names_array"}[$part_id];
+            $part_name = to_part_name($part_type, $part_id);
             $disp_type = ucfirst($part_type);
             $prize_name = "$part_name $disp_type";
             if ($is_epic == true) {
@@ -205,7 +205,7 @@ try {
             $is_epic = (bool) $prize->epic;
 
             // make the display name
-            $part_name = ${$part_type."_names_array"}[$part_id];
+            $part_name = to_part_name($part_type, $part_id);
             $disp_type = ucfirst($part_type);
             $prize_name = "$part_name $disp_type";
             if ($is_epic === true) {
@@ -259,7 +259,7 @@ try {
             $is_epic = (bool) $prize->epic;
 
                // make the display name
-               $part_name = ${$part_type."_names_array"}[$part_id];
+               $part_name = to_part_name($part_type, $part_id);
                $disp_type = ucfirst($part_type);
             $prize_name = "$part_name $disp_type";
             if ($is_epic === true) {

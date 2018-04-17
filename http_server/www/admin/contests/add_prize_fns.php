@@ -62,7 +62,7 @@ function add_contest_prize($pdo, $admin, $contest)
     $is_epic = (bool) $prize->epic;
 
     // make the display name
-    $part_name = ${$prize_type."_names_array"}[$prize_id];
+    $part_name = to_part_name($prize_type, $prize_id);
     $disp_type = ucfirst($prize_type);
     $full_part_name = "$part_name $disp_type";
     if ($is_epic == true) {
