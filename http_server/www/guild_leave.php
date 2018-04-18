@@ -10,7 +10,7 @@ $ip = get_ip();
 
 try {
     // get and validate referrer
-    require_trusted_ref();
+    require_trusted_ref('leave your guild');
 
     // rate limiting
     rate_limit('guild-leave-attempt-'.$ip, 5, 1);

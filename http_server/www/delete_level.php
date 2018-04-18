@@ -18,7 +18,7 @@ try {
     }
 
     // check referrer
-    require_trusted_ref();
+    require_trusted_ref('delete levels');
 
     // sanity check
     if (is_empty($level_id, false)) {

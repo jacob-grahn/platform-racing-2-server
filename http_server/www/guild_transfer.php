@@ -85,7 +85,7 @@ try {
 
     // start the transfer
     if ($action === 'submit') {
-        require_trusted_ref();
+        require_trusted_ref('transfer your guild');
 
         $old_name = $user->name;
 

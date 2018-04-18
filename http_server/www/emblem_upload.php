@@ -15,7 +15,7 @@ try {
     }
 
     // check referrer
-    require_trusted_ref();
+    require_trusted_ref('upload an emblem');
 
     // rate limiting
     rate_limit(

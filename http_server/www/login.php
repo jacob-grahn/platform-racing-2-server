@@ -49,12 +49,6 @@ if ($ip_info !== false && !empty($ip_info)) {
     $country_code = "?"; // deal with third party failure
 }
 
-// debugging
-$is_bls = false;
-if (strpos($ip, $BLS_IP_PREFIX) === 0) {
-    $is_bls = true;
-}
-
 try {
     // sanity checks
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -339,7 +333,7 @@ try {
     $reply->userId = $user_id;
 
     // allowed domain check
-    require_trusted_ref();
+    require_trusted_ref('log in');
 
     // tell the user
     echo json_encode($reply);

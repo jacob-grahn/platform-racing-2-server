@@ -19,7 +19,7 @@ try {
     }
 
     // check referrer
-    require_trusted_ref();
+    require_trusted_ref('change your password');
 
     // sanity check: was a password entered?
     if (strlen($new_pass) <= 0) {
