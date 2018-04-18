@@ -108,8 +108,8 @@ try {
     if ($old_rating == 0) {
         echo "Your vote of $new_rating changed the average rating from $old to $new.";
     } else {
-        echo "You changed your vote from $old_rating to $new_rating, which ".
-            "changed the average rating from $old to $new.";
+        echo "You changed your vote from $old_rating to $new_rating, "
+            ."which changed the average rating from $old to $new.";
     }
 } catch (Exception $e) {
     $error = $e->getMessage();

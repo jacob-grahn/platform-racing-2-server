@@ -67,11 +67,12 @@ try {
         echo '<br>';
         echo '---';
         echo '<br>';
-        echo '<pre>When making changes, use the "Description of Changes" box to summarize what you did.<br><br>
-            To replace the guild owner, get the user ID of the user you want to make the owner.<br>
-            Then, replace the previous one in the guild owner field.<br><br>
-            NOTE: You MUST make sure that the person you\'re making the owner is already in the guild.</pre>';
-
+        echo '<pre>When making changes, use the "Description of Changes" box to summarize what you did.<br>'
+            .'<br>'
+            .'To replace the guild owner, get the user ID of the user you want to make the owner.<br>'
+            .'Then, replace the previous one in the guild owner field.<br>'
+            .'<br>'
+            ."NOTE: You MUST make sure that the person you're making the owner is already in the guild.</pre>";
         output_footer();
     }
 

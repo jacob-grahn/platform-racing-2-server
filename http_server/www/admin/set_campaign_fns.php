@@ -114,11 +114,12 @@ function output_form($pdo, $message, $campaign_id)
     echo '<br>';
     echo '---';
     echo '<br>';
-    echo '<pre>To set the custom campaign, gather the levels you want to set.<br>
-        Then, find the level IDs of those levels.<br>
-        Finally, use the level IDs to update the campaign in the form above.<br><br>
-        You can find a list of prizes and their corresponding IDs
-        <a href="part_ids.php" target="_blank">here</a>.</pre>';
+    echo '<pre>To set the custom campaign, gather the levels you want to set.<br>'
+        .'Then, find the level IDs of those levels.<br>'
+        .'Finally, use the level IDs to update the campaign in the form above.<br>'
+        .'<br>'
+        .'You can find a list of prizes and their corresponding IDs '
+        .'<a href="part_ids.php" target="_blank">here</a>.</pre>';
 
     output_footer();
 }

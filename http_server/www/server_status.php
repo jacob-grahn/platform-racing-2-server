@@ -13,22 +13,18 @@ try {
     }
 
     // make a heading
-    echo '
-	<center>
-	<font face="Gwibble" class="gwibble">-- Server Status --</font>
-	<br /><br />
-	';
+    echo '<center>'
+        .'<font face="Gwibble" class="gwibble">-- Server Status --</font><br>'
+        .'<br>';
 
     // make a table and the headers
-    echo "
-	<table>
-	  <tr>
-		<th>Server Name</th>
-		<th>Status</th>
-		<th>Happy Hour</th>
-		<th>Tournament</th>
-	  </tr>
-	";
+    echo "<table>
+      <tr>
+        <th>Server Name</th>
+        <th>Status</th>
+        <th>Happy Hour</th>
+        <th>Tournament</th>
+      </tr>";
 
     foreach ($data->servers as $server) {
         // echo this when it's yes/no
@@ -70,12 +66,13 @@ try {
         echo "</tr>";
     }
 
+    // end table
     echo "</table>";
 } catch (Exception $e) {
     $safe_message = htmlspecialchars($e->getMessage());
     echo "Error: $safe_message";
+} finally {
+    echo "</center>";
+    output_footer();
+    die();
 }
-
-echo "</center>";
-output_footer();
-die();

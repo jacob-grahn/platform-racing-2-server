@@ -56,10 +56,12 @@ try {
         $recent_awards = (int) throttle_awards($pdo, $contest_id, $user_id);
         $max_awards = (int) $contest->max_awards;
         if ($recent_awards >= $max_awards) {
-            throw new Exception("You've reached your maximum amount of awards for this week.<br>"
-                               ."If you need to award more, please contact a member of the PR2 Staff Team."
-                               ."<br><br>"
-                               ."<a href='contests.php'><- All Contests</a>");
+            throw new Exception(
+                "You've reached your maximum amount of awards for this week.<br>".
+                "If you need to award more, please contact a member of the PR2 Staff Team.".
+                "<br><br>".
+                "<a href='contests.php'><- All Contests</a>"
+            );
         }
     }
 } catch (Exception $e) {
@@ -120,15 +122,15 @@ try {
                 $prize_name = "Epic " . $prize_name;
             }
 
-            echo "<input type='checkbox' name='prize_$prize_id' id='prize_$prize_id'>
-                    <label for='prize_$prize_id'> $prize_name</label>";
-            echo "<input type='hidden' name='prize_name_$prize_id' value='$prize_name'><br>";
+            echo "<input type='checkbox' name='prize_$prize_id' id='prize_$prize_id'>"
+                ."<label for='prize_$prize_id'> $prize_name</label>";
+                ."<input type='hidden' name='prize_name_$prize_id' value='$prize_name'><br>";
         }
         echo '<br>';
 
         echo "PR2 Name: <input type='text' name='winner_name' maxlength='25'> (enter the winner's PR2 name here)<br>";
-        echo "Comments: <input type='text' name='comment'>
-            (this should be used to explain why you're awarding this user these prizes)<br>";
+        echo "Comments: <input type='text' name='comment'> "
+            ."(this should be used to explain why you're awarding this user these prizes)<br>";
         echo '<input type="hidden" name="action" value="award"><br>';
         echo '<input type="hidden" name="contest_id" value="'.(int) $contest->contest_id.'">';
 
@@ -143,10 +145,10 @@ try {
         echo '<pre>Check the boxes of the prizes you wish to award.'
             .'<br>When you\'re done, click "Award Prize(s)".';
         if ($is_staff->mod === false && $is_staff->admin === false) {
-            echo '<br><br><b>WARNING: Awarding prizes to players who have not won
-                your contest will result in disciplinary action.<br>
-                If you have a special case and are unsure of what to do, ask a
-                member of the PR2 Staff Team for help.</b>';
+            echo '<br><br><b>WARNING: Awarding prizes to players who have not won your contest'
+                .'will result in disciplinary action.<br>'
+                .'If you have a special case and are unsure of what to do, '
+                .'ask a member of the PR2 Staff Team for help.</b>';
         }
         echo '</pre>';
         output_footer();
@@ -226,10 +228,12 @@ try {
         // if there were any errors, do not proceed
         if ($errors > 0) {
             echo '<br>';
-            throw new Exception("One or more checks returned an error.
-                The results can be seen above.
-                If the user already has one of the parts, go back and uncheck that part.
-                If you need help, ask a member of the PR2 Staff Team.");
+            throw new Exception(
+                "One or more checks returned an error. ".
+                "The results can be seen above. ".
+                "If the user already has one of the parts, go back and uncheck that part. ".
+                "If you need help, ask a member of the PR2 Staff Team."
+            );
         } else {
             // if no prizes are being awarded, stop
             if (empty($prizes_to_award)) {
@@ -247,9 +251,10 @@ try {
 
             $award = award_part($pdo, $winner_id, $part_type, $part_id);
             if ($award === false) {
-                throw new Exception("CRITICAL ERROR: Could not award
-                    $prize_name to $winner_name. Please report this error to
-                    an admin.");
+                throw new Exception(
+                    "CRITICAL ERROR: Could not award $prize_name to $winner_name. ".
+                    "Please report this error to an admin."
+                );
             }
 
             // get prize info
@@ -258,27 +263,28 @@ try {
             $part_id = (int) $prize->id;
             $is_epic = (bool) $prize->epic;
 
-               // make the display name
-               $part_name = to_part_name($part_type, $part_id);
-               $disp_type = ucfirst($part_type);
+            // make the display name
+            $part_name = to_part_name($part_type, $part_id);
+            $disp_type = ucfirst($part_type);
             $prize_name = "$part_name $disp_type";
             if ($is_epic === true) {
                 $prize_name = "Epic " . $prize_name;
             }
 
             array_push($prizes_awarded_arr, $prize_name);
-            echo "<span style='color: green; font-weight: bold;'>
-                    The $prize_name was successfully awarded to $html_winner_name.
-                  </span><br>";
+            echo "<span style='color: green; font-weight: bold;'>"
+                ."The $prize_name was successfully awarded to $html_winner_name."
+                ."</span><br>";
         }
 
         if ($errors > 0) {
             echo '<br>';
-            throw new Exception("One or more prizes could not be awarded. The
-                results can be seen above. If the winner already has one or
-                more of the parts selected, go back, deselect them, and
-                attempt to award the prizes again. If this error persists,
-                contact a member of the PR2 Staff Team.");
+            throw new Exception(
+                "One or more prizes could not be awarded. The results can be seen above. ".
+                "If the winner already has one or more of the parts selected, ".
+                "go back, deselect them, and attempt to award the prizes again. ".
+                "If this error persists, contact a member of the PR2 Staff Team."
+            );
         }
 
         // make the array a string

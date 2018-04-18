@@ -55,14 +55,14 @@ try {
         $safe_name = htmlspecialchars($user->name);
         $safe_guild_name = htmlspecialchars($guild->guild_name);
 
-        echo "Welcome, <b>$safe_name</b>. You are currently the owner of $safe_guild_name.<br><br>";
-
-        echo 'This page will allow you to transfer your guild ownership status to another user on PR2.<br>';
-        echo 'This means that this user will be able to edit your guild\'s
-            information and buy/own private servers. As a result, you will lose
-            these privileges.<br><br>';
-
-        echo 'If you would like to proceed, please fill out the form below.<br><br>';
+        echo "Welcome, <b>$safe_name</b>. You are currently the owner of $safe_guild_name.<br>"
+            .'<br>'
+            .'This page will allow you to transfer your guild ownership status to another user on PR2. '
+            ."This means that this user will be able to edit your guild's information and buy/own private servers. "
+            .'As a result, you will lose these privileges.<br>'
+            .'<br>';
+            .'If you would like to proceed, please fill out the form below.<br>'
+            .'<br>';
 
         echo '<form name="input" action="guild_transfer.php" method="post">';
 
@@ -71,8 +71,8 @@ try {
         echo 'New Guild Owner\'s Username: <input type="text" name="new_owner"><br><br>';
         echo '<input type="hidden" name="action" value="submit">';
 
-        echo 'NOTE: You may only transfer guild ownership once per week.
-            If you still want to proceed, click submit below.<br><br>';
+        echo 'NOTE: You may only transfer guild ownership once per week. '
+            .'If you still want to proceed, click submit below.<br><br>';
 
         echo '<input type="submit" value="Submit">&nbsp;(no confirmation!)';
         echo '</form>';
