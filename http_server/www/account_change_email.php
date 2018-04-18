@@ -24,7 +24,7 @@ try {
     }
 
     // check referrer
-    require_trusted_ref();
+    require_trusted_ref('change your email');
 
     // rate limiting
     rate_limit('change-email-attempt-'.$ip, 5, 1);

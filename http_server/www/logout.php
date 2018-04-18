@@ -15,7 +15,7 @@ try {
     if (is_from_game() !== true) {
         throw new Exception(
             "It looks like you're not using PR2 to log out. ".
-            'For security reasons, you may only log out from a PR2 client.'
+            "For security reasons, you may only log out from a PR2 client."
         );
     }
 

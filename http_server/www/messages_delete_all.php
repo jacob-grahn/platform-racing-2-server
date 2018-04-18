@@ -8,7 +8,7 @@ $ip = get_ip();
 
 try {
     // check referrer
-    require_trusted_ref();
+    require_trusted_ref('delete all of your PMs');
 
     // rate limiting
     rate_limit(

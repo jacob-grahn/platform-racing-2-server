@@ -13,7 +13,7 @@ $ip = get_ip();
 
 try {
     // get and validate referrer
-    require_trusted_ref();
+    require_trusted_ref('edit your guild');
 
     // rate limiting
     rate_limit(

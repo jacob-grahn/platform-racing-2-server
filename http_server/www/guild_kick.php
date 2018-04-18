@@ -13,7 +13,7 @@ $ip = get_ip();
 
 try {
     // check referrer
-    require_trusted_ref();
+    require_trusted_ref('kick someone from your guild');
 
     // rate limiting
     rate_limit(

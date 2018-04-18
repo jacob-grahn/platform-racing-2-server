@@ -49,12 +49,6 @@ if ($ip_info !== false && !empty($ip_info)) {
     $country_code = "?"; // deal with third party failure
 }
 
-// debugging
-$is_bls = false;
-if (strpos($ip, $BLS_IP_PREFIX) === 0) {
-    $is_bls = true;
-}
-
 try {
     // sanity checks
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
