@@ -49,12 +49,6 @@ if ($ip_info !== false && !empty($ip_info)) {
     $country_code = "?"; // deal with third party failure
 }
 
-// debugging
-$is_bls = false;
-if (strpos($ip, $BLS_IP_PREFIX) === 0) {
-    $is_bls = true;
-}
-
 try {
     // sanity checks
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -64,8 +58,10 @@ try {
         throw new Exception('Login data not recieved.');
     }
     if (array_search($version, $allowed_versions) === false) {
-        throw new Exception('Platform Racing 2 has recently been updated.
-            Please refresh your browser to download the latest version.');
+        throw new Exception(
+            'Platform Racing 2 has recently been updated. '.
+            'Please refresh your browser to download the latest version.'
+        );
     }
 
     // rate limiting
@@ -89,9 +85,12 @@ try {
 
     // more sanity checks
     if (array_search($version2, $allowed_versions) === false) {
-        throw new Exception('Platform Racing 2 has recently been updated.
-            Please refresh your browser to download the latest version.
-            [Version check 2] ' . $version2);
+        throw new Exception(
+            'Platform Racing 2 has recently been updated. '.
+            'Please refresh your browser to download the latest version. '.
+            '[Version check 2] '.
+            $version2
+        );
     }
     if ($origination_domain == 'local') {
         throw new Exception('Testing mode has been disabled.');
@@ -339,7 +338,7 @@ try {
     $reply->userId = $user_id;
 
     // allowed domain check
-    require_trusted_ref();
+    require_trusted_ref('log in');
 
     // tell the user
     echo json_encode($reply);

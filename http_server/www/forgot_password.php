@@ -22,7 +22,7 @@ try {
     }
 
     // check referrer
-    require_trusted_ref();
+    require_trusted_ref('request a new password');
 
     // rate limiting
     rate_limit('forgot-password-attempt-'.$ip, 5, 1);

@@ -106,9 +106,8 @@ try {
 
         // contest host
         $host_url = $base_url . $html_url_host_name;
-        echo "Run by: <a href='$host_url'
-                         style='color: #$host_color;
-                         text-decoration: underline;'>$html_host_name</a><br>";
+        echo "Run by: <a href='$host_url' style='color: #$host_color; text-decoration: underline;'>"
+            ."$html_host_name</a><br>";
 
         // awarding
         echo "Awarding: $html_awarding<br>";
@@ -140,12 +139,9 @@ try {
         // end contest, move onto the next one
         echo "</p>";
     }
-
-    // end it
-    output_footer();
-    die();
 } catch (Exception $e) {
     echo 'Error: ' . $e->getMessage();
+} finally {
     output_footer();
     die();
 }

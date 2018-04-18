@@ -9,8 +9,10 @@ require_once __DIR__ . '/../../queries/levels/level_select.php';
 require_once __DIR__ . '/../../queries/levels/levels_restore_backup.php';
 
 $ip = get_ip();
-$desc = "<p><center>Welcome to PR2's level restore system!<br>
-    You can use this tool to restore any level that was modified or deleted in the past month.</center></p>";
+$desc = "<p><center>".
+        "Welcome to PR2's level restore system!<br>".
+        "You can use this tool to restore any level that was modified or deleted in the past month.".
+        "</center></p>";
 
 try {
     // rate limiting
@@ -42,7 +44,7 @@ try {
 
     if ($action == 'restore') {
         // check referrer
-        require_trusted_ref();
+        require_trusted_ref('restore level backups');
 
         // get the level_id that this backup_id points to
         $backup_id = find('backup_id');

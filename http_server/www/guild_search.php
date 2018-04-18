@@ -13,6 +13,7 @@ $guild_name = default_get('name', '');
 $guild_id = (int) default_get('id', 0);
 $ip = get_ip();
 
+echo '<center>';
 output_header("Guild Search");
 
 try {
@@ -119,12 +120,12 @@ try {
 
             // gp today column
             echo '<td>'
-                ."$gp_today"
+                ."$member_gp_today"
                 .'</td>';
 
             // gp total column
             echo '<td>'
-                ."$gp_total"
+                ."$member_gp_total"
                 .'</td>';
 
             // end the row, move on to the next member
@@ -139,11 +140,12 @@ try {
 
     // end the table
     echo '</table>';
-
-    output_footer();
 } catch (Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
     output_guild_search($guild_name, $guild_id);
     echo "<br><i>Error: $safe_error</i><br>";
+} finally {
+    echo '</center>';
     output_footer();
+    die();
 }
