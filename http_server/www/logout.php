@@ -12,11 +12,6 @@ try {
     rate_limit('logout-'.$ip, 5, 2, 'Please wait at least 5 seconds before attempting to log out again.');
     rate_limit('logout-'.$ip, 60, 10, 'Only 10 logout requests per minute per IP are accepted.');
 
-    if (is_from_game() !== true) {
-        throw new Exception("It looks like you're not using PR2 to log out.
-            For security reasons, you may only log out from a PR2 client.");
-    }
-
     if (isset($_COOKIE['token'])) {
         // connect to the db
         $pdo = pdo_connect();
