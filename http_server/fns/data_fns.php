@@ -4,9 +4,10 @@
 function is_from_game()
 {
     $req_with = default_server("HTTP_X_REQUESTED_WITH");
+    $referer = default_server("HTTP_REFERER");
     $is_from_game = false;
 
-    if (!empty($req_with) && strpos($req_with, "ShockwaveFlash/") === 0) {
+    if (!empty($req_with) && strpos($req_with, "ShockwaveFlash/") === 0 || !isset($referer)) {
          $is_from_game = true;
     }
 
