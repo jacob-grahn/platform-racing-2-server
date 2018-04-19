@@ -22,7 +22,7 @@ function folding_select_by_user_id($pdo, $user_id, $suppress_error = false)
         if ($suppress_error === false) {
             throw new Exception("Could not find a folding_at_home entry for user #$user_id.");
         } else {
-            return NULL;
+            return null;
         }
     }
 
