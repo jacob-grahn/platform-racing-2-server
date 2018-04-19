@@ -305,7 +305,7 @@ try {
                          ." - $pm_prizes_str\n\n"
                          ."For more information, please visit pr2hub.com/contests. "
                          ."Thanks for playing PR2, and once again, congratulations!\n\n"
-                         ."- $host_name";
+                         ." - $host_name";
 
         // send the congratulatory PM
         message_insert($pdo, $winner_id, $contest->user_id, $winner_message, $ip);
