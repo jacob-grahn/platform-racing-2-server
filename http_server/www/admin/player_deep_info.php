@@ -50,7 +50,7 @@ try {
                 output_object($pr2);
                 output_object($epic);
                 output_objects($folding_stats);
-                output_objects($folding);
+                output_objects($folding, false, null, true);
                 output_objects($changing_emails);
                 output_objects($logins, true, $user);
                 echo '<a href="update_account.php?id='.$user->user_id.'">
