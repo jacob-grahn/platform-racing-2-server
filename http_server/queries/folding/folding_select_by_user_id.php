@@ -1,6 +1,6 @@
 <?php
 
-function folding_select_by_user_id($pdo, $user_id)
+function folding_select_by_user_id($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('SELECT * FROM folding_at_home WHERE user_id = :user_id LIMIT 1');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
@@ -13,7 +13,11 @@ function folding_select_by_user_id($pdo, $user_id)
     $row = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (empty($row)) {
-        throw new Exception('Could not find a folding_at_home entry for user #$user_id.');
+        if ($suppress_error === false) {
+            throw new Exception('Could not find a folding_at_home entry for user #$user_id.');
+        } else {
+            return false;
+        }
     }
 
     return $row;
