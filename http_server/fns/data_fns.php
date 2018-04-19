@@ -4,13 +4,11 @@
 function is_from_game()
 {
     $req_with = default_server("HTTP_X_REQUESTED_WITH");
-    $referer = default_server("HTTP_REFERER");
+    $ref = default_server("HTTP_REFERER");
     
-    $allowedurls = array("http://pr2hub.com/", "https://pr2hub.com/", "https://jiggmin2.com/games/platform-racing-2/", "https://www.kongregate.com/");
-    
+    // is it from the game?
     $is_from_game = false;
-
-    if (!empty($req_with) && strpos($req_with, "ShockwaveFlash/") === 0 || !isset($referer) || is_empty($referer) || in_array($referer, $allowedurls) === true) {
+    if ((!empty($req_with) && strpos($req_with, "ShockwaveFlash/") === 0) || is_empty($ref)) {
          $is_from_game = true;
     }
 
