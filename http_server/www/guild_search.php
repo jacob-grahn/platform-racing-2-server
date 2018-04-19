@@ -13,8 +13,8 @@ $guild_name = default_get('name', '');
 $guild_id = (int) default_get('id', 0);
 $ip = get_ip();
 
-echo '<center>';
 output_header("Guild Search");
+echo '<center>';
 
 try {
     // rate limiting

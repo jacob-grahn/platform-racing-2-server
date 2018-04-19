@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../www/mod/mod_fns.php';
 require_once __DIR__ . '/../../queries/staff/actions/admin_actions_select.php';
 
 $start = find('start', 0);

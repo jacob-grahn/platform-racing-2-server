@@ -123,7 +123,7 @@ try {
             }
 
             echo "<input type='checkbox' name='prize_$prize_id' id='prize_$prize_id'>"
-                ."<label for='prize_$prize_id'> $prize_name</label>";
+                ."<label for='prize_$prize_id'> $prize_name</label>"
                 ."<input type='hidden' name='prize_name_$prize_id' value='$prize_name'><br>";
         }
         echo '<br>';
@@ -139,7 +139,7 @@ try {
 
         echo '<br><br>';
         echo "<a href='contests.php'>&lt;- All Contests</a>";
-        echo '<br>';
+        echo '<br><br>';
         echo '---';
         echo '<br>';
         echo '<pre>Check the boxes of the prizes you wish to award.'

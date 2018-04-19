@@ -50,19 +50,20 @@ if ($ip_info !== false && !empty($ip_info)) {
 }
 
 try {
-    // sanity checks
+    // sanity check: POST?
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
-    }
+    } // sanity check: was data received?
     if (!isset($encrypted_login)) {
         throw new Exception('Login data not recieved.');
-    }
+    } // sanity check: is it an allowed version?
     if (array_search($version, $allowed_versions) === false) {
         throw new Exception(
             'Platform Racing 2 has recently been updated. '.
             'Please refresh your browser to download the latest version.'
         );
-    }
+    } // sanity check: correct referrer?
+    require_trusted_ref('log in');
 
     // rate limiting
     rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
@@ -336,9 +337,6 @@ try {
     $reply->guildName = $guild_name;
     $reply->emblem = $emblem;
     $reply->userId = $user_id;
-
-    // allowed domain check
-    require_trusted_ref('log in');
 
     // tell the user
     echo json_encode($reply);
