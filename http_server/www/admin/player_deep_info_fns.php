@@ -1,11 +1,15 @@
 <?php
 
-function output_objects($objs, $is_logins = false, $user = null)
+function output_objects($objs, $is_logins = false, $user = null, $keys = false)
 {
     if ($objs !== false) {
         foreach ($objs as $obj) {
-            output_object($obj, ', ');
-            echo '<br/>';
+            if ($keys === false) {
+                output_object($obj, ', ');
+            } elseif ($keys === true) {
+                output_object_keys($obj, ', ');
+            }
+            echo '<br>';
         }
         if ($is_logins === true) {
             $url_name = urlencode($user->name);
@@ -38,6 +42,17 @@ function output_object($obj, $sep = '<br/>')
             }
             if ($var != 'user_id' && $var != 'email' && $var != 'guild') {
                 echo "$var: ".htmlspecialchars($val)."$sep";
+            }
+        }
+    }
+}
+
+function output_object_keys($obj, $sep = '<br/>')
+{
+    if ($obj !== false) {
+        foreach ($obj as $var => $val) {
+            if ($val == 1 && $var != 'user_id') {
+                echo $val.$sep;
             }
         }
     }
