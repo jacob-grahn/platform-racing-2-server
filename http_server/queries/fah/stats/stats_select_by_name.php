@@ -1,6 +1,6 @@
 <?php
 
-function stats_select_by_name($pdo, $fah_name)
+function stats_select_by_name($pdo, $fah_name, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT *
@@ -15,5 +15,11 @@ function stats_select_by_name($pdo, $fah_name)
         throw new Exception('Could not perform fah db query stats_select_by_name.');
     }
     
-    return $stmt->fetch(PDO::FETCH_OBJ);
+    $row = $stmt->fetch(PDO::FETCH_OBJ);
+    
+    if (empty($row) && $suppress_error === true) {
+        return false;
+    }
+    
+    return $row;
 }
