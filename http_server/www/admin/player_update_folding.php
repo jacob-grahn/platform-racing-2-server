@@ -21,7 +21,8 @@ require_once __DIR__ . '/../../queries/rank_tokens/rank_token_upsert.php';
 
 // make some variables
 $ip = get_ip();
-$fah_name = str_replace(' ', '_', find('name')); // debugging
+$name = find('name');
+$fah_name = str_replace(' ', '_', $name); // debugging
 
 // check permission
 try {
@@ -61,16 +62,28 @@ try {
     } // sanity check: has this user folded anything for Team Jiggmin?
     if ($fah_data_server->description == 'No results') {
         $kill = true;
-        $name = htmlspecialchars(find('name'));
+        $name = htmlspecialchars($name);
         throw new Exception("Error: The user $name has not earned any Folding@Home points for Team Jiggmin.");
     }
     
     // new variables from fah server
-    $fah_server = $fah_data_server->results;
-    $pr2_name = str_replace('_', ' ', $fah_server['name']);
-    $fah_points = (int) $fah_server['credit'];
-    $fah_wus = (int) $fah_server['wus'];
-    $fah_rank = (int) $fah_server['rank'];
+    $fah_server = $fah_data_server->results[0];
+    $pr2_name = str_replace('_', ' ', $fah_server->name);
+    $fah_points = (int) $fah_server->credit;
+    $fah_wus = (int) $fah_server->wus;
+    $fah_rank = (int) $fah_server->rank;
+    
+    // sanity check: does the user exist?
+    $user_id = name_to_id($pr2_pdo, $name, true);
+    if ($user_id === false) {
+        $kill = true;
+        $name = htmlspecialchars($name);
+        throw new Exception(
+            "Error: Could not find a user with the name \"$name\"."
+            ."<br><br>"
+            ."<a href='javascript:history.back()'>&lt;- Go Back</a>"
+        );
+    }
     
     // connect to the fah database
     $fah_pdo = pdo_fah_connect();
@@ -96,12 +109,7 @@ try {
             && $db_rank === $fah_rank
         ) {
             $name = htmlspecialchars($pr2_name);
-            throw new Exception(
-                "<span style='color: red;'>"
-                ."The folding data for $name is up-to-date with the Folding@Home server."
-                ."</span>"
-                ."<br>"
-            );
+            throw new Exception("The folding data for $name is up-to-date with the Folding@Home server.<br>");
         }
 
         // if the database has values less than or equal to the folding server, update
@@ -139,14 +147,15 @@ try {
 
 // admin validated update awards
 try {
-    $folding_user = folding_select_by_user_id($pr2_pdo, name_to_id($pr2_name));
-    $prize_array[strtolower($folding_user->name)] = $folding_user;
+    $user_id = name_to_id($pr2_pdo, $pr2_name);
+    $folding_user = folding_select_by_user_id($pr2_pdo, $user_id, true);
+    $prize_array[strtolower($pr2_name)] = $folding_user;
     $user = stats_select_by_name($fah_pdo, $pr2_name);
-    
+
     add_prizes($pr2_pdo, $user->fah_name, $user->points, $prize_array, array());
     $url_name = htmlspecialchars(urlencode($pr2_name));
     $pr2_name = htmlspecialchars($pr2_name);
-    echo "<br><br><span style='color: green;'>Great success! All operations completed successfully.</span>"
+    echo "<br><span style='color: green;'>Great success! All operations completed successfully.</span>"
         ."<br><br><a href='player_deep_info.php?name1=$url_name'>&lt;- Go Back</a>";
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
