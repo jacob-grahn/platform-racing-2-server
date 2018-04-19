@@ -52,7 +52,7 @@ try {
     }
 
     // if not an admin/mod, throttle awards
-    if ($user_id === $host_id) {
+    if ($user_id === $host_id && $is_admin === false && $is_mod === false) {
         $recent_awards = (int) throttle_awards($pdo, $contest_id, $user_id);
         $max_awards = (int) $contest->max_awards;
         if ($recent_awards >= $max_awards) {
@@ -302,8 +302,8 @@ try {
         $winner_message = "Dear $winner_name,\n\n"
                          ."I'm pleased to inform you that you won $contest_name! "
                          ."You have been awarded with the following prizes:\n\n"
-                         ."$pm_prizes_str\n\n"
-                         ."For more information, visit pr2hub.com/contests. "
+                         ." - $pm_prizes_str\n\n"
+                         ."For more information, please visit pr2hub.com/contests. "
                          ."Thanks for playing PR2, and once again, congratulations!\n\n"
                          ."- $host_name";
 
