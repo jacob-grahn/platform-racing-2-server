@@ -113,7 +113,7 @@ try {
         echo "Awarding: $html_awarding<br>";
 
         // mod
-        if ($is_mod === true || $is_host === true) {
+        if (($is_mod === true || $is_host === true) && $host->power < 2) {
             $max_awards = (int) $contest->max_awards;
             $used_awards = (int) throttle_awards($pdo, $contest_id, $host_id);
             echo "Used Awards (this week): $used_awards<br>"
