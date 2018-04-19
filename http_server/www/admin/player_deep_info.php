@@ -5,6 +5,8 @@ require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/users/user_select_by_name.php';
 require_once __DIR__ . '/../../queries/pr2/pr2_select.php';
 require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php';
+require_once __DIR__ . '/../../queries/fah/stats/stats_select_by_name.php';
+require_once __DIR__ . '/../../queries/folding/folding_select_by_user_id.php';
 require_once __DIR__ . '/../../queries/changing_emails/changing_emails_select_by_user.php';
 require_once __DIR__ . '/../../queries/recent_logins/recent_logins_select.php';
 require_once __DIR__ . '/player_deep_info_fns.php';
@@ -49,20 +51,15 @@ try {
                 output_object($user);
                 output_object($pr2);
                 output_object($epic);
-                output_objects($folding_stats);
-                output_objects($folding, false, null, true);
+                output_object($folding_stats, ', ');
+                output_object_keys($folding);
                 output_objects($changing_emails);
                 output_objects($logins, true, $user);
-                echo '<a href="update_account.php?id='.$user->user_id.'">
-                        edit
-                      </a>
-                    | <a href="//pr2hub.com/mod/ban.php?user_id='.$user->user_id.'&force_ip=">
-                        ban
-                      </a>
-                    | <a href="player_update_folding.php?name='.htmlspecialchars(urlencode($user->name)).'">
-                        fah update
-                      </a>
-                    <br><br><br>';
+                echo '<a href="update_account.php?id='.$user->user_id.'">edit</a>'
+                    .' | <a href="//pr2hub.com/mod/ban.php?user_id='.$user->user_id.'&force_ip=">ban</a>'
+                    .' | <a href="player_update_folding.php?name='.htmlspecialchars(urlencode($user->name)).'">'
+                    .' fah update</a>'
+                    .'<br><br><br>';
             } catch (Exception $e) {
                 echo "<i>Error: ".$e->getMessage()."</i><br><br>";
             }
