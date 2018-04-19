@@ -47,7 +47,11 @@ try {
     output_header('Update Folding Data', true, true);
 
     // get folding data from folding.stanford.edu
-    $fah_data_server = json_decode(file_get_contents("http://folding.stanford.edu/stats/api/donors?team=143016&name=$fah_name"));
+    $fah_data_server = json_decode(
+        file_get_contents(
+            "http://folding.stanford.edu/stats/api/donors?team=143016&name=$fah_name"
+        )
+    );
 
     // sanity check: was any data received?
     $kill = false;
@@ -87,8 +91,7 @@ try {
         $db_rank = (int) $fah_db->rank;
     
         // check if they're equivalent
-        if (
-            $db_points === $fah_points
+        if ($db_points === $fah_points
             && $db_wus === $fah_wus
             && $db_rank === $fah_rank
         ) {
