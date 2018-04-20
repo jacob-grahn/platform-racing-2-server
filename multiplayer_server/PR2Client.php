@@ -139,33 +139,27 @@ class PR2Client extends \chabot\SocketServerClient
             //echo("too many connections from this ip\n");
             $this->close();
             $this->onDisconnect();
-            $this->disconnected = true;
         } else {
             $time = time();
             $this->last_action = $time;
             $this->last_user_action = $time;
-            $this->disconnected = false;
         }
     }
 
 
     public function onDisconnect()
     {
-        //echo "disconnect ".$this->remote_address."\n";
-        if ($this->disconnected == false) {
-            $this->disconnected = true;
-            if (isset($this->player)) {
-                $this->player->remove();
-                unset($this->player);
-                $this->player = null;
-            }
+        if (isset($this->player)) {
+            $this->player->socket = null;
+            $this->player->remove();
+            $this->player = null;
         }
 
         if ($this->login_id != null) {
             global $login_array;
             $login_array[$this->login_id] = null;
+            $this->login_id = null;
         }
-        $this->login_id = null;
 
         if (!$this->subtracted_ip) {
             $this->subtracted_ip = true;

@@ -1391,11 +1391,10 @@ class Player
 
         //make sure the socket is nice and dead
         if (is_object($this->socket)) {
-            unset($this->socket->player);
-            if ($this->socket->disconnected === false) {
-                $this->socket->close();
-                $this->socket->onDisconnect();
-            }
+            $this->socket->player = null;
+            $this->socket->close();
+            $this->socket->onDisconnect();
+            $this->socket = null;
         }
 
         //get out of whatever you're in
