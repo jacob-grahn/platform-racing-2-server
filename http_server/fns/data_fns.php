@@ -12,7 +12,7 @@ function is_from_game()
     }
     
     // does the request originate from the flash player?
-    return strpos($req_with, "ShockwaveFlash/") === 0
+    return strpos($req_with, "ShockwaveFlash/") === 0;
 }
 
 // check if player has an epic color option for a part
