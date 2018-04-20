@@ -3,15 +3,16 @@
 // requests from a flash client will include this header
 function is_from_game()
 {
-    $req_with = default_server("HTTP_X_REQUESTED_WITH");
+    $req_with = default_server("HTTP_X_REQUESTED_WITH", "");
     $ref = default_server("HTTP_REFERER");
-    $is_from_game = false;
-
-    if ((!is_empty($req_with) && strpos($req_with, "ShockwaveFlash/") !== 0) || is_empty($ref)) {
-         $is_from_game = true;
+    
+    // let people type in the url manually
+    if (is_empty($ref)) {
+        return true;
     }
-
-    return $is_from_game;
+    
+    // does the request originate from the flash player?
+    return strpos($req_with, "ShockwaveFlash/") === 0
 }
 
 // check if player has an epic color option for a part
