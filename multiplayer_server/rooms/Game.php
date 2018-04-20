@@ -47,7 +47,6 @@ class Game extends Room
 
     public function addPlayer($player)
     {
-        if (count($this->finish_array) < 4) {
             Room::addPlayer($player);
             $player->socket->write('startGame`'.$this->course_id);
             $player->temp_id = $this->temp_id;
@@ -62,7 +61,6 @@ class Game extends Room
             $race_stats = new RaceStats($player->temp_id, $player->name, $player->active_rank, $player->ip);
             array_push($this->finish_array, $race_stats);
             $player->race_stats = $race_stats;
-        }
     }
 
 
