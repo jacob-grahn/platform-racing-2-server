@@ -19,7 +19,7 @@ try {
     $pdo = pdo_connect();
     
     // check permission
-    $admin = 3483035; //check_moderator($pdo, false, 3);
+    $admin = check_moderator($pdo, false, 3);
 } catch (Exception $e) {
     output_header('Error');
     echo "Error: " . $e->getMessage();
