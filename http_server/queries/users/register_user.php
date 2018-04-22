@@ -9,6 +9,7 @@ function register_user($pdo, $name, $password, $ip, $time, $email)
 {
     // user insert
     $pass_hash = to_hash($password);
+    unset($password); // don't keep pass in memory
     user_insert($pdo, $name, $pass_hash, $ip, $time, $email);
     unset($pass_hash); // don't keep hash in memory
 
