@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/users/register_user.php';
+require_once __DIR__ . '/../queries/users/do_register_user.php';
 
 $name = $_POST['name'];
 $password = $_POST['password'];
@@ -75,7 +75,7 @@ try {
     );
 
     // register user
-    register_user($pdo, $name, $password, $ip, $time, $email);
+    do_register_user($pdo, $name, $password, $ip, $time, $email);
 
     $ret = new stdClass();
     $ret->result = 'success';
