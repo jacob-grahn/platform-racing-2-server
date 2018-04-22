@@ -1,15 +1,25 @@
 <?php
 
+// get general functions
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/output_fns.php';
+
+// select stats from fah db
+require_once __DIR__ . '/../queries/fah/stats/stats_select_all.php';
+require_once __DIR__ . '/../queries/fah/stats/stats_select_by_name.php';
+require_once __DIR__ . '/../queries/fah/stats/stats_insert.php';
+
+// folding_at_home data select/insert/update from/into/in pr2 db
 require_once __DIR__ . '/../queries/folding/folding_insert.php';
 require_once __DIR__ . '/../queries/folding/folding_select_by_user_id.php';
 require_once __DIR__ . '/../queries/folding/folding_select_list.php';
 require_once __DIR__ . '/../queries/folding/folding_update.php';
+require_once __DIR__ . '/../cron/fah_award_prizes_fns.php';
+
+// message, insert rank token
 require_once __DIR__ . '/../queries/messages/message_insert.php';
+require_once __DIR__ . '/../queries/rank_tokens/rank_token_select.php';
 require_once __DIR__ . '/../queries/rank_tokens/rank_token_upsert.php';
-require_once __DIR__ . '/../queries/users/user_select_by_name.php';
-require_once __DIR__ . '/../queries/fah/stats/stats_select_all.php';
-require_once __DIR__ . '/fah_award_prizes_fns.php';
 
 $prize_array = array();
 $processed_names = array();
