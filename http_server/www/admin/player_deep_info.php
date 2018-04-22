@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/users/user_select_by_name.php';
 require_once __DIR__ . '/../../queries/pr2/pr2_select.php';
 require_once __DIR__ . '/../../queries/epic_upgrades/epic_upgrades_select.php';
+require_once __DIR__ . '/../../queries/rank_tokens/rank_token_select.php';
 require_once __DIR__ . '/../../queries/fah/stats/stats_select_by_name.php';
 require_once __DIR__ . '/../../queries/folding/folding_select_by_user_id.php';
 require_once __DIR__ . '/../../queries/changing_emails/changing_emails_select_by_user.php';
@@ -43,6 +44,7 @@ try {
                 $user = user_select_by_name($pdo, $name);
                 $pr2 = pr2_select($pdo, $user->user_id, true);
                 $epic = epic_upgrades_select($pdo, $user->user_id, true);
+                $rank_tokens = rank_token_select($pdo, $user->user_id);
                 $folding_stats = stats_select_by_name($fah_pdo, $name, true);
                 $folding = folding_select_by_user_id($pdo, $user->user_id, true);
                 $changing_emails = changing_emails_select_by_user($pdo, $user->user_id, true);
@@ -51,6 +53,7 @@ try {
                 output_object($user);
                 output_object($pr2);
                 output_object($epic);
+                output_object($rank_tokens);
                 output_object($folding_stats, ', ');
                 output_object_keys($folding);
                 output_objects($changing_emails);
