@@ -32,8 +32,8 @@ function add_prizes($pdo, $name, $score, $prize_array, $processed_names)
             // get information from pr2, rank_tokens, and folding_at_home
             $hat_array = explode(',', pr2_select($pdo, $user_id)->hat_array);
             $available_tokens = (int) rank_token_select($pdo, $user_id)->available_tokens;
-            $folding = get_object_vars($row);
             
+            // define columns
             $columns = array(
                         'r1' => array('token' => 1, 'min_score' => 1),
                         'r2' => array('token' => 2, 'min_score' => 500),
@@ -82,7 +82,6 @@ function add_prizes($pdo, $name, $score, $prize_array, $processed_names)
                 award_hat($pdo, $user_id, $name, $score, 'cowboy');
             }
             
-            echo 'got here';
         } catch (Exception $e) {
             $error = $e->getMessage();
             $safe_error = htmlspecialchars($error);
