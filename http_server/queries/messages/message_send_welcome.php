@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../queries/messages/message_insert.php';
+
 function message_send_welcome($pdo, $name, $user_id)
 {
     // compose a welcome pm
