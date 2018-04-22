@@ -1,12 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/to_hash.php';
-require_once __DIR__ . '/../queries/users/user_select_by_name.php';
-require_once __DIR__ . '/../queries/users/user_insert.php';
-require_once __DIR__ . '/../queries/users_new/users_new_insert.php';
-require_once __DIR__ . '/../queries/pr2/pr2_insert.php';
-require_once __DIR__ . '/../queries/messages/message_insert.php';
+require_once __DIR__ . '/../queries/users/register_user.php';
 
 $name = $_POST['name'];
 $password = $_POST['password'];
@@ -79,29 +74,8 @@ try {
         'You may create a maximum of five accounts from the same IP address per day.'
     );
 
-    // --- begin user registration --- \\
-
-    // user insert
-    $pass_hash = to_hash($password);
-    user_insert($pdo, $name, $pass_hash, $ip, $time, $email);
-
-    // pr2 insert
-    $user_id = name_to_id($pdo, $name);
-    pr2_insert($pdo, $user_id);
-
-    // compose a welcome pm
-    $safe_name = htmlspecialchars($name);
-    $welcome_message = "Welcome to Platform Racing 2, $safe_name!\n\n"
-        ."<a href='https://grahn.io' target='_blank'><u><font color='#0000FF'>"
-        ."Click here</font></u></a> to read about the latest Platform Racing news on my blog.\n\n"
-        ."If you have any questions or comments, send me an email at "
-        ."<a href='mailto:jacob@grahn.io?subject=Questions or Comments about "
-        ."PR2' target='_blank'><u><font color='#0000FF'>jacob@grahn.io</font></u></a>.\n\n"
-        ."Thanks for playing, I hope you enjoy.\n\n"
-        ."- Jacob";
-
-    // welcome them
-    message_insert($pdo, $user_id, 1, $welcome_message, '0');
+    // register user
+    register_user($pdo, $name, $password, $ip, $time, $email);
 
     $ret = new stdClass();
     $ret->result = 'success';
