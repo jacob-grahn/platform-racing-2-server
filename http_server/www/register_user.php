@@ -84,7 +84,6 @@ try {
     // user insert
     $pass_hash = to_hash($password);
     user_insert($pdo, $name, $pass_hash, $ip, $time, $email);
-    users_new_insert($pdo, $name, $ip, $time);
 
     // pr2 insert
     $user_id = name_to_id($pdo, $name);
