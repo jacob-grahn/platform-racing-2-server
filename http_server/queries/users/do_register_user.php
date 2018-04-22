@@ -5,7 +5,7 @@ require_once __DIR__ . '/../queries/users/user_insert.php';
 require_once __DIR__ . '/../queries/pr2/pr2_insert.php';
 require_once __DIR__ . '/../queries/messages/message_send_welcome.php';
 
-function register_user($pdo, $name, $password, $ip, $time, $email)
+function do_register_user($pdo, $name, $password, $ip, $time, $email)
 {
     // user insert
     $pass_hash = to_hash($password);
