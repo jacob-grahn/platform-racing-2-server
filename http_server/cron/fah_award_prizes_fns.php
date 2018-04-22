@@ -81,7 +81,6 @@ function add_prizes($pdo, $name, $score, $prize_array, $processed_names)
             if (($award_cb === true || $score > 100000) && $has_cb === false) {
                 award_hat($pdo, $user_id, $name, $score, 'cowboy');
             }
-            
         } catch (Exception $e) {
             $error = $e->getMessage();
             $safe_error = htmlspecialchars($error);
