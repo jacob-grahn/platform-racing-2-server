@@ -65,10 +65,9 @@ try {
 
     //--- compose an eloquent invitation
     $pm_safe_guild_name = preg_replace("/[^a-zA-Z0-9 ]/", "_", $guild->guild_name);
-    $message = "Hi $target_account->name, You've been invited to join our
-        guild, [guildlink=$guild->guild_id]". $pm_safe_guild_name
-        ."[/guildlink]. Click [invitelink=$guild->guild_id]here[/invitelink]
-        to accept.";
+    $message = "Hi $target_account->name! "
+        ."You've been invited to join our guild, [guildlink=$guild->guild_id]" . $pm_safe_guild_name . "[/guildlink]. "
+        ."Click [invitelink=$guild->guild_id]here[/invitelink] to accept!";
 
 
     //--- add the invitation to the db
