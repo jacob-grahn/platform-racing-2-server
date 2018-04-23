@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/users/do_register_user.php';
+require_once __DIR__ . '/../fns/register_user_fns.php';
 
 $name = $_POST['name'];
 $password = $_POST['password'];
