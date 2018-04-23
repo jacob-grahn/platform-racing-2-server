@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../fns/Encryptor.php';
+require_once __DIR__ . '/../fns/register_user_fns.php';
 require_once __DIR__ . '/../queries/tokens/token_insert.php';
 require_once __DIR__ . '/../queries/servers/server_select.php';
 require_once __DIR__ . '/../queries/users/user_select_guest.php';
@@ -166,7 +167,11 @@ try {
     }
 
     // get their pr2 and epic_upgrades info
-    $stats = pr2_select($pdo, $user_id);
+    $stats = pr2_select($pdo, $user_id, true);
+    if ($stats === false) {
+        pr2_insert($pdo, $user_id);
+        message_send_welcome($pdo, $user_name, $user_id);
+    }
     $epic_upgrades = epic_upgrades_select($pdo, $user_id, true);
 
     // check if they own rank tokens
