@@ -279,8 +279,10 @@ class Player
 
         //special text emotes
         if ($room_type == 'c') {
-            $chat_message = str_replace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
-            $chat_message = str_replace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
+            $chat_message = str_ireplace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
+            $chat_message = str_ireplace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
+            $chat_message = str_ireplace(":thinking:", "🤔", $chat_message);
+            $chat_message = str_ireplace(":lol:", "😂", $chat_message);
         }
 
         // html killer for systemChat
