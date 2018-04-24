@@ -172,7 +172,7 @@ function finalize_folding_award($pdo, $user_id, $name, $prize_code)
     $prize_str = $prizes[$prize_code][0];
     $min_score = $prizes[$prize_code][1];
     $message = "Dear $name,\n\n"
-        ."Congratulations on earning $min_score points for Team Jiggmin! "
+        ."Congratulations on earning $min_score for Team Jiggmin! "
         ."As a special thank you, I've added $prize_str to your account!!\n\n"
         ."Thanks for helping us take over the world (or cure cancer)!\n\n"
         ."- Jiggmin";
