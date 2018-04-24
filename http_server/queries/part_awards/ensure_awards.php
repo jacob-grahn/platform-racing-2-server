@@ -1,13 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/part_awards/part_awards_select_list.php';
-require_once __DIR__ . '/../queries/part_awards/part_awards_delete_old.php';
-
-try {
-    // connect
-    $pdo = pdo_connect();
-
+function ensure_awards($pdo)
+{
     // select all records, they get cleared out weekly or somesuch
     $awards = part_awards_select_list($pdo);
 
@@ -30,7 +24,4 @@ try {
 
     // delete older records
     part_awards_delete_old($pdo);
-} catch (Exception $e) {
-    echo "Error: $e";
-    exit();
 }
