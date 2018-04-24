@@ -766,6 +766,24 @@ class Player
                         'the server. Check with them if you\'re unsure.';
                 }
                 $this->write($message);
+            } // emotes command
+            elseif ($chat_message == '/emotes' ||
+                $chat_message == '/emoticons' ||
+                $chat_message == '/emojis' ||
+                $chat_message == '/smilies' ||
+                $chat_message == '/smiles'
+            ) {
+                if ($room_type == 'c') {
+                    $this->write('systemChat`PR2 Emoticons:<br>'
+                                .':shrug: = ¯\_(ツ)_/¯<br>'
+                                .':lenny: = ( ͡° ͜ʖ ͡°)<br>'
+                                .':think: = 🤔<br>'
+                                .':laugh: = 😂<br>'
+                                .'Note: Emoticons can\'t be used in races.');
+                } else {
+                    $this->write('systemChat`To get a list of emoticons that can be used in the chatroom,'
+                                .' go to the chat tab in the lobby and type /emotes.');
+                }
             } // help command
             elseif ($chat_message == '/help' ||
                 $chat_message == '/commands' ||
@@ -778,9 +796,8 @@ class Player
                 $server_owner = '';
 
                 if ($room_type == 'g') {
-                    $this->write('systemChat`To get a list of commands that '.
-                        'can be used in the chatroom, go to the chat tab '.
-                        'in the lobby and type /help.');
+                    $this->write('systemChat`To get a list of commands that can be used in the chatroom,'
+                                .' go to the chat tab in the lobby and type /help.');
                 } else {
                     if ($this->group >= 2) {
                         if ($this->temp_mod === false) {
@@ -820,7 +837,8 @@ class Player
                         '- /hh status<br>'.
                         '- /t status<br>'.
                         '- /population<br>'.
-                        '- /beawesome'.$mod.$effects.$admin.$server_owner);
+                        '- /beawesome<br>'.
+                        '- /emotes'.$mod.$effects.$admin.$server_owner);
                 }
             } // --- send chat message --- \\
             else {
