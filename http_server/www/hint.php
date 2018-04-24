@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../fns/output_fns.php';
+require_once __DIR__ . '/../fns/data_fns.php';
 
 output_header('Artifact Hint');
 
