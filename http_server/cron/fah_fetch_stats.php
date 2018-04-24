@@ -8,7 +8,7 @@ require_once __DIR__ . '/../queries/fah/team/team_update.php';
 
 //--- load the team page for Team Jiggmin -----------------------------------------------------------------
 $contents = file_get_contents('http://fah-web.stanford.edu/teamstats/team143016.html');
-$contents = preg_replace('/\s+/', ' ', $contents); //replace "_" with " "
+$contents = str_replace('_', ' ', $contents); //replace "_" with " "
 $contents = trim($contents);
 
 

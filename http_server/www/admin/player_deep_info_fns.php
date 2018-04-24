@@ -3,11 +3,12 @@
 function output_objects($objs, $is_logins = false, $user = null)
 {
     if ($objs !== false) {
+        $count = 0;
         foreach ($objs as $obj) {
             output_object($obj, ', ');
-            echo '<br/>';
+            $count++;
         }
-        if ($is_logins === true) {
+        if ($is_logins === true && $count > 0) {
             $url_name = urlencode($user->name);
             echo "<a href='player_deep_logins.php?name=$url_name'>more logins</a><br>";
         }
@@ -40,5 +41,20 @@ function output_object($obj, $sep = '<br/>')
                 echo "$var: ".htmlspecialchars($val)."$sep";
             }
         }
+        if ($sep != '<br/>') {
+            echo '<br>';
+        }
+    }
+}
+
+function output_object_keys($obj, $sep = ', ')
+{
+    if ($obj !== false) {
+        foreach ($obj as $var => $val) {
+            if ($val == 1 && $var != 'user_id') {
+                echo $var.$sep;
+            }
+        }
+        echo '<br>';
     }
 }
