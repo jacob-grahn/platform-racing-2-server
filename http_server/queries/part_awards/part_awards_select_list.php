@@ -18,5 +18,5 @@ function part_awards_select_list($pdo)
         return false;
     }
 
-    return $result;
+    return $awards;
 }
