@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/echo_line.php';
 require_once __DIR__ . '/../fns/PseudoRandom.php';
 require_once __DIR__ . '/../queries/artifact_locations/artifact_location_select.php';
 require_once __DIR__ . '/../queries/users/user_select.php';
