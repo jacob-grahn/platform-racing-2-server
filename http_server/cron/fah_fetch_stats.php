@@ -18,7 +18,7 @@ if ($contents == false
     || strpos($contents, 'Stats update in progress') !== false
     || strpos($contents, 'The database server is currently serving too many connections.') !== false
 ) {
-    echo 'updating';
+    output('FAH is currently performing a stats update. We\'ll try again later.');
     exit;
 }
 
@@ -98,12 +98,14 @@ foreach ($user_array as $user_str) {
         if (($history->wu != $work_units || $history->points != $points || $history->rank != $team_rank)
             && !$history->processed
         ) {
-            echo("* updating $name: wu: $work_units, points: $points \n");
+            output("Updating $name... WU: $work_units | Points: $points | Rank: $team_rank");
             stats_insert($pdo, $name, $work_units, $points, $team_rank);
         }
         $history->processed = true;
     } else {
-        echo("* creating $name: wu: $work_units, points: $points \n");
+        output("Creating $name... WU: $work_units | Points: $points | Rank: $team_rank");
         stats_insert($pdo, $name, $work_units, $points, $team_rank);
     }
 }
+
+output('Done updating FAH stats!');
