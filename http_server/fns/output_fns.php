@@ -181,7 +181,7 @@ function output_mod_navigation($formatting_for_admins = true)
         <b>
             <a href="//pr2hub.com/mod/reported_messages.php">Reported Messages</a>
             -
-            <a href="//pr2hub.com/mod/player_search.php">Player Search</a>
+            <a href="//pr2hub.com/mod/player_info.php">Player Search</a>
             -
             <a href="//pr2hub.com/bans/bans.php">Ban Log</a>
             -
