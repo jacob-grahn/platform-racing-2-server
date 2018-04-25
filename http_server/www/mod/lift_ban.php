@@ -3,9 +3,17 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../queries/bans/ban_select.php';
+require_once __DIR__ . '/../../queries/bans/ban_lift.php';
+require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
 
-$ban_id = (int) default_val($_GET['ban_id'], 0);
+// for both
+$action = find('action', 'form');
+$ban_id = (int) find('ban_id', 0);
 $ip = get_ip();
+
+// for lifting the ban
+$reason = default_post('reason', 'They bribed me with skittles!');
+$reason = $reason . ' @' . date('M j, Y g:i A'); // add time/date to lift reason
 
 try {
     // rate limiting
@@ -25,35 +33,52 @@ try {
 }
 
 try {
-    // output header
-    output_header('Lift Ban', true);
+    if ($action === 'lift' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        // sanity check: are any values blank?
+        if (is_empty($ban_id, false) || is_empty($reason)) {
+            throw new Exception('Some information is missing.');
+        }
 
-    // get the ban
-    $ban = ban_select($pdo, $ban_id);
-    $banned_name = $ban->banned_name;
-    $lifted = $ban->lifted;
-    if ($lifted == '1') {
-        throw new Exception('This ban has already been lifted.');
+        // lift the ban
+        $lifted_by = $mod->name;
+        ban_lift($pdo, $ban_id, $lifted_by, $reason);
+
+        // record the lifting
+        $user_id = $mod->user_id;
+        $name = $mod->name;
+        if ($reason != '') {
+            $disp_reason = "Reason: " . htmlspecialchars($reason);
+        } else {
+            $disp_reason = "There was no reason given";
+        }
+        mod_action_insert($pdo, $user_id, "$name lifted ban $ban_id from $ip. $disp_reason.", 0, $ip);
+
+        //redirect to a page showing the lifted ban
+        header("Location: /bans/show_record.php?ban_id=$ban_id");
+        die();
+    } else {
+        // get the ban
+        $ban = ban_select($pdo, $ban_id);
+        $banned_name = $ban->banned_name;
+        $lifted = $ban->lifted;
+        if ($lifted == '1') {
+            throw new Exception('This ban has already been lifted.');
+        }
+
+        // --- make the visible things --- \\
+        output_header('Lift Ban', true);
+        echo "<p>To lift the ban on $banned_name, please enter a reason and hit submit.</p>";
+        echo '<form method="post">'
+            ."<input type='hidden' value='$ban_id' name='ban_id'>"
+            .'<input type="hidden" value="lift" name="action">'
+            .'<input type="text" value="They bribed me with skittles!" name="reason" size="70">'
+            .'&nbsp;<input type="submit" value="Lift Ban">'
+            .'</form>';
     }
-
-    // make the visible things...
-    echo "<p>To lift the ban on $banned_name, please enter a reason and hit submit.</p>";
-
-    ?>
-
-    <form action="do_lift_ban.php" method="post">
-        <input type="hidden" value="<?php echo $ban_id; ?>" name="ban_id"  />
-        <input type="text" value="They bribed me with skittles!" name="reason" size="70" />
-        <input type="submit" value="Lift Ban" />
-    </form>
-
-
-    <?php
 } catch (Exception $e) {
-    // header already echoed
-    $error = $e->getMessage();
-    echo "Error: $error";
+    output_header('Lift Ban', true);
+    echo 'Error: ' . htmlspecialchars($e->getMessage());
+} finally {
     output_footer();
+    die();
 }
-
-?>
