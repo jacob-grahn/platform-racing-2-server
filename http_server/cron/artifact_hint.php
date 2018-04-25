@@ -84,4 +84,4 @@ $r->updated_time = $updated_time;
 $r_str = json_encode($r);
 
 file_put_contents(__DIR__ . '/../www/files/artifact_hint.txt', $r_str);
-echo_line($r->hint);
+output($r->hint);
