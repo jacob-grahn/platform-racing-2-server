@@ -11,4 +11,4 @@ best_levels_monthly($pdo);
 messages_delete_old($pdo);
 all_optimize($pdo);
 
-echo 'result=ok';
+output('result=ok');
