@@ -116,10 +116,3 @@ function save_gp($pdo, $server_id, $gp_array)
         }
     }
 }
-
-
-
-function output($str)
-{
-    echo $str . "\n";
-}
