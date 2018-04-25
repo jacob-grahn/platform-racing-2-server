@@ -35,4 +35,4 @@ users_reset_status($pdo);
 guild_transfers_expire_old($pdo);
 changing_emails_expire_old($pdo);
 
-output('result=ok');
+output('Daily CRON successful.');
