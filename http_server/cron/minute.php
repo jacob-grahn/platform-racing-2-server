@@ -21,4 +21,4 @@ generate_level_list($pdo, 'newest');
 run_update_cycle($pdo);
 write_server_status($pdo);
 
-echo 'result=ok';
+output('result=ok');
