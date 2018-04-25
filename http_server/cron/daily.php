@@ -35,4 +35,4 @@ users_reset_status($pdo);
 guild_transfers_expire_old($pdo);
 changing_emails_expire_old($pdo);
 
-echo('result=ok');
+output('result=ok');
