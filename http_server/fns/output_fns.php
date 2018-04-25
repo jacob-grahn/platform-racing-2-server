@@ -1,5 +1,12 @@
 <?php
 
+// shell
+function output($str)
+{
+    echo "* $str\n";
+}
+
+// guild_search.php
 function output_guild_search($guild_name = '', $guild_id = '', $mode = null)
 {
     $guild_id = (int) $guild_id;
@@ -79,7 +86,7 @@ function output_guild_search($guild_name = '', $guild_id = '', $mode = null)
     echo '</center>';
 }
 
-
+// bans.php
 function create_ban_list($bans)
 {
     $str = '<p><ul>';
@@ -93,7 +100,7 @@ function create_ban_list($bans)
     return $str;
 }
 
-
+// various mod/admin scripts, bans.php, leaderboard.php
 function output_pagination($start, $count, $extra = '', $is_end = false)
 {
     $next_start_num = $start + $count;
@@ -116,7 +123,7 @@ function output_pagination($start, $count, $extra = '', $is_end = false)
 }
 
 
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// standard header
 function output_header($title = '', $formatting_for_mods = false, $formatting_for_admins = false)
 {
 ?>
@@ -151,7 +158,7 @@ if ($formatting_for_mods) {
 }
 }
 
-
+// standard footer
 function output_footer()
 {
 ?>
@@ -172,7 +179,7 @@ function output_footer()
 <?php
 }
 
-
+// mod/admin navigation
 function output_mod_navigation($formatting_for_admins = true)
 {
 ?>
