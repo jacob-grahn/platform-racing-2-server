@@ -20,11 +20,11 @@ foreach ($users as $row) {
 
     $play_count = user_select_level_plays($pdo, $user_id);
 
-    $str = "$user_id plays: $play_count rank: $rank.";
+    $str = "$user_id has $play_count level plays and is rank $rank.";
     if ($play_count > 100 || $rank > 15) {
-        echo("$str SPARE \n");
+        output("$str SPARE \n");
     } else {
-        echo("$str DELETE \n");
+        output("$str DELETE \n");
         user_delete($pdo, $user_id);
     }
 }
