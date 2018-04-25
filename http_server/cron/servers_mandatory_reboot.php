@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/shell_output_fns.php';
 require_once __DIR__ . '/../queries/servers/servers_select.php';
 
 //--- load all servers
