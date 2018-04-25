@@ -13,4 +13,4 @@ generate_level_list($pdo, 'best_today');
 generate_level_list($pdo, 'campaign');
 ensure_awards($pdo);
 
-echo 'result=ok';
+output('result=ok');
