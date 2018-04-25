@@ -11,6 +11,7 @@ require_once __DIR__ . '/../../queries/guilds/guild_select.php';
 require_once __DIR__ . '/../../queries/messages/message_insert.php';
 require_once __DIR__ . '/../../queries/purchases/purchase_insert.php';
 require_once __DIR__ . '/../../queries/rank_token_rentals/rank_token_rentals_count.php';
+require_once __DIR__ . '/../../queries/rank_roken_rentals/rank_token_rental_insert.php';
 require_once __DIR__ . '/../../queries/servers/server_select.php';
 require_once __DIR__ . '/../../queries/servers/server_select_by_guild_id.php';
 require_once __DIR__ . '/../../queries/servers/server_insert.php';
@@ -18,6 +19,7 @@ require_once __DIR__ . '/../../queries/servers/server_update_expire_date.php';
 require_once __DIR__ . '/../../queries/servers/servers_select.php';
 require_once __DIR__ . '/../../queries/servers/servers_select_highest_port.php';
 require_once __DIR__ . '/../../queries/users/user_select_expanded.php';
+
 
 try {
     //--- parse the incoming message
