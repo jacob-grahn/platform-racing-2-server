@@ -2,7 +2,7 @@
 
 function run_update_cycle($pdo)
 {
-    output('run update cycle');
+    output('Running update cycle...');
     //--- gather data to send to active servers
     $send = new stdClass();
     $send->artifact = artifact_location_select($pdo);
@@ -19,7 +19,7 @@ function run_update_cycle($pdo)
     foreach ($servers as $server) {
         if ($server->result != false && $server->result != null) {
             $happy_hour = (int)$server->result->happy_hour;
-            output('server is up');
+            output("$server->server_name (ID #$server->server_id) is up.");
             save_plays($pdo, $server->result->plays);
             save_gp($pdo, $server->server_id, $server->result->gp);
             server_update_status(
@@ -30,10 +30,12 @@ function run_update_cycle($pdo)
                 $happy_hour
             );
         } else {
-            output('server is down: ' . json_encode($server));
+            $server_str = json_encode($server);
+            output("$server->server_name is down. Data: $server_str");
             server_update_status($pdo, $server->server_id, 'down', 0, 0);
         }
     }
+    output('Update cycle complete.');
 }
 
 
@@ -43,7 +45,7 @@ function write_server_status($pdo)
     $displays = array();
     foreach ($servers as $server) {
         $display = new stdClass();
-        output('server id ' . $server->server_name);
+        output("Writing status for $server->server_name (ID #$server->server_id)...");
         $display->server_id = $server->server_id;
         $display->server_name = preg_replace("/[^A-Za-z0-9 ]/", '', $server->server_name);
         $display->address = $server->address;
@@ -54,16 +56,19 @@ function write_server_status($pdo)
         $display->tournament = $server->tournament;
         $display->happy_hour = $server->happy_hour;
         $displays[] = $display;
+        output("Status written for $server->server_name (ID #$server->server_id).");
     }
 
     $save = new stdClass();
     $save->servers = $displays;
     $display_str = json_encode($save);
 
-    output('output display str');
+    output('Outputting server status:');
     output($display_str);
 
     file_put_contents(__DIR__ . '/../www/files/server_status_2.txt', $display_str);
+    
+    output('Server status output successful.');
 }
 
 
@@ -77,7 +82,7 @@ function get_recent_pms($pdo)
     }
 
     //--- select the messages
-    output("last_message_id: $last_message_id");
+    output("Last Message ID: $last_message_id");
     $messages = messages_select_recent($pdo, $last_message_id);
 
     if (count($messages) > 0) {
@@ -87,6 +92,8 @@ function get_recent_pms($pdo)
 
     //--- save the message id for next time
     file_put_contents($file, $last_message_id);
+    
+    output("Wrote last message ID to last-pm.txt.");
 
     //--- done
     return $messages;
@@ -143,16 +150,17 @@ function update_artifact($pdo)
     
     // figure out how much of the string to reveal
     $elapsed = time() - $updated_time;
-    $perc = $elapsed / (60*60*24*3);
+    $perc = $elapsed / 259200; // 3 days
     if ($perc > 1) {
         $perc = 1;
     }
     $hide_perc = 1 - $perc;
+    $disp_perc = $hide_perc * 100;
     $hide_characters = round($len * $hide_perc);
-    echo_line("hide_perc: $hide_perc");
-    echo_line("hide_characters: $hide_characters");
-    echo_line("len: $len");
-    echo_line("finder_name: $finder_name ");
+    output("Hidden Percent: $disp_perc%");
+    output("Hidden Chars: $hide_characters");
+    output("String Length: $len");
+    output("Finder Name: $finder_name");
     
     
     // generate random
