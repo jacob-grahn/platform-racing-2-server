@@ -9,4 +9,4 @@ $pdo = pdo_connect();
 servers_deactivate_expired($pdo);
 servers_delete_old($pdo);
 
-echo 'result=ok';
+echo('result=ok');
