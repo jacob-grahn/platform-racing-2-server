@@ -1,11 +1,5 @@
 <?php
 
-// shell
-function output($str)
-{
-    echo "* $str\n";
-}
-
 // guild_search.php
 function output_guild_search($guild_name = '', $guild_id = '', $mode = null)
 {
