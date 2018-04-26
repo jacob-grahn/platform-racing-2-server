@@ -18,7 +18,6 @@ try {
     // check login
     $user_id = token_login($pdo);
     $power = user_select_power($pdo, $user_id);
-    
     if ($power <= 0) {
         throw new Exception(
             "Guests can't load or save levels. ".
