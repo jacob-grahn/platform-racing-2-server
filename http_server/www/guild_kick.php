@@ -39,6 +39,12 @@ try {
     if ($guild->owner_id != $user_id) {
         throw new Exception('You are not the owner of this guild.');
     }
+    if ($account->power <= 0) {
+        throw new Exception(
+            "Guests can't kick users from guilds. ".
+            "To access this feature, please create your own account."
+        );
+    }
     if ($target_account->guild != $account->guild) {
         throw new Exception('They are not in your guild.');
     }
