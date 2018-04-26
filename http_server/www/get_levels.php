@@ -17,6 +17,14 @@ try {
 
     // check login
     $user_id = token_login($pdo);
+    $power = user_select_power($pdo, $user_id);
+    
+    if ($power <= 0) {
+        throw new Exception(
+            "Guests can't load or save levels. ".
+            "To access this feature, please create your own account."
+        );
+    }
 
     // more rate limiting
     rate_limit('get-levels-'.$user_id, 3, 2);
