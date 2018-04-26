@@ -17,6 +17,14 @@ try {
 
     // check their login
     $user_id = token_login($pdo);
+    $power = user_select_power($pdo, $user_id);
+    if ($power <= 0) {
+        $mode = htmlspecialchars($mode);
+        throw new Exception(
+            "Guests can't add players to their $mode list. ".
+            "To access this feature, please create your own account."
+        );
+    }
 
     // more rate limiting
     rate_limit("user-list-$user_id", 5, 2);
