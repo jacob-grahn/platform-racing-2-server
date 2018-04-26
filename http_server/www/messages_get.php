@@ -4,7 +4,6 @@ header("Content-type: text/plain");
 
 require_once __DIR__ . '/../fns/all_fns.php';
 require_once __DIR__ . '/../queries/messages/messages_select.php';
-require_once __DIR__ . '/../queries/users/user_select.php';
 require_once __DIR__ . '/../queries/users/user_update_read.php';
 
 
@@ -24,6 +23,7 @@ try {
 
     // check their login
     $user_id = token_login($pdo);
+    $power = user_select_power($pdo, $user_id);
 
     // more rate limiting
     rate_limit('get-messages-'.$user_id, 3, 2);
@@ -33,6 +33,21 @@ try {
     $messages_array = [];
 
     foreach ($messages as $row) {
+        if ($power <= 0) {
+            $message = new stdClass();
+            $message->message_id = 0;
+            $message->message = "Hi there! It looks like you're a guest. "
+                                ."You won't be able to send or receive private messages.\n\n"
+                                ."To use the private messaging system, log out and create your own account.\n\n"
+                                ."Thanks for playing!\n- Jiggmin";
+            $message->time = time();
+            $message->user_id = 1;
+            $message->name = 'Jiggmin';
+            $message->group = 3;
+            $messages_array[] = $message;
+            break;
+        }
+    
         if ($row->message_id > $largest_id) {
             $largest_id = $row->message_id;
         }
