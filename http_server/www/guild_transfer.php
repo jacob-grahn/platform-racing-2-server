@@ -60,7 +60,7 @@ try {
             .'This page will allow you to transfer your guild ownership status to another user on PR2. '
             ."This means that this user will be able to edit your guild's information and buy/own private servers. "
             .'As a result, you will lose these privileges.<br>'
-            .'<br>';
+            .'<br>'
             .'If you would like to proceed, please fill out the form below.<br>'
             .'<br>';
 
