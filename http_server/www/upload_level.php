@@ -61,11 +61,11 @@ try {
     }
 
     // sanity check: are they a guest?
-    $account = user_select($pdo, $user_id);
-    if ($account->power <= 0) {
+    $power = user_select_power($pdo, $user_id);
+    if ($power <= 0) {
         throw new Exception(
-            'Guests can\'t save levels.'.
-            'To access this feature, please log out and create your own account.'
+            "Guests can't load or save levels. ".
+            "To access this feature, please create your own account."
         );
     }
 
