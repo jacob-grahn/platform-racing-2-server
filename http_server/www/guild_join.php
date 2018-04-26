@@ -35,7 +35,10 @@ try {
         throw new Exception('You are already a member of a guild.');
     }
     if ($account->power <= 0) {
-        throw new Exception('Guests can\'t join guilds.');
+        throw new Exception(
+            "Guests can't join guilds. ".
+            "To access this feature, please create your own account."
+        );
     }
     if ($guild->member_count >= 200) {
         throw new Exception('This guild is full.');
