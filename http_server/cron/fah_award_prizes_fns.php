@@ -186,11 +186,3 @@ function finalize_folding_award($pdo, $user_id, $name, $prize_code)
     // output
     output("Finished awarding $prize_code to $name ($user_id).");
 }
-
-
-
-// handy output function; never leave home without it!
-function output($str)
-{
-    echo("* $str \n<br>");
-}

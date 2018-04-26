@@ -15,4 +15,4 @@ foreach ($servers as $server) {
     }
 }
 
-echo 'result=ok';
+output('All eligible servers have been activated.');
