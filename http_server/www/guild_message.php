@@ -40,6 +40,12 @@ try {
     if ($guild_id <= 0) {
         throw new Exception('You are not in a guild.');
     }
+    if ($user->power <= 0) {
+        throw new Exception(
+            "Guests can't send guild messages. ".
+            "To access this feature, please create your own account."
+        );
+    }
 
     // confirm that there's a message
     if (is_empty($message)) {
