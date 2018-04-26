@@ -43,6 +43,9 @@ try {
 
     // load the user account
     $user = user_select_by_name($pdo, $name);
+    if ($user->power <= 0) {
+        throw new Exception("Guests don't have accounts to recover. Try creating your own account.");
+    }
 
     // the email must match
     if (strtolower($user->email) !== strtolower($email)) {
