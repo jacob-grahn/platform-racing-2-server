@@ -46,7 +46,10 @@ try {
         throw new Exception('You must be rank 20 or above to create a guild.');
     }
     if ($account->power <= 0) {
-        throw new Exception('Guests can not create guilds.');
+        throw new Exception(
+            "Guests can't create guilds. ".
+            "To access this feature, please create your own account."
+        );
     }
     if ($account->guild != 0) {
         throw new Exception('You are already a member of a guild.');
