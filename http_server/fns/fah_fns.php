@@ -62,7 +62,7 @@ function fah_fetch_stats()
     $user_array = array_splice($user_array, 2);
     $users_json = array();
     
-    foreach($user_array as $user_str) {
+    foreach ($user_array as $user_str) {
         $array = explode('<TD>', $user_str);
     
         $team_rank = $array[2];
