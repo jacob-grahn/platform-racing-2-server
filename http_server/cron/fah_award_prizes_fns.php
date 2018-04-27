@@ -66,7 +66,7 @@ function add_prizes($pdo, $name, $score, $prize_array, $processed_names)
             // award tokens
             if ($available_tokens !== count($token_awards)) {
                 foreach ($token_awards as $column) {
-                    award_token($pdo, $user_id, $name, $score, $column);
+                    award_token($pdo, $user_id, $name, $score, $column, $available_tokens);
                 }
             }
 
@@ -91,7 +91,7 @@ function add_prizes($pdo, $name, $score, $prize_array, $processed_names)
 
 
 
-function award_token($pdo, $user_id, $name, $score, $column)
+function award_token($pdo, $user_id, $name, $score, $column, $available_tokens)
 {
     $token_num = $column['token'];
     $column = "r$token_num";
@@ -105,6 +105,10 @@ function award_token($pdo, $user_id, $name, $score, $column)
             || ($column == 'r5' && $score < 10000000)
         ) {
             throw new Exception("$name ($user_id): Insufficient score ($score) for that folding prize ($column).");
+        }
+        
+        if ($token_num <= $available_tokens) {
+            throw new Exception("$name ($user_id): This user already has $column. Moving on...")
         }
         
         // do it
