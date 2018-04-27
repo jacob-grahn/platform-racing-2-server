@@ -13,7 +13,7 @@ function all_optimize($pdo)
     
     // put the table names into an array
     $table_names = array();
-    foreach(range(0,$end) as $num) {
+    foreach (range(0, $end) as $num) {
         $table_name = $tables[$num]["Tables_in_".$DB_NAME]; // take from env
         array_push($table_names, $table_name);
     }
