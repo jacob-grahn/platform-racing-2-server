@@ -108,7 +108,7 @@ function award_token($pdo, $user_id, $name, $score, $column, $available_tokens)
         }
         
         if ($token_num <= $available_tokens) {
-            throw new Exception("$name ($user_id): This user already has $column. Moving on...")
+            throw new Exception("$name ($user_id): This user already has $column. Moving on...");
         }
         
         // do it
