@@ -1,7 +1,7 @@
 <?php
 
 function servers_restart_all($pdo)
-{   
+{
     // tell the command line
     $time = date('r');
     output("Mandatory server reboot CRON starting at $time...");
