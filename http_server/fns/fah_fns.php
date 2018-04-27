@@ -48,13 +48,6 @@ function fah_fetch_stats()
     // tell the world
     output('The stats aren\'t updating. Parsing list...');
     
-    // find the user table
-    $table_1_index = strpos($contents, '<TABLE>');
-    $table_2_index = strpos($contents, '<TABLE>', $table_1_index+1);
-    $table_3_index = strpos($contents, '<TABLE>', $table_2_index+1);
-    $table_4_index = strpos($contents, '<TABLE>', $table_3_index+1);
-    $table_5_index = strpos($contents, '<TABLE>', $table_4_index+1);
-    
     // parse user stats
     $users_start_index = strpos($contents, '<BR>Team members:<BR>');
     $user_strs = substr($contents, $users_start_index);
