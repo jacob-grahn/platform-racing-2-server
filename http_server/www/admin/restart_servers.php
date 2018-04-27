@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../fns/shell_output_fns.php';
 require_once __DIR__ . '/../../queries/servers/servers_select.php';
 require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
 

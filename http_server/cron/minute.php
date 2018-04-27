@@ -2,8 +2,8 @@
 
 // get script fns
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/cron_fns.php';
 require_once __DIR__ . '/../fns/PseudoRandom.php';
-require_once __DIR__ . '/minute_fns.php';
 
 // artifact (artifact_hint.txt, send info to servers)
 require_once __DIR__ . '/../queries/levels/level_select.php';
@@ -24,6 +24,7 @@ require_once __DIR__ . '/../queries/levels/level_increment_play_count.php';
 // update active servers
 require_once __DIR__ . '/../queries/servers/servers_select.php';
 require_once __DIR__ . '/../queries/servers/server_update_status.php';
+require_once __DIR__ . '/../queries/servers/server_update_address.php';
 
 // increment gp
 require_once __DIR__ . '/../queries/gp/gp_increment.php';
@@ -39,6 +40,7 @@ $pdo = pdo_connect();
 // perform minute tasks
 generate_level_list($pdo, 'newest');
 update_artifact($pdo);
+failover_servers($pdo);
 run_update_cycle($pdo);
 write_server_status($pdo);
 

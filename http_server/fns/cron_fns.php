@@ -200,3 +200,21 @@ function update_artifact($pdo)
     file_put_contents(__DIR__ . '/../www/files/artifact_hint.txt', $r_str);
     output($r->hint);
 }
+
+function failover_servers($pdo)
+{
+    // list servers
+    $servers = servers_select($pdo);
+    $addresses = array('45.76.24.255'); // todo: this should be in the db
+
+    // restart if down
+    foreach ($servers as $server) {
+        if ($server->status == 'down') {
+            $fallback_address = $addresses[array_rand($addresses)];
+            server_update_address($pdo, $server->server_id, $fallback_address);
+        }
+    }
+
+    // tell the world
+    output('All eligible servers have been activated.');
+}
