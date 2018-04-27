@@ -1,5 +1,27 @@
 <?php
 
+// fah update (combine all functions)
+function fah_update($pdo)
+{
+    // create a list of existing users and their prizes
+    $prize_array = array();
+    $folding_rows = folding_select_list($pdo);
+    foreach ($folding_rows as $row) {
+        $prize_array[strtolower($row->name)] = $row;
+    }
+
+    // get fah user stats
+    $stats = fah_fetch_stats();
+    if ($stats === false) {
+        throw new Exception('Could not fetch FAH stats.');
+    }
+    
+    // award prizes
+    foreach ($stats->users as $user) {
+        fah_award_prizes($pdo, $user->name, $user->points, $prize_array);
+    }
+}
+
 // get stats from fah server
 function fah_fetch_stats()
 {
