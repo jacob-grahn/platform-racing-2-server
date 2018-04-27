@@ -35,7 +35,7 @@ try {
     generate_level_list($pdo, 'newest');
     generate_level_list($pdo, 'best');
     generate_level_list($pdo, 'best_today');
-    generate_level_list($pdo, 'campaign');
+    generate_level_list($pdo, 'campaign');
     ensure_awards($pdo);
     servers_deactivate_expired($pdo);
     servers_delete_old($pdo);
