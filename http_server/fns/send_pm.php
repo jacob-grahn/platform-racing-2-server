@@ -45,7 +45,8 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
     if ($ignored) {
         throw new Exception(
             "You have been ignored by this player. ".
-            "They won't receive any chat or messages from you.");
+            "They won't receive any chat or messages from you."
+        );
     }
 
     // prevent flooding
