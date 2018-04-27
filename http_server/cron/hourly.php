@@ -20,6 +20,10 @@ require_once __DIR__ . '/../queries/messages/message_insert.php';
 require_once __DIR__ . '/../queries/rank_tokens/rank_token_select.php';
 require_once __DIR__ . '/../queries/rank_tokens/rank_token_upsert.php';
 
+// remove expired servers
+require_once __DIR__ . '/../queries/servers/servers_deactivate_expired.php';
+require_once __DIR__ . '/../queries/servers/servers_delete_old.php';
+
 // tell the command line
 $time = date('r');
 output("Hourly CRON starting at $time...");
@@ -33,6 +37,8 @@ try {
     generate_level_list($pdo, 'best_today');
     generate_level_list($pdo, 'campaign');
     ensure_awards($pdo);
+    servers_deactivate_expired($pdo);
+    servers_delete_old($pdo);
     fah_update($pdo);
 
     // tell the command line
