@@ -25,7 +25,6 @@ $name9 = find('name9', '');
 try {
     // connect
     $pdo = pdo_connect();
-    $fah_pdo = pdo_fah_connect();
 
     // make sure you're an admin
     $mod = check_moderator($pdo, false, 3);
@@ -45,7 +44,6 @@ try {
                 $pr2 = pr2_select($pdo, $user->user_id, true);
                 $epic = epic_upgrades_select($pdo, $user->user_id, true);
                 $rank_tokens = rank_token_select($pdo, $user->user_id);
-                $folding_stats = stats_select_by_name($fah_pdo, $name, true);
                 $folding = folding_select_by_user_id($pdo, $user->user_id, true);
                 $changing_emails = changing_emails_select_by_user($pdo, $user->user_id, true);
                 $logins = recent_logins_select($pdo, $user->user_id, true);
@@ -54,14 +52,11 @@ try {
                 output_object($pr2);
                 output_object($epic);
                 output_object($rank_tokens);
-                output_object($folding_stats, ', ');
                 output_object_keys($folding);
                 output_objects($changing_emails);
                 output_objects($logins, true, $user);
                 echo '<a href="update_account.php?id='.$user->user_id.'">edit</a>'
                     .' | <a href="//pr2hub.com/mod/ban.php?user_id='.$user->user_id.'&force_ip=">ban</a>'
-                    .' | <a href="player_update_folding.php?name='.htmlspecialchars(urlencode($user->name)).'">'
-                    .' fah update</a>'
                     .'<br><br><br>';
             } catch (Exception $e) {
                 echo "<i>Error: ".$e->getMessage()."</i><br><br>";
