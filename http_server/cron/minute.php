@@ -2,8 +2,8 @@
 
 // get script fns
 require_once __DIR__ . '/../fns/all_fns.php';
+require_once __DIR__ . '/../fns/cron_fns.php';
 require_once __DIR__ . '/../fns/PseudoRandom.php';
-require_once __DIR__ . '/minute_fns.php';
 
 // artifact (artifact_hint.txt, send info to servers)
 require_once __DIR__ . '/../queries/levels/level_select.php';
