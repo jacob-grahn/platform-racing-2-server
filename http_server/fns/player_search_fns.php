@@ -11,24 +11,24 @@ function find_user($pdo, $name)
     return $user;
 }
 
-function output_search($name = '')
+function output_search($name = '', $gwibble = true)
 {
 
     // safety first
     $safe_name = htmlspecialchars($name);
 
-    echo '
-	<center>
-	<font face="Gwibble" class="gwibble">-- Player Search --</font>
-	<br /><br />
-	';
+    // gwibble output
+    if ($gwibble === true) {
+        echo '<center>'
+            .'<font face="Gwibble" class="gwibble">-- Player Search --</font>'
+            .'<br><br>';
+    }
 
-    echo "
-	<form method='get'>
-	Username: <input type='text' name='name' value='$safe_name'>
-	<input type='submit' value='Search'>
-	</form>
-	";
+    // output search
+    echo '<form method="get">'
+        ."Username: <input type='text' name='name' value='$safe_name'>"
+        .'<input type="submit" value="Search">'
+        .'</form>';
 }
 
 function output_page($pdo, $user)
@@ -70,8 +70,8 @@ function output_page($pdo, $user)
 
     // group html change if staff
     if ($group >= 2) {
-        $group_name = "<a href='https://pr2hub.com/staff.php' style='color: #000000; font-weight: bold'>".
-            "$group_name</a>";
+        $group_name = "<a href='https://pr2hub.com/staff.php' style='color: #000000; font-weight: bold'>"
+                        ."$group_name</a>";
     }
 
     // safety first
@@ -85,23 +85,13 @@ function output_page($pdo, $user)
 
     // --- Start the Page --- \\
 
-    echo "
-	<br /><br />
-	-- <font style='color: #$group_color; text-decoration: underline; font-weight: bold'>$safe_name</font> --
-	<br />
-	<i>$safe_status</i>
-	<br /><br />
-	Group: $group_name
-	<br />
-	Guild: $safe_guild
-	<br />
-	Rank: $rank
-	<br />
-	Hats: $hats
-	<br />
-	Joined: $register_date
-	<br />
-	Active: $login_date
-	</center>
-	";
+    echo '<br><br>'
+        ."-- <font style='color: #$group_color; text-decoration: underline; font-weight: bold'>$safe_name</font> --<br>"
+        ."<i>$safe_status</i><br><br>"
+        ."Group: $group_name<br>"
+        ."Guild: $safe_guild<br>"
+        ."Rank: $rank<br>"
+        ."Hats: $hats<br>"
+        ."Joined: $register_date<br>"
+        ."Active: $login_date</center>";
 }

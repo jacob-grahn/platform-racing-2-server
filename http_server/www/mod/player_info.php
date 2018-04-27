@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
+require_once __DIR__ . '/../../fns/player_search_fns.php';
 require_once __DIR__ . '/../../queries/users/user_select.php';
 require_once __DIR__ . '/../../queries/pr2/pr2_select.php';
 require_once __DIR__ . '/../../queries/pr2/pr2_select_true_rank.php';
@@ -9,17 +10,13 @@ require_once __DIR__ . '/../../queries/bans/bans_select_by_user_id.php';
 require_once __DIR__ . '/../../queries/bans/bans_select_by_ip.php';
 
 $user_id = (int) default_get('user_id', 0);
+$name = default_get('name', '');
 $force_ip = find_no_cookie('force_ip');
 $ip = find_no_cookie('ip');
 
 $mod_ip = get_ip();
 
 try {
-    // sanity check: make sure something is fed to the script
-    if (is_empty($user_id, false) && is_empty($force_ip) && is_empty($ip)) {
-        throw new Exception("Invalid user ID specified.");
-    }
-
     // sanity check: send IP to ip_info.php
     if ((!is_empty($ip) || !is_empty($force_ip)) && is_empty($user_id, false)) {
         $ip = urlencode($ip);
@@ -46,10 +43,31 @@ try {
 try {
     // header
     output_header('Player Info', true);
+    
+    // determine mode
+    $mode = '';
+    if (!is_empty($name) && ($user_id === 0 || is_empty($user_id, false))) {
+        $mode = 'name';
+        $user = user_select_by_name($pdo, $name, true);
+    } elseif (!is_empty($user_id, false)) {
+        $mode = 'ID';
+        $user = user_select($pdo, $user_id, true);
+    } else {
+        // output search without gwibble text
+        output_search('', false);
+        throw new Exception();
+    }
+    
+    // output search without gwibble text
+    output_search($name, false);
+    
+    if ($user === false) {
+        throw new Exception("Could not find a user with that $mode.");
+    }
 
     // check if they are currently banned
     $banned = 'No';
-    $row = query_if_banned($pdo, $user_id, $ip);
+    $row = query_if_banned($pdo, $user->user_id, $ip);
 
     //give some more info on the current ban in effect if there is one
     if ($row !== false) {
@@ -68,12 +86,11 @@ try {
     }
 
     // get dem infos
-    $user = user_select($pdo, $user_id);
-    $pr2 = pr2_select($pdo, $user_id, true);
+    $pr2 = pr2_select($pdo, $user->user_id, true);
 
     // make neat variables
     if ($pr2 !== false) {
-        $rank = (int) pr2_select_true_rank($pdo, $user_id);
+        $rank = (int) pr2_select_true_rank($pdo, $user->user_id);
         $hats = count(explode(',', $pr2->hat_array)) - 1;
     }
     $status = $user->status;
@@ -81,7 +98,7 @@ try {
     $user_name = $user->name;
 
     // count how many times they have been banned
-    $account_bans = bans_select_by_user_id($pdo, $user_id);
+    $account_bans = bans_select_by_user_id($pdo, $user->user_id);
     $account_ban_count = (int) count($account_bans);
     $account_ban_list = create_ban_list($account_bans);
     $acc_lang = 'time';
@@ -113,8 +130,7 @@ try {
     // output the results
     if (!is_empty($user_id)) {
         $html_user_name = htmlspecialchars($user_name);
-        echo "<p>Name: <b>$html_user_name</b></p>"
-            ."<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>"
+        echo "<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>"
             ."<p>Status: $status</p>";
 
         // display pr2 info
@@ -136,7 +152,9 @@ try {
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
-    echo "Error: $error";
+    if (!is_empty($error)) {
+        echo "<i>Error: $error</i>";
+    }
 } finally {
     output_footer();
     die();
