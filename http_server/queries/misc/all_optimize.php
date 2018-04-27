@@ -1,7 +1,7 @@
 <?php
 
 // TO-DO: is this needed?
-function all_optimize($pdo)
+function all_optimize($pdo, $DB_NAME)
 {
     // get all table names
     $stmt = $pdo->query("SHOW TABLES");
@@ -22,5 +22,5 @@ function all_optimize($pdo)
     $tables = join(", ", $table_names);
     
     // execute one SQL query that optimizes every db table at once
-    $result = $pdo->query("OPTIMIZE TABLE $tables");
+    $pdo->exec("OPTIMIZE TABLE $tables");
 }
