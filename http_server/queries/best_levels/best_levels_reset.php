@@ -1,6 +1,6 @@
 <?php
 
-function best_levels_monthly($pdo)
+function best_levels_reset($pdo)
 {
     best_levels_truncate($pdo);
     best_levels_populate($pdo);
