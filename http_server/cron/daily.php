@@ -31,6 +31,7 @@ require_once __DIR__ . '/../queries/changing_emails/changing_emails_expire_old.p
 
 // start the new day
 require_once __DIR__ . '/../queries/servers/servers_select.php';
+require_once __DIR__ . '/../queries/servers/servers_restart_all.php';
 
 
 // tell the command line
@@ -53,9 +54,15 @@ users_reset_status($pdo);
 guild_transfers_expire_old($pdo);
 changing_emails_expire_old($pdo);
 
+// start new day
 $servers = servers_select($pdo);
 exp_today_truncate($pdo);
 poll_servers($servers, 'start_new_day`');
+
+// only restart servers once a week
+if (date('D') === 'Tue') {
+    servers_restart_all($pdo, $servers);
+}
 
 // tell the command line
 output('Daily CRON successful.');
