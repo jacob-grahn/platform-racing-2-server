@@ -4,7 +4,7 @@
 require_once __DIR__ . '/../fns/all_fns.php';
 
 // atb reset
-require_once __DIR__ . '/../queries/best_levels/best_levels_monthly.php';
+require_once __DIR__ . '/../queries/best_levels/best_levels_reset.php';
 
 // delete old messages
 require_once __DIR__ . '/../queries/messages/messages_delete_old.php';
@@ -25,7 +25,7 @@ output("Monthly CRON starting at $time...");
 // connect
 $pdo = pdo_connect();
 
-best_levels_monthly($pdo);
+best_levels_reset($pdo);
 messages_delete_old($pdo);
 all_optimize($pdo);
 delete_old_accounts($pdo);
