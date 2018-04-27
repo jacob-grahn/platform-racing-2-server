@@ -499,3 +499,9 @@ function rate_limit($key, $interval, $max, $error = 'Slow down a bit, yo.')
 
     return( $count );
 }
+
+// handy output function; never leave home without it!
+function output($str)
+{
+    echo "* $str \n";
+}
