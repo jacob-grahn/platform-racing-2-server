@@ -1,11 +1,14 @@
 <?php
 
-function servers_restart_all($pdo, $servers)
+function servers_restart_all($pdo)
 {   
     // tell the command line
     $time = date('r');
     output("Mandatory server reboot CRON starting at $time...");
 
+    // grab active servers
+    $servers = servers_select($pdo);
+    
     // shut down all active servers
     foreach ($servers as $server) {
         output("Shutting down $server->server_name (ID: #$server->server_id)...");
