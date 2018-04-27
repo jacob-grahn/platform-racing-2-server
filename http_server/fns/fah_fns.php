@@ -82,7 +82,7 @@ function fah_fetch_stats()
     }
     
     // throw all of the data into a readable object
-    output('List parsed! Returning data...');
+    output('List parsed! Starting to award prizes...');
     $r = new stdClass();
     $r->users = $users_json;
     return $r;
@@ -91,6 +91,7 @@ function fah_fetch_stats()
 // validate, determine, and award fah prizes
 function fah_award_prizes($pdo, $name, $score, $prize_array)
 {
+    $safe_name = htmlspecialchars($name);
     $lower_name = strtolower($name);
     
     try {
@@ -99,7 +100,10 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
             $user_id = $row->user_id;
             $status = $row->status;
         } else {
-            $user = user_select_by_name($pdo, $name);
+            $user = user_select_by_name($pdo, $name, true);
+            if ($user === false) {
+                throw new Exception("Could not find a user with the name $safe_name.");
+            }
 
             // make some variables
             $user_id = $user->user_id;
@@ -110,7 +114,7 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
         }
 
         if ($status != 'offline') {
-            throw new Exception("$name is \"$status\". Abort mission! We'll try again later.");
+            throw new Exception("$safe_name is \"$status\". We'll try again later.");
         }
         
         // --- ensure awards and give new ones --- \\
@@ -167,6 +171,9 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
         if (($award_cb === true || $score > 100000) && $has_cb === false) {
             fah_award_hat($pdo, $user_id, $name, $score, 'cowboy');
         }
+        
+        // tell the world
+        output("Finished $safe_name.");
     } catch (Exception $e) {
         $error = $e->getMessage();
         $safe_error = htmlspecialchars($error);
@@ -177,6 +184,7 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
 // award tokens
 function fah_award_token($pdo, $user_id, $name, $score, $column, $available_tokens)
 {
+    $safe_name = htmlspecialchars($name);
     $token_num = $column['token'];
     $column = "r$token_num";
     
@@ -188,15 +196,15 @@ function fah_award_token($pdo, $user_id, $name, $score, $column, $available_toke
             || ($column == 'r4' && $score < 1000000)
             || ($column == 'r5' && $score < 10000000)
         ) {
-            throw new Exception("$name ($user_id): Insufficient score ($score) for that folding prize ($column).");
+            throw new Exception("$safe_name ($user_id): Insufficient score ($score) for that folding prize ($column).");
         }
         
         if ($token_num <= $available_tokens) {
-            throw new Exception("$name ($user_id): This user already has $column. Moving on...");
+            throw new Exception("$safe_name ($user_id): This user already has $column. Moving on...");
         }
         
         // do it
-        output("Awarding $column to $name...");
+        output("Awarding $column to $safe_name...");
         rank_token_upsert($pdo, $user_id, $token_num);
         
         // finalize it (send message, mark as awarded in folding_at_home)
@@ -209,6 +217,7 @@ function fah_award_token($pdo, $user_id, $name, $score, $column, $available_toke
 // award hats
 function fah_award_hat($pdo, $user_id, $name, $score, $hat)
 {
+    $safe_name = htmlspecialchars($name);
     $column = $hat . '_hat';
     
     try {
@@ -219,18 +228,18 @@ function fah_award_hat($pdo, $user_id, $name, $score, $hat)
             $hat_id = 5;
         } // sanity check: is the prize an actual prize?
         else {
-            throw new Exception("$name ($user_id): Invalid hat prize ($hat).");
+            throw new Exception("$safe_name ($user_id): Invalid hat prize ($hat).");
         }
         
         // sanity check: has the correct amount of points been folded for this prize?
         if (($hat == 'crown' && $score < 5000)
             || ($hat == 'cowboy' && $score < 100000)
         ) {
-            throw new Exception("$name ($user_id): Insufficient score ($score) for that folding prize ($column).");
+            throw new Exception("$safe_name ($user_id): Insufficient score ($score) for that folding prize ($column).");
         }
         
         // do it
-        output("Awarding $column to $name...");
+        output("Awarding $column to $safe_name...");
         award_part($pdo, $user_id, 'hat', $hat_id);
         
         // finalize it (send message, mark as awarded in folding_at_home)
@@ -255,9 +264,10 @@ function fah_finalize_award($pdo, $user_id, $name, $prize_code)
                 );
     
     // compose a PM
+    $safe_name = htmlspecialchars($name);
     $prize_str = $prizes[$prize_code][0];
     $min_score = $prizes[$prize_code][1];
-    $message = "Dear $name,\n\n"
+    $message = "Dear $safe_name,\n\n"
         ."Congratulations on earning $min_score for Team Jiggmin! "
         ."As a special thank you, I've added $prize_str to your account!!\n\n"
         ."Thanks for helping us take over the world (or cure cancer)!\n\n"
