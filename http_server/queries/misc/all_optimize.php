@@ -3,27 +3,24 @@
 // TO-DO: is this needed?
 function all_optimize($pdo)
 {
-    $pdo->exec('OPTIMIZE TABLE artifact_location');
-    $pdo->exec('OPTIMIZE TABLE bans');
-    $pdo->exec('OPTIMIZE TABLE best_levels');
-    $pdo->exec('OPTIMIZE TABLE bounce');
-    $pdo->exec('OPTIMIZE TABLE flagged_messages');
-    $pdo->exec('OPTIMIZE TABLE folding_at_home');
-    $pdo->exec('OPTIMIZE TABLE friends');
-    $pdo->exec('OPTIMIZE TABLE ignored');
-    $pdo->exec('OPTIMIZE TABLE login_attempts');
-    $pdo->exec('OPTIMIZE TABLE messages');
-    $pdo->exec('OPTIMIZE TABLE messages_reported');
-    $pdo->exec('OPTIMIZE TABLE pr2');
-    $pdo->exec('OPTIMIZE TABLE pr2_campaign');
-    $pdo->exec('OPTIMIZE TABLE pr2_levels');
-    $pdo->exec('OPTIMIZE TABLE pr2_new_levels');
-    $pdo->exec('OPTIMIZE TABLE pr2_ratings');
-    $pdo->exec('OPTIMIZE TABLE promotion_log');
-    $pdo->exec('OPTIMIZE TABLE queries');
-    $pdo->exec('OPTIMIZE TABLE tokens');
-    $pdo->exec('OPTIMIZE TABLE users');
-    $pdo->exec('OPTIMIZE TABLE users_new');
-
-    return true;
+    // get all table names
+    $stmt = $pdo->query("SHOW TABLES");
+    $tables = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // count the tables
+    $tables_count = count($tables);
+    $end = $tables_count - 1;
+    
+    // put the table names into an array
+    $table_names = array();
+    foreach(range(0,$end) as $num) {
+        $table_name = $tables[$num]["Tables_in_".$DB_NAME]; // take from env
+        array_push($table_names, $table_name);
+    }
+    
+    // join the table names
+    $tables = join(", ", $table_names);
+    
+    // execute one SQL query that optimizes every db table at once
+    $result = $pdo->query("OPTIMIZE TABLE $tables");
 }
