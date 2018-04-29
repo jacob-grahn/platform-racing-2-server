@@ -94,9 +94,6 @@ try {
             $version2
         );
     }
-    if ($origination_domain == 'local') {
-        throw new Exception('Testing mode has been disabled.');
-    }
     if ((is_empty($in_token) === true && is_empty($user_name) === true) || strpos($user_name, '`') !== false) {
         throw new Exception('Invalid user name entered.');
     }
