@@ -1,6 +1,6 @@
 <?php
 
-function user_select_mod($pdo, $user_id, $suppress_error)
+function user_select_mod($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
             SELECT users.user_id,
