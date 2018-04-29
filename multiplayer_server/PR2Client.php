@@ -51,20 +51,24 @@ class PR2Client extends \chabot\SocketServerClient
                 if ($sub_hash != $hash) {
                     $this->close();
                     $this->onDisconnect();
-                    throw new \Exception("the hash doesn't match. recieved: $hash, local: $sub_hash \n");
+                    throw new \Exception(
+                                output("Error: The received hash doesn't match. ".
+                                        "Recieved: $hash | Local: $sub_hash \n"
+                                )
+                    );
                 }
 
                 if ($send_num > 2 && $send_num != $this->rec_num+1 && $send_num != 13) {
                     $this->close();
                     $this->onDisconnect();
-                    throw new \Exception("a command was recieved out of order \n");
+                    throw new \Exception(output("Error: A command was recieved out of order."));
                 }
 
                 $this->rec_num = $send_num;
             }
 
             if (!function_exists($function)) {
-                throw new \Exception("$function is not a function");
+                throw new \Exception(output("Error: $function is not a function."));
             }
 
             $function($this, $data);
@@ -194,7 +198,7 @@ class PR2Client extends \chabot\SocketServerClient
     public function getPlayer()
     {
         if (!isset($this->player)) {
-            throw new \Exception("\n error: this socket does not have a player");
+            throw new \Exception(output('Error: This socket does not have a player.'));
         }
         return $this->player;
     }
