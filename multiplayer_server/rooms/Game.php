@@ -448,18 +448,15 @@ class Game extends Room
 
         if ($player->finished_race === false
             && !isset($player->race_stats->finish_time)
-            && $player->race_stats->drawing === false
-            && $this->begun === true
         ) {
             $finish_microtime = microtime(true);
+            if($this->start_time == null)
+                this->start_time = 0;
             $full_time = $finish_microtime - $this->start_time;
 
             // get/format/validate/set finish time
             $finish_time = $this->timeFormat($full_time);
             $broadcast_time = $this->timeFormat($full_time, 3);
-            if ($finish_time > 31536000) {
-                $finish_time = 0; // if the race time > 1 year, set it to 0
-            }
             $this->setFinishTime($player, $finish_time);
 
             $time_mod = $finish_time / 120;
