@@ -103,6 +103,8 @@ require_once __DIR__ . '/rooms/modes/eggs.php';
 require_once __DIR__ . '/rooms/modes/objective.php';
 require_once __DIR__ . '/rooms/modes/race.php';
 
+output("Initializing startup...");
+
 Prizes::init();
 RankupCalculator::init();
 HappyHour::$random_hour = rand(0, 36);
@@ -137,12 +139,15 @@ $min_version = .60;
 $pdo = pdo_connect();
 
 // load in startup info
-output('requesting startup info...');
+output('Requesting loadup information...');
 begin_loadup($server_id);
 
 // start the socket server
-$date = date('r');
-output("Starting PR2 server $server_name on port $port at on $date.");
+output("Starting PR2 server $server_name (ID: #$server_id) on port $port...");
 $daemon = new \chabot\SocketDaemon();
 $server = $daemon->createServer('\pr2\multi\PR2SocketServer', '\pr2\multi\PR2Client', 0, $port);
 $daemon->process();
+
+// tell the world
+$date = date('r');
+output("Success! PR2 server $server_name started on port $port on $date.");
