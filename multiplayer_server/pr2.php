@@ -143,11 +143,9 @@ output('Requesting loadup information...');
 begin_loadup($server_id);
 
 // start the socket server
+$date = date('r');
 output("Starting PR2 server $server_name (ID: #$server_id) on port $port...");
 $daemon = new \chabot\SocketDaemon();
 $server = $daemon->createServer('\pr2\multi\PR2SocketServer', '\pr2\multi\PR2Client', 0, $port);
-$daemon->process();
-
-// tell the world
-$date = date('r');
 output("Success! PR2 server $server_name started on port $port on $date.");
+$daemon->process();
