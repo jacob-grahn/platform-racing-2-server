@@ -81,7 +81,6 @@ try {
     $server_id = $login->server->server_id;
     $server_port = $login->server->port;
     $server_address = $login->server->address;
-    $origination_domain = $login->domain;
     $remember = $login->remember;
     $login_code = $login->login_code;
 
