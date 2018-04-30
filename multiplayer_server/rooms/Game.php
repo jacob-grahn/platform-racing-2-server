@@ -535,7 +535,7 @@ class Game extends Room
             for ($i = $place+1; $i < count($this->finish_array); $i++) {
                 $race_stats = $this->finish_array[$i];
                 $exp_gain = ($race_stats->rank+5) * $time_mod;
-                if ($race_stats->rank+5 > 135) {
+                if (($race_stats->rank+5) > 135) {
                     $exp_gain = 0;
                 }
                 $exp_gain = ceil($this->appyExpCurve($player, $exp_gain));
