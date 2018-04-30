@@ -626,7 +626,10 @@ class Game extends Room
                     $player->write('award`Artifact Found!`+ ' . number_format($artifact_bonus));
                 }
             }
-
+            if ($tot_exp_gain > 100000) {
+                $tot_exp_gain = 0; //resets unrealistic exp
+            }
+            
             //---
             $player->incExp($tot_exp_gain);
 
