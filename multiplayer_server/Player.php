@@ -1298,16 +1298,16 @@ class Player
         }
 
         // make sure none of the part values are blank to avoid server crashes
-        if (is_empty($this->hat, false)) {
+        if (empty($this->hat)) {
             $this->gainPart('hat', 1, true);
         }
-        if (is_empty($this->head, false)) {
+        if (empty($this->head)) {
             $this->gainPart('head', 1, true);
         }
-        if (is_empty($this->body, false)) {
+        if (empty($this->body)) {
             $this->gainPart('body', 1, true);
         }
-        if (is_empty($this->feet, false)) {
+        if (empty($this->feet)) {
             $this->gainPart('feet', 1, true);
         }
 
