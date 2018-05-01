@@ -81,7 +81,6 @@ try {
     $server_id = $login->server->server_id;
     $server_port = $login->server->port;
     $server_address = $login->server->address;
-    $origination_domain = $login->domain;
     $remember = $login->remember;
     $login_code = $login->login_code;
 
@@ -93,9 +92,6 @@ try {
             '[Version check 2] '.
             $version2
         );
-    }
-    if ($origination_domain == 'local') {
-        throw new Exception('Testing mode has been disabled.');
     }
     if ((is_empty($in_token) === true && is_empty($user_name) === true) || strpos($user_name, '`') !== false) {
         throw new Exception('Invalid user name entered.');
