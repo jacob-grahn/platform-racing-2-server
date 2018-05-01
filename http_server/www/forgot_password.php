@@ -8,12 +8,8 @@ require_once __DIR__ . '/../queries/users/user_select_by_name.php';
 require_once __DIR__ . '/../queries/users/user_update_temp_pass.php';
 
 $name = $_POST['name'];
+$email = $_POST['email'];
 $ip = get_ip();
-
-// sanitize email
-$problematic_chars = array('&', '"', "'", "<", ">");
-$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-$email = str_replace($problematic_chars, '', $email);
 
 try {
     // check for post
@@ -29,8 +25,8 @@ try {
 
     // sanity check: is it a valid email address?
     if (!valid_email($email)) {
-        $email = htmlspecialchars($email);
-        throw new Exception("\"$email\" is not a valid email address.");
+         $safe_disp_email = htmlspecialchars($email);
+         throw new Exception("\"$safe_disp_email\" is not a valid email address.");
     }
 
     // easter egg: Jiggmin's luggage
@@ -49,9 +45,7 @@ try {
 
     // the email must match
     if (strtolower($user->email) !== strtolower($email)) {
-        $name = htmlspecialchars($name);
-        $email = htmlspecialchars($email);
-        throw new Exception("No account was found with the username \"$name\" and the email address \"$email\".");
+        throw new Exception('Wrong email');
     }
 
     // get the user id
@@ -68,11 +62,11 @@ try {
     // --- email them their new pass --- \\
     include 'Mail.php';
     
-    $recipient = $user->email;
+    $recipients = $email;
 
     $headers = array();
     $headers['From']    = 'Fred the Giant Cactus <contact@jiggmin.com>';
-    $headers['To']      = $recipient;
+    $headers['To']      = $email;
     $headers['Subject'] = 'A password and chocolates from PR2';
 
     $body = "Hi $name,\n\n"
@@ -93,14 +87,13 @@ try {
     $mail_object = Mail::factory('smtp', $params);
 
     // Send the message
-    $mail_object->send($recipient, $headers, $body);
+    $mail_object->send($recipients, $headers, $body);
 
     // tell the world
     echo 'message=Great success! You should receive an email with your new password shortly.';
+    die();
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+    die();
 }
-
-// seeya
-die();
