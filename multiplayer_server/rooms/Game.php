@@ -474,7 +474,7 @@ class Game extends Room
                 $this->broadcastResults($player, $broadcast_time);
             }
 
-            //--- prize -----------
+            // prize
             $prize = null;
 
             if ($this->course_id == self::LEVEL_BUTO && $player->wearingHat(Hats::JIGG)) {
@@ -493,14 +493,14 @@ class Game extends Room
             }
 
 
-            //--- exp gain -------
+            // exp gain
             $tot_exp_gain = 0;
 
-            //--- welcome back bonus ---
+            // welcome back bonus
             $welcome_back_bonus = 0;
             if ($player->exp_today == 0 && $player->rank >= 5) {
                 $welcome_back_bonus = 1000;
-            } //--- level bonus ---
+            } // level bonus
             else {
                 $level_bonus = $this->appyExpCurve($player, 25 * $time_mod);
 
@@ -531,12 +531,13 @@ class Game extends Room
                 $tot_exp_gain += $level_bonus;
             }
 
-            //--- opponent bonus ---
+            // opponent bonus
             for ($i = $place+1; $i < count($this->finish_array); $i++) {
                 $race_stats = $this->finish_array[$i];
-                $exp_gain = ($race_stats->rank+5) * $time_mod;
-                $exp_gain = ceil($this->appyExpCurve($player, $exp_gain));
-                if (PR2SocketServer::$no_prizes) {
+                if ($race_stats->rank < 100 && PR2SocketServer::$no_prizes === false) {
+                    $exp_gain = ($race_stats->rank+5) * $time_mod;
+                    $exp_gain = ceil($this->appyExpCurve($player, $exp_gain));
+                } else {
                     $exp_gain = 0;
                 }
                 $tot_exp_gain += $exp_gain;
@@ -606,13 +607,13 @@ class Game extends Room
                 }
             }
 
-            //apply welcome back bonus after all multipliers
+            // apply welcome back bonus after all multipliers
             if ($welcome_back_bonus > 0) {
                 $tot_exp_gain += $welcome_back_bonus;
                 $player->write('award`Welcome Back Bonus`+ 1,000');
             }
 
-            //artifact bonus
+            // apply artifact bonus after all multipliers
             if ($this->course_id == Artifact::$level_id && $player->wearingHat(Hats::ARTIFACT)) {
                 $result = save_finder($pdo, $player);
                 if ($result) {
@@ -621,16 +622,18 @@ class Game extends Room
                     if ($artifact_bonus > $max_artifact_bonus) {
                         $artifact_bonus = $max_artifact_bonus;
                     }
-
                     $tot_exp_gain += $artifact_bonus;
                     $player->write('award`Artifact Found!`+ ' . number_format($artifact_bonus));
                 }
             }
+            
+            // resets unrealistic EXP gain
+            if ($tot_exp_gain > 100000) {
+                $tot_exp_gain = 0;
+            }
 
-            //---
+            // increment exp and maybe save
             $player->incExp($tot_exp_gain);
-
-            //--- save
             $player->maybeSave();
         } else {
             $this->setFinishTime($player, 'forfeit');

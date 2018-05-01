@@ -28,39 +28,6 @@ function find_variable($string, $default)
 
 
 
-//--- tests if a value is empty using a variety of functions --------------------------------
-function is_empty($str, $incl_zero = true)
-{
-    /*
-    $incl_zero: checks if the user wants to include the string "0" in the empty check.
-    If not, empty($str) will make this function return true.
-    */
-
-    // if the string length is 0, it's empty
-    if (strlen(trim($str)) === 0) {
-        return true;
-    }
-    // if the string isn't set, it's empty
-    if (!isset($str)) {
-        return true;
-    }
-    // if the string is empty and not 0, it's empty
-    if ($incl_zero) {
-        if (empty($str) && $str != '0') {
-            return true;
-        }
-    } // if the string is empty, it's empty
-    else {
-        if (empty($str)) {
-            return true;
-        }
-    }
-    // you're still here? must mean $str isn't empty
-    return false;
-}
-
-
-
 //--- tests to see if a string contains obscene words ---------------------------------------
 function is_obscene($str)
 {
