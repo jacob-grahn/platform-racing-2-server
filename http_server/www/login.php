@@ -187,6 +187,10 @@ try {
         $rt_used = $rt_available;
     }
 
+    if ($rt_available > 26) {
+        throw new Exception('Too many rank tokens. Please use a different account.');
+    }
+    
     // record moderator login
     $server_name = $server->server_name;
     if ($group > 1) {
