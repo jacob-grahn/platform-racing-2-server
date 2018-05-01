@@ -3,11 +3,7 @@
 require_once __DIR__ . '/../../fns/all_fns.php';
 require_once __DIR__ . '/../../fns/output_fns.php';
 require_once __DIR__ . '/../../fns/player_search_fns.php';
-require_once __DIR__ . '/../../queries/users/user_select.php';
-require_once __DIR__ . '/../../queries/pr2/pr2_select.php';
 require_once __DIR__ . '/../../queries/pr2/pr2_select_true_rank.php';
-require_once __DIR__ . '/../../queries/bans/bans_select_by_user_id.php';
-require_once __DIR__ . '/../../queries/bans/bans_select_by_ip.php';
 
 $user_id = (int) default_get('user_id', 0);
 $name = default_get('name', '');
@@ -58,12 +54,13 @@ try {
         throw new Exception();
     }
     
-    // output search without gwibble text
-    output_search($name, false);
-    
     if ($user === false) {
+        output_search('', false);
         throw new Exception("Could not find a user with that $mode.");
     }
+    
+    // output search without gwibble text
+    output_search($user->name, false);
 
     // check if they are currently banned
     $banned = 'No';
@@ -81,7 +78,7 @@ try {
         } elseif ($row->account_ban == 1) {
             $ban_type = 'account is';
         }
-        $banned = "<a href='../bans/show_record.php?ban_id=$ban_id'>Yes.</a>"
+        $banned = "<a href='../bans/show_record.php?ban_id=$ban_id'>Yes.</a> "
                  ."This $ban_type banned until $ban_end_date. Reason: $reason";
     }
 

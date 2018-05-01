@@ -15,7 +15,7 @@ $action = find('action', 'form');
 
 try {
      // rate limiting
-     rate_limit('add-contest-prize-'.$ip, 30, 5);
+     rate_limit('add-contest-prize-'.$ip, 30, 10);
      rate_limit('add-contest-prize-'.$ip, 5, 2);
 
     // sanity check: is a valid contest ID specified?

@@ -1,6 +1,6 @@
 <?php
 
-function user_select_mod($pdo, $user_id)
+function user_select_mod($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
             SELECT users.user_id,
@@ -30,7 +30,7 @@ function user_select_mod($pdo, $user_id)
     
     $user = $stmt->fetch(PDO::FETCH_OBJ);
 
-    if (empty($user)) {
+    if (empty($user) && $suppress_error === false) {
         throw new Exception('Could not find a mod with that ID.');
     }
 
