@@ -189,6 +189,11 @@ try {
         throw new Exception('Your rank is too high. Please choose a different account.');
     }
 
+    // sanity check: unrealistic amount of folding tokens?
+    if ($rt_available > 5) {
+        throw new Exception('Too many rank tokens. Please use a different account.');
+    }
+    
     // record moderator login
     $server_name = $server->server_name;
     if ($group > 1) {
