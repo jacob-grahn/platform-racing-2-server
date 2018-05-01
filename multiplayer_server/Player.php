@@ -158,17 +158,20 @@ class Player
         global $player_array;
         global $max_players;
 
+        // check if the server is full
         if ((count($player_array) > $max_players && $this->group < 2) ||
             (count($player_array) > ($max_players-10) && $this->group == 0)
         ) {
             $this->write('loginFailure`');
             $this->write('message`Sorry, this server is full. Try back later.');
             $this->remove();
-        } elseif ($this->active_rank > 100 && $this->user_id !== self::FRED) {
+        } // check for a valid rank
+        elseif ($this->active_rank > 100 && $this->user_id !== self::FRED) {
             $this->write('loginFailure`');
             $this->write('message`Your rank is too high. Please choose a different account.');
             $this->remove();
-        } else {
+        } // add to the player array
+        else {
             $player_array[$this->user_id] = $this;
         }
 
