@@ -1297,18 +1297,36 @@ class Player
             return false;
         }
 
+        // ensure no part arrays contain empty values
+        if (($arr_key = array_search('', $this->hat_array)) !== false) {
+            unset($this->hat_array[$arr_key]);
+        }
+        if (($arr_key = array_search('', $this->head_array)) !== false) {
+            unset($this->head_array[$arr_key]);
+        }
+        if (($arr_key = array_search('', $this->body_array)) !== false) {
+            unset($this->body_array[$arr_key]);
+        }
+        if (($arr_key = array_search('', $this->feet_array)) !== false) {
+            unset($this->feet_array[$arr_key]);
+        }
+
         // make sure none of the part values are blank to avoid server crashes
         if (empty($this->hat)) {
             $this->gainPart('hat', 1, true);
+            $this->setPart('hat', 1);
         }
         if (empty($this->head)) {
             $this->gainPart('head', 1, true);
+            $this->setPart('head', 1);
         }
         if (empty($this->body)) {
             $this->gainPart('body', 1, true);
+            $this->setPart('body', 1);
         }
         if (empty($this->feet)) {
             $this->gainPart('feet', 1, true);
+            $this->setPart('feet', 1);
         }
 
         // auto removing some hat?
