@@ -20,6 +20,7 @@ To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com
 - BrokenBulb78
 - Dex472
 - EternalUF
+- famelegend1
 - fourst4r
 - Grovbi
 - isokissa3
