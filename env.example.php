@@ -8,10 +8,6 @@ $DB_USER = 'user';
 $DB_NAME = 'pr2';
 $DB_PORT = 1234;
 
-$DB_FAH_USER = 'fah_user';
-$DB_FAH_NAME = 'fah';
-$DB_FAH_PASS = 'apple';
-
 $S3_SECRET = 'secret';
 $S3_PASS = 'pass';
 
@@ -41,7 +37,6 @@ $LOGIN_KEY = 'hello';
 $LOGIN_IV = 'there';
 
 $GUEST_PASS = 'this is the universal password for all guest accounts';
-
 $BLS_IP_PREFIX = 'no ddos plz';
 
 ?>
