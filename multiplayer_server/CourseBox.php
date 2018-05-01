@@ -124,10 +124,18 @@ class CourseBox
         $course_id = substr($this->course_id, 0, strpos($this->course_id, '_'));
         $game = new Game($course_id);
         foreach ($this->slot_array as $player) {
-            $player->confirmed = false;
-            $game->addPlayer($player);
-            client_set_right_room($player->socket, 'none');
-            client_set_chat_room($player->socket, 'none');
+            if ($player->active_rank < 100 || $player->user_id == $player::FRED) {
+                $player->confirmed = false;
+                $game->addPlayer($player);
+                client_set_right_room($player->socket, 'none');
+                client_set_chat_room($player->socket, 'none');
+            } else {
+                $slot = $player->slot; // get slot
+                $player->write('message`Some data was incorrect. Please log in again.');
+                $player->remove(); // disconnect them
+                $this->slot_array[$slot] = null; // clear that slot
+                unset($this->slot_array[$slot]); // ^
+            }
         }
         $game->init();
         $this->remove();
