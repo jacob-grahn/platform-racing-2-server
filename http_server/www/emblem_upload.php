@@ -64,7 +64,10 @@ try {
         throw new Exception('Must be rank 20 or above to upload an emblem.');
     }
     if ($account->power <= 0) {
-        throw new Exception('Guests can not upoad emblems.');
+        throw new Exception(
+            "Guests can't upload guild emblems. ".
+            "To access this feature, please create your own account."
+        );
     }
     if (!isset($image)) {
         throw new Exception('No image recieved.');

@@ -43,7 +43,10 @@ try {
 
     // sanity checks
     if ($account->power <= 0) {
-        throw new Exception('Guests cannot edit guilds.');
+        throw new Exception(
+            "Guests can't edit guilds. ".
+            "To access this feature, please create your own account."
+        );
     }
     if ($account->guild == 0) {
         throw new Exception('You are not a member of a guild.');

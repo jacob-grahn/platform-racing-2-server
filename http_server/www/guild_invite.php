@@ -39,8 +39,11 @@ try {
     if ($target_account->guild != 0) {
         throw new Exception('They are already in a guild.');
     }
-    if ($target_account->power <= 0) {
-                throw new Exception('Guests can\'t join guilds.');
+    if ($account->power <= 0 || $target_account->power <= 0) {
+        throw new Exception(
+            "Guests can't join or invite users to guilds. ".
+            "To access this feature, please create your own account."
+        );
     }
     if ($user_id == $target_id) {
         throw new Exception('Do not invite yourself, yo.');

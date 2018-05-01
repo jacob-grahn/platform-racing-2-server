@@ -23,6 +23,13 @@ try {
 
     // check their login
     $user_id = token_login($pdo, false);
+    $power = user_select_power($pdo, $user_id);
+    if ($power <= 0) {
+        throw new Exception(
+            "Guests can't use the private messaging system. ".
+            "To access this feature, please create your own account."
+        );
+    }
 
     // more rate limiting
     rate_limit(

@@ -3,11 +3,12 @@
 function send_pm($pdo, $from_user_id, $to_user_id, $message)
 {
     // call user info from the db
-    $power = (int) user_select_power($pdo, $from_user_id);
+    $from_power = (int) user_select_power($pdo, $from_user_id);
+    $to_power = (int) user_select_power($pdo, $to_user_id);
     $active_rank = (int) pr2_select_true_rank($pdo, $from_user_id);
 
     // let admins use the [url=][/url] tags
-    if ($power >= 3) {
+    if ($from_power >= 3) {
         $message = preg_replace(
             '/\[url=(.+?)\](.+?)\[\/url\]/',
             '<a href="\1" target="_blank"><u><font color="#0000FF">\2</font></u></a>',
@@ -22,8 +23,14 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
     if ($active_rank < 3) {
         throw new Exception('You need to be rank 3 or above to send private messages.');
     }
-    if ($power <= 0) {
-        throw new Exception("Guests can't send private messages. To use this feature, please create an account.");
+    if ($from_power <= 0) {
+        throw new Exception(
+            "Guests can't use the private messaging system. ".
+            "To access this feature, please create your own account."
+        );
+    }
+    if ($to_power <= 0) {
+         throw new Exception("You can't send private messages to guests.");
     }
 
     // check the length of their message
@@ -36,8 +43,10 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
     // see if they've been ignored
     $ignored = ignored_select($pdo, $to_user_id, $from_user_id, true);
     if ($ignored) {
-        throw new Exception("You have been ignored by this player. They won't "
-            ."receive any chat or messages from you.");
+        throw new Exception(
+            "You have been ignored by this player. ".
+            "They won't receive any chat or messages from you."
+        );
     }
 
     // prevent flooding
