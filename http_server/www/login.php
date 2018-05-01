@@ -186,6 +186,12 @@ try {
     if ($rt_available < $rt_used) {
         $rt_used = $rt_available;
     }
+    
+    // sanity check: is the user's rank 100+?
+    $rank = (int) $stats->rank;
+    if ($rank + $rt_used >= 100) {
+        throw new Exception('Your rank is too high. Please choose a different account.');
+    }
 
     // record moderator login
     $server_name = $server->server_name;
