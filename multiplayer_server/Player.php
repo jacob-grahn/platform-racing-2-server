@@ -102,28 +102,28 @@ class Player
         $this->ip = $socket->ip;
         $this->last_save_time = time();
 
-        $this->user_id = $login->user->user_id;
+        $this->user_id = (int) $login->user->user_id;
         $this->name = $login->user->name;
-        $this->group = $login->user->power;
-        $this->guild_id = $login->user->guild;
+        $this->group = (int) $login->user->power;
+        $this->guild_id = (int) $login->user->guild;
 
-        $this->rank = $login->stats->rank;
-        $this->exp_points = $login->stats->exp_points;
+        $this->rank = (int) $login->stats->rank;
+        $this->exp_points = (int) $login->stats->exp_points;
 
-        $this->hat_color = $login->stats->hat_color;
-        $this->head_color = $login->stats->head_color;
-        $this->body_color = $login->stats->body_color;
-        $this->feet_color = $login->stats->feet_color;
+        $this->hat_color = (int) $login->stats->hat_color;
+        $this->head_color = (int) $login->stats->head_color;
+        $this->body_color = (int) $login->stats->body_color;
+        $this->feet_color = (int) $login->stats->feet_color;
 
-        $this->hat_color_2 = $login->stats->hat_color_2;
-        $this->head_color_2 = $login->stats->head_color_2;
-        $this->body_color_2 = $login->stats->body_color_2;
-        $this->feet_color_2 = $login->stats->feet_color_2;
+        $this->hat_color_2 = (int) $login->stats->hat_color_2;
+        $this->head_color_2 = (int) $login->stats->head_color_2;
+        $this->body_color_2 = (int) $login->stats->body_color_2;
+        $this->feet_color_2 = (int) $login->stats->feet_color_2;
 
-        $this->hat = $login->stats->hat;
-        $this->head = $login->stats->head;
-        $this->body = $login->stats->body;
-        $this->feet = $login->stats->feet;
+        $this->hat = (int) $login->stats->hat;
+        $this->head = (int) $login->stats->head;
+        $this->body = (int) $login->stats->body;
+        $this->feet = (int) $login->stats->feet;
 
         $this->hat_array = explode(",", $login->stats->hat_array);
         $this->head_array = explode(",", $login->stats->head_array);
@@ -137,9 +137,9 @@ class Player
             $this->epic_feet_array = $this->safeExplode($login->epic_upgrades->epic_feet);
         }
 
-        $this->speed = $login->stats->speed;
-        $this->acceleration = $login->stats->acceleration;
-        $this->jumping = $login->stats->jumping;
+        $this->speed = (int) $login->stats->speed;
+        $this->acceleration = (int) $login->stats->acceleration;
+        $this->jumping = (int) $login->stats->jumping;
 
         $this->friends_array = $login->friends;
         $this->ignored_array = $login->ignored;
@@ -147,9 +147,9 @@ class Player
         $this->domain = $login->login->domain;
         $this->version = $login->login->version;
 
-        $this->rt_used = $login->rt_used;
-        $this->rt_available = $login->rt_available;
-        $this->exp_today = $this->start_exp_today = $login->exp_today;
+        $this->rt_used = (int) $login->rt_used;
+        $this->rt_available = (int) $login->rt_available;
+        $this->exp_today = (int) $this->start_exp_today = (int) $login->exp_today;
         $this->status = $login->status;
 
         $socket->player = $this;
@@ -158,21 +158,26 @@ class Player
         global $player_array;
         global $max_players;
 
-        if ((count($player_array) > $max_players &&
-            $this->group < 2) || (count($player_array) > ($max_players-10) &&
-            $this->group == 0)
+        if ((count($player_array) > $max_players && $this->group < 2) ||
+            (count($player_array) > ($max_players-10) && $this->group == 0)
         ) {
             $this->write('loginFailure`');
             $this->write('message`Sorry, this server is full. Try back later.');
+            $this->remove();
+        } elseif ($this->active_rank > 100 && $this->user_id !== self::FRED) {
+            $this->write('loginFailure`');
+            $this->write('message`Your rank is too high. Please choose a different account.');
             $this->remove();
         } else {
             $player_array[$this->user_id] = $this;
         }
 
-        $this->awardKongHat();
-        $this->applyTempItems();
-        $this->verifyStats();
-        $this->verifyParts();
+        if (isset($player_array[$this->user_id])) {
+            $this->awardKongHat();
+            $this->applyTempItems();
+            $this->verifyStats();
+            $this->verifyParts();
+        }
     }
 
 
@@ -1176,6 +1181,10 @@ class Player
 
     private function verifyPart($strict, $type)
     {
+        if (!isset($this->user_id)) {
+            return false;
+        }
+        
         $eType = 'e'.ucfirst($type);
         $part = $this->{$type};
 
@@ -1186,7 +1195,7 @@ class Player
             $parts_available = $this->getFullParts($type);
             $epic_parts_available = $this->getFullParts($eType);
         }
-
+        
         if (array_search($part, $parts_available) === false) {
             $part = $parts_available[0];
             $this->{$type} = $part;
@@ -1279,6 +1288,11 @@ class Player
     public function saveInfo()
     {
         global $server_id, $pdo;
+        
+        // make sure there's something to save
+        if (!isset($this->user_id)) {
+            return false;
+        }
 
         // make sure none of the part values are blank to avoid server crashes
         if (is_empty($this->hat, false)) {
