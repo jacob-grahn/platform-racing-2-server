@@ -9,6 +9,7 @@ try {
     rate_limit($ip, 5, 2);
 } catch (Exception $e) {
     echo 'error=' . urlencode($e->getMessage());
+    die();
 }
 
 
