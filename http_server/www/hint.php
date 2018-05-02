@@ -3,6 +3,15 @@
 require_once __DIR__ . '/../fns/output_fns.php';
 require_once __DIR__ . '/../fns/data_fns.php';
 
+// rate limiting
+try {
+    $ip = get_ip();
+    rate_limit($ip, 5, 2);
+} catch (Exception $e) {
+    echo 'error=' . urlencode($e->getMessage());
+}
+
+
 output_header('Artifact Hint');
 
 echo '<center>'
@@ -26,7 +35,7 @@ if (is_empty($decode->finder_name)) {
 } else {
     echo "<i>The first person to find this artifact was <b>$safe_finder</b>!!</i>";
 }
-    
+
 // get last updated time
 $timestamp = (int) (time() - $decode->updated_time);
 $formatted_date = date('M j, Y g:i A', $timestamp);
