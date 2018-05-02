@@ -190,7 +190,7 @@ try {
     }
 
     // sanity check: unrealistic amount of folding tokens?
-    if ($rt_available > 5) {
+    if ($rt_available > 26) {
         throw new Exception('Too many rank tokens. Please use a different account.');
     }
     
