@@ -37,7 +37,6 @@ require_once __DIR__ . '/process/check_status.php';
 require_once __DIR__ . '/process/register_login.php';
 require_once __DIR__ . '/process/shut_down.php';
 require_once __DIR__ . '/process/start_new_day.php';
-require_once __DIR__ . '/process/unlock_super_booster.php';
 require_once __DIR__ . '/process/update_cycle.php';
 require_once __DIR__ . '/process/vault.php';
 
