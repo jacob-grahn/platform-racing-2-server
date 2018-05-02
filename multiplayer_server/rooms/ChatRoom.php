@@ -37,7 +37,7 @@ class ChatRoom extends Room
         $old_chat_array = $this->chat_array;
     
         // send enough systemChat messages to clear the room
-        foreach (range(0,50) as $num) {
+        foreach (range(0, 50) as $num) {
             $this->sendChat('systemChat` ');
         }
         
