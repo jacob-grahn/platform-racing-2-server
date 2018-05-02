@@ -39,6 +39,7 @@ class ChatRoom extends Room
         // send enough systemChat messages to clear the room
         foreach (range(0, 50) as $num) {
             $this->sendChat('systemChat` ');
+            unset($num);
         }
         
         // notify the player
