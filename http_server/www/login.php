@@ -182,7 +182,7 @@ try {
     if ($rt_available < $rt_used) {
         $rt_used = $rt_available;
     }
-    
+
     // sanity check: is the user's rank 100+?
     $rank = (int) $stats->rank;
     if ($rank + $rt_used >= 100) {
@@ -190,10 +190,10 @@ try {
     }
 
     // sanity check: unrealistic amount of folding tokens?
-    if ($rt_available > 5) {
-        throw new Exception('Too many rank tokens. Please use a different account.');
-    }
-    
+    // if ($rt_available > 5) {
+    //     throw new Exception('Too many rank tokens. Please use a different account.');
+    // }
+
     // record moderator login
     $server_name = $server->server_name;
     if ($group > 1) {
