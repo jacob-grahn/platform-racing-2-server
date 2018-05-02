@@ -23,7 +23,7 @@ function begin_loadup($server_id)
 
 function set_server($pdo, $server)
 {
-    global $port, $server_name, $uptime, $server_expire_time, $guild_id, $guild_owner, $key;
+    global $port, $server_name, $uptime, $server_expire_time, $guild_id, $guild_owner, $key, $server_id, $ANNIE_ID;
     $port = $server->port;
     $server_name = $server->server_name;
     $datetime = new DateTime();
@@ -33,7 +33,7 @@ function set_server($pdo, $server)
     $guild_owner = 0;
     $key = $server->salt;
     \pr2\multi\PR2SocketServer::$tournament = $server->tournament;
-    if (\pr2\multi\PR2SocketServer::$tournament) {
+    if (\pr2\multi\PR2SocketServer::$tournament || $ANNIE_ID === $server_id) {
         \pr2\multi\PR2SocketServer::$no_prizes = true;
     }
 

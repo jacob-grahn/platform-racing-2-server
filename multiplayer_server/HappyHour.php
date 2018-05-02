@@ -10,8 +10,13 @@ class HappyHour
 
     public static function activate($duration = 3600)
     {
-        $time = time();
+        global $server_id, $ANNIE_ID;
+        
+        if ($server_id === $ANNIE_ID) {
+            return false;
+        }
 
+        $time = time();
         if (self::$hh_active_until < $time) {
             self::$hh_active_until = $time;
         }

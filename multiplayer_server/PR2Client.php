@@ -52,7 +52,9 @@ class PR2Client extends \chabot\SocketServerClient
                     $this->close();
                     $this->onDisconnect();
                     throw new \Exception(
-                        output("Error: The received hash doesn't match. Recieved: $hash | Local: $sub_hash \n")
+                                output("Error: The received hash doesn't match. ".
+                                        "Recieved: $hash | Local: $sub_hash \n"
+                                )
                     );
                 }
 

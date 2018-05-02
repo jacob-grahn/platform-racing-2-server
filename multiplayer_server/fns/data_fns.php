@@ -27,7 +27,6 @@ function find_variable($string, $default)
 }
 
 
-
 //--- tests to see if a string contains obscene words ---------------------------------------
 function is_obscene($str)
 {

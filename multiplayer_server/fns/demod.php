@@ -2,7 +2,11 @@
 
 function demote_mod($user_name, $admin, $demoted_player)
 {
-    global $pdo, $server_name, $guild_owner;
+    global $pdo, $server_name, $guild_owner, $server_id, $ANNIE_ID;
+    
+    if ($server_id === $ANNIE_ID) {
+        return false;
+    }
 
     // safety first
     $html_user_name = htmlspecialchars($user_name);

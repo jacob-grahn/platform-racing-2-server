@@ -98,32 +98,42 @@ class Player
 
     public function __construct($socket, $login)
     {
+        global $server_id, $ANNIE_ID;
         $this->socket = $socket;
         $this->ip = $socket->ip;
         $this->last_save_time = time();
 
-        $this->user_id = (int) $login->user->user_id;
+        $this->user_id = $login->user->user_id;
         $this->name = $login->user->name;
-        $this->group = (int) $login->user->power;
-        $this->guild_id = (int) $login->user->guild;
+        $this->group = $login->user->power;
+        $this->guild_id = $login->user->guild;
 
-        $this->rank = (int) $login->stats->rank;
-        $this->exp_points = (int) $login->stats->exp_points;
+        $this->is_mod = false;
+        $this->is_admin = false;
+        $this->guest = false;
+        if ($server_id === $ANNIE_ID) {
+            $this->guest = $login->guest;
+            $this->is_mod = $login->is_mod;
+            $this->is_admin = $login->is_admin;
+        }
 
-        $this->hat_color = (int) $login->stats->hat_color;
-        $this->head_color = (int) $login->stats->head_color;
-        $this->body_color = (int) $login->stats->body_color;
-        $this->feet_color = (int) $login->stats->feet_color;
+        $this->rank = $login->stats->rank;
+        $this->exp_points = $login->stats->exp_points;
 
-        $this->hat_color_2 = (int) $login->stats->hat_color_2;
-        $this->head_color_2 = (int) $login->stats->head_color_2;
-        $this->body_color_2 = (int) $login->stats->body_color_2;
-        $this->feet_color_2 = (int) $login->stats->feet_color_2;
+        $this->hat_color = $login->stats->hat_color;
+        $this->head_color = $login->stats->head_color;
+        $this->body_color = $login->stats->body_color;
+        $this->feet_color = $login->stats->feet_color;
 
-        $this->hat = (int) $login->stats->hat;
-        $this->head = (int) $login->stats->head;
-        $this->body = (int) $login->stats->body;
-        $this->feet = (int) $login->stats->feet;
+        $this->hat_color_2 = $login->stats->hat_color_2;
+        $this->head_color_2 = $login->stats->head_color_2;
+        $this->body_color_2 = $login->stats->body_color_2;
+        $this->feet_color_2 = $login->stats->feet_color_2;
+
+        $this->hat = $login->stats->hat;
+        $this->head = $login->stats->head;
+        $this->body = $login->stats->body;
+        $this->feet = $login->stats->feet;
 
         $this->hat_array = explode(",", $login->stats->hat_array);
         $this->head_array = explode(",", $login->stats->head_array);
@@ -137,9 +147,9 @@ class Player
             $this->epic_feet_array = $this->safeExplode($login->epic_upgrades->epic_feet);
         }
 
-        $this->speed = (int) $login->stats->speed;
-        $this->acceleration = (int) $login->stats->acceleration;
-        $this->jumping = (int) $login->stats->jumping;
+        $this->speed = $login->stats->speed;
+        $this->acceleration = $login->stats->acceleration;
+        $this->jumping = $login->stats->jumping;
 
         $this->friends_array = $login->friends;
         $this->ignored_array = $login->ignored;
@@ -147,9 +157,9 @@ class Player
         $this->domain = $login->login->domain;
         $this->version = $login->login->version;
 
-        $this->rt_used = (int) $login->rt_used;
-        $this->rt_available = (int) $login->rt_available;
-        $this->exp_today = (int) $this->start_exp_today = (int) $login->exp_today;
+        $this->rt_used = $login->rt_used;
+        $this->rt_available = $login->rt_available;
+        $this->exp_today = $this->start_exp_today = $login->exp_today;
         $this->status = $login->status;
 
         $socket->player = $this;
@@ -158,29 +168,21 @@ class Player
         global $player_array;
         global $max_players;
 
-        // check if the server is full
-        if ((count($player_array) > $max_players && $this->group < 2) ||
-            (count($player_array) > ($max_players-10) && $this->group == 0)
+        if ((count($player_array) > $max_players &&
+            $this->group < 2) || (count($player_array) > ($max_players-10) &&
+            $this->group == 0)
         ) {
             $this->write('loginFailure`');
             $this->write('message`Sorry, this server is full. Try back later.');
             $this->remove();
-        } // check for a valid rank
-        elseif ($this->active_rank > 100 && $this->user_id !== self::FRED) {
-            $this->write('loginFailure`');
-            $this->write('message`Your rank is too high. Please choose a different account.');
-            $this->remove();
-        } // add to the player array
-        else {
+        } else {
             $player_array[$this->user_id] = $this;
         }
 
-        if (isset($player_array[$this->user_id])) {
-            $this->awardKongHat();
-            $this->applyTempItems();
-            $this->verifyStats();
-            $this->verifyParts();
-        }
+        $this->awardKongHat();
+        $this->applyTempItems();
+        $this->verifyStats();
+        $this->verifyParts();
     }
 
 
@@ -260,7 +262,7 @@ class Player
 
         // globals and variables
         global $guild_id, $guild_owner, $player_array, $port, $server_name,
-            $server_id, $server_expire_time, $uptime, $pdo;
+            $server_id, $server_expire_time, $uptime, $pdo, $ANNIE_ID;
         $admin_name = $this->name;
         $admin_id = $this->user_id;
         $ip = $this->ip;
@@ -289,7 +291,7 @@ class Player
         if ($room_type == 'c') {
             $think_array = [":thinking:", ":think:", ":what:", ":hmm:"];
             $lol_array = [":lol:", ":laugh:", ":lmao:", ":joy:"];
-            
+
             $chat_message = str_ireplace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
             $chat_message = str_ireplace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
             $chat_message = str_ireplace($think_array, "🤔", $chat_message);
@@ -383,8 +385,9 @@ class Player
                 }
             } // chat effects
             elseif (!is_null($chat_effect) &&
-                $this->group >= 2 &&
-                ($this->temp_mod == false || $this->server_owner == true)
+                    $this->group >= 2 &&
+                    ($this->temp_mod == false || $this->server_owner == true) &&
+                    ($server_id !== $ANNIE_ID || $this->is_mod === true)
             ) {
                 if ($room_type == 'c') {
                     $player_room->sendChat('systemChat`' . $chat_effect_tag .
@@ -395,8 +398,9 @@ class Player
                 }
             } // chat announcements
             elseif (strpos($chat_message, '/a ') === 0 &&
-                $this->group >= 2 &&
-                ($this->temp_mod == false || $this->server_owner == true)
+                    $this->group >= 2 &&
+                    ($this->temp_mod === false || $this->server_owner === true) &&
+                    ($server_id !== $ANNIE_ID || $this->is_mod === true)
             ) {
                 $announcement = trim(substr($chat_message, 3));
                 $safe_announcement = htmlspecialchars($announcement); // html killer
@@ -410,8 +414,9 @@ class Player
                 }
             } // "give" command
             elseif (strpos($chat_message, '/give ') === 0 &&
-                $this->group >= 2 &&
-                ($this->temp_mod == false || $this->server_owner == true)
+                    $this->group >= 2 &&
+                    ($this->temp_mod == false || $this->server_owner == true) &&
+                    ($server_id !== $ANNIE_ID || $this->is_mod === true)
             ) {
                 $give_this = trim(substr($chat_message, 6));
                 $safe_give_this = htmlspecialchars($give_this); // html killer
@@ -423,7 +428,11 @@ class Player
                     $this->write('systemChat`The thing you\'re giving must be at least 1 character.');
                 }
             } // "promote" command
-            elseif (strpos($chat_message, '/promote ') === 0 && $this->group >= 3 && $this->server_owner == false) {
+            elseif (strpos($chat_message, '/promote ') === 0 &&
+                    $this->group >= 3 &&
+                    $this->server_owner == false &&
+                    ($server_id !== $ANNIE_ID || $this->is_admin === true)
+            ) {
                 $promote_this = trim(substr($chat_message, 9));
                 $safe_promote_this = htmlspecialchars($promote_this); // html killer
                 $promote_this_length = strlen($safe_promote_this);
@@ -451,8 +460,9 @@ class Player
                     $pop_counted.' '.$pop_lang[1].' playing on this server.');
             } // clear command
             elseif (($chat_message == '/clear' || $chat_message == '/cls') &&
-                $this->group >= 2 &&
-                ($this->temp_mod == false || $this->server_owner == true)
+                    $this->group >= 2 &&
+                    ($this->temp_mod == false || $this->server_owner == true) &&
+                    ($server_id !== $ANNIE_ID || $this->is_mod === true)
             ) {
                 if ($player_room == $this->chat_room) {
                     $player_room->clear();
@@ -461,7 +471,9 @@ class Player
                 }
             } // debug command for admins
             elseif (($chat_message == '/debug' || strpos($chat_message, '/debug ') === 0) &&
-                $this->group >= 3 && $this->server_owner == false
+                    $this->group >= 3 &&
+                    $this->server_owner == false &&
+                    ($server_id !== $ANNIE_ID || $this->is_admin === true)
             ) {
                 $is_ps = 'no';
                 if ($guild_id != '0') {
@@ -565,8 +577,9 @@ class Player
                 }
             } // restart server command for admins
             elseif ($chat_message == '/restart_server' &&
-                $this->group >= 3 &&
-                ($this->server_owner == false || $guild_id == 183)
+                    $this->group >= 3 &&
+                    ($this->server_owner == false || $guild_id == 183) &&
+                    ($server_id !== $ANNIE_ID || $this->is_admin === true)
             ) {
                 if ($room_type == 'c') {
                     if ($this->restart_warned == false) {
@@ -604,22 +617,25 @@ class Player
                 $this->write("message`<b>You're awesome!</b>");
             } // kick command
             elseif (strpos($chat_message, '/kick ') === 0 &&
-                $this->group >= 2 &&
-                ($this->temp_mod === false || $this->server_owner == true)
+                    $this->group >= 2 &&
+                    ($this->temp_mod === false || $this->server_owner == true) &&
+                    ($server_id !== $ANNIE_ID || $this->is_mod === true)
             ) {
                 $kicked_name = trim(substr($chat_message, 6));
                 client_kick($this->socket, $kicked_name);
             } // unkick command
             elseif (strpos($chat_message, '/unkick ') === 0 &&
-                $this->group >= 2 &&
-                ($this->temp_mod === false || $this->server_owner == true)
+                    $this->group >= 2 &&
+                    ($this->temp_mod === false || $this->server_owner == true) &&
+                    ($server_id !== $ANNIE_ID || $this->is_mod === true)
             ) {
                 $unkicked_name = trim(substr($chat_message, 8));
                 client_unkick($this->socket, $unkicked_name);
             } // disconnect command
             elseif ((strpos($chat_message, '/dc ') === 0 || strpos($chat_message, '/disconnect ') === 0) &&
-                 $this->group >= 2 &&
-                 ($this->temp_mod === false || $this->server_owner == true)
+                    $this->group >= 2 &&
+                    ($this->temp_mod === false || $this->server_owner == true) &&
+                    ($server_id !== $ANNIE_ID || $this->is_mod === true)
              ) {
                 $dc_name = trim(substr($chat_message, 12)); // for /disconnect
                 if (strpos($chat_message, '/dc ') === 0) {
@@ -677,18 +693,32 @@ class Player
                     $hhmsg_warning = 'WARNING: This will remove all stacked '.
                         'Happy Hours bought by all users on this server from '.
                         'the Vault of Magics, as well as ending the current one.';
-                    if ($this->group >= 3 && $this->server_owner == false) {
+                    if ($this->group >= 3 &&
+                        $this->server_owner == false &&
+                        ($server_id !== $ANNIE_ID)
+                    ) {
                         $hhmsg_admin = "To activate a Happy Hour, type /hh ".
                             "activate. To deactivate the current Happy Hour, ".
                             "type /hh deactivate. $hhmsg_warning";
-                    } elseif ($this->group >= 3 && $this->server_owner == true) {
+                    } elseif ($this->group >= 3 &&
+                              $this->server_owner == true &&
+                              ($server_id !== $ANNIE_ID)
+                    ) {
                         $hhmsg_server_owner = "To deactivate the current ".
                             "Happy Hour, type /hh deactivate. $hhmsg_warning";
                     }
                     $this->write('systemChat`To find out if a Happy Hour is '.
                         'active and when it expires, type /hh status. '.
                         $hhmsg_admin.$hhmsg_server_owner);
-                } elseif ($args[0] == 'activate' && $this->group >=3 && $this->server_owner == false) {
+                } elseif ($args[0] == 'activate' &&
+                          $this->group >=3 &&
+                          $this->server_owner == false &&
+                          ($server_id !== $ANNIE_ID || $this->is_admin === true)
+                ) {
+                    if ($server_id === $ANNIE_ID) {
+                        $this->write('systemChat`You can\'t activate a Happy Hour on this server.');
+                        return false;
+                    }
                     if (HappyHour::isActive() != true && PR2SocketServer::$tournament == false) {
                         if (!isset($args[1])) {
                             HappyHour::activate();
@@ -712,7 +742,10 @@ class Player
                             "on this server. It will expire in '.
                             format_duration($hh_timeleft) . '.');
                     }
-                } elseif ($args[0] == 'deactivate' && $this->group >= 3) {
+                } elseif ($args[0] == 'deactivate' &&
+                          $this->group >= 3 &&
+                          ($server_id !== $ANNIE_ID || $this->is_admin === true)
+                ) {
                     if (!$this->hh_warned) {
                         $this->hh_warned = true;
                         $this->write("systemChat`WARNING: This will remove ALL ".
@@ -792,11 +825,64 @@ class Player
                     $this->write('systemChat`To get a list of emoticons that can be used in the chatroom,'
                                 .' go to the chat tab in the lobby and type /emotes.');
                 }
+            } // jigg quotes command (because I can)
+            elseif ($chat_message == '/jigg') {
+                $jigg_quotes = ['I have no idea what you\'re saying!',
+                                'It\'s time to bring back the tabs, because this droppy-down thingy is... kind of confusing. And by confusing, I mean it was confusing me... and I MADE this!',
+                                'Blast you tabs, WORK!!!',
+                                'Thanks for joining me today, as we accomplished very little.',
+                                'Let\'s see if this hidey button is still broken. *click* yes, it is!',
+                                'This\'ll be easy to fix. Nope. Nope. Nope. Nope. Got it. Hungry. To the store! bBbBbBbBeee! beeBbBbBbBb.',
+                                'Washing dishes!',
+                                'Making stir-fry!',
+                                'Whatever, I\'m gonna make this cool swirly thing instead.',
+                                'As I suffer a mental breakdown, let\'s go back in time and watch as this gingerbread set is drawn.',
+                                'See how peaceful the gingerbread looks. See how loving the gingerbread looks. See how not made of tabs the gingerbread man is. No tabs. Anywhere.',
+                                'I\'m back, and the tabs HAVE BEEN DEFEATED!!!',
+                                'gweheheheHEHEHE',
+                                'goyo sll time best',
+                                'I tell you what, if those tabs ever break again, I\'m gonna punch myself in the face.',
+                                'Thanks for joining us today, as we made a 5-second song that is neither what we wanted or needed.',
+                                'Good news! We have successfully completed no steps.',
+                                'Aha! We have successfully programmed the color green!',
+                                'It\'s Motley Monday, and you know what that means... CHEESE BALLS!',
+                                'It\'s Motley Monday, so we\'re gonna take away everyone\'s ranks! >:)',
+                                'I would like to see a level that takes three days and three nights to beat.',
+                                'What do you mean it\'s not Monday? Well, it\'s still Motley... Tuesday. Terrible Tuesday. Terrific Tuesday. Tuberculosis Tuesday! :D',
+                                'Hmm... the text editor sure is getting a lot of support, but it would be hard to make. I\'ll just not make it.',
+                                'If anyone\'s still alive out there, tell them. Tell them. The text editor is too hard!  I\'LL NEVER DO IT!  I\'LL NE-',
+                                'It\'s Motley Monday! The show where everything\'s made up and the points don\'t matter! (COPYRIGHT INFRINGEMENT)',
+                                'Hello, ninjas? Yes, the person watching the video right now. You just have to sneak in, hit the pause button when they\'re not paying atten- *pauses*',
+                                'Maaaan, there\'s not enough time to make a video. *time blocks appear* Aw... now there\'s too much time...',
+                                '*takes a bite of cardboard* Hmm... maybe I should get some money.',
+                                '*holds up a sign that says* "Will sit for money (and in fact, I am doing just that)"',
+                                'Well, now I\'m kind of out of interesting things to say. So let\'s talk about... popcorn. I discovered yesterday that my microwave has a popcorn button. Actually, I wasn\'t the one to discover it. Someone came over and they brought popcorn. I horrendously burned the first bag of popcorn, and my guest graciously showed me that my microwave has a popcorn button. You just punch in the weight, and it doesn\'t burn your popcorn. It\'s ingenius!',
+                                'That\'s where I\'ll have to do math, which is always unfortunate. Maybe I\'ll just cheat. I like cheating and not having to do math.',
+                                '*puts on a cat in the hat hat* now we\'re festive! It\'s the closest thing I have to a Christmas hat. No, it\'s not the new PR2 hat, but maybe I should add it! It would be interesting.',
+                                'PR2 livestream today at 4:00 eastern. Be there or be triangle.',
+                                'So I was standing outside and enjoying some fireworks when a sizable bunny fell from the sky! I can only assume that it hitched a ride on one of the fireworks. I tried to ask the bunny how its day was going, but before the words left my mouth the bunny abruptly shouted "Good-o! Have this top hat sir!". Much to my surprise, the bunny then threw the hat in my face and vanished... as if by magic.',
+                                'Okay... the server is maybe fixed? There\'s a slight possibility.',
+                                'I\'m gonna celebrate somehow. I\'m gonna eat a pretzel. I think I mentioned pretzels earlier and now I want pretzels. I wonder if I can buy any; it\'s 11:00 at night. Walmart\'s always open. They sell pretzels, probably.',
+                                'One grapefruit for you, sir, as way of apology.',
+                                'Ha! I nevr make typos!',
+                                'You disconnected becuase you logged in somewhere else.',
+                                'Platform Racing 2 has recently been updated. Refresh your browser to dowloand the most recent version.'];
+
+                $smelly_zeus = ['It\'s the turquoise one, next to the blowfish, Jiggy!', '...what?'];
+
+                $rand_num = rand(0, 39);
+                if ($rand_num === 0) {
+                    $this->write("chat`Smelly Zeus`2`$smelly_zeus[0]");
+                    $this->write("chat`Jiggmin`3`$jigg_quotes[0]");
+                    $this->write("chat`Smelly Zeus`2`$smelly_zeus[1]");
+                } else {
+                    $this->write("chat`Jiggmin`3`$jigg_quotes[$rand_num]");
+                }
             } // help command
             elseif ($chat_message == '/help' ||
-                $chat_message == '/commands' ||
-                $chat_message == '/?' ||
-                $chat_message == '/'
+                    $chat_message == '/commands' ||
+                    $chat_message == '/?' ||
+                    $chat_message == '/'
             ) {
                 $mod = '';
                 $effects = '';
@@ -807,7 +893,9 @@ class Player
                     $this->write('systemChat`To get a list of commands that can be used in the chatroom,'
                                 .' go to the chat tab in the lobby and type /help.');
                 } else {
-                    if ($this->group >= 2) {
+                    if ($this->group >= 2 &&
+                        ($server_id !== $ANNIE_ID || $this->is_mod === true)
+                    ) {
                         if ($this->temp_mod === false) {
                             $mod = '<br>Moderator:<br>'.
                                 '- /a (Announcement)<br>'.
@@ -822,7 +910,10 @@ class Player
                                 '- /u (Underlined)<br>'.
                                 '- /li (Bulleted)';
                         }
-                        if ($this->group >= 3 && $this->server_owner == false) {
+                        if ($this->group >= 3 &&
+                            $this->server_owner == false &&
+                            ($server_id !== $ANNIE_ID || $this->is_admin === true)
+                        ) {
                             $admin = '<br>Admin:<br>'.
                                 '- /promote *message*<br>'.
                                 '- /restart_server<br>'.
@@ -846,23 +937,33 @@ class Player
                         '- /t status<br>'.
                         '- /population<br>'.
                         '- /beawesome<br>'.
-                        '- /emotes'.$mod.$effects.$admin.$server_owner);
+                        '- /emotes'.
+                        '- /jigg'.$mod.$effects.$admin.$server_owner);
                 }
             } // --- send chat message --- \\
             else {
                 // guest check
-                if ($this->group <= 0 || $this->guest == true) {
+                if ($this->group <= 0 || $this->guest === true) {
                     $this->write("systemChat`Sorries, guests can't send chat messages.");
                 } // rank 3 check
-                elseif ($this->active_rank < 3 && $this->group < 2) {
+                elseif ($this->active_rank < 3 &&
+                        $this->group < 2 &&
+                        ($server_id === $ANNIE_ID && $this->is_mod === false)
+                ) {
                     $this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
                 } // chat ban check (warnings, auto-warn)
-                elseif ($this->chat_ban > time() && ($this->group < 2 || $this->temp_mod === true)) {
+                elseif ($this->chat_ban > time() &&
+                        ($this->group < 2 || $this->temp_mod === true ||
+                        ($this->is_mod === false && $server_id === $ANNIE_ID))
+                ) {
                     $chat_ban_seconds = $this->chat_ban - time();
                     $this->write("systemChat`You have been temporarily banned from the chat. ".
                         "The ban will be lifted in $chat_ban_seconds seconds.");
                 } // spam check
-                elseif ($this->getChatCount() > 6 && ($this->group < 2 || $this->temp_mod === true)) {
+                elseif ($this->getChatCount() > 6 &&
+                        ($this->group < 2 || $this->temp_mod === true ||
+                        ($this->is_mod === false && $server_id === $ANNIE_ID))
+                ) {
                     $this->chat_ban = time() + 60;
                     $this->write('systemChat`Slow down a bit, yo.');
                 } // illegal character in username/message check
@@ -1187,7 +1288,7 @@ class Player
         if (!isset($this->user_id)) {
             return false;
         }
-        
+
         $eType = 'e'.ucfirst($type);
         $part = $this->{$type};
 
@@ -1198,7 +1299,7 @@ class Player
             $parts_available = $this->getFullParts($type);
             $epic_parts_available = $this->getFullParts($eType);
         }
-        
+
         if (array_search($part, $parts_available) === false) {
             $part = $parts_available[0];
             $this->{$type} = $part;
@@ -1291,7 +1392,7 @@ class Player
     public function saveInfo()
     {
         global $server_id, $pdo;
-        
+
         // make sure there's something to save
         if (!isset($this->user_id)) {
             return false;
@@ -1311,22 +1412,22 @@ class Player
             unset($this->feet_array[$arr_key]);
         }
 
+        if ($server_id === 0) {
+            return false; // don't save if on Annie
+        }
+
         // make sure none of the part values are blank to avoid server crashes
         if (empty($this->hat)) {
             $this->gainPart('hat', 1, true);
-            $this->setPart('hat', 1);
         }
         if (empty($this->head)) {
             $this->gainPart('head', 1, true);
-            $this->setPart('head', 1);
         }
         if (empty($this->body)) {
             $this->gainPart('body', 1, true);
-            $this->setPart('body', 1);
         }
         if (empty($this->feet)) {
             $this->gainPart('feet', 1, true);
-            $this->setPart('feet', 1);
         }
 
         // auto removing some hat?
@@ -1443,7 +1544,7 @@ class Player
 
     public function remove()
     {
-        global $player_array;
+        global $player_array, $ANNIE_ID, $server_id, $pdo;
 
         unset($player_array[$this->user_id]);
 
@@ -1470,10 +1571,14 @@ class Player
         }
 
         //save info
-        $this->status = "offline";
-        $this->verifyStats();
-        $this->verifyParts(true);
-        $this->saveInfo();
+        if ($ANNIE_ID !== $server_id) { // if not on Annie
+            $this->status = "offline";
+            $this->verifyStats();
+            $this->verifyParts(true);
+            $this->saveInfo();
+        } else {
+            user_update_status($pdo, $this->user_id, 'offline', 0);
+        }
 
         //delete
         $this->socket = null;

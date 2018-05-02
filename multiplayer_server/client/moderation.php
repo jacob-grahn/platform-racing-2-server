@@ -3,19 +3,29 @@
 // kick a player
 function client_kick($socket, $data)
 {
-    global $pdo, $guild_id, $server_name;
+    global $pdo, $guild_id, $server_name, $server_id, $ANNIE_ID;
     $name = $data;
 
     // get players
     $kicked = name_to_player($name);
     $mod = $socket->getPlayer();
+    
+    if ($ANNIE_ID === $server_id) {
+        if ($mod->is_mod === false) {
+            return false;
+        }
+    }
 
     // safety first
     $safe_kname = htmlspecialchars($name);
     $safe_mname = htmlspecialchars($mod->name);
 
     // if the player actually has the power to do what they're trying to do, then do it
-    if ($mod->group >= 2 && ($kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
+    if ($mod->group >= 2 &&
+        ($kicked->group < 2 ||
+        ($server_id === $ANNIE_ID && $mod->is_mod === true) ||
+        ($mod->server_owner == true && $kicked != $mod))
+    ) {
         \pr2\multi\LocalBans::add($name);
 
         if (isset($kicked)) {
@@ -57,12 +67,18 @@ function client_kick($socket, $data)
 //--- unkick a player -------------------------------------------------------------
 function client_unkick($socket, $data)
 {
-    global $pdo, $guild_id, $server_name;
+    global $pdo, $guild_id, $server_name, $server_id, $ANNIE_ID;
     $name = $data;
 
     // get some info
     $mod = $socket->getPlayer();
     $unkicked_name = htmlspecialchars($name);
+
+    if ($ANNIE_ID === $server_id) {
+        if ($mod->is_mod === false) {
+            return false;
+        }
+    }
 
     // if the player actually has the power to do what they're trying to do, then do it
     if (($mod->group >= 2 && $mod->temp_mod === false) || $mod->server_owner === true) {
@@ -92,11 +108,18 @@ function client_unkick($socket, $data)
 //--- warn a player -------------------------------------------------------------
 function client_warn($socket, $data)
 {
+    global $server_id, $ANNIE_ID;
     list($name, $num) = explode("`", $data);
 
     // get player info
     $warned = name_to_player($name);
     $mod = $socket->getPlayer();
+    
+    if ($ANNIE_ID === $server_id) {
+        if ($mod->is_mod === false) {
+            return false;
+        }
+    }
 
     // safety first
     $safe_mname = htmlspecialchars($mod->name);
@@ -124,7 +147,11 @@ function client_warn($socket, $data)
     }
 
     // if they're a mod, and the user is on this server, warn the user
-    if ($mod->group >= 2 && isset($warned) && ($warned->group < 2 || $mod->server_owner == true)) {
+    if ($mod->group >= 2 &&
+        isset($warned) &&
+        ($warned->group < 2 || $mod->server_owner === true ||
+        ($server_id === $ANNIE_ID && $mod->is_mod === true))
+    ) {
         $warned->chat_ban = time() + $time;
     } // if they're a mod but the user isn't online, tell them
     elseif ($mod->group >= 2 && !isset($warned)) {
@@ -148,11 +175,18 @@ function client_warn($socket, $data)
 //--- ban a player -------------------------------------------------------
 function client_ban($socket, $data)
 {
+    global $server_id, $ANNIE_ID;
     list($banned_name, $seconds, $reason) = explode("`", $data);
 
     // get player info
     $mod = $socket->getPlayer();
     $banned = name_to_player($banned_name);
+    
+    if ($ANNIE_ID === $server_id) {
+        if ($mod->is_mod === false) {
+            return false;
+        }
+    }
 
     // safety first
     $safe_mname = htmlspecialchars($mod->name);
@@ -192,13 +226,13 @@ function client_ban($socket, $data)
     }
 
     // tell the world
-    if ($mod->group >= 2 && isset($banned)) {
+    if (($mod->group >= 2 || ($server_id === $ANNIE_ID && $mod->is_mod === true)) && isset($banned)) {
         if (isset($mod->chat_room)) {
             $mod->chat_room->sendChat("systemChat`$safe_mname has banned ".
                 "$safe_bname for $disp_time. $disp_reason. This ban has been ".
                 "recorded at https://pr2hub.com/bans.");
         }
-        if (isset($banned) && $banned->group < 2) {
+        if (isset($banned) && ($banned->group < 2 || ($server_id === $ANNIE_ID && $banned->is_mod === false))) {
             $banned->remove();
         }
     }
@@ -209,7 +243,12 @@ function client_ban($socket, $data)
 //--- promote a player to a moderator -------------------------------------
 function client_promote_to_moderator($socket, $data)
 {
+    global $server_id, $ANNIE_ID;
     list($name, $type) = explode("`", $data);
+
+    if ($ANNIE_ID === $server_id) {
+        return false;
+    }
 
     // get player info
     $admin = $socket->getPlayer();
@@ -254,6 +293,12 @@ function client_promote_to_moderator($socket, $data)
 //-- demote a moderator ------------------------------------------------------------------
 function client_demote_moderator($socket, $name)
 {
+    global $server_id, $ANNIE_ID;
+    
+    if ($ANNIE_ID === $server_id) {
+        return false;
+    }
+    
     // get player info
     $admin = $socket->getPlayer();
     $demoted = name_to_player($name);

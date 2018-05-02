@@ -205,7 +205,7 @@ class Game extends Room
 
         // random part/upgrade prizes
         if (!isset($this->prize) && $player_count >= 1) {
-            if (rand($player_count*2, 20) >= 19) {
+            if (rand($player_count*2, 10) >= 9) {
                 $prize_array = array(
                 Prizes::$TACO_HEAD,
                 Prizes::$TACO_BODY,
@@ -240,16 +240,16 @@ class Game extends Room
 
         // random hat prizes
         if (!isset($this->prize) && $player_count >= 2) {
-            if (rand(0, 40) == 40) {
+            if (rand(0, 20) == 20) {
                 $this->prize = Prizes::$EXP_HAT;
             }
-            if (rand(0, 45) == 45) {
+            if (rand(0, 25) == 25) {
                 $this->prize = Prizes::$SANTA_HAT;
             }
-            if (rand(0, 50) == 50) {
+            if (rand(0, 25) == 25) {
                 $this->prize = Prizes::$PARTY_HAT;
             }
-            if (rand(0, 40) == 40 && HappyHour::isActive()) {
+            if (rand(0, 20) == 20) {
                 $this->prize = Prizes::$JUMP_START_HAT;
             }
         }
@@ -377,6 +377,8 @@ class Game extends Room
 
     private function initHats()
     {
+        global $server_id, $ANNIE_ID;
+        
         foreach ($this->player_array as $player) {
             $player->worn_hat_array = array();
             $hat_id = $player->hat;
@@ -387,7 +389,27 @@ class Game extends Room
             if ($this->cowboy_mode) {
                 $hat_id = 5;
             }
-
+            
+            // jigg hat for anniversary
+            $hat_arr_pos = 0;
+            if ($server_id === $ANNIE_ID) {
+                $jigg_hat = new Hat(
+                    $this->next_hat_id++,
+                    Hats::JIGG,
+                    0xFFFFFF,
+                    -1
+                );
+                
+                $player->worn_hat_array[$hat_arr_pos] = $jigg_hat;
+                $hat_arr_pos++;
+                
+                if ($hat_id == 1 || $hat_id > 14) {
+                    $player->socket->write("chat`Jiggmin`3`Happy Anniversary! Fred gave you a Jigg Hat to celebrate! :)");
+                } else {
+                    $player->socket->write("chat`Jiggmin`3`Happy Anniversary! Fred snuck a Jigg Hat under your chosen hat to celebrate! :)");
+                }
+            }
+            
             if ($hat_id != 1) {
                 $hat = new Hat(
                     $this->next_hat_id++,
@@ -395,7 +417,7 @@ class Game extends Room
                     $player->hat_color,
                     $player->getSecondColor('hat', $hat_id)
                 );
-                $player->worn_hat_array[0] = $hat;
+                $player->worn_hat_array[$hat_arr_pos] = $hat;
             }
 
             $this->sendToAll($this->getHatStr($player));
@@ -444,7 +466,7 @@ class Game extends Room
 
     public function finishRace($player)
     {
-        global $pdo;
+        global $pdo, $server_id, $ANNIE_ID;
 
         if ($player->finished_race === false
             && !isset($player->race_stats->finish_time)
@@ -474,7 +496,7 @@ class Game extends Room
                 $this->broadcastResults($player, $broadcast_time);
             }
 
-            // prize
+            //--- prize -----------
             $prize = null;
 
             if ($this->course_id == self::LEVEL_BUTO && $player->wearingHat(Hats::JIGG)) {
@@ -493,16 +515,16 @@ class Game extends Room
             }
 
 
-            // exp gain
+            //--- exp gain -------
             $tot_exp_gain = 0;
 
-            // welcome back bonus
+            //--- welcome back bonus ---
             $welcome_back_bonus = 0;
             if ($player->exp_today == 0 && $player->rank >= 5) {
-                $welcome_back_bonus = 1000;
-            } // level bonus
+                $welcome_back_bonus = 10000;
+            } //--- level bonus ---
             else {
-                $level_bonus = $this->appyExpCurve($player, 25 * $time_mod);
+                $level_bonus = $this->applyExpCurve($player, 25 * $time_mod);
 
                 $completed_perc = 0;
                 if ($this->mode == self::MODE_OBJECTIVE && $this->finish_count > 0) {
@@ -520,24 +542,25 @@ class Game extends Room
                     $level_bonus = 0;
                 }
 
-                if ($this->mode == self::MODE_DEATHMATCH) {
-                    $player->write('award`Survival Bonus`+ '.$level_bonus);
-                } elseif ($this->mode == self::MODE_OBJECTIVE && $completed_perc < 1) {
-                    $player->write('award`Level Attempted`+ '.$level_bonus);
-                } else {
-                    $player->write('award`Level Completed`+ '.$level_bonus);
+                if ($server_id !== $ANNIE_ID) {
+                    if ($this->mode == self::MODE_DEATHMATCH) {
+                        $player->write('award`Survival Bonus`+ '.$level_bonus);
+                    } elseif ($this->mode == self::MODE_OBJECTIVE && $completed_perc < 1) {
+                        $player->write('award`Level Attempted`+ '.$level_bonus);
+                    } else {
+                        $player->write('award`Level Completed`+ '.$level_bonus);
+                    }
                 }
 
                 $tot_exp_gain += $level_bonus;
             }
 
-            // opponent bonus
+            //--- opponent bonus ---
             for ($i = $place+1; $i < count($this->finish_array); $i++) {
                 $race_stats = $this->finish_array[$i];
-                if ($race_stats->rank < 100 && PR2SocketServer::$no_prizes === false) {
-                    $exp_gain = ($race_stats->rank+5) * $time_mod;
-                    $exp_gain = ceil($this->appyExpCurve($player, $exp_gain));
-                } else {
+                $exp_gain = ($race_stats->rank+5) * $time_mod;
+                $exp_gain = ceil($this->applyExpCurve($player, $exp_gain));
+                if (PR2SocketServer::$no_prizes) {
                     $exp_gain = 0;
                 }
                 $tot_exp_gain += $exp_gain;
@@ -545,7 +568,7 @@ class Game extends Room
             }
 
             // hat, campaign, hh bonuses
-            $hat_bonus = 0;
+            /*$hat_bonus = 0;
             $gp_multiplier = 1;
             $wearing_moon = false;
             foreach ($player->worn_hat_array as $hat) {
@@ -564,25 +587,31 @@ class Game extends Room
             }
             if ($hat_bonus > 0) {
                 $tot_exp_gain += $tot_exp_gain * $hat_bonus;
-            }
+            }*/
 
             // gp bonus
-            if (($place == 0 || $wearing_moon === true) && count($this->finish_array) > 1 && $finish_time > 10) {
+            /*if (($place == 0 || $wearing_moon === true) && count($this->finish_array) > 1 && $finish_time > 10) {
                 $this->giveGp($player, $wearing_moon, $gp_multiplier);
+            }*/
+            
+            // ANNIVERSARY BONUS!!!
+            if ($server_id !== $ANNIE_ID) {
+                $tot_exp_gain *= 10;
+                $player->write('award`HAPPY ANNIVERSARY!!!`exp X 10');
             }
 
             // happy hour bonus
-            if (HappyHour::isActive()) {
+            /*if (HappyHour::isActive()) {
                 $tot_exp_gain *= 2;
-            }
+            }*/
 
             // campaign bonus
-            if (isset($this->campaign)) {
+            /*if (isset($this->campaign)) {
                 $tot_exp_gain *= 2;
-            }
+            }*/
 
             // tell the user about the hat/hh/campaign bonus(es)
-            if ($hat_bonus > 0 || isset($this->campaign) || HappyHour::isActive() == true) {
+            /*if ($hat_bonus > 0 || isset($this->campaign) || HappyHour::isActive() == true) {
                 // hat bonus only
                 if ($hat_bonus > 0 && !isset($this->campaign) && HappyHour::isActive() != true) {
                     $player->write('award`Hat Bonus`exp X '.($hat_bonus+1));
@@ -605,16 +634,19 @@ class Game extends Room
                 elseif ($hat_bonus > 0 && isset($this->campaign) && HappyHour::isActive() == true) {
                     $player->write('award`Hat/Campaign/HH Bonuses`exp X '.($hat_bonus+4));
                 }
-            }
+            }*/
 
-            // apply welcome back bonus after all multipliers
+            //apply welcome back bonus after all multipliers
             if ($welcome_back_bonus > 0) {
                 $tot_exp_gain += $welcome_back_bonus;
-                $player->write('award`Welcome Back Bonus`+ 1,000');
+                $player->write('award`Welcome Back Bonus`+ ' . number_format($welcome_back_bonus));
             }
 
-            // apply artifact bonus after all multipliers
-            if ($this->course_id == Artifact::$level_id && $player->wearingHat(Hats::ARTIFACT)) {
+            //artifact bonus
+            if ($this->course_id == Artifact::$level_id &&
+                $player->wearingHat(Hats::ARTIFACT) &&
+                $server_id !== $ANNIE_ID
+            ) {
                 $result = save_finder($pdo, $player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
@@ -622,21 +654,26 @@ class Game extends Room
                     if ($artifact_bonus > $max_artifact_bonus) {
                         $artifact_bonus = $max_artifact_bonus;
                     }
+
                     $tot_exp_gain += $artifact_bonus;
                     $player->write('award`Artifact Found!`+ ' . number_format($artifact_bonus));
                 }
             }
-            
-            // resets unrealistic EXP gain
-            if ($tot_exp_gain > 100000) {
-                $tot_exp_gain = 0;
-            }
 
-            // increment exp and maybe save
+            //--- increment EXP and maybe save
             $player->incExp($tot_exp_gain);
             $player->maybeSave();
         } else {
             $this->setFinishTime($player, 'forfeit');
+        }
+        
+        // if on Annie, show a custom award window
+        if ($server_id === $ANNIE_ID)  {
+            $player->write('award`Thank you for everything` <3');
+            $player->write('award`over the years. PR2 was` <3');
+            $player->write('award`so successful because of` <3');
+            $player->write('award`awesome players like you!` <3');
+            $player->write('award` - The PR2 Staff Team` <3');
         }
 
         $player->finished_race = true;
@@ -1037,7 +1074,7 @@ class Game extends Room
     }
 
 
-    private function appyExpCurve($player, $exp)
+    private function applyExpCurve($player, $exp)
     {
         if ($player->exp_today < 5000) {
             $tier = 2.0;

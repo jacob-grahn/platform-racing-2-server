@@ -2,7 +2,11 @@
 
 function promote_to_moderator($name, $type, $admin, $promoted)
 {
-    global $pdo, $server_name;
+    global $pdo, $server_name, $server_id, $ANNIE_ID;
+    
+    if ($server_id === $ANNIE_ID) {
+        return false;
+    }
 
     // safety first
     $html_name = htmlspecialchars($name);
