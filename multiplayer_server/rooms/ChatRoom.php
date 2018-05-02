@@ -23,11 +23,78 @@ class ChatRoom extends Room
     }
 
 
-    public function clear()
+    public function clear($mod)
     {
-        for ($i = 0; $i <= $this->keep_count; $i++) {
+        global $pdo, $guild_id, $server_name;
+        
+        // safety first
+        $guild_id = (int) $guild_id;
+        $mod_name = htmlspecialchars($mod->name);
+        
+        // preserve chatroom data
+        $old_player_array = $this->player_array;
+        $room_name = $this->chat_room_name;
+        $old_chat_array = $this->chat_array;
+    
+        // send enough systemChat messages to clear the room
+        foreach (range(0,50) as $num) {
             $this->sendChat('systemChat` ');
         }
+        
+        // notify the player
+        foreach ($this->player_array as $player) {
+            if ($player->user_id !== $mod->user_id) {
+                $player->write('message`A moderator has just cleared the chat log. '.
+                                'Please re-enter the chatroom by clicking "Join Room".');
+            }
+            $this->removePlayer($player);
+        }
+        
+        // remove the chatroom
+        $this->remove();
+        
+        // make a new one with the same name if a special chatroom
+        if ($room_name === 'main' || $room_name === 'mod' || $room_name === 'admin') {
+            $new_room = new ChatRoom($room_name);
+            $new_room->sendChat("systemChat`$mod_name cleared the chatroom.");
+        }
+        
+        // log mod action if on a public server and in main
+        if ((int) $guild_id === 0 && $room_name === 'main' && count($old_chat_array) > 0) {
+            $log_chat = array();
+            
+            foreach ($old_chat_array as $key => $value) {
+                // check to make sure there's a message
+                if (!is_object($value)) {
+                    unset($old_chat_array[$key]);
+                    continue;
+                }
+                
+                // extract the message
+                $message_array = explode('`', $value->message);
+                if ($message_array[0] === 'systemChat') {
+                    array_push($log_chat, 'SYSTEM: ' . $message_array[1]);
+                } elseif ($message_array[0] === 'chat') {
+                    array_push($log_chat, 'Chat (' . $message_array[1] . '): ' . $message_array[3]);
+                }
+            }
+            
+            $chat_count = count($log_chat);
+            if ($chat_count > 0) {
+                $chat_str = join(' | ', $log_chat);
+                mod_action_insert(
+                    $pdo,
+                    $mod->user_id,
+                    "$mod->name cleared the main chatroom on $server_name from $mod->ip. ".
+                    "{chat_count: $chat_count, chat_array: $chat_str}",
+                    $mod->user_id,
+                    $mod->ip
+                );
+            }
+        }
+        
+        // tell the mod
+        $mod->write('message`Chatroom successfully cleared. You can re-join by clicking "Join Room".');
     }
     
     
