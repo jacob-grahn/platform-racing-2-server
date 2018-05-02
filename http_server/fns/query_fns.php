@@ -97,7 +97,7 @@ function is_staff($pdo, $user_id)
 
 
 // award hats
-function award_part($pdo, $user_id, $type, $part_id)
+function award_part($pdo, $user_id, $type, $part_id, $ensure = false)
 {
     $is_epic = false;
     $type = strtolower($type);
@@ -134,7 +134,9 @@ function award_part($pdo, $user_id, $type, $part_id)
     }
 
     // insert part award, award part
-    part_awards_insert($pdo, $user_id, $type, $part_id);
+    if ($ensure) {
+        part_awards_insert($pdo, $user_id, $type, $part_id);
+    }
 
     // award part
     array_push($part_array, $part_id);
