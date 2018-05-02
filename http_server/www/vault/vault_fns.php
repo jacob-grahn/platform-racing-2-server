@@ -179,6 +179,8 @@ function describeVault($pdo, $user_id, $arr)
             throw new Exception('Unknown item type.');
         }
 
+        $item->price = ceil($item->price / 10);
+
         $descriptions[] = $item;
     }
 
