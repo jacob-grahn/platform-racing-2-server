@@ -15,7 +15,8 @@ class Game extends Room
 
     const PLAYER_SIR = 5321458; // sir sirlington
     const PLAYER_CLINT = 5451130; // clint the cowboy
-
+    const PLAYER_BLS = 3483035; //bls1999
+    
     private $finish_array = array();
     private $course_id;
     private $start_time;
