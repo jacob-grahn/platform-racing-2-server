@@ -12,7 +12,8 @@ function sort_chat_room_array($a, $b)
 
 
 // build a url
-function urlify($link, $disp, $color = '#0000FF', $bt_replace = true) {
+function urlify($link, $disp, $color = '#0000FF', $bt_replace = true)
+{
     $link = htmlspecialchars($link);
     $disp = htmlspecialchars($disp);
     
