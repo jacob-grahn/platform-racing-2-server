@@ -10,7 +10,7 @@ $pdo = pdo_connect();
 for ($i=1; $i<100; $i++) {
     @$server_id = (int) $argv[$i];
 
-    if (isset($server_id) && $server_id != 0) {
+    if (isset($server_id)) {
         try {
             $server = server_select($pdo, $server_id);
             $reply = talk_to_server('localhost', $server->port, $server->salt, 'shut_down`', true);
