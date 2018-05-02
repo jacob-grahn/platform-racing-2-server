@@ -1,34 +1,33 @@
 <?php
 
 
-//--- tries to pull a variable from the $_GET array. If it is not present, the default is used. ---------------
-function get($str, $default)
+// sort the chat rooms by how many users are in them
+function sort_chat_room_array($a, $b)
 {
-    $val = $_GET[$str];
-    if (!isset($val)) {
-        $val = $default;
+    if (count($a->player_array) == count($b->player_array)) {
+        return 0;
     }
-    return $val;
+    return (count($a->player_array) > count($b->player_array)) ? -1 : 1;
 }
 
 
-
-//--- looks for a variable in the url and form data. If none are found, retun the default.
-function find_variable($string, $default)
-{
-    $variable = $_POST[$string];
-    if (!isset($variable)) {
-        $variable = $_GET[$string];
+// build a url
+function urlify($link, $disp, $color = '#0000FF', $bt_replace = true) {
+    $link = htmlspecialchars($link);
+    $disp = htmlspecialchars($disp);
+    
+    // replace backticks with html code to prevent errors
+    if ($bt_replace === true) {
+        $link = str_replace('`', '&#96;', $link);
+        $disp = str_replace('`', '&#96;', $disp);
     }
-    if (!isset($variable)) {
-        $variable = $default;
-    }
-    return $variable;
+    
+    // return url
+    return "<a href='$link' target='_blank'><u><font color='$color'>$disp</font></u></a>";
 }
 
 
-
-//--- tests to see if a string contains obscene words ---------------------------------------
+// tests to see if a string contains obscene words
 function is_obscene($str)
 {
     $str = strtolower($str);
@@ -58,49 +57,7 @@ function is_obscene($str)
 }
 
 
-//---
-function remove_resource($_target)
-{
-
-    //file?
-    if (is_file($_target)) {
-        if (is_writable($_target)) {
-            if (@unlink($_target)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    //dir?
-    if (is_dir($_target)) {
-        if (is_writeable($_target)) {
-            foreach (new DirectoryIterator($_target) as $_res) {
-                if ($_res->isDot()) {
-                    unset($_res);
-                    continue;
-                }
-
-                if ($_res->isFile()) {
-                    remove_resource($_res->getPathName());
-                } elseif ($_res->isDir()) {
-                    remove_resource($_res->getRealPath());
-                }
-
-                unset($_res);
-            }
-
-            if (@rmdir($_target)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-}
-
-
+// make a readable time format from seconds
 function format_duration($seconds)
 {
     if ($seconds < 60) {
@@ -143,29 +100,7 @@ function format_duration($seconds)
 }
 
 
-
-
-
-//put the user directory into more manageable sub directories. ex: 2,461,761 becomes 2,000,000/2,461,000/2,461,761
-function get_user_dir($user_id)
-{
-    $million_folder = (floor($user_id / 1000000) % 1000) * 1000000;
-    $thousand_folder = $million_folder + ((floor($user_id / 1000) % 1000) * 1000);
-    $hundred_folder = $user_id;
-
-    $million_folder = number_format($million_folder);
-    $thousand_folder = number_format($thousand_folder);
-    $hundred_folder = number_format($hundred_folder);
-
-    $dir = $million_folder.'/'.$thousand_folder.'/'.$hundred_folder;
-
-    return $dir;
-}
-
-
-
-
-//
+// simple number limit function
 function limit($num, $min, $max)
 {
     if ($num < $min) {
