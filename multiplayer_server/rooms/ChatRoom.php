@@ -32,13 +32,13 @@ class ChatRoom extends Room
         $mod_name = htmlspecialchars($mod->name);
         
         // preserve chatroom data
-        $old_player_array = $this->player_array;
         $room_name = $this->chat_room_name;
         $old_chat_array = $this->chat_array;
     
         // send enough systemChat messages to clear the room
         foreach (range(0, 50) as $num) {
             $this->sendChat('systemChat` ');
+            unset($num); // only adding this because travis is yelling at me about unused variables
         }
         
         // notify the player
