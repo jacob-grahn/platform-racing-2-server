@@ -455,7 +455,7 @@ class Player
                 ($this->temp_mod == false || $this->server_owner == true)
             ) {
                 if ($player_room == $this->chat_room) {
-                    $player_room->clear();
+                    $player_room->clear($this);
                 } else {
                     $this->write('systemChat`This command cannot be used in levels.');
                 }
