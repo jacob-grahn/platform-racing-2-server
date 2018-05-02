@@ -5,12 +5,12 @@ function is_from_game()
 {
     $req_with = default_server("HTTP_X_REQUESTED_WITH", "");
     $ref = default_server("HTTP_REFERER");
-    
+
     // let people type in the url manually
     if (is_empty($ref)) {
         return true;
     }
-    
+
     // does the request originate from the flash player?
     return strpos($req_with, "ShockwaveFlash/") === 0;
 }
@@ -363,7 +363,7 @@ function check_moderator($pdo, $check_ref = true, $min_power = 2)
     $user_id = token_login($pdo);
     $user = user_select_mod($pdo, $user_id, true);
 
-    if ($user->power < $min_power || $user === false) {
+    if (!$user || $user->power < $min_power) {
         throw new Exception('You lack the power to access this resource.');
     }
 
