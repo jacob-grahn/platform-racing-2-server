@@ -29,6 +29,31 @@ class ChatRoom extends Room
             $this->sendChat('systemChat` ');
         }
     }
+    
+    
+    public function whoIsHere()
+    {
+        $colors = ['676666', '047B7B', '1C369F', '870A6F']; // colors
+        $count = count($this->player_array);
+        $str = "Currently in this chatroom ($count):"; // start the return string
+        
+        foreach ($this->player_array as $player) {
+            $color = $colors[$player->group]; // name colors
+            $name = htmlspecialchars($player->name); // safe name
+            
+            // build string addition
+            $link = "event:user`" . $player->group . '`' . $name;
+            $str .= "<br> - " . urlify($link, $name, ('#' . $color));
+        }
+        
+        // this should never happen (the person in the room is calling the function)
+        if ($str === 'Currently in this chatroom:') {
+            $str = 'No one is here. :(';
+        }
+        
+        // send the string back
+        return $str;
+    }
 
 
     public function addPlayer($player)
@@ -45,7 +70,8 @@ class ChatRoom extends Room
             ' people in this chat room.';
         }
         if ($this->chat_room_name == 'main' && $guild_id == 0) {
-            $welcome_message .= ' Before chatting, please read the PR2 rules listed at pr2hub.com/rules.';
+            $rules_link = urlify('https://pr2hub.com/rules', 'pr2hub.com/rules');
+            $welcome_message .= " Before chatting, please read the PR2 rules listed at $rules_link.";
         }
         $player->socket->write($welcome_message);
 
