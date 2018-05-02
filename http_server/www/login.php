@@ -176,6 +176,11 @@ try {
         $rt_available = $row->available_tokens;
         $rt_used = $row->used_tokens;
     }
+    
+    // sanity check: do they have more than 5 permanent rank tokens?
+    if ($rt_used > 5 || $rt_available > 5) {
+        throw new Exception("Too many rank tokens. Please use a different account.");
+    }
 
     // sanity check: are more tokens used than available?
     $rt_available += rank_token_rentals_count($pdo, $user->user_id, $user->guild);
@@ -189,9 +194,9 @@ try {
         throw new Exception('Your rank is too high. Please choose a different account.');
     }
 
-    // sanity check: unrealistic amount of folding tokens?
+    // sanity check: unrealistic amount of guild tokens?
     if ($rt_available > 26) {
-        throw new Exception('Too many rank tokens. Please use a different account.');
+        throw new Exception('Too many guild tokens. Please use a different account.');
     }
     
     // record moderator login
