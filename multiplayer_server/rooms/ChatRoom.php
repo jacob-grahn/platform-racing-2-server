@@ -32,7 +32,6 @@ class ChatRoom extends Room
         $mod_name = htmlspecialchars($mod->name);
         
         // preserve chatroom data
-        $old_player_array = $this->player_array;
         $room_name = $this->chat_room_name;
         $old_chat_array = $this->chat_array;
     
