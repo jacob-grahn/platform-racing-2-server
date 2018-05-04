@@ -49,7 +49,7 @@ function output_object($obj, $sep = '<br/>')
 
 function output_object_keys($obj, $sep = ', ')
 {
-    if ($obj !== false) {
+    if ($obj !== false && $obj !== null) {
         foreach ($obj as $var => $val) {
             if ($val == 1 && $var != 'user_id') {
                 echo $var.$sep;
