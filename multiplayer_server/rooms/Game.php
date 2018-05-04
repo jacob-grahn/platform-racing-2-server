@@ -15,7 +15,7 @@ class Game extends Room
 
     const PLAYER_SIR = 5321458; // sir sirlington
     const PLAYER_CLINT = 5451130; // clint the cowboy
-
+    
     private $finish_array = array();
     private $course_id;
     private $start_time;
@@ -505,6 +505,12 @@ class Game extends Room
                 $level_bonus = $this->appyExpCurve($player, 25 * $time_mod);
 
                 $completed_perc = 0;
+                
+                //sanity check, think it works fine here
+                if ($level_bonus >= 5 && $finish_time <= 3) {
+                    $level_bonus = 0;
+                }
+                
                 if ($this->mode == self::MODE_OBJECTIVE && $this->finish_count > 0) {
                     $objective_count = count($player->race_stats->objectives_reached);
                     if ($objective_count > $this->finish_count) {
@@ -545,7 +551,7 @@ class Game extends Room
             }
 
             // hat, campaign, hh bonuses
-            $hat_bonus = 0;
+            $hat_bonus = 1;
             $gp_multiplier = 1;
             $wearing_moon = false;
             foreach ($player->worn_hat_array as $hat) {
@@ -562,8 +568,14 @@ class Game extends Room
                     $gp_multiplier += 1;
                 }
             }
-            if ($hat_bonus > 0) {
-                $tot_exp_gain += $tot_exp_gain * $hat_bonus;
+            
+            //another sanity check, humanly impossible hat bonus?
+            if ($hat_bonus > 5) {
+                $hat_bonus = 5;
+            }
+            
+            if ($hat_bonus > 1) {
+                $tot_exp_gain *= $hat_bonus;
             }
 
             // gp bonus
