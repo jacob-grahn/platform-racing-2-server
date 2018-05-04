@@ -594,28 +594,28 @@ class Game extends Room
             }
 
             // tell the user about the hat/hh/campaign bonus(es)
-            if ($hat_bonus > 0 || isset($this->campaign) || HappyHour::isActive() == true) {
+            if ($hat_bonus > 1 || isset($this->campaign) || HappyHour::isActive() == true) {
                 // hat bonus only
-                if ($hat_bonus > 0 && !isset($this->campaign) && HappyHour::isActive() != true) {
-                    $player->write('award`Hat Bonus`exp X '.($hat_bonus+1));
+                if ($hat_bonus > 1 && !isset($this->campaign) && HappyHour::isActive() != true) {
+                    $player->write('award`Hat Bonus`exp X '.($hat_bonus));
                 } // campaign bonus only
-                elseif ($hat_bonus == 0 && isset($this->campaign) && HappyHour::isActive() != true) {
+                elseif ($hat_bonus == 1 && isset($this->campaign) && HappyHour::isActive() != true) {
                     $player->write('award`Campaign Bonus`exp X 2');
                 } // hh bonus only
-                elseif ($hat_bonus == 0 && !isset($this->campaign) && HappyHour::isActive() == true) {
+                elseif ($hat_bonus == 1 && !isset($this->campaign) && HappyHour::isActive() == true) {
                     $player->write('award`Happy Hour Bonus`exp X 2');
                 } // hat + campaign bonuses
-                elseif ($hat_bonus > 0 && isset($this->campaign) && HappyHour::isActive() != true) {
-                    $player->write('award`Hat & Campaign Bonuses`exp X '.($hat_bonus+2));
+                elseif ($hat_bonus > 1 && isset($this->campaign) && HappyHour::isActive() != true) {
+                    $player->write('award`Hat & Campaign Bonuses`exp X '.($hat_bonus+1));
                 } // hat + hh bonuses
-                elseif ($hat_bonus > 0 && !isset($this->campaign) && HappyHour::isActive() == true) {
-                    $player->write('award`Hat/Happy Hour Bonuses`exp X '.($hat_bonus+2));
+                elseif ($hat_bonus > 1 && !isset($this->campaign) && HappyHour::isActive() == true) {
+                    $player->write('award`Hat/Happy Hour Bonuses`exp X '.($hat_bonus+1));
                 } // hh + campaign bonuses
-                elseif ($hat_bonus == 0 && isset($this->campaign) && HappyHour::isActive() == true) {
+                elseif ($hat_bonus == 1 && isset($this->campaign) && HappyHour::isActive() == true) {
                     $player->write('award`Campaign/HH Bonuses`exp X 4');
                 } // hat+ campaign + hh bonuses
-                elseif ($hat_bonus > 0 && isset($this->campaign) && HappyHour::isActive() == true) {
-                    $player->write('award`Hat/Campaign/HH Bonuses`exp X '.($hat_bonus+4));
+                elseif ($hat_bonus > 1 && isset($this->campaign) && HappyHour::isActive() == true) {
+                    $player->write('award`Hat/Campaign/HH Bonuses`exp X '.($hat_bonus+3));
                 }
             }
 
