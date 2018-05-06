@@ -196,9 +196,9 @@ try {
         $rt_used = $rt_available;
     }
     
-    // sanity check: is the user's rank 100+?
+    // sanity check: is the user's rank 100+ and are they not Fred?
     $rank = (int) $stats->rank;
-    if (($rank + $rt_used >= 100) || ($user_id === 4291976)) {
+    if (($rank + $rt_used >= 100) && $user_id !== 4291976) {
         throw new Exception('Your rank is too high. Please choose a different account.');
     }
     
