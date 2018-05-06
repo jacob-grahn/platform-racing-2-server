@@ -178,7 +178,7 @@ try {
     }
     
     // check if they're renting rank tokens
-    $rt_rented = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
+    $rt_rented = rank_token_rentals_count($pdo, $user_id, $user->guild);
     
     // sanity check: do they have more than 5 permanent rank tokens?
     if ($rt_available > 5) {
@@ -198,7 +198,7 @@ try {
     
     // sanity check: is the user's rank 100+?
     $rank = (int) $stats->rank;
-    if ($rank + $rt_used >= 100) {
+    if (($rank + $rt_used >= 100) || ($user_id === 4291976)) {
         throw new Exception('Your rank is too high. Please choose a different account.');
     }
     
