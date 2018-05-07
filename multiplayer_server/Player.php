@@ -455,7 +455,14 @@ class Player
                 ($this->temp_mod == false || $this->server_owner == true)
             ) {
                 if ($player_room == $this->chat_room) {
-                    $player_room->clear();
+                    $player_room->clear($this);
+                } else {
+                    $this->write('systemChat`This command cannot be used in levels.');
+                }
+            } // here command
+            elseif ($chat_message == '/here') {
+                if ($player_room == $this->chat_room) {
+                    $this->write('systemChat`' . $player_room->whoIsHere());
                 } else {
                     $this->write('systemChat`This command cannot be used in levels.');
                 }
@@ -767,7 +774,8 @@ class Player
                 }
             } // rules command
             elseif ($chat_message == '/rules') {
-                $message = 'systemChat`The PR2 rules can be found at pr2hub.com/rules.';
+                $rules_link = urlify('https://pr2hub.com/rules', 'pr2hub.com/rules');
+                $message = "systemChat`The PR2 rules can be found at $rules_link.";
                 if ($guild_id != 0) {
                     $message .= ' Since this is a private server, your guild '.
                         'owner may have different rules for the chatrooms and '.
@@ -839,7 +847,9 @@ class Player
                         }
                     }
                     $this->write('systemChat`PR2 Chat Commands:<br>'.
-                        '- /rules<br>- /view *player*<br>'.
+                        '- /rules<br>'.
+                        '- /here (in this chatroom)<br>'.
+                        '- /view *player*<br>'.
                         '- /guild *guild name*<br>'.
                         '- /hint (Artifact)<br>'.
                         '- /hh status<br>'.

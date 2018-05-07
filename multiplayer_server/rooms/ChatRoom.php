@@ -23,11 +23,103 @@ class ChatRoom extends Room
     }
 
 
-    public function clear()
+    public function clear($mod)
     {
-        for ($i = 0; $i <= $this->keep_count; $i++) {
+        global $pdo, $guild_id, $server_name;
+        
+        // safety first
+        $guild_id = (int) $guild_id;
+        $mod_name = htmlspecialchars($mod->name);
+        
+        // preserve chatroom data
+        $room_name = $this->chat_room_name;
+        $old_chat_array = $this->chat_array;
+    
+        // send enough systemChat messages to clear the room
+        foreach (range(0, 50) as $num) {
             $this->sendChat('systemChat` ');
+            unset($num);
         }
+        
+        // notify the player
+        foreach ($this->player_array as $player) {
+            if ($player->user_id !== $mod->user_id) {
+                $player->write('message`A moderator has just cleared the chat log. '.
+                                'Please re-enter the chatroom by clicking "Join Room".');
+            }
+            $this->removePlayer($player);
+        }
+        
+        // remove the chatroom
+        $this->remove();
+        
+        // make a new one with the same name if a special chatroom
+        if ($room_name === 'main' || $room_name === 'mod' || $room_name === 'admin') {
+            $new_room = new ChatRoom($room_name);
+            $new_room->sendChat("systemChat`$mod_name cleared the chatroom.");
+        }
+        
+        // log mod action if on a public server and in main
+        if ((int) $guild_id === 0 && $room_name === 'main' && count($old_chat_array) > 0) {
+            $log_chat = array();
+            
+            foreach ($old_chat_array as $key => $value) {
+                // check to make sure there's a message
+                if (!is_object($value)) {
+                    unset($old_chat_array[$key]);
+                    continue;
+                }
+                
+                // extract the message
+                $message_array = explode('`', $value->message);
+                if ($message_array[0] === 'systemChat') {
+                    array_push($log_chat, 'SYSTEM: ' . $message_array[1]);
+                } elseif ($message_array[0] === 'chat') {
+                    array_push($log_chat, 'Chat (' . $message_array[1] . '): ' . $message_array[3]);
+                }
+            }
+            
+            $chat_count = count($log_chat);
+            if ($chat_count > 0) {
+                $chat_str = join(' | ', $log_chat);
+                mod_action_insert(
+                    $pdo,
+                    $mod->user_id,
+                    "$mod->name cleared the main chatroom on $server_name from $mod->ip. ".
+                    "{chat_count: $chat_count, chat_array: $chat_str}",
+                    $mod->user_id,
+                    $mod->ip
+                );
+            }
+        }
+        
+        // tell the mod
+        $mod->write('message`Chatroom successfully cleared. You can re-join by clicking "Join Room".');
+    }
+    
+    
+    public function whoIsHere()
+    {
+        $colors = ['676666', '047B7B', '1C369F', '870A6F']; // colors
+        $count = count($this->player_array);
+        $str = "Currently in this chatroom ($count):"; // start the return string
+        
+        foreach ($this->player_array as $player) {
+            $color = $colors[$player->group]; // name colors
+            $name = htmlspecialchars($player->name); // safe name
+            
+            // build string addition
+            $link = "event:user`" . $player->group . '`' . $name;
+            $str .= "<br> - " . urlify($link, $name, ('#' . $color));
+        }
+        
+        // this should never happen (the person in the room is calling the function)
+        if ($str === 'Currently in this chatroom:') {
+            $str = 'No one is here. :(';
+        }
+        
+        // send the string back
+        return $str;
     }
 
 
@@ -45,7 +137,8 @@ class ChatRoom extends Room
             ' people in this chat room.';
         }
         if ($this->chat_room_name == 'main' && $guild_id == 0) {
-            $welcome_message .= ' Before chatting, please read the PR2 rules listed at pr2hub.com/rules.';
+            $rules_link = urlify('https://pr2hub.com/rules', 'PR2 rules');
+            $welcome_message .= " Before chatting, please read the $rules_link.";
         }
         $player->socket->write($welcome_message);
 

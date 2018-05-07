@@ -1,6 +1,19 @@
 <?php
 
-//--- unlock a temporary perk -------------------------------------------------------------
+// unlock the super booster
+function process_unlock_super_booster($socket, $data)
+{
+    if ($socket->process == true) {
+        $user_id = $data;
+        $player = id_to_player($user_id, false);
+        if (isset($player)) {
+            $player->super_booster = true;
+        }
+        $socket->write('ok`');
+    }
+}
+
+// unlock a temporary perk
 function process_unlock_perk($socket, $data)
 {
     if ($socket->process == true) {
@@ -28,7 +41,7 @@ function process_unlock_perk($socket, $data)
 }
 
 
-//--- unlock items -------------------------------------------------------------
+// unlock the king set
 function process_unlock_set_king($socket, $data)
 {
     if ($socket->process == true) {
@@ -48,7 +61,7 @@ function process_unlock_set_king($socket, $data)
 }
 
 
-//--- unlock items -------------------------------------------------------------
+// unlock the queen set
 function process_unlock_set_queen($socket, $data)
 {
     if ($socket->process == true) {
@@ -68,7 +81,7 @@ function process_unlock_set_queen($socket, $data)
 }
 
 
-//--- unlock items -------------------------------------------------------------
+// unlock the djinn set
 function process_unlock_set_djinn($socket, $data)
 {
     if ($socket->process == true) {
@@ -88,7 +101,7 @@ function process_unlock_set_djinn($socket, $data)
 }
 
 
-//--- unlock epic everything --------------------------------------------------
+// unlock epic everything
 function process_unlock_epic_everything($socket, $data)
 {
     if ($socket->process == true) {

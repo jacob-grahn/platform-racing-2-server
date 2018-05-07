@@ -1,6 +1,7 @@
 <?php
 
-//--- set right room ----------------------------------------------------
+
+// set right room
 function client_set_right_room($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -19,8 +20,7 @@ function client_set_right_room($socket, $data)
 }
 
 
-
-//--- set the chat room -----------------------------------------------
+// set the chat room
 function client_set_chat_room($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -45,8 +45,7 @@ function client_set_chat_room($socket, $data)
 }
 
 
-
-//--- set game room ------------------------------------------------------
+// set game room
 function client_set_game_room($socket)
 {
     $player = $socket->getPlayer();
@@ -56,8 +55,7 @@ function client_set_game_room($socket)
 }
 
 
-
-//--- join a slot in a course box ------------------------------------------------
+// join a slot in a course box
 function client_fill_slot($socket, $data)
 {
     list($course_id, $slot) = explode('`', $data);
@@ -68,8 +66,7 @@ function client_fill_slot($socket, $data)
 }
 
 
-
-//--- confirm slot --------------------------------------------------------------------
+// confirm a slot in a course box
 function client_confirm_slot($socket)
 {
     $player = $socket->getPlayer();
@@ -80,8 +77,7 @@ function client_confirm_slot($socket)
 }
 
 
-
-//--- clear slot --------------------------------------------------------------------
+// clear a slot in a course box
 function client_clear_slot($socket)
 {
     $player = $socket->getPlayer();
@@ -92,8 +88,7 @@ function client_clear_slot($socket)
 }
 
 
-
-//--- force the players who have not confirmed out so the rest can play -----------------
+// force the players who have not confirmed out so the rest can play
 function client_force_start($socket)
 {
     $player = $socket->getPlayer();
@@ -104,8 +99,7 @@ function client_force_start($socket)
 }
 
 
-
-//--- returns info for the customize page -----------------------------------------------
+// returns info for the customize page
 function client_get_customize_info($socket)
 {
     $player = $socket->getPlayer();
@@ -113,8 +107,7 @@ function client_get_customize_info($socket)
 }
 
 
-
-//--- sets info for the character --------------------------------------------------------
+// sets info for the character
 function client_set_customize_info($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -122,8 +115,7 @@ function client_set_customize_info($socket, $data)
 }
 
 
-
-//--- chat ----------------------------------------------------------------
+// sends a chat message
 function client_chat($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -131,8 +123,7 @@ function client_chat($socket, $data)
 }
 
 
-
-//--- get a list of the players that are online ---------------------------------------------
+// get a list of the players that are online
 function client_get_online_list($socket)
 {
     global $player_array;
@@ -143,8 +134,7 @@ function client_get_online_list($socket)
 }
 
 
-
-//--- get a list of the top chat rooms ----------------------------------------------------------
+// get a list of the top chat rooms
 function client_get_chat_rooms($socket)
 {
     global $chat_room_array;
@@ -161,13 +151,16 @@ function client_get_chat_rooms($socket)
         $chat_room = $temp_array[$i];
         $str .= '`'.$chat_room->chat_room_name.' - '.count($chat_room->player_array).' online';
     }
+    
+    if ($str === 'setChatRoomList') {
+        $str .= '`No one is chatting. :(';
+    }
 
     $socket->write($str);
 }
 
 
-
-//--- add a user to your ignored array ----------------------------------------------------------
+// add a user to your ignored array
 function client_ignore_user($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -178,8 +171,7 @@ function client_ignore_user($socket, $data)
 }
 
 
-
-//--- remove a user from your ignored array ----------------------------------------------------------
+// remove a user from your ignored array
 function client_un_ignore_user($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -194,8 +186,7 @@ function client_un_ignore_user($socket, $data)
 }
 
 
-
-//-- award kong outfit -------------------------------------------------------------------
+// unlock the kong set (ant set)
 function client_award_kong_outfit($socket)
 {
     $player = $socket->getPlayer();
@@ -203,8 +194,7 @@ function client_award_kong_outfit($socket)
 }
 
 
-
-//-- use a rank token -------------------------------------------------------------------
+// increment used rank tokens
 function client_use_rank_token($socket)
 {
     $player = $socket->getPlayer();
@@ -212,8 +202,7 @@ function client_use_rank_token($socket)
 }
 
 
-
-//-- un-use a rank token ----------------------------------------------------------------
+// decrement used rank tokens
 function client_unuse_rank_token($socket)
 {
     $player = $socket->getPlayer();
