@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../../env.php';
+require_once __DIR__ . '/../env.php';
 require_once __DIR__ . '/management_fns.php';
-require_once __DIR__ . '/../../http_server/fns/pdo_connect.php';
-require_once __DIR__ . '/../../http_server/queries/servers/server_select.php';
+require_once __DIR__ . '/../http_server/fns/pdo_connect.php';
+require_once __DIR__ . '/../http_server/queries/servers/server_select.php';
 
 $pdo = pdo_connect();
 
