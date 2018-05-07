@@ -121,7 +121,8 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
         
         // get information from pr2, rank_tokens, and folding_at_home
         $hat_array = explode(',', pr2_select($pdo, $user_id)->hat_array);
-        $available_tokens = (int) rank_token_select($pdo, $user_id)->available_tokens;
+        $rank_token_row = rank_token_select($pdo, $user_id);
+        $available_tokens = $rank_token_row ? (int) $rank_token_row->available_tokens : 0;
         
         // define columns
         $columns = array(
