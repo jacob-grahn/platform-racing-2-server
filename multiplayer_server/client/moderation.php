@@ -194,10 +194,10 @@ function client_ban($socket, $data)
     // tell the world
     if ($mod->group >= 2 && isset($banned)) {
         if (isset($mod->chat_room)) {
-            $ban_log = urlify('https://pr2hub.com/bans', 'pr2hub.com/bans');
+            $ban_log = urlify('https://pr2hub.com/bans', 'the ban log');
             $mod->chat_room->sendChat("systemChat`$safe_mname has banned $safe_bname for $disp_time. ".
                 "$disp_reason. ".
-                "This ban has been recorded at $ban_log.");
+                "This ban has been recorded on $ban_log.");
         }
         if (isset($banned) && ($banned->group < 2 || $banned->temp_mod === true)) {
             $banned->remove();
