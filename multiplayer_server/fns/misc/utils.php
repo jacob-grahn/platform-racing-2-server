@@ -132,11 +132,14 @@ function get_status()
 function shutdown_server()
 {
     global $player_array;
+    output('Disconnecting all players...');
     foreach ($player_array as $player) {
         $player->write('message`The server is restarting, hold on a sec...');
         $player->remove();
     }
+    output('All players disconnected. Shutting down...');
     sleep(1);
+    output('The shutdown was successful.');
     exit();
 }
 
