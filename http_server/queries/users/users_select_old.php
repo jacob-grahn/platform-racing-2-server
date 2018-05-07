@@ -4,7 +4,7 @@
 function users_select_old($pdo)
 {
     $year3 = time() - 94610000; // 3 years
-    $month = time() - 2592000; // 1 month
+    // $month = time() - 2592000; // 1 month
 
     $stmt = $pdo->prepare('
         SELECT users.user_id, users.time, pr2.rank, pr2.user_id
@@ -15,7 +15,7 @@ function users_select_old($pdo)
             /* OR (users.time < :month AND users.user_id NOT IN (SELECT user_id FROM pr2)) */
     ');
     $stmt->bindValue(':year3', $year3, PDO::PARAM_INT);
-    $stmt->bindValue(':month', $month, PDO::PARAM_INT);
+    // $stmt->bindValue(':month', $month, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
