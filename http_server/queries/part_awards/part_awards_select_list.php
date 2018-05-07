@@ -12,11 +12,5 @@ function part_awards_select_list($pdo)
         throw new Exception('Could not fetch the list of part awards.');
     }
     
-    $awards = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    if (empty($awards)) {
-        return false;
-    }
-
-    return $awards;
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
