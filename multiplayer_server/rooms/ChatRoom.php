@@ -137,8 +137,8 @@ class ChatRoom extends Room
             ' people in this chat room.';
         }
         if ($this->chat_room_name == 'main' && $guild_id == 0) {
-            $rules_link = urlify('https://pr2hub.com/rules', 'pr2hub.com/rules');
-            $welcome_message .= " Before chatting, please read the PR2 rules listed at $rules_link.";
+            $rules_link = urlify('https://pr2hub.com/rules', 'PR2 rules');
+            $welcome_message .= " Before chatting, please read the $rules_link.";
         }
         $player->socket->write($welcome_message);
 
