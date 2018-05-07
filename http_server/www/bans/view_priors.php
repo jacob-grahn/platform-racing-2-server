@@ -35,7 +35,8 @@ try {
         } elseif ($row->account_ban == 1) {
             $ban_type = 'account is';
         }
-        $banned = "<a href='show_record.php?ban_id=$ban_id'>Yes.</a> " . "Your $ban_type banned until $ban_end_date. Reason: $reason";
+        $banned = "<a href='show_record.php?ban_id=$ban_id'>Yes.</a> ".
+            "Your $ban_type banned until $ban_end_date. Reason: $reason";
     }
     
     // count how many times they have been banned
@@ -66,8 +67,7 @@ try {
         ."<p>Your account has been banned $account_ban_count $acc_lang.</p> $account_ban_list"
         ."<p>Your IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list"
         .'<p>Priors expire one year after the ban\'s expire date.</p>';
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
     echo "<br /><i>Error: $safe_error</i>";
 } finally {
