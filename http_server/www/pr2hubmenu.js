@@ -129,7 +129,7 @@ function initialize_menu()
     document.getElementById("prmenu").innerHTML = "<center><span class=\"menutitle\"><img src=\"https://pr2hub.com/favicon.ico\" width=\"20px\" height=\"20px\"></img> Pr2Hub Menu</span><hr class=\"menudivider\"></hr><a href=\"#\" class=\"menulink\" id=\"banview\">View ban by ID</a><a href=\"#\" class=\"menulink\" id=\"setbg\">Set background</a><a href=\"#\" class=\"menulink\" id=\"skip_to_ban\">Go to specified page on bans</a><a href=\"#\" class=\"menulink\" id=\"menu_leaderboard\">Leaderboard</a><a href=\"#\" class=\"menulink\" id=\"ban_list\">Bans</a><a href=\"#\" class=\"menulink\" id=\"arti_hint\">Artifact hint</a><a href=\"#\" class=\"menulink\" id=\"srch_player\">Player search</a><a href=\"#\" class=\"menulink\" id=\"guild_srch\">Guild search</a><a href=\"#\" class=\"menulink\" id=\"staff_list\">Staff list</a><a href=\"#\" class=\"menulink\" id=\"transfer_guild\">Guild transfer</a></center>";
 }
 
-window.onload = function()
+window.onload = function ()
 {
     insert_css();
 
@@ -143,46 +143,46 @@ window.onload = function()
         displaymenu(eventargs);
     });
 
-    document.addEventListener("click", function() {
+    document.addEventListener("click", function () {
         user_click_hide();
     });
 
-    document.getElementById("banview").addEventListener("click", function() {
+    document.getElementById("banview").addEventListener("click", function () {
         goto_ban();
     });
 
-    document.getElementById("setbg").addEventListener("click", function() {
+    document.getElementById("setbg").addEventListener("click", function () {
         set_background();
     });
 
-    document.getElementById("skip_to_ban").addEventListener("click", function() {
+    document.getElementById("skip_to_ban").addEventListener("click", function () {
         skip_to_page();
     });
 
-    document.getElementById("menu_leaderboard").addEventListener("click", function() {
+    document.getElementById("menu_leaderboard").addEventListener("click", function () {
         open_leaderboard();
     });
-    document.getElementById("arti_hint").addEventListener("click", function() {
+    document.getElementById("arti_hint").addEventListener("click", function () {
         open_arti_page();
     });
 
-    document.getElementById("srch_player").addEventListener("click", function() {
+    document.getElementById("srch_player").addEventListener("click", function () {
         open_player_search();
     });
 
-    document.getElementById("guild_srch").addEventListener("click", function() {
+    document.getElementById("guild_srch").addEventListener("click", function () {
         open_guild_search();
     });
 
-    document.getElementById("staff_list").addEventListener("click", function() {
+    document.getElementById("staff_list").addEventListener("click", function () {
         open_staff_list();
     });
 
-    document.getElementById("transfer_guild").addEventListener("click", function() {
+    document.getElementById("transfer_guild").addEventListener("click", function () {
         open_guild_transfer();
     });
 
-    document.getElementById("ban_list").addEventListener("click", function() {
+    document.getElementById("ban_list").addEventListener("click", function () {
         open_ban_list();
     });
 
