@@ -129,6 +129,7 @@ function output_header($title = '', $formatting_for_mods = false, $formatting_fo
     <title>PR2 Hub - <?php echo $title; ?></title>
     <link href="//pr2hub.com/style/gwibble.css" rel="stylesheet" type="text/css" />
     <link href="//pr2hub.com/style/pr2hub.css" rel="stylesheet" type="text/css"/>
+    <script src="//pr2hub.com/pr2hubmenu.js" type="text/javascript"></script>
     <?php if ($formatting_for_mods) { ?>
         <script src="https://code.jquery.com/jquery-latest.min.js"></script>
         <script src="https://malsup.github.io/jquery.form.js"></script>
