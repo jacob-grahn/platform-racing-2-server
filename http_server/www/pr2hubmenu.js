@@ -4,35 +4,41 @@ var menu_css_decoded = window.atob("LmhjbGFzc3sNCglkaXNwbGF5OiBub25lOw0KfQ0KI3By
 
 var menu_enabled = false;
 
-function insert_css() {
+function insert_css()
+{
     var menucss = document.createElement("style");
     menucss.innerHTML = menu_css_decoded;
     document.body.appendChild(menucss);
 }
 
-function insert_menu_code() {
+function insert_menu_code()
+{
     var hub_menu = document.createElement("div");
     hub_menu.setAttribute("class", "hclass");
     hub_menu.setAttribute("id", "prmenu");
     document.body.appendChild(hub_menu);
 }
 
-function display_menu_hint() {
+function display_menu_hint()
+{
     var menu_hint = document.createElement("div");
     menu_hint.setAttribute("id", "menuhint");
     menu_hint.innerHTML = "<center><span class=\"menuhtext\">Press M to enable right click directory menu</span></center>";
     document.body.appendChild(menu_hint);
 }
 
-function hide_menu_hint() {
+function hide_menu_hint()
+{
     document.getElementById("menuhint").style.display = "none";
 }
 
-function unhide_menu_hint() {
+function unhide_menu_hint()
+{
     document.getElementById("menuhint").style.display = "block";
 }
 
-function goto_ban() {
+function goto_ban()
+{
     var ban_id = window.prompt("Enter ban id");
     if (ban_id !== null && ban_id !== "" && isNaN(ban_id) === false) {
         location.href = "/bans/show_record.php?ban_id=" + ban_id;
@@ -41,7 +47,8 @@ function goto_ban() {
     }
 }
 
-function set_background() {
+function set_background()
+{
     var user_bg_url = window.prompt("Enter direct link to image to use as background");
     if (user_bg_url !== null && user_bg_url !== "") {
         if (user_bg_url.startsWith("http://") === true || user_bg_url.startsWith("https://") === true) {
@@ -54,7 +61,8 @@ function set_background() {
     }
 }
 
-function skip_to_page() {
+function skip_to_page()
+{
     var page_num = window.prompt("Page number on bans to skip to (pages start at 0)");
     if (page_num !== null && page_num !== "" && isNaN(page_num) === false) {
         location.replace("/bans/bans.php?start=" + page_num * 100 + "&count=100");
@@ -63,35 +71,43 @@ function skip_to_page() {
     }
 }
 
-function open_leaderboard() {
+function open_leaderboard()
+{
     location.href = "/leaderboard.php";
 }
 
-function open_arti_page() {
+function open_arti_page()
+{
     location.href = "/hint.php";
 }
 
-function open_player_search() {
+function open_player_search()
+{
     location.href = "/player_search.php";
 }
 
-function open_guild_search() {
+function open_guild_search()
+{
     location.href = "/guild_search.php";
 }
 
-function open_staff_list() {
+function open_staff_list()
+{
     location.href = "/staff.php";
 }
 
-function open_guild_transfer() {
+function open_guild_transfer()
+{
     location.href = "/guild_transfer.php";
 }
 
-function open_ban_list() {
+function open_ban_list()
+{
     location.href = "/bans/bans.php";
 }
 
-function displaymenu(ev) {
+function displaymenu(ev)
+{
     if (menu_enabled === true) {
         var hubmenu = document.getElementById("prmenu");
         hubmenu.style.left = (ev.clientX + document.body.scrollLeft + document.documentElement.scrollLeft) + "px";
@@ -103,15 +119,18 @@ function displaymenu(ev) {
     }
 }
 
-function user_click_hide() {
+function user_click_hide()
+{
     document.getElementById("prmenu").style.display = "none";
 }
 
-function initialize_menu() {
+function initialize_menu()
+{
     document.getElementById("prmenu").innerHTML = "<center><span class=\"menutitle\"><img src=\"https://pr2hub.com/favicon.ico\" width=\"20px\" height=\"20px\"></img> Pr2Hub Menu</span><hr class=\"menudivider\"></hr><a href=\"#\" class=\"menulink\" id=\"banview\">View ban by ID</a><a href=\"#\" class=\"menulink\" id=\"setbg\">Set background</a><a href=\"#\" class=\"menulink\" id=\"skip_to_ban\">Go to specified page on bans</a><a href=\"#\" class=\"menulink\" id=\"menu_leaderboard\">Leaderboard</a><a href=\"#\" class=\"menulink\" id=\"ban_list\">Bans</a><a href=\"#\" class=\"menulink\" id=\"arti_hint\">Artifact hint</a><a href=\"#\" class=\"menulink\" id=\"srch_player\">Player search</a><a href=\"#\" class=\"menulink\" id=\"guild_srch\">Guild search</a><a href=\"#\" class=\"menulink\" id=\"staff_list\">Staff list</a><a href=\"#\" class=\"menulink\" id=\"transfer_guild\">Guild transfer</a></center>";
 }
 
-window.onload = function() {
+window.onload = function()
+{
     insert_css();
 
     insert_menu_code();
