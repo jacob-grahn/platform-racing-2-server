@@ -129,8 +129,7 @@ function initialize_menu()
     document.getElementById("prmenu").innerHTML = "<center><span class=\"menutitle\"><img src=\"https://pr2hub.com/favicon.ico\" width=\"20px\" height=\"20px\"></img> Pr2Hub Menu</span><hr class=\"menudivider\"></hr><a href=\"#\" class=\"menulink\" id=\"banview\">View ban by ID</a><a href=\"#\" class=\"menulink\" id=\"setbg\">Set background</a><a href=\"#\" class=\"menulink\" id=\"skip_to_ban\">Go to specified page on bans</a><a href=\"#\" class=\"menulink\" id=\"menu_leaderboard\">Leaderboard</a><a href=\"#\" class=\"menulink\" id=\"ban_list\">Bans</a><a href=\"#\" class=\"menulink\" id=\"arti_hint\">Artifact hint</a><a href=\"#\" class=\"menulink\" id=\"srch_player\">Player search</a><a href=\"#\" class=\"menulink\" id=\"guild_srch\">Guild search</a><a href=\"#\" class=\"menulink\" id=\"staff_list\">Staff list</a><a href=\"#\" class=\"menulink\" id=\"transfer_guild\">Guild transfer</a></center>";
 }
 
-window.onload = function ()
-{
+window.onload = function () {
     insert_css();
 
     insert_menu_code();
@@ -139,7 +138,7 @@ window.onload = function ()
 
     display_menu_hint();
 
-    document.addEventListener("contextmenu", function(eventargs) {
+    document.addEventListener("contextmenu", function (eventargs) {
         displaymenu(eventargs);
     });
 
@@ -186,7 +185,7 @@ window.onload = function ()
         open_ban_list();
     });
 
-    document.addEventListener("keydown", function(keyinfo) {
+    document.addEventListener("keydown", function (keyinfo) {
         if (keyinfo.keyCode === 77) {
             if (menu_enabled === false) {
                 menu_enabled = true;
