@@ -17,6 +17,13 @@ function insert_menu_code()
     document.body.appendChild(hub_menu);
 }
 
+function update_menu_position()
+{
+	if (document.getElementById("prmenu").style.display === "block"){
+		document.getElementById("prmenu").style.display = "none";
+	}
+}
+
 function goto_ban()
 {
     var ban_id = window.prompt("Enter ban id");
@@ -184,4 +191,8 @@ window.onload = function () {
             document.getElementById("mtext").click();
         }
     });
+	
+	document.addEventListener("scroll", function (e_args) {
+		update_menu_position();
+	});
 };
