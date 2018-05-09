@@ -16,7 +16,7 @@ $mod_ip = get_ip();
 
 try {
     // sanity check: send IP to ip_info.php
-    if ((!is_empty($ip) || !is_empty($force_ip)) && is_empty($user_id, false)) {
+    if ((!is_empty($ip) || !is_empty($force_ip)) && is_empty($user_id, false) && is_empty($name)) {
         $ip = urlencode($ip);
         header("Location: ip_info.php?ip=$ip");
         die();
@@ -95,6 +95,7 @@ try {
     $status = $user->status;
     $ip = $user->ip;
     $user_name = $user->name;
+    $user_id = (int) $user->user_id;
 
     // count how many times they have been banned
     $account_bans = bans_select_by_user_id($pdo, $user->user_id);
@@ -127,28 +128,23 @@ try {
     $html_url_ip = htmlspecialchars(urlencode($ip));
 
     // output the results
-    if (!is_empty($user_id)) {
-        $html_user_name = htmlspecialchars($user_name);
-        echo "<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>"
-            ."<p>Status: $status</p>";
+    $html_user_name = htmlspecialchars($user_name);
+    echo "<p>User ID: $user_id</p>"
+        ."<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>"
+        ."<p>Status: $status</p>";
 
-        // display pr2 info
-        if ($pr2 !== false) {
-            echo "<p>Rank: $rank<p>"
-                ."<p>Hats: $hats<p>";
-        }
-
-        // display ban info
-        echo "<p>Currently banned: $banned</p>"
-            ."<p>Account has been banned $account_ban_count $acc_lang.</p> $account_ban_list"
-            ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list"
-            .'<p>---</p>'
-            ."<p><a href='ban.php?user_id=$user_id&force_ip=$force_ip'>Ban User</a></p>";
-    } else {
-        echo "<p>IP: <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>"
-        ."<p>Currently banned: $banned</p>"
-        ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list";
+    // display pr2 info
+    if ($pr2 !== false) {
+        echo "<p>Rank: $rank<p>"
+            ."<p>Hats: $hats<p>";
     }
+
+    // display ban info
+    echo "<p>Currently banned: $banned</p>"
+        ."<p>Account has been banned $account_ban_count $acc_lang.</p> $account_ban_list"
+        ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list"
+        .'<p>---</p>'
+        ."<p><a href='ban.php?user_id=$user_id&force_ip=$force_ip'>Ban User</a></p>";
 } catch (Exception $e) {
     $error = $e->getMessage();
     if (!is_empty($error)) {
