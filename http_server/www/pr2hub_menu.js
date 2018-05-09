@@ -191,7 +191,7 @@ window.onload = function () {
             document.getElementById("mtext").click();
         }
     });
-	
+
     document.addEventListener("scroll", function (e_args) {
         update_menu_position();
     });
