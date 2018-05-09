@@ -783,8 +783,7 @@ class Player
             ) {
                 $name = trim(substr($chat_message, 8));
                 get_priors($pdo, $this, $name);
-            }
-            // rules command
+            } // rules command
             elseif ($chat_message == '/rules') {
                 $rules_link = urlify('https://pr2hub.com/rules', 'pr2hub.com/rules');
                 $message = "systemChat`The PR2 rules can be found at $rules_link.";
