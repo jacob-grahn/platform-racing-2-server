@@ -49,12 +49,14 @@ function promote_server_mod($name, $owner, $promoted)
     // if they're the server owner and have gotten this far, promote the user to a server mod
     if ($owner->server_owner == true) {
         $promoted->becomeTempMod();
-        $owner->write("message`$name has been promoted to a server moderator! ".
-            "They'll remain a moderator until you type /demod *their name* ".
-            "or until they log out.");
+        $owner->write("message`$safe_name has been promoted to a server moderator! ".
+            "They'll remain a moderator until you type /demod *their name* or until they log out.");
         if (isset($owner->chat_room)) {
-            $owner->chat_room->sendChat("systemChat`$safe_owner has promoted ".
-                "$safe_name to a server moderator! Your private peace-keeping is ".
+            $owner_url = userify($owner, $owner->name);
+            $promoted_url = userify($promoted, $promoted->name);
+            
+            $owner->chat_room->sendChat("systemChat`$owner_url has promoted ".
+                "$promoted_url to a server moderator! Your private peace-keeping is ".
                 "greatly appreciated! You'll have your mod powers until you log ".
                 "out or are demoted.");
         }
