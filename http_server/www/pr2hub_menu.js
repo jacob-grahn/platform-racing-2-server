@@ -19,9 +19,9 @@ function insert_menu_code()
 
 function update_menu_position()
 {
-	if (document.getElementById("prmenu").style.display === "block"){
-		document.getElementById("prmenu").style.display = "none";
-	}
+    if (document.getElementById("prmenu").style.display === "block") {
+        document.getElementById("prmenu").style.display = "none";
+    }
 }
 
 function goto_ban()
@@ -192,7 +192,7 @@ window.onload = function () {
         }
     });
 	
-	document.addEventListener("scroll", function (e_args) {
-		update_menu_position();
-	});
+    document.addEventListener("scroll", function (e_args) {
+        update_menu_position();
+    });
 };
