@@ -56,7 +56,8 @@ class ChatRoom extends Room
         // make a new one with the same name if a special chatroom
         if ($room_name === 'main' || $room_name === 'mod' || $room_name === 'admin') {
             $new_room = new ChatRoom($room_name);
-            $new_room->sendChat("systemChat`$mod_name cleared the chatroom.");
+            $mod_url = userify($mod, $mod->name);
+            $new_room->sendChat("systemChat`$mod_url cleared the chatroom.");
         }
         
         // log mod action if on a public server and in main
@@ -100,17 +101,11 @@ class ChatRoom extends Room
     
     public function whoIsHere()
     {
-        $colors = ['676666', '047B7B', '1C369F', '870A6F']; // colors
         $count = count($this->player_array);
         $str = "Currently in this chatroom ($count):"; // start the return string
         
         foreach ($this->player_array as $player) {
-            $color = $colors[$player->group]; // name colors
-            $name = htmlspecialchars($player->name); // safe name
-            
-            // build string addition
-            $link = "event:user`" . $player->group . '`' . $name;
-            $str .= "<br> - " . urlify($link, $name, ('#' . $color));
+            $str .= "<br> - " . userify($player, $player->name);
         }
         
         // this should never happen (the person in the room is calling the function)
