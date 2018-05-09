@@ -83,16 +83,16 @@ function initialize_menu()
 {
     document.getElementById("prmenu").innerHTML = "<span class='menutitle'><img src='/favicon.ico' width='20px' height='20px'></img> PR2 Hub</span>" +
                                                   "<hr class='menudivider'></hr>" +
-                                                  "<a href='#/' class='menulink' id='banview'>View Ban</a>" +
                                                   "<a href='#/' class='menulink' id='setbg'>Set Background</a>" +
-                                                  "<a href='#/' class='menulink' id='skip_to_ban'>Skip to Ban Log Page</a>" +
-                                                  "<a href='#/' class='menulink' id='menu_leaderboard'>Leaderboard</a>" +
-                                                  "<a href='#/' class='menulink' id='ban_list'>Bans</a>" +
-                                                  "<a href='#/' class='menulink' id='arti_hint'>Artifact Hint</a>" +
                                                   "<a href='#/' class='menulink' id='srch_player'>Player Search</a>" +
                                                   "<a href='#/' class='menulink' id='guild_srch'>Guild Search</a>" +
-                                                  "<a href='#/' class='menulink' id='staff_list'>PR2 Staff Team</a>" +
+                                                  "<a href='#/' class='menulink' id='menu_leaderboard'>Leaderboard</a>" +
+                                                  "<a href='#/' class='menulink' id='arti_hint'>Artifact Hint</a>" +
                                                   "<a href='#/' class='menulink' id='transfer_guild'>Transfer Guild</a>" +
+                                                  "<a href='#/' class='menulink' id='staff_list'>PR2 Staff Team</a>" +
+                                                  "<a href='#/' class='menulink' id='ban_list'>Ban Log</a>" +
+                                                  "<a href='#/' class='menulink' id='skip_to_ban'>Skip to Ban Log Page</a>" +
+                                                  "<a href='#/' class='menulink' id='banview'>View Ban</a>" +
                                                   "<a href='#/' class='menulink' id='menu_close'>Close</a>" +
                                                   "<br><span class='menutext'>You can open this menu from anywhere using the F8 key.</span>";
 }
