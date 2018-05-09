@@ -88,11 +88,11 @@ function open_ban_list()
 
 function displaymenu(ev)
 {
-	var hubmenu = document.getElementById("prmenu");
-	hubmenu.style.left = (ev.clientX + document.body.scrollLeft + document.documentElement.scrollLeft) + "px";
-	hubmenu.style.top = (ev.clientY + document.body.scrollTop + document.documentElement.scrollTop) + "px";
-	hubmenu.style.display = "block";
-	ev.returnValue = false;
+        var hubmenu = document.getElementById("prmenu");
+        hubmenu.style.left = (ev.clientX + document.body.scrollLeft + document.documentElement.scrollLeft) + "px";
+        hubmenu.style.top = (ev.clientY + document.body.scrollTop + document.documentElement.scrollTop) + "px";
+        hubmenu.style.display = "block";
+        ev.returnValue = false;
 }
 
 function user_menu_hide()
@@ -119,16 +119,16 @@ window.onload = function () {
     insert_menu_code();
 
     initialize_menu();
-	
+
     add_menu_button();
 
     document.getElementById("mtext").addEventListener("click", function (eventargs) {
         displaymenu(eventargs);
     });
-	
-	document.getElementById("menu_close").addEventListener("click", function (m_event) {
-		user_menu_hide();
-	});
+
+        document.getElementById("menu_close").addEventListener("click", function (m_event) {
+                user_menu_hide();
+        });
 
     document.getElementById("banview").addEventListener("click", function () {
         goto_ban();
