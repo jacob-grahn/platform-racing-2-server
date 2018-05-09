@@ -107,10 +107,10 @@ function initialize_menu()
 
 function add_menu_button()
 {
-	var create_btn = document.createElement("div");
-	create_btn.setAttribute("id", "menubutton");
-	create_btn.innerHTML = "<a href=\"#\" id=\"mtext\">-Menu-</a>";
-	document.body.appendChild(create_btn);
+    var create_btn = document.createElement("div");
+    create_btn.setAttribute("id", "menubutton");
+    create_btn.innerHTML = "<a href=\"#\" id=\"mtext\">-Menu-</a>";
+    document.body.appendChild(create_btn);
 }
 
 window.onload = function () {
@@ -120,7 +120,7 @@ window.onload = function () {
 
     initialize_menu();
 	
-	add_menu_button();
+    add_menu_button();
 
     document.getElementById("mtext").addEventListener("click", function (eventargs) {
         displaymenu(eventargs);
