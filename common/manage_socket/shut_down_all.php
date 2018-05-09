@@ -1,9 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../env.php';
+require_once __DIR__ . '/../pdo_connect.php';
+require_once __DIR__ . '/../../http_server/queries/servers/servers_select.php';
 require_once __DIR__ . '/management_fns.php';
-require_once __DIR__ . '/../http_server/fns/pdo_connect.php';
-require_once __DIR__ . '/../http_server/queries/servers/servers_select.php';
 
 @$mode = $argv[1];
 if (!isset($mode)) {
