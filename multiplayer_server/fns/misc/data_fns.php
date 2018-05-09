@@ -28,6 +28,35 @@ function urlify($link, $disp, $color = '#0000FF', $bt_replace = true)
 }
 
 
+// determine a group color from a group value
+function group_color($group)
+{
+    $colors = ['676666', '047B7B', '1C369F', '870A6F']; // colors
+    return $colors[$group];
+}
+
+
+// determine a user's display info
+function userify($player, $name, $power = null)
+{
+    $name = htmlspecialchars($name);
+
+    if (isset($player) && isset($player->group) && is_null($power)) {
+        $color = group_color($player->group);
+        $link = "event:user`" . $player->group . '`' . $name;
+        $url = urlify($link, $name, "#$color");
+        return $url;
+    } elseif (is_null($player) && !is_null($power)) {
+        $color = group_color($power);
+        $link = "event:user`" . $power . '`' . $name;
+        $url = urlify($link, $name, "#$color");
+        return $url;
+    } else {
+        return $name;
+    }
+}
+
+
 // tests to see if a string contains obscene words
 function is_obscene($str)
 {
