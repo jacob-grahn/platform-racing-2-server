@@ -14,9 +14,9 @@ for ($i=1; $i<100; $i++) {
         try {
             $server = server_select($pdo, $server_id);
             $reply = talk_to_server('localhost', $server->port, $server->salt, 'shut_down`', true);
-            echo "Shutting down server $server_id. Reply: $reply\n";
+            output("Shutting down server $server_id. Reply: $reply");
         } catch (Exception $e) {
-            echo $e->getMessage();
+            output($e->getMessage());
         }
     } else {
         break;
