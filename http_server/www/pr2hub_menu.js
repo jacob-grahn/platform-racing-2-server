@@ -126,46 +126,56 @@ window.onload = function () {
         displaymenu(eventargs);
     });
 
-        document.getElementById("menu_close").addEventListener("click", function (m_event) {
-                user_menu_hide();
-        });
+    document.getElementById("menu_close").addEventListener("click", function (m_event) {
+        user_menu_hide();
+    });
 
     document.getElementById("banview").addEventListener("click", function () {
+        user_menu_hide();
         goto_ban();
     });
 
     document.getElementById("setbg").addEventListener("click", function () {
+        user_menu_hide();
         set_background();
     });
 
     document.getElementById("skip_to_ban").addEventListener("click", function () {
+        user_menu_hide();
         skip_to_page();
     });
 
     document.getElementById("menu_leaderboard").addEventListener("click", function () {
+        user_menu_hide();
         open_leaderboard();
     });
     document.getElementById("arti_hint").addEventListener("click", function () {
+        user_menu_hide();
         open_arti_page();
     });
 
     document.getElementById("srch_player").addEventListener("click", function () {
+        user_menu_hide();
         open_player_search();
     });
 
     document.getElementById("guild_srch").addEventListener("click", function () {
+        user_menu_hide();
         open_guild_search();
     });
 
     document.getElementById("staff_list").addEventListener("click", function () {
+        user_menu_hide();
         open_staff_list();
     });
 
     document.getElementById("transfer_guild").addEventListener("click", function () {
+        user_menu_hide();
         open_guild_transfer();
     });
 
     document.getElementById("ban_list").addEventListener("click", function () {
+        user_menu_hide();
         open_ban_list();
     });
 
