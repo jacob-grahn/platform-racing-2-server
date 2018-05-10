@@ -16,9 +16,9 @@ To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com
 
 ## Contributors
 - aaaaaa123456789
+- Altex1
 - bls1999
 - BrokenBulb78
-- Dex472
 - EternalUF
 - famelegend1
 - fourst4r
