@@ -1,6 +1,6 @@
 "use strict";
 
-var menu_css_decoded = window.atob("LmhjbGFzc3sNCiAgICBkaXNwbGF5OiBub25lOw0KfQ0KI3BybWVudXsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDA4MEZGOw0KICAgIGJvcmRlcjogMHB4IHNvbGlkICMwMDAwMDA7DQogICAgYm9yZGVyLXJhZGl1czogNXB4Ow0KICAgIHdpZHRoOiAyNTBweDsNCiAgICBoZWlnaHQ6IDQwMHB4Ow0KICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTsNCiAgICBvdmVyZmxvdy15OiBhdXRvOw0KICAgIGFuaW1hdGlvbjogbG9hZG1lbnUgMC4yNXMgc3RlcHMoNjAsZW5kKTsNCiAgICBib3gtc2hhZG93OiAwcHggMHB4IDIwcHggIzAwMDAwMDsNCiAgICB6LWluZGV4OiA5OTk5Ow0KfQ0KI21lbnVidXR0b257DQogICAgcG9zaXRpb246IGZpeGVkOw0KICAgIHRvcDogMjVweDsNCiAgICBsZWZ0OiAyNXB4Ow0KICAgIGhlaWdodDogMzBweDsNCiAgICB3aWR0aDogMTIwcHg7DQogICAgYmFja2dyb3VuZC1jb2xvcjogIzAwMDAwMDsNCiAgICBib3gtc2hhZG93OiAwcHggMHB4IDIwcHggIzAwMDAwMDsNCiAgICB6LWluZGV4OiA5OTk1Ow0KfQ0KI210ZXh0ew0KICAgIGRpc3BsYXk6IGJsb2NrOw0KICAgIGZvbnQtc2l6ZTogMjJweDsNCiAgICBjb2xvcjogI0ZGRkZGRjsNCiAgICBwb3NpdGlvbjogcmVsYXRpdmU7DQogICAgbGVmdDogMHB4Ow0KICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7DQp9DQojbXRleHQ6aG92ZXJ7DQogICAgY29sb3I6ICMwMDAwMDA7DQogICAgYmFja2dyb3VuZC1jb2xvcjogI0ZGRkZGRjsNCiAgICB0cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICAtbW96LXRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC13ZWJraXQtdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQp9DQojbXRleHQ6bm90KDpob3Zlcil7DQogICAgdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLW1vei10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICAtd2Via2l0LXRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KfQ0Kc3Bhbi5tZW51dGl0bGV7DQogICAgY29sb3I6ICNGQUNDMkU7DQogICAgZm9udC1zaXplOiAyNnB4Ow0KICAgIGJhY2tncm91bmQtY29sb3I6ICMwMDAwMDA7DQogICAgZGlzcGxheTogYmxvY2s7DQogICAgICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCn0NCmhyLm1lbnVkaXZpZGVyew0KICAgIHdpZHRoOiA1MCU7DQogICAgICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCn0NCmEubWVudWxpbmt7DQogICAgY29sb3I6ICNGQUNDMkU7DQogICAgZGlzcGxheTogYmxvY2s7DQogICAgd29yZC13cmFwOiBicmVhay13b3JkOw0KICAgIGZvbnQtc2l6ZTogMjJweDsNCiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7DQp9DQphLm1lbnVsaW5rOmhvdmVyew0KICAgIGJhY2tncm91bmQtY29sb3I6ICMwMDAwMDA7DQogICAgdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLW1vei10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICAtd2Via2l0LXRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIGRpc3BsYXk6IGJsb2NrOw0KfQ0KYS5tZW51bGluazpub3QoOmhvdmVyKXsNCiAgICB0cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICAtbW96LXRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC13ZWJraXQtdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgZGlzcGxheTogYmxvY2s7DQp9DQpzcGFuLm1lbnV0ZXh0ew0KICAgIGRpc3BsYXk6IGJsb2NrOw0KICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCiAgICBjb2xvcjogI0ZGRkZGRjsNCiAgICBmb250LXN0eWxlOiBpdGFsaWM7DQp9DQpzcGFuLm5vam1wew0KCWNvbG9yOiAjRkFDQzJFOw0KCWZvbnQtc2l6ZTogMjJweDsNCgl0ZXh0LWRlY29yYXRpb246IG5vbmU7DQoJd29yZC13cmFwOiBicmVhay13b3JkOw0KCWRpc3BsYXk6IGJsb2NrOw0KfQ0Kc3Bhbi5ub2ptcDpob3ZlcnsNCgliYWNrZ3JvdW5kLWNvbG9yOiAjMDAwMDAwOw0KCWN1cnNvcjogcG9pbnRlcjsNCgl0cmFuc2l0aW9uLWR1cmF0aW9uOiAxczsNCgktbW96LXRyYW5zaXRpb24tZHVyYXRpb246IDFzOw0KCS13ZWJraXQtdHJhbnNpdGlvbi1kdXJhdGlvbjogMXM7DQp9DQpzcGFuLm5vam1wOm5vdCg6aG92ZXIpew0KCXRyYW5zaXRpb24tZHVyYXRpb246IDFzOw0KCS1tb3otdHJhbnNpdGlvbi1kdXJhdGlvbjogMXM7DQoJLXdlYmtpdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAxczsNCn0NCkBrZXlmcmFtZXMgbG9hZG1lbnV7DQogICAgZnJvbXsNCiAgICAgICAgaGVpZ2h0OiAwcHg7DQogICAgICAgIG9wYWNpdHk6IDA7DQogICAgfTsNCn0=");
+var menu_css_decoded = window.atob("LmhjbGFzc3sNCiAgICBkaXNwbGF5OiBub25lOw0KfQ0KI3BybWVudXsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDA4MEZGOw0KICAgIGJvcmRlcjogMHB4IHNvbGlkICMwMDAwMDA7DQogICAgYm9yZGVyLXJhZGl1czogNXB4Ow0KICAgIHdpZHRoOiAyNTBweDsNCiAgICBoZWlnaHQ6IDQwMHB4Ow0KICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTsNCiAgICBvdmVyZmxvdy15OiBhdXRvOw0KICAgIGFuaW1hdGlvbjogbG9hZG1lbnUgMC4yNXMgc3RlcHMoNjAsZW5kKTsNCiAgICBib3gtc2hhZG93OiAwcHggMHB4IDIwcHggIzAwMDAwMDsNCiAgICB6LWluZGV4OiA5OTk5Ow0KfQ0KI21lbnVidXR0b257DQogICAgcG9zaXRpb246IGZpeGVkOw0KICAgIHRvcDogMjVweDsNCiAgICBsZWZ0OiAyNXB4Ow0KICAgIGhlaWdodDogMzBweDsNCiAgICB3aWR0aDogMTIwcHg7DQogICAgYmFja2dyb3VuZC1jb2xvcjogIzAwMDAwMDsNCiAgICBib3gtc2hhZG93OiAwcHggMHB4IDIwcHggIzAwMDAwMDsNCiAgICB6LWluZGV4OiA5OTk1Ow0KfQ0KI210ZXh0ew0KICAgIGRpc3BsYXk6IGJsb2NrOw0KICAgIGZvbnQtc2l6ZTogMjJweDsNCiAgICBjb2xvcjogI0ZGRkZGRjsNCiAgICBwb3NpdGlvbjogcmVsYXRpdmU7DQogICAgbGVmdDogMHB4Ow0KICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7DQp9DQojbXRleHQ6aG92ZXJ7DQogICAgY29sb3I6ICMwMDAwMDA7DQogICAgYmFja2dyb3VuZC1jb2xvcjogI0ZGRkZGRjsNCiAgICB0cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICAtbW96LXRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC13ZWJraXQtdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgY3Vyc29yOiBwb2ludGVyOw0KfQ0KI210ZXh0Om5vdCg6aG92ZXIpew0KICAgIHRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC1tb3otdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLXdlYmtpdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCn0NCnNwYW4ubWVudXRpdGxlew0KICAgIGNvbG9yOiAjRkFDQzJFOw0KICAgIGZvbnQtc2l6ZTogMjZweDsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDAwMDAwOw0KICAgIGRpc3BsYXk6IGJsb2NrOw0KICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCn0NCnNwYW4jZ29ob21lOmhvdmVyew0KICAgIHRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lOw0KICAgIGN1cnNvcjogcG9pbnRlcjsNCn0NCmhyLm1lbnVkaXZpZGVyew0KICAgIHdpZHRoOiA1MCU7DQogICAgdGV4dC1hbGlnbjogY2VudGVyOw0KfQ0Kc3Bhbi5tZW51bGlua3sNCiAgICBjb2xvcjogI0ZBQ0MyRTsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICB3b3JkLXdyYXA6IGJyZWFrLXdvcmQ7DQogICAgZm9udC1zaXplOiAyMnB4Ow0KICAgIHBhZGRpbmctbGVmdDogMTVweDsNCiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7DQogICAgY3Vyc29yOiBwb2ludGVyOw0KfQ0Kc3Bhbi5tZW51bGluazpob3ZlcnsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDAwMDAwOw0KICAgIHRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC1tb3otdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLXdlYmtpdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICBjdXJzb3I6IHBvaW50ZXI7DQp9DQpzcGFuLm1lbnVsaW5rOm5vdCg6aG92ZXIpew0KICAgIHRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC1tb3otdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLXdlYmtpdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICBjdXJzb3I6IHBvaW50ZXI7DQp9DQpzcGFuLnNtYWxsdGV4dHsNCiAgICBjb2xvcjogI0ZGRkZGRjsNCiAgICBmb250LXN0eWxlOiBpdGFsaWM7DQogICAgZm9udC1zaXplOiAxM3B4Ow0KfQ0Kc3Bhbi5zbWFsbHRleHQ6aG92ZXJ7DQogICAgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7DQp9DQpzcGFuLm1lbnV0ZXh0ew0KICAgIGRpc3BsYXk6IGJsb2NrOw0KICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCiAgICBjb2xvcjogI0ZGRkZGRjsNCiAgICBmb250LXN0eWxlOiBpdGFsaWM7DQp9DQpAa2V5ZnJhbWVzIGxvYWRtZW51ew0KICAgIGZyb217DQogICAgICAgIGhlaWdodDogMHB4Ow0KICAgICAgICBvcGFjaXR5OiAwOw0KICAgIH07DQp9");
 
 function insert_css()
 {
@@ -26,7 +26,7 @@ function update_menu_position()
 
 function goto_ban()
 {
-    var ban_id = window.prompt("Enter the ban ID.");
+    var ban_id = window.prompt("Enter the ban ID of the ban you'd like to view. Enter 0 or click cancel to view your bans.");
     if (ban_id !== null && ban_id !== "" && isNaN(ban_id) === false) {
         location.href = "/bans/show_record.php?ban_id=" + ban_id;
     }
@@ -46,7 +46,7 @@ function set_background()
 
 function skip_to_page()
 {
-    var page_num = window.prompt("Enter the page to which you'd like to go (100 bans per page). Enter 0 to go to the start of the ban log.");
+    var page_num = window.prompt("Enter the page to which you'd like to go (100 bans per page). Enter 0 or press cancel to go to the start of the ban log.");
     if (page_num !== null && page_num !== "" && isNaN(page_num) === false) {
         location.replace("/bans/bans.php?start=" + page_num * 100 + "&count=100");
     }
@@ -81,27 +81,26 @@ function user_menu_hide()
 
 function initialize_menu()
 {
-    document.getElementById("prmenu").innerHTML = "<span class='menutitle'><img src='/favicon.ico' width='20px' height='20px'></img> PR2 Hub</span>" +
+    document.getElementById("prmenu").innerHTML = "<span class='menutitle'><img src='/favicon.ico' width='20px' height='20px'></img> <span id='gohome'>PR2 Hub</span></span>" +
                                                   "<hr class='menudivider'></hr>" +
-                                                  "<center><a href='#/' class='menulink' id='banview'>View Ban</a>" +
-                                                  "<span class='nojmp' id='setbg'>Set background</span>" +
-                                                  "<a href='#' class='menulink' id='skip_to_ban'>Skip to Ban Log Page</a>" +
-                                                  "<a href='#' class='menulink' id='menu_leaderboard'>Leaderboard</a>" +
-                                                  "<a href='#' class='menulink' id='ban_list'>Bans</a>" +
-                                                  "<a href='#' class='menulink' id='arti_hint'>Artifact Hint</a>" +
-                                                  "<a href='#' class='menulink' id='srch_player'>Player Search</a>" +
-                                                  "<a href='#' class='menulink' id='guild_srch'>Guild Search</a>" +
-                                                  "<a href='#' class='menulink' id='staff_list'>PR2 Staff Team</a>" +
-                                                  "<a href='#' class='menulink' id='transfer_guild'>Transfer Guild</a>" +
-                                                  "<span class='nojmp' id='menu_close'>Close menu</span></center>" +
-                                                  "<br/><span class='menutext'>You can open this menu from anywhere using the F8 key.</span>";
+                                                  "<span class='menulink' id='setbg'>Set Background</span>" +
+                                                  "<span class='menulink' id='srch_player'>Player Search</span>" +
+                                                  "<span class='menulink' id='guild_srch'>Guild Search</span>" +
+                                                  "<span class='menulink' id='menu_leaderboard'>Leaderboard</span>" +
+                                                  "<span class='menulink' id='arti_hint'>Artifact Hint</span>" +
+                                                  "<span class='menulink' id='transfer_guild'>Transfer Guild</span>" +
+                                                  "<span class='menulink' id='staff_list'>PR2 Staff Team</span>" +
+                                                  "<span class='menulink' id='ban_list'>Ban Log <span class='smalltext' id='skip_to_ban'>(or specify page)</span></span>" +
+                                                  "<span class='menulink' id='ban_priors'>Your Bans <span class='smalltext' id='banview'>(or specify ban ID)</span></span>" +
+                                                  "<span class='menulink' id='menu_close'>Close</span><br>" +
+                                                  "<span class='menutext'>You can open this menu from anywhere using the F8 key.</span>";
 }
 
 function add_menu_button()
 {
     var create_btn = document.createElement("div");
     create_btn.setAttribute("id", "menubutton");
-    create_btn.innerHTML = "<a href='#' id='mtext'>-- Menu --</a>";
+    create_btn.innerHTML = "<span id='mtext'>-- Menu --</span>";
     document.body.appendChild(create_btn);
 }
 
@@ -125,6 +124,11 @@ window.onload = function () {
     document.querySelector('#container').addEventListener('click', function (containerevent) {
         user_menu_hide();
     })
+    
+    document.getElementById("gohome").addEventListener("click", function () {
+        user_menu_hide();
+        open_link('');
+    });
 
     document.getElementById("banview").addEventListener("click", function () {
         user_menu_hide();
@@ -173,6 +177,11 @@ window.onload = function () {
     document.getElementById("ban_list").addEventListener("click", function () {
         user_menu_hide();
         open_link('bans/bans.php');
+    });
+    
+    document.getElementById("ban_priors").addEventListener("click", function () {
+        user_menu_hide();
+        open_link('bans/view_priors.php');
     });
 
     document.addEventListener("keydown", function (keyinfo) {
