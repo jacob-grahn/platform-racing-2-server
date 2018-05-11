@@ -132,7 +132,6 @@ window.onload = function () {
         setBackground();
     });
 
-    // 
     document.getElementById("menu_banLogPage").addEventListener("click", function () {
         toggleMenu('close');
         banLogPage();
