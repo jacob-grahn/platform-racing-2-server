@@ -44,7 +44,7 @@ function setBackground()
 {
     var imgURL = window.prompt("Enter a direct image link to use as a background.");
     if (imgURL !== null && imgURL !== "" && (imgURL.startsWith("http://") === true || imgURL.startsWith("https://") === true)) {
-        document.body.style.cssText = "background-image: url(" + imgURL + ");"; // background-attachment: fixed; background-size: cover
+        document.body.style.cssText = "background-image: url(\"" + imgURL + "\"); background-attachment: fixed; background-size: cover;";
     } else if (imgURL === null) {
         //no background given
     } else {
@@ -65,6 +65,7 @@ function toggleMenu(action)
 {
     var hubMenu = document.getElementById("prmenu");
     if (menuOpen === true || action == 'close') {
+        menuClosing();
         hubMenu.classList.remove("open");
         hubMenu.classList.add("closed");
         menuOpen = false;
