@@ -23,10 +23,10 @@ function menuClosing()
 {
     var page_menu = document.getElementById("prmenu");
     var menuheight = 400;
-	var height_counter = parseInt(page_menu.style.height);
-    while (height_counter !== 0 && menuheight >= 400){
+    var height_counter = parseInt(page_menu.style.height);
+    while (height_counter !== 0 && menuheight >= 400) {
         menuheight -= 1;
-		height_counter -= 1;
+        height_counter -= 1;
         page_menu.style.height = menuheight + "px";
     }
     menuheight = 400;
@@ -65,7 +65,7 @@ function toggleMenu(action)
 {
     var hubMenu = document.getElementById("prmenu");
     if (menuOpen === true || action == 'close') {
-		menuClosing();
+        menuClosing();
         hubMenu.classList.remove("open");
         hubMenu.classList.add("closed");
         menuOpen = false;
@@ -146,7 +146,6 @@ window.onload = function () {
         setBackground();
     });
 
-    // 
     document.getElementById("menu_banLogPage").addEventListener("click", function () {
         toggleMenu('close');
         banLogPage();
