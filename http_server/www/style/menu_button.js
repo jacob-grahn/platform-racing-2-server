@@ -1,196 +1,186 @@
 "use strict";
 
-var menu_css_decoded = window.atob("LmhjbGFzc3sNCiAgICBkaXNwbGF5OiBub25lOw0KfQ0KI3BybWVudXsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDA4MEZGOw0KICAgIGJvcmRlcjogMHB4IHNvbGlkICMwMDAwMDA7DQogICAgYm9yZGVyLXJhZGl1czogNXB4Ow0KICAgIHdpZHRoOiAyNTBweDsNCiAgICBoZWlnaHQ6IDQwMHB4Ow0KICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTsNCiAgICBvdmVyZmxvdy15OiBhdXRvOw0KICAgIGFuaW1hdGlvbjogbG9hZG1lbnUgMC4yNXMgc3RlcHMoNjAsZW5kKTsNCiAgICBib3gtc2hhZG93OiAwcHggMHB4IDIwcHggIzAwMDAwMDsNCiAgICB6LWluZGV4OiA5OTk5Ow0KfQ0KI21lbnVidXR0b257DQogICAgcG9zaXRpb246IGZpeGVkOw0KICAgIHRvcDogMjVweDsNCiAgICBsZWZ0OiAyNXB4Ow0KICAgIGhlaWdodDogMzBweDsNCiAgICB3aWR0aDogMTIwcHg7DQogICAgYmFja2dyb3VuZC1jb2xvcjogIzAwMDAwMDsNCiAgICBib3gtc2hhZG93OiAwcHggMHB4IDIwcHggIzAwMDAwMDsNCiAgICB6LWluZGV4OiA5OTk1Ow0KfQ0KI210ZXh0ew0KICAgIGRpc3BsYXk6IGJsb2NrOw0KICAgIGZvbnQtc2l6ZTogMjJweDsNCiAgICBjb2xvcjogI0ZGRkZGRjsNCiAgICBwb3NpdGlvbjogcmVsYXRpdmU7DQogICAgbGVmdDogMHB4Ow0KICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7DQp9DQojbXRleHQ6aG92ZXJ7DQogICAgY29sb3I6ICMwMDAwMDA7DQogICAgYmFja2dyb3VuZC1jb2xvcjogI0ZGRkZGRjsNCiAgICB0cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICAtbW96LXRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC13ZWJraXQtdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgY3Vyc29yOiBwb2ludGVyOw0KfQ0KI210ZXh0Om5vdCg6aG92ZXIpew0KICAgIHRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC1tb3otdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLXdlYmtpdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCn0NCnNwYW4ubWVudXRpdGxlew0KICAgIGNvbG9yOiAjRkFDQzJFOw0KICAgIGZvbnQtc2l6ZTogMjZweDsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDAwMDAwOw0KICAgIGRpc3BsYXk6IGJsb2NrOw0KICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCn0NCnNwYW4jZ29ob21lOmhvdmVyew0KICAgIHRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lOw0KICAgIGN1cnNvcjogcG9pbnRlcjsNCn0NCmhyLm1lbnVkaXZpZGVyew0KICAgIHdpZHRoOiA1MCU7DQogICAgdGV4dC1hbGlnbjogY2VudGVyOw0KfQ0Kc3Bhbi5tZW51bGlua3sNCiAgICBjb2xvcjogI0ZBQ0MyRTsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICB3b3JkLXdyYXA6IGJyZWFrLXdvcmQ7DQogICAgZm9udC1zaXplOiAyMnB4Ow0KICAgIHBhZGRpbmctbGVmdDogMTVweDsNCiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7DQogICAgY3Vyc29yOiBwb2ludGVyOw0KfQ0Kc3Bhbi5tZW51bGluazpob3ZlcnsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDAwMDAwOw0KICAgIHRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC1tb3otdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLXdlYmtpdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICBjdXJzb3I6IHBvaW50ZXI7DQp9DQpzcGFuLm1lbnVsaW5rOm5vdCg6aG92ZXIpew0KICAgIHRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC1tb3otdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLXdlYmtpdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICBjdXJzb3I6IHBvaW50ZXI7DQp9DQpzcGFuLnNtYWxsdGV4dHsNCiAgICBjb2xvcjogI0ZGRkZGRjsNCiAgICBmb250LXN0eWxlOiBpdGFsaWM7DQogICAgZm9udC1zaXplOiAxM3B4Ow0KfQ0Kc3Bhbi5zbWFsbHRleHQ6aG92ZXJ7DQogICAgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7DQp9DQpzcGFuLm1lbnV0ZXh0ew0KICAgIGRpc3BsYXk6IGJsb2NrOw0KICAgIHRleHQtYWxpZ246IGNlbnRlcjsNCiAgICBjb2xvcjogI0ZGRkZGRjsNCiAgICBmb250LXN0eWxlOiBpdGFsaWM7DQp9DQpAa2V5ZnJhbWVzIGxvYWRtZW51ew0KICAgIGZyb217DQogICAgICAgIGhlaWdodDogMHB4Ow0KICAgICAgICBvcGFjaXR5OiAwOw0KICAgIH07DQp9");
+var menu_css_decoded = window.atob("LmNsb3NlZHsNCiAgICB0cmFuc2l0aW9uLXByb3BlcnR5OiBhbGw7DQogICAgdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgdHJhbnNpdGlvbi10aW1pbmctZnVuY3Rpb246IGN1YmljLWJlemllcigwLCAxLCAwLjUsIDEpOw0KICAgIGhlaWdodDogMHB4Ow0KICAgIG9wYWNpdHk6IDA7DQogICAgZGlzcGxheTogbm9uZTsNCn0NCi5vcGVuew0KICAgIHRyYW5zaXRpb24tcHJvcGVydHk6IGFsbDsNCiAgICB0cmFuc2l0aW9uLWR1cmF0aW9uOiAuMjVzOw0KICAgIHRyYW5zaXRpb24tdGltaW5nLWZ1bmN0aW9uOiBjdWJpYy1iZXppZXIoMCwgMSwgMC41LCAxKTsNCiAgICBoZWlnaHQ6IDQwMHB4Ow0KICAgIG9wYWNpdHk6IDE7DQogICAgZGlzcGxheTogYmxvY2s7DQp9DQojcHJtZW51ew0KICAgIGJhY2tncm91bmQtY29sb3I6ICMwMDgwRkY7DQogICAgYm9yZGVyOiAwcHggc29saWQgIzAwMDAwMDsNCiAgICBib3JkZXItdG9wLXJpZ2h0LXJhZGl1czogNXB4Ow0KICAgIGJvcmRlci1ib3R0b20tbGVmdC1yYWRpdXM6IDVweDsNCiAgICBib3JkZXItYm90dG9tLXJpZ2h0LXJhZGl1czogNXB4Ow0KICAgIHBvc2l0aW9uOiBmaXhlZDsNCiAgICBtYXgtaGVpZ2h0OiA0MDBweDsNCiAgICBtYXgtd2lkdGg6IDI1MHB4Ow0KICAgIGxlZnQ6IDI1cHg7DQogICAgdG9wOiA1NXB4Ow0KICAgIG92ZXJmbG93LXk6IGF1dG87DQogICAgYm94LXNoYWRvdzogMHB4IDBweCAyMHB4ICMwMDAwMDA7DQogICAgei1pbmRleDogOTk5OTsNCiAgICB1c2VyLXNlbGVjdDogbm9uZTsNCn0NCiNtZW51QnV0dG9uew0KICAgIHBvc2l0aW9uOiBmaXhlZDsNCiAgICB0b3A6IDI1cHg7DQogICAgbGVmdDogMjVweDsNCiAgICBoZWlnaHQ6IDMwcHg7DQogICAgd2lkdGg6IDEyMHB4Ow0KICAgIGJhY2tncm91bmQtY29sb3I6ICMwMDAwMDA7DQogICAgYm94LXNoYWRvdzogMHB4IDBweCAyMHB4ICMwMDAwMDA7DQogICAgei1pbmRleDogOTk5NTsNCiAgICB1c2VyLXNlbGVjdDogbm9uZTsNCn0NCiNtZW51QnV0dG9uVGV4dHsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICBmb250LXNpemU6IDIycHg7DQogICAgY29sb3I6ICNGRkZGRkY7DQogICAgcG9zaXRpb246IHJlbGF0aXZlOw0KICAgIGxlZnQ6IDBweDsNCiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7DQogICAgdGV4dC1kZWNvcmF0aW9uOiBub25lOw0KICAgIHVzZXItc2VsZWN0OiBub25lOw0KfQ0KI21lbnVCdXR0b25UZXh0OmhvdmVyew0KICAgIGNvbG9yOiAjMDAwMDAwOw0KICAgIGJhY2tncm91bmQtY29sb3I6ICNGRkZGRkY7DQogICAgdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLW1vei10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICAtd2Via2l0LXRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIGN1cnNvcjogcG9pbnRlcjsNCn0NCiNtZW51QnV0dG9uVGV4dDpub3QoOmhvdmVyKXsNCiAgICB0cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICAtbW96LXRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC13ZWJraXQtdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQp9DQpzcGFuLm1lbnVUaXRsZXsNCiAgICBjb2xvcjogI0ZBQ0MyRTsNCiAgICBmb250LXNpemU6IDI2cHg7DQogICAgYmFja2dyb3VuZC1jb2xvcjogIzAwMDAwMDsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7DQp9DQpzcGFuI21lbnVfZ29Ib21lOmhvdmVyew0KICAgIHRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lOw0KICAgIGN1cnNvcjogcG9pbnRlcjsNCn0NCmhyLm1lbnVEaXZpZGVyew0KICAgIHdpZHRoOiA1MCU7DQogICAgdGV4dC1hbGlnbjogY2VudGVyOw0KfQ0Kc3Bhbi5tZW51TGlua3sNCiAgICBjb2xvcjogI0ZBQ0MyRTsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICB3b3JkLXdyYXA6IGJyZWFrLXdvcmQ7DQogICAgZm9udC1zaXplOiAyMnB4Ow0KICAgIHBhZGRpbmctbGVmdDogMTVweDsNCiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7DQogICAgY3Vyc29yOiBwb2ludGVyOw0KfQ0Kc3Bhbi5tZW51TGluazpob3ZlcnsNCiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjMDAwMDAwOw0KICAgIHRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC1tb3otdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLXdlYmtpdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICBjdXJzb3I6IHBvaW50ZXI7DQp9DQpzcGFuLm1lbnVMaW5rOm5vdCg6aG92ZXIpew0KICAgIHRyYW5zaXRpb24tZHVyYXRpb246IDAuMTVzOw0KICAgIC1tb3otdHJhbnNpdGlvbi1kdXJhdGlvbjogMC4xNXM7DQogICAgLXdlYmtpdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAwLjE1czsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICBjdXJzb3I6IHBvaW50ZXI7DQp9DQpzcGFuLnNtYWxsTGlua3sNCiAgICBjb2xvcjogI0ZGRkZGRjsNCiAgICBmb250LXN0eWxlOiBpdGFsaWM7DQogICAgZm9udC1zaXplOiAxM3B4Ow0KfQ0Kc3Bhbi5zbWFsbExpbms6aG92ZXJ7DQogICAgdGV4dC1kZWNvcmF0aW9uOiB1bmRlcmxpbmU7DQp9DQpzcGFuLnNtYWxsVGV4dHsNCiAgICBkaXNwbGF5OiBibG9jazsNCiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7DQogICAgY29sb3I6ICNGRkZGRkY7DQogICAgZm9udC1zdHlsZTogaXRhbGljOw0KfQ==");
+var menuOpen = false;
+var baseURL = '//pr2hub.com/';
 
-function insert_css()
+function insertCSS()
 {
     var menucss = document.createElement("style");
     menucss.innerHTML = menu_css_decoded;
-    document.body.appendChild(menucss);
+    document.head.appendChild(menucss);
 }
 
-function insert_menu_code()
+function menuCodeInsert()
 {
-    var hub_menu = document.createElement("div");
-    hub_menu.setAttribute("class", "hclass");
-    hub_menu.setAttribute("id", "prmenu");
-    document.body.appendChild(hub_menu);
+    var hubMenu = document.createElement("div");
+    hubMenu.setAttribute("class", "closed");
+    hubMenu.setAttribute("id", "prmenu");
+    document.body.appendChild(hubMenu);
 }
 
-function update_menu_position()
+function banView()
 {
-    if (document.getElementById("prmenu").style.display === "block") {
-        document.getElementById("prmenu").style.display = "none";
+    var banID = window.prompt("Enter the ID of the ban you'd like to view.");
+    if (banID !== null && banID !== "" && isNaN(banID) === false) {
+        location.href = "/bans/show_record.php?ban_id=" + banID;
     }
 }
 
-function goto_ban()
+function setBackground()
 {
-    var ban_id = window.prompt("Enter the ban ID of the ban you'd like to view. Enter 0 or click cancel to view your bans.");
-    if (ban_id !== null && ban_id !== "" && isNaN(ban_id) === false) {
-        location.href = "/bans/show_record.php?ban_id=" + ban_id;
+    var imgURL = window.prompt("Enter a direct image link to use as a background.");
+    if (imgURL !== null && imgURL !== "" && (imgURL.startsWith("http://") === true || imgURL.startsWith("https://") === true)) {
+        document.body.style.cssText = "background-image: url(" + imgURL + ");"; // background-attachment: fixed; background-size: cover
+    } else {
+        alert("That doesn't seem to be a valid link...");
     }
 }
 
-function set_background()
+function banLogPage()
 {
-    var user_bg_url = window.prompt("Enter a direct image link to use as a background.");
-    if (user_bg_url !== null && user_bg_url !== "") {
-        if (user_bg_url.startsWith("http://") === true || user_bg_url.startsWith("https://") === true) {
-            document.body.style.cssText = "background-image: url(" + user_bg_url + "); background-attachment: fixed; background-size: cover";
-        } else {
-            alert("That doesn't seem to be a valid link...");
-        }
+    var pageNum = window.prompt("Enter the page to which you'd like to go (100 bans per page).\nEnter 0 to go to the start of the ban log.");
+    if (pageNum !== null && pageNum !== "" && isNaN(pageNum) === false) {
+        var startingID = parseInt(pageNum) * 100;
+        var link = "bans/bans.php?start=" + startingID + "&count=100";
+        open_link(link);
     }
 }
 
-function skip_to_page()
+function toggleMenu(action)
 {
-    var page_num = window.prompt("Enter the page to which you'd like to go (100 bans per page). Enter 0 or press cancel to go to the start of the ban log.");
-    if (page_num !== null && page_num !== "" && isNaN(page_num) === false) {
-        location.replace("/bans/bans.php?start=" + page_num * 100 + "&count=100");
+    var hubMenu = document.getElementById("prmenu");
+    if (menuOpen === true || action == 'close') {
+        hubMenu.classList.remove("open");
+        hubMenu.classList.add("closed");
+        menuOpen = false;
+    } else if (menuOpen === false) {
+        hubMenu.classList.remove("closed");
+        hubMenu.classList.add("open");
+        /*hubMenu.style.left = "25px";
+        hubMenu.style.top = "55px";
+        hubMenu.style.display = "block";*/
+        menuOpen = true;
     }
 }
 
-function open_link(link)
+function menuInit()
 {
-    location.href = "//pr2hub.com/" + link;
+    document.getElementById("prmenu").innerHTML = "<span class='menuTitle'><img src='/favicon.ico' width='20px' height='20px'></img> <span id='menu_goHome'>PR2 Hub</span></span>" +
+                                                  "<hr class='menuDivider'></hr>" +
+                                                  "<span class='menuLink' id='menu_setBackground'>Set Background</span>" +
+                                                  "<span class='menuLink' id='menu_playerSearch'>Player Search</span>" +
+                                                  "<span class='menuLink' id='menu_guildSearch'>Guild Search</span>" +
+                                                  "<span class='menuLink' id='menu_leaderboard'>Leaderboard</span>" +
+                                                  "<span class='menuLink' id='menu_artiHint'>Artifact Hint</span>" +
+                                                  "<span class='menuLink' id='menu_transferGuild'>Transfer Guild</span>" +
+                                                  "<span class='menuLink' id='menu_staffList'>PR2 Staff Team</span>" +
+                                                  "<span class='menuLink' id='menu_banLog'>Ban Log <span onclick='event.stopPropagation(); window.event.cancelBubble = true;' class='smallLink' id='menu_banLogPage'>(or specify page)</span></span>" +
+                                                  "<span class='menuLink' id='menu_banPriors'>Your Bans <span onclick='event.stopPropagation(); window.event.cancelBubble = true;' class='smallLink' id='menu_banView'>(or specify ban ID)</span></span>" +
+                                                  "<span class='menuLink' id='menu_close'>Close</span><br>" +
+                                                  "<span class='smallText'>You can open this menu from anywhere using the F8 key.</span>";
 }
 
-function displaymenu(ev)
+function menuButtonAdd()
 {
-    var hubmenu = document.getElementById("prmenu");
-    hubmenu.style.left = (ev.clientX + document.body.scrollLeft + document.documentElement.scrollLeft) + "px";
-    hubmenu.style.top = (ev.clientY + document.body.scrollTop + document.documentElement.scrollTop) + "px";
-    hubmenu.style.display = "block";
-    ev.returnValue = false;
-}
-
-function menuHotkey()
-{
-    var hotkeymenu = document.getElementById("prmenu");
-    hotkeymenu.style.left = (115 + document.body.scrollLeft + document.documentElement.scrollLeft) + "px";
-    hotkeymenu.style.top = (50 + document.body.scrollTop + document.documentElement.scrollTop) + "px";
-    hotkeymenu.style.display = "block";
-}
-
-function user_menu_hide()
-{
-    document.getElementById("prmenu").style.display = "none";
-}
-
-function initialize_menu()
-{
-    document.getElementById("prmenu").innerHTML = "<span class='menutitle'><img src='/favicon.ico' width='20px' height='20px'></img> <span id='gohome'>PR2 Hub</span></span>" +
-                                                  "<hr class='menudivider'></hr>" +
-                                                  "<span class='menulink' id='setbg'>Set Background</span>" +
-                                                  "<span class='menulink' id='srch_player'>Player Search</span>" +
-                                                  "<span class='menulink' id='guild_srch'>Guild Search</span>" +
-                                                  "<span class='menulink' id='menu_leaderboard'>Leaderboard</span>" +
-                                                  "<span class='menulink' id='arti_hint'>Artifact Hint</span>" +
-                                                  "<span class='menulink' id='transfer_guild'>Transfer Guild</span>" +
-                                                  "<span class='menulink' id='staff_list'>PR2 Staff Team</span>" +
-                                                  "<span class='menulink' id='ban_list'>Ban Log <span class='smalltext' id='skip_to_ban'>(or specify page)</span></span>" +
-                                                  "<span class='menulink' id='ban_priors'>Your Bans <span class='smalltext' id='banview'>(or specify ban ID)</span></span>" +
-                                                  "<span class='menulink' id='menu_close'>Close</span><br>" +
-                                                  "<span class='menutext'>You can open this menu from anywhere using the F8 key.</span>";
-}
-
-function add_menu_button()
-{
-    var create_btn = document.createElement("div");
-    create_btn.setAttribute("id", "menubutton");
-    create_btn.innerHTML = "<span id='mtext'>-- Menu --</span>";
-    document.body.appendChild(create_btn);
+    var createButton = document.createElement("div");
+    createButton.setAttribute("id", "menuButton");
+    createButton.innerHTML = "<span id='menuButtonText'>-- Menu --</span>";
+    document.body.appendChild(createButton);
 }
 
 window.onload = function () {
-    insert_css();
+    // insert and init
+    insertCSS();
+    menuButtonAdd();
+    menuCodeInsert();
+    menuInit();
 
-    insert_menu_code();
-
-    initialize_menu();
-
-    add_menu_button();
-
-    document.getElementById("mtext").addEventListener("click", function (eventargs) {
-        displaymenu(eventargs);
+    // menu button
+    document.getElementById("menuButtonText").addEventListener("click", function () {
+        toggleMenu();
     });
 
+    // clicking anywhere but the menu with the menu open
+    document.querySelector('#container').addEventListener('mousedown', function (containerevent) {
+        if (menuOpen === true) {
+            toggleMenu('close');
+        }
+    });
+
+    // close button
     document.getElementById("menu_close").addEventListener("click", function (m_event) {
-        user_menu_hide();
+        toggleMenu('close');
     });
     
-    document.querySelector('#container').addEventListener('click', function (containerevent) {
-        user_menu_hide();
-    })
-    
-    document.getElementById("gohome").addEventListener("click", function () {
-        user_menu_hide();
-        open_link('');
+    // PR2 Hub button
+    document.getElementById("menu_goHome").addEventListener("click", function () {
+        toggleMenu('close');
+        location.href = baseURL;
     });
 
-    document.getElementById("banview").addEventListener("click", function () {
-        user_menu_hide();
-        goto_ban();
+    // view specific ban ID button
+    document.getElementById("menu_banView").addEventListener("click", function () {
+        toggleMenu('close');
+        banView();
     });
 
-    document.getElementById("setbg").addEventListener("click", function () {
-        user_menu_hide();
-        set_background();
+    // set background button
+    document.getElementById("menu_setBackground").addEventListener("click", function () {
+        toggleMenu('close');
+        setBackground();
     });
 
-    document.getElementById("skip_to_ban").addEventListener("click", function () {
-        user_menu_hide();
-        skip_to_page();
+    // 
+    document.getElementById("menu_banLogPage").addEventListener("click", function () {
+        toggleMenu('close');
+        banLogPage();
     });
 
     document.getElementById("menu_leaderboard").addEventListener("click", function () {
-        user_menu_hide();
-        open_link('leaderboard.php');
+        toggleMenu('close');
+        location.href = baseURL + 'leaderboard.php';
     });
-    document.getElementById("arti_hint").addEventListener("click", function () {
-        user_menu_hide();
-        open_link('hint.php');
-    });
-
-    document.getElementById("srch_player").addEventListener("click", function () {
-        user_menu_hide();
-        open_link('player_search.php');
+    document.getElementById("menu_artiHint").addEventListener("click", function () {
+        toggleMenu('close');
+        location.href = baseURL + 'hint.php';
     });
 
-    document.getElementById("guild_srch").addEventListener("click", function () {
-        user_menu_hide();
-        open_link('guild_search.php');
+    document.getElementById("menu_playerSearch").addEventListener("click", function () {
+        toggleMenu('close');
+        location.href = baseURL + 'player_search.php';
     });
 
-    document.getElementById("staff_list").addEventListener("click", function () {
-        user_menu_hide();
-        open_link('staff.php');
+    document.getElementById("menu_guildSearch").addEventListener("click", function () {
+        toggleMenu('close');
+        location.href = baseURL + 'guild_search.php';
     });
 
-    document.getElementById("transfer_guild").addEventListener("click", function () {
-        user_menu_hide();
-        open_link('guild_transfer.php');
+    document.getElementById("menu_staffList").addEventListener("click", function () {
+        toggleMenu('close');
+        location.href = baseURL + 'staff.php';
     });
 
-    document.getElementById("ban_list").addEventListener("click", function () {
-        user_menu_hide();
-        open_link('bans/bans.php');
+    document.getElementById("menu_transferGuild").addEventListener("click", function () {
+        toggleMenu('close');
+        location.href = baseURL + 'guild_transfer.php';
+    });
+
+    document.getElementById("menu_banLog").addEventListener("click", function () {
+        toggleMenu('close');
+        location.href = baseURL + 'bans/';
     });
     
-    document.getElementById("ban_priors").addEventListener("click", function () {
-        user_menu_hide();
-        open_link('bans/view_priors.php');
+    document.getElementById("menu_banPriors").addEventListener("click", function () {
+        toggleMenu('close');
+        location.href = baseURL + 'bans/view_priors.php';
     });
 
     document.addEventListener("keydown", function (keyinfo) {
-        if (keyinfo.keyCode === 119) {
-            menuHotkey();
+        if (keyinfo.keyCode === 119) { // F8
+            toggleMenu();
+        } else if (keyinfo.keyCode === 27) { // esc
+            toggleMenu('close');
         }
-    });
-    
-    document.addEventListener("scroll", function (e_args) {
-        update_menu_position();
     });
 };
