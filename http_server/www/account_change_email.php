@@ -45,7 +45,7 @@ try {
     // sanitize email
     $problematic_chars = array('&', '"', "'", "<", ">");
     $new_email = filter_var($new_email, FILTER_SANITIZE_EMAIL);
-    $new_email = str_replace($problematic_chars, '', $email);
+    $new_email = str_replace($problematic_chars, '', $new_email);
 
     // sanity check: check for invalid email
     if (!valid_email($new_email)) {
