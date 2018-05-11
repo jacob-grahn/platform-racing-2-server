@@ -42,8 +42,7 @@ function banLogPage()
     var pageNum = window.prompt("Enter the page to which you'd like to go (100 bans per page).\nEnter 0 to go to the start of the ban log.");
     if (pageNum !== null && pageNum !== "" && isNaN(pageNum) === false) {
         var startingID = parseInt(pageNum) * 100;
-        var link = "bans/bans.php?start=" + startingID + "&count=100";
-        open_link(link);
+        location.href = baseURL + "bans/bans.php?start=" + startingID + "&count=100";
     }
 }
 
