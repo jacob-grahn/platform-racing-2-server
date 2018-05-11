@@ -32,7 +32,7 @@ function setBackground()
     var imgURL = window.prompt("Enter a direct image link to use as a background.");
     if (imgURL !== null && imgURL !== "" && (imgURL.startsWith("http://") === true || imgURL.startsWith("https://") === true)) {
         document.body.style.cssText = "background-image: url(" + imgURL + ");"; // background-attachment: fixed; background-size: cover
-    } else if (imgURL == null) {
+    } else if (imgURL === null) {
         break;
     } else {
         alert("That doesn't seem to be a valid link...");
