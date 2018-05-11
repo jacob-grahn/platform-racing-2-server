@@ -12,20 +12,23 @@ function client_kick($socket, $data)
 
     // safety first
     $safe_kname = htmlspecialchars($name);
-    $safe_mname = htmlspecialchars($mod->name);
 
     // if the player actually has the power to do what they're trying to do, then do it
     if ($mod->group >= 2 && ($kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
         \pr2\multi\LocalBans::add($name);
 
         if (isset($kicked)) {
+            $mod_url = userify($mod, $mod->name);
+            $kicked_url = userify($kicked, $name);
+            
+            // kick the user
             $kicked->remove();
             $mod->write("message`$safe_kname has been kicked from this server for 30 minutes.");
 
             // let people know that the player kicked someone
             if (isset($mod->chat_room)) {
-                $mod->chat_room->sendChat("systemChat`$safe_mname has kicked ".
-                    "$safe_kname from this server for 30 minutes.");
+                $mod->chat_room->sendChat("systemChat`$mod_url has kicked ".
+                    "$kicked_url from this server for 30 minutes.");
             }
 
             // log the action if it's on a public server
@@ -99,7 +102,6 @@ function client_warn($socket, $data)
     $mod = $socket->getPlayer();
 
     // safety first
-    $safe_mname = htmlspecialchars($mod->name);
     $safe_wname = htmlspecialchars($name);
 
     $w_str = '';
@@ -136,8 +138,11 @@ function client_warn($socket, $data)
 
     // tell the world
     if (isset($mod->chat_room) && $mod->group >= 2) {
-        $mod->chat_room->sendChat("systemChat`$safe_mname has given ".
-            "$safe_wname $num $w_str. They have been banned from the chat ".
+        $mod_url = userify($mod, $mod->name);
+        $warned_url = userify($warned, $name);
+
+        $mod->chat_room->sendChat("systemChat`$mod_url has given ".
+            "$warned_url $num $w_str. They have been banned from the chat ".
             "for $time seconds.");
     }
 }
@@ -155,8 +160,6 @@ function client_ban($socket, $data)
     $banned = name_to_player($banned_name);
 
     // safety first
-    $safe_mname = htmlspecialchars($mod->name);
-    $safe_bname = htmlspecialchars($banned_name);
     $safe_reason = htmlspecialchars($reason);
 
     // set a variable that uses seconds to make friendly times
@@ -193,9 +196,12 @@ function client_ban($socket, $data)
 
     // tell the world
     if ($mod->group >= 2 && isset($banned)) {
+        $mod_url = userify($mod, $mod->name);
+        $banned_url = userify($banned, $banned_name);
+    
         if (isset($mod->chat_room)) {
             $ban_log = urlify('https://pr2hub.com/bans', 'the ban log');
-            $mod->chat_room->sendChat("systemChat`$safe_mname has banned $safe_bname for $disp_time. ".
+            $mod->chat_room->sendChat("systemChat`$mod_url has banned $banned_url for $disp_time. ".
                 "$disp_reason. ".
                 "This ban has been recorded on $ban_log.");
         }
@@ -217,7 +223,6 @@ function client_promote_to_moderator($socket, $data)
     $promoted = name_to_player($name);
 
     // safety first
-    $safe_aname = htmlspecialchars($admin->name);
     $safe_pname = htmlspecialchars($name);
 
     // if they're an admin and not a server owner, continue with the promotion (1st line of defense)
@@ -237,9 +242,12 @@ function client_promote_to_moderator($socket, $data)
         }
 
         if (isset($admin->chat_room) && (isset($promoted) || $type != 'temporary') && $result == true) {
+            $admin_url = userify($admin, $admin->name);
+            $promoted_url = userify($promoted, $name);
             $mod_guide = urlify('https://jiggmin2.com/forums/showthread.php?tid=12', 'moderator guidelines');
+            
             $admin->chat_room->sendChat(
-                "systemChat`$safe_aname has promoted $safe_pname to a $type moderator! ".
+                "systemChat`$admin_url has promoted $promoted_url to a $type moderator! ".
                 "May they reign in $reign_time of peace and prosperity! ".
                 "Make sure you read the $mod_guide.",
                 $admin->user_id

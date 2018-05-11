@@ -8,10 +8,10 @@ error_reporting(E_ALL | E_STRICT);
 @ob_end_flush();
 set_time_limit(0);
 
-require_once __DIR__ . '/../env.php';
-require_once __DIR__ . '/../http_server/fns/pdo_connect.php';
+require_once __DIR__ . '/../common/env.php';
+require_once __DIR__ . '/../common/pdo_connect.php';
+require_once __DIR__ . '/../common/multi_queries.php';
 require_once __DIR__ . '/../vend/socket/index.php';
-require_once __DIR__ . '/../multi_queries.php';
 
 require_once __DIR__ . '/fns/admin/demod.php';
 require_once __DIR__ . '/fns/admin/promote_to_moderator.php';
@@ -77,7 +77,7 @@ output("Initializing startup...");
 
 Prizes::init();
 RankupCalculator::init();
-HappyHour::$random_hour = rand(0, 36);
+HappyHour::$random_hour = rand(1, 24);
 
 $server_id = (int) $argv[1];
 

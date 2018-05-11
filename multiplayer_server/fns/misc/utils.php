@@ -203,6 +203,225 @@ function assign_guild_part($type, $part_id, $user_id, $guild_id, $seconds_durati
 }
 
 
+// check if the user is banned
+function query_if_banned($pdo, $user_id, $ip)
+{
+    $ban = false;
+    if (isset($user_id) && $user_id != 0) {
+        $ban = ban_select_active_by_user_id($pdo, $user_id);
+    }
+    if (!$ban && isset($ip)) {
+        $ban = ban_select_active_by_ip($pdo, $ip);
+    }
+    return $ban;
+}
+
+
+// get ban priors (for lazy mods)
+function get_priors($pdo, $mod, $name)
+{
+    $safe_name = htmlspecialchars($name);
+
+    // sanity: make sure they're online and a staff member
+    if (!isset($mod) || $mod->group < 2 || $mod->temp_mod == true || $mod->server_owner == true) {
+        $mod->write("message`Error: You lack the power to view priors for $safe_name.");
+        return false;
+    }
+
+    // get player info for mod
+    $mod_power = (int) user_select_power($pdo, $mod->user_id, true);
+    if ($mod_power < 2 || $mod_power === false) {
+        $mod->write("message`Error: You lack the power to view priors for $safe_name.");
+        return false;
+    }
+
+    // get user info
+    $user = user_select_by_name($pdo, $name, true);
+    $user_id = (int) $user->user_id;
+    if ($user_id === false) {
+        $mod->write("message`Error: Could not find a user with that name.");
+        return false;
+    }
+
+    // make user vars
+    $name = $user->name;
+    $safe_name = htmlspecialchars($name);
+    $ip = $user->ip;
+    $power = (int) $user->power;
+
+    // initialize return string var
+    $url_name = htmlspecialchars(urlencode($name));
+    $user_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $safe_name, '#'.group_color($power));
+    $str = "<b>Ban Data for $user_link</b><br><br>";
+    
+    // check if the user is currently banned
+    $str .= "Currently Banned: ";
+    $is_banned = 'No';
+    $row = query_if_banned($pdo, $user_id, $ip);
+    if ($row !== false) {
+        $ban_id = $row->ban_id;
+        $reason = htmlspecialchars($row->reason);
+        $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
+        if ($row->ip_ban == 1 && $row->account_ban == 1 && $row->banned_name == $name) {
+            $ban_type = 'account and IP are';
+        } elseif ($row->ip_ban == 1) {
+            $ban_type = 'IP is';
+        } elseif ($row->account_ban == 1) {
+            $ban_type = 'account is';
+        }
+        $ban_link = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'Yes');
+        $str .= "$ban_link, this $ban_type banned until $ban_end_date. Reason: $reason<br><br>";
+    } else {
+        $str .= $is_banned . '<br><br>';
+    }
+
+    // get account bans of target user
+    $account_bans = bans_select_by_user_id($pdo, $user_id);
+    $account_ban_count = (int) count($account_bans);
+    $str .= "This account has been banned $account_ban_count times.<br><br>";
+
+    // make account bans list
+    if ($account_ban_count !== 0) {
+        $str .= '<ul>';
+        foreach ($account_bans as $ban) {
+            $str .= '<li>';
+            $ban_id = (int) $ban->ban_id;
+            $date = date("M j, Y g:i A", $ban->time);
+            $mod_name = htmlspecialchars($ban->mod_name);
+            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name));
+            $banned_name = htmlspecialchars($ban->banned_name);
+            $banned_ip = htmlspecialchars(urlencode($ban->banned_ip));
+            $duration = format_duration($ban->expire_time - $ban->time);
+            $reason = htmlspecialchars($ban->reason);
+            $lifted = (bool) $ban->lifted;
+            $acc_ban = (bool) $ban->account_ban;
+            $ip_ban = (bool) $ban->ip_ban;
+            
+            // var init
+            $nameip_str = '';
+            $lifted_str = '';
+            if (strlen(trim($reason)) === 0) {
+                $reason = 'No reason was given.';
+            }
+            
+            // make name/ip str
+            if ($acc_ban === true) {
+                $nameip_str .= $banned_name;
+            }
+            if ($ip_ban === true) {
+                $nameip_str .= ' [' . $banned_ip . ']';
+            }
+            $nameip_str = trim($nameip_str);
+
+            // check if lifted
+            if ($lifted === true) {
+                $lifted_reason = htmlspecialchars($ban->lifted_reason);
+                $lifted_by = htmlspecialchars($ban->lifted_by);
+                $lifted_date = '';
+                $at_loc = strrpos($lifted_reason, '@');
+                if ($at_loc !== false) {
+                    $lifted_datetime = date('M j, Y \a\t g:i A', strtotime(trim(substr($lifted_reason, $at_loc + 1))));
+                    $lifted_reason = trim(substr($lifted_reason, 0, $at_loc));
+                }
+                $lifted_str = "<b>^ LIFTED</b> on $lifted_datetime by $lifted_by. Reason: $lifted_reason";
+            }
+
+            // craft ban string
+            $date_url = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", $date);
+            $ban_str = "$date_url: $mod_name banned $nameip_str for $duration. Reason: $reason";
+            
+            // add to the output string
+            if ($lifted === true) {
+                $str .= $ban_str . '<br>' . $lifted_str;
+            } else {
+                $str .= $ban_str;
+            }
+
+            // move to the next ban
+            $str .= '</li>';
+        }
+        
+        // end this group of bans
+        $str .= '</ul><br>';
+    }
+
+    // get IP bans of target user's IP
+    $ip_bans = bans_select_by_ip($pdo, $ip);
+    $ip_ban_count = (int) count($ip_bans);
+    $ip_link = urlify("https://pr2hub.com/mod/ip_info.php?ip=$ip", $ip);
+    $str .= "This IP ($ip_link) has been banned $ip_ban_count times.<br><br>";
+
+    // make account bans list
+    if ($ip_ban_count !== 0) {
+        $str .= '<ul>';
+        foreach ($ip_bans as $ban) {
+            $str .= '<li>';
+            $ban_id = (int) $ban->ban_id;
+            $date = date("M j, Y g:i A", $ban->time);
+            $mod_name = htmlspecialchars($ban->mod_name);
+            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name));
+            $banned_name = htmlspecialchars($ban->banned_name);
+            $banned_ip = htmlspecialchars(urlencode($ban->banned_ip));
+            $duration = format_duration($ban->expire_time - $ban->time);
+            $reason = htmlspecialchars($ban->reason);
+            $lifted = (bool) $ban->lifted;
+            $acc_ban = (bool) $ban->account_ban;
+            $ip_ban = (bool) $ban->ip_ban;
+            
+            // var init
+            $nameip_str = '';
+            $lifted_str = '';
+            if (strlen(trim($reason)) === 0) {
+                $reason = 'No reason was given.';
+            }
+
+            // make name/ip str
+            if ($acc_ban === true) {
+                $nameip_str .= $banned_name;
+            }
+            if ($ip_ban === true) {
+                $nameip_str .= ' [' . $banned_ip . ']';
+            }
+            $nameip_str = trim($nameip_str);
+
+            // check if lifted
+            if ($lifted === true) {
+                $lifted_reason = htmlspecialchars($ban->lifted_reason);
+                $lifted_by = htmlspecialchars($ban->lifted_by);
+                $lifted_date = '';
+                $at_loc = strrpos($lifted_reason, '@');
+                if ($at_loc !== false) {
+                    $lifted_datetime = date('M j, Y \a\t g:i A', strtotime(trim(substr($lifted_reason, $at_loc + 1))));
+                    $lifted_reason = trim(substr($lifted_reason, 0, $at_loc));
+                }
+                $lifted_str = "<b>^ LIFTED</b> on $lifted_datetime by $lifted_by. Reason: $lifted_reason";
+            }
+
+            // craft ban string
+            $date_url = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", $date);
+            $ban_str = "$date_url: $mod_name banned $nameip_str for $duration. Reason: $reason";
+
+            // add to the output string
+            if ($lifted === true) {
+                $str .= $ban_str . '<br>' . $lifted_str;
+            } else {
+                $str .= $ban_str;
+            }
+
+            // move to the next ban
+            $str .= '</li>';
+        }
+
+        // end this group of bans
+        $str .= '</ul>';
+    }
+
+    // tell the mod
+    $mod->write("message`$str");
+    return true;
+}
+
+
 // limit the amount of times an action can be performed in a certain time period
 function rate_limit($key, $interval, $max, $display_error = false, $player = null, $error = 'Slow down a bit, yo.')
 {

@@ -388,7 +388,7 @@ class Player
             ) {
                 if ($room_type == 'c') {
                     $player_room->sendChat('systemChat`' . $chat_effect_tag .
-                        $this->name . ' has temporarily activated ' .
+                        userify($this, $this->name) . ' has temporarily activated ' .
                         $chat_effect . ' chat!');
                 } else {
                     $this->write('systemChat`This command cannot be used in levels.');
@@ -404,7 +404,7 @@ class Player
 
                 if ($announce_length >= 1) {
                     $player_room->sendChat('systemChat`Chatroom Announcement from '
-                        .$this->name.': ' . $safe_announcement);
+                        .userify($this, $this->name).': ' . $safe_announcement);
                 } else {
                     $this->write('systemChat`Your announcement must be at least 1 character.');
                 }
@@ -418,7 +418,8 @@ class Player
                 $give_this_length = strlen($safe_give_this);
 
                 if ($give_this_length >= 1) {
-                    $player_room->sendChat('systemChat`'.$this->name.' has given ' . $safe_give_this);
+                    $mod_url = userify($this, $this->name);
+                    $player_room->sendChat('systemChat`'.$mod_url.' has given ' . $safe_give_this);
                 } else {
                     $this->write('systemChat`The thing you\'re giving must be at least 1 character.');
                 }
@@ -429,7 +430,8 @@ class Player
                 $promote_this_length = strlen($safe_promote_this);
 
                 if ($promote_this_length >= 1) {
-                    $player_room->sendChat('systemChat`'.$this->name.' has promoted ' . $safe_promote_this);
+                    $admin_url = userify($this, $this->name);
+                    $player_room->sendChat('systemChat`'.$admin_url.' has promoted ' . $safe_promote_this);
                 } else {
                     $this->write('systemChat`The thing you\'re promoting must be at least 1 character.');
                 }
@@ -662,7 +664,9 @@ class Player
                 } elseif (isset($dc_player) && ($dc_player->group > 2 || $this->server_owner == false)) {
                     $this->write("message`Error: You lack the power to disconnect $safe_dc_name.");
                 } else {
-                    $this->write("message`Error: Could not find a user with the name \"$safe_dc_name\" on this server."); // they're not online or don't exist
+                    $this->write(
+                        "message`Error: Could not find a user with the name \"$safe_dc_name\" on this server."
+                    );
                 }
             } // hh status for everyone, activate for admins, deactivate for admins and server owners
             elseif (($chat_message == '/hh' || strpos($chat_message, '/hh ') === 0)) {
@@ -707,7 +711,7 @@ class Player
                             HappyHour::activate($args[1]);
                         }
                         $player_room->sendChat('systemChat`'.
-                            htmlspecialchars($this->name).
+                            userify($this, $this->name) .
                             ' just triggered a Happy Hour!');
                     } elseif (PR2SocketServer::$tournament == true) {
                         $this->write('systemChat`You can\'t activate a Happy '.
@@ -715,8 +719,7 @@ class Player
                             'Disable tournament mode and try again.');
                     } else {
                         $hh_timeleft = HappyHour::timeLeft();
-                        $this->write('systemChat`There is already a Happy Hour ".
-                            "on this server. It will expire in '.
+                        $this->write('systemChat`There is already a Happy Hour on this server. It will expire in '.
                             format_duration($hh_timeleft) . '.');
                     }
                 } elseif ($args[0] == 'deactivate' && $this->group >= 3) {
@@ -730,7 +733,7 @@ class Player
                     } elseif (HappyHour::isActive() && $this->hh_warned) {
                         HappyHour::deactivate();
                         $player_room->sendChat('systemChat`' .
-                            htmlspecialchars($this->name) .
+                            userify($this, $this->name) .
                             ' just ended the current Happy Hour.');
                     } else {
                         $this->write('systemChat`There isn\'t an active Happy Hour right now.');
@@ -769,9 +772,17 @@ class Player
                         demote_server_mod($to_name, $owner, $target);
                     }
                 } else {
-                    $this->write("Invalid action. For more information on how '.
-                        'to use this command, type /mod help.");
+                    $this->write('Invalid action. For more information on how '.
+                        'to use this command, type /mod help.');
                 }
+            } // get priors (for lazy mods)
+            elseif (strpos($chat_message, '/priors ') === 0 &&
+                    $this->group >= 2 &&
+                    $this->temp_mod === false &&
+                    $this->server_owner === false
+            ) {
+                $name = trim(substr($chat_message, 8));
+                get_priors($pdo, $this, $name);
             } // rules command
             elseif ($chat_message == '/rules') {
                 $rules_link = urlify('https://pr2hub.com/rules', 'pr2hub.com/rules');
@@ -823,6 +834,7 @@ class Player
                                 '- /kick *name*<br>'.
                                 '- /unkick *name*<br>'.
                                 '- /disconnect *name*<br>'.
+                                '- /priors *name*<br>'.
                                 '- /clear';
                             $effects = '<br>Chat Effects:<br>'.
                                 '- /b (Bold)<br>'.
@@ -1488,16 +1500,23 @@ class Player
         //delete
         $this->socket = null;
         $this->user_id = null;
+        $this->guild_id = null;
         $this->name = null;
         $this->rank = null;
         $this->active_rank = null;
         $this->exp_points = null;
+        $this->start_exp_today = null;
+        $this->exp_today = null;
         $this->group = null;
         $this->guest = null;
         $this->hat_color = null;
         $this->head_color = null;
         $this->body_color = null;
         $this->feet_color = null;
+        $this->hat_color_2 = null;
+        $this->head_color_2 = null;
+        $this->body_color_2 = null;
+        $this->feet_color_2 = null;
         $this->hat = null;
         $this->head = null;
         $this->body = null;
@@ -1515,6 +1534,8 @@ class Player
         $this->jumping = null;
         $this->friends = null;
         $this->ignored = null;
+        $this->rt_used = null;
+        $this->rt_available = null;
         $this->url = null;
         $this->version = null;
         $this->last_action = null;
@@ -1534,10 +1555,17 @@ class Player
         $this->quit_race = null;
         $this->chat_ban = null;
         $this->domain = null;
+        $this->ip = null;
         $this->temp_mod = null;
         $this->server_owner = null;
         $this->hh_warned = null;
         $this->restart_warned = null;
         $this->status = null;
+        $this->lives = null;
+        $this->items_used = null;
+        $this->super_booster = null;
+        $this->last_save_time = null;
+        $this->friends_array = null;
+        $this->ignored_array = null;
     }
 }

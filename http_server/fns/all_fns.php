@@ -1,10 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../env.php';
+require_once __DIR__ . '/../../common/env.php';
+require_once __DIR__ . '/../../common/pdo_connect.php';
+
 require_once __DIR__ . '/data_fns.php';
 require_once __DIR__ . '/query_fns.php';
 require_once __DIR__ . '/random_str.php';
-require_once __DIR__ . '/pdo_connect.php';
 
 require_once __DIR__ . '/../queries/users/user_apply_temp_pass.php';
 require_once __DIR__ . '/../queries/users/id_to_name.php';
