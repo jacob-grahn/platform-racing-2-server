@@ -77,7 +77,7 @@ output("Initializing startup...");
 
 Prizes::init();
 RankupCalculator::init();
-HappyHour::$random_hour = rand(0, 36);
+HappyHour::$random_hour = rand(1, 24);
 
 $server_id = (int) $argv[1];
 
