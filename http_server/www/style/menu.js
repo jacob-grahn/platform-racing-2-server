@@ -19,6 +19,19 @@ function menuCodeInsert()
     document.body.appendChild(hubMenu);
 }
 
+function menuClosing()
+{
+    var page_menu = document.getElementById("prmenu");
+    var menuheight = 400;
+	var height_counter = parseInt(page_menu.style.height);
+    while (height_counter !== 0 && menuheight >= 400){
+        menuheight -= 1;
+		height_counter -= 1;
+        page_menu.style.height = menuheight + "px";
+    }
+    menuheight = 400;
+}
+
 function banView()
 {
     var banID = window.prompt("Enter the ID of the ban you'd like to view.");
@@ -33,7 +46,7 @@ function setBackground()
     if (imgURL !== null && imgURL !== "" && (imgURL.startsWith("http://") === true || imgURL.startsWith("https://") === true)) {
         document.body.style.cssText = "background-image: url(" + imgURL + ");"; // background-attachment: fixed; background-size: cover
     } else if (imgURL === null) {
-        break;
+        //no background given
     } else {
         alert("That doesn't seem to be a valid link...");
     }
@@ -52,6 +65,7 @@ function toggleMenu(action)
 {
     var hubMenu = document.getElementById("prmenu");
     if (menuOpen === true || action == 'close') {
+		menuClosing();
         hubMenu.classList.remove("open");
         hubMenu.classList.add("closed");
         menuOpen = false;
@@ -132,6 +146,7 @@ window.onload = function () {
         setBackground();
     });
 
+    // 
     document.getElementById("menu_banLogPage").addEventListener("click", function () {
         toggleMenu('close');
         banLogPage();
