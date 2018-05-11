@@ -711,7 +711,7 @@ class Player
                             HappyHour::activate($args[1]);
                         }
                         $player_room->sendChat('systemChat`'.
-                            userify($this, $this->name).
+                            userify($this, $this->name) .
                             ' just triggered a Happy Hour!');
                     } elseif (PR2SocketServer::$tournament == true) {
                         $this->write('systemChat`You can\'t activate a Happy '.
@@ -733,7 +733,7 @@ class Player
                     } elseif (HappyHour::isActive() && $this->hh_warned) {
                         HappyHour::deactivate();
                         $player_room->sendChat('systemChat`' .
-                            htmlspecialchars($this->name) .
+                            userify($this, $this->name) .
                             ' just ended the current Happy Hour.');
                     } else {
                         $this->write('systemChat`There isn\'t an active Happy Hour right now.');
