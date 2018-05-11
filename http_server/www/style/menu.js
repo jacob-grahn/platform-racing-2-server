@@ -65,7 +65,6 @@ function toggleMenu(action)
 {
     var hubMenu = document.getElementById("prmenu");
     if (menuOpen === true || action == 'close') {
-        menuClosing();
         hubMenu.classList.remove("open");
         hubMenu.classList.add("closed");
         menuOpen = false;
