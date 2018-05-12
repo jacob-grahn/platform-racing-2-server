@@ -80,7 +80,8 @@ function output_page($pdo, $user)
     if ($guild_name == '<i>none</i>') {
         $safe_guild = $guild_name;
     } else {
-        $safe_guild = "<a href='/guild_search.php?name=$guild_name' target='_blank'>". htmlspecialchars($guild_name) . "</a>";
+        $safe_guild = "<a href='/guild_search.php?name=$guild_name' target='_blank'>"
+            . htmlspecialchars($guild_name) . "</a>";
     }
 
     // --- Start the Page --- \\
