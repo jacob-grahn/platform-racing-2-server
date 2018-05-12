@@ -70,7 +70,7 @@ function output_page($pdo, $user)
 
     // group html change if staff
     if ($group >= 2) {
-        $group_name = "<a href='/staff.php' style='color: #000000; font-weight: bold'>"
+        $group_name = "<a href='/staff.php' style='color: #000000; font-weight: bold' target='_blank'>"
                         ."$group_name</a>";
     }
 
@@ -80,7 +80,7 @@ function output_page($pdo, $user)
     if ($guild_name == '<i>none</i>') {
         $safe_guild = $guild_name;
     } else {
-        $safe_guild = "<a href='/guild_search.php?name=$guild_name'>" . htmlspecialchars($guild_name) . "</a>";
+        $safe_guild = "<a href='/guild_search.php?name=$guild_name' target='_blank'>". htmlspecialchars($guild_name) . "</a>";
     }
 
     // --- Start the Page --- \\
