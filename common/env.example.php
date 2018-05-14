@@ -38,5 +38,3 @@ $LOGIN_IV = 'there';
 
 $GUEST_PASS = 'this is the universal password for all guest accounts';
 $BLS_IP_PREFIX = 'no ddos plz';
-
-?>

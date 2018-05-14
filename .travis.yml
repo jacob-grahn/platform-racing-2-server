@@ -3,5 +3,5 @@ php:
   - '7.1'
 before_script: composer install
 script:
-  - ./vendor/bin/phpmd http_server,multiplayer_server,policy_server text unusedcode
-  - ./vendor/bin/phpcs --standard=PSR2 http_server multiplayer_server policy_server
+  - ./vendor/bin/phpmd common,http_server,multiplayer_server,policy_server text unusedcode
+  - ./vendor/bin/phpcs --standard=PSR2 common http_server multiplayer_server policy_server

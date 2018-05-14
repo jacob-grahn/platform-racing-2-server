@@ -209,7 +209,7 @@ function talk_to_server($address, $port, $salt, $process_function, $receive = tr
     $local_hash = md5($str_to_hash);
     $sub_hash = substr($local_hash, 0, 3);
 
-    // throw it together 
+    // throw it together
     $to_process = $sub_hash . '`' . $send_num . '`' . $intro_function . '`' . $data . $end;
     $command = $process_function . $end;
     $send_str = $to_process . $command;
