@@ -87,5 +87,3 @@ function output_staff_nav($formatting_for_admins = true)
     echo '</b></p>'
         .'<p>---</p>';
 }
-
-?>

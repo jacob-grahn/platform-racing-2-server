@@ -77,11 +77,11 @@ try {
             $data->message = $message;
             $data = json_encode($data);
             $reply = talk_to_server($server->address,
-                            $server->port,
-                            $server->salt,
-                            'message_player`' . $data,
-                            true,
-                            false
+                $server->port,
+                $server->salt,
+                'message_player`' . $data,
+                true,
+                false
             );
             
             if ($reply !== false) {

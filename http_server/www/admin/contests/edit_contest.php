@@ -58,4 +58,3 @@ try {
 } finally {
     die();
 }
-

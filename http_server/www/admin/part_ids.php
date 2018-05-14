@@ -195,7 +195,6 @@ Hats: 15+
 Heads: 40+
 Bodies: 33, 40+
 Feet: 31-33, 40+</pre>';
-
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();

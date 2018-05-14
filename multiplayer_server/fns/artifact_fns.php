@@ -86,4 +86,3 @@ function save_first_finder($pdo, $player)
 
     message_insert($pdo, $user_id, 1, $artifact_first_pm, '0');
 }
-
