@@ -1,13 +1,18 @@
 <?php
+
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/player_search_fns.php';
 require_once QUERIES_DIR . '/bans/bans_select_by_user_id.php';
 require_once QUERIES_DIR . '/bans/bans_select_by_ip.php';
+
 $ip = get_ip();
+
 output_header("View Priors");
+
 echo '<center><font face="Gwibble" class="gwibble">-- View Priors --</font></center>'
     .'<br>';
+
 try {
     // rate limit
     rate_limit("gui-view-priors-" . $ip, 5, 1);
@@ -45,6 +50,7 @@ try {
     if ($account_ban_count !== 1) {
         $acc_lang = 'times';
     }
+
     // look for all historical bans given to this ip address
     $ip_bans = bans_select_by_ip($pdo, $user->ip);
     $ip_ban_count = (int) count($ip_bans);
@@ -53,6 +59,7 @@ try {
     if ($ip_ban_count !== 1) {
         $ip_lang = 'times';
     }
+
     // output the results
     echo "<p>Currently banned: $banned</p>"
         ."<p>Your account has been banned $account_ban_count $acc_lang.</p> $account_ban_list"
