@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../../fns/all_fns.php';
-require_once __DIR__ . '/../../../fns/output_fns.php';
-require_once __DIR__ . '/../../../queries/contests/contest_select.php';
-require_once __DIR__ . '/../../../queries/contests/contest_update.php';
-require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
-require_once __DIR__ . '/edit_contest_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/edit_contest_fns.php';
+require_once QUERIES_DIR . '/contests/contest_select.php';
+require_once QUERIES_DIR . '/contests/contest_update.php';
+require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 
 $ip = get_ip();
 $action = find_no_cookie('action', 'form');

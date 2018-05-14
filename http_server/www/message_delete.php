@@ -1,9 +1,9 @@
 <?php
 
 header("Content-type: text/plain");
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/messages/message_delete.php';
 
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/messages/message_delete.php';
 
 $message_id = $_POST['message_id'];
 $ip = get_ip();

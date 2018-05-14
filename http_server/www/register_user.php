@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/register_user_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pr2/register_user_fns.php';
 
 $name = $_POST['name'];
 $password = $_POST['password'];

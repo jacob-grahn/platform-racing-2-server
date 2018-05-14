@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
-require_once __DIR__ . '/../../queries/messages_reported/messages_reported_archive.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
+require_once QUERIES_DIR . '/messages_reported/messages_reported_archive.php';
 
 $message_id = (int) default_get('message_id', 0);
 $ip = get_ip();

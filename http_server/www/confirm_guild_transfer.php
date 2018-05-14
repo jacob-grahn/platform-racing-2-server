@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/output_fns.php';
-require_once __DIR__ . '/../queries/guild_transfers/guild_transfer_select.php';
-require_once __DIR__ . '/../queries/guild_transfers/guild_transfer_complete.php';
-require_once __DIR__ . '/../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../queries/guilds/guild_update.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/guild_transfers/guild_transfer_select.php';
+require_once QUERIES_DIR . '/guild_transfers/guild_transfer_complete.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/guilds/guild_update.php';
 
 $code = $_GET['code'];
 $ip = get_ip();

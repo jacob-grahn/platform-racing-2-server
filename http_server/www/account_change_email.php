@@ -3,14 +3,14 @@
 header("Content-type: text/plain");
 
 require_once 'Mail.php';
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/Encryptor.php';
-require_once __DIR__ . '/../fns/send_email.php';
-require_once __DIR__ . '/../queries/users/user_select.php';
-require_once __DIR__ . '/../queries/users/user_update_email.php';
-require_once __DIR__ . '/../queries/changing_emails/changing_email_insert.php';
-require_once __DIR__ . '/../queries/changing_emails/changing_email_select.php';
-require_once __DIR__ . '/../queries/changing_emails/changing_email_complete.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/Encryptor.php';
+require_once HTTP_FNS . '/send_email.php';
+require_once QUERIES_DIR . '/users/user_select.php';
+require_once QUERIES_DIR . '/users/user_update_email.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_insert.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_select.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_complete.php';
 
 
 $encrypted_data = $_POST['data'];
@@ -44,7 +44,6 @@ try {
 
     // sanitize email
     $problematic_chars = array('&', '"', "'", "<", ">");
-    $new_email = filter_var($new_email, FILTER_SANITIZE_EMAIL);
     $new_email = str_replace($problematic_chars, '', $new_email);
 
     // sanity check: check for invalid email

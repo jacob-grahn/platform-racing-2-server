@@ -1,12 +1,12 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/campaign/campaign_select_by_id.php';
-require_once __DIR__ . '/../../queries/campaign/campaign_update.php';
-require_once __DIR__ . '/../../queries/levels/level_select.php';
-require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
-require_once __DIR__ . '/set_campaign_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/set_campaign_fns.php';
+require_once QUERIES_DIR . '/campaign/campaign_select_by_id.php';
+require_once QUERIES_DIR . '/campaign/campaign_update.php';
+require_once QUERIES_DIR . '/levels/level_select.php';
+require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 
 $action = $_POST['action'];
 $message = htmlspecialchars(find('message', ''));

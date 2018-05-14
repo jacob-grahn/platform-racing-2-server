@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/bans/ban_update.php';
-require_once __DIR__ . '/../../queries/bans/ban_select.php';
-require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/bans/ban_update.php';
+require_once QUERIES_DIR . '/bans/ban_select.php';
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
 
 $action = find_no_cookie('action', 'edit');
 $ban_id = (int) find_no_cookie('ban_id', 0);

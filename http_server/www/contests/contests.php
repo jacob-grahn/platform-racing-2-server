@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/contests/contests_select.php';
-require_once __DIR__ . '/../../queries/users/user_select_name_and_power.php';
-require_once __DIR__ . '/../../queries/contest_winners/throttle_awards.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/contests/contests_select.php';
+require_once QUERIES_DIR . '/users/user_select_name_and_power.php';
+require_once QUERIES_DIR . '/contest_winners/throttle_awards.php';
 
 $ip = get_ip();
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];

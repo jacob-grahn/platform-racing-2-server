@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/users/user_select_by_name.php';
-require_once __DIR__ . '/../../queries/recent_logins/recent_logins_select.php';
-require_once __DIR__ . '/../../queries/recent_logins/recent_logins_count_by_user.php';
-require_once __DIR__ . '/player_deep_logins_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/player_deep_logins_fns.php';
+require_once QUERIES_DIR . '/users/user_select_by_name.php';
+require_once QUERIES_DIR . '/recent_logins/recent_logins_select.php';
+require_once QUERIES_DIR . '/recent_logins/recent_logins_count_by_user.php';
 
 
 $name = find('name', '');

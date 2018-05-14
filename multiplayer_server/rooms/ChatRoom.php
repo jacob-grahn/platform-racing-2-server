@@ -29,6 +29,7 @@ class ChatRoom extends Room
         
         // safety first
         $guild_id = (int) $guild_id;
+        $mod_name = htmlspecialchars($mod->name);
         
         // preserve chatroom data
         $room_name = $this->chat_room_name;

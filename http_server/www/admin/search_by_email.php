@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/users/users_select_by_email.php';
-require_once __DIR__ . '/search_by_email_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/search_by_email_fns.php';
+require_once QUERIES_DIR . '/users/users_select_by_email.php';
 
 $ip = get_ip();
 $email = find_no_cookie('email', '');

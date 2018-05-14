@@ -1,14 +1,15 @@
 <?php
 
+error_reporting(E_ALL | E_STRICT);
+
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/pr2_fns.php';
-require_once __DIR__ . '/../fns/s3.php';
-require_once __DIR__ . '/../queries/levels/level_select_by_title.php';
-require_once __DIR__ . '/../queries/levels/level_insert.php';
-require_once __DIR__ . '/../queries/levels/level_update.php';
-require_once __DIR__ . '/../queries/new_levels/new_level_insert.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pr2_fns.php';
+require_once QUERIES_DIR . '/levels/level_select_by_title.php';
+require_once QUERIES_DIR . '/levels/level_insert.php';
+require_once QUERIES_DIR . '/levels/level_update.php';
+require_once QUERIES_DIR . '/new_levels/new_level_insert.php';
 
 $title = $_POST['title'];
 $note = $_POST['note'];
@@ -45,7 +46,7 @@ try {
 
     // connect to the db
     $pdo = pdo_connect();
-    $s3 = s3_connect();
+    //$s3 = s3_connect();
 
     // check their login
     $user_id = token_login($pdo, false);
@@ -136,20 +137,7 @@ try {
         // update existing level
         $version = $level->version + 1;
         $level_id = $level->level_id;
-        level_update(
-            $pdo,
-            $level_id,
-            $title,
-            $note,
-            $live,
-            $time,
-            $ip,
-            $min_level,
-            (int) $song,
-            $version,
-            $hash2,
-            $type
-        );
+        level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, (int) $song, $version, $hash2, $type);
     } else {
         level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, (int) $song, $user_id, $hash2, $type);
         $level = level_select_by_title($pdo, $user_id, $title);
@@ -176,14 +164,18 @@ try {
 
 
     //save this file to the new level system
-    $result = $s3->putObjectString($str, 'pr2levels1', $level_id.'.txt');
+    /*$result = $s3->putObjectString($str, 'pr2levels1', $level_id.'.txt');
     if (!$result) {
         throw new Exception('A server error was encountered. Your level could not be saved.');
-    }
+    }*/
+    
+    $file = fopen(__DIR__ . "/levels/$level_id.txt", "w");
+    fwrite($file, $str);
+    fclose($file);
 
 
     //save the new file to the backup system
-    backup_level(
+    /*backup_level(
         $pdo,
         $s3,
         $user_id,
@@ -197,7 +189,7 @@ try {
         $min_level,
         $song,
         $org_play_count
-    );
+    );*/
 
 
     //tell every one it's time to party

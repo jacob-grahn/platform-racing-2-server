@@ -2,11 +2,11 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/pr2_fns.php';
-require_once __DIR__ . '/../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../queries/guilds/guild_select_by_name.php';
-require_once __DIR__ . '/../queries/guilds/guild_select_members.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pr2_fns.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/guilds/guild_select_by_name.php';
+require_once QUERIES_DIR . '/guilds/guild_select_members.php';
 
 $guild_id = find_no_cookie('id', 0);
 $guild_name = find_no_cookie('name', '');

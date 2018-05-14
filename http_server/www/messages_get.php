@@ -2,10 +2,9 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/messages/messages_select.php';
-require_once __DIR__ . '/../queries/users/user_update_read.php';
-
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/messages/messages_select.php';
+require_once QUERIES_DIR . '/users/user_update_read.php';
 
 $start = (int) find('start', 0);
 $count = (int) find('count', 10);

@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../fns/output_fns.php';
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/player_search_fns.php';
-require_once __DIR__ . '/../queries/users/user_select_expanded.php';
-require_once __DIR__ . '/../queries/guilds/guild_select.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pages/player_search_fns.php';
+require_once QUERIES_DIR . '/users/user_select_expanded.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
 
 $name = find_no_cookie("name", "");
 $ip = get_ip();

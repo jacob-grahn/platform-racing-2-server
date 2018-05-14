@@ -2,9 +2,9 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/s3.php';
-require_once __DIR__ . '/../queries/users/user_select_expanded.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/s3.php';
+require_once QUERIES_DIR . '/users/user_select_expanded.php';
 
 $ip = get_ip();
 

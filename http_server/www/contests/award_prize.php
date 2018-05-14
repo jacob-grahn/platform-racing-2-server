@@ -1,14 +1,14 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/part_vars.php';
-require_once __DIR__ . '/../../queries/contests/contest_select.php';
-require_once __DIR__ . '/../../queries/contest_prizes/contest_prize_select.php';
-require_once __DIR__ . '/../../queries/contest_prizes/contest_prizes_select_by_contest.php';
-require_once __DIR__ . '/../../queries/contest_winners/throttle_awards.php';
-require_once __DIR__ . '/../../queries/contest_winners/contest_winner_insert.php';
-require_once __DIR__ . '/../../queries/messages/message_insert.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/contests/part_vars.php';
+require_once QUERIES_DIR . '/contests/contest_select.php';
+require_once QUERIES_DIR . '/contest_prizes/contest_prize_select.php';
+require_once QUERIES_DIR . '/contest_prizes/contest_prizes_select_by_contest.php';
+require_once QUERIES_DIR . '/contest_winners/throttle_awards.php';
+require_once QUERIES_DIR . '/contest_winners/contest_winner_insert.php';
+require_once QUERIES_DIR . '/messages/message_insert.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
