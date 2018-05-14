@@ -1,5 +1,4 @@
 <?php
-
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/player_search_fns.php';
