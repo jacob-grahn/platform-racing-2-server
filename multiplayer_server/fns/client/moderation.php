@@ -160,7 +160,6 @@ function client_ban($socket, $data)
     $banned = name_to_player($banned_name);
 
     // safety first
-    $safe_bname = htmlspecialchars($banned_name);
     $safe_reason = htmlspecialchars($reason);
 
     // set a variable that uses seconds to make friendly times

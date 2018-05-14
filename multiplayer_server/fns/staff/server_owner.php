@@ -5,7 +5,6 @@ function promote_server_mod($name, $owner, $promoted)
     global $guild_owner;
 
     // safety first
-    $safe_owner = htmlspecialchars($owner->name);
     $safe_name = htmlspecialchars($name);
 
     // if the user doesn't own the server, kill the function (2nd line of defense)
