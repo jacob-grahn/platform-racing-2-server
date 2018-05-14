@@ -297,7 +297,7 @@ function generate_level_list($pdo, $mode)
         $levels = levels_select_newest($pdo);
     }
 
-    $dir = __DIR__ . '/../www/files/lists/'.$mode.'/';
+    $dir = WWW_ROOT . '/files/lists/'.$mode.'/';
     @mkdir($dir, 0777, true);
 
     for ($j=0; $j<9; $j++) {

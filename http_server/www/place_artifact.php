@@ -76,7 +76,8 @@ try {
             $data->user_id = $user_id;
             $data->message = $message;
             $data = json_encode($data);
-            $reply = talk_to_server($server->address,
+            $reply = talk_to_server(
+                $server->address,
                 $server->port,
                 $server->salt,
                 'message_player`' . $data,

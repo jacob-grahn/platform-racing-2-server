@@ -135,7 +135,8 @@ try {
         // update existing level
         $version = $level->version + 1;
         $level_id = $level->level_id;
-        level_update($pdo,
+        level_update(
+            $pdo,
             $level_id,
             $title,
             $note,
@@ -179,7 +180,7 @@ try {
         throw new Exception('A server error was encountered. Your level could not be saved.');
     }
     
-    $file = fopen(__DIR__ . "/levels/$level_id.txt", "w");
+    $file = fopen(WWW_ROOT . "/levels/$level_id.txt", "w");
     fwrite($file, $str);
     fclose($file);
 
