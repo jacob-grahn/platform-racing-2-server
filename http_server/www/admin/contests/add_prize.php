@@ -2,7 +2,7 @@
 
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
-require_once HTTP_FNS . '/pages/admin/add_prize_fns.php';
+require_once HTTP_FNS . '/pages/admin/contests/add_prize_fns.php';
 require_once HTTP_FNS . '/pages/contests/part_vars.php';
 require_once QUERIES_DIR . '/contests/contest_select.php';
 require_once QUERIES_DIR . '/contest_prizes/contest_prize_select_id.php';
@@ -49,7 +49,6 @@ try {
     if ($action === 'form') {
         output_form($contest);
         output_footer();
-        die();
     } // add
     elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -64,5 +63,6 @@ try {
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
+} finally {
     die();
 }

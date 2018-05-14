@@ -18,24 +18,24 @@ try {
     }
 
     // check referrer
-    //require_trusted_ref();
+    require_trusted_ref();
 
     // rate limiting
-    /*rate_limit(
+    rate_limit(
         'place-artifact-attempt-'.$ip,
         30,
         1,
         "Please wait at least 30 seconds before trying to set a new artifact location again."
-    );*/
+    );
 
     // connect
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = 3483035; //(int) token_login($pdo);
+    $user_id = (int) token_login($pdo);
 
     // more rate limiting
-    /*if ($user_id != 1) {
+    if ($user_id != 1) {
         rate_limit(
             'place-artifact-'.$ip,
             3600,
@@ -48,7 +48,7 @@ try {
             10,
             "The artifact can only be placed a maximum of 10 times per hour. Try again later."
         );
-    }*/
+    }
 
     // sanity check: are they Fred?
     if ($user_id != 1 && $user_id != 4291976) {

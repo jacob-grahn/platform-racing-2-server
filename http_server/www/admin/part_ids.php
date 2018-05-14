@@ -196,9 +196,10 @@ Heads: 40+
 Bodies: 33, 40+
 Feet: 31-33, 40+</pre>';
 
-    output_footer();
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
+} finally {
     output_footer();
+    die();
 }

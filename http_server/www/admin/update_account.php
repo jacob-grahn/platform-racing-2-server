@@ -224,11 +224,11 @@ try {
         );
 
         header("Location: player_deep_info.php?name1=" . urlencode($user_name));
-        die();
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
+} finally {
     die();
 }

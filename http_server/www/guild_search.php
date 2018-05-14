@@ -1,7 +1,8 @@
 <?php
 
-require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/guild_search_fns.php';
 require_once QUERIES_DIR . '/guilds/guild_name_to_id.php';
 require_once QUERIES_DIR . '/guilds/guild_select.php';
 require_once QUERIES_DIR . '/guilds/guild_select_members.php';

@@ -61,9 +61,10 @@ try {
     $reply->guildId = $guild->guild_id;
     $reply->guildName = $guild->guild_name;
     $reply->emblem = $guild->emblem;
-    echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
+} finally {
     echo json_encode($reply);
+    die();
 }

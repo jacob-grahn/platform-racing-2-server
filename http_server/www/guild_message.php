@@ -3,7 +3,7 @@
 header("Content-type: text/plain");
 
 require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/pr2_fns.php';
+require_once HTTP_FNS . '/pr2/pr2_fns.php';
 require_once QUERIES_DIR . '/users/user_select.php';
 require_once QUERIES_DIR . '/guilds/guild_select_members.php';
 require_once QUERIES_DIR . '/messages/message_insert.php';
@@ -66,4 +66,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }

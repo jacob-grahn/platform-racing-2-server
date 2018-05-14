@@ -25,10 +25,8 @@ try {
     // connect
     $pdo = pdo_connect();
 
-
     // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-
 
     // lookup
     if ($action === 'lookup') {
@@ -43,5 +41,7 @@ try {
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
+} finally {
     output_footer();
+    die();
 }

@@ -106,14 +106,11 @@ try {
         $url_name = urlencode($name);
         output_pagination($start, $count, "&name=$url_name", $is_end);
     }
-
-    // end it all
-    output_footer();
-    die();
 } catch (Exception $e) {
     $message = $e->getMessage();
     output_search($safe_name);
     echo "<i>Error: $message</i>";
+} finally {
     output_footer();
     die();
 }

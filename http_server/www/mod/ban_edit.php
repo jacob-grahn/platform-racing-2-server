@@ -73,7 +73,6 @@ try {
 
         // redirect to the ban listing
         header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
-        die();
     } elseif ($action == 'edit') {
         $ban = ban_select($pdo, $ban_id);
         output_header('Edit Ban', true);
@@ -94,7 +93,6 @@ try {
             </form>";
 
         output_footer();
-        die();
     } else {
         throw new Exception('Unknown action specified.');
     }
@@ -103,5 +101,6 @@ try {
     output_header('Edit Ban', true);
     echo "Error: $error";
     output_footer();
+} finally {
     die();
 }

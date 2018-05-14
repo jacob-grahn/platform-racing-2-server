@@ -1,6 +1,7 @@
 common/cron/last-pm.txt
 http_server/www/music/*
 http_server/www/files/*
+http_server/www/levels/*
 env.php
 .DS_Store
 composer.phar

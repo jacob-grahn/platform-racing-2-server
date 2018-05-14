@@ -3,7 +3,6 @@
 header("Content-type: text/plain");
 
 require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/s3.php';
 require_once QUERIES_DIR . '/users/user_select_expanded.php';
 
 $ip = get_ip();
@@ -106,9 +105,10 @@ try {
     $reply->success = true;
     $reply->len = strlen($image);
     $reply->filename = $filename;
-    echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
+} finally {
     echo json_encode($reply);
+    die();
 }

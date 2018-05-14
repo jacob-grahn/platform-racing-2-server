@@ -3,7 +3,7 @@
 header("Content-type: text/plain");
 
 require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/to_hash.php';
+require_once HTTP_FNS . '/rand_crypt/to_hash.php';
 require_once QUERIES_DIR . '/users/user_select_by_name.php';
 require_once QUERIES_DIR . '/users/user_update_temp_pass.php';
 
@@ -99,7 +99,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }
-
-// seeya
-die();

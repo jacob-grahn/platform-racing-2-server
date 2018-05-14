@@ -3,7 +3,6 @@
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/player_search_fns.php';
-require_once HTTP_FNS . '/pages/create_ban_list.php';
 require_once QUERIES_DIR . '/pr2/pr2_select_true_rank.php';
 require_once QUERIES_DIR . '/bans/bans_select_by_user_id.php';
 require_once QUERIES_DIR . '/bans/bans_select_by_ip.php';

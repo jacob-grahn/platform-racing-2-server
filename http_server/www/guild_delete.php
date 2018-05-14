@@ -53,9 +53,10 @@ try {
     $reply = new stdClass();
     $reply->success = true;
     $reply->message = "\"$safe_guild_name\" (ID #$guild_id) was successfully deleted.";
-    echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
+} finally {
     echo json_encode($reply);
+    die();
 }

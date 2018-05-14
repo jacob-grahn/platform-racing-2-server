@@ -41,9 +41,10 @@ try {
     $safe_guild_name = htmlspecialchars($guild->guild_name);
     $safe_new_owner = htmlspecialchars(id_to_name($pdo, $new_owner_id));
     echo "Great success! The new owner of $safe_guild_name is $safe_new_owner. Long live $safe_guild_name!";
-    output_footer();
 } catch (Exception $e) {
     $message = $e->getMessage();
     echo "Error: $message";
+} finally {
     output_footer();
+    die();
 }

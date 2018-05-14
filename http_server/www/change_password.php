@@ -3,7 +3,7 @@
 header("Content-type: text/plain");
 
 require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/to_hash.php';
+require_once HTTP_FNS . '/rand_crypt/to_hash.php';
 require_once QUERIES_DIR . '/users/user_update_pass.php';
 
 // make some variables
@@ -58,4 +58,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }

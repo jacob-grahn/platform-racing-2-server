@@ -79,9 +79,10 @@ try {
 
     $ret = new stdClass();
     $ret->result = 'success';
-    echo json_encode($ret);
 } catch (Exception $e) {
     $ret = new stdClass();
     $ret->error = $e->getMessage();
+} finally {
     echo json_encode($ret);
+    die();
 }

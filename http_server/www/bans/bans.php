@@ -29,7 +29,7 @@ try {
 
     // navigation
     output_pagination($start, $count);
-    echo('<p>---</p>');
+    echo '<p>---</p>';
 
     if ($is_mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10);
@@ -91,7 +91,7 @@ foreach ($bans as $row) {
 			</p>";
 }
 
-echo('<p>---</p>');
+echo '<p>---</p>';
 output_pagination($start, $count);
 
 output_footer();

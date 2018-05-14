@@ -64,10 +64,10 @@ try {
     }
     echo '<input type="submit" value="Submit">';
     echo '</form>';
-
-    output_footer();
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
+} finally {
     output_footer();
+    die();
 }

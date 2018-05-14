@@ -1,6 +1,7 @@
 <?php
 
 header("Content-type: text/plain");
+
 require_once HTTP_FNS . '/all_fns.php';
 require_once QUERIES_DIR . '/ignored/ignored_insert.php';
 
@@ -44,5 +45,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
-    exit;
+} finally {
+    die();
 }

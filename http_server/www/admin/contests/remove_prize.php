@@ -90,8 +90,6 @@ try {
         echo '<br>';
         echo '<pre>Check the boxes of the prizes you wish to remove.<br>'
             .'When you\'re done, click "Remove Contest Prize(s)".</pre>';
-        output_footer();
-        die();
     } // add
     elseif ($action === 'remove') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -153,8 +151,6 @@ try {
         echo "<br><br>";
         echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Prize</a><br>";
         echo "<a href='/contests/contests.php'>&lt;- All Contests</a>";
-        output_footer();
-        die();
     } // unknown handler
     else {
         throw new Exception('Invalid action specified.');
@@ -162,6 +158,7 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
     die();
 }

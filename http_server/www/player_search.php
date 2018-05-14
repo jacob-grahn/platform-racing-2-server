@@ -13,8 +13,6 @@ output_header("Player Search");
 
 if (is_empty($name)) {
     output_search();
-    output_footer();
-    die();
 }
 
 try {
@@ -31,11 +29,11 @@ try {
     // output
     output_search($name);
     output_page($pdo, $user);
-    output_footer();
 } catch (Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
     output_search($name);
     echo "<br /><i>Error: $safe_error</i>";
+} finally {
     output_footer();
     die();
 }

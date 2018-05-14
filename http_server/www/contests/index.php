@@ -1,2 +1,4 @@
 <?php
-require_once __DIR__ . '/contests.php';
+
+require_once WWW_ROOT . '/contests/contests.php';
+die();

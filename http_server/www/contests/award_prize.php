@@ -151,8 +151,6 @@ try {
                 .'ask a member of the PR2 Staff Team for help.</b>';
         }
         echo '</pre>';
-        output_footer();
-        die();
     } // award
     elseif ($action === 'award') {
         // validate request method
@@ -316,8 +314,6 @@ try {
         echo "<br><br>";
         echo "<a href='view_winners.php?contest_id=$contest_id'>&lt;- View Winners</a><br>";
         echo "<a href='contests.php'>&lt;- All Contests</a>";
-        output_footer();
-        die();
     } // unknown handler
     else {
         throw new Exception('Invalid action specified.');
@@ -325,6 +321,7 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
     die();
 }

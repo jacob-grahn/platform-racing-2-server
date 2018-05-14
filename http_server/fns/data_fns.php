@@ -200,8 +200,8 @@ function is_empty($str, $incl_zero = true)
 function is_trusted_ref()
 {
     $ref = $_SERVER['HTTP_REFERER'];
-    return (strpos($ref, 'http://pr2hub.local/') === 0
-        || strpos($ref, 'https://pr2hub.local/') === 0
+    return (strpos($ref, 'http://pr2hub.com/') === 0
+        || strpos($ref, 'https://pr2hub.com/') === 0
         || strpos($ref, 'http://cdn.jiggmin.com/') === 0
         || strpos($ref, 'http://chat.kongregate.com/') === 0
         || strpos($ref, 'http://external.kongregate-games.com/gamez/') === 0
@@ -277,7 +277,7 @@ function check_moderator($pdo, $check_ref = true, $min_power = 2)
     $user_id = token_login($pdo);
     $user = user_select_mod($pdo, $user_id, true);
 
-    if ($user->power < $min_power || $user === false) {
+    if (!$user || $user->power < $min_power) {
         throw new Exception('You lack the power to access this resource.');
     }
 

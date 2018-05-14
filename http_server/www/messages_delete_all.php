@@ -45,11 +45,9 @@ try {
 
     // tell the world
     echo 'message=All of your PMs have been deleted!';
-
-    // seeya fam
-    die();
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
     die();
 }

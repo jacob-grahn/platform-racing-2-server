@@ -43,10 +43,11 @@ try {
 
     echo('<p>---</p>');
     output_pagination($start, $count);
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Mod Action Log', true);
     echo "Error: $error";
+} finally {
     output_footer();
+    die();
 }

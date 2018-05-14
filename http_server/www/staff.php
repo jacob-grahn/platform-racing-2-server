@@ -76,9 +76,7 @@ try {
     // end the table
     echo '</table>';
 } catch (Exception $e) {
-    $reply = new stdClass();
-    $reply->error = $e->getMessage();
-    echo json_encode($reply);
+    echo "<br><i>Error: " . htmlspecialchars($e->getMessage()) . '</i>';
 } finally {
     echo '</center>';
     output_footer();

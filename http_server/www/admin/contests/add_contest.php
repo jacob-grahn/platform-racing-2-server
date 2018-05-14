@@ -32,7 +32,6 @@ try {
         output_header('Add Contest', true, true);
         output_form();
         output_footer();
-        die();
     } // add
     elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -47,5 +46,6 @@ try {
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
+} finally {
     die();
 }

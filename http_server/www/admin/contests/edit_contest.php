@@ -40,7 +40,6 @@ try {
         output_header('Edit Contest', true, true);
         output_form($contest);
         output_footer();
-        die();
     } // add
     elseif ($action === 'edit') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -56,5 +55,7 @@ try {
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
+} finally {
     die();
 }
+

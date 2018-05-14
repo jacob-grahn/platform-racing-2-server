@@ -76,14 +76,11 @@ try {
         echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>
             $safe_name</a> | Last Active: $active_date<br>";
     }
-
-    // end it all
-    output_footer();
-    die();
 } catch (Exception $e) {
     $message = $e->getMessage();
     output_search($safe_email);
     echo "<i>Error: $message</i>";
+} finally {
     output_footer();
     die();
 }

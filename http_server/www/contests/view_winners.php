@@ -143,12 +143,9 @@ try {
     
     // back link
     echo "<br><br><a href='contests.php'>&lt;- All Contests";
-    
-    // end it
-    output_footer();
-    die();
 } catch (Exception $e) {
     echo 'Error: ' . $e->getMessage();
+} finally {
     output_footer();
     die();
 }

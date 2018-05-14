@@ -119,3 +119,4 @@ if ($is_mod === true) {
 echo '<p><a href="bans.php">Go Back</a></p>';
 
 output_footer();
+die();

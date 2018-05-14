@@ -357,11 +357,10 @@ try {
     $reply->guildName = $guild_name;
     $reply->emblem = $emblem;
     $reply->userId = $user_id;
-
-    // tell the user
-    echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
+} finally {
     echo json_encode($reply);
+    die();
 }

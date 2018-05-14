@@ -87,11 +87,11 @@ try {
     echo "</table>";
     output_pagination($start, $count);
     echo "</center>";
-
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     $safe_error = htmlspecialchars($error);
     echo "Error: $safe_error";
+} finally {
     output_footer();
+    die();
 }

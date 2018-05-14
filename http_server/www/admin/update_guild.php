@@ -153,12 +153,12 @@ try {
 
         // redirect
         header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));
-        die();
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Update Guild', true, true);
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
+} finally {
     die();
 }

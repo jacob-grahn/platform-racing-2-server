@@ -2,6 +2,7 @@
 
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/player_search_fns.php';
 require_once QUERIES_DIR . '/bans/bans_select_by_ip.php';
 require_once QUERIES_DIR . '/users/users_select_by_ip.php';
 

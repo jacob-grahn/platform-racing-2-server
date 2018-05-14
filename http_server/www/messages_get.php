@@ -71,9 +71,10 @@ try {
     $r = new stdClass();
     $r->messages = $messages_array;
     $r->success = true;
-    echo json_encode($r);
 } catch (Exception $e) {
     $r = new stdClass();
     $r->error = $e->getMessage();
+} finally {
     echo json_encode($r);
+    die();
 }

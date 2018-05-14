@@ -38,11 +38,12 @@ try {
     $ret = new stdClass();
     $ret->success = true;
     $ret->message_id = $message_id;
-    echo json_encode($ret);
 } catch (Exception $e) {
     $ret = new stdClass();
     $ret->success = false;
     $ret->error = $e->getMessage();
     $ret->message_id = $message_id;
+} finally {
     echo json_encode($ret);
+    die();
 }
