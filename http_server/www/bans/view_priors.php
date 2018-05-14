@@ -50,12 +50,7 @@ try {
     if ($account_ban_count !== 1) {
         $acc_lang = 'times';
     }
-    // override ip
-    $overridden_ip = '';
-    if (isset($force_ip) && $force_ip != '') {
-        $overridden_ip = $ip;
-        $ip = $force_ip;
-    }
+
     // look for all historical bans given to this ip address
     $ip_bans = bans_select_by_ip($pdo, $user->ip);
     $ip_ban_count = (int) count($ip_bans);
