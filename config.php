@@ -1,29 +1,5 @@
 <?php
 
-/*
-
-Post this in the pull request:
-
-
-
-**_This pull requires a server configuration edit._**
-Without this change, EVERY FILE in platform-racing-2-server will break.
-
-The goal is to tell nginx to load CONSTANTS.php every time a php command or client request is made.
-Add the following line within the "location ~ \.php$" block of your server configuration:
-
-```
-fastcgi_param PHP_VALUE "auto_prepend_file=/full/path/to/this/file/config.php";
-```
-
-Replace "/full/path/to/this/file" with the full path to config.php (this file).
-
-For more information, see these resources:
-https://stackoverflow.com/questions/26192274/replacement-for-php-htaccess-values-in-nginx
-https://stackoverflow.com/questions/14884439/automatically-load-a-config-php-file-for-all-pages-before-anything-else
-
-*/
-
 $directory = __DIR__; // this directory
 
 define('ROOT_DIR', $directory); // root
