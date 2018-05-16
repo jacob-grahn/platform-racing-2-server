@@ -43,7 +43,8 @@ users_reset_status($pdo);
 best_levels_reset($pdo);
 restart_servers($pdo);
 all_optimize($pdo, $DB_NAME);
-delete_old_accounts($pdo);
+// TODO: move this to monthly/yearly. too slow to run weekly.
+// delete_old_accounts($pdo);
 
 // tell the command line
 output('Weekly CRON successful.');
