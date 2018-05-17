@@ -59,7 +59,7 @@ try {
     if ($is_admin === true) {
         $base_url = "/admin/player_deep_info.php?name1=";
     } elseif ($is_admin === false && $is_mod === true) {
-        $base_url = "/mod/do_player_search.php?name=";
+        $base_url = "/mod/player_info.php?name=";
     } else {
         $base_url = "/player_search.php?name=";
     }
