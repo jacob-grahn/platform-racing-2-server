@@ -4,5 +4,6 @@ http_server/www/files/*
 http_server/www/levels/*
 env.php
 .DS_Store
+*.icloud
 composer.phar
 vendor
