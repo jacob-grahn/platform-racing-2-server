@@ -289,11 +289,13 @@ class Player
         if ($room_type == 'c') {
             $think_array = [":thinking:", ":think:", ":what:", ":hmm:"];
             $lol_array = [":lol:", ":laugh:", ":lmao:", ":joy:"];
+            $fred_array = [":fred:", ":cactus:"];
             
             $chat_message = str_ireplace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
             $chat_message = str_ireplace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
             $chat_message = str_ireplace($think_array, "🤔", $chat_message);
             $chat_message = str_ireplace($lol_array, "😂", $chat_message);
+            $chat_message = str_ireplace($fred_array, "🌵", $chat_message);
         }
 
         // html killer for systemChat
@@ -666,7 +668,7 @@ class Player
                 } else {
                     $this->write(
                         "message`Error: Could not find a user with the name \"$safe_dc_name\" on this server."
-                    );
+                    ); // they're not online or don't exist ^^
                 }
             } // hh status for everyone, activate for admins, deactivate for admins and server owners
             elseif (($chat_message == '/hh' || strpos($chat_message, '/hh ') === 0)) {
@@ -711,7 +713,7 @@ class Player
                             HappyHour::activate($args[1]);
                         }
                         $player_room->sendChat('systemChat`'.
-                            userify($this, $this->name) .
+                            userify($this, $this->name).
                             ' just triggered a Happy Hour!');
                     } elseif (PR2SocketServer::$tournament == true) {
                         $this->write('systemChat`You can\'t activate a Happy '.
@@ -733,7 +735,7 @@ class Player
                     } elseif (HappyHour::isActive() && $this->hh_warned) {
                         HappyHour::deactivate();
                         $player_room->sendChat('systemChat`' .
-                            userify($this, $this->name) .
+                            htmlspecialchars($this->name) .
                             ' just ended the current Happy Hour.');
                     } else {
                         $this->write('systemChat`There isn\'t an active Happy Hour right now.');
@@ -806,6 +808,7 @@ class Player
                                 .':lenny: = ( ͡° ͜ʖ ͡°)<br>'
                                 .':think: = 🤔<br>'
                                 .':laugh: = 😂<br>'
+                                .':fred: = 🌵<br>'
                                 .'Note: Emoticons can\'t be used in races.');
                 } else {
                     $this->write('systemChat`To get a list of emoticons that can be used in the chatroom,'
@@ -834,7 +837,6 @@ class Player
                                 '- /kick *name*<br>'.
                                 '- /unkick *name*<br>'.
                                 '- /disconnect *name*<br>'.
-                                '- /priors *name*<br>'.
                                 '- /clear';
                             $effects = '<br>Chat Effects:<br>'.
                                 '- /b (Bold)<br>'.

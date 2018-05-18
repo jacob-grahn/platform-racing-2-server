@@ -2,10 +2,9 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/messages/messages_select.php';
-require_once __DIR__ . '/../queries/users/user_update_read.php';
-
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/messages/messages_select.php';
+require_once QUERIES_DIR . '/users/user_update_read.php';
 
 $start = (int) find('start', 0);
 $count = (int) find('count', 10);
@@ -47,7 +46,7 @@ try {
             $messages_array[] = $message;
             break;
         }
-    
+
         if ($row->message_id > $largest_id) {
             $largest_id = $row->message_id;
         }
@@ -72,9 +71,9 @@ try {
     $r = new stdClass();
     $r->messages = $messages_array;
     $r->success = true;
-    echo json_encode($r);
 } catch (Exception $e) {
     $r = new stdClass();
     $r->error = $e->getMessage();
+} finally {
     echo json_encode($r);
 }

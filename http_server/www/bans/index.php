@@ -1,2 +1,3 @@
 <?php
-require_once __DIR__ . '/bans.php';
+
+require_once WWW_ROOT . '/bans/bans.php';

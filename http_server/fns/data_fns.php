@@ -1,16 +1,16 @@
 <?php
 
-// requests from a flash client will include this header
+// requests from a flash client will include this header (only used in logout.php)
 function is_from_game()
 {
     $req_with = default_server("HTTP_X_REQUESTED_WITH", "");
     $ref = default_server("HTTP_REFERER");
-    
+
     // let people type in the url manually
     if (is_empty($ref)) {
         return true;
     }
-    
+
     // does the request originate from the flash player?
     return strpos($req_with, "ShockwaveFlash/") === 0;
 }
@@ -29,6 +29,7 @@ function test_epic($color, $arr_str, $part)
 }
 
 
+// add part to part array if not already present
 function add_item(&$arr, $item)
 {
     if (array_search($item, $arr) === false) {
@@ -39,11 +40,11 @@ function add_item(&$arr, $item)
     }
 }
 
-// tries to pull a variable from the $_GET or $_POST array
-// if it is not present, the default is used
-function find($str, $default = null)
+
+// tries to find a variable in various request arrays; uses default if not found
+function find($str, $default = null, $cookie = true)
 {
-    if (isset($_COOKIE[$str])) {
+    if (isset($_COOKIE[$str]) && $cookie === true) {
         $val = $_COOKIE[$str];
         return $val;
     }
@@ -61,7 +62,15 @@ function find($str, $default = null)
     }
 }
 
-// get a variable from the $_GET array without throwing a warning if it doesn't exist
+
+// placeholder function to appease files still using
+function find_no_cookie($str, $default = null)
+{
+    return find($str, $default, false);
+}
+
+
+// gets a variable from $_GET array, or default if it doesn't exist
 function default_get($str, $default = null)
 {
     if (isset($_GET[$str])) {
@@ -72,7 +81,7 @@ function default_get($str, $default = null)
 }
 
 
-// get a variable from the $_POST array without throwing a warning if it doesn't exist
+// gets a variable from $_POST array, or default if it doesn't exist
 function default_post($str, $default = null)
 {
     if (isset($_POST[$str])) {
@@ -83,7 +92,7 @@ function default_post($str, $default = null)
 }
 
 
-// get a variable from the $_SERVER array without throwing a warning if it doesn't exist
+// gets a variable from $_SERVER array, or default if it doesn't exist
 function default_server($str, $default = null)
 {
     if (isset($_SERVER[$str])) {
@@ -94,23 +103,7 @@ function default_server($str, $default = null)
 }
 
 
-function find_no_cookie($str, $default = null)
-{
-    if (isset($_POST[$str])) {
-        $val = $_POST[$str];
-        return $val;
-    }
-    if (isset($_GET[$str])) {
-        $val = $_GET[$str];
-        return $val;
-    }
-    if (!isset($val)) {
-        $val = $default;
-        return $val;
-    }
-}
-
-
+// gets any variable, uses default if it doesn't exist
 function default_val($val, $default = null)
 {
     if (is_empty($val)) {
@@ -121,7 +114,7 @@ function default_val($val, $default = null)
 }
 
 
-
+// time formatting
 function format_duration($seconds)
 {
     if ($seconds < 60) {
@@ -164,22 +157,16 @@ function format_duration($seconds)
 }
 
 
+// get a user's IP address
 function get_ip()
 {
     return $_SERVER["REMOTE_ADDR"];
 }
 
+
+// check for a string inside another variable, echoing yes/no if found/not
 function check_value($value, $check_for, $yes = 'yes', $no = 'no')
 {
-
-    /*
-    Arguments:
-    1. $value: the string/value you're checking
-    2. $check_for: what you are checking the string against
-    3. $yes: what you want to be echoed if the check is found
-    4. $no: what you want to be echoed if the check isn't found
-    */
-
     if ($value == $check_for) {
         return $yes;
     } else {
@@ -187,28 +174,18 @@ function check_value($value, $check_for, $yes = 'yes', $no = 'no')
     }
 }
 
+
+// checks if a string is empty (includes a variety of checks)
 function is_empty($str, $incl_zero = true)
 {
-    /*
-    $incl_zero: checks if the user wants to include the string "0" in the empty check.
-    If not, empty($str) will make this function return true.
-    */
-
-    // if the string length is 0, it's empty
-    if (strlen(trim($str)) === 0) {
+    if (strlen(trim($str)) === 0 || !isset($str)) { // if the string length is 0 or it isn't set
         return true;
     }
-    // if the string isn't set, it's empty
-    if (!isset($str)) {
-        return true;
-    }
-    // if the string is empty and not 0, it's empty
-    if ($incl_zero) {
+    if ($incl_zero === true) { // if the string is empty and not 0, it's empty
         if (empty($str) && $str != '0') {
             return true;
         }
-    } // if the string is empty, it's empty
-    else {
+    } else {
         if (empty($str)) {
             return true;
         }
@@ -218,6 +195,8 @@ function is_empty($str, $incl_zero = true)
     return false;
 }
 
+
+// referrer check
 function is_trusted_ref()
 {
     $ref = $_SERVER['HTTP_REFERER'];
@@ -232,6 +211,7 @@ function is_trusted_ref()
 }
 
 
+// checks for trusted ref, throws an exception if not
 function require_trusted_ref($action = 'perform this action', $mod = false)
 {
     if (!is_trusted_ref() && $mod === false) {
@@ -244,69 +224,6 @@ function require_trusted_ref($action = 'perform this action', $mod = false)
         throw new Exception(trim($err));
     }
 }
-
-
-// send a message to every server
-// DO NOT OUTPUT ANYTHING FROM THIS FUNCTION FOR TESTING
-function poll_servers($servers, $message, $receive = true, $server_ids = array())
-{
-    $results = array();
-
-    foreach ($servers as $server) {
-        if (count($server_ids) == 0 || array_search($server->server_id, $server_ids) !== false) {
-            $result = talk_to_server($server->address, $server->port, $server->salt, $message, $receive);
-            $server->command = $message;
-            $server->result = json_decode($result);
-            $results[] = $server;
-        }
-    }
-
-    return( $results );
-}
-
-
-
-// connects to the farm server and calls a function
-function talk_to_server($address, $port, $key, $server_function, $receive = false)
-{
-    global $PROCESS_PASS;
-
-    $end = chr(0x04);
-    $send_num = 1;
-    $data = $PROCESS_PASS;
-    $intro_function = 'become_process';
-    $str_to_hash = $key . $send_num.'`'.$intro_function.'`'.$data;
-    $local_hash = md5($str_to_hash);
-    $sub_hash = substr($local_hash, 0, 3);
-
-    $message1 = $sub_hash .'`'. $send_num .'`'. $intro_function .'`'. $data . $end;
-    $message2 = $server_function . $end;
-    $send_str = $message1 . $message2;
-
-    $reply = true;
-    $fsock = fsockopen($address, $port, $errno, $errstr, 2);
-
-    if ($fsock) {
-        fputs($fsock, $send_str);
-        stream_set_timeout($fsock, 2);
-        if ($receive) {
-            $reply = fread($fsock, 999999);
-        }
-        fclose($fsock);
-    } else {
-        echo "$errno $errstr \n";
-        $reply = false;
-    }
-
-    if ($receive && $reply == '') {
-        $reply = false;
-    } else {
-        $reply = substr($reply, 0, strlen($reply)-1);
-    }
-
-    return($reply);
-}
-
 
 
 // tests to see if a string contains obscene words
@@ -339,8 +256,6 @@ function is_obscene($str)
 }
 
 
-
-
 // checks if an email address is valid
 function valid_email($email)
 {
@@ -352,11 +267,10 @@ function valid_email($email)
 }
 
 
-
 // returns your account if you are a moderator
 function check_moderator($pdo, $check_ref = true, $min_power = 2)
 {
-    if ($check_ref) {
+    if ($check_ref === true) {
         require_trusted_ref('', true);
     }
 
@@ -369,7 +283,6 @@ function check_moderator($pdo, $check_ref = true, $min_power = 2)
 
     return $user;
 }
-
 
 
 // returns true if you are logged in as a moderator, false if you are not
@@ -387,8 +300,6 @@ function is_moderator($pdo, $check_ref = true)
 }
 
 
-
-
 // returns true if you are logged in as an admin, false if you are not
 function is_admin($pdo, $check_ref = true)
 {
@@ -402,8 +313,6 @@ function is_admin($pdo, $check_ref = true)
 
     return $is_admin;
 }
-
-
 
 
 // format the list of levels returned from the db
@@ -454,8 +363,6 @@ function format_level_list($levels)
 }
 
 
-
-
 // replace naughty words with slightly less naughty ones
 function filter_swears($str)
 {
@@ -465,19 +372,17 @@ function filter_swears($str)
     $niggerArray = array("someone cooler than me", "ladies magnet", "cooler race");
     $bitchArray = array("cooler gender", "female dog");
 
-    $str = str_replace('damn', $damnArray[ array_rand($damnArray) ], $str);
-    $str = str_replace('fuck', $fuckArray[ array_rand($fuckArray) ], $str);
-    $str = str_replace('nigger', $niggerArray[ array_rand($niggerArray) ], $str);
-    $str = str_replace('nigga', $niggerArray[ array_rand($niggerArray) ], $str);
-    $str = str_replace('spic ', $niggerArray[ array_rand($niggerArray) ], $str);
-    $str = str_replace('shit', $shitArray[ array_rand($shitArray) ], $str);
-    $str = str_replace('bitch', $bitchArray[ array_rand($bitchArray) ], $str);
-    $str = str_replace('cunt', $bitchArray[ array_rand($bitchArray) ], $str);
+    $str = str_replace('damn', $damnArray[array_rand($damnArray)], $str);
+    $str = str_replace('fuck', $fuckArray[array_rand($fuckArray)], $str);
+    $str = str_replace('nigger', $niggerArray[array_rand($niggerArray)], $str);
+    $str = str_replace('nigga', $niggerArray[array_rand($niggerArray)], $str);
+    $str = str_replace('spic ', $niggerArray[array_rand($niggerArray)], $str);
+    $str = str_replace('shit', $shitArray[array_rand($shitArray)], $str);
+    $str = str_replace('bitch', $bitchArray[array_rand($bitchArray)], $str);
+    $str = str_replace('cunt', $bitchArray[array_rand($bitchArray)], $str);
 
     return( $str );
 }
-
-
 
 
 // slow down a bit, yo.
@@ -497,11 +402,5 @@ function rate_limit($key, $interval, $max, $error = 'Slow down a bit, yo.')
     $count++;
     apcu_store($key, $count, $interval);
 
-    return( $count );
-}
-
-// handy output function; never leave home without it!
-function output($str)
-{
-    echo "* $str \n";
+    return($count);
 }

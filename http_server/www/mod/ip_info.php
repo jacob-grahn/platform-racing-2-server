@@ -1,9 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/bans/bans_select_by_ip.php';
-require_once __DIR__ . '/../../queries/users/users_select_by_ip.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/player_search_fns.php';
+require_once QUERIES_DIR . '/bans/bans_select_by_ip.php';
+require_once QUERIES_DIR . '/users/users_select_by_ip.php';
 
 $ip = default_get('ip', '');
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
@@ -19,18 +20,6 @@ try {
 
     //make sure you're a mod
     $mod = check_moderator($pdo, false);
-} catch (Exception $e) {
-    $message = $e->getMessage();
-    output_header('Error');
-    echo "Error: $message";
-    output_footer();
-    die();
-}
-
-// mod validated try/catch
-try {
-    // header
-    output_header('IP Info', true);
 
     // sanity check: is a value entered for IP?
     if (empty($ip)) {
@@ -75,6 +64,9 @@ try {
 
     // we can dance if we want to, we can leave your friends behind
     $html_ip = htmlspecialchars($ip);
+
+    // header
+    output_header('IP Info', true);
 
     // start
     echo "<p>IP: $html_ip</p>";
@@ -142,10 +134,11 @@ try {
         echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>$name</a>
             | Last Active: $active<br>";
     }
+
+    output_footer();
 } catch (Exception $e) {
     $message = $e->getMessage();
+    output_header('Error');
     echo "Error: $message";
-} finally {
     output_footer();
-    die();
 }

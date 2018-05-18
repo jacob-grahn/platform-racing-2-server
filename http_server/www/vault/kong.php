@@ -2,23 +2,23 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/kong_order_placed.php';
-require_once __DIR__ . '/kong_order_request.php';
-require_once __DIR__ . '/vault_fns.php';
-require_once __DIR__ . '/../../fns/all_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pages/vault/kong_order_placed.php';
+require_once HTTP_FNS . '/pages/vault/kong_order_request.php';
+require_once HTTP_FNS . '/pages/vault/vault_fns.php';
 
-require_once __DIR__ . '/../../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../../queries/messages/message_insert.php';
-require_once __DIR__ . '/../../queries/purchases/purchase_insert.php';
-require_once __DIR__ . '/../../queries/rank_token_rentals/rank_token_rentals_count.php';
-require_once __DIR__ . '/../../queries/rank_token_rentals/rank_token_rental_insert.php';
-require_once __DIR__ . '/../../queries/servers/server_select.php';
-require_once __DIR__ . '/../../queries/servers/server_select_by_guild_id.php';
-require_once __DIR__ . '/../../queries/servers/server_insert.php';
-require_once __DIR__ . '/../../queries/servers/server_update_expire_date.php';
-require_once __DIR__ . '/../../queries/servers/servers_select.php';
-require_once __DIR__ . '/../../queries/servers/servers_select_highest_port.php';
-require_once __DIR__ . '/../../queries/users/user_select_expanded.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/messages/message_insert.php';
+require_once QUERIES_DIR . '/purchases/purchase_insert.php';
+require_once QUERIES_DIR . '/rank_token_rentals/rank_token_rentals_count.php';
+require_once QUERIES_DIR . '/rank_token_rentals/rank_token_rental_insert.php';
+require_once QUERIES_DIR . '/servers/server_select.php';
+require_once QUERIES_DIR . '/servers/server_select_by_guild_id.php';
+require_once QUERIES_DIR . '/servers/server_insert.php';
+require_once QUERIES_DIR . '/servers/server_update_expire_date.php';
+require_once QUERIES_DIR . '/servers/servers_select.php';
+require_once QUERIES_DIR . '/servers/servers_select_highest_port.php';
+require_once QUERIES_DIR . '/users/user_select_expanded.php';
 
 
 try {

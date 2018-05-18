@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/bans/ban_select.php';
-require_once __DIR__ . '/../../queries/bans/ban_lift.php';
-require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/bans/ban_select.php';
+require_once QUERIES_DIR . '/bans/ban_lift.php';
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
 
 // for both
 $action = find('action', 'form');
@@ -24,15 +24,8 @@ try {
 
     // make sure you're a moderator
     $mod = check_moderator($pdo);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header('Error');
-    echo "Error: $error";
-    output_footer();
-    die();
-}
 
-try {
+    // lift
     if ($action === 'lift' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         // sanity check: are any values blank?
         if (is_empty($ban_id, false) || is_empty($reason)) {
@@ -55,7 +48,6 @@ try {
 
         //redirect to a page showing the lifted ban
         header("Location: /bans/show_record.php?ban_id=$ban_id");
-        die();
     } else {
         // get the ban
         $ban = ban_select($pdo, $ban_id);
@@ -74,11 +66,11 @@ try {
             .'<input type="text" value="They bribed me with skittles!" name="reason" size="70">'
             .'&nbsp;<input type="submit" value="Lift Ban">'
             .'</form>';
+        output_footer();
     }
 } catch (Exception $e) {
-    output_header('Lift Ban', true);
-    echo 'Error: ' . htmlspecialchars($e->getMessage());
-} finally {
+    $error = $e->getMessage();
+    output_header('Error');
+    echo "Error: $error";
     output_footer();
-    die();
 }

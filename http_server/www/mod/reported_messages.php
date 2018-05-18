@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/messages_reported/messages_reported_select.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/messages_reported/messages_reported_select.php';
 
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
@@ -19,24 +19,16 @@ try {
 
     //make sure you're a moderator
     $mod = check_moderator($pdo, false);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header("Error");
-    echo "Error: $error";
-    output_footer();
-    die();
-}
 
-try {
+    //get the messages
+    $messages = messages_reported_select($pdo, $start, $count);
+
     // output header
     output_header('Reported Messages', true);
 
     // navigation
     output_pagination($start, $count);
     echo('<p>---</p>');
-
-    //get the messages
-    $messages = messages_reported_select($pdo, $start, $count);
 
     //output the messages
     foreach ($messages as $row) {
@@ -59,68 +51,67 @@ try {
         }
 
         echo("	<br/>
-				<div class='$class'>
-				<p>
+                <div class='$class'>
+                <p>
                     <a href='player_info.php?user_id=$from_user_id&force_ip=$from_ip'>$from_name</a>
                     sent this message to
                     <a href='player_info.php?user_id=$to_user_id&force_ip=$reporter_ip'>$to_name</a>
                     on $formatted_time
                 <p>
-				<p>$html_safe_message</p> ");
+                <p>$html_safe_message</p> ");
 
         if (!$archived) {
             $form_id = 'f'.$next_form_id;
             $button_id = 'b'.$next_form_id;
             $div_id = 'd'.$next_form_id++;
             echo("<div id='$div_id'>
-					<input id='$button_id' type='submit' value='Archive' />
-					<br/>
-					-- or --
-					<br/>
-					<form id='$form_id' action='../ban_user.php' method='post'>
-						<input type='hidden' value='yes' name='using_mod_site'  />
-						<input type='hidden' value='$from_name' name='banned_name' />
-						<input type='hidden' value='$from_ip' name='force_ip' />
-						<input type='submit' name='reason' value='Flaming' />
-						<input type='submit' name='reason' value='Vulgar Language' />
-						<input type='submit' name='reason' value='Password Scamming' />
-						<input type='submit' name='reason' value='Spam' />
-						<select name='duration'>
-							<option value='60'>1 Minute</option>
-							<option value='3600' selected='selected'>1 Hour</option>
-							<option value='86400'>1 Day</option>
-							<option value='604800'>1 Week</option>
-							<option value='2592000'>1 Month</option>
-							<option value='31536000'>1 Year</option>
-						</select>
-					</form>
-				</div>
-				<script>
-					$('#$form_id').ajaxForm(function() {
-						$('#$div_id').remove();
-						$.get('archive_message.php', {message_id: $message_id});
-					});
-					$('#$button_id').click(function() {
-						$('#$div_id').remove();
-						$.get('archive_message.php', {message_id: $message_id});
-					});
-				</script>
-			");
+                    <input id='$button_id' type='submit' value='Archive' />
+                    <br/>
+                    -- or --
+                    <br/>
+                    <form id='$form_id' action='../ban_user.php' method='post'>
+                        <input type='hidden' value='yes' name='using_mod_site'  />
+                        <input type='hidden' value='$from_name' name='banned_name' />
+                        <input type='hidden' value='$from_ip' name='force_ip' />
+                        <input type='submit' name='reason' value='Flaming' />
+                        <input type='submit' name='reason' value='Vulgar Language' />
+                        <input type='submit' name='reason' value='Password Scamming' />
+                        <input type='submit' name='reason' value='Spam' />
+                        <select name='duration'>
+                            <option value='60'>1 Minute</option>
+                            <option value='3600' selected='selected'>1 Hour</option>
+                            <option value='86400'>1 Day</option>
+                            <option value='604800'>1 Week</option>
+                            <option value='2592000'>1 Month</option>
+                            <option value='31536000'>1 Year</option>
+                        </select>
+                    </form>
+                </div>
+                <script>
+                    $('#$form_id').ajaxForm(function() {
+                        $('#$div_id').remove();
+                        $.get('archive_message.php', {message_id: $message_id});
+                    });
+                    $('#$button_id').click(function() {
+                        $('#$div_id').remove();
+                        $.get('archive_message.php', {message_id: $message_id});
+                    });
+                </script>
+            ");
         }
 
         echo("
-				</div>
-				<p>&nbsp;</p>");
+                </div>
+                <p>&nbsp;</p>");
     }
 
 
     echo('<p>---</p>');
     output_pagination($start, $count);
-
     output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
-    output_header('Reported Messages', true);
+    output_header("Error");
     echo "Error: $error";
     output_footer();
 }

@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/levels/levels_search.php';
-
 header("Content-type: text/plain");
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/levels/levels_search.php';
 
 $mode = default_post('mode', 'user');
 $search_str = default_post('search_str', '');

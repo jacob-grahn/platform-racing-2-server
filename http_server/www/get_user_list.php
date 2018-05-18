@@ -1,9 +1,9 @@
 <?php
 
 header("Content-type: text/plain");
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/friends/friends_select.php';
-require_once __DIR__ . '/../queries/ignored/ignored_select_list.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/friends/friends_select.php';
+require_once QUERIES_DIR . '/ignored/ignored_select_list.php';
 
 $mode = find_no_cookie('mode');
 $ip = get_ip();

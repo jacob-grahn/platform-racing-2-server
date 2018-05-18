@@ -1,12 +1,12 @@
 <?php
 
-require_once __DIR__ . '/../../../fns/all_fns.php';
-require_once __DIR__ . '/../../../fns/output_fns.php';
-require_once __DIR__ . '/../../contests/part_vars.php';
-require_once __DIR__ . '/../../../queries/contests/contest_select.php';
-require_once __DIR__ . '/../../../queries/contest_prizes/contest_prizes_select_by_contest.php';
-require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_delete.php';
-require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/contests/part_vars.php';
+require_once QUERIES_DIR . '/contests/contest_select.php';
+require_once QUERIES_DIR . '/contest_prizes/contest_prizes_select_by_contest.php';
+require_once QUERIES_DIR . '/contest_prizes/contest_prize_delete.php';
+require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
@@ -27,16 +27,6 @@ try {
 
     // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
-
-try {
-    // header
-    output_header('Remove Contest Prize', true, true);
 
     // get contest info
     $contest = contest_select($pdo, $contest_id, false, true);
@@ -49,6 +39,9 @@ try {
     if ($prizes == false || empty($prizes)) {
         throw new Exception("This contest doesn't currently have any prizes.");
     }
+
+    // header
+    output_header('Remove Contest Prize', true, true);
 
     // form
     if ($action === 'form') {
@@ -90,8 +83,6 @@ try {
         echo '<br>';
         echo '<pre>Check the boxes of the prizes you wish to remove.<br>'
             .'When you\'re done, click "Remove Contest Prize(s)".</pre>';
-        output_footer();
-        die();
     } // add
     elseif ($action === 'remove') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -153,15 +144,16 @@ try {
         echo "<br><br>";
         echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Prize</a><br>";
         echo "<a href='/contests/contests.php'>&lt;- All Contests</a>";
+
+        // footer
         output_footer();
-        die();
     } // unknown handler
     else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
-    die();
 }

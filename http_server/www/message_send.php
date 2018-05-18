@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/pr2_fns.php';
-
 header("Content-type: text/plain");
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pr2/pr2_fns.php';
 
 $to_name = $_POST['to_name'];
 $message = $_POST['message'];
@@ -14,7 +14,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
     }
-    
+
     // ref check
     require_trusted_ref('send PMs');
 

@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../fns/player_search_fns.php';
-require_once __DIR__ . '/../../queries/pr2/pr2_select_true_rank.php';
-require_once __DIR__ . '/../../queries/bans/bans_select_by_user_id.php';
-require_once __DIR__ . '/../../queries/bans/bans_select_by_ip.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/player_search_fns.php';
+require_once QUERIES_DIR . '/pr2/pr2_select_true_rank.php';
+require_once QUERIES_DIR . '/bans/bans_select_by_user_id.php';
+require_once QUERIES_DIR . '/bans/bans_select_by_ip.php';
 
 $user_id = (int) default_get('user_id', 0);
 $name = default_get('name', '');
@@ -15,13 +15,6 @@ $ip = find_no_cookie('ip');
 $mod_ip = get_ip();
 
 try {
-    // sanity check: send IP to ip_info.php
-    if ((!is_empty($ip) || !is_empty($force_ip)) && is_empty($user_id, false) && is_empty($name)) {
-        $ip = urlencode($ip);
-        header("Location: ip_info.php?ip=$ip");
-        die();
-    }
-
     // rate limiting
     rate_limit('mod-player-info-'.$mod_ip, 5, 2);
 
@@ -30,18 +23,16 @@ try {
 
     // make sure you're a moderator
     $mod = check_moderator($pdo, false);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header("Error");
-    echo "Error: $error";
-    output_footer();
-    die();
-}
 
-try {
+    // sanity check: send IP to ip_info.php
+    if ((!is_empty($ip) || !is_empty($force_ip)) && is_empty($user_id, false) && is_empty($name)) {
+        $ip = urlencode($ip);
+        header("Location: ip_info.php?ip=$ip");
+    }
+
     // header
     output_header('Player Info', true);
-    
+
     // determine mode
     $mode = '';
     if (!is_empty($name) && ($user_id === 0 || is_empty($user_id, false))) {
@@ -55,12 +46,12 @@ try {
         output_search('', false);
         throw new Exception();
     }
-    
+
     if ($user === false) {
         output_search('', false);
         throw new Exception("Could not find a user with that $mode.");
     }
-    
+
     // output search without gwibble text
     output_search($user->name, false);
 
@@ -147,10 +138,7 @@ try {
         ."<p><a href='ban.php?user_id=$user_id&force_ip=$force_ip'>Ban User</a></p>";
 } catch (Exception $e) {
     $error = $e->getMessage();
-    if (!is_empty($error)) {
-        echo "<i>Error: $error</i>";
-    }
-} finally {
+    output_header("Error");
+    echo "Error: $error";
     output_footer();
-    die();
 }

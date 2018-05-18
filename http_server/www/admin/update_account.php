@@ -1,21 +1,21 @@
 <?php
 
 // output, misc functions
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
 
 // user data update functions
-require_once __DIR__ . '/../../queries/staff/admin/admin_account_update.php';
+require_once QUERIES_DIR . '/staff/admin/admin_account_update.php';
 
 // guild, email functions
-require_once __DIR__ . '/../../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../../queries/guilds/guild_increment_member.php';
-require_once __DIR__ . '/../../queries/changing_emails/changing_email_insert.php';
-require_once __DIR__ . '/../../queries/changing_emails/changing_email_select.php';
-require_once __DIR__ . '/../../queries/changing_emails/changing_email_complete.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/guilds/guild_increment_member.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_insert.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_select.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_complete.php';
 
 // admin log
-require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
+require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 
 // variables
 $user_id = find('id');
@@ -31,14 +31,7 @@ try {
 
     //make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
 
-try {
     // header
     output_header('Update PR2 Account', true, true);
 
@@ -82,7 +75,6 @@ try {
             .'<br>'
             .'Find what each part ID is <a href="part_ids.php" target="blank">here</a>.<br><br>'
             .'NOTE: Make sure the user is logged out of PR2 before trying to change parts.</pre>';
-        output_footer();
     }
 
 
@@ -224,11 +216,11 @@ try {
         );
 
         header("Location: player_deep_info.php?name1=" . urlencode($user_name));
-        die();
     }
+    output_footer();
 } catch (Exception $e) {
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
-    die();
 }

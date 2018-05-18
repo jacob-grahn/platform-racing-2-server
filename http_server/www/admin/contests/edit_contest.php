@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../../fns/all_fns.php';
-require_once __DIR__ . '/../../../fns/output_fns.php';
-require_once __DIR__ . '/../../../queries/contests/contest_select.php';
-require_once __DIR__ . '/../../../queries/contests/contest_update.php';
-require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
-require_once __DIR__ . '/edit_contest_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/edit_contest_fns.php';
+require_once QUERIES_DIR . '/contests/contest_select.php';
+require_once QUERIES_DIR . '/contests/contest_update.php';
+require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 
 $ip = get_ip();
 $action = find_no_cookie('action', 'form');
@@ -21,14 +21,7 @@ try {
 
     // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
 
-try {
     // select contest
     $contest = contest_select($pdo, $contest_id, false, true);
     if (empty($contest) || $contest === false) {
@@ -40,7 +33,6 @@ try {
         output_header('Edit Contest', true, true);
         output_form($contest);
         output_footer();
-        die();
     } // add
     elseif ($action === 'edit') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -52,9 +44,8 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    output_header('Edit Contest', true, true);
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
-    die();
 }

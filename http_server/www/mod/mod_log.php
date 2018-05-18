@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/staff/actions/mod_actions_select.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/staff/actions/mod_actions_select.php';
 
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
@@ -17,15 +17,7 @@ try {
 
     //make sure you're a moderator
     $mod = check_moderator($pdo, false);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header("Error");
-    echo "Error: $error";
-    output_footer();
-    die();
-}
 
-try {
     // get actions for this page
     $actions = mod_actions_select($pdo, $start, $count);
 
@@ -46,7 +38,7 @@ try {
     output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
-    output_header('Mod Action Log', true);
+    output_header("Error");
     echo "Error: $error";
     output_footer();
 }

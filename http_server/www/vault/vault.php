@@ -1,13 +1,13 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../queries/users/user_select_expanded.php';
-require_once __DIR__ . '/../../queries/servers/server_select.php';
-require_once __DIR__ . '/../../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../../queries/rank_token_rentals/rank_token_rentals_count.php';
-require_once __DIR__ . '/vault_fns.php';
-
 header("Content-type: text/plain");
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pages/vault/vault_fns.php';
+require_once QUERIES_DIR . '/users/user_select_expanded.php';
+require_once QUERIES_DIR . '/servers/server_select.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/rank_token_rentals/rank_token_rentals_count.php';
 
 $ip = get_ip();
 

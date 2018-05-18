@@ -2,17 +2,16 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/to_hash.php';
-require_once __DIR__ . '/../queries/users/user_select_by_name.php';
-require_once __DIR__ . '/../queries/users/user_update_temp_pass.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/rand_crypt/to_hash.php';
+require_once QUERIES_DIR . '/users/user_select_by_name.php';
+require_once QUERIES_DIR . '/users/user_update_temp_pass.php';
 
 $name = $_POST['name'];
 $ip = get_ip();
 
 // sanitize email
 $problematic_chars = array('&', '"', "'", "<", ">");
-$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
 $email = str_replace($problematic_chars, '', $email);
 
 try {
@@ -67,7 +66,7 @@ try {
 
     // --- email them their new pass --- \\
     include 'Mail.php';
-    
+
     $recipient = $user->email;
 
     $headers = array();
@@ -101,6 +100,3 @@ try {
     $error = $e->getMessage();
     echo "error=$error";
 }
-
-// seeya
-die();

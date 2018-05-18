@@ -2,9 +2,9 @@
 
 header("Content-Type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/pr2_fns.php';
-require_once __DIR__ . '/../queries/guilds/guilds_select_by_most_gp_today.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pr2/pr2_fns.php';
+require_once QUERIES_DIR . '/guilds/guilds_select_by_most_gp_today.php';
 
 $sort = find('sort', 'gpToday');
 $ip = get_ip();

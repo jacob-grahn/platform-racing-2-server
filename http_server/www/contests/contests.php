@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/contests/contests_select.php';
-require_once __DIR__ . '/../../queries/users/user_select_name_and_power.php';
-require_once __DIR__ . '/../../queries/contest_winners/throttle_awards.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/contests/contests_select.php';
+require_once QUERIES_DIR . '/users/user_select_name_and_power.php';
+require_once QUERIES_DIR . '/contest_winners/throttle_awards.php';
 
 $ip = get_ip();
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
@@ -22,14 +22,7 @@ try {
     $is_staff = is_staff($pdo, $user_id);
     $is_mod = $is_staff->mod;
     $is_admin = $is_staff->admin;
-} catch (Exception $e) {
-    output_header("Error");
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
 
-try {
     // output the correct header
     output_header("Contests", $is_mod, $is_admin);
 
@@ -58,7 +51,7 @@ try {
     if ($is_admin === true) {
         $base_url = "/admin/player_deep_info.php?name1=";
     } elseif ($is_admin === false && $is_mod === true) {
-        $base_url = "/mod/do_player_search.php?name=";
+        $base_url = "/mod/player_info.php?name=";
     } else {
         $base_url = "/player_search.php?name=";
     }
@@ -140,8 +133,7 @@ try {
         echo "</p>";
     }
 } catch (Exception $e) {
+    output_header("Error");
     echo 'Error: ' . $e->getMessage();
-} finally {
     output_footer();
-    die();
 }

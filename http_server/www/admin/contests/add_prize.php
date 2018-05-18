@@ -1,22 +1,22 @@
 <?php
 
-require_once __DIR__ . '/../../../fns/all_fns.php';
-require_once __DIR__ . '/../../../fns/output_fns.php';
-require_once __DIR__ . '/../../contests/part_vars.php';
-require_once __DIR__ . '/../../../queries/contests/contest_select.php';
-require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_select_id.php';
-require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_insert.php';
-require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
-require_once __DIR__ . '/add_prize_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/contests/add_prize_fns.php';
+require_once HTTP_FNS . '/pages/contests/part_vars.php';
+require_once QUERIES_DIR . '/contests/contest_select.php';
+require_once QUERIES_DIR . '/contest_prizes/contest_prize_select_id.php';
+require_once QUERIES_DIR . '/contest_prizes/contest_prize_insert.php';
+require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
 $action = find('action', 'form');
 
 try {
-     // rate limiting
-     rate_limit('add-contest-prize-'.$ip, 30, 10);
-     rate_limit('add-contest-prize-'.$ip, 5, 2);
+    // rate limiting
+    rate_limit('add-contest-prize-'.$ip, 30, 10);
+    rate_limit('add-contest-prize-'.$ip, 5, 2);
 
     // sanity check: is a valid contest ID specified?
     if (is_empty($contest_id, false)) {
@@ -28,16 +28,6 @@ try {
 
     // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
-
-try {
-    // header
-    output_header('Add Contest Prize', true, true);
 
     // get contest info
     $contest = contest_select($pdo, $contest_id, false, true);
@@ -47,9 +37,9 @@ try {
 
     // form
     if ($action === 'form') {
+        output_header('Add Contest Prize', true, true);
         output_form($contest);
         output_footer();
-        die();
     } // add
     elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -62,7 +52,7 @@ try {
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
+    output_header('Error');
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
-    die();
 }

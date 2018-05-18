@@ -1,12 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../fns/s3.php';
-require_once __DIR__ . '/../../queries/level_backups/level_backup_select.php';
-require_once __DIR__ . '/../../queries/level_backups/level_backups_select.php';
-require_once __DIR__ . '/../../queries/levels/level_select.php';
-require_once __DIR__ . '/../../queries/levels/levels_restore_backup.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/level_backups/level_backup_select.php';
+require_once QUERIES_DIR . '/level_backups/level_backups_select.php';
+require_once QUERIES_DIR . '/levels/level_select.php';
+require_once QUERIES_DIR . '/levels/levels_restore_backup.php';
 
 $ip = get_ip();
 $desc = "<p><center>".
@@ -22,15 +21,7 @@ try {
     // connect
     $pdo = pdo_connect();
     $user_id = token_login($pdo);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header("Level Backups");
-    echo "Error: $error";
-    output_footer();
-    die();
-}
 
-try {
     // rate limiting
     rate_limit('level-backups-'.$user_id, 5, 1);
     rate_limit('level-backups-'.$user_id, 30, 5);
@@ -122,10 +113,11 @@ try {
         echo "<p>$row->date: <b>".htmlspecialchars($row->title)
             ."</b> v$row->version <a href='?action=restore&backup_id=$row->backup_id'>restore</a></p>";
     }
+
+    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
+    output_header("Level Backups");
     echo "Error: $error";
-} finally {
     output_footer();
-    die();
 }
