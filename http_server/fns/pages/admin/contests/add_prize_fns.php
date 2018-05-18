@@ -93,5 +93,4 @@ function add_contest_prize($pdo, $admin, $contest)
     echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Another Prize</a><br>";
     echo "<a href='/contests/contests.php'>&lt;- All Contests</a>";
     output_footer();
-    die();
 }

@@ -22,14 +22,7 @@ try {
     $is_staff = is_staff($pdo, $user_id);
     $is_mod = $is_staff->mod;
     $is_admin = $is_staff->admin;
-} catch (Exception $e) {
-    output_header("Error");
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
 
-try {
     // output the correct header
     output_header("Contests", $is_mod, $is_admin);
 
@@ -140,8 +133,7 @@ try {
         echo "</p>";
     }
 } catch (Exception $e) {
+    output_header("Error");
     echo 'Error: ' . $e->getMessage();
-} finally {
     output_footer();
-    die();
 }

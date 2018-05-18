@@ -33,7 +33,7 @@ try {
     // push the change through
     changing_email_complete($pdo, $change_id, $ip);
     user_update_email($pdo, $user_id, $old_email, $new_email);
-    
+
     // make some variables
     $safe_old_email = htmlspecialchars($old_email);
     $safe_new_email = htmlspecialchars($new_email);
@@ -46,5 +46,4 @@ try {
     echo $e->getMessage();
 } finally {
     output_footer();
-    die();
 }

@@ -64,14 +64,7 @@ try {
             );
         }
     }
-} catch (Exception $e) {
-    output_header("Error", $is_mod, $is_admin);
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
 
-try {
     // header
     output_header('Award Prize', $is_mod, $is_admin);
 
@@ -318,10 +311,11 @@ try {
     else {
         throw new Exception('Invalid action specified.');
     }
+
+    output_footer();
 } catch (Exception $e) {
+    output_header("Error", $is_mod, $is_admin);
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
-} finally {
     output_footer();
-    die();
 }

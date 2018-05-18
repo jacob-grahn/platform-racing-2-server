@@ -93,5 +93,4 @@ try {
     echo "Error: $safe_error";
 } finally {
     output_footer();
-    die();
 }

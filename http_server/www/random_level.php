@@ -20,6 +20,4 @@ try {
 } catch (Exception $e) {
     $message = $e->getMessage();
     echo "Error: $message";
-} finally {
-    die();
 }

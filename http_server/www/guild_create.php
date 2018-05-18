@@ -77,7 +77,7 @@ try {
         throw new Exception('I\'m not sure what would happen if you didn\'t
             enter a guild name, but it would probably destroy the world.');
     }
-    
+
     // check if guild exists
     $guild_exists = guild_name_to_id($pdo, $guild_name, true);
     if ($guild_exists !== false) {
@@ -104,5 +104,4 @@ try {
     $reply->error = $e->getMessage();
 } finally {
     echo json_encode($reply);
-    die();
 }

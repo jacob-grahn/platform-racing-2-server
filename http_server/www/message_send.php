@@ -14,7 +14,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
     }
-    
+
     // ref check
     require_trusted_ref('send PMs');
 
@@ -36,6 +36,4 @@ try {
 } catch (Exception $e) {
     $message = $e->getMessage();
     echo 'error=' . $message;
-} finally {
-    die();
 }

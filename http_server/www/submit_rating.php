@@ -23,7 +23,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
     }
-    
+
     // ref check
     require_trusted_ref('rate levels');
 
@@ -112,6 +112,4 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
-} finally {
-    die();
 }

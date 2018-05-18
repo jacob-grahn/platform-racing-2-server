@@ -90,5 +90,4 @@ function add_contest($pdo, $admin)
     }
 
     header("Location: add_prize.php?contest_id=$inserted_contest_id");
-    die();
 }

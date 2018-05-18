@@ -46,7 +46,7 @@ try {
             $messages_array[] = $message;
             break;
         }
-    
+
         if ($row->message_id > $largest_id) {
             $largest_id = $row->message_id;
         }
@@ -76,5 +76,4 @@ try {
     $r->error = $e->getMessage();
 } finally {
     echo json_encode($r);
-    die();
 }

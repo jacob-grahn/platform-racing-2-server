@@ -17,15 +17,7 @@ try {
 
     //make sure you're a moderator
     $mod = check_moderator($pdo, false);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header("Error");
-    echo "Error: $error";
-    output_footer();
-    die();
-}
 
-try {
     // get actions for this page
     $actions = mod_actions_select($pdo, $start, $count);
 
@@ -43,11 +35,10 @@ try {
 
     echo('<p>---</p>');
     output_pagination($start, $count);
+    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
-    output_header('Mod Action Log', true);
+    output_header("Error");
     echo "Error: $error";
-} finally {
     output_footer();
-    die();
 }

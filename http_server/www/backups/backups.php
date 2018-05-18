@@ -21,15 +21,7 @@ try {
     // connect
     $pdo = pdo_connect();
     $user_id = token_login($pdo);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header("Level Backups");
-    echo "Error: $error";
-    output_footer();
-    die();
-}
 
-try {
     // rate limiting
     rate_limit('level-backups-'.$user_id, 5, 1);
     rate_limit('level-backups-'.$user_id, 30, 5);
@@ -121,10 +113,11 @@ try {
         echo "<p>$row->date: <b>".htmlspecialchars($row->title)
             ."</b> v$row->version <a href='?action=restore&backup_id=$row->backup_id'>restore</a></p>";
     }
+
+    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
+    output_header("Level Backups");
     echo "Error: $error";
-} finally {
     output_footer();
-    die();
 }

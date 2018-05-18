@@ -43,5 +43,4 @@ try {
     echo 'Error: ' . $e->getMessage();
 } finally {
     output_footer();
-    die();
 }

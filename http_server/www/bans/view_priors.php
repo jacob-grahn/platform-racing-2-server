@@ -17,15 +17,15 @@ try {
     // rate limit
     rate_limit("gui-view-priors-" . $ip, 5, 1);
     rate_limit("gui-view-priors-" . $ip, 30, 5);
-    
+
     //connect
     $pdo = pdo_connect();
     $user_id = token_login($pdo);
     $user = user_select($pdo, $user_id);
-    
+
     $banned = 'No';
     $row = query_if_banned($pdo, $user->user_id, $user->ip);
-    
+
     // give some more info on the current ban in effect if there is one
     if ($row !== false) {
         $ban_id = $row->ban_id;
@@ -41,7 +41,7 @@ try {
         $banned = "<a href='show_record.php?ban_id=$ban_id'>Yes</a>. Your $ban_type banned until $ban_end_date. ".
                     "Reason: $reason";
     }
-    
+
     // count how many times they have been banned
     $account_bans = bans_select_by_user_id($pdo, $user->user_id);
     $account_ban_count = (int) count($account_bans);
@@ -70,5 +70,4 @@ try {
     echo "<br /><i>Error: $safe_error</i>";
 } finally {
     output_footer();
-    die();
 }

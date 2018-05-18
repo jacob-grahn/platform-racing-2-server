@@ -20,18 +20,6 @@ try {
 
     //make sure you're a mod
     $mod = check_moderator($pdo, false);
-} catch (Exception $e) {
-    $message = $e->getMessage();
-    output_header('Error');
-    echo "Error: $message";
-    output_footer();
-    die();
-}
-
-// mod validated try/catch
-try {
-    // header
-    output_header('IP Info', true);
 
     // sanity check: is a value entered for IP?
     if (empty($ip)) {
@@ -76,6 +64,9 @@ try {
 
     // we can dance if we want to, we can leave your friends behind
     $html_ip = htmlspecialchars($ip);
+
+    // header
+    output_header('IP Info', true);
 
     // start
     echo "<p>IP: $html_ip</p>";
@@ -143,10 +134,11 @@ try {
         echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>$name</a>
             | Last Active: $active<br>";
     }
+
+    output_footer();
 } catch (Exception $e) {
     $message = $e->getMessage();
+    output_header('Error');
     echo "Error: $message";
-} finally {
     output_footer();
-    die();
 }

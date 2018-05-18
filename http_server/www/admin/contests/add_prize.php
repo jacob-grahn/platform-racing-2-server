@@ -14,9 +14,9 @@ $contest_id = (int) find('contest_id', 0);
 $action = find('action', 'form');
 
 try {
-     // rate limiting
-     rate_limit('add-contest-prize-'.$ip, 30, 10);
-     rate_limit('add-contest-prize-'.$ip, 5, 2);
+    // rate limiting
+    rate_limit('add-contest-prize-'.$ip, 30, 10);
+    rate_limit('add-contest-prize-'.$ip, 5, 2);
 
     // sanity check: is a valid contest ID specified?
     if (is_empty($contest_id, false)) {
@@ -28,16 +28,6 @@ try {
 
     // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
-
-try {
-    // header
-    output_header('Add Contest Prize', true, true);
 
     // get contest info
     $contest = contest_select($pdo, $contest_id, false, true);
@@ -47,22 +37,26 @@ try {
 
     // form
     if ($action === 'form') {
+        output_header('Add Contest Prize', true, true);
         output_form($contest);
         output_footer();
-    } // add
+    }
+
+    // add
     elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
         add_contest_prize($pdo, $admin, $contest);
-    } // unknown handler
+    }
+
+    // unknown handler
     else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
+    output_header('Error');
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
-} finally {
-    die();
 }

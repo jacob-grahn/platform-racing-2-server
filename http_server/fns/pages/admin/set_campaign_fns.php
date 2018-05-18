@@ -155,5 +155,4 @@ function update($pdo, $admin, $campaign_id)
     // did the script get here? great! redirect back to the script with a success message
     $message = "Great success! The new campaign has been set and will take effect shortly.";
     header("Location: set_campaign.php?message=" . urlencode($message));
-    die();
 }

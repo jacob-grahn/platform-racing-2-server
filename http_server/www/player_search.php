@@ -35,5 +35,4 @@ try {
     echo "<br /><i>Error: $safe_error</i>";
 } finally {
     output_footer();
-    die();
 }

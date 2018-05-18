@@ -27,16 +27,6 @@ try {
 
     // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
-
-try {
-    // header
-    output_header('Remove Contest Prize', true, true);
 
     // get contest info
     $contest = contest_select($pdo, $contest_id, false, true);
@@ -49,6 +39,9 @@ try {
     if ($prizes == false || empty($prizes)) {
         throw new Exception("This contest doesn't currently have any prizes.");
     }
+
+    // header
+    output_header('Remove Contest Prize', true, true);
 
     // form
     if ($action === 'form') {
@@ -151,14 +144,16 @@ try {
         echo "<br><br>";
         echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Prize</a><br>";
         echo "<a href='/contests/contests.php'>&lt;- All Contests</a>";
+
+        // footer
+        output_footer();
     } // unknown handler
     else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
-} finally {
     output_footer();
-    die();
 }

@@ -15,6 +15,7 @@ require_once QUERIES_DIR . '/changing_emails/changing_email_complete.php';
 $encrypted_data = $_POST['data'];
 
 $ip = get_ip();
+$ret = new stdClass();
 
 try {
     // post check
@@ -88,43 +89,38 @@ try {
         user_update_email($pdo, $user_id, $old_email, $new_email);
 
         // tell the user and end the script
-        $ret = new stdClass();
         $ret->message = 'Your email was changed successfully!';
-        echo json_encode($ret);
-        die();
     }
+    else {
+        // initiate an email change confirmation (generate code) if they do already have an email address
+        $code = random_str(24);
+        changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $ip);
 
-    // initiate an email change confirmation (generate code) if they do already have an email address
-    $code = random_str(24);
-    changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $ip);
+        // safety first
+        $safe_user_name = htmlspecialchars($user_name);
+        $safe_old_email = htmlspecialchars($old_email);
+        $safe_new_email = htmlspecialchars($new_email);
 
-    // safety first
-    $safe_user_name = htmlspecialchars($user_name);
-    $safe_old_email = htmlspecialchars($old_email);
-    $safe_new_email = htmlspecialchars($new_email);
+        // send a confirmation email
+        $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
+        $to = $old_email;
+        $subject = 'PR2 Email Change Confirmation';
+        $body = "Howdy $safe_user_name,\n\nWe received a request to change the "
+            ."email on your account from $safe_old_email to $safe_new_email. "
+            ."If you requested this change, please click the link below to change "
+            ."the email address on your Platform Racing 2 account.\n\n"
+            ."http://pr2hub.com/account_confirm_email_change.php?code=$code\n\n"
+            ."If you didn't request this change, you may need to change your "
+            ."password.\n\nAll the best,\nFred";
+        send_email($from, $to, $subject, $body);
 
-    // send a confirmation email
-    $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
-    $to = $old_email;
-    $subject = 'PR2 Email Change Confirmation';
-    $body = "Howdy $safe_user_name,\n\nWe received a request to change the "
-        ."email on your account from $safe_old_email to $safe_new_email. "
-        ."If you requested this change, please click the link below to change "
-        ."the email address on your Platform Racing 2 account.\n\n"
-        ."http://pr2hub.com/account_confirm_email_change.php?code=$code\n\n"
-        ."If you didn't request this change, you may need to change your "
-        ."password.\n\nAll the best,\nFred";
-    send_email($from, $to, $subject, $body);
-
-    // tell it to the world
-    $ret = new stdClass();
-    $ret->message = 'Almost done! We just sent a confirmation email to your '
-        .'old email address. Until you confirm the change, your old email '
-        .'address will still be active.';
+        // tell it to the world
+        $ret->message = 'Almost done! We just sent a confirmation email to your '
+            .'old email address. Until you confirm the change, your old email '
+            .'address will still be active.';
+    }
 } catch (Exception $e) {
-    $ret = new stdClass();
     $ret->error = $e->getMessage();
 } finally {
     echo json_encode($ret);
-    die();
 }

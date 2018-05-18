@@ -51,6 +51,4 @@ try {
     echo 'result=' . urlencode($enc_result);
 } catch (Exception $e) {
     echo 'error=' . urlencode($e->getMessage());
-} finally {
-    die();
 }

@@ -182,5 +182,4 @@ try {
     $message = $e->getMessage();
     echo "Error: $message";
     output_footer();
-    die();
 }

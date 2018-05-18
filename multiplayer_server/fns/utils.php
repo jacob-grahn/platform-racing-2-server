@@ -237,7 +237,7 @@ function get_priors($pdo, $mod, $name)
     $url_name = htmlspecialchars(urlencode($name));
     $user_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $safe_name, '#'.group_color($power));
     $str = "<b>Ban Data for $user_link</b><br><br>";
-    
+
     // check if the user is currently banned
     $str .= "Currently Banned: ";
     $is_banned = 'No';
@@ -280,14 +280,14 @@ function get_priors($pdo, $mod, $name)
             $lifted = (bool) $ban->lifted;
             $acc_ban = (bool) $ban->account_ban;
             $ip_ban = (bool) $ban->ip_ban;
-            
+
             // var init
             $nameip_str = '';
             $lifted_str = '';
             if (strlen(trim($reason)) === 0) {
                 $reason = 'No reason was given.';
             }
-            
+
             // make name/ip str
             if ($acc_ban === true) {
                 $nameip_str .= $banned_name;
@@ -313,7 +313,7 @@ function get_priors($pdo, $mod, $name)
             // craft ban string
             $date_url = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", $date);
             $ban_str = "$date_url: $mod_name banned $nameip_str for $duration. Reason: $reason";
-            
+
             // add to the output string
             if ($lifted === true) {
                 $str .= $ban_str . '<br>' . $lifted_str;
@@ -324,7 +324,7 @@ function get_priors($pdo, $mod, $name)
             // move to the next ban
             $str .= '</li>';
         }
-        
+
         // end this group of bans
         $str .= '</ul><br>';
     }
@@ -351,7 +351,7 @@ function get_priors($pdo, $mod, $name)
             $lifted = (bool) $ban->lifted;
             $acc_ban = (bool) $ban->account_ban;
             $ip_ban = (bool) $ban->ip_ban;
-            
+
             // var init
             $nameip_str = '';
             $lifted_str = '';
@@ -431,7 +431,7 @@ function rate_limit($key, $interval, $max, $display_error = false, $player = nul
 function shutdown_server($socket = null)
 {
     global $player_array, $socket;
-    
+
     // disconnect everyone
     output('Disconnecting all players...');
     foreach ($player_array as $player) {

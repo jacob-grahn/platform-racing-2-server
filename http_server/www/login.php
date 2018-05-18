@@ -176,15 +176,15 @@ try {
         $rt_available = $row->available_tokens;
         $rt_used = $row->used_tokens;
     }
-    
+
     // check if they're renting rank tokens
     $rt_rented = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
-    
+
     // sanity check: do they have more than 5 permanent rank tokens?
     if ($rt_available > 5) {
         throw new Exception("Too many rank tokens. Please use a different account.");
     }
-    
+
     // sanity check: are they renting more than 21 guild tokens?
     if ($rt_rented > 21) {
         throw new Exception('Too many guild tokens. Please use a different account.');
@@ -195,13 +195,13 @@ try {
     if ($rt_available < $rt_used) {
         $rt_used = $rt_available;
     }
-    
+
     // sanity check: is the user's rank 100+?
     $rank = (int) $stats->rank;
     if ($rank + $rt_used >= 100) {
         throw new Exception('Your rank is too high. Please choose a different account.');
     }
-    
+
     // record moderator login
     $server_name = $server->server_name;
     if ($group > 1) {
@@ -362,5 +362,4 @@ try {
     $reply->error = $e->getMessage();
 } finally {
     echo json_encode($reply);
-    die();
 }

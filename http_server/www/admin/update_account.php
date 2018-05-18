@@ -31,14 +31,7 @@ try {
 
     //make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
 
-try {
     // header
     output_header('Update PR2 Account', true, true);
 
@@ -82,7 +75,6 @@ try {
             .'<br>'
             .'Find what each part ID is <a href="part_ids.php" target="blank">here</a>.<br><br>'
             .'NOTE: Make sure the user is logged out of PR2 before trying to change parts.</pre>';
-        output_footer();
     }
 
 
@@ -225,10 +217,10 @@ try {
 
         header("Location: player_deep_info.php?name1=" . urlencode($user_name));
     }
+    output_footer();
 } catch (Exception $e) {
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
-} finally {
-    die();
 }

@@ -21,14 +21,7 @@ try {
 
     // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
 
-try {
     // select contest
     $contest = contest_select($pdo, $contest_id, false, true);
     if (empty($contest) || $contest === false) {
@@ -51,10 +44,8 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    output_header('Edit Contest', true, true);
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
-} finally {
-    die();
 }

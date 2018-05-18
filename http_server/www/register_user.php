@@ -84,5 +84,4 @@ try {
     $ret->error = $e->getMessage();
 } finally {
     echo json_encode($ret);
-    die();
 }

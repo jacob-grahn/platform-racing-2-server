@@ -20,6 +20,4 @@ try {
     talk_to_server($server->address, $server->port, $server->salt, 'activate_happy_hour`', true);
 } catch (Exception $e) {
     output($e->getMessage());
-} finally {
-    die();
 }

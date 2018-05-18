@@ -28,6 +28,4 @@ try {
     echo 'user_name='.urlencode($user->name).'&guild_id='.urlencode($user->guild);
 } catch (Exception $e) {
     echo 'user_name=';
-} finally {
-    die();
 }

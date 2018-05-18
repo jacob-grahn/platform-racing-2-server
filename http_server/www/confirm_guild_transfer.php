@@ -46,5 +46,4 @@ try {
     echo "Error: $message";
 } finally {
     output_footer();
-    die();
 }

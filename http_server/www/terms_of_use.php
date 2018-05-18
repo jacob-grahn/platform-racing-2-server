@@ -32,4 +32,3 @@ echo 'The VoM sells premium items that may be rented or bought '
     .'<a href="https://www.kongregate.com/pages/terms">Kongregate Terms of Service</a>';
 
 output_footer();
-die();

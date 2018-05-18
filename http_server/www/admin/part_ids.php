@@ -7,7 +7,7 @@ try {
     // rate limiting
     rate_limit('part-ids-'.$ip, 60, 5);
     rate_limit('part-ids-'.$ip, 10, 1);
-    
+
     //connect
     $pdo = pdo_connect();
 
@@ -200,5 +200,4 @@ Feet: 31-33, 40+</pre>';
     echo 'Error: ' . $e->getMessage();
 } finally {
     output_footer();
-    die();
 }

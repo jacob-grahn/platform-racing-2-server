@@ -15,4 +15,3 @@ check_servers($pdo);
 
 // log end
 output('Server checks complete.');
-die();

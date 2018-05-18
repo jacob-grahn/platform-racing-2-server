@@ -74,5 +74,4 @@ try {
 } finally {
     echo "</center>";
     output_footer();
-    die();
 }

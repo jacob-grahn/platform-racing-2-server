@@ -93,5 +93,4 @@ try {
     $reply->error = $e->getMessage();
 } finally {
     echo json_encode($reply);
-    die();
 }

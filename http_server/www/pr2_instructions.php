@@ -26,4 +26,3 @@ echo "<p>"
     ."</p>";
 
 output_footer();
-die();

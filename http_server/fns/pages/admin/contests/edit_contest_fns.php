@@ -107,5 +107,4 @@ function edit_contest($pdo, $contest, $admin)
     );
 
     header("Location: /contests/contests.php");
-    die();
 }

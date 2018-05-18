@@ -66,7 +66,7 @@ try {
 
     // --- email them their new pass --- \\
     include 'Mail.php';
-    
+
     $recipient = $user->email;
 
     $headers = array();
@@ -99,6 +99,4 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
-} finally {
-    die();
 }

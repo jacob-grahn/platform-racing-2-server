@@ -30,15 +30,7 @@ try {
 
     // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header("Error");
-    echo "Error: $error";
-    output_footer();
-    die();
-}
 
-try {
     // lookup
     if ($action === 'lookup') {
         output_header('Update Guild', true, true);
@@ -156,9 +148,7 @@ try {
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
-    output_header('Update Guild', true, true);
+    output_header("Error");
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
-} finally {
-    die();
 }

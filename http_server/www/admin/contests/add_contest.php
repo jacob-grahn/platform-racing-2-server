@@ -19,33 +19,29 @@ try {
 
     // make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
-} catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
-    output_footer();
-    die();
-}
 
-try {
-    // form
-    if ($action === 'form') {
-        output_header('Add Contest', true, true);
-        output_form();
-        output_footer();
-    } // add
-    elseif ($action === 'add') {
+    // add
+    if ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
         add_contest($pdo, $admin);
-    } // unknown handler
+    }
+
+    // form
+    elseif ($action === 'form') {
+        output_header('Add Contest', true, true);
+        output_form();
+        output_footer();
+    }
+
+    // no matching action
     else {
         throw new Exception('Invalid action specified.');
     }
+
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+    output_header('Error');
+    echo 'Error: ' . $e->getMessage() . '<br><br><a href="javascript:history.back()"><- Go Back</a>';
     output_footer();
-} finally {
-    die();
 }

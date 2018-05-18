@@ -20,16 +20,7 @@ try {
 
     // make sure you're a moderator
     $mod = check_moderator($pdo);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header('Error');
-    echo "Error: $error";
-    output_footer();
-    die();
-}
 
-// mod validated try/catch
-try {
     // sanity check: what ban id?
     if (is_empty($ban_id, false)) {
         throw new Exception('No ban ID specified.');
@@ -98,9 +89,7 @@ try {
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
-    output_header('Edit Ban', true);
+    output_header('Error');
     echo "Error: $error";
     output_footer();
-} finally {
-    die();
 }

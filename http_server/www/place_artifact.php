@@ -84,7 +84,7 @@ try {
                 true,
                 false
             );
-            
+
             if ($reply !== false) {
                 echo $reply;
             } else {
@@ -96,6 +96,4 @@ try {
     } catch (Exception $e) {
         echo $e->getMessage();
     }
-    
-    die();
 }

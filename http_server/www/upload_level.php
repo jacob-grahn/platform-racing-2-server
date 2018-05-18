@@ -179,7 +179,7 @@ try {
     if (!$result) {
         throw new Exception('A server error was encountered. Your level could not be saved.');
     }
-    
+
     $file = fopen(WWW_ROOT . "/levels/$level_id.txt", "w");
     fwrite($file, $str);
     fclose($file);
@@ -215,6 +215,4 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
-} finally {
-    die();
 }

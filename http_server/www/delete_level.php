@@ -81,7 +81,7 @@ try {
 
     // delete the level in the db
     level_delete($pdo, $level_id);
-    
+
     // delete the file from server
     unlink(__DIR__ . "/levels/$level_id.txt");
 
@@ -96,6 +96,4 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
-} finally {
-    die();
 }

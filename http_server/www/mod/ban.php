@@ -23,22 +23,14 @@ try {
 
     // make sure you're a moderator
     $mod = check_moderator($pdo);
-} catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header('Error');
-    echo "Error: $error";
-    output_footer();
-    die();
-}
-
-try {
-    // output header w/ mod nav
-    output_header('Ban User', true);
 
     // get the user's name
     $row = user_select($pdo, $user_id);
     $name = $row->name;
     $target_ip = $row->ip;
+
+    // output header w/ mod nav
+    output_header('Ban User', true);
 
     if (isset($force_ip) && $force_ip != '') {
         $target_ip = $force_ip;
@@ -67,10 +59,10 @@ try {
             .'</select>'
             .'<input type="submit" value="Submit" />'
         .'</form>';
-} catch (Exception $e) {
-    output_header("Ban User", true);
-    echo 'Error: '.$e->getMessage();
-} finally {
     output_footer();
-    die();
+} catch (Exception $e) {
+    $error = $e->getMessage();
+    output_header('Error');
+    echo "Error: $error";
+    output_footer();
 }
