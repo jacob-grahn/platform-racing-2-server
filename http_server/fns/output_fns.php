@@ -32,9 +32,8 @@ function output_header($title = '', $staff_nav = false, $show_admin = false)
             ."<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />"
             ."<title>PR2 Hub - $title</title>"
             ."<link href='/style/gwibble.css' rel='stylesheet' type='text/css' />"
-            ."<link href='/style/pr2hub.css' rel='stylesheet' type='text/css'/>"
-            ."<script src='/style/menu.js' type='text/javascript'></script>";
-    
+            ."<link href='/style/pr2hub.css' rel='stylesheet' type='text/css'/>";
+
     // mod header
     if ($staff_nav === true) {
         echo "<script src='https://code.jquery.com/jquery-latest.min.js'></script>"
@@ -75,7 +74,7 @@ function output_staff_nav($formatting_for_admins = true)
         ."<a href='//pr2hub.com/mod/player_info.php'>Player Search</a> - "
         ."<a href='//pr2hub.com/bans/bans.php'>Ban Log</a> - "
         ."<a href='//pr2hub.com/mod/mod_log.php'>Mod Action Log</a>";
-    
+
     if ($formatting_for_admins === true) {
         echo "<br>"
             ."<a href='//pr2hub.com/admin/player_deep_info.php'>Update Account</a> - "
@@ -83,7 +82,7 @@ function output_staff_nav($formatting_for_admins = true)
             ."<a href='//pr2hub.com/admin/set_campaign.php'>Set Custom Campaign</a> - "
             ."<a href='//pr2hub.com/admin/admin_log.php'>Admin Action Log</a>";
     }
-    
+
     echo '</b></p>'
         .'<p>---</p>';
 }
