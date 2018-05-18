@@ -40,17 +40,13 @@ try {
         output_header('Add Contest Prize', true, true);
         output_form($contest);
         output_footer();
-    }
-
-    // add
+    } // add
     elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
         add_contest_prize($pdo, $admin, $contest);
-    }
-
-    // unknown handler
+    } // unknown handler
     else {
         throw new Exception('Invalid action specified.');
     }

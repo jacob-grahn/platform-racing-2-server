@@ -26,9 +26,7 @@ try {
     if (is_empty($guild_name) && is_empty($guild_id, false)) {
         output_guild_search();
         output_footer();
-    }
-
-    else {
+    } else {
         // connect
         $pdo = pdo_connect();
 
@@ -142,7 +140,6 @@ try {
         // end the table
         echo '</table>';
     }
-
 } catch (Exception $e) {
     $safe_error = htmlspecialchars($e->getMessage());
     output_guild_search($guild_name, $guild_id);

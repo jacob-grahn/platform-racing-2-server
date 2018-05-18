@@ -26,8 +26,7 @@ try {
     // sanity check: no email in search box
     if (is_empty($email)) {
         output_search('', false);
-    }
-    else {
+    } else {
         // if there's an email set, let's get data from the db
         $users = users_select_by_email($pdo, $email);
 
@@ -62,8 +61,10 @@ try {
             }
 
             // display the name with the color and link to the player search page
-            echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>
-            $safe_name</a> | Last Active: $active_date<br>";
+            echo "<a href='player_deep_info.php?name1=$url_name'
+                style='color: #$group_color;
+                text-decoration: underline;'>
+                $safe_name</a> | Last Active: $active_date<br>";
         }
     }
     output_footer();

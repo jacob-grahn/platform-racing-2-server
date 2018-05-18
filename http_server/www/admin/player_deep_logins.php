@@ -90,8 +90,7 @@ try {
             $url_name = urlencode($name);
             output_pagination($start, $count, "&name=$url_name", $is_end);
         }
-    }
-    else {
+    } else {
         output_search('', false);
     }
 

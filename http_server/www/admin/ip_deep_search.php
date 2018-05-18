@@ -76,7 +76,9 @@ try {
             }
 
             // display the name with the color and link to the player search page
-            echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>
+            echo "<a href='player_deep_info.php?name1=$url_name'
+                style='color: #$group_color;
+                text-decoration: underline;'>
                 $name</a> | Last Active: $active_date<br>";
         }
 
@@ -85,12 +87,10 @@ try {
             $html_ip = htmlspecialchars(urlencode($ip));
             output_pagination($start, $count, "&ip=$html_ip", $is_end);
         }
-    }
-    else {
+    } else {
         output_search('', false);
     }
     output_footer();
-
 } catch (Exception $e) {
     $message = $e->getMessage();
     output_header('Error');

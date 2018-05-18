@@ -30,8 +30,7 @@ try {
     // tell the sorry saps trying to debug
     $ret->success = true;
     $ret->message_id = $message_id;
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     $ret->success = false;
     $ret->error = $e->getMessage();
     $ret->message_id = $message_id;

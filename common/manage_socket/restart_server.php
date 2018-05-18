@@ -14,7 +14,6 @@ if (isset($server_id)) {
 
     // restart it
     restart_server(PR2_ROOT . '/pr2.php', $server->address, $server->port, $server->salt, $server->server_id);
-}
-else {
+} else {
     output('no server id');
 }

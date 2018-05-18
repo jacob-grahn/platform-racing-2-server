@@ -90,8 +90,7 @@ try {
 
         // tell the user and end the script
         $ret->message = 'Your email was changed successfully!';
-    }
-    else {
+    } else {
         // initiate an email change confirmation (generate code) if they do already have an email address
         $code = random_str(24);
         changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $ip);

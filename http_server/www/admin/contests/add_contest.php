@@ -26,20 +26,15 @@ try {
             throw new Exception('Invalid request type.');
         }
         add_contest($pdo, $admin);
-    }
-
-    // form
+    } // form
     elseif ($action === 'form') {
         output_header('Add Contest', true, true);
         output_form();
         output_footer();
-    }
-
-    // no matching action
+    } // no matching action
     else {
         throw new Exception('Invalid action specified.');
     }
-
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage() . '<br><br><a href="javascript:history.back()"><- Go Back</a>';
