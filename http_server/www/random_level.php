@@ -1,8 +1,9 @@
 <?php
 
 header("Content-type: text/plain");
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/levels/levels_select_by_rand.php';
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/levels/levels_select_by_rand.php';
 
 $ip = get_ip();
 
@@ -19,4 +20,6 @@ try {
 } catch (Exception $e) {
     $message = $e->getMessage();
     echo "Error: $message";
+} finally {
+    die();
 }

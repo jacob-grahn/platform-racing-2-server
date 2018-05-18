@@ -1,9 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/bans/bans_select_by_ip.php';
-require_once __DIR__ . '/../../queries/users/users_select_by_ip.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/player_search_fns.php';
+require_once QUERIES_DIR . '/bans/bans_select_by_ip.php';
+require_once QUERIES_DIR . '/users/users_select_by_ip.php';
 
 $ip = default_get('ip', '');
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];

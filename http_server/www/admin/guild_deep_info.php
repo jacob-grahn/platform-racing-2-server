@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../../queries/guilds/guild_select_members.php';
-require_once __DIR__ . '/../../queries/guild_transfers/guild_transfers_select_by_guild.php';
-require_once __DIR__ . '/guild_deep_info_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/guild_deep_info_fns.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/guilds/guild_select_members.php';
+require_once QUERIES_DIR . '/guild_transfers/guild_transfers_select_by_guild.php';
 
 $guild_id = find('guild_id', 0);
 

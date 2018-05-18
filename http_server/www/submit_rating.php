@@ -2,21 +2,19 @@
 
 header("Content-type: text/plain");
 
-// pdo queries
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/levels/level_check_if_creator.php';
-require_once __DIR__ . '/../queries/levels/level_select.php';
-require_once __DIR__ . '/../queries/levels/level_update_rating.php';
-require_once __DIR__ . '/../queries/ratings/rating_insert.php';
-require_once __DIR__ . '/../queries/ratings/rating_select.php';
-
-$level_id = (int) $_POST['level_id'];
-$new_rating = (int) $_POST['rating'];
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/levels/level_check_if_creator.php';
+require_once QUERIES_DIR . '/levels/level_select.php';
+require_once QUERIES_DIR . '/levels/level_update_rating.php';
+require_once QUERIES_DIR . '/ratings/rating_insert.php';
+require_once QUERIES_DIR . '/ratings/rating_select.php';
 
 $time = (int) time();
+$level_id = (int) $_POST['level_id'];
 $old_weight = 0;
 $weight = 1;
 $old_rating = 0;
+$new_rating = (int) $_POST['rating'];
 
 $ip = get_ip();
 
@@ -114,4 +112,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }

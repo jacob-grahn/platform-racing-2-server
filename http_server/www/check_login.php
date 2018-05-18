@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/users/user_select.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/users/user_select.php';
 
 header("Content-type: text/plain");
 $ip = get_ip();
@@ -28,4 +28,6 @@ try {
     echo 'user_name='.urlencode($user->name).'&guild_id='.urlencode($user->guild);
 } catch (Exception $e) {
     echo 'user_name=';
+} finally {
+    die();
 }

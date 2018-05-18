@@ -2,9 +2,9 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/Encryptor.php';
-require_once __DIR__ . '/../queries/levels/level_select.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
+require_once QUERIES_DIR . '/levels/level_select.php';
 
 $level_id = (int) default_val($_GET['courseID'], 0);
 $hash = find_no_cookie('hash', '');
@@ -51,4 +51,6 @@ try {
     echo 'result=' . urlencode($enc_result);
 } catch (Exception $e) {
     echo 'error=' . urlencode($e->getMessage());
+} finally {
+    die();
 }

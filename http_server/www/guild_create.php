@@ -1,11 +1,12 @@
 <?php
 
 header("Content-type: text/plain");
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/users/user_select_expanded.php';
-require_once __DIR__ . '/../queries/users/user_update_guild.php';
-require_once __DIR__ . '/../queries/guilds/guild_name_to_id.php';
-require_once __DIR__ . '/../queries/guilds/guild_insert.php';
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/users/user_select_expanded.php';
+require_once QUERIES_DIR . '/users/user_update_guild.php';
+require_once QUERIES_DIR . '/guilds/guild_name_to_id.php';
+require_once QUERIES_DIR . '/guilds/guild_insert.php';
 
 $note = filter_swears(find('note'));
 $guild_name = filter_swears(find('name'));
@@ -98,9 +99,10 @@ try {
     $reply->guildId = $guild_id;
     $reply->emblem = $emblem;
     $reply->guildName = $guild_name;
-    echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
+} finally {
     echo json_encode($reply);
+    die();
 }

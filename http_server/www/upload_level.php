@@ -2,13 +2,12 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/pr2_fns.php';
-require_once __DIR__ . '/../fns/s3.php';
-require_once __DIR__ . '/../queries/levels/level_select_by_title.php';
-require_once __DIR__ . '/../queries/levels/level_insert.php';
-require_once __DIR__ . '/../queries/levels/level_update.php';
-require_once __DIR__ . '/../queries/new_levels/new_level_insert.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pr2/pr2_fns.php';
+require_once QUERIES_DIR . '/levels/level_select_by_title.php';
+require_once QUERIES_DIR . '/levels/level_insert.php';
+require_once QUERIES_DIR . '/levels/level_update.php';
+require_once QUERIES_DIR . '/new_levels/new_level_insert.php';
 
 $title = $_POST['title'];
 $note = $_POST['note'];
@@ -43,7 +42,7 @@ try {
     // rate limiting
     rate_limit('upload-level-attempt-'.$ip, 10, 3, "Please wait at least 10 seconds before trying to save again.");
 
-    // connect to the db
+    // connect
     $pdo = pdo_connect();
     $s3 = s3_connect();
 
@@ -114,7 +113,7 @@ try {
         $org_time = $level->time;
         $org_pass_hash2 = $level->pass;
 
-        //backup the file that is about to be overwritten
+        // backup the file that is about to be overwritten
         if (($time - $org_time) > (60*60*24*14)) {
             backup_level(
                 $pdo,
@@ -162,7 +161,7 @@ try {
         new_level_insert($pdo, $level_id, $time, $ip);
     }
 
-    //create the save string
+    // create the save string
     $url_note = str_replace('&', '%26', $note);
     $url_title = str_replace('&', '%26', $title);
     $str = "level_id=$level_id&version=$version&user_id=$user_id&credits="
@@ -175,14 +174,18 @@ try {
     $str .= $hash;
 
 
-    //save this file to the new level system
+    // save this file to the new level system
     $result = $s3->putObjectString($str, 'pr2levels1', $level_id.'.txt');
     if (!$result) {
         throw new Exception('A server error was encountered. Your level could not be saved.');
     }
+    
+    $file = fopen(WWW_ROOT . "/levels/$level_id.txt", "w");
+    fwrite($file, $str);
+    fclose($file);
 
 
-    //save the new file to the backup system
+    // save the new file to the backup system
     backup_level(
         $pdo,
         $s3,
@@ -200,7 +203,7 @@ try {
     );
 
 
-    //tell every one it's time to party
+    // tell every one it's time to party
     if ($on_success == 'pass set with live') {
         echo 'message=The save was successful, but since you set a password, '.
             'your level has been left unpublished. If you wish to publish '.
@@ -212,4 +215,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }

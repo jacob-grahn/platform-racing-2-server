@@ -1,8 +1,9 @@
 <?php
 
 header("Content-type: text/plain");
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../queries/servers/server_select.php';
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/servers/server_select.php';
 
 $server_id = (int) $_GET['server_id'];
 $ip = get_ip();

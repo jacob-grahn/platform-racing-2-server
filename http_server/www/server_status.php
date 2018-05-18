@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../fns/data_fns.php';
-require_once __DIR__ . '/../fns/output_fns.php';
+require_once HTTP_FNS . '/data_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
 
 output_header('Server Status');
 

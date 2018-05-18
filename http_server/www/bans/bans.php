@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/bans/retrieve_ban_list.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/bans/retrieve_ban_list.php';
 
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 100);
@@ -29,7 +29,7 @@ try {
 
     // navigation
     output_pagination($start, $count);
-    echo('<p>---</p>');
+    echo '<p>---</p>';
 
     if ($is_mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10);
@@ -91,7 +91,7 @@ foreach ($bans as $row) {
 			</p>";
 }
 
-echo('<p>---</p>');
+echo '<p>---</p>';
 output_pagination($start, $count);
 
 output_footer();

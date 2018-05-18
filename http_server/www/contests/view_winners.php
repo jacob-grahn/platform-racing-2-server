@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/contests/contest_select.php';
-require_once __DIR__ . '/../../queries/contest_winners/contest_winners_select_by_contest.php';
-require_once __DIR__ . '/../../queries/users/user_select_name_and_power.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/contests/contest_select.php';
+require_once QUERIES_DIR . '/contest_winners/contest_winners_select_by_contest.php';
+require_once QUERIES_DIR . '/users/user_select_name_and_power.php';
 
 $ip = get_ip();
 $contest_id = (int) default_get('contest_id', 0);
@@ -59,7 +59,7 @@ try {
     if ($is_admin === true) {
         $base_url = "/admin/player_deep_info.php?name1=";
     } elseif ($is_admin === false && $is_mod === true) {
-        $base_url = "/mod/do_player_search.php?name=";
+        $base_url = "/mod/player_info.php?name=";
     } else {
         $base_url = "/player_search.php?name=";
     }
@@ -143,12 +143,9 @@ try {
     
     // back link
     echo "<br><br><a href='contests.php'>&lt;- All Contests";
-    
-    // end it
-    output_footer();
-    die();
 } catch (Exception $e) {
     echo 'Error: ' . $e->getMessage();
+} finally {
     output_footer();
     die();
 }

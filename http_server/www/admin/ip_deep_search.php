@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/staff/admin/users_count_from_ip_expanded.php';
-require_once __DIR__ . '/../../queries/staff/admin/users_select_by_ip_expanded.php';
-require_once __DIR__ . '/ip_deep_search_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/ip_deep_search_fns.php';
+require_once QUERIES_DIR . '/staff/admin/users_count_from_ip_expanded.php';
+require_once QUERIES_DIR . '/staff/admin/users_select_by_ip_expanded.php';
 
 $ip = default_get('ip', '');
 $html_ip = htmlspecialchars($ip);

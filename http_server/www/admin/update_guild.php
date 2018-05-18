@@ -1,21 +1,21 @@
 <?php
 
 // output/misc functions
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
 
 // guild select/update functions
-require_once __DIR__ . '/../../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../../queries/guilds/guild_count_members.php';
-require_once __DIR__ . '/../../queries/guilds/guild_update.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/guilds/guild_count_members.php';
+require_once QUERIES_DIR . '/guilds/guild_update.php';
 
 // guild transfer functions
-require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_insert.php';
-require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_select.php';
-require_once __DIR__ . '/../../queries/guild_transfers/guild_transfer_complete.php';
+require_once QUERIES_DIR . '/guild_transfers/guild_transfer_insert.php';
+require_once QUERIES_DIR . '/guild_transfers/guild_transfer_select.php';
+require_once QUERIES_DIR . '/guild_transfers/guild_transfer_complete.php';
 
 // admin action
-require_once __DIR__ . '/../../queries/staff/actions/admin_action_insert.php';
+require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 
 $guild_id = find('guild_id');
 $action = find('action', 'lookup');
@@ -153,12 +153,12 @@ try {
 
         // redirect
         header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));
-        die();
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Update Guild', true, true);
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
+} finally {
     die();
 }

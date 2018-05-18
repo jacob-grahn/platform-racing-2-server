@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/register_user_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pr2/register_user_fns.php';
 
 $name = $_POST['name'];
 $password = $_POST['password'];
@@ -79,9 +79,10 @@ try {
 
     $ret = new stdClass();
     $ret->result = 'success';
-    echo json_encode($ret);
 } catch (Exception $e) {
     $ret = new stdClass();
     $ret->error = $e->getMessage();
+} finally {
     echo json_encode($ret);
+    die();
 }

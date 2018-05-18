@@ -1,8 +1,10 @@
 <?php
 
 header("Content-type: text/plain");
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/artifact_locations/artifact_location_update.php';
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/artifact_locations/artifact_location_update.php';
+require_once QUERIES_DIR . '/servers/server_select.php';
 
 $x = (int) find('x', 0);
 $y = (int) find('y', 0);
@@ -30,7 +32,7 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($pdo);
+    $user_id = (int) token_login($pdo);
 
     // more rate limiting
     if ($user_id != 1) {
@@ -57,8 +59,43 @@ try {
     artifact_location_update($pdo, $level_id, $x, $y);
 
     // tell the world
-    echo "message=Great success! The artifact location will be updated at the top of the next minute.";
+    $message = "Great success! The artifact location will be updated at the top of the next minute.";
+    echo "message=$message";
 } catch (Exception $e) {
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage());
     echo "error=$error";
+    $message = "Error: $error";
+} finally {
+    echo "&message2=";
+    try {
+        $user = user_select($pdo, $user_id);
+        $server_id = (int) $user->server_id;
+        if ($user->server_id != 0) {
+            $server = server_select($pdo, $server_id);
+            $data = new stdClass();
+            $data->user_id = $user_id;
+            $data->message = $message;
+            $data = json_encode($data);
+            $reply = talk_to_server(
+                $server->address,
+                $server->port,
+                $server->salt,
+                'message_player`' . $data,
+                true,
+                false
+            );
+            
+            if ($reply !== false) {
+                echo $reply;
+            } else {
+                echo "No reply from the server.";
+            }
+        } else {
+            echo "You're not online, so you couldn't be notified on the server.";
+        }
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
+    
+    die();
 }

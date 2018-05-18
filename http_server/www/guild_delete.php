@@ -2,10 +2,10 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/guilds/guild_select.php'; // select a guild
-require_once __DIR__ . '/../queries/guilds/guild_delete.php'; // delete a guild
-require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php'; // record the mod action
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php'; // select a guild
+require_once QUERIES_DIR . '/guilds/guild_delete.php'; // delete a guild
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php'; // record the mod action
 
 $guild_id = find_no_cookie('guild_id');
 $ip = get_ip();
@@ -53,9 +53,10 @@ try {
     $reply = new stdClass();
     $reply->success = true;
     $reply->message = "\"$safe_guild_name\" (ID #$guild_id) was successfully deleted.";
-    echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
+} finally {
     echo json_encode($reply);
+    die();
 }

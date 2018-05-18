@@ -2,11 +2,10 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/s3.php';
-require_once __DIR__ . '/../fns/pr2_fns.php';
-require_once __DIR__ . '/../queries/levels/level_select.php';
-require_once __DIR__ . '/../queries/levels/level_delete.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pr2/pr2_fns.php';
+require_once QUERIES_DIR . '/levels/level_select.php';
+require_once QUERIES_DIR . '/levels/level_delete.php';
 
 $level_id = (int) default_val($_POST['level_id'], 0);
 $ip = get_ip();
@@ -82,6 +81,9 @@ try {
 
     // delete the level in the db
     level_delete($pdo, $level_id);
+    
+    // delete the file from server
+    unlink(__DIR__ . "/levels/$level_id.txt");
 
     // delete the file from s3
     $result = $s3->deleteObject('pr2levels1', $level_id.'.txt');
@@ -94,4 +96,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }

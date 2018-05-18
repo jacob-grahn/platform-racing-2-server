@@ -1,11 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../fns/player_search_fns.php';
-require_once __DIR__ . '/../../queries/pr2/pr2_select_true_rank.php';
-require_once __DIR__ . '/../../queries/bans/bans_select_by_user_id.php';
-require_once __DIR__ . '/../../queries/bans/bans_select_by_ip.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/player_search_fns.php';
+require_once QUERIES_DIR . '/pr2/pr2_select_true_rank.php';
+require_once QUERIES_DIR . '/bans/bans_select_by_user_id.php';
+require_once QUERIES_DIR . '/bans/bans_select_by_ip.php';
 
 $user_id = (int) default_get('user_id', 0);
 $name = default_get('name', '');

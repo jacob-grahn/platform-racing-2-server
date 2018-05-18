@@ -1,13 +1,13 @@
 <?php
 
-require_once __DIR__ . '/../../../fns/all_fns.php';
-require_once __DIR__ . '/../../../fns/output_fns.php';
-require_once __DIR__ . '/../../contests/part_vars.php';
-require_once __DIR__ . '/../../../queries/contests/contest_select.php';
-require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_select_id.php';
-require_once __DIR__ . '/../../../queries/contest_prizes/contest_prize_insert.php';
-require_once __DIR__ . '/../../../queries/staff/actions/admin_action_insert.php';
-require_once __DIR__ . '/add_prize_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/contests/add_prize_fns.php';
+require_once HTTP_FNS . '/pages/contests/part_vars.php';
+require_once QUERIES_DIR . '/contests/contest_select.php';
+require_once QUERIES_DIR . '/contest_prizes/contest_prize_select_id.php';
+require_once QUERIES_DIR . '/contest_prizes/contest_prize_insert.php';
+require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
@@ -49,7 +49,6 @@ try {
     if ($action === 'form') {
         output_form($contest);
         output_footer();
-        die();
     } // add
     elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -64,5 +63,6 @@ try {
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
+} finally {
     die();
 }

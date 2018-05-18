@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/staff/actions/mod_actions_select.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/staff/actions/mod_actions_select.php';
 
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
@@ -43,10 +43,11 @@ try {
 
     echo('<p>---</p>');
     output_pagination($start, $count);
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Mod Action Log', true);
     echo "Error: $error";
+} finally {
     output_footer();
+    die();
 }

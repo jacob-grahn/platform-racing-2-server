@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/bans/ban_update.php';
-require_once __DIR__ . '/../../queries/bans/ban_select.php';
-require_once __DIR__ . '/../../queries/staff/actions/mod_action_insert.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/bans/ban_update.php';
+require_once QUERIES_DIR . '/bans/ban_select.php';
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
 
 $action = find_no_cookie('action', 'edit');
 $ban_id = (int) find_no_cookie('ban_id', 0);
@@ -73,7 +73,6 @@ try {
 
         // redirect to the ban listing
         header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
-        die();
     } elseif ($action == 'edit') {
         $ban = ban_select($pdo, $ban_id);
         output_header('Edit Ban', true);
@@ -94,7 +93,6 @@ try {
             </form>";
 
         output_footer();
-        die();
     } else {
         throw new Exception('Unknown action specified.');
     }
@@ -103,5 +101,6 @@ try {
     output_header('Edit Ban', true);
     echo "Error: $error";
     output_footer();
+} finally {
     die();
 }

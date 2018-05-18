@@ -3,14 +3,14 @@
 header("Content-type: text/plain");
 
 // misc functions
-require_once __DIR__ . '/../fns/all_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
 
 // pdo queries
-require_once __DIR__ . '/../queries/users/user_select_by_name.php'; // select user by name
-require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php'; // insert into mod action log
-require_once __DIR__ . '/../queries/staff/bans/throttle_bans.php'; // throttle mod bans per hour
-require_once __DIR__ . '/../queries/staff/bans/ban_user.php'; // ban user
-require_once __DIR__ . '/../queries/tokens/tokens_delete_by_user.php'; // delete user token
+require_once QUERIES_DIR . '/users/user_select_by_name.php'; // select user by name
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php'; // insert into mod action log
+require_once QUERIES_DIR . '/staff/bans/throttle_bans.php'; // throttle mod bans per hour
+require_once QUERIES_DIR . '/staff/bans/ban_user.php'; // ban user
+require_once QUERIES_DIR . '/tokens/tokens_delete_by_user.php'; // delete user token
 
 // variables
 $banned_name = default_post('banned_name');
@@ -186,4 +186,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }

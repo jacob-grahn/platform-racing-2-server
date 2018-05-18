@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
 
 try {
     // rate limiting
@@ -195,10 +195,10 @@ Hats: 15+
 Heads: 40+
 Bodies: 33, 40+
 Feet: 31-33, 40+</pre>';
-
-    output_footer();
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
+} finally {
     output_footer();
+    die();
 }

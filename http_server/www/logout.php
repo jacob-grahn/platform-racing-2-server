@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/tokens/token_delete.php';
-
 header("Content-type: text/plain");
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/tokens/token_delete.php';
 
 $ip = get_ip();
 
@@ -34,4 +34,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }

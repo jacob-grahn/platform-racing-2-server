@@ -2,26 +2,26 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/Encryptor.php';
-require_once __DIR__ . '/../fns/register_user_fns.php';
-require_once __DIR__ . '/../queries/tokens/token_insert.php';
-require_once __DIR__ . '/../queries/servers/server_select.php';
-require_once __DIR__ . '/../queries/users/user_select_guest.php';
-require_once __DIR__ . '/../queries/users/user_select.php';
-require_once __DIR__ . '/../queries/users/user_update_status.php';
-require_once __DIR__ . '/../queries/users/user_update_ip.php';
-require_once __DIR__ . '/../queries/pr2/pr2_select.php';
-require_once __DIR__ . '/../queries/epic_upgrades/epic_upgrades_select.php';
-require_once __DIR__ . '/../queries/rank_tokens/rank_token_select.php';
-require_once __DIR__ . '/../queries/rank_token_rentals/rank_token_rentals_count.php';
-require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php';
-require_once __DIR__ . '/../queries/friends/friends_select.php';
-require_once __DIR__ . '/../queries/ignored/ignored_select_list.php';
-require_once __DIR__ . '/../queries/exp_today/exp_today_select.php';
-require_once __DIR__ . '/../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../queries/recent_logins/recent_logins_insert.php';
-require_once __DIR__ . '/../queries/messages/messages_select_most_recent.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
+require_once HTTP_FNS . '/pr2/register_user_fns.php';
+require_once QUERIES_DIR . '/tokens/token_insert.php';
+require_once QUERIES_DIR . '/servers/server_select.php';
+require_once QUERIES_DIR . '/users/user_select_guest.php';
+require_once QUERIES_DIR . '/users/user_select.php';
+require_once QUERIES_DIR . '/users/user_update_status.php';
+require_once QUERIES_DIR . '/users/user_update_ip.php';
+require_once QUERIES_DIR . '/pr2/pr2_select.php';
+require_once QUERIES_DIR . '/epic_upgrades/epic_upgrades_select.php';
+require_once QUERIES_DIR . '/rank_tokens/rank_token_select.php';
+require_once QUERIES_DIR . '/rank_token_rentals/rank_token_rentals_count.php';
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
+require_once QUERIES_DIR . '/friends/friends_select.php';
+require_once QUERIES_DIR . '/ignored/ignored_select_list.php';
+require_once QUERIES_DIR . '/exp_today/exp_today_select.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/recent_logins/recent_logins_insert.php';
+require_once QUERIES_DIR . '/messages/messages_select_most_recent.php';
 
 // initialize our variables
 $encrypted_login = $_POST['i'];
@@ -64,7 +64,7 @@ try {
             'Please refresh your browser to download the latest version.'
         );
     } // sanity check: correct referrer?
-    require_trusted_ref('log in');
+    //require_trusted_ref('log in');
 
     // rate limiting
     rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
@@ -178,7 +178,7 @@ try {
     }
     
     // check if they're renting rank tokens
-    $rt_rented = rank_token_rentals_count($pdo, $user_id, $user->guild);
+    $rt_rented = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
     
     // sanity check: do they have more than 5 permanent rank tokens?
     if ($rt_available > 5) {
@@ -196,9 +196,9 @@ try {
         $rt_used = $rt_available;
     }
     
-    // sanity check: is the user's rank 100+ and are they not Fred?
+    // sanity check: is the user's rank 100+?
     $rank = (int) $stats->rank;
-    if (($rank + $rt_used >= 100) && $user_id !== 4291976) {
+    if ($rank + $rt_used >= 100) {
         throw new Exception('Your rank is too high. Please choose a different account.');
     }
     
@@ -341,7 +341,7 @@ try {
     $send->epic_upgrades = $epic_upgrades;
 
     $str = "register_login`" . json_encode($send);
-    talk_to_server($server_address, $server_port, $server->salt, $str, false);
+    talk_to_server($server_address, $server_port, $server->salt, $str, false, false);
 
     // tell the world
     $reply = new stdClass();
@@ -357,11 +357,10 @@ try {
     $reply->guildName = $guild_name;
     $reply->emblem = $emblem;
     $reply->userId = $user_id;
-
-    // tell the user
-    echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
+} finally {
     echo json_encode($reply);
+    die();
 }

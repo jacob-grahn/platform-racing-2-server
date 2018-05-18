@@ -2,11 +2,11 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/pr2_fns.php';
-require_once __DIR__ . '/../queries/users/user_select_expanded.php';
-require_once __DIR__ . '/../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../queries/guild_invitations/guild_invitation_insert.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/pr2/pr2_fns.php';
+require_once QUERIES_DIR . '/users/user_select_expanded.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/guild_invitations/guild_invitation_insert.php';
 
 $target_id = find('userId');
 $ip = get_ip();
@@ -66,25 +66,26 @@ try {
         'You can only invite up to 10 players to your guild per hour. Try again later.'
     );
 
-    //--- compose an eloquent invitation
+    // compose an eloquent invitation
     $pm_safe_guild_name = preg_replace("/[^a-zA-Z0-9 ]/", "_", $guild->guild_name);
     $message = "Hi $target_account->name! "
         ."You've been invited to join our guild, [guildlink=$guild->guild_id]" . $pm_safe_guild_name . "[/guildlink]. "
         ."Click [invitelink=$guild->guild_id]here[/invitelink] to accept!";
 
 
-    //--- add the invitation to the db
+    // add the invitation to the db
     send_pm($pdo, $user_id, $target_id, $message);
     guild_invitation_insert($pdo, $guild->guild_id, $target_id);
 
 
-    //--- tell it to the world
+    // tell it to the world
     $reply = new stdClass();
     $reply->success = true;
     $reply->message = 'Your invitation has been sent.';
-    echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
     $reply->error = $e->getMessage();
+} finally {
     echo json_encode($reply);
+    die();
 }

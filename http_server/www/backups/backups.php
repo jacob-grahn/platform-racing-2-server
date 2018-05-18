@@ -1,12 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../fns/s3.php';
-require_once __DIR__ . '/../../queries/level_backups/level_backup_select.php';
-require_once __DIR__ . '/../../queries/level_backups/level_backups_select.php';
-require_once __DIR__ . '/../../queries/levels/level_select.php';
-require_once __DIR__ . '/../../queries/levels/levels_restore_backup.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/level_backups/level_backup_select.php';
+require_once QUERIES_DIR . '/level_backups/level_backups_select.php';
+require_once QUERIES_DIR . '/levels/level_select.php';
+require_once QUERIES_DIR . '/levels/levels_restore_backup.php';
 
 $ip = get_ip();
 $desc = "<p><center>".

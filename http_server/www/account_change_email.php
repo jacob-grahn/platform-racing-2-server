@@ -3,15 +3,14 @@
 header("Content-type: text/plain");
 
 require_once 'Mail.php';
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/Encryptor.php';
-require_once __DIR__ . '/../fns/send_email.php';
-require_once __DIR__ . '/../queries/users/user_select.php';
-require_once __DIR__ . '/../queries/users/user_update_email.php';
-require_once __DIR__ . '/../queries/changing_emails/changing_email_insert.php';
-require_once __DIR__ . '/../queries/changing_emails/changing_email_select.php';
-require_once __DIR__ . '/../queries/changing_emails/changing_email_complete.php';
-
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
+require_once HTTP_FNS . '/send_email.php';
+require_once QUERIES_DIR . '/users/user_select.php';
+require_once QUERIES_DIR . '/users/user_update_email.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_insert.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_select.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_complete.php';
 
 $encrypted_data = $_POST['data'];
 
@@ -29,12 +28,12 @@ try {
     // rate limiting
     rate_limit('change-email-attempt-'.$ip, 5, 1);
 
-    //--- sanity check
+    // sanity check
     if (!isset($encrypted_data)) {
         throw new Exception('No data was recieved.');
     }
 
-    //--- decrypt
+    // decrypt data from client
     $encryptor = new \pr2\http\Encryptor();
     $encryptor->setKey($CHANGE_EMAIL_KEY);
     $str_data = $encryptor->decrypt($encrypted_data, $CHANGE_EMAIL_IV);
@@ -44,7 +43,6 @@ try {
 
     // sanitize email
     $problematic_chars = array('&', '"', "'", "<", ">");
-    $new_email = filter_var($new_email, FILTER_SANITIZE_EMAIL);
     $new_email = str_replace($problematic_chars, '', $new_email);
 
     // sanity check: check for invalid email
@@ -123,9 +121,10 @@ try {
     $ret->message = 'Almost done! We just sent a confirmation email to your '
         .'old email address. Until you confirm the change, your old email '
         .'address will still be active.';
-    echo json_encode($ret);
 } catch (Exception $e) {
     $ret = new stdClass();
     $ret->error = $e->getMessage();
+} finally {
     echo json_encode($ret);
+    die();
 }

@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/messages_reported/messages_reported_select.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/messages_reported/messages_reported_select.php';
 
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
@@ -116,11 +116,11 @@ try {
 
     echo('<p>---</p>');
     output_pagination($start, $count);
-
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Reported Messages', true);
     echo "Error: $error";
+} finally {
     output_footer();
+    die();
 }

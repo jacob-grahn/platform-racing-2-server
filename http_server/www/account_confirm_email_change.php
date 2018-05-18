@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/output_fns.php';
-require_once __DIR__ . '/../queries/changing_emails/changing_email_select.php';
-require_once __DIR__ . '/../queries/changing_emails/changing_email_complete.php';
-require_once __DIR__ . '/../queries/users/user_update_email.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_select.php';
+require_once QUERIES_DIR . '/changing_emails/changing_email_complete.php';
+require_once QUERIES_DIR . '/users/user_update_email.php';
 
 $code = $_GET['code'];
 $ip = get_ip();
@@ -41,9 +41,10 @@ try {
     // tell it to the world
     output_header('Confirm Email Change');
     echo "Great success! Your email address has been changed from $safe_old_email to $safe_new_email.";
-    output_footer();
 } catch (Exception $e) {
     output_header('Confirm Email Change');
     echo $e->getMessage();
+} finally {
     output_footer();
+    die();
 }

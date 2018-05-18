@@ -1,7 +1,18 @@
 <?php
 
-require_once __DIR__ . '/../fns/output_fns.php';
-require_once __DIR__ . '/../fns/data_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/data_fns.php';
+
+// rate limiting
+try {
+    $ip = get_ip();
+    rate_limit('gui-hint-'$ip, 5, 2);
+} catch (Exception $e) {
+    output_header('Error');
+    echo 'Error: ' . htmlspecialchars($e->getMessage());
+    output_footer();
+    die();
+}
 
 output_header('Artifact Hint');
 

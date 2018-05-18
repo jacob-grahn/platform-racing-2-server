@@ -1,13 +1,13 @@
 <?php
 
 require_once 'Mail.php';
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../fns/send_email.php';
-require_once __DIR__ . '/../fns/output_fns.php';
-require_once __DIR__ . '/../queries/users/user_select.php';
-require_once __DIR__ . '/../queries/users/user_select_by_name.php';
-require_once __DIR__ . '/../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../queries/guild_transfers/guild_transfer_insert.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/send_email.php';
+require_once QUERIES_DIR . '/users/user_select.php';
+require_once QUERIES_DIR . '/users/user_select_by_name.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/guild_transfers/guild_transfer_insert.php';
 
 $ip = get_ip();
 

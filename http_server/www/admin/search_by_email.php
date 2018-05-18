@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/users/users_select_by_email.php';
-require_once __DIR__ . '/search_by_email_fns.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/admin/search_by_email_fns.php';
+require_once QUERIES_DIR . '/users/users_select_by_email.php';
 
 $ip = get_ip();
 $email = find_no_cookie('email', '');
@@ -76,14 +76,11 @@ try {
         echo "<a href='player_deep_info.php?name1=$url_name' style='color: #$group_color; text-decoration: underline;'>
             $safe_name</a> | Last Active: $active_date<br>";
     }
-
-    // end it all
-    output_footer();
-    die();
 } catch (Exception $e) {
     $message = $e->getMessage();
     output_search($safe_email);
     echo "<i>Error: $message</i>";
+} finally {
     output_footer();
     die();
 }

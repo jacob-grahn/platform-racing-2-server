@@ -2,10 +2,10 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/messages_reported/messages_reported_check_existing.php';
-require_once __DIR__ . '/../queries/messages_reported/messages_reported_insert.php';
-require_once __DIR__ . '/../queries/messages/message_select.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/messages_reported/messages_reported_check_existing.php';
+require_once QUERIES_DIR . '/messages_reported/messages_reported_insert.php';
+require_once QUERIES_DIR . '/messages/message_select.php';
 
 $message_id = (int) $_POST['message_id'];
 $time = (int) time();
@@ -71,4 +71,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }

@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/users/user_select_expanded.php';
-require_once __DIR__ . '/../queries/guilds/guild_select.php';
-require_once __DIR__ . '/../queries/ignored/ignored_select.php';
-require_once __DIR__ . '/../queries/friends/friend_select.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/users/user_select_expanded.php';
+require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/ignored/ignored_select.php';
+require_once QUERIES_DIR . '/friends/friend_select.php';
 
 header("Content-type: text/plain");
 

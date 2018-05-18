@@ -1,8 +1,9 @@
 <?php
 
 header("Content-type: text/plain");
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/ignored/ignored_insert.php';
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/ignored/ignored_insert.php';
 
 $ignored_name = $_POST['target_name'];
 $safe_ignored_name = htmlspecialchars($ignored_name);
@@ -44,5 +45,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
-    exit;
+} finally {
+    die();
 }

@@ -2,10 +2,10 @@
 
 header("Content-type: text/plain");
 
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/levels/level_select.php'; // select a level
-require_once __DIR__ . '/../queries/staff/level_unpublish.php'; // unpublish a level
-require_once __DIR__ . '/../queries/staff/actions/mod_action_insert.php'; // record the mod action
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/levels/level_select.php'; // select a level
+require_once QUERIES_DIR . '/staff/level_unpublish.php'; // unpublish a level
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php'; // record the mod action
 
 $level_id = (int) default_post('level_id', 0);
 

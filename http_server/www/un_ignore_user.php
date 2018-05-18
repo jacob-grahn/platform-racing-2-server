@@ -1,8 +1,9 @@
 <?php
 
 header("Content-type: text/plain");
-require_once __DIR__ . '/../fns/all_fns.php';
-require_once __DIR__ . '/../queries/ignored/ignored_delete.php';
+
+require_once HTTP_FNS . '/all_fns.php';
+require_once QUERIES_DIR . '/ignored/ignored_delete.php';
 
 $target_name = $_POST['target_name'];
 $ip = get_ip();
@@ -44,4 +45,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "error=$error";
+} finally {
+    die();
 }

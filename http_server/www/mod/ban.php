@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../../fns/all_fns.php';
-require_once __DIR__ . '/../../fns/output_fns.php';
-require_once __DIR__ . '/../../queries/users/user_select.php';
+require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/output_fns.php';
+require_once QUERIES_DIR . '/users/user_select.php';
 
 $user_id = find_no_cookie('user_id', 0);
 $force_ip = find_no_cookie('force_ip');
@@ -46,37 +46,31 @@ try {
 
     echo "<p>Ban $name [$target_ip]</p>";
 
-    ?>
-
-    <form action="../ban_user.php" method="post">
-        <input type="hidden" value="yes" name="using_mod_site"  />
-        <input type="hidden" value="yes" name="redirect" />
-        <input type="hidden" value="<?php echo $target_ip; ?>" name="force_ip" />
-        <input type="hidden" value="<?php echo $name; ?>" name="banned_name" />
-        <input type="text" value="<?php echo $reason; ?>" name="reason" size="70" />
-        <select name="duration">
-            <option value="60">1 Minute</option>
-            <option value="3600">1 Hour</option>
-            <option value="86400">1 Day</option>
-            <option value="604800">1 Week</option>
-            <option value="2592000">1 Month</option>
-            <option value="31536000">1 Year</option>
-        </select>
-        <select name="type">
-            <option value="account">account</option>
-            <option value="ip">ip</option>
-            <option value="both" selected="selected">ip and account</option>
-        </select>
-        <input type="submit" value="Submit" />
-    </form>
-
-
-    <?php
-
-    output_footer();
+    echo '<form action="/ban_user.php" method="post">'
+            .'<input type="hidden" value="yes" name="using_mod_site" />'
+            .'<input type="hidden" value="yes" name="redirect" />'
+            ."<input type='hidden' value='$target_ip' name='force_ip' />"
+            ."<input type='hidden' value='$name' name='banned_name' />"
+            ."<input type='text' value='$reason' name='reason' size='70' />"
+            .'<select name="duration">'
+                .'<option value="60">1 Minute</option>'
+                .'<option value="3600">1 Hour</option>'
+                .'<option value="86400">1 Day</option>'
+                .'<option value="604800">1 Week</option>'
+                .'<option value="2592000">1 Month</option>'
+                .'<option value="31536000">1 Year</option>'
+            .'</select>'
+            .'<select name="type">'
+                .'<option value="account">account</option>'
+                .'<option value="ip">ip</option>'
+                .'<option value="both" selected="selected">ip and account</option>'
+            .'</select>'
+            .'<input type="submit" value="Submit" />'
+        .'</form>';
 } catch (Exception $e) {
     output_header("Ban User", true);
     echo 'Error: '.$e->getMessage();
+} finally {
     output_footer();
+    die();
 }
-?>
