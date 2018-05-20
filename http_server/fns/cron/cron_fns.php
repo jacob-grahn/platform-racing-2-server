@@ -105,20 +105,24 @@ function get_recent_pms($pdo)
 
 function save_plays($pdo, $plays)
 {
-    foreach ($plays as $course => $plays) {
-        level_increment_play_count($pdo, $course, $plays);
+    if (!empty($plays)) {
+        foreach ($plays as $course => $plays) {
+            level_increment_play_count($pdo, $course, $plays);
+        }
     }
 }
 
 
 function save_gp($pdo, $server_id, $gp_array)
 {
-    foreach ($gp_array as $user_id => $gp) {
-        $user = user_select($pdo, $user_id);
-        $guild_id = $user->guild;
-        if ($guild_id > 0 && $server_id == $user->server_id) {
-            gp_increment($pdo, $user_id, $guild_id, $gp);
-            guild_increment_gp($pdo, $guild_id, $gp);
+    if (!empty($gp_array)) {
+        foreach ($gp_array as $user_id => $gp) {
+            $user = user_select($pdo, $user_id);
+            $guild_id = $user->guild;
+            if ($guild_id > 0 && $server_id == $user->server_id) {
+                gp_increment($pdo, $user_id, $guild_id, $gp);
+                guild_increment_gp($pdo, $guild_id, $gp);
+            }
         }
     }
 }
@@ -201,7 +205,7 @@ function update_artifact($pdo)
     $r->updated_time = $updated_time;
     $r_str = json_encode($r);
     
-    file_put_contents(__DIR__ . '/../www/files/artifact_hint.txt', $r_str);
+    file_put_contents(WWW_ROOT . '/files/artifact_hint.txt', $r_str);
     output($r->hint);
 }
 
