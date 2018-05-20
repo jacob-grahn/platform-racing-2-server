@@ -44,7 +44,7 @@ try {
     } else {
         // output search without gwibble text
         output_search('', false);
-        throw new Exception();
+        throw new Exception('');
     }
 
     if ($user === false) {
@@ -71,7 +71,7 @@ try {
         } elseif ($row->account_ban == 1) {
             $ban_type = 'account is';
         }
-        $banned = "<a href='../bans/show_record.php?ban_id=$ban_id'>Yes.</a> "
+        $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes.</a> "
                  ."This $ban_type banned until $ban_end_date. Reason: $reason";
     }
 
@@ -137,8 +137,9 @@ try {
         .'<p>---</p>'
         ."<p><a href='ban.php?user_id=$user_id&force_ip=$force_ip'>Ban User</a></p>";
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header("Error");
-    echo "Error: $error";
+    if ($e->getMessage() !== '') {
+        $error = $e->getMessage();
+        echo "Error: $error";
+    }
     output_footer();
 }
