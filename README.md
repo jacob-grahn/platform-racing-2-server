@@ -6,10 +6,12 @@
 
 Welcome to the PR2 GitHub repo!
 
-All contributions are welcome; However, please keep these things in mind when contributing:
+All contributions are welcome; however, please keep these things in mind when contributing:
 - Only edit things if you know exactly what they do and what you're doing.
 - If you want to edit something but don't exactly know what to do, post an issue and someone will assist you.
 - When submitting a pull request, leave a summary of your changes in the title/description.
+- If you have a new idea to suggest, please post the idea on JV2. Do not post an issue.
+- Submitting malicious pull requests or posting ban appeals will result in getting reported to GitHub.
 - I'll check all of the code before it goes in, but make sure it won't throw a syntax error by checking it [here](https://phpcodechecker.com/).
 
 To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com/forums/forumdisplay.php?fid=45) section on [the JV2 forums](https://jiggmin2.com/forums).
