@@ -198,7 +198,7 @@ try {
 
     // sanity check: is the user's rank 100+?
     $rank = (int) $stats->rank;
-    if ($rank + $rt_used >= 100) {
+    if (($rank + $rt_used >= 100) && $user_id !== 4291976) { // TO-DO: Make Fred's ID a constant
         throw new Exception('Your rank is too high. Please choose a different account.');
     }
 

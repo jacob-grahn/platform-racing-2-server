@@ -258,13 +258,19 @@ function talk_to_server($address, $port, $salt, $process_function, $receive = tr
 function poll_servers($servers, $message, $output = true, $server_ids = array())
 {
     $results = array();
+    $query = array();
 
     foreach ($servers as $server) {
-        if (count($server_ids) == 0 || array_search($server->server_id, $server_ids) !== false) {
-            $result = talk_to_server($server->address, $server->port, $server->salt, $message, $output);
-            $server->command = $message;
-            $server->result = json_decode($result);
-            $results[] = $server;
+        $id = (int) $server->server_id;
+        $query = new stdClass();
+
+        if (count($server_ids) == 0 || array_search($id, $server_ids) !== false) {
+            $result = (string) talk_to_server($server->address, $server->port, $server->salt, $message, $output);
+            $result = preg_replace('/[[:cntrl:]]/', '', $result); // remove control characters causing errors
+            $query->result = json_decode($result);
+            $query->command = $message;
+            $query->server_id = $id;
+            $results[$id] = $query;
         }
     }
 
