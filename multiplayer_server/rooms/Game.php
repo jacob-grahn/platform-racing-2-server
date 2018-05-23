@@ -640,7 +640,7 @@ class Game extends Room
             }
             
             // resets unrealistic EXP gain
-            if ($tot_exp_gain > 100000) {
+            if ($tot_exp_gain > 55000) {
                 $tot_exp_gain = 0;
             }
 
