@@ -1,5 +1,8 @@
 <?php
 
+// env
+require_once __DIR__ . '/../../config.php';
+
 require_once COMMON_DIR . '/manage_socket/socket_manage_fns.php';
 require_once QUERIES_DIR . '/servers/server_select.php';
 

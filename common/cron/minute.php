@@ -1,5 +1,8 @@
 <?php
 
+// env
+require_once __DIR__ . '/../../config.php';
+
 // get script fns
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/cron/cron_fns.php';
