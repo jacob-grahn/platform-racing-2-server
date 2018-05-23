@@ -4,7 +4,7 @@
 require_once __DIR__ . '/../../config.php';
 
 require_once QUERIES_DIR . '/servers/servers_select.php';
-require_once COMMON_DIR . '/fns/socket_manage_fns.php';
+require_once COMMON_DIR . '/manage_socket/socket_manage_fns.php';
 
 // connect
 $pdo = pdo_connect();
