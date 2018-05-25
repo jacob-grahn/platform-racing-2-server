@@ -27,7 +27,11 @@ class HappyHour
             return true;
         } else {
             $current_hour = (int) date('G');
-            return $current_hour === self::$random_hour;
+            if ($current_hour === self::$random_hour) {
+                self::activate();
+                return true;
+            }
+            return false;
         }
     }
 
@@ -36,7 +40,7 @@ class HappyHour
         $time = time();
 
         if (self::$hh_active_until > $time) {
-            self::$hh_active_until = 0;
+            self::$hh_active_until = $time;
         }
     }
 
@@ -44,7 +48,7 @@ class HappyHour
     {
         if (self::isActive()) {
             $timeleft = self::$hh_active_until - time();
-            return $timeleft;
+            return abs($timeleft);
         } else {
             return false;
         }
