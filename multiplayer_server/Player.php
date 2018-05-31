@@ -837,6 +837,7 @@ class Player
                                 '- /kick *name*<br>'.
                                 '- /unkick *name*<br>'.
                                 '- /disconnect *name*<br>'.
+                                '- /priors *name*<br>'.
                                 '- /clear';
                             $effects = '<br>Chat Effects:<br>'.
                                 '- /b (Bold)<br>'.
