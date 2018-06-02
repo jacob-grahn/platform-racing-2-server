@@ -148,7 +148,8 @@ try {
     // sanity check: is the entered name and the one retrieved from the database identical?
     // this won't be triggered unless some real funny business is going on
     if (($token_login === false || !is_empty($login->user_name)) &&
-        strtolower($login->user_name) !== strtolower($user_name)
+        strtolower($login->user_name) !== strtolower($user_name) &&
+        $guest_login === false
     ) {
         throw new Exception("The names don't match. If this error persists, contact a member of the PR2 Staff Team.");
     }
