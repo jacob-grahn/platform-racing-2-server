@@ -122,8 +122,14 @@ try {
         else {
             $user = pass_login($pdo, $user_name, $user_pass);
         }
+        
+        // see if they're trying to log into a guest
+        if ($user->power == 0 && $guest_login === false) {
+            throw new Exception("Direct logins to guest accounts are not permitted. ".
+                               'To play as a guest, click the "Play as Guest" button on the main menu.');
+        }
     }
-
+    
     // generate a login token for future requests
     $token = get_login_token($user->user_id);
     token_insert($pdo, $user->user_id, $token);
