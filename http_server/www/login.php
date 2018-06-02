@@ -125,7 +125,7 @@ try {
         
         // see if they're trying to log into a guest
         if ($user->power == 0 && $guest_login === false) {
-            throw new Exception("Direct logins to guest accounts are not permitted. ".
+            throw new Exception('Direct logins to guest accounts are not permitted. '.
                                'To play as a guest, click the "Play as Guest" button on the main menu.');
         }
     }
