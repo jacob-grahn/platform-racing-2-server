@@ -63,8 +63,10 @@ try {
             'Platform Racing 2 has recently been updated. '.
             'Please refresh your browser to download the latest version.'
         );
-    } // sanity check: correct referrer?
-    //require_trusted_ref('log in');
+    }
+    
+    // correct referrer?
+    require_trusted_ref('log in');
 
     // rate limiting
     rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
@@ -106,10 +108,8 @@ try {
     // guest login
     if (strtolower(trim($login->user_name)) == 'guest') {
         $guest_login = true;
-        $guest = user_select_guest($pdo);
-        $user = pass_login($pdo, $guest->name, $GUEST_PASS);
-        $login->user_name = $guest->name;
-        $login->user_pass = $GUEST_PASS;
+        $user = user_select_guest($pdo);
+        check_if_banned($pdo, $user->user_id, $ip);
     } // account login
     else {
         // token login
@@ -122,8 +122,14 @@ try {
         else {
             $user = pass_login($pdo, $user_name, $user_pass);
         }
+        
+        // see if they're trying to log into a guest
+        if ($user->power == 0 && $guest_login === false) {
+            throw new Exception('Direct logins to guest accounts are not permitted. '.
+                               'To play as a guest, click the "Play as Guest" button on the main menu.');
+        }
     }
-
+    
     // generate a login token for future requests
     $token = get_login_token($user->user_id);
     token_insert($pdo, $user->user_id, $token);
@@ -142,7 +148,8 @@ try {
     // sanity check: is the entered name and the one retrieved from the database identical?
     // this won't be triggered unless some real funny business is going on
     if (($token_login === false || !is_empty($login->user_name)) &&
-        strtolower($login->user_name) !== strtolower($user_name)
+        strtolower($login->user_name) !== strtolower($user_name) &&
+        $guest_login === false
     ) {
         throw new Exception("The names don't match. If this error persists, contact a member of the PR2 Staff Team.");
     }

@@ -89,12 +89,16 @@ function process_register_login($server_socket, $data)
                 $socket->close();
                 $socket->onDisconnect();
             } elseif (isset($player_array[$user_id])) {
-                $existing_player = $player_array[$user_id];
-                $existing_player->write('message`You were disconnected because you logged in somewhere else.');
-                $existing_player->remove();
-
-                $socket->write('message`Your account was already running on this server. '.
-                    'It has been logged out to save your data. Please log in again.');
+                if ($group > 0) {
+                    $existing_player = $player_array[$user_id];
+                    $existing_player->write('message`You were disconnected because you logged in somewhere else.');
+                    $existing_player->remove();
+                    $socket->write('message`Your account was already running on this server. '.
+                        'It has been logged out to save your data. Please log in again.');
+                } else {
+                    $socket->write('message`This guest account is already online on this server. '.
+                                  'Please try again later, or create your own account.');
+                }
                 $socket->close();
                 $socket->onDisconnect();
             } elseif (\pr2\multi\LocalBans::isBanned($login_obj->user->name)) {
