@@ -290,13 +290,13 @@ class Player
             $think_array = [":thinking:", ":think:", ":what:", ":hmm:"];
             $lol_array = [":lol:", ":laugh:", ":lmao:", ":joy:"];
             $fred_array = [":fred:", ":cactus:"];
-            $yay_array = [":hooray:", ":yay:", ":woohoo:", ":wow:"];
+            $yay_array = [":yay:", ":woohoo:", ":wow:"];
             $hooray_array = [":hooray:", ":tada:", ":party:"];
             $hello_array = [":hi:", ":hello:", ":hey:"];
             
             $chat_message = str_ireplace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
             $chat_message = str_ireplace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
-            $chat_message = str_ireplace($hooray_array, "╰(ᴖ◡ᴖ)╯", $chat_message);
+            $chat_message = str_ireplace($yay_array, "╰(ᴖ◡ᴖ)╯", $chat_message);
             $chat_message = str_ireplace($hello_array, "ー( ◉▽◉ )ﾉ", $chat_message);
             $chat_message = str_ireplace($think_array, "🤔", $chat_message);
             $chat_message = str_ireplace($lol_array, "😂", $chat_message);
