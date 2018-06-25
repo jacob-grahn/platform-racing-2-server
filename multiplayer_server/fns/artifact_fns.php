@@ -27,7 +27,7 @@ function save_finder($pdo, $player)
 {
     try {
         // does not count if you have found this artifact already
-        if (has_found_artifact($pdo, $player)) {
+        if (has_found_artifact($pdo, $player) === true) {
             return false;
         }
 
@@ -35,7 +35,8 @@ function save_finder($pdo, $player)
         artifacts_found_insert($pdo, $player->user_id);
 
         // check if you were the very first
-        if (!\pr2\multi\Artifact::$first_finder) {
+        $first_finder = (int) \pr2\multi\Artifact::$first_finder;
+        if ($first_finder === 0) {
             save_first_finder($pdo, $player);
         }
 
@@ -49,11 +50,11 @@ function save_finder($pdo, $player)
 // save and award prizes to the first finder
 function save_first_finder($pdo, $player)
 {
-    $user_id = $player->user_id;
+    $user_id = (int) $player->user_id;
 
     artifact_location_update_first_finder($pdo, $user_id);
     $artifact = artifact_location_select($pdo);
-    $first_finder = $artifact->first_finder;
+    $first_finder = (int) $artifact->first_finder;
 
     // false alarm, someone else found it first
     if ($first_finder !== $user_id) {
