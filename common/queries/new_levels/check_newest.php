@@ -11,7 +11,7 @@ function check_newest($pdo, $name, $ip)
     parse_str($newest, $levels_array);
     $levels_data = array_chunk($levels_array, 12);
 
-    foreach($levels_data as $level) {
+    foreach ($levels_data as $level) {
         $level_id = (int) $level[0];
         $level_creator = $level[7];
 
