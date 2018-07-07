@@ -34,7 +34,7 @@ function fah_fetch_stats()
     output('Team page loaded! Checking for an active update...');
     $contents = str_replace('_', ' ', $contents); //replace "_" with " "
     $contents = trim($contents);
-    
+
     // give up if fah is doing a stat update
     if ($contents == false ||
         $contents == '' ||
@@ -44,43 +44,38 @@ function fah_fetch_stats()
         output('FATAL ERROR: FAH is currently updating. We\'ll try again later.');
         return false;
     }
-    
+
     // tell the world
     output('The stats aren\'t updating. Parsing list...');
-    
+
     // parse user stats
-    $users_start_index = strpos($contents, '<BR>Team members:<BR>');
+    $users_start_index = strpos($contents, '<table class="members">');
     $user_strs = substr($contents, $users_start_index);
-    $user_array = explode('<TR ', $user_strs);
+    $user_array = explode('<tr>', $user_strs);
     $user_array = array_splice($user_array, 2);
     $users_json = array();
-    
+
     foreach ($user_array as $user_str) {
-        $array = explode('<TD>', $user_str);
-    
-        $team_rank = $array[2];
-        $name = $array[3];
-        $points = $array[4];
-        $work_units = $array[5];
-    
-        $team_rank = substr($team_rank, 0, strlen($team_rank)-5);
-        $name = substr($name, 0, strlen($name)-5);
-        $points = substr($points, 0, strlen($points)-5);
-        $work_units = substr($work_units, 0, strlen($work_units)-5);
-    
+        $array = explode('<td>', $user_str);
+
+        $team_rank = explode("<", $array[2])[0];
+        $name = explode("<", $array[3])[0];
+        $points = explode("<", $array[4])[0];
+        $work_units = explode("<", $array[5])[0];
+
         if (strlen($name) > 50) {
             $name = substr($name, 0, 50);
         }
-        
+
         $user = new stdClass();
         $user->name = $name;
         $user->points = $points;
         $user->work_units = $work_units;
         $user->team_rank = $team_rank;
-        
+
         $users_json[] = $user;
     }
-    
+
     // throw all of the data into a readable object
     output('List parsed! Starting to award prizes...');
     $r = new stdClass();
