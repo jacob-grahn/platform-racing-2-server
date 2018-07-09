@@ -222,7 +222,7 @@ function get_priors($pdo, $mod, $name)
     // get user info
     $user = user_select_by_name($pdo, $name, true);
     $user_id = (int) $user->user_id;
-    if ($user_id === false) {
+    if ($user_id === 0) {
         $mod->write("message`Error: Could not find a user with that name.");
         return false;
     }
