@@ -56,11 +56,6 @@ try {
         $owner_url_name = htmlspecialchars(urlencode($owner->name));
         $owner_color = $group_colors[(int) $owner->power];
         var_dump((int) guild_count_active($pdo, $guild_id));
-        if (function_exists('guild_count_active')) {
-            echo "GREAT SUCCESS";
-        } else {
-            echo "le troll";
-        }
         $active_count = (int) guild_count_active($pdo, $guild_id);
         $members = guild_select_members($pdo, $guild_id);
         $member_count = count($members);
