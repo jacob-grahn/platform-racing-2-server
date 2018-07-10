@@ -13,6 +13,8 @@ output_header("Player Search");
 
 if (is_empty($name)) {
     output_search();
+    output_footer();
+    die();
 }
 
 try {
@@ -25,6 +27,9 @@ try {
 
     // find user
     $user = find_user($pdo, $name);
+    if ($user === false) {
+        throw new Exception("Could not find a user with that name.");
+    }
 
     // output
     output_search($name);
