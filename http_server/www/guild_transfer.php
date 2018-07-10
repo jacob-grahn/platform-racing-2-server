@@ -164,22 +164,22 @@ try {
         $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
         $to = $old_user->email;
         $subject = 'PR2 Guild Transfer Confirmation';
-        $body = "Howdy $safe_old_name,\n\nWe received a request to change the
-            owner of your guild $safe_guild_name to $safe_new_name. If you
-            requested this change, please click the link below to complete the
-            guild ownership transfer.\n\n
-            https://pr2hub.com/confirm_guild_transfer.php?code=$code\n\n
-            If you didn't request this change, you may need to change your password.\n\n
-            All the best,\nFred";
+        $body = "Howdy $safe_old_name,\n\nWe received a request to change the "
+            ."owner of your guild $safe_guild_name to $safe_new_name. If you "
+            ."requested this change, please click the link below to complete the "
+            ."guild ownership transfer.\n\n"
+            ."https://pr2hub.com/confirm_guild_transfer.php?code=$code\n\n"
+            ."If you didn't request this change, you may need to change your password.\n\n"
+            ."All the best,\nFred";
         send_email($from, $to, $subject, $body);
 
         // tell the world
-        echo "Almost done! We just sent a confirmation email to the email address
-            on your account. You'll still own your guild until you confirm the transfer.";
+        echo "Almost done! We just sent a confirmation email to the email address on your account. "
+            ."You'll still own your guild until you confirm the transfer.";
         output_footer();
     }
 } catch (Exception $e) {
     $message = $e->getMessage();
-    echo "Error: $message";
+    echo "Error: $message<br><br><a href='javascript:window.history.back()'>&lt;- Go Back</a>";
     output_footer();
 }
