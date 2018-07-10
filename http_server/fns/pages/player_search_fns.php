@@ -19,7 +19,10 @@ function create_ban_list($bans)
 function find_user($pdo, $name)
 {
     // get id from name
-    $user_id = name_to_id($pdo, $name);
+    $user_id = name_to_id($pdo, $name, true);
+    if ($user_id === false) {
+        return false;
+    }
 
     // get player info from id
     $user = user_select_expanded($pdo, $user_id);
