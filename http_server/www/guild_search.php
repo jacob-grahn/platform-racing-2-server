@@ -112,10 +112,9 @@ try {
                 }
 
                 // member name column
-                echo "<a href='player_search.php?name=$member_url_name'
-                style='color: #$member_color; text-decoration: underline;'>
-                $member_name
-            </a></td>";
+                echo "<a href='player_search.php?name=$member_url_name'"
+                ."style='color: #$member_color; text-decoration: underline;'>"
+                ."$member_name</a></td>";
 
                 // gp today column
                 echo '<td>'
@@ -133,8 +132,7 @@ try {
 
         // if there are no members in the guild, show "This guild contains no members."
         } else {
-            echo '<br>'
-            ."This guild contains no members.";
+            echo '<br>This guild contains no members.';
         }
 
         // end the table
