@@ -177,10 +177,10 @@ try {
         die();
     } else {
         if ($banned_user_id == 0) {
-            echo("message=Guest [$banned_ip] has been banned for $duration seconds.");
+            echo "message=Guest [$banned_ip] has been banned for $duration seconds.";
         } else {
             $disp_name = htmlspecialchars($banned_name);
-            echo("message=$disp_name has been banned for $duration seconds.");
+            echo "message=$disp_name has been banned for $duration seconds.";
         }
     }
 } catch (Exception $e) {
