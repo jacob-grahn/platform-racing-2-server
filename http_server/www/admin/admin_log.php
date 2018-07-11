@@ -26,7 +26,7 @@ try {
 
     //navigation
     output_pagination($start, $count);
-    echo('<p>---</p>');
+    echo '<p>---</p>';
 
 
     //output actions
@@ -35,11 +35,11 @@ try {
     }
 
 
-    echo('<p>---</p>');
+    echo '<p>---</p>';
     output_pagination($start, $count);
-    output_footer();
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: '.$e->getMessage();
+} finally {
     output_footer();
 }
