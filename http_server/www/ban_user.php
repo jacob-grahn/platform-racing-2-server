@@ -174,6 +174,7 @@ try {
 
     if ($using_mod_site == 'yes' && $redirect == 'yes') {
         header('Location: //pr2hub.com/mod/player_info.php?user_id='.$banned_user_id.'&force_ip='.$force_ip);
+        die();
     } else {
         if ($banned_user_id == 0) {
             echo("message=Guest [$banned_ip] has been banned for $duration seconds.");
