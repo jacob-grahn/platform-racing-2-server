@@ -26,19 +26,19 @@ try {
 
     //navigation
     output_pagination($start, $count);
-    echo('<p>---</p>');
+    echo '<p>---</p>';
 
     //output actions
     foreach ($actions as $row) {
         echo("<p><span class='date'>$row->time</span> -- ".htmlspecialchars($row->message)."</p>");
     }
 
-    echo('<p>---</p>');
+    echo '<p>---</p>';
     output_pagination($start, $count);
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Error");
     echo "Error: $error";
+} finally {
     output_footer();
 }
