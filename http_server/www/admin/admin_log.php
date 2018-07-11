@@ -31,7 +31,7 @@ try {
 
     //output actions
     foreach ($actions as $row) {
-        echo("<p><span class='date'>$row->time</span> -- ".htmlspecialchars($row->message)."</p>");
+        echo "<p><span class='date'>$row->time</span> -- ".htmlspecialchars($row->message)."</p>";
     }
 
 
