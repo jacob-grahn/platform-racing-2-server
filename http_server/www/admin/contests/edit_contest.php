@@ -2,7 +2,7 @@
 
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
-require_once HTTP_FNS . '/pages/admin/edit_contest_fns.php';
+require_once HTTP_FNS . '/pages/admin/contests/edit_contest_fns.php';
 require_once QUERIES_DIR . '/contests/contest_select.php';
 require_once QUERIES_DIR . '/contests/contest_update.php';
 require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
