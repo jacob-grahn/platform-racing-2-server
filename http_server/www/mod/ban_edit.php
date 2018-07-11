@@ -82,8 +82,6 @@ try {
             <p>Notes <textarea rows='4' cols='50' name='notes'>$ban->notes</textarea>
             <p><input type='submit' value='submit'></p>
             </form>";
-
-        output_footer();
     } else {
         throw new Exception('Unknown action specified.');
     }
@@ -91,5 +89,6 @@ try {
     $error = $e->getMessage();
     output_header('Error');
     echo "Error: $error";
+} finally {
     output_footer();
 }
