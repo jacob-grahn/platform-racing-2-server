@@ -147,6 +147,7 @@ try {
 
         // redirect
         header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));
+        die();
     }
 } catch (Exception $e) {
     if ($header === false) {
