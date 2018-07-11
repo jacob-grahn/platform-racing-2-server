@@ -115,6 +115,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error Fetching Ban', $is_mod);
-    echo "Error: $error";
+    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
 }
