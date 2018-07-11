@@ -48,6 +48,7 @@ try {
 
         //redirect to a page showing the lifted ban
         header("Location: /bans/show_record.php?ban_id=$ban_id");
+        die();
     } else {
         // get the ban
         $ban = ban_select($pdo, $ban_id);
