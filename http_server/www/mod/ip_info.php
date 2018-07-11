@@ -8,6 +8,7 @@ require_once QUERIES_DIR . '/users/users_select_by_ip.php';
 
 $ip = default_get('ip', '');
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
+$header = false;
 
 // mod check try/catch
 try {
@@ -67,6 +68,7 @@ try {
 
     // header
     output_header('IP Info', true);
+    $header = true;
 
     // start
     echo "<p>IP: $html_ip</p>";
@@ -134,11 +136,12 @@ try {
         echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>$name</a>
             | Last Active: $active<br>";
     }
-
-    output_footer();
 } catch (Exception $e) {
-    $message = $e->getMessage();
-    output_header('Error');
-    echo "Error: $message";
+    if ($header === false) {
+        output_header('Error');
+    }
+    $error = $e->getMessage();
+    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }
