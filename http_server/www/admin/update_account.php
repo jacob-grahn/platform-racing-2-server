@@ -33,12 +33,11 @@ try {
     //make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
 
-    // header
-    output_header('Update PR2 Account', true, true);
-    $header = true;
-
     // form
     if ($action === 'lookup') {
+        output_header('Update PR2 Account', true, true);
+        $header = true;
+    
         echo '<form name="input" action="update_account.php" method="post">';
 
         $user = user_select($pdo, $user_id);
