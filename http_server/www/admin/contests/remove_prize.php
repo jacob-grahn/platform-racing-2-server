@@ -144,9 +144,6 @@ try {
         echo "<br><br>";
         echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Prize</a><br>";
         echo "<a href='/contests/contests.php'>&lt;- All Contests</a>";
-
-        // footer
-        output_footer();
     } // unknown handler
     else {
         throw new Exception('Invalid action specified.');
@@ -155,5 +152,6 @@ try {
     output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }
