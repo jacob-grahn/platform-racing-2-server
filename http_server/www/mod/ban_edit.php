@@ -64,6 +64,7 @@ try {
 
         // redirect to the ban listing
         header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
+        die();
     } elseif ($action == 'edit') {
         $ban = ban_select($pdo, $ban_id);
         output_header('Edit Ban', true);
