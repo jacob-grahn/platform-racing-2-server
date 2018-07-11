@@ -120,8 +120,6 @@ function output_form($pdo, $message, $campaign_id)
         .'<br>'
         .'You can find a list of prizes and their corresponding IDs '
         .'<a href="part_ids.php" target="_blank">here</a>.</pre>';
-
-    output_footer();
 }
 
 function update($pdo, $admin, $campaign_id)
