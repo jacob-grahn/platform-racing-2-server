@@ -1332,22 +1332,22 @@ class Player
         }
 
         // ensure no part arrays contain empty values
-        foreach (range(0,(count($this->hat_array)-1)) as $num) {
+        foreach (range(0, (count($this->hat_array)-1)) as $num) {
             if (empty($this->hat_array[$num])) {
                 unset($this->hat_array[$num]);
             }
         }
-        foreach (range(0,(count($this->head_array)-1)) as $num) {
+        foreach (range(0, (count($this->head_array)-1)) as $num) {
             if (empty($this->head_array[$num])) {
                 unset($this->head_array[$num]);
             }
         }
-        foreach (range(0,(count($this->body_array)-1)) as $num) {
+        foreach (range(0, (count($this->body_array)-1)) as $num) {
             if (empty($this->body_array[$num])) {
                 unset($this->body_array[$num]);
             }
         }
-        foreach (range(0,(count($this->feet_array)-1)) as $num) {
+        foreach (range(0, (count($this->feet_array)-1)) as $num) {
             if (empty($this->feet_array[$num])) {
                 unset($this->feet_array[$num]);
             }
