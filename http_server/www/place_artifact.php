@@ -18,7 +18,9 @@ try {
     }
 
     // check referrer
-    require_trusted_ref();
+    if (!is_trusted_ref()) {
+        die('error=Incorrect referrer.');
+    }
 
     // rate limiting
     rate_limit(
