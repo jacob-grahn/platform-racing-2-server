@@ -1,19 +1,5 @@
 <?php
 
-// requests from a flash client will include this header (only used in logout.php)
-function is_from_game()
-{
-    $req_with = default_server("HTTP_X_REQUESTED_WITH", "");
-    $ref = default_server("HTTP_REFERER");
-
-    // let people type in the url manually
-    if (is_empty($ref)) {
-        return true;
-    }
-
-    // does the request originate from the flash player?
-    return strpos($req_with, "ShockwaveFlash/") === 0;
-}
 
 // check if player has an epic color option for a part
 function test_epic($color, $arr_str, $part)
