@@ -1312,8 +1312,6 @@ class Player
     public function becomeGuest()
     {
         $this->guest = true;
-        $this->group = 1;
-        $this->write('setGroup`1');
         $this->write("message`Welcome to Platform Racing 2!<br><br>".
             "You're a guest, which means you'll have limited privileges. ".
             "To gain full functionality, log out and create your own account. ".
