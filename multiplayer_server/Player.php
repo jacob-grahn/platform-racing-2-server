@@ -1330,17 +1330,25 @@ class Player
         }
 
         // ensure no part arrays contain empty values
-        if (($arr_key = array_search('', $this->hat_array)) !== false) {
-            unset($this->hat_array[$arr_key]);
+        foreach (range(0, (count($this->hat_array)-1)) as $num) {
+            if (empty($this->hat_array[$num])) {
+                unset($this->hat_array[$num]);
+            }
         }
-        if (($arr_key = array_search('', $this->head_array)) !== false) {
-            unset($this->head_array[$arr_key]);
+        foreach (range(0, (count($this->head_array)-1)) as $num) {
+            if (empty($this->head_array[$num])) {
+                unset($this->head_array[$num]);
+            }
         }
-        if (($arr_key = array_search('', $this->body_array)) !== false) {
-            unset($this->body_array[$arr_key]);
+        foreach (range(0, (count($this->body_array)-1)) as $num) {
+            if (empty($this->body_array[$num])) {
+                unset($this->body_array[$num]);
+            }
         }
-        if (($arr_key = array_search('', $this->feet_array)) !== false) {
-            unset($this->feet_array[$arr_key]);
+        foreach (range(0, (count($this->feet_array)-1)) as $num) {
+            if (empty($this->feet_array[$num])) {
+                unset($this->feet_array[$num]);
+            }
         }
 
         // make sure none of the part values are blank to avoid server crashes
