@@ -7,6 +7,8 @@ require_once HTTP_FNS . '/pr2/pr2_fns.php';
 require_once QUERIES_DIR . '/levels/level_select_by_title.php';
 require_once QUERIES_DIR . '/levels/level_insert.php';
 require_once QUERIES_DIR . '/levels/level_update.php';
+require_once QUERIES_DIR . '/new_levels/check_newest.php';
+require_once QUERIES_DIR . '/new_levels/delete_from_newest.php';
 require_once QUERIES_DIR . '/new_levels/new_level_insert.php';
 
 $title = $_POST['title'];
@@ -149,6 +151,11 @@ try {
             $hash2,
             $type
         );
+
+        // delete from newest if there and not published
+        if (!$live) {
+            delete_from_newest($pdo, (int) $level_id);
+        }
     } else {
         level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, (int) $song, $user_id, $hash2, $type);
         $level = level_select_by_title($pdo, $user_id, $title);
@@ -157,8 +164,11 @@ try {
     }
 
     // add to 'newest' level list
-    if ($live) {
+    $to_newest = (bool) check_newest($pdo, $user_name, $ip);
+    if ($live && $to_newest === true) {
         new_level_insert($pdo, $level_id, $time, $ip);
+    } elseif ($live && $to_newest === false) {
+        $on_success = 'no newest';
     }
 
     // create the save string
@@ -209,6 +219,10 @@ try {
             'your level has been left unpublished. If you wish to publish '.
             'your level, remove the password and check the box to publish '.
             'the level.';
+    } elseif ($on_success == 'no newest') {
+        echo 'message=The save was successful, but since you recently published more than 3 maps, '.
+            'your level was not added to the newest levels list. If you wish to have your level on newest, '.
+            'wait for your other levels to disappear off page 1 of newest and then publish again.';
     } else {
         echo 'message=The save was successful.';
     }

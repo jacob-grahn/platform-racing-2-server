@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once HTTP_FNS . '/all_fns.php';
 require_once QUERIES_DIR . '/levels/level_select.php'; // select a level
+require_once QUERIES_DIR . '/new_levels/delete_from_newest.php'; // delete from newest if present
 require_once QUERIES_DIR . '/staff/level_unpublish.php'; // unpublish a level
 require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php'; // record the mod action
 
@@ -44,6 +45,7 @@ try {
     $l_note = $level->note;
 
     // unpublish the level
+    delete_from_newest($pdo, $level_id);
     level_unpublish($pdo, $level_id);
 
     //action log
