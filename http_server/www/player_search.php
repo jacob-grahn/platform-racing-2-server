@@ -13,6 +13,7 @@ output_header("Player Search");
 
 if (is_empty($name)) {
     output_search();
+    die();
 }
 
 try {

@@ -29,17 +29,10 @@ function find_user($pdo, $name)
 
 
 // output gwibble option for /mod/player_info.php vs player_search.php
-function output_search($name = '', $gwibble = true)
+function output_search($name = '')
 {
     // safety first
     $safe_name = htmlspecialchars($name);
-
-    // gwibble output
-    if ($gwibble === true) {
-        echo '<center>'
-            .'<font face="Gwibble" class="gwibble">-- Player Search --</font>'
-            .'<br><br>';
-    }
 
     // output search
     echo '<form method="get">'
