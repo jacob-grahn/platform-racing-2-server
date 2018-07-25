@@ -823,6 +823,21 @@ class Player
                     $this->write('systemChat`To get a list of emoticons that can be used in the chatroom,'
                                 .' go to the chat tab in the lobby and type /emotes.');
                 }
+            }
+            elseif ($chat_message == '/guides') {
+                $hats = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Hats');
+                $epic_upgrades = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Epic Upgrades');
+                $group_types = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Group Types');
+
+                if ($room_type == 'c') {
+                    $this->write('systemChat`Guides:<br>'
+                                .'- $hat_guide<br>'
+                                .'- $epic_upgrades<br>'
+                                .'- $group_types<br>');
+                } else {
+                    $this->write('systemChat`To get a list of guides that can be used in the chatroom,'
+                                .' go to the chat tab in the lobby and type /guides.');
+                }
             } // help command
             elseif ($chat_message == '/help' ||
                 $chat_message == '/commands' ||
@@ -880,7 +895,8 @@ class Player
                         '- /t status<br>'.
                         '- /population<br>'.
                         '- /beawesome<br>'.
-                        '- /emotes'.$mod.$effects.$admin.$server_owner);
+                        '- /emotes'
+                        '- /guides'.$mod.$effects.$admin.$server_owner);
                 }
             } // --- send chat message --- \\
             else {
