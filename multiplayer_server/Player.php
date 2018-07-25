@@ -833,7 +833,7 @@ class Player
                     $this->write('systemChat`Guides:<br>'
                                 .'- $hat_guide<br>'
                                 .'- $epic_upgrades<br>'
-                                .'- $group_types<br>');
+                                .'- $group_types');
                 } else {
                     $this->write('systemChat`To get a list of guides that can be used in the chatroom,'
                                 .' go to the chat tab in the lobby and type /guides.');
