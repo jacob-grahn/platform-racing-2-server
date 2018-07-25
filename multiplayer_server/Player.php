@@ -831,7 +831,7 @@ class Player
 
                 if ($room_type == 'c') {
                     $this->write('systemChat`Guides:<br>'
-                                .'- $hat_guide<br>'
+                                .'- $hats<br>'
                                 .'- $epic_upgrades<br>'
                                 .'- $group_types');
                 } else {
