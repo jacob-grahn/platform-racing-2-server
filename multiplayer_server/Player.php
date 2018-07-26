@@ -826,7 +826,7 @@ class Player
             } elseif ($chat_message == '/guides' || $chat_message == '/guide') {
                 if ($room_type == 'c') {
                     $hats_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Hats');
-                    $eparts_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Epic Upgrades');
+                    $eparts_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=123', 'Epic Upgrades');
                     $groups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Groups');
                     $this->write('systemChat`Here are some guides about different elements of PR2:<br>'
                                 ."- $hats_link<br>"
