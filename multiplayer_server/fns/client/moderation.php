@@ -160,7 +160,6 @@ function client_warn($socket, $data)
 // unmute a player
 function client_unmute($socket, $data)
 {
-    global $pdo, $guild_id, $server_name;
     $name = $data;
 
     // get some info
