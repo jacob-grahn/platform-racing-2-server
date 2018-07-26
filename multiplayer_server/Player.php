@@ -828,7 +828,7 @@ class Player
                     $hats_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Hats');
                     $eups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=123', 'Epic Upgrades');
                     $groups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Groups');
-                    $this->write('systemChat`Here are some guides about different elements of PR2:<br>'
+                    $this->write('systemChat`Helpful Resources:<br>'
                                 ."- $hats_link<br>"
                                 ."- $eups_link<br>"
                                 ."- $groups_link");
@@ -891,10 +891,10 @@ class Player
                         '- /hint (Artifact)<br>'.
                         '- /hh status<br>'.
                         '- /t status<br>'.
-                        '- /guides<br>'.
                         '- /population<br>'.
                         '- /beawesome<br>'.
-                        '- /emotes'.$mod.$effects.$admin.$server_owner);
+                        '- /emotes<br>'.
+                        '- /guides'.$mod.$effects.$admin.$server_owner);
                 }
             } // --- send chat message --- \\
             else {
