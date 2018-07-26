@@ -2,7 +2,7 @@
 
 namespace pr2\multi;
 
-class LocalBans
+class ServerBans
 {
 
     private static $arr = array();
@@ -22,7 +22,7 @@ class LocalBans
         $len = count(self::$arr);
         for ($i=0; $i<$len; $i++) {
             $ban = self::$arr[$i];
-            if ($ban->user_name == $user_name) {
+            if (strtolower(trim($ban->user_name)) == strtolower(trim($user_name))) {
                 array_splice(self::$arr, $i, 1);
                 return true;
             }
@@ -36,12 +36,12 @@ class LocalBans
     {
         $match = false;
         foreach (self::$arr as $ban) {
-            if ($ban->user_name == $user_name) {
+            if (strtolower(trim($ban->user_name)) == strtolower(trim($user_name))) {
                 $match = true;
                 break;
             }
         }
-        return( $match );
+        return $match;
     }
 
 

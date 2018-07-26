@@ -15,7 +15,8 @@ class PR2SocketServer extends \chabot\SocketServer
     public function onTimer()
     {
         TemporaryItems::removeExpired();
-        LocalBans::removeExpired();
+        ServerBans::removeExpired();
+        Mutes::removeExpired();
         LoiterDetector::check();
     }
 }
