@@ -894,7 +894,8 @@ class Player
                         '- /guides<br>'.
                         '- /population<br>'.
                         '- /beawesome<br>'.
-                        '- /emotes'.$mod.$effects.$admin.$server_owner);
+                        '- /emotes'
+                        '- /guides'.$mod.$effects.$admin.$server_owner);
                 }
             } // --- send chat message --- \\
             else {
