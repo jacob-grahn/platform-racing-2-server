@@ -130,9 +130,8 @@ function client_warn($socket, $data)
     if ($mod->group >= 2) {
         // if the target isn't online, tell the mod
         if (!isset($warned)) {
-            $mod->write("message`Error: \"$safe_wname\" is not currently on this server, "
-                .'but the mute will be applied anyway.'
-            );
+            $mod->write("message`Error: \"$safe_wname\" is not currently on this server, ".
+                'but the mute will be applied anyway.');
         }
 
         // remove existing mutes, then mute

@@ -63,7 +63,7 @@ class Mutes
         $mute = new \stdClass();
         $mute->user_name = null;
         $mute->expire_time = 0;
-        return $mute; 
+        return $mute;
     }
 
 
