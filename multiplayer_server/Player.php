@@ -823,19 +823,17 @@ class Player
                     $this->write('systemChat`To get a list of emoticons that can be used in the chatroom,'
                                 .' go to the chat tab in the lobby and type /emotes.');
                 }
-            }
-            elseif ($chat_message == '/guides') {
-                $hats = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Hats');
-                $epic_upgrades = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Epic Upgrades');
-                $group_types = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Group Types');
-
+            } elseif ($chat_message == '/guides' || $chat_message == '/guide') {
                 if ($room_type == 'c') {
-                    $this->write('systemChat`Guides:<br>'
-                                .'- $hats<br>'
-                                .'- $epic_upgrades<br>'
-                                .'- $group_types');
+                    $hats_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Hats');
+                    $eups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=123', 'Epic Upgrades');
+                    $groups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Groups');
+                    $this->write('systemChat`Here are some guides about different elements of PR2:<br>'
+                                ."- $hats_link<br>"
+                                ."- $eups_link<br>"
+                                ."- $groups_link");
                 } else {
-                    $this->write('systemChat`To get a list of guides that can be used in the chatroom,'
+                    $this->write('systemChat`To get a list of guides that explain different parts of PR2,'
                                 .' go to the chat tab in the lobby and type /guides.');
                 }
             } // help command
@@ -893,10 +891,10 @@ class Player
                         '- /hint (Artifact)<br>'.
                         '- /hh status<br>'.
                         '- /t status<br>'.
+                        '- /guides<br>'.
                         '- /population<br>'.
                         '- /beawesome<br>'.
-                        '- /emotes'
-                        '- /guides'.$mod.$effects.$admin.$server_owner);
+                        '- /emotes'.$mod.$effects.$admin.$server_owner);
                 }
             } // --- send chat message --- \\
             else {
