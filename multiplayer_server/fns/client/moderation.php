@@ -21,6 +21,9 @@ function client_kick($socket, $data)
             $kicked_url = userify($kicked, $name);
 
             // kick the user
+            if (\pr2\multi\ServerBans::isBanned($name) === true) {
+                \pr2\multi\ServerBans::remove($name); // remove existing kick if there is one
+            }
             \pr2\multi\ServerBans::add($name);
             $kicked->remove();
             $mod->write("message`$safe_kname has been kicked from this server for 30 minutes.");
