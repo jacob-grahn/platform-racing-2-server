@@ -1,5 +1,7 @@
 <?php
 
+require_once PR2_FNS_DIR . '/data_fns.php';
+
 function pass_login($pdo, $name, $password)
 {
 
@@ -257,6 +259,9 @@ function check_if_banned($pdo, $user_id, $ip)
         //figure out what the best way to say this is
         $seconds = $expire_time - time();
         $time_left = format_duration($seconds);
+        
+        //urlify the ban appeal link
+        $ban_appeal = urlify('jiggmin2.com/forums/showthread.php?tid=110', 'here');
 
         //tell it to the world
         $output = "This account or ip address has been banned.\n"
@@ -264,7 +269,7 @@ function check_if_banned($pdo, $user_id, $ip)
         ."This ban will expire in $time_left. \n"
         ."You can see more details about this ban at pr2hub.com/bans/show_record.php?ban_id=$ban_id. \n\n"
         ."If you feel that this ban is unjust, you can dispute it. Follow the "
-        ."instructions outlined at jiggmin2.com/forums/showthread.php?tid=110.";
+        ."instructions outlined $ban_appeal.";
 
         throw new Exception($output);
     }
