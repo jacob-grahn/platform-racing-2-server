@@ -16,13 +16,12 @@ function client_kick($socket, $data)
 
     // if the player actually has the power to do what they're trying to do, then do it
     if ($mod->group >= 2 && ($kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
-        \pr2\multi\ServerBans::add($name);
-
         if (isset($kicked)) {
             $mod_url = userify($mod, $mod->name);
             $kicked_url = userify($kicked, $name);
             
             // kick the user
+            \pr2\multi\ServerBans::add($name);
             $kicked->remove();
             $mod->write("message`$safe_kname has been kicked from this server for 30 minutes.");
 
@@ -46,7 +45,13 @@ function client_kick($socket, $data)
                 );
             }
         } else {
-            $mod->write("message`Error: Could not find a user with the name \"$safe_kname\" on this server.");
+            if (name_to_id($pdo, $name, true) === false) {
+                $mod->write("message`Error: Could not find a user with the name \"$safe_kname\".");
+            } else {
+                \pr2\multi\ServerBans::add($name);
+                $mod->write("message`Error: \"$safe_kname\" is not currently on this server, "
+                    ."but the kick was applied anyway.");
+            }
         }
     } // if the kicker is the server owner, tell them they're a silly goose
     elseif ($mod->server_owner == true && $kicked == $mod) {
@@ -96,6 +101,7 @@ function client_unkick($socket, $data)
 // administer a chat warning
 function client_warn($socket, $data)
 {
+    global $pdo;
     list($name, $num) = explode("`", $data);
 
     // get player info
@@ -130,8 +136,13 @@ function client_warn($socket, $data)
     if ($mod->group >= 2) {
         // if the target isn't online, tell the mod
         if (!isset($warned)) {
-            $mod->write("message`Error: \"$safe_wname\" is not currently on this server, ".
-                'but the mute will be applied anyway.');
+            if (name_to_id($pdo, $name, true) === false) {
+                $mod->write("message`Error: Could not find a user with the name \"$safe_wname\".");
+                return false;
+            } else {
+                $mod->write("message`Error: \"$safe_wname\" is not currently on this server, "
+                    .'but the mute was applied anyway.');
+            }
         }
 
         // remove existing mutes, then mute
