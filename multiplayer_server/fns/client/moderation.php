@@ -15,11 +15,11 @@ function client_kick($socket, $data)
     $safe_kname = htmlspecialchars($name);
 
     // if the player actually has the power to do what they're trying to do, then do it
-    if ($mod->group >= 2 && ($kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
+    if ($mod->group >= 2 && (@$kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
         if (isset($kicked)) {
             $mod_url = userify($mod, $mod->name);
             $kicked_url = userify($kicked, $name);
-            
+
             // kick the user
             \pr2\multi\ServerBans::add($name);
             $kicked->remove();
