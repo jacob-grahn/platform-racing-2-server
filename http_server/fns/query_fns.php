@@ -260,8 +260,8 @@ function check_if_banned($pdo, $user_id, $ip)
         $seconds = $expire_time - time();
         $time_left = format_duration($seconds);
         
-        //urlify the ban appeal link
-        $ban_appeal = urlify('jiggmin2.com/forums/showthread.php?tid=110', 'here');
+        //urlify ban appeal link
+        $ban_appeal = urlify('https://jiggmin2.com/forums/showthread.php?tid=110', 'here');
 
         //tell it to the world
         $output = "This account or ip address has been banned.\n"
