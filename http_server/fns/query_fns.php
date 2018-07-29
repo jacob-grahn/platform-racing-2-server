@@ -1,7 +1,5 @@
 <?php
 
-require_once PR2_FNS_DIR . '/data_fns.php';
-
 function pass_login($pdo, $name, $password)
 {
 
