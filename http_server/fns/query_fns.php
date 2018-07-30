@@ -263,7 +263,7 @@ function check_if_banned($pdo, $user_id, $ip)
         ."Reason: $reason \n"
         ."This ban will expire in $time_left. \n"
         ."You can see more details about this ban "
-        ."<a href='pr2hub.com/bans/show_record.php?ban_id=$ban_id' target='_blank'>here</a> \n\n"
+        ."<a href='http://pr2hub.com/bans/show_record.php?ban_id=$ban_id' target='_blank'>here</a> \n\n"
         ."If you feel that this ban is unjust, you can dispute it. Follow the instructions outlined "
         ."<a href='https://jiggmin2.com/forums/showthread.php?tid=110' target='_blank'>here</a>";
 
