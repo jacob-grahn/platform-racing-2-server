@@ -257,9 +257,6 @@ function check_if_banned($pdo, $user_id, $ip)
         //figure out what the best way to say this is
         $seconds = $expire_time - time();
         $time_left = format_duration($seconds);
-        
-        //urlify ban appeal link
-        $ban_appeal = urlify('https://jiggmin2.com/forums/showthread.php?tid=110', 'here');
 
         //tell it to the world
         $output = "This account or ip address has been banned.\n"
@@ -267,7 +264,9 @@ function check_if_banned($pdo, $user_id, $ip)
         ."This ban will expire in $time_left. \n"
         ."You can see more details about this ban at pr2hub.com/bans/show_record.php?ban_id=$ban_id. \n\n"
         ."If you feel that this ban is unjust, you can dispute it. Follow the "
-        ."instructions outlined $ban_appeal.";
+        ."instructions outlined <a href='https://jiggmin2.com/forums/showthread.php?tid=110' "
+        ."target='_blank'>here</a>";
+";
 
         throw new Exception($output);
     }
