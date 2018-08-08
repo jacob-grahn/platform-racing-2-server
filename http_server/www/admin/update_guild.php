@@ -19,6 +19,7 @@ require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 
 $guild_id = find('guild_id');
 $action = find('action', 'lookup');
+$header = false;
 
 try {
     // rate limiting
@@ -34,6 +35,7 @@ try {
     // lookup
     if ($action === 'lookup') {
         output_header('Update Guild', true, true);
+        $header = true;
 
         echo '<form name="input" action="update_guild.php" method="get">';
 
@@ -145,10 +147,13 @@ try {
 
         // redirect
         header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));
+        die();
     }
 } catch (Exception $e) {
+    if ($header === false) {
+        output_header("Error");
+    }
     $error = $e->getMessage();
-    output_header("Error");
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
 }

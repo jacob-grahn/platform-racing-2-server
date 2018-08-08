@@ -11,6 +11,7 @@ require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
 $action = find('action', 'form');
+$header = false;
 
 try {
     // rate limiting
@@ -42,6 +43,7 @@ try {
 
     // header
     output_header('Remove Contest Prize', true, true);
+    $header = true;
 
     // form
     if ($action === 'form') {
@@ -144,16 +146,16 @@ try {
         echo "<br><br>";
         echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Prize</a><br>";
         echo "<a href='/contests/contests.php'>&lt;- All Contests</a>";
-
-        // footer
-        output_footer();
     } // unknown handler
     else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    output_header('Error');
+    if ($header === false) {
+        output_header('Error');
+    }
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }

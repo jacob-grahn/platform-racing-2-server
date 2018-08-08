@@ -138,7 +138,8 @@ try {
     echo "<br><br><a href='contests.php'>&lt;- All Contests";
     output_footer();
 } catch (Exception $e) {
+    $error = htmlspecialchars($e->getMessage());
     output_header("Error");
-    echo 'Error: ' . $e->getMessage();
+    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
 }

@@ -48,6 +48,7 @@ try {
 
         //redirect to a page showing the lifted ban
         header("Location: /bans/show_record.php?ban_id=$ban_id");
+        die();
     } else {
         // get the ban
         $ban = ban_select($pdo, $ban_id);
@@ -71,6 +72,6 @@ try {
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error');
-    echo "Error: $error";
+    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
 }

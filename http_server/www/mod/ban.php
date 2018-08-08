@@ -59,10 +59,10 @@ try {
             .'</select>'
             .'<input type="submit" value="Submit" />'
         .'</form>';
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error');
     echo "Error: $error";
+} finally {
     output_footer();
 }

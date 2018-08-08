@@ -20,6 +20,7 @@ require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 // variables
 $user_id = find('id');
 $action = find('action', 'lookup');
+$header = false;
 
 try {
     // rate limiting
@@ -32,11 +33,11 @@ try {
     //make sure you're an admin
     $admin = check_moderator($pdo, true, 3);
 
-    // header
-    output_header('Update PR2 Account', true, true);
-
     // form
     if ($action === 'lookup') {
+        output_header('Update PR2 Account', true, true);
+        $header = true;
+    
         echo '<form name="input" action="update_account.php" method="post">';
 
         $user = user_select($pdo, $user_id);
@@ -216,11 +217,14 @@ try {
         );
 
         header("Location: player_deep_info.php?name1=" . urlencode($user_name));
+        die();
     }
-    output_footer();
 } catch (Exception $e) {
-    output_header('Error');
+    if ($header === false) {
+        output_header("Error");
+    }
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }

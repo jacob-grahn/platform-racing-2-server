@@ -109,15 +109,18 @@ try {
     // display available backups
     echo '<br/>';
     $backups = level_backups_select($pdo, $user_id);
-    foreach ($backups as $row) {
-        echo "<p>$row->date: <b>".htmlspecialchars($row->title)
-            ."</b> v$row->version <a href='?action=restore&backup_id=$row->backup_id'>restore</a></p>";
+    if (!empty($backups)) {
+        foreach ($backups as $row) {
+            echo "<p>$row->date: <b>".htmlspecialchars($row->title)
+                ."</b> v$row->version <a href='?action=restore&backup_id=$row->backup_id'>restore</a></p>";
+        }
+    } else {
+        echo "<center>You haven't modified or deleted any levels in the past 30 days.</center>";
     }
-
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header("Level Backups");
     echo "Error: $error";
+} finally {
     output_footer();
 }

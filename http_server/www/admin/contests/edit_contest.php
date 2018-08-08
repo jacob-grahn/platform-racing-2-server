@@ -2,7 +2,7 @@
 
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
-require_once HTTP_FNS . '/pages/admin/edit_contest_fns.php';
+require_once HTTP_FNS . '/pages/admin/contests/edit_contest_fns.php';
 require_once QUERIES_DIR . '/contests/contest_select.php';
 require_once QUERIES_DIR . '/contests/contest_update.php';
 require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
@@ -10,6 +10,7 @@ require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
 $ip = get_ip();
 $action = find_no_cookie('action', 'form');
 $contest_id = (int) find_no_cookie('contest_id', 0);
+$header = false;
 
 try {
     // rate limiting
@@ -31,6 +32,7 @@ try {
     // form
     if ($action === 'form') {
         output_header('Edit Contest', true, true);
+        $header = true;
         output_form($contest);
         output_footer();
     } // add
@@ -44,7 +46,9 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    output_header('Error');
+    if ($header === false) {
+        output_header('Error');
+    }
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();

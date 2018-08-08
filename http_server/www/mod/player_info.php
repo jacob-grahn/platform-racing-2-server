@@ -139,7 +139,8 @@ try {
 } catch (Exception $e) {
     if ($e->getMessage() !== '') {
         $error = $e->getMessage();
-        echo "Error: $error";
+        echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     }
+} finally {
     output_footer();
 }

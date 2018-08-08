@@ -3,8 +3,10 @@
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/guild_search_fns.php';
+require_once HTTP_FNS . '/pr2/guild_count_active.php';
 require_once QUERIES_DIR . '/guilds/guild_name_to_id.php';
 require_once QUERIES_DIR . '/guilds/guild_select.php';
+require_once QUERIES_DIR . '/guilds/guild_select_active_member_count.php';
 require_once QUERIES_DIR . '/guilds/guild_select_members.php';
 require_once QUERIES_DIR . '/users/user_select_name_and_power.php';
 
@@ -25,7 +27,6 @@ try {
     // sanity check: is any data entered?
     if (is_empty($guild_name) && is_empty($guild_id, false)) {
         output_guild_search();
-        output_footer();
     } else {
         // connect
         $pdo = pdo_connect();
@@ -54,7 +55,7 @@ try {
         $owner_name = htmlspecialchars($owner->name);
         $owner_url_name = htmlspecialchars(urlencode($owner->name));
         $owner_color = $group_colors[(int) $owner->power];
-        // $active_count = (int) guild_count_active($pdo, $guild_id);
+        $active_count = (int) guild_count_active($pdo, $guild_id);
         $members = guild_select_members($pdo, $guild_id);
         $member_count = count($members);
 
@@ -74,10 +75,9 @@ try {
         echo '<br>'
         ."<img src='https://pr2hub.com/emblems/$emblem'>"
         .'<br><br>'
-        ."Owner: <a href='player_search.php?name=$owner_url_name'
-        style='color: #$owner_color; text-decoration: underline;'>$owner_name
-        </a><br>"
-        ."Members: $member_count <br>" // | Active: $active_count
+        ."Owner: <a href='player_search.php?name=$owner_url_name' "
+        ."style='color: #$owner_color; text-decoration: underline;'>$owner_name</a><br>"
+        ."Members: $member_count | Active: $active_count<br>"
         ."GP Today: $gp_today | GP Total: $gp_total<br>"
         ."Created: $creation_date<br>"
         ."Last Active: $active_date<br>";
@@ -112,10 +112,9 @@ try {
                 }
 
                 // member name column
-                echo "<a href='player_search.php?name=$member_url_name'
-                style='color: #$member_color; text-decoration: underline;'>
-                $member_name
-            </a></td>";
+                echo "<a href='player_search.php?name=$member_url_name'"
+                ."style='color: #$member_color; text-decoration: underline;'>"
+                ."$member_name</a></td>";
 
                 // gp today column
                 echo '<td>'
@@ -133,8 +132,7 @@ try {
 
         // if there are no members in the guild, show "This guild contains no members."
         } else {
-            echo '<br>'
-            ."This guild contains no members.";
+            echo '<br>This guild contains no members.';
         }
 
         // end the table
