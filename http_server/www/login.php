@@ -205,13 +205,13 @@ try {
 
     // sanity check: is the user's rank 100+?
     $rank = (int) $stats->rank;
-    if (($rank + $rt_used >= 100) && $user_id !== 4291976) { // TO-DO: Make Fred's ID a constant
+    if (($rank + $rt_used >= 100) && $user_id !== FRED) {
         throw new Exception('Your rank is too high. Please choose a different account.');
     }
 
     // record moderator login
     $server_name = $server->server_name;
-    if ($group > 1) {
+    if ($group > 1 || in_array($user_id, $special_ids)) {
         mod_action_insert($pdo, $user_id, "$user_name logged into $server_name from $ip", $user_id, $ip);
     }
 

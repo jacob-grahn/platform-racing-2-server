@@ -4,8 +4,6 @@ namespace pr2\multi;
 
 class Player
 {
-    const FRED = 4291976;
-
     public $socket;
     public $user_id;
     public $guild_id;
@@ -166,7 +164,7 @@ class Player
             $this->write('message`Sorry, this server is full. Try back later.');
             $this->remove();
         } // check for a valid rank
-        elseif ($this->active_rank > 100 && $this->user_id !== self::FRED) {
+        elseif ($this->active_rank > 100 && $this->user_id != FRED) {
             $this->write('loginFailure`');
             $this->write('message`Your rank is too high. Please choose a different account.');
             $this->remove();
@@ -657,7 +655,7 @@ class Player
                     $dc_player->remove();
 
                     // if they're an actual mod, log it
-                    if ($this->server_owner == false || $mod_id == self::FRED) {
+                    if ($this->server_owner == false || $mod_id == FRED) {
                         mod_action_insert(
                             $pdo,
                             $mod_id,
@@ -753,7 +751,7 @@ class Player
             elseif (($chat_message == '/mod' || strpos($chat_message, '/mod ') === 0) &&
                 $this->group >= 3 &&
                 $this->server_owner == true &&
-                $this->user_id != self::FRED
+                $this->user_id != FRED
             ) {
                 if ($chat_message == '/mod help') {
                     $this->write('systemChat`To promote someone to a server '.
@@ -1297,7 +1295,7 @@ class Player
         $this->server_owner = true;
         $this->group = 3;
         $this->write('setGroup`3');
-        if ($this->user_id != self::FRED) {
+        if ($this->user_id != FRED) {
             $this->write("message`Welcome to your private server! ".
                 "You have admin privileges here. To promote server mods, ".
                 "type /mod promote *player name here* in the chat. ".
