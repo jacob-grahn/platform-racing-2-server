@@ -36,6 +36,7 @@ function restart_server($script, $address, $port, $salt, $server_id)
 {
     $pid = read_pid($port);
     shut_down_server($pid, $address, $port, $salt);
+    sleep(1);
     start_server($script, $port, $server_id);
 }
 
@@ -78,11 +79,7 @@ function test_server($script, $address, $port, $salt, $server_id)
         output("GOOD - Server #$server_id is running.");
     } else {
         output("BAD - Bad/No response from server #$server_id.");
-
-        $pid = read_pid($port);
-        shut_down_server($pid, $address, $port, $salt);
-
-        start_server($script, $port, $server_id);
+        restart_server($script, $address, $port, $salt, $server_id);
     }
 
     // tell the world
@@ -93,15 +90,15 @@ function test_server($script, $address, $port, $salt, $server_id)
 // starts a server
 function start_server($script, $port, $server_id)
 {
-    output("start_server: $script, $port");
+    output("STARTING SERVER | Script: $script | Port: $port");
 
-    $log = '/home/jiggmin/pr2/log/'.$port.'-'.date("Fj-Y-g:ia").'.log';
+    $log = ROOT_DIR . '/../pr2/log/' . $port . '-' . date("Fj-Y-g:ia") . '.log';
     $command = "nohup php $script $server_id > $log & echo $!";
     output("Executing command: $command");
     $pid = exec($command);
 
     write_pid($pid, $port);
-    return($pid);
+    return $pid;
 }
 
 
@@ -125,10 +122,10 @@ function shut_down_server($pid, $address, $port, $salt)
     }
 
     // tell the world
-    if ($kill_res === true) {
+    if (@$kill_res === true) {
         output("Shutdown of server running at $address:$port successful.");
     } else {
-        output("Unable to kill port. The server could already be shut down.");
+        output("A new server can now be started on port $port.");
     }
 }
 
@@ -136,8 +133,8 @@ function shut_down_server($pid, $address, $port, $salt)
 // gets the pid file
 function get_pid_file($port)
 {
-    $pid_file = '/home/jiggmin/pr2/pid/'.$port.'.txt';
-    return($pid_file);
+    $pid_file = ROOT_DIR . '/../pr2/pid/' . $port . '.txt';
+    return $pid_file;
 }
 
 
@@ -165,19 +162,19 @@ function read_pid($port)
     if ($handle !== false) {
         $pid = fread($handle, 999);
         fclose($handle);
-        output("PID is: $pid \n");
+        output("PID is: $pid");
     } else {
         output("The PID file does not exist.");
     }
-    return($pid);
+    return $pid;
 }
 
 
 // kills a port
 function kill_pid($pid)
 {
-    if ($pid != null && $pid != 0 && $pid != '') {
-        system("kill ".$pid, $k);
+    if ($pid != null && $pid != 0 && $pid != '' && $pid != false) {
+        system("kill " . $pid, $k);
         $pid = null;
         if (!$k) {
             return true;
@@ -274,7 +271,7 @@ function poll_servers($servers, $message, $output = true, $server_ids = array())
         }
     }
 
-    return($results);
+    return $results;
 }
 
 
