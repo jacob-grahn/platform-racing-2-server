@@ -602,6 +602,7 @@ class Player
                             $admin_id,
                             $ip
                         );
+                        output("$this->name initiated a server shutdown.");
                         shutdown_server();
                     }
                 } else {
