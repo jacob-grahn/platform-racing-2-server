@@ -502,7 +502,7 @@ class Game extends Room
                 $welcome_back_bonus = 1000;
             } // level bonus
             else {
-                $level_bonus = $this->appyExpCurve($player, 25 * $time_mod);
+                $level_bonus = $this->applyExpCurve($player, 25 * $time_mod);
 
                 $completed_perc = 0;
                 
@@ -542,7 +542,7 @@ class Game extends Room
                 $race_stats = $this->finish_array[$i];
                 if ($race_stats->rank < 100 && PR2SocketServer::$no_prizes === false) {
                     $exp_gain = ($race_stats->rank+5) * $time_mod;
-                    $exp_gain = ceil($this->appyExpCurve($player, $exp_gain));
+                    $exp_gain = ceil($this->applyExpCurve($player, $exp_gain));
                 } else {
                     $exp_gain = 0;
                 }
@@ -1049,7 +1049,7 @@ class Game extends Room
     }
 
 
-    private function appyExpCurve($player, $exp)
+    private function applyExpCurve($player, $exp)
     {
         if ($player->exp_today < 5000) {
             $tier = 2.0;
