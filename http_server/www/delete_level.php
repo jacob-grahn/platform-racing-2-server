@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/pr2/pr2_fns.php';
+require_once QUERIES_DIR . '/campaign/campaign_level_select_by_id.php';
 require_once QUERIES_DIR . '/levels/level_select.php';
 require_once QUERIES_DIR . '/levels/level_delete.php';
 
@@ -59,7 +60,13 @@ try {
     // fetch level data
     $row = level_select($pdo, $level_id);
     if ($row->user_id !== $user_id) {
-        throw new Exception('This is not your level');
+        throw new Exception('This is not your level.');
+    }
+
+    // check to see if this is a campaign level
+    $campaign_loc = campaign_level_select_by_id($pdo, $level_id);
+    if (!empty($campaign_loc)) {
+        throw new Exception('Your level could not be deleted because it is featured in a campaign.');
     }
 
     // save this file to the backup system
