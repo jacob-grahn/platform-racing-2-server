@@ -644,7 +644,14 @@ class Game extends Room
                 $tot_exp_gain = 0;
             }
 
-            // increment exp and maybe save
+            // disconnects anyone trying to earn exp too quick
+            if ($player->last_exp_time >= (time() - 3)) {
+                $player->socket->write("message`Botting is a no-no. :(");
+                $player->remove();
+            }
+
+            // log/increment exp and maybe save
+            $player->last_exp_time = time();
             $player->incExp($tot_exp_gain);
             $player->maybeSave();
         } else {
