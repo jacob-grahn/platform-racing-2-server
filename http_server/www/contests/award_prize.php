@@ -9,6 +9,7 @@ require_once QUERIES_DIR . '/contest_prizes/contest_prizes_select_by_contest.php
 require_once QUERIES_DIR . '/contest_winners/throttle_awards.php';
 require_once QUERIES_DIR . '/contest_winners/contest_winner_insert.php';
 require_once QUERIES_DIR . '/messages/message_insert.php';
+require_once QUERIES_DIR . '/pr2/pr2_insert.php'; // if pr2 data doesn't exist
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);

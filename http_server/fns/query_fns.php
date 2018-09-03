@@ -136,12 +136,23 @@ function award_part($pdo, $user_id, $type, $part_id)
     // insert part award, award part
     part_awards_insert($pdo, $user_id, $type, $part_id);
 
-    // award part
+    // push to part array
     array_push($part_array, $part_id);
+
+    // remove empty parts in part array
+    foreach ($part_array as $key => $part) {
+        if (empty($part)) {
+            $part_array[$key] = null;
+            unset($part_array[$key]);
+        }
+    }
+    
+    // join data to prepare for db update
     $new_field_str = join(",", $part_array);
 
+    // award part
     if ($is_epic === true) {
-        epic_upgrades_update_field($pdo, $user_id, $type, $new_field_str);
+        epic_upgrades_update_field($pdo, $user_id, $type, $new_field_str); // insert epic_upgrades data if not present
     } else {
         pr2_update_part_array($pdo, $user_id, $type, $new_field_str);
     }
@@ -170,9 +181,17 @@ function has_part($pdo, $user_id, $type, $part_id)
     // perform query
     $field = type_to_db_field($type);
     if ($is_epic === true) {
-        $data = epic_upgrades_select($pdo, $user_id);
+        $data = epic_upgrades_select($pdo, $user_id, true);
     } else {
-        $data = pr2_select($pdo, $user_id);
+        $data = pr2_select($pdo, $user_id, true);
+        if ($data === false) {
+            pr2_insert($pdo, $user_id); // insert pr2 data if not present
+        }
+    }
+
+    // if pr2/epart data isn't present, they don't have this part
+    if ($data === false) {
+        return false;
     }
 
     // get data and convert to an array
