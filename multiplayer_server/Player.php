@@ -16,6 +16,7 @@ class Player
     public $exp_points;
     public $start_exp_today;
     public $exp_today;
+    public $last_exp_time;
     public $group;
     public $guest;
 
@@ -150,6 +151,7 @@ class Player
         $this->rt_used = (int) $login->rt_used;
         $this->rt_available = (int) $login->rt_available;
         $this->exp_today = (int) $this->start_exp_today = (int) $login->exp_today;
+        $this->last_exp_time = time();
         $this->status = $login->status;
 
         $socket->player = $this;
@@ -1539,6 +1541,7 @@ class Player
         $this->exp_points = null;
         $this->start_exp_today = null;
         $this->exp_today = null;
+        $this->last_exp_time = null;
         $this->group = null;
         $this->guest = null;
         $this->hat_color = null;
