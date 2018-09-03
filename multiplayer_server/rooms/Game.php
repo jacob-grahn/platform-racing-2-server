@@ -645,7 +645,7 @@ class Game extends Room
             }
 
             // disconnects anyone trying to earn exp too quick
-            if ($player->last_exp_time >= (time() - 3)) {
+            if ($player->last_exp_time >= (time() - 2)) {
                 $player->socket->write("message`Botting is a no-no. :(");
                 $player->remove();
             }
