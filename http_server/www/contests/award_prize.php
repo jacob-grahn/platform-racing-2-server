@@ -13,6 +13,7 @@ require_once QUERIES_DIR . '/messages/message_insert.php';
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
 $action = find('action', 'form');
+$header = false;
 
 try {
     // rate limiting
@@ -66,6 +67,7 @@ try {
     }
 
     // header
+    $header = true;
     output_header('Award Prize', $is_mod, $is_admin);
 
     // get prizes info for this contest
@@ -305,6 +307,7 @@ try {
         // output the page
         echo "<br>All operations completed! The results can be seen above.";
         echo "<br><br>";
+        echo "<a href='award_prize.php?contest_id=$contest_id'>&lt;- Award Another Prize</a><br>";
         echo "<a href='view_winners.php?contest_id=$contest_id'>&lt;- View Winners</a><br>";
         echo "<a href='contests.php'>&lt;- All Contests</a>";
     } // unknown handler
@@ -314,7 +317,9 @@ try {
 
     output_footer();
 } catch (Exception $e) {
-    output_header("Error", $is_mod, $is_admin);
+    if ($header === false) {
+        output_header("Error", $is_mod, $is_admin);
+    }
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
