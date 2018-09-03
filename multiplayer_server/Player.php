@@ -16,7 +16,6 @@ class Player
     public $exp_points;
     public $start_exp_today;
     public $exp_today;
-    public $last_exp_time;
     public $group;
     public $guest;
 
@@ -58,6 +57,7 @@ class Player
     public $url = '';
     public $version = '0.0';
 
+    public $last_exp_time;
     public $last_action = 0;
     public $chat_count = 0;
     public $chat_time = 0;
@@ -545,6 +545,9 @@ class Player
                         $pefeetc = $player->feet_color_2;
                         $pdomain = $player->domain;
                         $pversion = $player->version;
+                        $plaction = $player->socket->last_action;
+                        $plaction = format_duration(time() - $plaction) . " ago ($plaction)";
+                        $plexp = format_duration(time() - $player->last_exp_time) . " ago ($player->last_exp_time)";
                         if ($player->temp_mod === true) {
                             $ptemp = 'yes';
                         } else {
@@ -562,10 +565,12 @@ class Player
                             ."ip: $pip<br>"
                             ."name: $pname | user_id: $puid<br>"
                             ."status: $pstatus<br>"
+                            ."last_action: $plaction<br>"
                             ."group: $pgroup | temp_mod: $ptemp | server_owner: $pso<br>"
                             ."guild_id: $pguild<br>"
                             ."active_rank: $parank | rank (no rt): $prank | rt_used: $prtused | rt_avail: $prtavail<br>"
                             ."exp_today: $pexp2day | exp_points: $pexppoints<br>"
+                            ."last_exp_time: $plexp<br>"
                             ."speed: $pspeed | acceleration: $paccel | jumping: $pjump<br>"
                             ."hat: $phat | head: $phead | body: $pbody | feet: $pfeet<br>"
                             ."hat_color: $phatc | hat_color_2: $pehatc<br>"
@@ -1541,7 +1546,6 @@ class Player
         $this->exp_points = null;
         $this->start_exp_today = null;
         $this->exp_today = null;
-        $this->last_exp_time = null;
         $this->group = null;
         $this->guest = null;
         $this->hat_color = null;
@@ -1573,6 +1577,7 @@ class Player
         $this->rt_available = null;
         $this->url = null;
         $this->version = null;
+        $this->last_exp_time = null;
         $this->last_action = null;
         $this->chat_count = null;
         $this->chat_time = null;
