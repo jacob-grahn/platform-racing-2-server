@@ -88,6 +88,7 @@ function add_contest_prize($pdo, $admin, $contest)
     );
 
     // output the page
+    output_header("Add Contest Prize", true, true);
     echo "Great success! <b>$html_contest_name</b> is now able to award the $full_part_name.";
     echo "<br><br>";
     echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Another Prize</a><br>";
