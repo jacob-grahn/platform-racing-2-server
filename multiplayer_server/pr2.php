@@ -31,23 +31,6 @@ require_once PR2_FNS_DIR . '/staff/demod.php';
 require_once PR2_FNS_DIR . '/staff/promote_to_moderator.php';
 require_once PR2_FNS_DIR . '/staff/server_owner.php';
 
-require_once PR2_ROOT . '/Artifact.php';
-require_once PR2_ROOT . '/loadup.php';
-require_once PR2_ROOT . '/Player.php';
-require_once PR2_ROOT . '/PR2SocketServer.php';
-require_once PR2_ROOT . '/PR2Client.php';
-require_once PR2_ROOT . '/CourseBox.php';
-require_once PR2_ROOT . '/ChatMessage.php';
-require_once PR2_ROOT . '/GuildPoints.php';
-require_once PR2_ROOT . '/HappyHour.php';
-require_once PR2_ROOT . '/RaceStats.php';
-require_once PR2_ROOT . '/Hat.php';
-require_once PR2_ROOT . '/LocalBans.php';
-require_once PR2_ROOT . '/LoiterDetector.php';
-require_once PR2_ROOT . '/TemporaryItems.php';
-require_once PR2_ROOT . '/Perks.php';
-require_once PR2_ROOT . '/RankupCalculator.php';
-
 require_once PR2_ROOT . '/parts/Bodies.php';
 require_once PR2_ROOT . '/parts/Feet.php';
 require_once PR2_ROOT . '/parts/Hats.php';
@@ -63,6 +46,24 @@ require_once PR2_ROOT . '/rooms/modes/deathmatch.php';
 require_once PR2_ROOT . '/rooms/modes/eggs.php';
 require_once PR2_ROOT . '/rooms/modes/objective.php';
 require_once PR2_ROOT . '/rooms/modes/race.php';
+
+require_once PR2_ROOT . '/Artifact.php';
+require_once PR2_ROOT . '/CourseBox.php';
+require_once PR2_ROOT . '/ChatMessage.php';
+require_once PR2_ROOT . '/GuildPoints.php';
+require_once PR2_ROOT . '/HappyHour.php';
+require_once PR2_ROOT . '/Hat.php';
+require_once PR2_ROOT . '/Mutes.php';
+require_once PR2_ROOT . '/loadup.php';
+require_once PR2_ROOT . '/LoiterDetector.php';
+require_once PR2_ROOT . '/Perks.php';
+require_once PR2_ROOT . '/Player.php';
+require_once PR2_ROOT . '/PR2SocketServer.php';
+require_once PR2_ROOT . '/PR2Client.php';
+require_once PR2_ROOT . '/RaceStats.php';
+require_once PR2_ROOT . '/RankupCalculator.php';
+require_once PR2_ROOT . '/ServerBans.php';
+require_once PR2_ROOT . '/TemporaryItems.php';
 
 output("Initializing startup...");
 

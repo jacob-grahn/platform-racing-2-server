@@ -14,8 +14,8 @@ function sort_chat_room_array($a, $b)
 // build a url
 function urlify($link, $disp, $color = '#0000FF', $bt_replace = true)
 {
-    $link = htmlspecialchars($link);
-    $disp = htmlspecialchars($disp);
+    $link = htmlspecialchars($link, ENT_QUOTES);
+    $disp = htmlspecialchars($disp, ENT_QUOTES);
     
     // replace backticks with html code to prevent errors
     if ($bt_replace === true) {
@@ -39,7 +39,7 @@ function group_color($group)
 // determine a user's display info
 function userify($player, $name, $power = null)
 {
-    $name = htmlspecialchars($name);
+    $name = htmlspecialchars($name, ENT_QUOTES);
 
     if (isset($player) && isset($player->group) && is_null($power)) {
         $color = group_color($player->group);

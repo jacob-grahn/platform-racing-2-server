@@ -1,5 +1,6 @@
 <?php
 
+
 // kick a player
 function client_kick($socket, $data)
 {
@@ -14,14 +15,16 @@ function client_kick($socket, $data)
     $safe_kname = htmlspecialchars($name);
 
     // if the player actually has the power to do what they're trying to do, then do it
-    if ($mod->group >= 2 && ($kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
-        \pr2\multi\LocalBans::add($name);
-
+    if ($mod->group >= 2 && (@$kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
         if (isset($kicked)) {
             $mod_url = userify($mod, $mod->name);
             $kicked_url = userify($kicked, $name);
-            
+
             // kick the user
+            if (\pr2\multi\ServerBans::isBanned($name) === true) {
+                \pr2\multi\ServerBans::remove($name); // remove existing kick if there is one
+            }
+            \pr2\multi\ServerBans::add($name);
             $kicked->remove();
             $mod->write("message`$safe_kname has been kicked from this server for 30 minutes.");
 
@@ -45,7 +48,13 @@ function client_kick($socket, $data)
                 );
             }
         } else {
-            $mod->write("message`Error: Could not find a user with the name \"$safe_kname\" on this server.");
+            if (name_to_id($pdo, $name, true) === false) {
+                $mod->write("message`Error: Could not find a user with the name \"$safe_kname\".");
+            } else {
+                \pr2\multi\ServerBans::add($name);
+                $mod->write("message`Error: \"$safe_kname\" is not currently on this server, "
+                    ."but the kick was applied anyway.");
+            }
         }
     } // if the kicker is the server owner, tell them they're a silly goose
     elseif ($mod->server_owner == true && $kicked == $mod) {
@@ -57,7 +66,7 @@ function client_kick($socket, $data)
 }
 
 
-//--- unkick a player -------------------------------------------------------------
+// unkick a player
 function client_unkick($socket, $data)
 {
     global $pdo, $guild_id, $server_name;
@@ -69,8 +78,8 @@ function client_unkick($socket, $data)
 
     // if the player actually has the power to do what they're trying to do, then do it
     if (($mod->group >= 2 && $mod->temp_mod === false) || $mod->server_owner === true) {
-        if (\pr2\multi\LocalBans::isBanned($name) === true) {
-            \pr2\multi\LocalBans::remove($name);
+        if (\pr2\multi\ServerBans::isBanned($name) === true) {
+            \pr2\multi\ServerBans::remove($name);
 
             // unkick them, yo
             $mod->write("message`$unkicked_name has been unkicked! Hooray for second chances!");
@@ -92,9 +101,10 @@ function client_unkick($socket, $data)
 }
 
 
-//--- warn a player -------------------------------------------------------------
+// administer a chat warning
 function client_warn($socket, $data)
 {
+    global $pdo;
     list($name, $num) = explode("`", $data);
 
     // get player info
@@ -126,11 +136,23 @@ function client_warn($socket, $data)
     }
 
     // if they're a mod, and the user is on this server, warn the user
-    if ($mod->group >= 2 && isset($warned) && ($warned->group < 2 || $mod->server_owner == true)) {
-        $warned->chat_ban = time() + $time;
-    } // if they're a mod but the user isn't online, tell them
-    elseif ($mod->group >= 2 && !isset($warned)) {
-        $mod->write("message`Error: Could not find a user with the name \"$safe_wname\" on this server.");
+    if ($mod->group >= 2) {
+        // if the target isn't online, tell the mod
+        if (!isset($warned)) {
+            if (name_to_id($pdo, $name, true) === false) {
+                $mod->write("message`Error: Could not find a user with the name \"$safe_wname\".");
+                return false;
+            } else {
+                $mod->write("message`Error: \"$safe_wname\" is not currently on this server, "
+                    .'but the mute was applied anyway.');
+            }
+        }
+
+        // remove existing mutes, then mute
+        if (\pr2\multi\Mutes::isMuted($name) === true) {
+            \pr2\multi\Mutes::remove($name);
+        }
+        \pr2\multi\Mutes::add($name, $time);
     } // if they aren't a mod, tell them
     else {
         $mod->write("message`Error: You lack the power to warn $safe_wname.");
@@ -142,15 +164,38 @@ function client_warn($socket, $data)
         $warned_url = userify($warned, $name);
 
         $mod->chat_room->sendChat("systemChat`$mod_url has given ".
-            "$warned_url $num $w_str. They have been banned from the chat ".
+            "$warned_url $num $w_str. They have been muted from the chat ".
             "for $time seconds.");
     }
 }
 
 
+// unmute a player
+function client_unmute($socket, $data)
+{
+    $name = $data;
+
+    // get some info
+    $mod = $socket->getPlayer();
+    $unmuted_name = htmlspecialchars($name);
+
+    // if the player actually has the power to do what they're trying to do, then do it
+    if (($mod->group >= 2 && $mod->temp_mod === false) || $mod->server_owner === true) {
+        if (\pr2\multi\Mutes::isMuted($name) === true) {
+            \pr2\multi\Mutes::remove($name);
+
+            // unmute them, yo
+            $mod->write("message`$unmuted_name has been unmuted! Hooray for speech!");
+        } else {
+            $mod->write("message`Error: $unmuted_name isn't muted.");
+        }
+    } else {
+        $mod->write("message`Error: You lack the power to unmute $unmuted_name.");
+    }
+}
 
 
-//--- ban a player -------------------------------------------------------
+// ban a player
 function client_ban($socket, $data)
 {
     list($banned_name, $seconds, $reason) = explode("`", $data);
@@ -212,8 +257,7 @@ function client_ban($socket, $data)
 }
 
 
-
-//--- promote a player to a moderator -------------------------------------
+// promote a player to a moderator
 function client_promote_to_moderator($socket, $data)
 {
     list($name, $type) = explode("`", $data);
@@ -260,7 +304,7 @@ function client_promote_to_moderator($socket, $data)
 }
 
 
-//-- demote a moderator ------------------------------------------------------------------
+// demote a moderator
 function client_demote_moderator($socket, $name)
 {
     // get player info

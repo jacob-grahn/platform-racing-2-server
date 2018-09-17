@@ -77,8 +77,6 @@ class Player
     public $finished_race = false;
     public $quit_race = false;
 
-    public $chat_ban = 0;
-
     public $domain;
     public $ip;
 
@@ -898,20 +896,27 @@ class Player
                 }
             } // --- send chat message --- \\
             else {
+                // get time of mute expiry
+                $isMuted = Mutes::isMuted($this->name);
+
                 // guest check
                 if ($this->group <= 0 || $this->guest == true) {
                     $this->write("systemChat`Sorries, guests can't send chat messages.");
                 } // rank 3 check
                 elseif ($this->active_rank < 3 && $this->group < 2) {
                     $this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
-                } // chat ban check (warnings, auto-warn)
-                elseif ($this->chat_ban > time() && ($this->group < 2 || $this->temp_mod === true)) {
-                    $chat_ban_seconds = $this->chat_ban - time();
-                    $this->write("systemChat`You have been temporarily banned from the chat. ".
-                        "The ban will be lifted in $chat_ban_seconds seconds.");
+                } // muted check (warnings, auto-warn, manual mute duration)
+                elseif ($isMuted === true
+                    && ($this->group < 2
+                        || $this->temp_mod === true
+                        || ($guild_id != 0 && $this->server_owner === false))
+                ) {
+                    $cb_secs = (int) Mutes::remainingTime($this->name);
+                    $this->write("systemChat`You have been temporarily muted from the chat. ".
+                        "The mute will be lifted in $cb_secs seconds.");
                 } // spam check
                 elseif ($this->getChatCount() > 6 && ($this->group < 2 || $this->temp_mod === true)) {
-                    $this->chat_ban = time() + 60;
+                    Mutes::add($this->name, 60);
                     $this->write('systemChat`Slow down a bit, yo.');
                 } // illegal character in username/message check
                 elseif (strpos($this->name, '`') !== false || strpos($chat_message, '`') !== false) {
@@ -1585,7 +1590,6 @@ class Player
         $this->worn_hat_array = null;
         $this->finished_race = null;
         $this->quit_race = null;
-        $this->chat_ban = null;
         $this->domain = null;
         $this->ip = null;
         $this->temp_mod = null;
