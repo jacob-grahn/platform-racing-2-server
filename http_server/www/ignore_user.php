@@ -22,7 +22,7 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false);
     $power = user_select_power($pdo, $user_id);
     if ($power <= 0) {
         throw new Exception(
@@ -35,10 +35,15 @@ try {
     rate_limit('ignored-list-'.$user_id, 3, 2);
 
     // get the ignored user's id
-    $ignored_id = name_to_id($pdo, $ignored_name);
-
+    $ignored_id = (int) name_to_id($pdo, $ignored_name);
+    if ($ignored_id === $user_id) {
+        throw new Exception("You can't ignore yourself, silly!");
+    }
+    
     // create the restraining order
-    ignored_insert($pdo, $user_id, $ignored_id);
+    if ($ignored_id > 0 && $user_id > 0) {
+        ignored_insert($pdo, $user_id, $ignored_id);
+    }
 
     // tell it to the world
     echo "message=$safe_ignored_name has been ignored. You won't recieve any chat or private messages from them.";
