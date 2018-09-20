@@ -24,7 +24,7 @@ try {
     // check their login
     $user_id = (int) token_login($pdo, false);
     $power = user_select_power($pdo, $user_id);
-    if ($power <= 0) {
+    if ($power <= 0 || $user_id === 0) {
         throw new Exception(
             "Guests can't add/remove users to/from their friends/ignored lists. ".
             "To access this feature, please create your own account."
@@ -41,9 +41,7 @@ try {
     }
     
     // create the restraining order
-    if ($ignored_id > 0 && $user_id > 0) {
-        ignored_insert($pdo, $user_id, $ignored_id);
-    }
+    ignored_insert($pdo, $user_id, $ignored_id);
 
     // tell it to the world
     echo "message=$safe_ignored_name has been ignored. You won't recieve any chat or private messages from them.";
