@@ -492,7 +492,6 @@ class Game extends Room
                 }
             }
 
-
             // exp gain
             $tot_exp_gain = 0;
 
@@ -518,6 +517,9 @@ class Game extends Room
                     }
                     $completed_perc = $objective_count / $this->finish_count;
                     $level_bonus *= $completed_perc;
+                    if ($completed_perc < 1) {
+                        $player->race_stats->give_artifact = false;
+                    }
                 }
 
                 $level_bonus = round($level_bonus);
@@ -626,7 +628,10 @@ class Game extends Room
             }
 
             // apply artifact bonus after all multipliers
-            if ($this->course_id == Artifact::$level_id && $player->wearingHat(Hats::ARTIFACT)) {
+            if ($this->course_id == Artifact::$level_id
+                && $player->wearingHat(Hats::ARTIFACT)
+                && $player->race_stats->give_artifact == true
+           ) {
                 $result = save_finder($pdo, $player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
