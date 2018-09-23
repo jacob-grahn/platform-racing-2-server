@@ -631,7 +631,7 @@ class Game extends Room
             if ($this->course_id == Artifact::$level_id
                 && $player->wearingHat(Hats::ARTIFACT)
                 && $player->race_stats->give_artifact == true
-           ) {
+            ) {
                 $result = save_finder($pdo, $player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
