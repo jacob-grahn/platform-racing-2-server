@@ -9,7 +9,7 @@ function has_found_artifact($pdo, $player)
     try {
         // make sure they haven't found this artifact before
         $last_found_at = artifacts_found_select_time($pdo, $user_id);
-        if ($last_found_at > \pr2\multi\Artifact::$updated_time) {
+        if ($last_found_at > \pr2\multi\Artifact::$updated_time || $player->group <= 0) {
             return true;
         }
 
