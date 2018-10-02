@@ -83,5 +83,6 @@ try {
     $error = $e->getMessage();
     output_header('Error');
     echo "Error: $error";
+} finally {
     output_footer();
 }
