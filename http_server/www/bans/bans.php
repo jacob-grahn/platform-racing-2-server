@@ -62,8 +62,8 @@ try {
                 $display_name .= ' ';
             }
             $display_name .= "[$banned_ip]";
-        } elseif ($ip_ban == 1 && !$is_mod) {
-            $display_name = "<b>an IP</b>";
+        } elseif ($ip_ban == 1 && $account_ban == 0 && !$is_mod) {
+            $display_name = "<i>an IP</i>";
         }
 
         $reason = htmlspecialchars($reason);
