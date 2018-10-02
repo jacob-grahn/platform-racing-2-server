@@ -53,7 +53,7 @@ try {
         $formatted_time = date('M j, Y g:i A', $time);
         $duration = $expire_time - $time;
 
-        $display_name = htmlspecialchars('');
+        $display_name = '';
         if ($account_ban == 1) {
             $display_name .= $banned_name;
         }
