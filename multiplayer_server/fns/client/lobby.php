@@ -28,7 +28,7 @@ function client_set_chat_room($socket, $data)
         $player->chat_room->removePlayer($player);
     }
     if (($data == 'mod' && $player->group < 2) ||
-        ($data == 'admin' && ($player->group < 3 || $player->user_id == 4291976))
+        ($data == 'admin' && ($player->group < 3 || $player->user_id == FRED))
     ) {
         $data = 'none';
         $player->write('message`You lack the power to enter this room.');

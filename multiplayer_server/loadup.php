@@ -41,7 +41,7 @@ function set_server($pdo, $server)
         $guild = guild_select($pdo, $guild_id);
         $guild_owner = $guild->owner_id;
     } else {
-        $guild_owner = 4291976; //Fred the G. Cactus
+        $guild_owner = FRED;
     }
 }
 

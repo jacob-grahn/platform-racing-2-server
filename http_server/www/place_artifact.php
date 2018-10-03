@@ -53,7 +53,7 @@ try {
     }
 
     // sanity check: are they Fred?
-    if ($user_id != 1 && $user_id != 4291976) {
+    if ($user_id !== FRED) {
         throw new Exception('You are not Fred.');
     }
 

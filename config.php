@@ -14,6 +14,9 @@ define('WWW_ROOT', $directory . "/http_server/www"); // main folder
 
 define('SOCKET_DAEMON_FILES', $directory . '/vend/socket/index.php'); // files for phpSocketDaemon
 
+define('FRED', 4291976); // fred id
+$special_ids = array(FRED, 5321458, 5451130); // fred, sir, clint
+
 // call globally needed files
 require_once COMMON_DIR . '/env.php';
 require_once COMMON_DIR . '/pdo_connect.php';

@@ -11,7 +11,7 @@ function promote_server_mod($name, $owner, $promoted)
     if ($owner->group < 3 ||
         $owner->server_owner == false ||
         $owner->user_id != $guild_owner ||
-        $owner->user_id == 4291976
+        $owner->user_id == FRED
     ) {
         $owner->write("message`Error: You lack the power to promote $safe_name to a server moderator.");
         return false;
