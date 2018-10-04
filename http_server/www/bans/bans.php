@@ -53,17 +53,13 @@ try {
         $formatted_time = date('M j, Y g:i A', $time);
         $duration = $expire_time - $time;
 
-        $display_name = '';
-        if ($account_ban == 1) {
-            $display_name .= $banned_name;
-        }
+        $display_name = $banned_name;
+
         if ($ip_ban == 1 && $is_mod) {
             if ($display_name != '') {
                 $display_name .= ' ';
             }
             $display_name .= "[$banned_ip]";
-        } elseif ($ip_ban == 1 && $account_ban == 0 && !$is_mod) {
-            $display_name = "<i>an IP</i>";
         }
 
         $reason = htmlspecialchars($reason);
