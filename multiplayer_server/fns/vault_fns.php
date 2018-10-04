@@ -16,23 +16,38 @@ function process_unlock_super_booster($socket, $data)
 // unlock a temporary perk
 function process_unlock_perk($socket, $data)
 {
+    global $player_array;
+
     if ($socket->process == true) {
         list( $slug, $user_id, $guild_id, $user_name ) = explode('`', $data);
 
         start_perk($slug, $user_id, $guild_id);
+        $player = id_to_player($user_id, false);
+        $display_name = userify($player, $user_name);
 
         if ($guild_id != 0) {
             if ($slug == \pr2\multi\Perks::GUILD_FRED) {
-                send_to_guild($guild_id, "systemChat`$user_name unlocked Fred mode for your guild!");
+                send_to_guild($guild_id, "systemChat`$display_name unlocked Fred mode for your guild!");
             }
             if ($slug == \pr2\multi\Perks::GUILD_GHOST) {
-                send_to_guild($guild_id, "systemChat`$user_name unlocked Ghost mode for your guild!");
+                send_to_guild($guild_id, "systemChat`$display_name unlocked Ghost mode for your guild!");
             }
             if ($slug == \pr2\multi\Perks::GUILD_ARTIFACT) {
-                send_to_guild($guild_id, "systemChat`$user_name unlocked Artifact mode for your guild!");
+                send_to_guild($guild_id, "systemChat`$display_name unlocked Artifact mode for your guild!");
             }
             if ($slug == \pr2\multi\Perks::HAPPY_HOUR) {
-                sendToAll_players("systemChat`$user_name just triggered a Happy Hour!");
+                global $chat_room_array;
+                if (isset($chat_room_array['main'])) {
+                    $main = $chat_room_array['main'];
+                    $main->sendChat("systemChat`$display_name just triggered a Happy Hour!", -1);
+                    foreach ($player_array as $player) {
+                        if (isset($player->chat_room) && $player->chat_room != $main) {
+                            $player->write("systemChat`$display_name just triggered a Happy Hour!");
+                        }
+                    }
+                } else {
+                    sendToAll_players("systemChat`$display_name just triggered a Happy Hour!");
+                }
             }
         }
 
