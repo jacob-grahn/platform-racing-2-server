@@ -124,7 +124,7 @@ class CourseBox
         $course_id = substr($this->course_id, 0, strpos($this->course_id, '_'));
         $game = new Game($course_id);
         foreach ($this->slot_array as $player) {
-            if ($player->active_rank < 100 || $player->user_id === $player::FRED) {
+            if ($player->active_rank < 100 || $player->user_id === FRED) {
                 $player->confirmed = false;
                 $game->addPlayer($player);
                 client_set_right_room($player->socket, 'none');
