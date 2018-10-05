@@ -22,9 +22,9 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = (int) token_login($pdo, false);
+    $user_id = token_login($pdo, false);
     $power = user_select_power($pdo, $user_id);
-    if ($power <= 0 || $user_id === 0) {
+    if ($power <= 0) {
         throw new Exception(
             "Guests can't add/remove users to/from their friends/ignored lists. ".
             "To access this feature, please create your own account."
