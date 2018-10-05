@@ -62,6 +62,8 @@ try {
         $ban_type = "Account";
     } elseif ($account_ban == 0 && $ip_ban == 1) {
         $ban_type = "IP";
+    } else {
+        $ban_type = "Unknown";
     }
 
     $html_lifted_by = htmlspecialchars($lifted_by);
@@ -96,7 +98,7 @@ try {
 
     echo "<p>$html_mod_name banned $html_banned_name for $f_duration on $formatted_time.</p>
             <p>Reason: $html_reason</p>
-            <p>Type: $ban_type</p>
+            <p>Ban Type: $ban_type</p>
             <p>This ban will expire on $expire_formatted_time.</p>
             <p> --- </p>
             <p>$html_record</p>
