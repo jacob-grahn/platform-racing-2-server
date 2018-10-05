@@ -49,21 +49,25 @@ try {
     $duration = $expire_time - $time;
     $f_duration = format_duration($duration);
 
-    $display_name = '';
-    if ($account_ban == 1) {
-        $display_name .= $banned_name;
-    }
     if ($ip_ban == 1 && $is_mod) {
-        if ($display_name != '') {
-            $display_name .= ' ';
+        if ($banned_name != '') {
+            $banned_name .= ' ';
         }
-        $display_name .= "[$banned_ip]";
+        $banned_name .= "[$banned_ip]";
+    }
+
+    if ($account_ban == 1 && $ip_ban == 1) {
+        $ban_type = "Account and IP";
+    } elseif ($account_ban == 1 && $ip_ban == 0) {
+        $ban_type = "Account";
+    } elseif ($account_ban == 0 && $ip_ban == 1) {
+        $ban_type = "IP";
     }
 
     $html_lifted_by = htmlspecialchars($lifted_by);
     $html_lifted_reason = htmlspecialchars($lifted_reason);
     $html_mod_name = htmlspecialchars($mod_name);
-    $html_banned_name = htmlspecialchars($display_name);
+    $html_banned_name = htmlspecialchars($banned_name);
     $html_reason = htmlspecialchars($reason);
     $html_record = str_replace("\r", '<br/>', htmlspecialchars($record));
     $html_notes = str_replace("\n", '<br>', htmlspecialchars($notes));
@@ -92,6 +96,7 @@ try {
 
     echo "<p>$html_mod_name banned $html_banned_name for $f_duration on $formatted_time.</p>
             <p>Reason: $html_reason</p>
+            <p>Type: $ban_type</p>
             <p>This ban will expire on $expire_formatted_time.</p>
             <p> --- </p>
             <p>$html_record</p>
@@ -110,11 +115,10 @@ try {
     }
 
     echo '<p><a href="bans.php">Go Back</a></p>';
-
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error Fetching Ban', $is_mod);
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }
