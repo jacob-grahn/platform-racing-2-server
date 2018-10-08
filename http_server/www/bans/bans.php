@@ -58,11 +58,11 @@ try {
         if ($account_ban == 1) {
             $display_name .= $banned_name;
         }
-        // display "an IP" if IP ban and not mod
+        // display "an IP" if ip ban and you're not a mod
         if ($ip_ban == 1 && $account_ban == 0 && !$is_mod) {
             $display_name .= "<i>an IP</i>";
         }
-        // if the ban type if ip and you're a mod, display the ip
+        // if ip ban and you're a mod, display the ip
         if ($ip_ban == 1 && $is_mod) {
             if ($display_name != '') {
                 $display_name .= ' ';
