@@ -1,23 +1,31 @@
 <?php
+
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/bans/ban_select.php';
+
 $ban_id = (int) $_GET['ban_id'];
 $ip = get_ip();
+
 try {
     // rate limiting
     rate_limit('show-ban-record-'.$ip, 5, 2);
+    
     // connect
     $pdo = pdo_connect();
+    
     // are they a moderator
     $is_mod = is_moderator($pdo, false);
     if ($is_mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10, "Please wait at least one minute before trying to view another ban.");
     }
+    
     // get the ban details
     $row = ban_select($pdo, $ban_id);
+    
     // output header (w/ mod nav if they're a mod)
     output_header('View Ban', $is_mod);
+    
     //--- output the page ---
     $ban_id = $row->ban_id;
     $banned_ip = $row->banned_ip;
@@ -39,7 +47,9 @@ try {
     $expire_formatted_time = date('M j, Y g:i A', $expire_time);
     $duration = $expire_time - $time;
     $f_duration = format_duration($duration);
+    
     $display_name = '';
+    
     // display name if account ban
     if ($account_ban == 1) {
         $display_name .= $banned_name;
@@ -55,8 +65,10 @@ try {
         }
         $display_name .= "[$banned_ip]";
     }
+    
     $html_record = str_replace("\r", '<br/>', $record));
     $html_notes = str_replace("\n", '<br>', $notes));
+    
     if ($lifted == 1) {
         echo '<b><p>-----------------------------------------------------------------------------------------------</p>'
                ."<p>--- This ban has been lifted by $lifted_by ---</p>"
@@ -64,6 +76,7 @@ try {
                .'<p>-----------------------------------------------------------------------------------------------</p>'
                .'<p>&nbsp;</p></b>';
     }
+    
     //make the names clickable for moderators
     if ($is_mod === true) {
         $mod_name = "<a href='/mod/player_info.php?user_id=$mod_user_id'>$mod_name</a>";
@@ -73,12 +86,14 @@ try {
             $display_name = "<a href='/mod/ip_info.php?ip=$banned_ip'>$display_name</a>";
         }
     }
+    
     echo "<p>$mod_name banned $display_name for $f_duration on $formatted_time.</p>
             <p>Reason: $reason</p>
             <p>This ban will expire on $expire_formatted_time.</p>
             <p> --- </p>
             <p>$record</p>
             <p> --- </p>";
+    
     if ($is_mod === true) {
         if (isset($notes) && $notes != '') {
             echo "<p> --- notes</p>";
@@ -90,11 +105,12 @@ try {
             echo "<p><a href='/mod/lift_ban.php?ban_id=$ban_id'>Lift Ban</a></p>";
         }
     }
+    
     echo '<p><a href="bans.php">Go Back</a></p>';
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error Fetching Ban', $is_mod);
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }
