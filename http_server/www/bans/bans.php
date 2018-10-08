@@ -53,11 +53,21 @@ try {
         $formatted_time = date('M j, Y g:i A', $time);
         $duration = $expire_time - $time;
 
+        $display_name = '';
+        // display name if account ban
+        if ($account_ban == 1) {
+            $display_name .= $banned_name;
+        }
+        // display "an IP" if IP ban and not mod
+        if ($ip_ban == 1 && $account_ban == 0 && !$is_mod) {
+            $display_name .= "<i>an IP</i>";
+        }
+        // if the ban type if ip and you're a mod, display the ip
         if ($ip_ban == 1 && $is_mod) {
-            if ($banned_name != '') {
-                $banned_name .= ' ';
+            if ($display_name != '') {
+                $display_name .= ' ';
             }
-            $banned_name .= "[$banned_ip]";
+            $display_name .= "[$banned_ip]";
         }
 
         $reason = htmlspecialchars($reason);
@@ -65,7 +75,7 @@ try {
 
         echo "<p>$formatted_time
                 <a href='show_record.php?ban_id=$ban_id'>
-                $mod_name banned $banned_name for $f_duration.</a><br/>
+                $mod_name banned $display_name for $f_duration.</a><br/>
                 Reason: $reason
                 </p>";
     }
