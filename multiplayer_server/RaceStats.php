@@ -12,6 +12,7 @@ class RaceStats
     public $finish_time;
     public $drawing = true;
     public $still_here = true;
+    public $give_artifact = true;
 
     public $level_hash = '';
     public $mode = '';

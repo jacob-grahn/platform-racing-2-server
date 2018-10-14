@@ -637,6 +637,13 @@ class Player
             ) {
                 $unkicked_name = trim(substr($chat_message, 8));
                 client_unkick($this->socket, $unkicked_name);
+            } // unwarn/unmute command
+            elseif ($this->group >= 2 &&
+                (strpos($chat_message, '/unmute ') === 0 || strpos($chat_message, '/unwarn ') === 0) &&
+                ($this->temp_mod === false || $this->server_owner == true)
+            ) {
+                $unmuted_name = trim(substr($chat_message, 8));
+                client_unmute($this->socket, $unmuted_name);
             } // disconnect command
             elseif ((strpos($chat_message, '/dc ') === 0 || strpos($chat_message, '/disconnect ') === 0) &&
                  $this->group >= 2 &&
@@ -912,11 +919,7 @@ class Player
                 elseif ($this->active_rank < 3 && $this->group < 2) {
                     $this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
                 } // muted check (warnings, auto-warn, manual mute duration)
-                elseif ($isMuted === true
-                    && ($this->group < 2
-                        || $this->temp_mod === true
-                        || ($guild_id != 0 && $this->server_owner === false))
-                ) {
+                elseif ($isMuted === true && ($this->group < 2 || ($guild_id != 0 && $this->server_owner === false))) {
                     $cb_secs = (int) Mutes::remainingTime($this->name);
                     $this->write("systemChat`You have been temporarily muted from the chat. ".
                         "The mute will be lifted in $cb_secs seconds.");
