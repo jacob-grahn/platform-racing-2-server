@@ -43,27 +43,32 @@ try {
         $user = user_select($pdo, $user_id);
         $pr2 = pr2_select($pdo, $user_id, true);
         $epic = epic_upgrades_select($pdo, $user_id, true);
-        echo "user_id: $user->user_id <br>---<br>";
 
+        $user_id = (int) $user->user_id;
+        $name = htmlspecialchars($user->name, ENT_QUOTES);
+        $email = htmlspecialchars($user->email, ENT_QUOTES);
+        $guild = htmlspecialchars($user->guild, ENT_QUOTES);
 
-        echo 'Name: <input type="text" size="" name="name" value="'.htmlspecialchars($user->name, ENT_QUOTES).'"><br>';
-        echo 'Email: <input type="text" name="email" value="'.htmlspecialchars($user->email, ENT_QUOTES).'"><br>';
-        echo 'Guild: <input type="text" name="guild" value="'.htmlspecialchars($user->guild, ENT_QUOTES).'"><br>';
+        echo "user_id: $user_id";
+        echo "<br>---<br>";
+        echo "Name: <input type='text' name='name' value='$name'><br>";
+        echo "Email: <input type='text' name='email' value='$email'><br>";
+        echo "Guild: <input type='text' name='guild' value='$guild'><br>";
         if ($pr2 !== false) {
-            echo 'Hats: <input type="text" size="100" name="hats" value="'.$pr2->hat_array.'"><br>';
-            echo 'Heads: <input type="text" size="100" name="heads" value="'.$pr2->head_array.'"><br>';
-            echo 'Bodies: <input type="text" size="100" name="bodies" value="'.$pr2->body_array.'"><br>';
-            echo 'Feet: <input type="text" size="100" name="feet" value="'.$pr2->feet_array.'"><br>';
+            echo "Hats: <input type='text' size='100' name='hats' value='$pr2->hat_array'><br>";
+            echo "Heads: <input type=text' size='100' name='heads' value='$pr2->head_array'><br>";
+            echo "Bodies: <input type='text' size='100' name='bodies' value='$pr2->body_array'><br>";
+            echo "Feet: <input type='text' size='100' name='feet' value='$pr2->feet_array'><br>";
         }
         if ($epic !== false) {
-            echo 'Epic Hats: <input type="text" size="100" name="eHats" value="'.$epic->epic_hats.'"><br>';
-            echo 'Epic Heads: <input type="text" size="100" name="eHeads" value="'.$epic->epic_heads.'"><br>';
-            echo 'Epic Bodies: <input type="text" size="100" name="eBodies" value="'.$epic->epic_bodies.'"><br>';
-            echo 'Epic Feet: <input type="text" size="100" name="eFeet" value="'.$epic->epic_feet.'"><br>';
+            echo "Epic Hats: <input type='text' size='100' name='eHats' value='$epic->epic_hats'><br>";
+            echo "Epic Heads: <input type='text' size='100' name='eHeads' value='$epic->epic_heads'><br>";
+            echo "Epic Bodies: <input type='text' size='100' name='eBodies' value='$epic->epic_bodies'><br>";
+            echo "Epic Feet: <input type='text' size='100' name='eFeet' value='$epic->epic_feet'><br>";
         }
         echo 'Description of Changes: <input type="text" size="100" name="account_changes"><br>';
         echo '<input type="hidden" name="action" value="update">';
-        echo '<input type="hidden" name="id" value="'.$user->user_id.'">';
+        echo "<input type='hidden' name='id' value='$user_id'>";
 
         echo '<br/>';
         echo '<input type="submit" value="Submit">&nbsp;(no confirmation!)';
