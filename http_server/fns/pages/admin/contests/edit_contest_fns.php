@@ -25,7 +25,7 @@ function output_form($contest)
         (link to contest homepage, max: 255 characters)<br>";
     echo "Host User ID: <input type='text' name='host_id' maxlength='10' value='$host_id'>
         (the user ID of the PR2 player that is hosting this contest, max: 10 numbers)<br>";
-    echo "Awarding: <input type='text' name='awarding' maxlength='255' value='$awarding)'>
+    echo "Awarding: <input type='text' name='awarding' maxlength='255' value='$awarding'>
         (summary of the prizes the contest is awarding, max: 255 characters)<br>";
     echo "Max Awards: <input type='text' name='max_awards' maxlength='2' value='$max_awards'>
         (max times a contest owner can award prizes per week, suggested: 1-3, min: 1, max: 50)<br>";
