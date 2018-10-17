@@ -47,7 +47,7 @@ try {
         $guild_prose = htmlspecialchars($guild->note, ENT_QUOTES);
         $guild_id = (int) $guild->guild_id;
 
-        echo "Guild Name: <input type='text' size='' name='guild_name' value='$guild_name)'><br>";
+        echo "Guild Name: <input type='text' size='' name='guild_name' value='$guild_name'><br>";
         echo "Guild Owner: <input type='text' size='' name='owner_id' value='$guild_owner'><br>";
         echo "Prose: <textarea rows='4' name='note'>$guild_prose</textarea><br>";
         echo 'Delete Emblem? <input type="checkbox" name="delete_emblem"><br>';
