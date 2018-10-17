@@ -42,17 +42,19 @@ try {
         $guild = guild_select($pdo, $guild_id);
         echo "guild_id: $guild->guild_id <br>---<br>";
 
+        $guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
+        $guild_owner = (int) $guild->owner_id;
+        $guild_prose = htmlspecialchars($guild->note, ENT_QUOTES);
+        $guild_id = (int) $guild->guild_id;
 
-        echo 'Guild Name: <input type="text" size="" name="guild_name" value="'
-            .htmlspecialchars($guild->guild_name).'"><br>';
-        echo 'Guild Owner: <input type="text" size"" name="owner_id" value="'
-            .htmlspecialchars($guild->owner_id).'"><br>';
-        echo 'Prose: <textarea rows="4" name="note">'.htmlspecialchars($guild->note).'</textarea><br>';
+        echo "Guild Name: <input type='text' size='' name='guild_name' value='$guild_name)'><br>";
+        echo "Guild Owner: <input type='text' size='' name='owner_id' value='$guild_owner'><br>";
+        echo "Prose: <textarea rows='4' name='note'>$guild_prose</textarea><br>";
         echo 'Delete Emblem? <input type="checkbox" name="delete_emblem"><br>';
         echo 'Recount Members? <input type="checkbox" name="recount_members"><br>';
         echo 'Description of Changes: <input type="text" size="100" name="guild_changes"><br>';
         echo '<input type="hidden" name="action" value="update">';
-        echo '<input type="hidden" name="guild_id_submit" value="'.$guild->guild_id.'">';
+        echo "<input type='hidden' name='guild_id_submit' value='$guild_id'>";
 
         echo '<br/>';
         echo '<input type="submit" value="Submit">&nbsp;(no confirmation!)';
@@ -153,7 +155,7 @@ try {
     if ($header === false) {
         output_header("Error");
     }
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
 }

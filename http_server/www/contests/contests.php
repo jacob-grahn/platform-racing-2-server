@@ -70,12 +70,12 @@ try {
         $host_color = $group_colors[(int) $host->power];
 
         // safety first
-        $html_contest_name = htmlspecialchars($contest_name);
-        $html_desc = htmlspecialchars($desc);
-        $html_awarding = htmlspecialchars($awarding);
-        $html_contest_url = htmlspecialchars($contest_url);
-        $html_host_name = htmlspecialchars($host->name);
-        $html_url_host_name = htmlspecialchars(urlencode($host->name));
+        $html_contest_name = htmlspecialchars($contest_name, ENT_QUOTES);
+        $html_desc = htmlspecialchars($desc, ENT_QUOTES);
+        $html_awarding = htmlspecialchars($awarding, ENT_QUOTES);
+        $html_contest_url = htmlspecialchars($contest_url, ENT_QUOTES);
+        $html_host_name = htmlspecialchars($host->name, ENT_QUOTES);
+        $html_url_host_name = htmlspecialchars(urlencode($host->name), ENT_QUOTES);
 
         // are they the host?
         $is_host = false;

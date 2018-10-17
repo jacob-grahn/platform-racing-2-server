@@ -40,7 +40,7 @@ try {
         $user_id = $mod->user_id;
         $name = $mod->name;
         if ($reason != '') {
-            $disp_reason = "Reason: " . htmlspecialchars($reason);
+            $disp_reason = "Reason: " . htmlspecialchars($reason, ENT_QUOTES);
         } else {
             $disp_reason = "There was no reason given";
         }

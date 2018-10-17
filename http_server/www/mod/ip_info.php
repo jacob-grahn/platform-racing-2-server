@@ -41,14 +41,14 @@ try {
         $ip_info = $ip_info->data->geo;
 
         // make some variables
-        $html_host = htmlspecialchars($ip_info->host);
-        $html_dns = htmlspecialchars($ip_info->dns);
-        $html_isp = htmlspecialchars($ip_info->isp);
-        $url_isp = htmlspecialchars(urlencode($ip_info->isp));
-        $html_city = htmlspecialchars($ip_info->city);
-        $html_region = htmlspecialchars($ip_info->region);
-        $html_country = htmlspecialchars($ip_info->country_name);
-        $html_country_code = htmlspecialchars($ip_info->country_code);
+        $html_host = htmlspecialchars($ip_info->host, ENT_QUOTES);
+        $html_dns = htmlspecialchars($ip_info->dns, ENT_QUOTES);
+        $html_isp = htmlspecialchars($ip_info->isp, ENT_QUOTES);
+        $url_isp = htmlspecialchars(urlencode($ip_info->isp), ENT_QUOTES);
+        $html_city = htmlspecialchars($ip_info->city, ENT_QUOTES);
+        $html_region = htmlspecialchars($ip_info->region, ENT_QUOTES);
+        $html_country = htmlspecialchars($ip_info->country_name, ENT_QUOTES);
+        $html_country_code = htmlspecialchars($ip_info->country_code, ENT_QUOTES);
 
         // make a location string out of the location data
         $html_location = '';
@@ -64,7 +64,7 @@ try {
     }
 
     // we can dance if we want to, we can leave your friends behind
-    $html_ip = htmlspecialchars($ip);
+    $html_ip = htmlspecialchars($ip, ENT_QUOTES);
 
     // header
     output_header('IP Info', true);
@@ -96,7 +96,7 @@ try {
     // give some more info on the current ban in effect if there is one
     if ($row !== false) {
         $ban_id = $row->ban_id;
-        $reason = htmlspecialchars($row->reason);
+        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
         $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
         $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes.</a>
             This IP is banned until $ban_end_date. Reason: $reason";
@@ -128,7 +128,7 @@ try {
 
     foreach ($users as $user) {
         $user_id = (int) $user->user_id;
-        $name = htmlspecialchars($user->name);
+        $name = htmlspecialchars($user->name, ENT_QUOTES);
         $power_color = $group_colors[(int) $user->power];
         $active = date('j/M/Y', (int) $user->time);
 

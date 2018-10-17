@@ -9,25 +9,31 @@ function output_form($contest)
 
     echo "Edit Contest<br><br>";
 
-    echo "Contest Name:
-        <input type='text' name='contest_name' maxlength='100' value='".htmlspecialchars($contest->contest_name)."'>
+    $contest_id = (int) $contest->contest_id;
+    $name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
+    $desc = htmlspecialchars($contest->description, ENT_QUOTES);
+    $url = htmlspecialchars($contest->url, ENT_QUOTES);
+    $host_id = (int) $contest->user_id;
+    $awarding = htmlspecialchars($contest->awarding, ENT_QUOTES);
+    $max_awards = (int) $contest->max_awards;
+
+    echo "Contest Name: <input type='text' name='contest_name' maxlength='100' value='$name'>
         (the name of the contest, max: 100 characters)<br>";
-    echo "Description:
-        <input type='text' name='description' maxlength='255' value='".htmlspecialchars($contest->description)."'>
+    echo "Description: <input type='text' name='description' maxlength='255' value='$desc'>
         (short description of what the contest involves, max: 255 characters)<br>";
-    echo "Contest URL: <input type='text' name='url' maxlength='255' value='".htmlspecialchars($contest->url)."'>
+    echo "Contest URL: <input type='text' name='url' maxlength='255' value='$url'>
         (link to contest homepage, max: 255 characters)<br>";
-    echo "Host User ID: <input type='text' name='host_id' maxlength='10' value='".(int) $contest->user_id."'>
+    echo "Host User ID: <input type='text' name='host_id' maxlength='10' value='$host_id'>
         (the user ID of the PR2 player that is hosting this contest, max: 10 numbers)<br>";
-    echo "Awarding: <input type='text' name='awarding' maxlength='255' value='".htmlspecialchars($contest->awarding)."'>
+    echo "Awarding: <input type='text' name='awarding' maxlength='255' value='$awarding)'>
         (summary of the prizes the contest is awarding, max: 255 characters)<br>";
-    echo "Max Awards: <input type='text' name='max_awards' maxlength='2' value='".(int) $contest->max_awards."'>
+    echo "Max Awards: <input type='text' name='max_awards' maxlength='2' value='$max_awards'>
         (max times a contest owner can award prizes per week, suggested: 1-3, min: 1, max: 50)<br>";
     echo "Active: <input type='checkbox' name='active' $active_checked>
         (contest visible and prizes able to be awarded)<br>";
 
     echo '<input type="hidden" name="action" value="edit">';
-    echo "<input type='hidden' name='contest_id' value='".(int) $contest->contest_id."'>";
+    echo "<input type='hidden' name='contest_id' value='$contest_id'>";
 
     echo '<br>';
     echo '<input type="submit" value="Edit Contest">&nbsp;(no confirmation!)';

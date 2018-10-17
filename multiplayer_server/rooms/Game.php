@@ -689,7 +689,7 @@ class Game extends Room
                 $names[] = "[$race_stats->name]";
             }
             $vs_names = join(' vs ', $names);
-            $html_name = htmlspecialchars($player->name);
+            $html_name = htmlspecialchars($player->name, ENT_QUOTES);
             $message = "$vs_names: // $html_name wins with a time of $str!";
             $main->sendChat("systemChat`$message", -1);
         }

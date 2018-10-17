@@ -179,11 +179,11 @@ try {
         if ($banned_user_id == 0) {
             echo "message=Guest [$banned_ip] has been banned for $duration seconds.";
         } else {
-            $disp_name = htmlspecialchars($banned_name);
+            $disp_name = htmlspecialchars($banned_name, ENT_QUOTES);
             echo "message=$disp_name has been banned for $duration seconds.";
         }
     }
 } catch (Exception $e) {
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "error=$error";
 }

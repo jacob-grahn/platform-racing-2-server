@@ -96,9 +96,9 @@ try {
         changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $ip);
 
         // safety first
-        $safe_user_name = htmlspecialchars($user_name);
-        $safe_old_email = htmlspecialchars($old_email);
-        $safe_new_email = htmlspecialchars($new_email);
+        $safe_user_name = htmlspecialchars($user_name, ENT_QUOTES);
+        $safe_old_email = htmlspecialchars($old_email, ENT_QUOTES);
+        $safe_new_email = htmlspecialchars($new_email, ENT_QUOTES);
 
         // send a confirmation email
         $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
@@ -119,7 +119,7 @@ try {
             .'address will still be active.';
     }
 } catch (Exception $e) {
-    $ret->error = $e->getMessage();
+    $ret->error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
 } finally {
     echo json_encode($ret);
 }

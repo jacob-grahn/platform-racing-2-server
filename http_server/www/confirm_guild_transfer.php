@@ -38,12 +38,12 @@ try {
     guild_update($pdo, $guild_id, $guild->guild_name, $guild->emblem, $guild->note, $new_owner_id);
 
     // tell the world
-    $safe_guild_name = htmlspecialchars($guild->guild_name);
-    $safe_new_owner = htmlspecialchars(id_to_name($pdo, $new_owner_id));
+    $safe_guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
+    $safe_new_owner = htmlspecialchars(id_to_name($pdo, $new_owner_id), ENT_QUOTES);
     echo "Great success! The new owner of $safe_guild_name is $safe_new_owner. Long live $safe_guild_name!";
 } catch (Exception $e) {
-    $message = $e->getMessage();
-    echo "Error: $message";
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    echo "Error: $error";
 } finally {
     output_footer();
 }

@@ -35,15 +35,16 @@ try {
     user_update_email($pdo, $user_id, $old_email, $new_email);
 
     // make some variables
-    $safe_old_email = htmlspecialchars($old_email);
-    $safe_new_email = htmlspecialchars($new_email);
+    $safe_old_email = htmlspecialchars($old_email, ENT_QUOTES);
+    $safe_new_email = htmlspecialchars($new_email, ENT_QUOTES);
 
     // tell it to the world
     output_header('Confirm Email Change');
     echo "Great success! Your email address has been changed from $safe_old_email to $safe_new_email.";
 } catch (Exception $e) {
     output_header('Confirm Email Change');
-    echo $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES)
+    echo "Error: $error";
 } finally {
     output_footer();
 }

@@ -17,8 +17,8 @@ function prize_check($type, $id, $err_prefix)
     $type_array = array("hat", "head", "body", "feet", "eHat", "eHead", "eBody", "eFeet");
 
     // safety first
-    $safe_type = htmlspecialchars($type);
-    $safe_id = htmlspecialchars($id);
+    $safe_type = htmlspecialchars($type, ENT_QUOTES);
+    $safe_id = htmlspecialchars($id, ENT_QUOTES);
 
     // check for a valid prize type
     if (!in_array($type, $type_array)) {

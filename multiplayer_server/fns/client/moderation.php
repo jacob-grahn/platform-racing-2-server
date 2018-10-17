@@ -12,7 +12,7 @@ function client_kick($socket, $data)
     $mod = $socket->getPlayer();
 
     // safety first
-    $safe_kname = htmlspecialchars($name);
+    $safe_kname = htmlspecialchars($name, ENT_QUOTES);
 
     // if the player actually has the power to do what they're trying to do, then do it
     if ($mod->group >= 2 && (@$kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
@@ -74,7 +74,7 @@ function client_unkick($socket, $data)
 
     // get some info
     $mod = $socket->getPlayer();
-    $unkicked_name = htmlspecialchars($name);
+    $unkicked_name = htmlspecialchars($name, ENT_QUOTES);
 
     // if the player actually has the power to do what they're trying to do, then do it
     if (($mod->group >= 2 && $mod->temp_mod === false) || $mod->server_owner === true) {
@@ -112,7 +112,7 @@ function client_warn($socket, $data)
     $mod = $socket->getPlayer();
 
     // safety first
-    $safe_wname = htmlspecialchars($name);
+    $safe_wname = htmlspecialchars($name, ENT_QUOTES);
 
     $w_str = '';
     $time = 0;
@@ -177,7 +177,7 @@ function client_unmute($socket, $data)
 
     // get some info
     $mod = $socket->getPlayer();
-    $unmuted_name = htmlspecialchars($name);
+    $unmuted_name = htmlspecialchars($name, ENT_QUOTES);
 
     // if the player actually has the power to do what they're trying to do, then do it
     if (($mod->group >= 2 && $mod->temp_mod === false) || $mod->server_owner === true) {
@@ -205,7 +205,7 @@ function client_ban($socket, $data)
     $banned = name_to_player($banned_name);
 
     // safety first
-    $safe_reason = htmlspecialchars($reason);
+    $safe_reason = htmlspecialchars($reason, ENT_QUOTES);
 
     // set a variable that uses seconds to make friendly times
     switch ($seconds) {
@@ -267,7 +267,7 @@ function client_promote_to_moderator($socket, $data)
     $promoted = name_to_player($name);
 
     // safety first
-    $safe_pname = htmlspecialchars($name);
+    $safe_pname = htmlspecialchars($name, ENT_QUOTES);
 
     // if they're an admin and not a server owner, continue with the promotion (1st line of defense)
     if ($admin->group >= 3 && $admin->server_owner == false) {

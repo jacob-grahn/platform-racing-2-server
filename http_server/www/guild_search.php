@@ -43,7 +43,7 @@ try {
 
         // make some variables
         $guild_id = (int) $guild->guild_id;
-        $guild_name = htmlspecialchars($guild->guild_name);
+        $guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
         $creation_date = date('j/M/Y', strtotime($guild->creation_date));
         $active_date = date('j/M/Y', strtotime($guild->active_date));
         $emblem = $guild->emblem;
@@ -51,9 +51,9 @@ try {
         $gp_total = (int) $guild->gp_today;
         $owner_id = (int) $guild->owner_id;
         $owner = user_select_name_and_power($pdo, $owner_id);
-        $prose = htmlspecialchars($guild->note);
-        $owner_name = htmlspecialchars($owner->name);
-        $owner_url_name = htmlspecialchars(urlencode($owner->name));
+        $prose = htmlspecialchars($guild->note, ENT_QUOTES);
+        $owner_name = htmlspecialchars($owner->name, ENT_QUOTES);
+        $owner_url_name = htmlspecialchars(urlencode($owner->name), ENT_QUOTES);
         $owner_color = $group_colors[(int) $owner->power];
         $active_count = (int) guild_count_active($pdo, $guild_id);
         $members = guild_select_members($pdo, $guild_id);
@@ -96,8 +96,8 @@ try {
             // make a new row for each member
             foreach ($members as $member) {
                 $member_id = (int) $member->user_id;
-                $member_name = htmlspecialchars($member->name);
-                $member_url_name = htmlspecialchars(urlencode($member->name));
+                $member_name = htmlspecialchars($member->name, ENT_QUOTES);
+                $member_url_name = htmlspecialchars(urlencode($member->name), ENT_QUOTES);
                 $member_color = $group_colors[$member->power];
                 $member_gp_today = (int) $member->gp_today;
                 $member_gp_total = (int) $member->gp_total;
@@ -139,7 +139,7 @@ try {
         echo '</table>';
     }
 } catch (Exception $e) {
-    $safe_error = htmlspecialchars($e->getMessage());
+    $safe_error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_guild_search($guild_name, $guild_id);
     echo "<br><i>Error: $safe_error</i><br>";
 } finally {

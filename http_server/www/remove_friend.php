@@ -6,7 +6,7 @@ require_once HTTP_FNS . '/all_fns.php';
 require_once QUERIES_DIR . '/friends/friend_delete.php';
 
 $friend_name = $_POST['target_name'];
-$safe_friend_name = htmlspecialchars($friend_name);
+$safe_friend_name = htmlspecialchars($friend_name, ENT_QUOTES);
 $ip = get_ip();
 
 try {
@@ -43,6 +43,6 @@ try {
     // tell the world
     echo "message=$safe_friend_name has been removed from your friends list.";
 } catch (Exception $e) {
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "error=$error";
 }

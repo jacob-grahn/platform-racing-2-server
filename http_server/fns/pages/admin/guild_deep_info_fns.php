@@ -15,13 +15,14 @@ function output_object($obj, $sep = '<br/>')
     if ($obj !== false) {
         foreach ($obj as $var => $val) {
             if ($var == 'name') {
-                $safe_val = htmlspecialchars($val);
+                $safe_val = htmlspecialchars($val, ENT_QUOTES);
                 $url_val = urlencode($val);
                 $val = "<a href='player_deep_info.php?name1=$url_val'>$safe_val</a>";
                 echo "$var: $val".$sep;
             }
             if ($var != 'guild_id' && $var != 'name') {
-                echo "$var: ".htmlspecialchars($val)."$sep";
+                $safe_val = htmlspecialchars($val, ENT_QUOTES);
+                echo "$var: $safe_val$sep";
             }
         }
     }

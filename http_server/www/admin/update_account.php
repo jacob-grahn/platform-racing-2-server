@@ -46,9 +46,9 @@ try {
         echo "user_id: $user->user_id <br>---<br>";
 
 
-        echo 'Name: <input type="text" size="" name="name" value="'.htmlspecialchars($user->name).'"><br>';
-        echo 'Email: <input type="text" name="email" value="'.htmlspecialchars($user->email).'"><br>';
-        echo 'Guild: <input type="text" name="guild" value="'.htmlspecialchars($user->guild).'"><br>';
+        echo 'Name: <input type="text" size="" name="name" value="'.htmlspecialchars($user->name, ENT_QUOTES).'"><br>';
+        echo 'Email: <input type="text" name="email" value="'.htmlspecialchars($user->email, ENT_QUOTES).'"><br>';
+        echo 'Guild: <input type="text" name="guild" value="'.htmlspecialchars($user->guild, ENT_QUOTES).'"><br>';
         if ($pr2 !== false) {
             echo 'Hats: <input type="text" size="100" name="hats" value="'.$pr2->hat_array.'"><br>';
             echo 'Heads: <input type="text" size="100" name="heads" value="'.$pr2->head_array.'"><br>';
@@ -156,7 +156,7 @@ try {
         if (strtolower($user->name) != strtolower($user_name)) {
             $id_exists = name_to_id($pdo, $user_name, true);
             if ($id_exists != false) {
-                $safe_name = htmlspecialchars($user_name);
+                $safe_name = htmlspecialchars($user_name, ENT_QUOTES);
                 throw new Exception("There is already a user with the name \"$safe_name\" (ID #$id_exists).");
             }
         }
