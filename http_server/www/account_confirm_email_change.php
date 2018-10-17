@@ -43,7 +43,7 @@ try {
     echo "Great success! Your email address has been changed from $safe_old_email to $safe_new_email.";
 } catch (Exception $e) {
     output_header('Confirm Email Change');
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES)
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "Error: $error";
 } finally {
     output_footer();
