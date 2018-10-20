@@ -46,7 +46,7 @@ try {
         $html_isp = htmlspecialchars($ip_info->isp, ENT_QUOTES);
         $url_isp = htmlspecialchars(urlencode($ip_info->isp), ENT_QUOTES);
         $html_city = htmlspecialchars($ip_info->city, ENT_QUOTES);
-        $html_region = htmlspecialchars($ip_info->region, ENT_QUOTES);
+        $html_region = htmlspecialchars($ip_info->region_name, ENT_QUOTES);
         $html_country = htmlspecialchars($ip_info->country_name, ENT_QUOTES);
         $html_country_code = htmlspecialchars($ip_info->country_code, ENT_QUOTES);
 
