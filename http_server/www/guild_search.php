@@ -47,8 +47,8 @@ try {
         $creation_date = date('j/M/Y', strtotime($guild->creation_date));
         $active_date = date('j/M/Y', strtotime($guild->active_date));
         $emblem = $guild->emblem;
-        $gp_today = (int) $guild->gp_total;
-        $gp_total = (int) $guild->gp_today;
+        $gp_today = (int) $guild->gp_today;
+        $gp_total = (int) $guild->gp_total;
         $owner_id = (int) $guild->owner_id;
         $owner = user_select_name_and_power($pdo, $owner_id);
         $prose = htmlspecialchars($guild->note);
