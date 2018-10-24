@@ -236,7 +236,7 @@ function client_ban($socket, $data)
     // instead of overwriting the $reason variable, set a new one
     $disp_reason = "Reason: $safe_reason";
     if ($reason == '') {
-        $disp_reason = 'There was no reason was given';
+        $disp_reason = 'There was no reason given';
     }
 
     // tell the world
