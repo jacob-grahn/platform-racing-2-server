@@ -11,7 +11,7 @@ function server_update_expire_date($pdo, $server_id, $expire_date, $server_name)
     ');
     $stmt->bindValue(':server_id', $server_id, PDO::PARAM_INT);
     $stmt->bindValue(':server_name', $server_name, PDO::PARAM_STR);
-    $stmt->bindValue(':expire_date', $expire_date, PDO::PARAM_STR);
+    $stmt->bindValue(':expire_date', $expire_date, PDO::PARAM_INT);
     $result = $stmt->execute();
     
     if ($result === false) {
