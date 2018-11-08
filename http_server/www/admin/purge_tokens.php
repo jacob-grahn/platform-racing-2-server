@@ -73,8 +73,7 @@ try {
         tokens_delete_by_user($pdo, $user_id);
 
         // redirect
-        $url_name = urlencode($user->name);
-        $url = "player_deep_info.php?name1=$url_name";
+        $url = "player_deep_info.php?name1=" . urlencode($user->name);
         header("Refresh: 2; URL=$url");
 
         // record action
