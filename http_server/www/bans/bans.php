@@ -69,8 +69,8 @@ try {
 
         echo "<p>"
             ."$formatted_time <a href='show_record.php?ban_id=$ban_id'>$mod_name banned $display_name for $f_dur.</a>"
-    		."<br/>Reason: $reason"
-    		."</p>";
+            ."<br/>Reason: $reason"
+            ."</p>";
     }
 
     echo '<p>---</p>';
