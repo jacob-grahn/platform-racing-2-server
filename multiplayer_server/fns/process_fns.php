@@ -31,6 +31,44 @@ function process_check_status($socket)
 }
 
 
+// disconnect player (purge tokens script for admins)
+function process_disconnect_player($socket, $data)
+{
+    if ($socket->process === true) {
+        $obj = json_decode($data);
+        $user_id = $obj->user_id;
+        $message = @$obj->message;
+
+        $player = id_to_player($user_id, false);
+        if (isset($player)) {
+            if (!empty($message)) {
+                $player->write("message`$message");
+            }
+            $player->remove();
+        }
+    }
+}
+
+
+// message a player on the server
+function process_message_player($socket, $data)
+{
+    global $server_name;
+    
+    if ($socket->process == true) {
+        $obj = json_decode($data);
+        $user_id = $obj->user_id;
+        $message = $obj->message;
+
+        $player = id_to_player($user_id, false);
+        if (isset($player)) {
+            $player->write('message`' . $message);
+        }
+        $socket->write("Message sent to player on $server_name.");
+    }
+}
+
+
 // clear player's daily exp levels
 function process_start_new_day($socket)
 {
@@ -119,25 +157,6 @@ function process_register_login($server_socket, $data)
                 $socket->write('ping`' . time());
             }
         }
-    }
-}
-
-
-// message a player on the server
-function process_message_player($socket, $data)
-{
-    global $server_name;
-    
-    if ($socket->process == true) {
-        $obj = json_decode($data);
-        $user_id = $obj->user_id;
-        $message = $obj->message;
-
-        $player = id_to_player($user_id, false);
-        if (isset($player)) {
-            $player->write('message`' . $message);
-        }
-        $socket->write("Message sent to player on $server_name.");
     }
 }
 

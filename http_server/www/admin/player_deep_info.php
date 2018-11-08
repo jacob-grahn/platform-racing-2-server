@@ -56,6 +56,7 @@ try {
                 output_objects($logins, true, $user);
                 echo '<a href="update_account.php?id='.$user->user_id.'">edit</a>'
                     .' | <a href="//pr2hub.com/mod/ban.php?user_id='.$user->user_id.'&force_ip=">ban</a>'
+                    .' | <a href="purge_tokens.php?user_id='.$user->user_id.'">purge tokens</a>'
                     .'<br><br><br>';
             } catch (Exception $e) {
                 echo "<i>Error: ".$e->getMessage()."</i><br><br>";
