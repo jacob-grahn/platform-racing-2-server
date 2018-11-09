@@ -3,7 +3,7 @@
 require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/servers/server_select.php';
-require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
 require_once QUERIES_DIR . '/tokens/tokens_delete_by_user.php';
 
 $ip = get_ip();
@@ -21,7 +21,12 @@ try {
     $pdo = pdo_connect();
 
     // check permission
-    $admin = check_moderator($pdo, false, 3);
+    $mod = check_moderator($pdo);
+
+    // exclude trial mods
+    if ($mod->can_unpublish_levels != 1) {
+        throw new Exception("You lack the power to access this resource.");
+    }
 
     // get user info
     $user = user_select($pdo, $user_id);
@@ -29,7 +34,7 @@ try {
 
     if ($action === 'warning') {
         $header = true;
-        output_header('Purge Active Tokens', true, true);
+        output_header('Purge Active Tokens', true);
         echo "Are you sure you want to purge all active login tokens for $name?<br><br>";
         echo '<form method="post">'
             .'<input type="hidden" name="action" value="purge">'
@@ -37,12 +42,19 @@ try {
             .'<input type="submit" value="Yes, I\'m sure.">&nbsp;(no confirmation!)'
             .'</form>';
     } elseif ($action === 'purge') {
-        // referrer check
-        require_trusted_ref('', true);
+        // make sure the mod isn't spamming this command for other staff members
+        if ($mod->power < 3 && $user->power >= 2) {
+            rate_limit(
+                'purge-staff-tokens-'.$mod->user_id,
+                3600,
+                1,
+                'You may only purge a staff member\'s tokens once per hour.'
+            );
+        }
 
         // make sure the token exists and is valid for this admin
         $auth = token_select($pdo, $token);
-        if ($auth->user_id != $admin->user_id) {
+        if ($auth->user_id != $mod->user_id) {
             throw new Exception('Could not validate token.');
         }
 
@@ -54,7 +66,7 @@ try {
                 $data = new stdClass();
                 $data->user_id = $user_id;
                 $data->message = 'Your account\'s stored login tokens have been purged, '.
-                    'so you\'ll need to log in again. Contact an admin for more information.';
+                    'so you\'ll need to log in again. Contact a PR2 staff member for more information.';
                 $data = json_encode($data);
                 talk_to_server(
                     $server->address,
@@ -73,19 +85,23 @@ try {
         tokens_delete_by_user($pdo, $user_id);
 
         // redirect
-        $url = "player_deep_info.php?name1=" . urlencode($user->name);
+        if ($mod->power == 3) {
+            $url = '/admin/player_deep_info.php?name1=' . urlencode($user->name);
+        } else {
+            $url = "/mod/player_info.php?user_id=$user_id";
+        }
         header("Refresh: 2; URL=$url");
 
         // record action
-        $admin_id = $admin->user_id;
-        $admin_name = $admin->name;
-        admin_action_insert($pdo, $admin_id, "$admin_name purged $name ($user_id)'s tokens from $ip.", $admin_id, $ip);
+        $mod_id = $mod->user_id;
+        $mod_name = $mod->name;
+        mod_action_insert($pdo, $mod_id, "$mod_name purged $name ($user_id)'s tokens from $ip.", $mod_id, $ip);
 
         // tell the world
         $header = true;
-        output_header('Purge Active Tokens', true, true);
+        output_header('Purge Active Tokens', true);
         echo 'The operation was successful. Redirecting...'
-            ."<br><br><a href='$link'>(click here if you're not automatically redirected)</a>";
+            ."<br><br><a href='$url'>(click here if you're not automatically redirected)</a>";
     }
 } catch (Exception $e) {
     if ($header === false) {

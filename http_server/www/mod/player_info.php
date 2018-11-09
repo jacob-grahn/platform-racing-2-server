@@ -133,9 +133,14 @@ try {
     // display ban info
     echo "<p>Currently banned: $banned</p>"
         ."<p>Account has been banned $account_ban_count $acc_lang.</p> $account_ban_list"
-        ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list"
-        .'<p>---</p>'
-        ."<p><a href='ban.php?user_id=$user_id&force_ip=$force_ip'>Ban User</a></p>";
+        ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list";
+
+    // display options
+    echo '<p>---</p>'
+        .'<p>'
+        ."<a href='ban.php?user_id=$user_id&force_ip=$force_ip'>Ban User</a><br>"
+        ."<a href='purge_tokens.php?user_id=$user_id'>Purge Tokens</a>"
+        .'</p>';
 } catch (Exception $e) {
     if ($e->getMessage() !== '') {
         $error = $e->getMessage();
