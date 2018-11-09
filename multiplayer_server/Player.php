@@ -839,10 +839,12 @@ class Player
                     $hats_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Hats');
                     $eups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=123', 'Epic Upgrades');
                     $groups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Groups');
+                    $fah_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=19', 'Folding at Home (F@H)');
                     $this->write('systemChat`Helpful Resources:<br>'
                                 ."- $hats_link<br>"
                                 ."- $eups_link<br>"
-                                ."- $groups_link");
+                                ."- $groups_link<br>"
+                                ."- $fah_link");
                 } else {
                     $this->write('systemChat`To get a list of guides that explain different parts of PR2,'
                                 .' go to the chat tab in the lobby and type /guides.');
