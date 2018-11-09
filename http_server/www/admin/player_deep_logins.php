@@ -32,7 +32,11 @@ try {
 
     // if there's a name set, let's get data from the db
     if ($name) {
-        $user_id = name_to_id($pdo, $name);
+        // check if the user exists, get user ID
+        $user_id = name_to_id($pdo, $name, true);
+        if ($user_id === false) {
+            throw new Exception("Could not find a user with that name.");
+        }
         $login_count = recent_logins_count_by_user($pdo, $user_id);
         $logins = recent_logins_select($pdo, $user_id, true, $start, $count);
     }
