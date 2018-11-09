@@ -44,7 +44,8 @@ function output_object($obj, $sep = '<br/>')
                 $val = date('M j, Y g:i A', $val);
             }
             if ($var != 'user_id') {
-                echo "$var: ".htmlspecialchars($val, ENT_QUOTES)."$sep";
+                $safe_val = htmlspecialchars($val, ENT_QUOTES);
+                echo "$var: $safe_val$sep";
             }
         }
         if ($sep != '<br/>') {

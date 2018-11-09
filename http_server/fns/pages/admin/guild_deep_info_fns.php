@@ -28,7 +28,8 @@ function output_object($obj, $sep = '<br/>')
                 continue;
             }
             if ($var != 'guild_id') {
-                echo "$var: ".htmlspecialchars($val, ENT_QUOTES)."$sep";
+                $safe_val = htmlspecialchars($val, ENT_QUOTES);
+                echo "$var: $safe_val$sep";
             }
         }
     }
