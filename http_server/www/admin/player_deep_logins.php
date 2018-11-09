@@ -37,6 +37,8 @@ try {
         if ($user_id === false) {
             throw new Exception("Could not find a user with that name.");
         }
+
+        // get login data
         $login_count = recent_logins_count_by_user($pdo, $user_id);
         $logins = recent_logins_select($pdo, $user_id, true, $start, $count);
     }
