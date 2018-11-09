@@ -26,7 +26,6 @@ try {
 
     output_header('Guild Deep Info', true, true);
 
-
     echo '<form name="input" action="" method="get">';
     echo 'Guild ID: <input type="text" name="guild_id" value="'.htmlspecialchars($guild_id).'">&nbsp;';
     echo '<input type="submit" value="Submit"><br>';
@@ -45,9 +44,9 @@ try {
     }
 
     echo '</form>';
-    output_footer();
 } catch (Exception $e) {
     output_header('Error');
     echo 'Error: ' . $e->getMessage();
+} finally {
     output_footer();
 }

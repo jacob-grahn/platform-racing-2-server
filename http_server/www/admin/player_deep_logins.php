@@ -32,13 +32,7 @@ try {
 
     // if there's a name set, let's get data from the db
     if ($name) {
-        // check if the user exists, get user ID
-        $user_id = name_to_id($pdo, $name, true);
-        if ($user_id === false) {
-            throw new Exception("Could not find a user with that name.");
-        }
-
-        // get login data
+        $user_id = name_to_id($pdo, $name);
         $login_count = recent_logins_count_by_user($pdo, $user_id);
         $logins = recent_logins_select($pdo, $user_id, true, $start, $count);
     }
@@ -83,7 +77,7 @@ try {
         // only gonna get here if there were results
         foreach ($logins as $row) {
             // make nice variables for our data
-            $ip = htmlspecialchars($row->ip); // ip
+            $ip = '<a href="/mod/ip_info?ip='.urlencode($row->ip).'">'.htmlspecialchars($row->ip).'</a>'; // ip
             $country = htmlspecialchars($row->country); // country code
             $date = htmlspecialchars($row->date); // date
 

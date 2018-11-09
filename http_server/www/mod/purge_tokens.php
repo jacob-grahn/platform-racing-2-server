@@ -22,9 +22,10 @@ try {
 
     // check permission
     $mod = check_moderator($pdo);
+    $mod->is_mod = true;
 
     // exclude trial mods
-    if ($mod->can_unpublish_levels != 1) {
+    if ($mod->can_unpublish_level != 1) {
         throw new Exception("You lack the power to access this resource.");
     }
 
@@ -43,7 +44,7 @@ try {
             .'</form>';
     } elseif ($action === 'purge') {
         // make sure the mod isn't spamming this command for other staff members
-        if ($mod->power < 3 && $user->power >= 2) {
+        if ($mod->power < 3 && $user->power >= 2 && $user->user_id != $mod->user_id) {
             rate_limit(
                 'purge-staff-tokens-'.$mod->user_id,
                 3600,
@@ -105,7 +106,7 @@ try {
     }
 } catch (Exception $e) {
     if ($header === false) {
-        output_header('Error');
+        output_header('Error', $mod->is_mod);
     }
     $error = $e->getMessage();
     echo "Error: $error";
