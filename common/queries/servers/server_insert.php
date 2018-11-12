@@ -11,7 +11,9 @@ function server_insert($pdo, $server_name, $address, $port, $expire_timestamp, $
                expire_date = :expire_date,
                active = true,
                salt = :salt,
-               guild_id = :guild_id
+               guild_id = :guild_id,
+               population = 0,
+               staus = "down"
     ');
     $stmt->bindValue(':server_name', $server_name, PDO::PARAM_STR);
     $stmt->bindValue(':address', $address, PDO::PARAM_STR);
