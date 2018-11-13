@@ -1,7 +1,5 @@
 <?php
 
-error_reporting(E_ALL | E_STRICT);
-
 // env
 require_once __DIR__ . '/../../config.php';
 
