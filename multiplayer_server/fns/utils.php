@@ -469,7 +469,7 @@ function restart_server()
 
     // start new instance of server
     $server_id = (int) $server_id; // make sure this won't do anything weird
-    echo shell_exec('php ' . COMMON_DIR . "/manage_socket/restart_server.php $server_id 1");
+    echo shell_exec('php ' . COMMON_DIR . "/manage_socket/restart_server.php $server_id");
     die(output("The restart was successful."));
 }
 
