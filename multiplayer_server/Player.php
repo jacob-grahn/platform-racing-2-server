@@ -601,12 +601,12 @@ class Player
                         admin_action_insert(
                             $pdo,
                             $admin_id,
-                            "$admin_name restarted $server_name from $ip.",
+                            "$admin_name ($admin_id) restarted $server_name from $ip.",
                             $admin_id,
                             $ip
                         );
-                        output("$this->name initiated a server shutdown.");
-                        shutdown_server();
+                        output("$this->name ($this->user_id) initiated a server shutdown.");
+                        restart_server();
                     }
                 } else {
                     $this->write('systemChat`This command cannot be used in levels.');

@@ -428,9 +428,12 @@ function rate_limit($key, $interval, $max, $display_error = false, $player = nul
 
 
 // graceful shutdown
-function shutdown_server($socket = null)
+function shutdown_server($socket = null, $die = true)
 {
     global $player_array, $socket;
+
+    // kill socket
+    kill_socket();
 
     // disconnect everyone
     output('Disconnecting all players...');
@@ -447,8 +450,39 @@ function shutdown_server($socket = null)
     }
 
     // socketDaemon shutdown
-    sleep(1);
-    die();
+    if ($die === true) {
+        die();
+    }
+}
+
+
+// graceful restart
+function restart_server()
+{
+    global $server_id;
+
+    // kill socket
+    kill_socket();
+
+    // disconnect everyone
+    shutdown_server(null, false);
+
+    // start new instance of server
+    $server_id = (int) $server_id; // make sure this won't do anything weird
+    echo shell_exec('php ' . COMMON_DIR . "/manage_socket/restart_server.php $server_id 1");
+    die(output("The restart was successful."));
+}
+
+
+// close socket to new connections and unbind port
+// DO NOT CALL WITHOUT SHUTDOWN_SERVER OR RESTART_SERVER
+function kill_socket()
+{
+    global $server;
+
+    output("Closing socket and unbinding port...");
+    $server->__destruct();
+    output("Socket closed.");
 }
 
 

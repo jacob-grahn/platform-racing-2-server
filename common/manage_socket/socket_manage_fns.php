@@ -173,18 +173,16 @@ function read_pid($port)
 // kills a port
 function kill_pid($pid)
 {
-    if ($pid != null && $pid != 0 && $pid != '' && $pid != false) {
-        system("kill " . $pid, $k);
-        $pid = null;
-        if (!$k) {
-            return true;
-        } else {
+    $pid = (int) $pid;
+    if ($pid > 0) {
+        $k = `kill {$pid}`;
+        if ($k) {
             return false;
         }
     } else {
         output('There is no PID to kill.');
-        return true;
     }
+    return true;
 }
 
 
@@ -216,8 +214,8 @@ function talk_to_server($address, $port, $salt, $process_function, $receive = tr
         output("Attempting to talk to server at $address:$port...");
     }
     $reply = true;
-    $fsock = fsockopen($address, $port, $errno, $errstr, 5);
-    if ($fsock !== false) {
+    $fsock = @fsockopen($address, $port, $errno, $errstr, 5);
+    if (is_resource($fsock)) {
         if ($output === true) {
             output("Successfully connected! Writing: $process_function");
         }
