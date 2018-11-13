@@ -88,15 +88,8 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         $reply = "This is the happiest hour ever!";
     } elseif ($slug == 'server-1-day' || $slug == 'server-30-days') {
         $command = '';
-        $seconds = 0;
-        if ($slug == 'server-1-day') {
-            $seconds = 60*60*24;
-        }
-        if ($slug == 'server-30-days') {
-            $seconds = 60*60*24*30;
-        }
-
-        $result = create_server($pdo, $guild_id, $seconds);
+        $days = (int) explode('-', $slug)[1];
+        $result = create_server($pdo, $guild_id, $days);
 
         if ($result == 0) {
             throw new Exception('Could not start the server.');
@@ -131,7 +124,7 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         $obj->user_id = $user_id;
         $obj->message = $reply;
         $data = json_encode($obj);
-        poll_servers($servers, "send_message_to_player`$data", false, array($server_id));
+        poll_servers($servers, "message_player`$data", false, array($server_id));
     }
 
     send_confirmation_pm($pdo, $user_id, $title, $order_id);
@@ -149,28 +142,33 @@ order id: $order_id";
 }
 
 
-function create_server($pdo, $guild_id, $seconds_of_life)
+function create_server($pdo, $guild_id, $days_of_life)
 {
-    global $COMM_PASS;
+    global $SERVER_IP;
+
     $existing_server = server_select_by_guild_id($pdo, $guild_id);
     $guild = guild_select($pdo, $guild_id);
-    $port = 1 + servers_select_highest_port($pdo);
+    $expire_time = time() + (86400 * $days_of_life);
     $server_name = $guild->guild_name;
-    $address = 'assign';
-    $expire_time = time() + $seconds_of_life;
-    $salt = $COMM_PASS;
+    $address = $SERVER_IP;
+    $port = 1 + servers_select_highest_port($pdo);
     $guild_id = $guild->guild_id;
 
-    if (!$existing_server) {
-        server_insert($pdo, $server_name, $address, $port, $expire_time, $salt, $guild_id);
-        return( 1 );
-    } else {
-        $server_id = $existing_server->server_id;
-        $expire_time_2 = strtotime($existing_server->expire_date) + $seconds_of_life;
-        if ($expire_time_2 > $expire_time) {
-            $expire_time = $expire_time_2;
+    try {
+        if (!$existing_server) {
+            server_insert($pdo, $expire_time, $server_name, $address, $port, $guild_id);
+            return 1;
+        } else {
+            $server_id = $existing_server->server_id;
+            $expire_time_2 = strtotime($existing_server->expire_date) + (86400 * $days_of_life);
+            if ($expire_time_2 > $expire_time) {
+                $expire_time = $expire_time_2;
+            }
+            server_update_expire_date($pdo, $expire_time, $server_id);
+            return 2;
         }
-        server_update_expire_date($pdo, $server_id, $expire_time, $server_name);
-        return( 2 );
+    } catch (Exception $e) {
+        unset($e);
+        return 0;
     }
 }
