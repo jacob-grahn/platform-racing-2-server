@@ -427,6 +427,18 @@ function rate_limit($key, $interval, $max, $display_error = false, $player = nul
 }
 
 
+// close socket to new connections and unbind port
+// DO NOT CALL WITHOUT SHUTDOWN_SERVER OR RESTART_SERVER
+function kill_socket()
+{
+    global $server;
+
+    output("Closing socket and unbinding port...");
+    $server->__destruct();
+    output("Socket closed.");
+}
+
+
 // graceful shutdown
 function shutdown_server($socket = null, $die = true)
 {
@@ -471,18 +483,6 @@ function restart_server()
     $server_id = (int) $server_id; // make sure this won't do anything weird
     echo shell_exec('php ' . COMMON_DIR . "/manage_socket/restart_server.php $server_id");
     die(output("The restart was successful."));
-}
-
-
-// close socket to new connections and unbind port
-// DO NOT CALL WITHOUT SHUTDOWN_SERVER OR RESTART_SERVER
-function kill_socket()
-{
-    global $server;
-
-    output("Closing socket and unbinding port...");
-    $server->__destruct();
-    output("Socket closed.");
 }
 
 
