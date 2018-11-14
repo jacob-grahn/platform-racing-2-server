@@ -84,6 +84,10 @@ function process_register_login($server_socket, $data)
                 $socket->write('message`Login verify failed.');
                 $socket->close();
                 $socket->onDisconnect();
+            } elseif ($login_obj->login->ip !== $socket->ip) {
+                $socket->write('message`There\'s an IP mismatch. Check your network settings.');
+                $socket->close();
+                $socket->onDisconnect();
             } elseif ($guild_id != 0 && $guild_id != $login_obj->user->guild) {
                 $socket->write('message`You are not a member of this guild.');
                 $socket->close();

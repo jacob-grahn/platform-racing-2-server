@@ -77,6 +77,7 @@ try {
     $encryptor->setKey($LOGIN_KEY);
     $str_login = $encryptor->decrypt($encrypted_login, $LOGIN_IV);
     $login = json_decode($str_login);
+    $login->ip = $ip;
     $user_name = $login->user_name;
     $user_pass = $login->user_pass;
     $version2 = $login->version;
