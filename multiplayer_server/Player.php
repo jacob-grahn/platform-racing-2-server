@@ -606,6 +606,7 @@ class Player
                             $ip
                         );
                         output("$this->name ($this->user_id) initiated a server shutdown.");
+                        $this->write('systemChat`Restarting...');
                         restart_server();
                     }
                 } else {
