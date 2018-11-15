@@ -73,6 +73,11 @@ try {
         throw new Exception("Guests don't even really have accounts...");
     }
 
+    // sanity check: is this already their email?
+    if ($old_email === $new_email) {
+        throw new Exception("That's already the email on your account!");
+    }
+
     // rate limiting
     rate_limit('change-email-'.$user_id, 86400, 2, 'Your email can be changed a maximum of two times per day.');
     rate_limit('change-email-'.$ip, 86400, 2, 'Your email can be changed a maximum of two times per day.');
