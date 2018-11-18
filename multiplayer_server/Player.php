@@ -921,7 +921,7 @@ class Player
                 elseif ($this->active_rank < 3 && $this->group < 2) {
                     $this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
                 } // muted check (warnings, auto-warn, manual mute duration)
-                elseif ($isMuted === true && ($this->group < 2 || ($guild_id != 0 && $this->server_owner === false))) {
+                elseif ($isMuted === true) {
                     $cb_secs = (int) Mutes::remainingTime($this->name);
                     $this->write("systemChat`You have been temporarily muted from the chat. ".
                         "The mute will be lifted in $cb_secs seconds.");
@@ -1510,14 +1510,13 @@ class Player
     }
 
 
-
     public function remove()
     {
         global $player_array;
 
         unset($player_array[$this->user_id]);
 
-        //make sure the socket is nice and dead
+        // make sure the socket is nice and dead
         if (is_object($this->socket)) {
             $this->socket->player = null;
             $this->socket->close();
@@ -1525,7 +1524,7 @@ class Player
             $this->socket = null;
         }
 
-        //get out of whatever you're in
+        // get out of whatever you're in
         if (isset($this->right_room)) {
             $this->right_room->removePlayer($this);
         }
@@ -1539,81 +1538,16 @@ class Player
             $this->course_box->clearSlot($this);
         }
 
-        //save info
-        $this->status = "offline";
+        // save info
+        $this->status = 'offline';
         $this->verifyStats();
         $this->verifyParts(true);
         $this->saveInfo();
 
-        //delete
-        $this->socket = null;
-        $this->user_id = null;
-        $this->guild_id = null;
-        $this->name = null;
-        $this->rank = null;
-        $this->active_rank = null;
-        $this->exp_points = null;
-        $this->start_exp_today = null;
-        $this->exp_today = null;
-        $this->group = null;
-        $this->guest = null;
-        $this->hat_color = null;
-        $this->head_color = null;
-        $this->body_color = null;
-        $this->feet_color = null;
-        $this->hat_color_2 = null;
-        $this->head_color_2 = null;
-        $this->body_color_2 = null;
-        $this->feet_color_2 = null;
-        $this->hat = null;
-        $this->head = null;
-        $this->body = null;
-        $this->feet = null;
-        $this->hat_array = null;
-        $this->head_array = null;
-        $this->body_array = null;
-        $this->feet_array = null;
-        $this->epic_hat_array = null;
-        $this->epic_head_array = null;
-        $this->epic_body_array = null;
-        $this->epic_feet_array = null;
-        $this->speed = null;
-        $this->acceleration = null;
-        $this->jumping = null;
-        $this->friends = null;
-        $this->ignored = null;
-        $this->rt_used = null;
-        $this->rt_available = null;
-        $this->url = null;
-        $this->version = null;
-        $this->last_exp_time = null;
-        $this->last_action = null;
-        $this->chat_count = null;
-        $this->chat_time = null;
-        $this->right_room = null;
-        $this->chat_room = null;
-        $this->game_room = null;
-        $this->course_box = null;
-        $this->confirmed = null;
-        $this->slot = null;
-        $this->temp_id = null;
-        $this->pos_x = null;
-        $this->pos_y = null;
-        $this->worn_hat_array = null;
-        $this->finished_race = null;
-        $this->quit_race = null;
-        $this->domain = null;
-        $this->ip = null;
-        $this->temp_mod = null;
-        $this->server_owner = null;
-        $this->hh_warned = null;
-        $this->restart_warned = null;
-        $this->status = null;
-        $this->lives = null;
-        $this->items_used = null;
-        $this->super_booster = null;
-        $this->last_save_time = null;
-        $this->friends_array = null;
-        $this->ignored_array = null;
+        // delete
+        foreach ($this as $key => $var) {
+            $this->$key = null;
+            unset($this->$key);
+        }
     }
 }

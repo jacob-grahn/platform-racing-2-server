@@ -4,7 +4,7 @@
 // kick a player
 function client_kick($socket, $data)
 {
-    global $pdo, $guild_id, $server_name;
+    global $pdo, $guild_id, $guild_owner, $server_name;
     $name = $data;
 
     // get players
@@ -14,53 +14,63 @@ function client_kick($socket, $data)
     // safety first
     $safe_kname = htmlspecialchars($name, ENT_QUOTES);
 
-    // if the player actually has the power to do what they're trying to do, then do it
-    if ($mod->group >= 2 && (@$kicked->group < 2 || ($mod->server_owner == true && $kicked != $mod))) {
-        if (isset($kicked)) {
-            $mod_url = userify($mod, $mod->name);
-            $kicked_url = userify($kicked, $name);
-
-            // kick the user
-            if (\pr2\multi\ServerBans::isBanned($name) === true) {
-                \pr2\multi\ServerBans::remove($name); // remove existing kick if there is one
+    // if they're a mod and not the person being kicked, proceed
+    if ($mod->group >= 2 && $kicked != $mod) {
+        // check if online and get user data if not
+        $kicked_online = true;
+        if (!isset($kicked)) {
+            $kicked_online = false;
+            $kicked = user_select_by_name($pdo, $name, true);
+            if ($kicked === false) {
+                $mod->write("message`Error: Could not find a user with the name \"$safe_kname\".");
+                return false;
+            } else {
+                $kicked->group = $kicked->power;
+                $kicked->server_owner = false;
+                if ($kicked->user_id == $guild_owner) {
+                    $kicked->server_owner = true;
+                    $kicked->group = 3;
+                }
             }
-            \pr2\multi\ServerBans::add($name);
-            $kicked->remove();
-            $mod->write("message`$safe_kname has been kicked from this server for 30 minutes.");
+        }
 
-            // let people know that the player kicked someone
+        // remove existing kicks, then kick
+        if (\pr2\multi\ServerBans::isBanned($name) === true) {
+            \pr2\multi\ServerBans::remove($name);
+        }
+
+        // kick the user
+        if (($kicked->group < 2 || $mod->server_owner === true) && $kicked->server_owner === false) {
+            // add server ban
+            \pr2\multi\ServerBans::add($name);
+
+            // let people know that the player is kicking someone
             if (isset($mod->chat_room)) {
-                $mod->chat_room->sendChat("systemChat`$mod_url has kicked ".
-                    "$kicked_url from this server for 30 minutes.");
+                $mod_url = userify($mod, $mod->name);
+                $kicked_url = userify($kicked, $name);
+                $message = "systemChat`$mod_url has kicked $kicked_url from this server for 30 minutes.";
+                $mod->chat_room->sendChat($message);
+            }
+
+            // disconnect them
+            if ($kicked_online === false) {
+                $mod->write("message`$safe_kname is not currently on this server, but the kick was applied anyway.");
+            } else {
+                $kicked->remove();
+                $mod->write("message`$safe_kname has been kicked from this server for 30 minutes.");
             }
 
             // log the action if it's on a public server
             if ($guild_id == 0) {
-                $mod_name = $mod->name;
-                $mod_ip = $mod->ip;
-                $mod_id = $mod->user_id;
-                mod_action_insert(
-                    $pdo,
-                    $mod_id,
-                    "$mod_name kicked $name from $server_name from $mod_ip.",
-                    $mod_id,
-                    $mod_ip
-                );
+                $message = "$mod->name kicked $name from $server_name from $mod->ip.";
+                mod_action_insert($pdo, $mod->user_id, $message, $mod->user_id, $mod->ip);
             }
         } else {
-            if (name_to_id($pdo, $name, true) === false) {
-                $mod->write("message`Error: Could not find a user with the name \"$safe_kname\".");
-            } else {
-                \pr2\multi\ServerBans::add($name);
-                $mod->write("message`Error: \"$safe_kname\" is not currently on this server, "
-                    ."but the kick was applied anyway.");
-            }
+            $mod->write("message`Error: You lack the power to kick $safe_kname.");
         }
-    } // if the kicker is the server owner, tell them they're a silly goose
-    elseif ($mod->server_owner == true && $kicked == $mod) {
-        $mod->write("message`Error: You can't kick yourself out of your own server, silly!");
-    } // if they don't have the power to do that, tell them
-    else {
+    } elseif ($kicked == $mod) {
+        $mod->write("message`Error: You can't kick yourself out of a server, silly!");
+    } else {
         $mod->write("message`Error: You lack the power to kick $safe_kname.");
     }
 }
@@ -85,12 +95,9 @@ function client_unkick($socket, $data)
             $mod->write("message`$unkicked_name has been unkicked! Hooray for second chances!");
 
             // log the action if it's on a public server
-            if ((int) $guild_id === 0) {
-                $mod_name = $mod->name;
-                $mod_ip = $mod->ip;
-                $mod_id = $mod->user_id;
-                mod_action_insert($pdo, $mod_id, "$mod_name unkicked $name ".
-                    "from $server_name from $mod_ip.", $mod_id, $mod_ip);
+            if ($guild_id == 0) {
+                $message = "$mod->name unkicked $name from $server_name from $mod->ip.";
+                mod_action_insert($pdo, $mod->user_id, $message, $mod->user_id, $mod->ip);
             }
         } else {
             $mod->write("message`Error: $unkicked_name isn't kicked.");
@@ -104,7 +111,7 @@ function client_unkick($socket, $data)
 // administer a chat warning
 function client_warn($socket, $data)
 {
-    global $pdo;
+    global $pdo, $guild_owner;
     list($name, $num) = explode("`", $data);
 
     // get player info
@@ -113,9 +120,6 @@ function client_warn($socket, $data)
 
     // safety first
     $safe_wname = htmlspecialchars($name, ENT_QUOTES);
-
-    $w_str = '';
-    $time = 0;
 
     switch ($num) {
         case 1:
@@ -132,19 +136,25 @@ function client_warn($socket, $data)
             break;
         default:
             $mod->write('message`Error: Invalid warning number.');
-            break;
+            return false;
     }
 
     // if they're a mod, and the user is on this server, warn the user
-    if ($mod->group >= 2) {
-        // if the target isn't online, tell the mod
+    if ($mod->group >= 2 && $warned != $mod) {
+        $warned_online = true;
         if (!isset($warned)) {
-            if (name_to_id($pdo, $name, true) === false) {
+            $warned_online = false;
+            $warned = user_select_by_name($pdo, $name, true);
+            if ($warned === false) {
                 $mod->write("message`Error: Could not find a user with the name \"$safe_wname\".");
                 return false;
             } else {
-                $mod->write("message`Error: \"$safe_wname\" is not currently on this server, "
-                    .'but the mute was applied anyway.');
+                $warned->group = $warned->power;
+                $warned->server_owner = false;
+                if ($warned->user_id == $guild_owner) {
+                    $warned->server_owner = true;
+                    $warned->group = 3;
+                }
             }
         }
 
@@ -152,9 +162,19 @@ function client_warn($socket, $data)
         if (\pr2\multi\Mutes::isMuted($name) === true) {
             \pr2\multi\Mutes::remove($name);
         }
-        \pr2\multi\Mutes::add($name, $time);
-    } // if they aren't a mod, tell them
-    else {
+
+        // warn the user if they're not a mod
+        if (($warned->group < 2 || $mod->server_owner === true) && $warned->server_owner === false) {
+            \pr2\multi\Mutes::add($name, $time);
+            if ($warned_online === false) {
+                $mod->write("message`$safe_wname is not currently on this server, but the mute was applied anyway.");
+            }
+        } else {
+            $mod->write("message`Error: You lack the power to warn $safe_wname.");
+        }
+    } elseif ($warned == $mod) {
+        $mod->write("message`Error: You can't warn yourself, silly!");
+    } else {
         $mod->write("message`Error: You lack the power to warn $safe_wname.");
     }
 
@@ -227,7 +247,7 @@ function client_ban($socket, $data)
         case 29030400:
             $disp_time = '1 year';
             break;
-     // if all else fails, echo the seconds
+         // if all else fails, echo the seconds
         default:
             $disp_time = $seconds.' seconds';
             break;
