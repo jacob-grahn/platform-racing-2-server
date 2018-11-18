@@ -1547,7 +1547,7 @@ class Player
         // delete
         foreach ($this as $key => $var) {
             $this->$key = null;
-            unset($this->$key);
+            unset($this->$key, $key, $var);
         }
     }
 }
