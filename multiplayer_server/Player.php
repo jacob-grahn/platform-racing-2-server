@@ -56,7 +56,7 @@ class Player
     public $version = '0.0';
 
     public $last_exp_time;
-    public $last_action = 0;
+    public $last_user_action = 0;
     public $chat_count = 0;
     public $chat_time = 0;
 
@@ -541,7 +541,7 @@ class Player
                         $pefeetc = $player->feet_color_2;
                         $pdomain = $player->domain;
                         $pversion = $player->version;
-                        $plaction = $player->socket->last_action;
+                        $plaction = $player->socket->last_user_action;
                         $plaction = format_duration(time() - $plaction) . " ago ($plaction)";
                         $plexp = format_duration(time() - $player->last_exp_time) . " ago ($player->last_exp_time)";
                         if ($player->temp_mod === true) {
@@ -561,7 +561,7 @@ class Player
                             ."ip: $pip<br>"
                             ."name: $pname | user_id: $puid<br>"
                             ."status: $pstatus<br>"
-                            ."last_action: $plaction<br>"
+                            ."last_user_action: $plaction<br>"
                             ."group: $pgroup | temp_mod: $ptemp | server_owner: $pso<br>"
                             ."guild_id: $pguild<br>"
                             ."active_rank: $parank | rank (no rt): $prank | rt_used: $prtused | rt_avail: $prtavail<br>"
