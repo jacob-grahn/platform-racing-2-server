@@ -28,8 +28,10 @@ function add_item(&$arr, $item)
 
 // awards prizes to a user for various reasons on login
 // TO-DO: Add pending contest prizes to this, then move fn to query_fns.php
-function award_special_parts($stats, $hat_array, $head_array, $body_array, $feet_array, $group)
+function award_special_parts($stats, $group)
 {
+    global $hat_array, $head_array, $body_array, $feet_array;
+
     // get current date for holiday parts check
     $date = date('F j');
 
@@ -61,7 +63,7 @@ function award_special_parts($stats, $hat_array, $head_array, $body_array, $feet
         $stats->hat = add_item($hat_array, 8) ? 8 : $stats->hat;
     }
 
-    // mod crown check
+    // crown for mods
     $stats->hat = $group >= 2 ? (add_item($hat_array, 6) ? 6 : $stats->hat) : $stats->hat;
 
     return $stats;

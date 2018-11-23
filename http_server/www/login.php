@@ -223,7 +223,7 @@ try {
     $feet_array = explode(',', $stats->feet_array);
 
     // check if parts need to be awarded
-    $stats = award_special_parts($stats, $hat_array, $head_array, $body_array, $feet_array, $group);
+    $stats = award_special_parts($stats, $group);
 
     // select their friends list
     $friends_result = friends_select($pdo, $user_id);
