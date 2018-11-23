@@ -56,8 +56,9 @@ try {
                 output_object_keys($folding);
                 output_objects($changing_emails);
                 output_objects($logins, true, $user);
-                echo "<a href='update_account.php?id='$user_id'>edit</a>"
-                    ." | <a href='//pr2hub.com/mod/ban.php?user_id=$user_id&force_ip='>ban</a>"
+                echo '<a href="update_account.php?id='.$user_id.'">edit</a>'
+                    .' | <a href="/mod/ban.php?user_id='.$user_id.'&force_ip=">ban</a>'
+                    .' | <a href="/mod/purge_tokens.php?user_id='.$user_id.'">purge tokens</a>'
                     .'<br><br><br>';
             } catch (Exception $e) {
                 $error = htmlspecialchars($error, ENT_QUOTES);

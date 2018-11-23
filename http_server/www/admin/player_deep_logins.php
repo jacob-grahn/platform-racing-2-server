@@ -83,7 +83,7 @@ try {
         // only gonna get here if there were results
         foreach ($logins as $row) {
             // make nice variables for our data
-            $ip = htmlspecialchars($row->ip, ENT_QUOTES); // ip
+            $ip = '<a href="/mod/ip_info?ip='.urlencode($row->ip).'">'.htmlspecialchars($row->ip, ENT_QUOTES).'</a>'; // ip
             $country = htmlspecialchars($row->country, ENT_QUOTES); // country code
             $date = htmlspecialchars($row->date, ENT_QUOTES); // date
 
