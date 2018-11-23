@@ -73,7 +73,7 @@ class PR2Client extends \chabot\SocketServerClient
 
             $time = time();
             $this->last_action = $time;
-            if ($function != 'ping') {
+            if ($function != 'client_ping') {
                 $this->last_user_action = $time;
             }
         } catch (\Exception $e) {
