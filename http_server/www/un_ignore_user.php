@@ -40,9 +40,9 @@ try {
     ignored_delete($pdo, $user_id, $target_id);
 
     // tell the world
-    $safe_name = htmlspecialchars($target_name);
+    $safe_name = htmlspecialchars($target_name, ENT_QUOTES);
     echo "message=$safe_name has been un-ignored. You will now recieve any chat or private messages they send you.";
 } catch (Exception $e) {
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "error=$error";
 }

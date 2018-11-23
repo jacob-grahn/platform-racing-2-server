@@ -54,7 +54,7 @@ try {
         }
 
         // safety first
-        $safe_name = htmlspecialchars($name);
+        $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
         // show the search form
         output_search($safe_name);
@@ -83,9 +83,9 @@ try {
         // only gonna get here if there were results
         foreach ($logins as $row) {
             // make nice variables for our data
-            $ip = htmlspecialchars($row->ip); // ip
-            $country = htmlspecialchars($row->country); // country code
-            $date = htmlspecialchars($row->date); // date
+            $ip = htmlspecialchars($row->ip, ENT_QUOTES); // ip
+            $country = htmlspecialchars($row->country, ENT_QUOTES); // country code
+            $date = htmlspecialchars($row->date, ENT_QUOTES); // date
 
             // display the data
             echo "IP: $ip | Country Code: $country | Date: $date<br>";

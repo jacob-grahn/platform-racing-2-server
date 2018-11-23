@@ -32,7 +32,7 @@ try {
 
     foreach ($staff_list as $row) {
         // make nice variables for our data
-        $safe_name = htmlspecialchars($row->name);
+        $safe_name = htmlspecialchars($row->name, ENT_QUOTES);
         $safe_name = str_replace(' ', '&nbsp;', $safe_name);
         $group = (int) $row->power;
         $group_color = $group_colors[$group];
@@ -76,7 +76,8 @@ try {
     // end the table
     echo '</table>';
 } catch (Exception $e) {
-    echo "<br><i>Error: " . htmlspecialchars($e->getMessage()) . '</i>';
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    echo "<br><i>Error: $error</i>";
 } finally {
     echo '</center>';
     output_footer();

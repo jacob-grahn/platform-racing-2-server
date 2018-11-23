@@ -34,7 +34,7 @@ try {
         // make some variables
         $happy_hour = check_value($server->happy_hour, 1, $yes, $no);
         $tournament = check_value($server->tournament, 1, $yes, $no);
-        $server_name = htmlspecialchars($server->server_name);
+        $server_name = htmlspecialchars($server->server_name, ENT_QUOTES);
         $guild_id = (int) $server->guild_id;
         $population = (int) $server->population;
         $status = $server->status;
@@ -69,7 +69,7 @@ try {
     // end table
     echo "</table>";
 } catch (Exception $e) {
-    $safe_message = htmlspecialchars($e->getMessage());
+    $safe_message = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "Error: $safe_message";
 } finally {
     echo "</center>";

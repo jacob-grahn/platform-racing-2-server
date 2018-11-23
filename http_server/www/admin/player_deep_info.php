@@ -35,7 +35,8 @@ try {
     echo '<form name="input" action="" method="get">';
     foreach (range(1, 9) as $i) {
         $name = ${"name$i"};
-        echo '<input type="text" name="name'.$i.'" value="'.htmlspecialchars($name).'"><br>';
+        $safe_name = htmlspecialchars($name, ENT_QUOTES);
+        echo "<input type='text' name='name$i' value='$safe_name'><br>";
 
         if ($name != '') {
             try {
@@ -46,7 +47,8 @@ try {
                 $folding = folding_select_by_user_id($pdo, $user->user_id, true);
                 $changing_emails = changing_emails_select_by_user($pdo, $user->user_id, true);
                 $logins = recent_logins_select($pdo, $user->user_id, true);
-                echo "user_id: $user->user_id <br/>";
+                $user_id = (int) $user->user_id;
+                echo "user_id: $user_id <br/>";
                 output_object($user);
                 output_object($pr2);
                 output_object($epic);
@@ -54,11 +56,12 @@ try {
                 output_object_keys($folding);
                 output_objects($changing_emails);
                 output_objects($logins, true, $user);
-                echo '<a href="update_account.php?id='.$user->user_id.'">edit</a>'
-                    .' | <a href="//pr2hub.com/mod/ban.php?user_id='.$user->user_id.'&force_ip=">ban</a>'
+                echo "<a href='update_account.php?id='$user_id'>edit</a>"
+                    ." | <a href='//pr2hub.com/mod/ban.php?user_id=$user_id&force_ip='>ban</a>"
                     .'<br><br><br>';
             } catch (Exception $e) {
-                echo "<i>Error: ".$e->getMessage()."</i><br><br>";
+                $error = htmlspecialchars($error, ENT_QUOTES);
+                echo "<i>Error: $error</i><br><br>";
             }
         }
     }
@@ -66,7 +69,8 @@ try {
     echo '</form>';
 } catch (Exception $e) {
     output_header('Error');
-    echo 'Error: ' . $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    echo "Error: $error";
 } finally {
     output_footer();
 }

@@ -7,7 +7,7 @@ require_once QUERIES_DIR . '/staff/admin/users_count_from_ip_expanded.php';
 require_once QUERIES_DIR . '/staff/admin/users_select_by_ip_expanded.php';
 
 $ip = default_get('ip', '');
-$html_ip = htmlspecialchars($ip);
+$html_ip = htmlspecialchars($ip, ENT_QUOTES);
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
 $group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
@@ -62,8 +62,8 @@ try {
 
         if ($user_count > 0 && count($users) > 0) {
             echo '<p>---</p>';
-            $html_ip = htmlspecialchars(urlencode($ip));
-            output_pagination($start, $count, "&ip=$html_ip", $is_end);
+            $url_ip = urlencode($ip);
+            output_pagination($start, $count, "&ip=$url_ip", $is_end);
         }
 
         foreach ($users as $user) {
@@ -84,16 +84,16 @@ try {
 
         // output page navigation
         if ($user_count > 0 && count($users) > 0) {
-            $html_ip = htmlspecialchars(urlencode($ip));
-            output_pagination($start, $count, "&ip=$html_ip", $is_end);
+            $url_ip = urlencode($ip);
+            output_pagination($start, $count, "&ip=$url_ip", $is_end);
         }
     } else {
         output_search('', false);
     }
     output_footer();
 } catch (Exception $e) {
-    $message = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_header('Error');
-    echo "Error: $message";
+    echo "Error: $error";
     output_footer();
 }

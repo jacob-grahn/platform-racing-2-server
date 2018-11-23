@@ -20,7 +20,7 @@ function output_object($obj, $sep = '<br/>')
     if ($obj !== false) {
         foreach ($obj as $var => $val) {
             if ($var == 'email') {
-                $safe_email = htmlspecialchars($val);
+                $safe_email = htmlspecialchars($val, ENT_QUOTES);
                 $url_email = urlencode($val);
                 $val = "<a href='search_by_email.php?email=$url_email'>$safe_email</a>";
                 echo "$var: $val $sep";
@@ -38,7 +38,8 @@ function output_object($obj, $sep = '<br/>')
                 $val = date('M j, Y g:i A', $val);
             }
             if ($var != 'user_id' && $var != 'email' && $var != 'guild') {
-                echo "$var: ".htmlspecialchars($val)."$sep";
+                $safe_val = htmlspecialchars($val, ENT_QUOTES);
+                echo "$var: $safe_val$sep";
             }
         }
         if ($sep != '<br/>') {

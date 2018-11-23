@@ -49,7 +49,7 @@ try {
 
     // sanity check: is this user the contest owner, admin, or mod?
     if ($is_admin === false && $is_mod === false && $user_id !== $host_id) {
-        $html_contest_name = htmlspecialchars($contest->contest_name);
+        $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
         throw new Exception("You don't own $html_contest_name.");
     }
 
@@ -81,7 +81,7 @@ try {
 
     // form
     if ($action === 'form') {
-        $html_contest_name = htmlspecialchars($contest->contest_name);
+        $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
         $max_awards = (int) $contest->max_awards;
         $recent_awards = (int) throttle_awards($pdo, $contest->contest_id, $contest->user_id);
         $lang = ['sets','times'];
@@ -174,7 +174,7 @@ try {
         $winner_id = (int) $winner_id;
 
         // safety first
-        $html_winner_name = htmlspecialchars($winner_name);
+        $html_winner_name = htmlspecialchars($winner_name, ENT_QUOTES);
 
         // check if the player has the part already
         $prizes_to_award = array();

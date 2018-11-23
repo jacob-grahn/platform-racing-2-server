@@ -44,8 +44,8 @@ try {
         $banned_user_id = $row->banned_user_id;
         $time = $row->time;
         $expire_time = $row->expire_time;
-        $reason = $row->reason;
-        $mod_name = $row->mod_name;
+        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
+        $mod_name = htmlspecialchars($row->mod_name, ENT_QUOTES);
         $banned_name = $row->banned_name;
         $ip_ban = $row->ip_ban;
         $account_ban = $row->account_ban;
@@ -64,21 +64,20 @@ try {
             $display_name .= "[$banned_ip]";
         }
 
-        $reason = htmlspecialchars($reason);
-        $f_duration = format_duration($duration);
+        $display_name = htmlspecialchars($display_name, ENT_QUOTES);
+        $f_dur = format_duration($duration);
 
-        echo "<p>$formatted_time
-    			<a href='show_record.php?ban_id=$ban_id'>
-    			".htmlspecialchars($mod_name)." banned ".htmlspecialchars($display_name)." for $f_duration.</a><br/>
-    			Reason: ".htmlspecialchars($reason)."
-    			</p>";
+        echo "<p>"
+            ."$formatted_time <a href='show_record.php?ban_id=$ban_id'>$mod_name banned $display_name for $f_dur.</a>"
+            ."<br/>Reason: $reason"
+            ."</p>";
     }
 
     echo '<p>---</p>';
     output_pagination($start, $count);
     output_footer();
 } catch (Exception $e) {
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_header('Error');
     echo "Error: $error";
     output_footer();

@@ -98,9 +98,10 @@ try {
         }
 
         // success
+        $safe_title = htmlspecialchars($title, ENT_QUOTES);
         echo $desc;
         echo '<p>---</p>';
-        echo "<p><b>".htmlspecialchars($title)." v$version</b> restored successfully!</p>";
+        echo "<p><b>$safe_title v$version</b> restored successfully!</p>";
     } else {
         echo $desc;
     }
@@ -111,14 +112,15 @@ try {
     $backups = level_backups_select($pdo, $user_id);
     if (!empty($backups)) {
         foreach ($backups as $row) {
-            echo "<p>$row->date: <b>".htmlspecialchars($row->title)
-                ."</b> v$row->version <a href='?action=restore&backup_id=$row->backup_id'>restore</a></p>";
+            $title = htmlspecialchars($row->title, ENT_QUOTES);
+            echo "<p>$row->date: <b>$title</b> v$row->version "
+                ."(<a href='?action=restore&backup_id=$row->backup_id'>restore</a>)</p>";
         }
     } else {
         echo "<center>You haven't modified or deleted any levels in the past 30 days.</center>";
     }
 } catch (Exception $e) {
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_header("Level Backups");
     echo "Error: $error";
 } finally {

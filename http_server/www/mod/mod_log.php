@@ -30,13 +30,14 @@ try {
 
     //output actions
     foreach ($actions as $row) {
-        echo "<p><span class='date'>$row->time</span> -- ".htmlspecialchars($row->message)."</p>";
+        $message = htmlspecialchars($row->message, ENT_QUOTES);
+        echo "<p><span class='date'>$row->time</span> -- $message</p>";
     }
 
     echo '<p>---</p>';
     output_pagination($start, $count);
 } catch (Exception $e) {
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_header("Error");
     echo "Error: $error";
 } finally {

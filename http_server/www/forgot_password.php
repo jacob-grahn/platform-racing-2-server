@@ -2,7 +2,9 @@
 
 header("Content-type: text/plain");
 
+include 'Mail.php';
 require_once HTTP_FNS . '/all_fns.php';
+require_once HTTP_FNS . '/send_email.php';
 require_once HTTP_FNS . '/rand_crypt/to_hash.php';
 require_once QUERIES_DIR . '/users/user_select_by_name.php';
 require_once QUERIES_DIR . '/users/user_update_temp_pass.php';
@@ -28,7 +30,7 @@ try {
 
     // sanity check: is it a valid email address?
     if (!valid_email($email)) {
-        $email = htmlspecialchars($email);
+        $email = htmlspecialchars($email, ENT_QUOTES);
         throw new Exception("\"$email\" is not a valid email address.");
     }
 
@@ -48,8 +50,8 @@ try {
 
     // the email must match
     if (strtolower($user->email) !== strtolower($email)) {
-        $name = htmlspecialchars($name);
-        $email = htmlspecialchars($email);
+        $name = htmlspecialchars($name, ENT_QUOTES);
+        $email = htmlspecialchars($email, ENT_QUOTES);
         throw new Exception("No account was found with the username \"$name\" and the email address \"$email\".");
     }
 
@@ -65,38 +67,20 @@ try {
     user_update_temp_pass($pdo, $user_id, $pass_hash);
 
     // --- email them their new pass --- \\
-    include 'Mail.php';
-
-    $recipient = $user->email;
-
-    $headers = array();
-    $headers['From']    = 'Fred the Giant Cactus <contact@jiggmin.com>';
-    $headers['To']      = $recipient;
-    $headers['Subject'] = 'A password and chocolates from PR2';
-
-    $body = "Hi $name,\n\n"
+    $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
+    $to = $user->email;
+    $subject = 'A password and chocolates from PR2';
+    $message = "Hi $name,\n\n"
                 ."It seems you forgot your password. Here's a new one: $pass\n\n"
                 ."If you didn't request this email, then just ignore it. "
                 ."Your old password will still work as long as you don't log in with this one.\n\n"
                 ."All the best,\n"
                 ."Fred";
-
-    // Define SMTP Parameters
-    $params['host'] = $EMAIL_HOST;
-    $params['port'] = '465';
-    $params['auth'] = 'PLAIN';
-    $params['username'] = $EMAIL_USER;
-    $params['password'] = $EMAIL_PASS;
-
-    // Create the mail object using the Mail::factory method
-    $mail_object = Mail::factory('smtp', $params);
-
-    // Send the message
-    $mail_object->send($recipient, $headers, $body);
+    send_email($from, $to, $subject, $message);
 
     // tell the world
     echo 'message=Great success! You should receive an email with your new password shortly.';
 } catch (Exception $e) {
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "error=$error";
 }
