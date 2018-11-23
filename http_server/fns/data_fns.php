@@ -26,6 +26,46 @@ function add_item(&$arr, $item)
     }
 }
 
+// awards prizes to a user for various reasons on login
+// TO-DO: Add pending contest prizes to this, then move fn to query_fns.php
+function award_special_parts($stats, $hat_array, $head_array, $body_array, $feet_array, $group)
+{
+    // get current date for holiday parts check
+    $date = date('F j');
+
+    // heart set (valentine)
+    if ($date === 'February 13' || $date === 'February 14') {
+        $stats->head = add_item($head_array, 38) ? 38 : $stats->head;
+        $stats->body = add_item($body_array, 38) ? 38 : $stats->body;
+        $stats->feet = add_item($feet_array, 38) ? 38 : $stats->feet;
+    }
+
+    // bunny set (easter)
+    $easter = date('F j', easter_date(date('Y')));
+    if ($date === $easter || date('F j', time() + 86400) === $easter) {
+        $stats->head = add_item($head_array, 39) ? 39 : $stats->head;
+        $stats->body = add_item($body_array, 39) ? 39 : $stats->body;
+        $stats->feet = add_item($feet_array, 39) ? 39 : $stats->feet;
+    }
+
+    // santa set (christmas)
+    if ($date === 'December 24' || $date === 'December 25') {
+        $stats->hat = add_item($hat_array, 7) ? 7 : $stats->hat;
+        $stats->head = add_item($head_array, 34) ? 34 : $stats->head;
+        $stats->body = add_item($body_array, 34) ? 34 : $stats->body;
+        $stats->feet = add_item($feet_array, 34) ? 34 : $stats->feet;
+    }
+
+    // party hat (new year)
+    if ($date === 'December 31' || $date === 'January 1') {
+        $stats->hat = add_item($hat_array, 8) ? 8 : $stats->hat;
+    }
+
+    // mod crown check
+    $stats->hat = $group >= 2 ? (add_item($hat_array, 6) ? 6 : $stats->hat) : $stats->hat;
+
+    return $stats;
+}
 
 // tries to find a variable in various request arrays; uses default if not found
 function find($str, $default = null, $cookie = true)
@@ -367,7 +407,7 @@ function filter_swears($str)
     $str = str_replace('bitch', $bitchArray[array_rand($bitchArray)], $str);
     $str = str_replace('cunt', $bitchArray[array_rand($bitchArray)], $str);
 
-    return( $str );
+    return $str;
 }
 
 
@@ -388,5 +428,5 @@ function rate_limit($key, $interval, $max, $error = 'Slow down a bit, yo.')
     $count++;
     apcu_store($key, $count, $interval);
 
-    return($count);
+    return $count;
 }
