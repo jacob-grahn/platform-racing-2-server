@@ -56,8 +56,8 @@ try {
     $r = new stdClass();
     $r->success = true;
     $r->listings = $listings;
-    $r->title = 'Vault of Magics';
-    $r->sale = false;
+    $r->title = 'Black Friday';
+    $r->sale = true;
     echo json_encode($r);
 } catch (Exception $e) {
     $r = new stdClass();
