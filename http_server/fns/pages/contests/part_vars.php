@@ -156,7 +156,7 @@ function to_part_name($type, $id)
 
 function validate_prize($type, $id)
 {
-    $type = htmlspecialchars(strtolower($type));
+    $type = htmlspecialchars(strtolower($type), ENT_QUOTES);
     $id = (int) $id;
     $type_array = array("hat", "head", "body", "feet", "ehat", "ehead", "ebody", "efeet");
 

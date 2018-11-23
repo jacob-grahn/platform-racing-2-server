@@ -32,7 +32,7 @@ try {
     //--- also disable html parsing
     foreach ($guilds as $guild) {
         $guild->active_count = guild_count_active($pdo, $guild->guild_id);
-        $guild->guild_name = htmlspecialchars($guild->guild_name);
+        $guild->guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
     }
 
 
@@ -43,6 +43,6 @@ try {
     echo json_encode($reply);
 } catch (Exception $e) {
     $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $reply->error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo json_encode($reply);
 }

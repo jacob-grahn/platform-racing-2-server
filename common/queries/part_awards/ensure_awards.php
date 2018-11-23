@@ -2,16 +2,12 @@
 
 function ensure_awards($pdo)
 {
-    // select all records, they get cleared out weekly or somesuch
+    // select all records
     $awards = part_awards_select_list($pdo);
 
     // give users their awards
     foreach ($awards as $row) {
-        if ($row->part == 0) {
-            $part = '*';
-        } else {
-            $part = $row->part;
-        }
+        $part = $row->part == 0 ? '*' : $row->part;
         $type = $row->type;
         $user_id = $row->user_id;
         try {
@@ -22,6 +18,6 @@ function ensure_awards($pdo)
         }
     }
 
-    // delete older records
+    // delete records older than a week
     part_awards_delete_old($pdo);
 }

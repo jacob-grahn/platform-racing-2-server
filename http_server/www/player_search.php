@@ -35,7 +35,7 @@ try {
     output_search($name);
     output_page($pdo, $user);
 } catch (Exception $e) {
-    $safe_error = htmlspecialchars($e->getMessage());
+    $safe_error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_search($name);
     echo "<br /><i>Error: $safe_error</i>";
 } finally {

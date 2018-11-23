@@ -29,7 +29,7 @@ function users_select_by_ip_expanded($pdo, $search_ip, $start = 0, $count = 25)
     $users = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     if (empty($users)) {
-        $search_ip = htmlspecialchars($search_ip);
+        $search_ip = htmlspecialchars($search_ip, ENT_QUOTES);
         throw new Exception("Could not find any users associated for that IP "
             ."address ($search_ip) with those search parameters.");
     }

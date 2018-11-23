@@ -204,7 +204,7 @@ function query_if_banned($pdo, $user_id, $ip)
 // get ban priors (for lazy mods)
 function get_priors($pdo, $mod, $name)
 {
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
     // sanity: make sure they're online and a staff member
     if (!isset($mod) || $mod->group < 2 || $mod->temp_mod == true || $mod->server_owner == true) {
@@ -229,12 +229,12 @@ function get_priors($pdo, $mod, $name)
 
     // make user vars
     $name = $user->name;
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
     $ip = $user->ip;
     $power = (int) $user->power;
 
     // initialize return string var
-    $url_name = htmlspecialchars(urlencode($name));
+    $url_name = htmlspecialchars(urlencode($name), ENT_QUOTES);
     $user_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $safe_name, '#'.group_color($power));
     $str = "<b>Ban Data for $user_link</b><br><br>";
 
@@ -244,7 +244,7 @@ function get_priors($pdo, $mod, $name)
     $row = query_if_banned($pdo, $user_id, $ip);
     if ($row !== false) {
         $ban_id = $row->ban_id;
-        $reason = htmlspecialchars($row->reason);
+        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
         $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
         if ($row->ip_ban == 1 && $row->account_ban == 1 && $row->banned_name == $name) {
             $ban_type = 'account and IP are';
@@ -271,12 +271,12 @@ function get_priors($pdo, $mod, $name)
             $str .= '<li>';
             $ban_id = (int) $ban->ban_id;
             $date = date("M j, Y g:i A", $ban->time);
-            $mod_name = htmlspecialchars($ban->mod_name);
-            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name));
-            $banned_name = htmlspecialchars($ban->banned_name);
-            $banned_ip = htmlspecialchars(urlencode($ban->banned_ip));
+            $mod_name = htmlspecialchars($ban->mod_name, ENT_QUOTES);
+            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name), ENT_QUOTES);
+            $banned_name = htmlspecialchars($ban->banned_name, ENT_QUOTES);
+            $banned_ip = htmlspecialchars(urlencode($ban->banned_ip), ENT_QUOTES);
             $duration = format_duration($ban->expire_time - $ban->time);
-            $reason = htmlspecialchars($ban->reason);
+            $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
             $lifted = (bool) $ban->lifted;
             $acc_ban = (bool) $ban->account_ban;
             $ip_ban = (bool) $ban->ip_ban;
@@ -299,8 +299,8 @@ function get_priors($pdo, $mod, $name)
 
             // check if lifted
             if ($lifted === true) {
-                $lifted_reason = htmlspecialchars($ban->lifted_reason);
-                $lifted_by = htmlspecialchars($ban->lifted_by);
+                $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
+                $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
                 $lifted_date = '';
                 $at_loc = strrpos($lifted_reason, '@');
                 if ($at_loc !== false) {
@@ -342,12 +342,12 @@ function get_priors($pdo, $mod, $name)
             $str .= '<li>';
             $ban_id = (int) $ban->ban_id;
             $date = date("M j, Y g:i A", $ban->time);
-            $mod_name = htmlspecialchars($ban->mod_name);
-            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name));
-            $banned_name = htmlspecialchars($ban->banned_name);
-            $banned_ip = htmlspecialchars(urlencode($ban->banned_ip));
+            $mod_name = htmlspecialchars($ban->mod_name, ENT_QUOTES);
+            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name), ENT_QUOTES);
+            $banned_name = htmlspecialchars($ban->banned_name, ENT_QUOTES);
+            $banned_ip = htmlspecialchars(urlencode($ban->banned_ip), ENT_QUOTES);
             $duration = format_duration($ban->expire_time - $ban->time);
-            $reason = htmlspecialchars($ban->reason);
+            $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
             $lifted = (bool) $ban->lifted;
             $acc_ban = (bool) $ban->account_ban;
             $ip_ban = (bool) $ban->ip_ban;
@@ -370,8 +370,8 @@ function get_priors($pdo, $mod, $name)
 
             // check if lifted
             if ($lifted === true) {
-                $lifted_reason = htmlspecialchars($ban->lifted_reason);
-                $lifted_by = htmlspecialchars($ban->lifted_by);
+                $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
+                $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
                 $lifted_date = '';
                 $at_loc = strrpos($lifted_reason, '@');
                 if ($at_loc !== false) {

@@ -2,7 +2,6 @@
 
 function pass_login($pdo, $name, $password)
 {
-
     // get their ip
     $ip = get_ip();
 
@@ -44,7 +43,6 @@ function pass_login($pdo, $name, $password)
 // login using a token
 function token_login($pdo, $use_cookie = true, $suppress_error = false)
 {
-
     $rec_token = find_no_cookie('token');
     if (isset($rec_token) && !empty($rec_token)) {
         $token = $rec_token;
@@ -230,7 +228,7 @@ function type_to_db_field($type)
     } else {
         throw new Exception('Unknown type');
     }
-    return( $field );
+    return $field;
 }
 
 
@@ -257,8 +255,7 @@ function append_to_str_array($str_arr, $val) // is this needed?
 // generates a login token
 function get_login_token($user_id)
 {
-    $token = $user_id . '-' . random_str(30);
-    return $token;
+    return $user_id . '-' . random_str(30);
 }
 
 

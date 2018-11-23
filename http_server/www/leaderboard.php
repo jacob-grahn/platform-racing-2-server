@@ -56,7 +56,7 @@ try {
     foreach ($users as $user) {
         // name
         $name = $user->name;
-        $safe_name = htmlspecialchars($name);
+        $safe_name = htmlspecialchars($name, ENT_QUOTES);
         $safe_name = str_replace(" ", "&nbsp;", $safe_name);
 
         // group
@@ -88,9 +88,8 @@ try {
     output_pagination($start, $count);
     echo "</center>";
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    $safe_error = htmlspecialchars($error);
-    echo "Error: $safe_error";
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    echo "Error: $error";
 } finally {
     output_footer();
 }

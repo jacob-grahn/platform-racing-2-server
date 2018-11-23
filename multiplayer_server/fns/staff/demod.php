@@ -5,7 +5,7 @@ function demote_mod($user_name, $admin, $demoted_player)
     global $pdo, $server_name, $guild_owner;
 
     // safety first
-    $html_user_name = htmlspecialchars($user_name);
+    $html_user_name = htmlspecialchars($user_name, ENT_QUOTES);
 
     // if the user isn't an admin on the server, kill the function (2nd line of defense)
     if ($admin->group != 3) {
@@ -94,7 +94,7 @@ function demote_mod($user_name, $admin, $demoted_player)
             throw new Exception("$user_name isn't a moderator.");
         }
     } catch (Exception $e) {
-        $message = htmlspecialchars($e->getMessage());
+        $message = htmlspecialchars($e->getMessage(), ENT_QUOTES);
         echo "Error: $message";
         $admin->write("message`Error: $message");
         return false;

@@ -10,8 +10,8 @@ try {
 
     // get data, make variables
     $decode = json_decode(file_get_contents("https://pr2hub.com/files/artifact_hint.txt"));
-    $safe_hint = htmlspecialchars($decode->hint);
-    $safe_finder = htmlspecialchars($decode->finder_name);
+    $safe_hint = htmlspecialchars($decode->hint, ENT_QUOTES);
+    $safe_finder = htmlspecialchars($decode->finder_name, ENT_QUOTES);
 
     output_header('Artifact Hint');
 
@@ -46,6 +46,7 @@ try {
     output_footer();
 } catch (Exception $e) {
     output_header('Error');
-    echo 'Error: ' . htmlspecialchars($e->getMessage());
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    echo "Error: $error";
     output_footer();
 }

@@ -47,7 +47,7 @@ try {
     if ($target->guild != 0) {
         try {
             $guild = guild_select($pdo, $target->guild);
-            $guild_name = htmlspecialchars($guild->guild_name);
+            $guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
         } catch (Exception $e) {
             $guild_name = '';
         }
@@ -105,7 +105,7 @@ try {
     }
 } catch (Exception $e) {
     $r = new stdClass();
-    $r->error = $e->getMessage();
+    $r->error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+} finally {
+    die(json_encode($r));
 }
-
-echo json_encode($r);

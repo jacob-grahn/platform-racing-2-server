@@ -47,7 +47,7 @@ try {
 
     // form
     if ($action === 'form') {
-        $html_contest_name = htmlspecialchars($contest->contest_name);
+        $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
         echo "Remove Prizes from <b>$html_contest_name</b>"
             ."<br><br>"
             ."<form method='post'>";
@@ -94,7 +94,7 @@ try {
         // make some variables
         $contest_id = (int) $contest->contest_id;
         $contest_name = $contest->contest_name;
-        $html_contest_name = htmlspecialchars($contest_name);
+        $html_contest_name = htmlspecialchars($contest_name, ENT_QUOTES);
         $removed = 0; // count the number of prizes removed
 
         // determine if we're removing these prizes
@@ -109,7 +109,7 @@ try {
             }
 
             // some names of things
-            $prize_name = htmlspecialchars(default_post("prize_name_$prize_id", ''));
+            $prize_name = htmlspecialchars(default_post("prize_name_$prize_id", ''), ENT_QUOTES);
 
             // do it
             $operation = contest_prize_delete($pdo, $prize_id, true);

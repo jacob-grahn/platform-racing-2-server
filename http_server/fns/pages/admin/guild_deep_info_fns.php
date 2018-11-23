@@ -27,7 +27,7 @@ function output_object($obj, $sep = '<br/>')
                 echo "$var: $val$sep";
                 continue;
             }
-            if ($var != 'guild_id') {
+            if ($var != 'guild_id' && $var != 'name') {
                 $safe_val = htmlspecialchars($val, ENT_QUOTES);
                 echo "$var: $safe_val$sep";
             }

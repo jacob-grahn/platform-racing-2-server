@@ -62,7 +62,7 @@ try {
     //give some more info on the current ban in effect if there is one
     if ($row !== false) {
         $ban_id = $row->ban_id;
-        $reason = htmlspecialchars($row->reason);
+        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
         $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
         if ($row->ip_ban == 1 && $row->account_ban == 1 && $row->banned_name == $user_name) {
             $ban_type = 'account and ip are';
@@ -114,12 +114,12 @@ try {
     }
 
     // safety first
-    $html_overridden_ip = htmlspecialchars($overridden_ip);
-    $html_ip = htmlspecialchars($ip);
-    $html_url_ip = htmlspecialchars(urlencode($ip));
+    $html_overridden_ip = htmlspecialchars($overridden_ip, ENT_QUOTES);
+    $html_ip = htmlspecialchars($ip, ENT_QUOTES);
+    $html_url_ip = htmlspecialchars(urlencode($ip), ENT_QUOTES);
 
     // output the results
-    $html_user_name = htmlspecialchars($user_name);
+    $html_user_name = htmlspecialchars($user_name, ENT_QUOTES);
     echo "<p>User ID: $user_id</p>"
         ."<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>"
         ."<p>Status: $status</p>";

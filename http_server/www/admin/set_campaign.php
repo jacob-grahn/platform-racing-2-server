@@ -40,7 +40,8 @@ try {
     }
 } catch (Exception $e) {
     output_header('Error');
-    echo 'Error: ' . $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    echo "Error: $error";
 } finally {
     output_footer();
 }

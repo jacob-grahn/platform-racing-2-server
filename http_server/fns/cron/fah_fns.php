@@ -86,7 +86,7 @@ function fah_fetch_stats()
 // validate, determine, and award fah prizes
 function fah_award_prizes($pdo, $name, $score, $prize_array)
 {
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
     $lower_name = strtolower($name);
     
     try {
@@ -178,7 +178,7 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
         output("Finished $safe_name.");
     } catch (Exception $e) {
         $error = $e->getMessage();
-        $safe_error = htmlspecialchars($error);
+        $safe_error = htmlspecialchars($error, ENT_QUOTES);
         output($safe_error);
     }
 }
@@ -186,7 +186,7 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
 // award tokens
 function fah_award_token($pdo, $user_id, $name, $score, $column, $available_tokens)
 {
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
     $token_num = $column['token'];
     $column = "r$token_num";
     
@@ -212,14 +212,14 @@ function fah_award_token($pdo, $user_id, $name, $score, $column, $available_toke
         // finalize it (send message, mark as awarded in folding_at_home)
         fah_finalize_award($pdo, $user_id, $name, $column);
     } catch (Exception $e) {
-        output(htmlspecialchars($e->getMessage()));
+        output(htmlspecialchars($e->getMessage(), ENT_QUOTES));
     }
 }
 
 // award hats
 function fah_award_hat($pdo, $user_id, $name, $score, $hat)
 {
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
     $column = $hat . '_hat';
     
     try {
@@ -247,7 +247,7 @@ function fah_award_hat($pdo, $user_id, $name, $score, $hat)
         // finalize it (send message, mark as awarded in folding_at_home)
         fah_finalize_award($pdo, $user_id, $name, $column);
     } catch (Exception $e) {
-        output(htmlspecialchars($e->getMessage()));
+        output(htmlspecialchars($e->getMessage(), ENT_QUOTES));
     }
 }
 
@@ -266,7 +266,7 @@ function fah_finalize_award($pdo, $user_id, $name, $prize_code)
                 );
     
     // compose a PM
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
     $prize_str = $prizes[$prize_code][0];
     $min_score = $prizes[$prize_code][1];
     $message = "Dear $safe_name,\n\n"

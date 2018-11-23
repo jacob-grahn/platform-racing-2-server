@@ -19,7 +19,7 @@ try {
     $user_id = token_login($pdo);
     $power = user_select_power($pdo, $user_id);
     if ($power <= 0) {
-        $mode = htmlspecialchars($mode);
+        $mode = htmlspecialchars($mode, ENT_QUOTES);
         throw new Exception(
             "Guests can't add players to their $mode list. ".
             "To access this feature, please create your own account."
@@ -43,7 +43,7 @@ try {
     // make individual list entries
     $num = 0;
     foreach ($users as $row) {
-        $name = urlencode(htmlspecialchars($row->name));
+        $name = urlencode(htmlspecialchars($row->name, ENT_QUOTES));
         $group = $row->power;
         $status = $row->status;
         $rank = $row->rank;
@@ -73,6 +73,6 @@ try {
         $num++;
     }
 } catch (Exception $e) {
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "error=$error";
 }
