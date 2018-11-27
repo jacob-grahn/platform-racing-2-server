@@ -58,9 +58,9 @@ function output_footer()
     echo "</div></div>"
         ."<div id='footer'>"
             ."<ul class='footer_links'>"
-                ."<li><a href='//pr2hub.com/backups'>Backups</a></li>"
+                ."<li><a href='/backups'>Backups</a></li>"
                 ."<li><a href='https://jiggmin2.com/forums/showthread.php?tid=19'>Folding@Home</a></li>"
-                ."<li><a href='//pr2hub.com/terms_of_use.php'>Terms of Use</a></li>"
+                ."<li><a href='/terms_of_use.php'>Terms of Use</a></li>"
                 ."<li><a href='https://jiggmin2.com/forums/showthread.php?tid=385'>Rules</a></li>"
             ."</ul>"
         ."</div></div>";
@@ -70,17 +70,17 @@ function output_footer()
 function output_staff_nav($formatting_for_admins = true)
 {
     echo "<p><b>"
-        ."<a href='//pr2hub.com/mod/reported_messages.php'>Reported Messages</a> - "
-        ."<a href='//pr2hub.com/mod/player_info.php'>Player Search</a> - "
-        ."<a href='//pr2hub.com/bans/bans.php'>Ban Log</a> - "
-        ."<a href='//pr2hub.com/mod/mod_log.php'>Mod Action Log</a>";
+        ."<a href='/mod/reported_messages.php'>Reported Messages</a> - "
+        ."<a href='/mod/player_info.php'>Player Search</a> - "
+        ."<a href='/bans/bans.php'>Ban Log</a> - "
+        ."<a href='/mod/mod_log.php'>Mod Action Log</a>";
 
     if ($formatting_for_admins === true) {
         echo "<br>"
-            ."<a href='//pr2hub.com/admin/player_deep_info.php'>Update Account</a> - "
-            ."<a href='//pr2hub.com/admin/guild_deep_info.php'>Update Guild</a> - "
-            ."<a href='//pr2hub.com/admin/set_campaign.php'>Set Custom Campaign</a> - "
-            ."<a href='//pr2hub.com/admin/admin_log.php'>Admin Action Log</a>";
+            ."<a href='/admin/player_deep_info.php'>Update Account</a> - "
+            ."<a href='/admin/guild_deep_info.php'>Update Guild</a> - "
+            ."<a href='/admin/set_campaign.php'>Set Custom Campaign</a> - "
+            ."<a href='/admin/admin_log.php'>Admin Action Log</a>";
     }
 
     echo '</b></p>'

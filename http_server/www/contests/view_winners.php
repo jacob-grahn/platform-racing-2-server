@@ -34,8 +34,8 @@ try {
 
     // make some variables
     $contest_id = (int) $contest->contest_id;
-    $contest_name = htmlspecialchars($contest->contest_name);
-    $contest_url = htmlspecialchars($contest->url);
+    $contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
+    $contest_url = htmlspecialchars($contest->url, ENT_QUOTES);
 
     // get the winners
     $winners = contest_winners_select_by_contest($pdo, $contest_id, !$is_mod);
@@ -86,23 +86,23 @@ try {
         $last_prize = end($prizes_awarded);
 
         // other variables
-        $awarder_ip = htmlspecialchars($winner->awarder_ip);
-        $comment = htmlspecialchars($winner->comment);
+        $awarder_ip = htmlspecialchars($winner->awarder_ip, ENT_QUOTES);
+        $comment = htmlspecialchars($winner->comment, ENT_QUOTES);
 
         // awarder name and color (staff)
         if ($is_mod === true) {
             $awarder_id = (int) $winner->awarded_by;
             $awarder = user_select_name_and_power($pdo, $awarder_id);
-            $awarder_html_name = htmlspecialchars($awarder->name);
-            $awarder_url = $base_url . htmlspecialchars(urlencode($awarder->name));
+            $awarder_html_name = htmlspecialchars($awarder->name, ENT_QUOTES);
+            $awarder_url = $base_url . htmlspecialchars(urlencode($awarder->name), ENT_QUOTES);
             $awarder_color = $group_colors[(int) $awarder->power];
         }
 
         // winner name and color
         $winner = user_select_name_and_power($pdo, $winner->winner_id);
         $winner_color = $group_colors[$winner->power];
-        $winner_html_name = htmlspecialchars($winner->name);
-        $winner_url = $base_url . htmlspecialchars(urlencode($winner->name));
+        $winner_html_name = htmlspecialchars($winner->name, ENT_QUOTES);
+        $winner_url = $base_url . htmlspecialchars(urlencode($winner->name), ENT_QUOTES);
 
         // start row
         echo "<tr>"
@@ -115,7 +115,7 @@ try {
             // output readable prizes
             echo "<td class='noborder'>";
             foreach ($prizes_awarded as $prize) {
-                echo htmlspecialchars($prize);
+                echo htmlspecialchars($prize, ENT_QUOTES);
                 if ($prize != $last_prize) {
                     echo ', '; // separator; don't echo after last prize
                 }
@@ -138,7 +138,7 @@ try {
     echo "<br><br><a href='contests.php'>&lt;- All Contests";
     output_footer();
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage());
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_header("Error");
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();

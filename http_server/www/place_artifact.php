@@ -64,7 +64,7 @@ try {
     $message = "Great success! The artifact location will be updated at the top of the next minute.";
     echo "message=$message";
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage());
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "error=$error";
     $message = "Error: $error";
 } finally {
@@ -96,6 +96,6 @@ try {
             echo "You're not online, so you couldn't be notified on the server.";
         }
     } catch (Exception $e) {
-        echo $e->getMessage();
+        echo htmlspecialchars($e->getMessage(), ENT_QUOTES);
     }
 }

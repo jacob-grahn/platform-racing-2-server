@@ -9,10 +9,12 @@ require_once QUERIES_DIR . '/contest_prizes/contest_prizes_select_by_contest.php
 require_once QUERIES_DIR . '/contest_winners/throttle_awards.php';
 require_once QUERIES_DIR . '/contest_winners/contest_winner_insert.php';
 require_once QUERIES_DIR . '/messages/message_insert.php';
+require_once QUERIES_DIR . '/pr2/pr2_insert.php'; // if pr2 data doesn't exist
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
 $action = find('action', 'form');
+$header = false;
 
 try {
     // rate limiting
@@ -47,7 +49,7 @@ try {
 
     // sanity check: is this user the contest owner, admin, or mod?
     if ($is_admin === false && $is_mod === false && $user_id !== $host_id) {
-        $html_contest_name = htmlspecialchars($contest->contest_name);
+        $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
         throw new Exception("You don't own $html_contest_name.");
     }
 
@@ -66,6 +68,7 @@ try {
     }
 
     // header
+    $header = true;
     output_header('Award Prize', $is_mod, $is_admin);
 
     // get prizes info for this contest
@@ -78,7 +81,7 @@ try {
 
     // form
     if ($action === 'form') {
-        $html_contest_name = htmlspecialchars($contest->contest_name);
+        $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
         $max_awards = (int) $contest->max_awards;
         $recent_awards = (int) throttle_awards($pdo, $contest->contest_id, $contest->user_id);
         $lang = ['sets','times'];
@@ -171,7 +174,7 @@ try {
         $winner_id = (int) $winner_id;
 
         // safety first
-        $html_winner_name = htmlspecialchars($winner_name);
+        $html_winner_name = htmlspecialchars($winner_name, ENT_QUOTES);
 
         // check if the player has the part already
         $prizes_to_award = array();
@@ -305,6 +308,7 @@ try {
         // output the page
         echo "<br>All operations completed! The results can be seen above.";
         echo "<br><br>";
+        echo "<a href='award_prize.php?contest_id=$contest_id'>&lt;- Award Another Prize</a><br>";
         echo "<a href='view_winners.php?contest_id=$contest_id'>&lt;- View Winners</a><br>";
         echo "<a href='contests.php'>&lt;- All Contests</a>";
     } // unknown handler
@@ -314,7 +318,9 @@ try {
 
     output_footer();
 } catch (Exception $e) {
-    output_header("Error", $is_mod, $is_admin);
+    if ($header === false) {
+        output_header("Error", $is_mod, $is_admin);
+    }
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();

@@ -14,10 +14,10 @@ class ChatRoom extends Room
 
     public function __construct($chat_room_name)
     {
-        $this->chat_room_name = htmlspecialchars($chat_room_name);
+        $this->chat_room_name = htmlspecialchars($chat_room_name, ENT_QUOTES);
 
         global $chat_room_array;
-        $chat_room_array[htmlspecialchars($chat_room_name)] = $this;
+        $chat_room_array[$this->chat_room_name] = $this;
 
         $this->chat_array = array_fill(0, $this->keep_count, '');
     }

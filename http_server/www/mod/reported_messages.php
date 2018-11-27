@@ -33,15 +33,15 @@ try {
     //output the messages
     foreach ($messages as $row) {
         $formatted_time = date('M j, Y g:i A', $row->sent_time);
-        $from_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->from_name));
-        $to_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->to_name));
+        $from_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->from_name, ENT_QUOTES));
+        $to_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->to_name, ENT_QUOTES));
         $from_user_id = $row->from_user_id;
         $to_user_id = $row->to_user_id;
         $from_ip = $row->from_ip;
         $reporter_ip = $row->reporter_ip;
         $archived = $row->archived;
         $message_id = $row->message_id;
-        $html_safe_message = htmlspecialchars(filter_swears($row->message));
+        $html_safe_message = htmlspecialchars(filter_swears($row->message), ENT_QUOTES);
         $html_safe_message = str_replace("\r", '<br>', $html_safe_message);
 
         if ($archived) {

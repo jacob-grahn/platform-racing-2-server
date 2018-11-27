@@ -56,7 +56,7 @@ function output_guild_search($guild_name = '', $guild_id = '', $mode = null)
         .'<br>';
 
     // name form
-    $html_guild_name = htmlspecialchars($guild_name);
+    $html_guild_name = htmlspecialchars($guild_name, ENT_QUOTES);
     echo "<div id='nameform' style='display:$name_display'><br>
               <form method='get'>
                   Name: <input type='text' name='name' value='$html_guild_name'>

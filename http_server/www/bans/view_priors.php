@@ -29,7 +29,7 @@ try {
     // give some more info on the current ban in effect if there is one
     if ($row !== false) {
         $ban_id = $row->ban_id;
-        $reason = htmlspecialchars($row->reason);
+        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
         $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
         if ($row->ip_ban == 1 && $row->account_ban == 1 && $row->banned_name == $user_name) {
             $ban_type = 'account and IP are';
@@ -66,8 +66,8 @@ try {
         ."<p>Your IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list"
         .'<p>Priors expire one year after the ban\'s expire date.</p>';
 } catch (Exception $e) {
-    $safe_error = htmlspecialchars($e->getMessage());
-    echo "<br /><i>Error: $safe_error</i>";
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    echo "<br /><i>Error: $error</i>";
 } finally {
     output_footer();
 }

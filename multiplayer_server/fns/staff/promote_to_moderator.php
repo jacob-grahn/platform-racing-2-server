@@ -5,8 +5,8 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     global $pdo, $server_name;
 
     // safety first
-    $html_name = htmlspecialchars($name);
-    $html_type = htmlspecialchars($type);
+    $html_name = htmlspecialchars($name, ENT_QUOTES);
+    $html_type = htmlspecialchars($type, ENT_QUOTES);
 
     // sanity check: is the admin valid and online?
     if (!isset($admin)) {

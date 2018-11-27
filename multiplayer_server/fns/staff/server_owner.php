@@ -5,7 +5,7 @@ function promote_server_mod($name, $owner, $promoted)
     global $guild_owner;
 
     // safety first
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
     // if the user doesn't own the server, kill the function (2nd line of defense)
     if ($owner->group < 3 ||
@@ -70,7 +70,7 @@ function demote_server_mod($name, $owner, $demoted)
     global $guild_owner;
 
     // safety first
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
     // sanity check: does the user own the server?
     if ($owner->group < 3 || $owner->server_owner == false || $owner->user_id != $guild_owner) {

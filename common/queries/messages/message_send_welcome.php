@@ -3,7 +3,7 @@
 function message_send_welcome($pdo, $name, $user_id)
 {
     // compose a welcome pm
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
     $welcome_message = "Welcome to Platform Racing 2, $safe_name!\n\n"
         ."<a href='https://grahn.io' target='_blank'><u><font color='#0000FF'>"
         ."Click here</font></u></a> to read about the latest Platform Racing news on my blog.\n\n"

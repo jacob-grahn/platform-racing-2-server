@@ -59,14 +59,16 @@ try {
     user_update_guild($pdo, $target_id, 0);
     guild_increment_member($pdo, $guild->guild_id, -1);
 
+    $kicked_name = htmlspecialchars($target_account->name, ENT_QUOTES);
+    $guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
+
     // tell it to the world
     $reply = new stdClass();
     $reply->success = true;
-    $reply->message = htmlspecialchars($target_account->name)
-        .' has been kicked from '.htmlspecialchars($guild->guild_name).'.';
+    $reply->message = "$kicked_name has been kicked from $guild_name.";
 } catch (Exception $e) {
     $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $reply->error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
 } finally {
     echo json_encode($reply);
 }

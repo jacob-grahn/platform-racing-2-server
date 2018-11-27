@@ -47,7 +47,7 @@ try {
     );
 
     // safety first
-    $safe_guild_name = htmlspecialchars($guild_name);
+    $safe_guild_name = htmlspecialchars($guild_name, ENT_QUOTES);
 
     // tell the world
     $reply = new stdClass();
@@ -55,7 +55,7 @@ try {
     $reply->message = "\"$safe_guild_name\" (ID #$guild_id) was successfully deleted.";
 } catch (Exception $e) {
     $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $reply->error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
 } finally {
     echo json_encode($reply);
 }

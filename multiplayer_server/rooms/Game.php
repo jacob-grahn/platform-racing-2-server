@@ -492,7 +492,6 @@ class Game extends Room
                 }
             }
 
-
             // exp gain
             $tot_exp_gain = 0;
 
@@ -518,6 +517,9 @@ class Game extends Room
                     }
                     $completed_perc = $objective_count / $this->finish_count;
                     $level_bonus *= $completed_perc;
+                    if ($completed_perc < 1) {
+                        $player->race_stats->give_artifact = false;
+                    }
                 }
 
                 $level_bonus = round($level_bonus);
@@ -626,7 +628,10 @@ class Game extends Room
             }
 
             // apply artifact bonus after all multipliers
-            if ($this->course_id == Artifact::$level_id && $player->wearingHat(Hats::ARTIFACT)) {
+            if ($this->course_id == Artifact::$level_id
+                && $player->wearingHat(Hats::ARTIFACT)
+                && $player->race_stats->give_artifact == true
+            ) {
                 $result = save_finder($pdo, $player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
@@ -644,7 +649,14 @@ class Game extends Room
                 $tot_exp_gain = 0;
             }
 
-            // increment exp and maybe save
+            // disconnects anyone trying to earn exp too quick
+            if ($player->last_exp_time >= (time() - 2)) {
+                $player->socket->write("message`Botting is a no-no. :(");
+                $player->remove();
+            }
+
+            // log/increment exp and maybe save
+            $player->last_exp_time = time();
             $player->incExp($tot_exp_gain);
             $player->maybeSave();
         } else {
@@ -677,7 +689,7 @@ class Game extends Room
                 $names[] = "[$race_stats->name]";
             }
             $vs_names = join(' vs ', $names);
-            $html_name = htmlspecialchars($player->name);
+            $html_name = htmlspecialchars($player->name, ENT_QUOTES);
             $message = "$vs_names: // $html_name wins with a time of $str!";
             $main->sendChat("systemChat`$message", -1);
         }

@@ -19,26 +19,33 @@ function output_object($obj, $sep = '<br/>')
 {
     if ($obj !== false) {
         foreach ($obj as $var => $val) {
-            if ($var == 'email') {
-                $safe_email = htmlspecialchars($val);
+            if ($var == 'email' || $var == 'old_email' || $var == 'new_email') {
+                $safe_email = htmlspecialchars($val, ENT_QUOTES);
                 $url_email = urlencode($val);
                 $val = "<a href='search_by_email.php?email=$url_email'>$safe_email</a>";
-                echo "$var: $val $sep";
-            }
-            if ($var == 'guild') {
+                echo "$var: $val$sep";
+                continue;
+            } elseif ($var == 'ip' || $var == 'register_ip' || $var == 'request_ip' || $var == 'confirm_ip') {
+                $safe_ip = htmlspecialchars($val, ENT_QUOTES);
+                $url_ip = urlencode($val);
+                $val = "<a href='/mod/ip_info.php?ip=$url_ip'>$safe_ip</a>";
+                echo "$var: $val$sep";
+                continue;
+            } elseif ($var == 'guild') {
                 $val = (int) $val;
                 if ($val != 0) {
                     $val = "<a href='guild_deep_info.php?guild_id=$val'>$val</a>";
                 } else {
                     $val = 'none';
                 }
-                echo "$var: $val $sep";
-            }
-            if ($var == 'time' || $var == 'register_time') {
+                echo "$var: $val$sep";
+                continue;
+            } elseif ($var == 'time' || $var == 'register_time') {
                 $val = date('M j, Y g:i A', $val);
             }
-            if ($var != 'user_id' && $var != 'email' && $var != 'guild') {
-                echo "$var: ".htmlspecialchars($val)."$sep";
+            if ($var != 'user_id') {
+                $safe_val = htmlspecialchars($val, ENT_QUOTES);
+                echo "$var: $safe_val$sep";
             }
         }
         if ($sep != '<br/>') {

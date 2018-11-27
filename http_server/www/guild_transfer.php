@@ -52,8 +52,8 @@ try {
 
     // check if the logged in user is the owner of their guild
     if ($user_id == $owner_id && $action === 'form') {
-        $safe_name = htmlspecialchars($user->name);
-        $safe_guild_name = htmlspecialchars($guild->guild_name);
+        $safe_name = htmlspecialchars($user->name, ENT_QUOTES);
+        $safe_guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
 
         echo "Welcome, <b>$safe_name</b>. You are currently the owner of $safe_guild_name.<br>"
             .'<br>'
@@ -79,7 +79,7 @@ try {
 
         output_footer();
     } elseif ($user_id != $owner_id && $action === 'form') {
-        $safe_guild_name = htmlspecialchars($guild->guild_name);
+        $safe_guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
         throw new Exception("You aren't the owner of $safe_guild_name.");
     }
 
@@ -113,7 +113,7 @@ try {
 
         // email sanity check
         if (!valid_email($email)) {
-            $safe_email = htmlspecialchars($email);
+            $safe_email = htmlspecialchars($email, ENT_QUOTES);
             throw new Exception("'$safe_email' is not a valid email address.");
         }
 
@@ -127,15 +127,15 @@ try {
         $new_id = $new_user->user_id;
 
         // make some variables from the old user
-        $safe_old_name = htmlspecialchars($old_user->name);
+        $safe_old_name = htmlspecialchars($old_user->name, ENT_QUOTES);
         $old_power = $old_user->power;
 
         // make some variables from the new user
-        $safe_new_name = htmlspecialchars($new_user->name);
+        $safe_new_name = htmlspecialchars($new_user->name, ENT_QUOTES);
         $new_power = $new_user->power;
 
         // make some variables from the guild
-        $safe_guild_name = htmlspecialchars($guild->guild_name);
+        $safe_guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
         $current_owner = $guild->owner_id;
 
         // sanity check: make sure guests aren't getting any funny ideas

@@ -65,10 +65,15 @@ try {
         }
         $display_name .= "[$banned_ip]";
     }
-    
-    $html_record = str_replace("\r", '<br/>', $record));
-    $html_notes = str_replace("\n", '<br>', $notes));
-    
+
+    $html_lifted_by = htmlspecialchars($lifted_by, ENT_QUOTES);
+    $html_lifted_reason = htmlspecialchars($lifted_reason, ENT_QUOTES);
+    $html_mod_name = htmlspecialchars($mod_name, ENT_QUOTES);
+    $html_banned_name = htmlspecialchars($display_name, ENT_QUOTES);
+    $html_reason = htmlspecialchars($reason, ENT_QUOTES);
+    $html_record = str_replace("\r", '<br/>', htmlspecialchars($record, ENT_QUOTES));
+    $html_notes = str_replace("\n", '<br>', htmlspecialchars($notes, ENT_QUOTES));
+
     if ($lifted == 1) {
         echo '<b><p>-----------------------------------------------------------------------------------------------</p>'
                ."<p>--- This ban has been lifted by $lifted_by ---</p>"

@@ -11,6 +11,7 @@ require_once QUERIES_DIR . '/users/user_select_guest.php';
 require_once QUERIES_DIR . '/users/user_select.php';
 require_once QUERIES_DIR . '/users/user_update_status.php';
 require_once QUERIES_DIR . '/users/user_update_ip.php';
+//require_once QUERIES_DIR . '/part_awards/part_awards_select_by_user.php';
 require_once QUERIES_DIR . '/pr2/pr2_select.php';
 require_once QUERIES_DIR . '/epic_upgrades/epic_upgrades_select.php';
 require_once QUERIES_DIR . '/rank_tokens/rank_token_select.php';
@@ -77,6 +78,7 @@ try {
     $encryptor->setKey($LOGIN_KEY);
     $str_login = $encryptor->decrypt($encrypted_login, $LOGIN_IV);
     $login = json_decode($str_login);
+    $login->ip = $ip;
     $user_name = $login->user_name;
     $user_pass = $login->user_pass;
     $version2 = $login->version;
@@ -124,7 +126,7 @@ try {
         }
         
         // see if they're trying to log into a guest
-        if ($user->power == 0 && $guest_login === false) {
+        if ($user->power == 0 && $guest_login === false && $token_login === false) {
             throw new Exception('Direct logins to guest accounts are not permitted. '.
                                'To play as a guest, click the "Play as Guest" button on the main menu.');
         }
@@ -221,62 +223,8 @@ try {
     $body_array = explode(',', $stats->body_array);
     $feet_array = explode(',', $stats->feet_array);
 
-    // give special parts based on date
-    $date = date('F d');
-
-    // santa set
-    if ($date == 'December 24' || $date == 'December 25') {
-        if (add_item($hat_array, 7)) {
-            $stats->hat = 7;
-        }
-        if (add_item($head_array, 34)) {
-            $stats->head = 34;
-        }
-        if (add_item($body_array, 34)) {
-            $stats->body = 34;
-        }
-        if (add_item($feet_array, 34)) {
-            $stats->feet = 34;
-        }
-    }
-
-    // bunny set
-    if ($date == 'April 7' || $date == 'April 8') {
-        if (add_item($head_array, 39)) {
-            $stats->head = 39;
-        }
-        if (add_item($body_array, 39)) {
-            $stats->body = 39;
-        }
-        if (add_item($feet_array, 39)) {
-            $stats->feet = 39;
-        }
-    }
-
-    // party hat
-    if ($date == 'December 31' || $date == 'January 1') {
-        if (add_item($hat_array, 8)) {
-            $stats->hat = 8;
-        }
-    }
-
-    // heart set
-    if ($date == 'February 13' || $date == 'February 14') {
-        if (add_item($head_array, 38)) {
-            $stats->head = 38;
-        }
-        if (add_item($body_array, 38)) {
-            $stats->body = 38;
-        }
-        if (add_item($feet_array, 38)) {
-            $stats->feet = 38;
-        }
-    }
-
-    // give crown hats to moderators
-    if ($group > 1) {
-        add_item($hat_array, 6);
-    }
+    // check if parts need to be awarded
+    $stats = award_special_parts($stats, $group);
 
     // select their friends list
     $friends_result = friends_select($pdo, $user_id);
