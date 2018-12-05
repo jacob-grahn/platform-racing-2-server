@@ -4,7 +4,11 @@ require_once HTTP_FNS . '/all_fns.php';
 require_once QUERIES_DIR . '/users/user_select.php';
 
 header("Content-type: text/plain");
+
 $ip = get_ip();
+$ret = new stdClass();
+$ret->user_name = "";
+$ret->guild_id = 0;
 
 try {
     // rate limiting
@@ -25,7 +29,10 @@ try {
     }
 
     // tell it to the world
-    echo 'user_name='.urlencode($user->name).'&guild_id='.urlencode($user->guild);
+    $ret->user_name = $user->name;
+    $ret->guild_id = $user->guild;
 } catch (Exception $e) {
-    echo 'user_name=';
+    unset($e);
+} finally {
+    die(json_encode($ret));
 }
