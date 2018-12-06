@@ -11,6 +11,9 @@ $y = (int) find('y', 0);
 $level_id = (int) find('levelId', 0);
 $ip = get_ip();
 
+$ret = new stdClass();
+$ret->success = true;
+
 try {
     // sanity check: is data missing?
     if (is_empty($x, false) || is_empty($y, false) || is_empty($level_id, false)) {
@@ -61,41 +64,10 @@ try {
     artifact_location_update($pdo, $level_id, $x, $y);
 
     // tell the world
-    $message = "Great success! The artifact location will be updated at the top of the next minute.";
-    echo "message=$message";
+    $ret->message = "Great success! The artifact location will be updated at the top of the next minute.";
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    echo "error=$error";
-    $message = "Error: $error";
+    $ret->success = false;
+    $ret->error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
 } finally {
-    echo "&message2=";
-    try {
-        $user = user_select($pdo, $user_id);
-        $server_id = (int) $user->server_id;
-        if ($user->server_id != 0) {
-            $server = server_select($pdo, $server_id);
-            $data = new stdClass();
-            $data->user_id = $user_id;
-            $data->message = $message;
-            $data = json_encode($data);
-            $reply = talk_to_server(
-                $server->address,
-                $server->port,
-                $server->salt,
-                'message_player`' . $data,
-                true,
-                false
-            );
-
-            if ($reply !== false) {
-                echo $reply;
-            } else {
-                echo "No reply from the server.";
-            }
-        } else {
-            echo "You're not online, so you couldn't be notified on the server.";
-        }
-    } catch (Exception $e) {
-        echo htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    }
+    die(json_encode($ret));
 }
