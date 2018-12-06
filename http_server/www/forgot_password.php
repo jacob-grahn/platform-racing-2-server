@@ -16,6 +16,9 @@ $ip = get_ip();
 $problematic_chars = array('&', '"', "'", "<", ">");
 $email = str_replace($problematic_chars, '', $_POST['email']);
 
+$ret = new stdClass();
+$ret->success = true;
+
 try {
     // check for post
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -79,8 +82,10 @@ try {
     send_email($from, $to, $subject, $message);
 
     // tell the world
-    echo 'message=Great success! You should receive an email with your new password shortly.';
+    $ret->message = "Great success! You should receive an email with your new password shortly.";
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    echo "error=$error";
+    $ret->success = false;
+    $ret->error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+} finally {
+    die(json_encode($ret));
 }
