@@ -8,6 +8,9 @@ require_once QUERIES_DIR . '/levels/levels_select_by_owner.php';
 $count = find_no_cookie('count', 100);
 $ip = get_ip();
 
+$ret = new stdClass();
+$ret->success = true;
+
 try {
     // rate limiting
     rate_limit('get-levels-'.$ip, 3, 2);
@@ -30,11 +33,10 @@ try {
 
     // get levels
     $levels = levels_select_by_owner($pdo, $user_id);
-    $str = format_level_list($levels, $count);
-
-    // tell the world
-    echo $str;
+    $ret->levels = $levels;
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    echo "error=$error";
+    $ret->success = false;
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }
