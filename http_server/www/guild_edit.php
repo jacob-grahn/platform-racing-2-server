@@ -4,9 +4,12 @@ header("Content-type: text/plain");
 
 require_once HTTP_FNS . '/all_fns.php';
 require_once QUERIES_DIR . '/users/user_select_expanded.php';
+require_once QUERIES_DIR . '/users/user_select_mod.php';
 require_once QUERIES_DIR . '/guilds/guild_select.php';
 require_once QUERIES_DIR . '/guilds/guild_update.php';
+require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
 
+$guild_id = (int) find('guild_id');
 $note = filter_swears(find('note'));
 $guild_name = filter_swears(find('name'));
 $emblem = filter_swears(find('emblem'));
@@ -17,12 +20,8 @@ try {
     require_trusted_ref('edit your guild');
 
     // rate limiting
-    rate_limit(
-        'guild-edit-attempt-'.$ip,
-        10,
-        3,
-        "Please wait at least 10 seconds before editing your guild again."
-    );
+    $rl_msg = 'Please wait at least 10 seconds before editing your guild again.';
+    rate_limit('guild-edit-attempt-'.$ip, 10, 3, $rl_msg);
 
     // connect to the db
     $pdo = pdo_connect();
@@ -31,29 +30,30 @@ try {
     $user_id = token_login($pdo, false);
 
     // more rate limiting
-    rate_limit(
-        'guild-edit-attempt-'.$user_id,
-        10,
-        3,
-        "Please wait at least 10 seconds before editing your guild again."
-    );
+    rate_limit('guild-edit-attempt-'.$user_id, 10, 3, $rl_msg);
 
     // get account and guild info
     $account = user_select_expanded($pdo, $user_id);
-    $guild = guild_select($pdo, $account->guild);
+    $guild = guild_select($pdo, $guild_id);
 
     // sanity checks
     if ($account->power <= 0) {
-        throw new Exception(
-            "Guests can't edit guilds. ".
-            "To access this feature, please create your own account."
-        );
+        $e_msg = 'Guests can\'t edit guilds. To access this feature, please create your own account.';
+        throw new Exception($e_msg);
     }
-    if ($account->guild == 0) {
+    if ($account->guild == 0 && $account->power < 2) {
         throw new Exception('You are not a member of a guild.');
     }
     if ($guild->owner_id != $user_id) {
-        throw new Exception('You are not the owner of this guild.');
+        if ($account->power < 2) {
+            throw new Exception('You are not the owner of this guild.');
+        } else {
+            $mod = user_select_mod($pdo, $user_id, true);
+            $can_unpub = (int) $mod->can_unpublish_level;
+            if ($can_unpub === 0) {
+                throw new Exception("You lack the power to edit this guild.");
+            }
+        }
     }
     if (!isset($note)) {
         throw new Exception('Your guild needs a prose.');
@@ -68,18 +68,42 @@ try {
         || preg_match('/\.\.\//', $emblem) === 1
         || preg_match('/\?/', $emblem) === 1
     ) {
-        throw new Exception('Emblem invalid');
+        throw new Exception('Your emblem is invalid.');
     }
     if (preg_match("/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
-        throw new Exception('Guild name is invalid. You may only use alphanumeric characters, spaces and hyphens.');
+        $e_msg = 'Your guild name is invalid. You may only use alphanumeric characters, spaces and hyphens.';
+        throw new Exception($e_msg);
     }
     if (strlen(trim($guild_name)) === 0) {
-        throw new Exception('I\'m not sure what would happen if you didn\'t
-            enter a guild name, but it would probably destroy the world.');
+        throw new Exception('Your guild needs a name.');
     }
 
     // edit guild in db
     guild_update($pdo, $guild->guild_id, $guild_name, $emblem, $note, $guild->owner_id);
+
+    // log update if a mod
+    if ($account->power > 2 && $guild->owner_id != $user_id) {
+        $str = "$account->name edited guild #$guild->guild_id from $ip";
+        if ($note !== $guild->note || $guild_name !== $guild->guild_name || $guild->emblem !== $emblem) {
+            $str .= ' {';
+            $changes = 0;
+            if ($note !== $guild->note) {
+                $str .= "old_note: $guild->note, new_note: $note";
+                $changes++;
+            }
+            if ($guild_name !== $guild->guild_name) {
+                $str .= $changes === 0 ?: '; '; 
+                $str .= "old_name: $guild->guild_name, new_name: $guild_name";
+                $changes++;
+            }
+            if ($emblem !== $guild->emblem) {
+                $str .= $changes === 0 ?: '; '; 
+                $str .= "old_emblem: $guild->emblem, new_emblem: $emblem";
+            }
+            $str .= '}';
+            mod_action_insert($pdo, $account->user_id, $str, 0, $ip);
+        }
+    }
 
     // tell it to the world
     $reply = new stdClass();
