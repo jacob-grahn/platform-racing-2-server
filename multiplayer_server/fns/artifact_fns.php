@@ -66,12 +66,17 @@ function save_first_finder($pdo, $player)
     $player->gainPart("body", 21, true);
     $player->gainPart("feet", 28, true);
 
+    // don't go through the bubble set notification sequence if they already had it
+    if ($player->head !== 27 && $player->body !== 21 && $player->feet !== 28) {
+        return;
+    }
+
     // tell the world
     $player->write('winPrize`' . json_encode(
         array(
         "type" => "eHead",
         "id" => 27,
-        "name" => "Bubble Set",
+        "name" => "Bubble Set!",
         "desc" => "For finding the artifact first, you earned your very own bubble set!",
         "universal" => true
         )
