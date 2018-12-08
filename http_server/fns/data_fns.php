@@ -353,12 +353,12 @@ function format_level_list($levels)
     foreach ($levels as $row) {
         $level_id = $row->level_id;
         $version = $row->version;
-        $title = urlencode(htmlspecialchars($row->title, ENT_QUOTES));
+        $title = urlencode($row->title);
         $rating = round($row->rating, 2);
         $play_count = $row->play_count;
         $min_level = $row->min_level;
-        $note = urlencode(htmlspecialchars($row->note, ENT_QUOTES));
-        $user_name = urlencode(htmlspecialchars($row->name, ENT_QUOTES));
+        $note = urlencode($row->note);
+        $user_name = urlencode($row->name);
         $group = $row->power;
         $live = $row->live;
         $pass = isset($row->pass);
