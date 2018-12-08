@@ -11,6 +11,9 @@ require_once QUERIES_DIR . '/messages/message_insert.php';
 $message = default_val($_POST['message']);
 $ip = get_ip();
 
+$ret = new stdClass();
+$ret->success = true;
+
 try {
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -62,8 +65,10 @@ try {
         message_insert($pdo, $member->user_id, $user_id, $message, $ip);
     }
 
-    echo 'message=Your message was sent successfully!';
+    $ret->message = 'Your message was sent successfully!';
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    echo "error=$error";
+    $ret->success = false;
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }

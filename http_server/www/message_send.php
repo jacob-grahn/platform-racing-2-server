@@ -9,6 +9,9 @@ $to_name = $_POST['to_name'];
 $message = $_POST['message'];
 $ip = get_ip();
 
+$ret = new stdClass();
+$ret->success = true;
+
 try {
     // POST check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -32,8 +35,10 @@ try {
     send_pm($pdo, $from_user_id, $to_user_id, $message);
 
     // tell the world
-    echo 'message=Your message was sent successfully!';
+    $ret->message = 'Your message was sent successfully!';
 } catch (Exception $e) {
-    $message = $e->getMessage();
-    echo 'error=' . $message;
+    $ret->success = false;
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }
