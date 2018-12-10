@@ -12,6 +12,7 @@ require_once QUERIES_DIR . '/users/user_select.php';
 require_once QUERIES_DIR . '/users/user_update_status.php';
 require_once QUERIES_DIR . '/users/user_update_ip.php';
 //require_once QUERIES_DIR . '/part_awards/part_awards_select_by_user.php';
+require_once QUERIES_DIR . '/mod_powers/mod_power_select.php';
 require_once QUERIES_DIR . '/pr2/pr2_select.php';
 require_once QUERIES_DIR . '/epic_upgrades/epic_upgrades_select.php';
 require_once QUERIES_DIR . '/rank_tokens/rank_token_select.php';
@@ -28,7 +29,7 @@ require_once QUERIES_DIR . '/messages/messages_select_most_recent.php';
 $encrypted_login = $_POST['i'];
 $version = $_POST['version'];
 $in_token = find('token');
-$allowed_versions = array('24-dec-2013-v1');
+$allowed_versions = array('24-dec-2018-v152');
 $guest_login = false;
 $token_login = false;
 $has_email = false; // is this needed?
@@ -60,10 +61,7 @@ try {
         throw new Exception('Login data not recieved.');
     } // sanity check: is it an allowed version?
     if (array_search($version, $allowed_versions) === false) {
-        throw new Exception(
-            'Platform Racing 2 has recently been updated. '.
-            'Please refresh your browser to download the latest version.'
-        );
+        throw new Exception('PR2 has recently been updated. Please refresh the page to download the latest version.');
     }
     
     // correct referrer?
@@ -90,12 +88,8 @@ try {
 
     // more sanity checks
     if (array_search($version2, $allowed_versions) === false) {
-        throw new Exception(
-            'Platform Racing 2 has recently been updated. '.
-            'Please refresh your browser to download the latest version. '.
-            '[Version check 2] '.
-            $version2
-        );
+        $e = "PR2 has recently been updated. Please refresh the page to download the latest version. $version2";
+        throw new Exception($e);
     }
     if ((is_empty($in_token) === true && is_empty($user_name) === true) || strpos($user_name, '`') !== false) {
         throw new Exception('Invalid user name entered.');
@@ -127,11 +121,11 @@ try {
         
         // see if they're trying to log into a guest
         if ($user->power == 0 && $guest_login === false && $token_login === false) {
-            throw new Exception('Direct logins to guest accounts are not permitted. '.
-                               'To play as a guest, click the "Play as Guest" button on the main menu.');
+            $e = 'Direct guest account logins are not allowed. Please instead click "Play as Guest" on the main menu.';
+            throw new Exception($e);
         }
     }
-    
+
     // generate a login token for future requests
     $token = get_login_token($user->user_id);
     token_insert($pdo, $user->user_id, $token);
@@ -145,7 +139,7 @@ try {
     // create variables from user data in db
     $user_id = (int) $user->user_id;
     $user_name = $user->name;
-    $group = $user->power;
+    $group = (int) $user->power;
 
     // sanity check: is the entered name and the one retrieved from the database identical?
     // this won't be triggered unless some real funny business is going on
@@ -169,6 +163,15 @@ try {
     // sanity check: if a guild server, is the user in the guild?
     if ($server->guild_id != 0 && $user->guild != $server->guild_id) {
         throw new Exception('You must be a member of this guild to join this server.');
+    }
+
+    // if a mod, get their trial mod status
+    if ($group === 2) {
+        $user->trial_mod = true;
+        $unpub = (int) mod_power_select($pdo, $user_id, true)->can_unpublish_level;
+        if ($unpub === 1) {
+            $user->trial_mod = false;
+        }
     }
 
     // get their pr2 and epic_upgrades info

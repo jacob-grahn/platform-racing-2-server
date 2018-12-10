@@ -1,13 +1,7 @@
 <?php
 
-// env
-require_once __DIR__ . '/../../config.php';
-
 // all fns
 require_once HTTP_FNS . '/all_fns.php';
-
-// truncate today's login attempts
-require_once QUERIES_DIR . '/login_attempts/login_attempts_truncate.php';
 
 // delete old rating entries
 require_once QUERIES_DIR . '/ratings/ratings_delete_old.php';
@@ -38,7 +32,6 @@ output("Daily CRON starting at $time...");
 // connect
 $pdo = pdo_connect();
 
-login_attempts_truncate($pdo);
 ratings_delete_old($pdo);
 guilds_reset_gp_today($pdo);
 gp_reset($pdo);

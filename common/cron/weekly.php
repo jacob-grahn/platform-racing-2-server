@@ -20,16 +20,9 @@ require_once QUERIES_DIR . '/best_levels/best_levels_reset.php';
 
 // restart the servers
 require_once QUERIES_DIR . '/servers/servers_select.php';
-require_once QUERIES_DIR . '/servers/servers_restart_all.php';
 
 // optimize tables
 require_once QUERIES_DIR . '/misc/all_optimize.php';
-
-// delete old accounts
-require_once QUERIES_DIR . '/users/delete_old_accounts.php';
-require_once QUERIES_DIR . '/users/users_select_old.php';
-require_once QUERIES_DIR . '/users/user_select_level_plays.php';
-require_once QUERIES_DIR . '/users/user_delete.php';
 
 // tell the command line
 $time = date('r');
@@ -46,8 +39,15 @@ users_reset_status($pdo);
 best_levels_reset($pdo);
 restart_servers($pdo);
 all_optimize($pdo, $DB_NAME);
-// TODO: move this to monthly/yearly. too slow to run weekly.
-// delete_old_accounts($pdo);
+
+// deletes old accounts every four weeks
+if (date('W') % 4 === 0) {
+    // import queries
+    require_once QUERIES_DIR . '/users/users_select_old.php';
+    require_once QUERIES_DIR . '/users/user_select_level_plays.php';
+    require_once QUERIES_DIR . '/users/user_delete.php';
+    delete_old_accounts($pdo);
+}
 
 // tell the command line
 output('Weekly CRON successful.');

@@ -227,3 +227,75 @@ function failover_servers($pdo)
     // tell the world
     output('The correct address of all active servers has been ensured.');
 }
+
+
+function servers_restart_all($pdo)
+{
+    // tell the command line
+    $time = date('r');
+    output("Mandatory server reboot CRON starting at $time...");
+
+    // grab active servers
+    $servers = servers_select($pdo);
+    
+    // shut down all active servers
+    foreach ($servers as $server) {
+        output("Shutting down $server->server_name (ID: #$server->server_id)...");
+        try {
+            $reply = talk_to_server($server->address, $server->port, $server->salt, 'shut_down`', true);
+            output("Reply: $reply");
+            output("$server->server_name (ID #$server->server_id) shut down successful.");
+        } catch (Exception $e) {
+            output($e->getMessage());
+        }
+    }
+
+    // tell the command line
+    output('Mandatory reboot finished.');
+}
+
+
+function delete_old_accounts($pdo)
+{
+    set_time_limit(0);
+    $start_time = time();
+
+    // get data
+    $users = users_select_old($pdo);
+    
+    // tell the world
+    $num_users = number_format(count($users));
+    output("$num_users accounts meet the time criteria for deletion.");
+
+    // count
+    $spared = 0;
+    $deleted = 0;
+    
+    // delete or spare
+    foreach ($users as $row) {
+        $user_id = $row->user_id;
+        $rank = $row->rank;
+
+        $play_count = user_select_level_plays($pdo, $user_id);
+
+        $str = "$user_id has $play_count level plays and is rank $rank.";
+        if ($play_count > 100 || $rank > 15) {
+            output("$str Spared!");
+            $spared++;
+        } else {
+            output("$str DELETING...");
+            user_delete($pdo, $user_id);
+            output("$user_id was successfully deleted.");
+            $deleted++;
+        }
+    }
+    
+    // tell the world
+    $total_secs = time() - $start_time;
+    $time = format_duration($total_secs);
+    output("Old account deletion completed. Stats:\n".
+        "Spared: $spared / $num_users\n".
+        "Deleted: $deleted / $num_users\n".
+        "Time: $time ($t_elapsed seconds)"
+    );
+}
