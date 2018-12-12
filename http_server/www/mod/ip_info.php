@@ -7,10 +7,8 @@ require_once QUERIES_DIR . '/bans/bans_select_by_ip.php';
 require_once QUERIES_DIR . '/users/users_select_by_ip.php';
 
 $ip = default_get('ip', '');
-$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 $header = false;
 
-// mod check try/catch
 try {
     // rate limiting
     rate_limit('ip-search-'.$ip, 60, 10, 'Wait a minute at most before searching again.');
@@ -19,8 +17,8 @@ try {
     // connect
     $pdo = pdo_connect();
 
-    //make sure you're a mod
-    $mod = check_moderator($pdo, false);
+    // make sure you're a mod
+    is_staff($pdo, token_login($pdo), false, true);
 
     // sanity check: is a value entered for IP?
     if (empty($ip)) {

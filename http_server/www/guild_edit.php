@@ -14,6 +14,7 @@ $note = filter_swears(find('note'));
 $guild_name = filter_swears(find('name'));
 $emblem = filter_swears(find('emblem'));
 $ip = get_ip();
+$log_action = false;
 
 try {
     // get and validate referrer
@@ -53,6 +54,7 @@ try {
             if ($can_unpub === 0) {
                 throw new Exception("You lack the power to edit this guild.");
             }
+            $log_action = true;
         }
     }
     if (!isset($note)) {
@@ -82,27 +84,28 @@ try {
     guild_update($pdo, $guild->guild_id, $guild_name, $emblem, $note, $guild->owner_id);
 
     // log update if a mod
-    if ($account->power > 2 && $guild->owner_id != $user_id) {
+    if ($log_action === true) {
         $str = "$account->name edited guild #$guild->guild_id from $ip";
-        if ($note !== $guild->note || $guild_name !== $guild->guild_name || $guild->emblem !== $emblem) {
+        if ($guild_name !== $guild->guild_name || $note !== $guild->note || $guild->emblem !== $emblem) {
+            $changes = false;
             $str .= ' {';
-            $changes = 0;
-            if ($note !== $guild->note) {
-                $str .= "old_note: $guild->note, new_note: $note";
-                $changes++;
-            }
             if ($guild_name !== $guild->guild_name) {
-                $str .= $changes === 0 ?: '; '; 
                 $str .= "old_name: $guild->guild_name, new_name: $guild_name";
-                $changes++;
+                $changes = true;
+            }
+            if ($note !== $guild->note) {
+                $str = $str . ($changes === true ? '; ' : '');
+                $str .= "old_note: $guild->note, new_note: $note";
+                $changes = true;
             }
             if ($emblem !== $guild->emblem) {
-                $str .= $changes === 0 ?: '; '; 
+                $str = $str . ($changes === true ? '; ' : '');
                 $str .= "old_emblem: $guild->emblem, new_emblem: $emblem";
+                $changes = true;
             }
             $str .= '}';
-            mod_action_insert($pdo, $account->user_id, $str, 0, $ip);
         }
+        mod_action_insert($pdo, $account->user_id, $str, 0, $ip);
     }
 
     // tell it to the world

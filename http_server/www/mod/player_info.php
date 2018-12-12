@@ -22,7 +22,7 @@ try {
     $pdo = pdo_connect();
 
     // make sure you're a moderator
-    $mod = check_moderator($pdo, false);
+    is_staff($pdo, token_login($pdo), false, true);
 
     // sanity check: send IP to ip_info.php
     if ((!is_empty($ip) || !is_empty($force_ip)) && is_empty($user_id, false) && is_empty($name)) {

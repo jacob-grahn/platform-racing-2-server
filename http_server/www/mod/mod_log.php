@@ -12,11 +12,11 @@ try {
     // rate limiting
     rate_limit('mod-action-log-'.$ip, 5, 3);
 
-    //connect
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're a moderator
-    $mod = check_moderator($pdo, false);
+    // make sure you're a moderator
+    is_staff($pdo, token_login($pdo), false, true);
 
     // get actions for this page
     $actions = mod_actions_select($pdo, $start, $count);
@@ -24,11 +24,11 @@ try {
     // output header
     output_header('Mod Action Log', true);
 
-    //navigation
+    // navigation
     output_pagination($start, $count);
     echo '<p>---</p>';
 
-    //output actions
+    // output actions
     foreach ($actions as $row) {
         $message = htmlspecialchars($row->message, ENT_QUOTES);
         echo "<p><span class='date'>$row->time</span> -- $message</p>";

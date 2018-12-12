@@ -16,18 +16,16 @@ try {
     $pdo = pdo_connect();
 
     // header, also check if mod and output the mod links if so
-    $is_mod = is_moderator($pdo, false);
-    output_header('Ban Log', $is_mod);
+    $staff = is_staff($pdo, $user_id, false);
+    output_header('Ban Log', $staff->mod, $staff->admin);
 
     // navigation
     output_pagination($start, $count);
     echo '<p>---</p>';
 
-    if ($is_mod === false) {
+    if ($staff->mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10);
-        if ($count > 100) {
-            $count = 100;
-        }
+        $count = $count > 100 ? 100 : $count;
     }
 
     // retrieve the ban list
@@ -38,26 +36,26 @@ try {
 
     // output the page
     foreach ($bans as $row) {
-        $ban_id = $row->ban_id;
+        $ban_id = (int) $row->ban_id;
         $banned_ip = $row->banned_ip;
-        $mod_user_id = $row->mod_user_id;
-        $banned_user_id = $row->banned_user_id;
-        $time = $row->time;
-        $expire_time = $row->expire_time;
+        $mod_user_id = (int) $row->mod_user_id;
+        $banned_user_id = (int) $row->banned_user_id;
+        $time = (int) $row->time;
+        $expire_time = (int) $row->expire_time;
         $reason = htmlspecialchars($row->reason, ENT_QUOTES);
         $mod_name = htmlspecialchars($row->mod_name, ENT_QUOTES);
         $banned_name = $row->banned_name;
-        $ip_ban = $row->ip_ban;
-        $account_ban = $row->account_ban;
+        $ip_ban = (int) $row->ip_ban;
+        $account_ban = (int) $row->account_ban;
 
         $formatted_time = date('M j, Y g:i A', $time);
         $duration = $expire_time - $time;
 
         $display_name = '';
-        if ($account_ban == 1) {
+        if ($account_ban === 1) {
             $display_name .= $banned_name;
         }
-        if ($ip_ban == 1 && $is_mod) {
+        if ($ip_ban === 1 && $staff->mod) {
             if ($display_name != '') {
                 $display_name .= ' ';
             }

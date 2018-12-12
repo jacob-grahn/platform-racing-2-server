@@ -6,7 +6,6 @@ require_once QUERIES_DIR . '/users/users_select_top.php';
 
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 100);
-$group_colors = ["7e7f7f", "047b7b", "1c369f", "870a6f"];
 $ip = get_ip();
 
 try {
@@ -17,41 +16,31 @@ try {
     $pdo = pdo_connect();
 
     // header, also check if mod and output the mod links if so
-    $is_mod = is_moderator($pdo, false);
-    output_header('Leaderboard', $is_mod);
+    $staff = is_staff($pdo, false);
+    output_header('Leaderboard', $staff->mod, $staff->admin);
 
     // limit amount of entries to be obtained from the db at a time
-    if ($is_mod === true) {
-        if (($count - $start) > 100) {
-            $count = 100;
-        }
-    } elseif ($is_mod === false) {
-        rate_limit(
-            'leaderboard-'.$ip,
-            60,
-            10,
-            'Please wait at least one minute before trying to view the leaderboard again.'
-        );
-        if (($count - $start) > 50) {
-            $count = 50;
-        }
+    if ($staff->mod === true) {
+        $count = ($count - $start) > 100 ? 100 : $count;
+    } elseif ($staff->mod === false) {
+        $rl_msg = 'Please wait at least one minute before trying to view the leaderboard again.';
+        rate_limit('leaderboard-'.$ip, 60, 10, $rl_msg);
+        $count = ($count - $start) > 50 ? 50 : $count;
     } else {
         throw new Exception("Could not determine user staff boolean.");
     }
 
     $users = users_select_top($pdo, $start, $count);
 
-    echo '
-	<center>
-	<font face="Gwibble" class="gwibble">-- Leaderboard --</font>
-	<br /><br />
-	<table>
-        <tr>
-            <th>Username</th>
-            <th>Rank</th>
-            <th>Hats</th>
-        </tr>
-    ';
+    echo '<center>'
+        .'<font face="Gwibble" class="gwibble">-- Leaderboard --</font>'
+        .'<br /><br />'
+        .'<table>'
+        .'<tr>'
+        .'<th>Username</th>'
+        .'<th>Rank</th>'
+        .'<th>Hats</th>'
+        .'</tr>';
 
     foreach ($users as $user) {
         // name

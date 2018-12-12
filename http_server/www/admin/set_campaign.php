@@ -19,14 +19,14 @@ if (is_empty($action)) {
 
 try {
     // rate limiting
-    rate_limit('set-campaign-'.$ip, 60, 5);
-    rate_limit('set-campaign-'.$ip, 10, 1);
+    rate_limit('set-campaign-'.$ip, 60, 10);
+    rate_limit('set-campaign-'.$ip, 10, 2);
 
     // connect
     $pdo = pdo_connect();
 
     // make sure you're an admin
-    $admin = check_moderator($pdo, true, 3);
+    $admin = check_moderator($pdo, null, true, 3);
 
     // lookup
     if ($action === 'lookup') {

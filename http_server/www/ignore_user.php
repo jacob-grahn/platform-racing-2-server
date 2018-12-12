@@ -39,7 +39,7 @@ try {
     if ($ignored_id === $user_id) {
         throw new Exception("You can't ignore yourself, silly!");
     }
-    
+
     // create the restraining order
     ignored_insert($pdo, $user_id, $ignored_id);
 

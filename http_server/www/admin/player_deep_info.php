@@ -26,7 +26,7 @@ try {
     $pdo = pdo_connect();
 
     // make sure you're an admin
-    $mod = check_moderator($pdo, false, 3);
+    is_staff($pdo, token_login($pdo), false, true, 3);
 
     // header
     output_header('Player Deep Info', true, true);

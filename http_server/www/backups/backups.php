@@ -27,8 +27,8 @@ try {
     rate_limit('level-backups-'.$user_id, 30, 5);
 
     // output mod nav if they're a mod
-    $is_mod = is_moderator($pdo, false);
-    output_header('Level Backups', $is_mod);
+    $staff = is_staff($pdo, $user_id, false);
+    output_header('Level Backups', $staff->mod, $staff->admin);
 
     // restore a backup
     $action = find('action');
@@ -48,8 +48,6 @@ try {
         $level_id = $row->level_id;
         $version = $row->version;
         $title = $row->title;
-        $ip = get_ip();
-        $time = time();
 
         // connect
         $s3 = s3_connect();
@@ -68,7 +66,6 @@ try {
             $title,
             $row->note,
             $row->live,
-            $time,
             $ip,
             $row->min_level,
             $row->song,
@@ -105,7 +102,6 @@ try {
     } else {
         echo $desc;
     }
-
 
     // display available backups
     echo '<br/>';

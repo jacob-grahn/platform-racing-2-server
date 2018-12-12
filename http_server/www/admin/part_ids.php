@@ -8,11 +8,11 @@ try {
     rate_limit('part-ids-'.$ip, 60, 5);
     rate_limit('part-ids-'.$ip, 10, 1);
 
-    //connect
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're an admin
-    $admin = check_moderator($pdo, false, 3);
+    // make sure you're an admin
+    is_staff($pdo, token_login($pdo), false, true, 3);
 
     output_header('PR2 Part IDs', true, true);
     echo '<pre>Platform Racing 2 Part Codes

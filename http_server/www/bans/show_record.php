@@ -15,8 +15,9 @@ try {
     $pdo = pdo_connect();
 
     // are they a moderator
-    $is_mod = is_moderator($pdo, false);
-    if ($is_mod === false) {
+    $user_id = token_login($pdo, $user_id, true);
+    $staff = is_staff($pdo, $user_id, false);
+    if ($staff->mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10, "Please wait at least one minute before trying to view another ban.");
     }
 
@@ -24,9 +25,9 @@ try {
     $row = ban_select($pdo, $ban_id);
 
     // output header (w/ mod nav if they're a mod)
-    output_header('View Ban', $is_mod);
+    output_header('View Ban', $staff->mod, $staff->admin);
 
-    //--- output the page ---
+    // output the page
     $ban_id = $row->ban_id;
     $banned_ip = $row->banned_ip;
     $mod_user_id = $row->mod_user_id;
@@ -53,7 +54,7 @@ try {
     if ($account_ban == 1) {
         $display_name .= $banned_name;
     }
-    if ($ip_ban == 1 && $is_mod) {
+    if ($ip_ban == 1 && $staff->mod) {
         if ($display_name != '') {
             $display_name .= ' ';
         }
@@ -79,8 +80,8 @@ try {
 
 
 
-    //make the names clickable for moderators
-    if ($is_mod === true) {
+    // make the names clickable for moderators
+    if ($staff->mod === true) {
         $html_mod_name = "<a href='/mod/player_info.php?user_id=$mod_user_id'>$html_mod_name</a>";
         if ($banned_user_id != 0 && $account_ban == 1) {
             $html_banned_name = "<a href='/mod/player_info.php?user_id=$banned_user_id'>$html_banned_name</a>";
@@ -97,7 +98,7 @@ try {
             <p>$html_record</p>
             <p> --- </p>";
 
-    if ($is_mod === true) {
+    if ($staff->mod === true) {
         if (isset($notes) && $notes != '') {
             echo "<p> --- notes</p>";
             echo "<p>$html_notes</p>";
@@ -114,7 +115,7 @@ try {
     output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
-    output_header('Error Fetching Ban', $is_mod);
+    output_header('Error Fetching Ban', $staff->mod, $staff->admin);
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();
 }

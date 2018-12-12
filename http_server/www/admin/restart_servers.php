@@ -18,7 +18,7 @@ try {
     $pdo = pdo_connect();
 
     // check permission
-    $admin = check_moderator($pdo, false, 3);
+    is_staff($pdo, token_login($pdo), false, true, 3);
 
     // output
     output_header('Restart Servers', true, true);

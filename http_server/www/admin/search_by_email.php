@@ -7,7 +7,6 @@ require_once QUERIES_DIR . '/users/users_select_by_email.php';
 
 $ip = get_ip();
 $email = find_no_cookie('email', '');
-$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
 // admin check try block
 try {
@@ -19,7 +18,7 @@ try {
     $pdo = pdo_connect();
 
     //make sure you're an admin
-    $admin = check_moderator($pdo, false, 3);
+    is_staff($pdo, token_login($pdo), false, true, 3);
 
     output_header('Deep Email Search', true, true);
 

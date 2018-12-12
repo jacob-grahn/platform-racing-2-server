@@ -8,7 +8,6 @@ require_once QUERIES_DIR . '/users/user_select_name_and_power.php';
 
 $ip = get_ip();
 $contest_id = (int) default_get('contest_id', 0);
-$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
 
 try {
     // rate limiting
@@ -136,10 +135,10 @@ try {
 
     // back link
     echo "<br><br><a href='contests.php'>&lt;- All Contests";
-    output_footer();
 } catch (Exception $e) {
     $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_header("Error");
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }

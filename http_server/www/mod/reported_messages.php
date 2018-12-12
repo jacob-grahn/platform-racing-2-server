@@ -14,13 +14,13 @@ try {
     // rate limiting
     rate_limit('mod-reported-messages-'.$mod_ip, 5, 3);
 
-    //connect
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're a moderator
-    $mod = check_moderator($pdo, false);
+    // make sure you're a moderator
+    is_staff($pdo, token_login($pdo), false, true);
 
-    //get the messages
+    // get the messages
     $messages = messages_reported_select($pdo, $start, $count);
 
     // output header

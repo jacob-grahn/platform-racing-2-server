@@ -19,7 +19,7 @@ try {
     $pdo = pdo_connect();
 
     // check their login and make some rad variables
-    $admin = check_moderator($pdo, true, 3);
+    $admin = check_moderator($pdo, null, true, 3);
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
 

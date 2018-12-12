@@ -15,10 +15,10 @@ try {
     // connect
     $pdo = pdo_connect();
 
-    // make sure you're an admin
-    $admin = check_moderator($pdo, false, 3);
+    //make sure you're an admin
+    is_staff($pdo, token_login($pdo), true, true, 3);
 
-    // get actions for this page
+    //get actions for this page
     $actions = admin_actions_select($pdo, $start, $count);
 
     // output header
@@ -30,16 +30,15 @@ try {
 
     // output actions
     foreach ($actions as $row) {
-        $message = htmlspecialchars($row->message, ENT_QUOTES);
-        echo "<p><span class='date'>$row->time</span> -- $message</p>";
+        $msg = htmlspecialchars($row->message, ENT_QUOTES);
+        echo "<p><span class='date'>$row->time</span> -- $msg</p>";
     }
 
     echo '<p>---</p>';
     output_pagination($start, $count);
 } catch (Exception $e) {
     output_header('Error');
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    echo "Error: ";
+    echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES);
 } finally {
     output_footer();
 }

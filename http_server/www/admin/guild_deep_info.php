@@ -18,7 +18,7 @@ try {
     $pdo = pdo_connect();
 
     // make sure you're an admin
-    $mod = check_moderator($pdo, false, 3);
+    is_staff($pdo, token_login($pdo), false, true, 3);
 
     if ($guild_id == 0) {
         $guild_id = '';

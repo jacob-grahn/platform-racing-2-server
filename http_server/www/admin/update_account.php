@@ -31,7 +31,7 @@ try {
     $pdo = pdo_connect();
 
     //make sure you're an admin
-    $admin = check_moderator($pdo, true, 3);
+    $admin = check_moderator($pdo, null, true, 3);
 
     // form
     if ($action === 'lookup') {

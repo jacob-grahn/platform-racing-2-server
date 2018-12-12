@@ -24,11 +24,11 @@ try {
     rate_limit('player-deep-logins-'.$ip, 60, 10, 'Wait a bit before searching again.');
     rate_limit('player-deep-logins-'.$ip, 5, 2);
 
-    //connect
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're an admin
-    $admin = check_moderator($pdo, false, 3);
+    // make sure you're an admin
+    is_staff($pdo, token_login($pdo), false, true, 3);
 
     // if there's a name set, let's get data from the db
     if ($name) {

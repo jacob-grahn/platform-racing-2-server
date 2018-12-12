@@ -10,8 +10,6 @@ $ip = default_get('ip', '');
 $html_ip = htmlspecialchars($ip, ENT_QUOTES);
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
-$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
-
 
 // admin check try block
 try {
@@ -23,12 +21,10 @@ try {
     $pdo = pdo_connect();
 
     // make sure you're an admin
-    $admin = check_moderator($pdo, false, 3);
+    is_staff($pdo, token_login($pdo), false, true, 3);
 
     // sanity check: ensure the database doesn't overload itself
-    if ($count > 25) {
-        $count = 25;
-    }
+    $count = $count > 25 ? 25 : $count;
 
     // if there's an IP set, let's get data from the db
     if ($ip) {
@@ -41,10 +37,7 @@ try {
 
     if ($ip) {
         // calculate the number of results and the grammar to go with it
-        $user_s = 'accounts are';
-        if ($user_count === 1) {
-            $user_s = 'account is';
-        }
+        $user_s = $user_count === 1 ? 'account is' : 'accounts are';
         output_search($html_ip);
 
         // this determines if anything is shown on the page
@@ -90,10 +83,10 @@ try {
     } else {
         output_search('', false);
     }
-    output_footer();
 } catch (Exception $e) {
     $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_header('Error');
     echo "Error: $error";
+} finally {
     output_footer();
 }

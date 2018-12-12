@@ -10,8 +10,6 @@ require_once QUERIES_DIR . '/guilds/guild_select_active_member_count.php';
 require_once QUERIES_DIR . '/guilds/guild_select_members.php';
 require_once QUERIES_DIR . '/users/user_select_name_and_power.php';
 
-$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
-
 $guild_name = default_get('name', '');
 $guild_id = (int) default_get('id', 0);
 $ip = get_ip();
@@ -113,8 +111,8 @@ try {
 
                 // member name column
                 echo "<a href='player_search.php?name=$member_url_name'"
-                ."style='color: #$member_color; text-decoration: underline;'>"
-                ."$member_name</a></td>";
+                    ."style='color: #$member_color; text-decoration: underline;'>"
+                    ."$member_name</a></td>";
 
                 // gp today column
                 echo '<td>'

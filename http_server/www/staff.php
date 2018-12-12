@@ -4,8 +4,6 @@ require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/users/users_select_staff.php';
 
-$group_colors = ['7e7f7f', '047b7b', '1c369f', '870a6f'];
-
 output_header('PR2 Staff Team');
 
 try {
