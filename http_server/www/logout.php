@@ -2,17 +2,16 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
-require_once QUERIES_DIR . '/tokens/token_delete.php';
 
-$data = $_POST['i'];
-$token = $_POST['token'];
-$from_lobby = $_POST['from_lobby'];
+$data = default_post('i', '');
+$token = default_post('token', '');
+$from_lobby = default_post('from_lobby', '');
 $ip = get_ip();
 
 $ret = new stdClass();
-$ret->success = true;
+$ret->success = false;
 
 try {
     // rate limiting
@@ -23,7 +22,7 @@ try {
     $pdo = pdo_connect();
 
     // client has token, token sent via post
-    if (isset($_POST['token']) && !isset($data)) {
+    if (!is_empty($_POST['token']) && is_empty($data)) {
         $ret->errorType = 'token';
         token_delete($pdo, $token);
         setcookie("token", "", time() - 3600);
@@ -49,10 +48,10 @@ try {
     }
 
     // if no errors were triggered, clear the errorType
+    $ret->success = true;
     unset($ret->errorType);
 } catch (Exception $e) {
-    if (!isset($from_lobby)) {
-        $ret->success = false;
+    if (!is_empty($from_lobby)) {
         $ret->error = $e->getMessage();
     }
 } finally {

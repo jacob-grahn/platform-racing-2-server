@@ -2,17 +2,17 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/to_hash.php';
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
-require_once QUERIES_DIR . '/users/user_update_pass.php';
+require_once QUERIES_DIR . '/users.php';
 
 // make some variables
-$data = $_POST['i'];
+$data = default_post('i', '');
 $ip = get_ip();
 
 $ret = new stdClass();
-$ret->success = true;
+$ret->success = false;
 
 try {
     // check request method
@@ -22,6 +22,11 @@ try {
 
     // check referrer
     require_trusted_ref('change your password');
+
+    // sanity check: was any data sent?
+    if (is_empty($data)) {
+        throw new Exception('Well, that didn\'t work...');
+    }
 
     // decrypt
     $encryptor = new \pr2\http\Encryptor();
@@ -38,7 +43,7 @@ try {
     }
 
     // sanity check: are the old and new passwords different?
-    if ($old_pass == $new_pass) {
+    if ($old_pass === $new_pass) {
         throw new Exception('Your current and new passwords match. Try picking a new password.');
     }
 
@@ -53,22 +58,21 @@ try {
     $login = pass_login($pdo, $name, $old_pass);
 
     // make sure guests aren't getting any funny ideas
-    $power = $login->power;
+    $power = (int) $login->power;
     if ($power < 1) {
         throw new Exception('Guests don\'t even really have passwords...');
     }
 
     // change their pass
-    $pass_hash = to_hash($new_pass);
-    user_update_pass($pdo, $login->user_id, $pass_hash);
+    user_update_pass($pdo, $login->user_id, to_hash($new_pass));
 
     // clear the existing token
     setcookie("token", "", time() - 3600);
 
     // tell the world
+    $ret->success = true;
     $ret->message = 'Your password has been changed successfully!';
 } catch (Exception $e) {
-    $ret->success = false;
     $ret->error = $e->getMessage();
 } finally {
     die(json_encode($ret));

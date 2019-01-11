@@ -2,8 +2,7 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/levels/level_select_by_rand.php';
+require_once GEN_HTTP_FNS;
 
 $ip = get_ip();
 
@@ -15,8 +14,12 @@ try {
     $pdo = pdo_connect();
 
     // get a random level
-    echo json_encode(level_select_by_rand($pdo));
+    $ret = level_select_by_rand($pdo);
+    $ret->success = true;
 } catch (Exception $e) {
-    $message = $e->getMessage();
-    echo "Error: $message";
+    $ret = new stdClass();
+    $ret->success = false;
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }

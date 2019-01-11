@@ -2,29 +2,30 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/pr2/pr2_fns.php';
-require_once QUERIES_DIR . '/users/user_select_expanded.php';
-require_once QUERIES_DIR . '/guilds/guild_select.php';
-require_once QUERIES_DIR . '/guild_invitations/guild_invitation_insert.php';
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/guild_invitations.php';
 
-$target_id = find('userId');
+$target_id = (int) default_post('user_id', 0);
 $ip = get_ip();
 
+$ret = new stdClass();
+$ret->success = false;
+
 try {
+    // check for post
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Invalid request method.');
+    }
+
     // rate limiting
-    rate_limit(
-        'guild-invite-attempt-'.$ip,
-        5,
-        2,
-        "Please wait at least 5 seconds before attempting to invite another player to your guild."
-    );
+    $rl_msg = 'Please wait at least 5 seconds before attempting to invite another player to your guild.';
+    rate_limit('guild-invite-attempt-'.$ip, 5, 2, $rl_msg);
 
     // connect
     $pdo = pdo_connect();
 
     // gather info
-    $user_id = token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false);
     $account = user_select_expanded($pdo, $user_id);
     $guild = guild_select($pdo, $account->guild);
     $target_account = user_select_expanded($pdo, $target_id);
@@ -40,31 +41,20 @@ try {
         throw new Exception('They are already in a guild.');
     }
     if ($account->power <= 0 || $target_account->power <= 0) {
-        throw new Exception(
-            "Guests can't join or invite users to guilds. ".
-            "To access this feature, please create your own account."
-        );
+        $e = 'Guests can\'t join or invite users to guilds. To access this feature, please create your own account.';
+        throw new Exception($e);
     }
-    if ($user_id == $target_id) {
-        throw new Exception('Do not invite yourself, yo.');
+    if ($user_id === $target_id) {
+        throw new Exception('You can\'t invite yourself to your own guild, silly!');
     }
-    if (!isset($target_id)) {
+    if (is_empty($target_id, false)) {
         throw new Exception('Who are you trying to invite?');
     }
 
     // rate limiting
-    rate_limit(
-        'guild-invite-'.$ip,
-        3600,
-        10,
-        'You can only invite up to 10 players to your guild per hour. Try again later.'
-    );
-    rate_limit(
-        'guild-invite-'.$user_id,
-        3600,
-        10,
-        'You can only invite up to 10 players to your guild per hour. Try again later.'
-    );
+    $rl_msg = 'You can only invite up to 10 players to your guild per hour. Try again later.';
+    rate_limit('guild-invite-'.$ip, 3600, 10, $rl_msg);
+    rate_limit('guild-invite-'.$user_id, 3600, 10, $rl_msg);
 
     // compose an eloquent invitation
     $pm_safe_guild_name = preg_replace("/[^a-zA-Z0-9 ]/", "_", $guild->guild_name);
@@ -72,19 +62,15 @@ try {
         ."You've been invited to join our guild, [guildlink=$guild->guild_id]" . $pm_safe_guild_name . "[/guildlink]. "
         ."Click [invitelink=$guild->guild_id]here[/invitelink] to accept!";
 
-
     // add the invitation to the db
     send_pm($pdo, $user_id, $target_id, $message);
     guild_invitation_insert($pdo, $guild->guild_id, $target_id);
 
-
     // tell it to the world
-    $reply = new stdClass();
-    $reply->success = true;
-    $reply->message = 'Your invitation has been sent.';
+    $ret->success = true;
+    $ret->message = 'Your invitation has been sent!';
 } catch (Exception $e) {
-    $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $ret->error = $e->getMessage();
 } finally {
-    echo json_encode($reply);
+    die(json_encode($ret));
 }

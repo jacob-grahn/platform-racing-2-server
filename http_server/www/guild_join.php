@@ -1,32 +1,30 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/users/user_select_expanded.php';
-require_once QUERIES_DIR . '/guilds/guild_select.php';
-require_once QUERIES_DIR . '/guilds/guild_increment_member.php';
-require_once QUERIES_DIR . '/guild_invitations/guild_invitation_select.php';
-require_once QUERIES_DIR . '/guild_invitations/guild_invitation_delete.php';
-require_once QUERIES_DIR . '/users/user_update_guild.php';
-
 header("Content-type: text/plain");
 
-$guild_id = (int) find_no_cookie('guildId', 0);
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/guild_invitations.php';
+
+$guild_id = (int) default_post('guild_id', 0);
 $ip = get_ip();
 
+$ret = new stdClass();
+$ret->success = false;
+
 try {
+    // check for post
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Invalid request method.');
+    }
+
     // rate limiting
-    rate_limit(
-        'guild-join-attempt-'.$ip,
-        30,
-        1,
-        'Please wait at least 30 seconds before trying to join this guild again.'
-    );
+    rate_limit('guild-join-attempt-'.$ip, 30, 1, $rl_msg);
 
     // connect
     $pdo = pdo_connect();
 
     // gather information
-    $user_id = token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false);
     $account = user_select_expanded($pdo, $user_id);
     $guild = guild_select($pdo, $guild_id);
 
@@ -35,17 +33,13 @@ try {
         throw new Exception('You are already a member of a guild.');
     }
     if ($account->power <= 0) {
-        throw new Exception(
-            "Guests can't join guilds. ".
-            "To access this feature, please create your own account."
-        );
+        $e = 'Guests can\'t join guilds. To access this feature, please create your own account.';
+        throw new Exception($e);
     }
     if ($guild->member_count >= 200) {
         throw new Exception('This guild is full.');
     }
-
-    $invite = guild_invitation_select($pdo, $guild_id, $user_id);
-    if (!$invite) {
+    if (!guild_invitation_select($pdo, $guild_id, $user_id)) {
         throw new Exception('The invitation has expired.');
     }
 
@@ -55,15 +49,14 @@ try {
     user_update_guild($pdo, $user_id, $guild_id);
 
     // tell the world
-    $reply = new stdClass();
-    $reply->success = true;
-    $reply->message = 'Welcome to '.$guild->guild_name.'!';
-    $reply->guildId = $guild->guild_id;
-    $reply->guildName = $guild->guild_name;
-    $reply->emblem = $guild->emblem;
+    $safe_guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
+    $ret->success = true;
+    $ret->message = "Welcome to $safe_guild_name!";
+    $ret->guildId = (int) $guild->guild_id;
+    $ret->guildName = $guild->guild_name;
+    $ret->emblem = $guild->emblem;
 } catch (Exception $e) {
-    $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $ret->error = $e->getMessage();
 } finally {
-    echo json_encode($reply);
+    die(json_encode($ret));
 }

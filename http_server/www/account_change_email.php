@@ -3,19 +3,15 @@
 header("Content-type: text/plain");
 
 require_once 'Mail.php';
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
-require_once HTTP_FNS . '/send_email.php';
-require_once QUERIES_DIR . '/users/user_select.php';
-require_once QUERIES_DIR . '/users/user_update_email.php';
-require_once QUERIES_DIR . '/changing_emails/changing_email_insert.php';
-require_once QUERIES_DIR . '/changing_emails/changing_email_select.php';
-require_once QUERIES_DIR . '/changing_emails/changing_email_complete.php';
+require_once QUERIES_DIR . '/changing_emails.php';
 
-$encrypted_data = $_POST['data'];
+$encrypted_data = default_post('data', '');
 
 $ip = get_ip();
 $ret = new stdClass();
+$ret->success = false;
 
 try {
     // post check
@@ -30,7 +26,7 @@ try {
     rate_limit('change-email-attempt-'.$ip, 5, 1);
 
     // sanity check
-    if (!isset($encrypted_data)) {
+    if (is_empty($encrypted_data)) {
         throw new Exception('No data was recieved.');
     }
 
@@ -48,14 +44,14 @@ try {
 
     // sanity check: check for invalid email
     if (!valid_email($new_email)) {
-        throw new Exception("Invalid email address.");
+        throw new Exception('Invalid email address.');
     }
 
     // connect
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false);
 
     // more rate limiting
     rate_limit('change-email-attempt-'.$user_id, 5, 1);
@@ -70,12 +66,12 @@ try {
 
     // sanity check: check for guest
     if ($user->power < 1) {
-        throw new Exception("Guests don't even really have accounts...");
+        throw new Exception('Guests don\'t even really have accounts...');
     }
 
     // sanity check: is this already their email?
     if ($old_email === $new_email) {
-        throw new Exception("That's already the email on your account!");
+        throw new Exception('That\'s already the email on your account!');
     }
 
     // rate limiting
@@ -109,22 +105,22 @@ try {
         $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
         $to = $old_email;
         $subject = 'PR2 Email Change Confirmation';
-        $body = "Howdy $safe_user_name,\n\nWe received a request to change the "
-            ."email on your account from $safe_old_email to $safe_new_email. "
-            ."If you requested this change, please click the link below to change "
-            ."the email address on your Platform Racing 2 account.\n\n"
+        $body = "Howdy $safe_user_name,\n\n"
+            ."We received a request to change the email on your PR2 account from $safe_old_email to $safe_new_email. "
+            ."If you requested this change, please click the link below to confirm the change.\n\n"
             ."http://pr2hub.com/account_confirm_email_change.php?code=$code\n\n"
-            ."If you didn't request this change, you may need to change your "
-            ."password.\n\nAll the best,\nFred";
+            ."If you didn't request this change, you may need to change your password.\n\n"
+            ."All the best,\n"
+            .'Fred';
         send_email($from, $to, $subject, $body);
 
         // tell it to the world
-        $ret->message = 'Almost done! We just sent a confirmation email to your '
-            .'old email address. Until you confirm the change, your old email '
-            .'address will still be active.';
+        $ret->success = true;
+        $ret->message = 'Almost done! We just sent a confirmation email to your old email address. '
+            .'Until you confirm the change, your old email address will still be active.';
     }
 } catch (Exception $e) {
-    $ret->error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    $ret->error = $e->getMessage();
 } finally {
-    echo json_encode($ret);
+    die(json_encode($ret));
 }

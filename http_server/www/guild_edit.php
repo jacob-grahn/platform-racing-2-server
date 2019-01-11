@@ -2,21 +2,25 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/users/user_select_expanded.php';
-require_once QUERIES_DIR . '/users/user_select_mod.php';
-require_once QUERIES_DIR . '/guilds/guild_select.php';
-require_once QUERIES_DIR . '/guilds/guild_update.php';
-require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/mod_actions.php';
 
-$guild_id = (int) find('guild_id');
-$note = filter_swears(find('note'));
-$guild_name = filter_swears(find('name'));
-$emblem = filter_swears(find('emblem'));
+$guild_id = (int) default_post('guild_id', 0);
+$note = filter_swears(default_post('note', ''));
+$guild_name = filter_swears(default_post('name', ''));
+$emblem = filter_swears(default_post('emblem', ''));
 $ip = get_ip();
 $log_action = false;
 
+$ret = new stdClass();
+$ret->success = false;
+
 try {
+    // check for post
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Invalid request method.');
+    }
+
     // get and validate referrer
     require_trusted_ref('edit your guild');
 
@@ -39,8 +43,8 @@ try {
 
     // sanity checks
     if ($account->power <= 0) {
-        $e_msg = 'Guests can\'t edit guilds. To access this feature, please create your own account.';
-        throw new Exception($e_msg);
+        $e = 'Guests can\'t edit guilds. To access this feature, please create your own account.';
+        throw new Exception($e);
     }
     if ($account->guild == 0 && $account->power < 2) {
         throw new Exception('You are not a member of a guild.');
@@ -52,7 +56,7 @@ try {
             $mod = user_select_mod($pdo, $user_id, true);
             $can_unpub = (int) $mod->can_unpublish_level;
             if ($can_unpub === 0) {
-                throw new Exception("You lack the power to edit this guild.");
+                throw new Exception('You lack the power to edit this guild.');
             }
             $log_action = true;
         }
@@ -73,8 +77,8 @@ try {
         throw new Exception('Your emblem is invalid.');
     }
     if (preg_match("/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
-        $e_msg = 'Your guild name is invalid. You may only use alphanumeric characters, spaces and hyphens.';
-        throw new Exception($e_msg);
+        $e = 'Your guild name is invalid. You may only use alphanumeric characters, spaces and hyphens.';
+        throw new Exception($e);
     }
     if (strlen(trim($guild_name)) === 0) {
         throw new Exception('Your guild needs a name.');
@@ -109,15 +113,13 @@ try {
     }
 
     // tell it to the world
-    $reply = new stdClass();
-    $reply->success = true;
-    $reply->message = 'Guild edited successfully!';
-    $reply->guildId = $guild->guild_id;
-    $reply->emblem = $emblem;
-    $reply->guildName = $guild_name;
+    $ret->success = true;
+    $ret->message = 'Guild edited successfully!';
+    $ret->guildId = $guild->guild_id;
+    $ret->emblem = $emblem;
+    $ret->guildName = $guild_name;
 } catch (Exception $e) {
-    $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $ret->error = $e->getMessage();
 } finally {
-    echo json_encode($reply);
+    die(json_encode($ret));
 }

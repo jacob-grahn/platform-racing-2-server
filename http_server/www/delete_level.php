@@ -2,14 +2,14 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/pr2/pr2_fns.php';
-require_once QUERIES_DIR . '/campaign/campaign_level_select_by_id.php';
-require_once QUERIES_DIR . '/levels/level_select.php';
-require_once QUERIES_DIR . '/levels/level_delete.php';
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/campaigns.php';
 
-$level_id = (int) default_val($_POST['level_id'], 0);
+$level_id = (int) default_post('level_id', 0);
 $ip = get_ip();
+
+$ret = new stdClass();
+$ret->success = false;
 
 try {
     // POST check
@@ -26,40 +26,28 @@ try {
     }
 
     // rate limiting
-    rate_limit(
-        'delete-level-attempt-'.$ip,
-        10,
-        1,
-        'Please wait at least 10 seconds before trying to delete another level.'
-    );
+    $rl_msg = 'Please wait at least 10 seconds before trying to delete another level.';
+    rate_limit('delete-level-attempt-'.$ip, 10, 1, $rl_msg);
 
     //connect
     $pdo = pdo_connect();
     $s3 = s3_connect();
 
-    //check their login
-    $user_id = token_login($pdo, false);
-    $power = user_select_power($pdo, $user_id);
+    // check their login
+    $user_id = (int) token_login($pdo, false);
+    $power = (int) user_select_power($pdo, $user_id);
     if ($power <= 0) {
-        throw new Exception(
-            "Guests can't delete levels. ".
-            "To access this feature, please create your own account."
-        );
+        throw new Exception('Guests can\'t delete levels. To access this feature, please create your own account.');
     }
 
     // more rate limiting
-    rate_limit(
-        'delete-level-attempt-'.$user_id,
-        10,
-        1,
-        'Please wait at least 10 seconds before trying to delete another level.'
-    );
+    rate_limit('delete-level-attempt-'.$user_id, 10, 1, $rl_msg);
     rate_limit('delete-level-'.$ip, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
     rate_limit('delete-level-'.$user_id, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 
     // fetch level data
     $row = level_select($pdo, $level_id);
-    if ($row->user_id !== $user_id) {
+    if ((int) $row->user_id !== $user_id) {
         throw new Exception('This is not your level.');
     }
 
@@ -99,8 +87,9 @@ try {
     }
 
     // tell the world
-    echo 'success=true';
+    $ret->success = true;
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    echo "error=$error";
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }

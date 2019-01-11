@@ -1,12 +1,12 @@
 <?php
 
-require_once HTTP_FNS . '/data_fns.php';
+require_once HTTP_FNS . '/http_data_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 
 output_header('Server Status');
 
 try {
-    $data = json_decode(file_get_contents("http://pr2hub.com/files/server_status_2.txt"));
+    $data = json_decode(file_get_contents(WWW_ROOT . "/files/server_status_2.txt"));
 
     if (array_key_exists('error', $data)) {
         throw new Exception($data->error);
@@ -28,7 +28,7 @@ try {
 
     foreach ($data->servers as $server) {
         // echo this when it's yes/no
-        $yes = "<strong>Yes</strong>";
+        $yes = "<b>Yes</b>";
         $no = "No";
 
         // make some variables
@@ -36,25 +36,17 @@ try {
         $tournament = check_value($server->tournament, 1, $yes, $no);
         $server_name = htmlspecialchars($server->server_name, ENT_QUOTES);
         $guild_id = (int) $server->guild_id;
-        $population = (int) $server->population;
+        $pop = (int) $server->population;
         $status = $server->status;
 
         // start row
         echo "<tr>";
 
         // echo the server name (in bold if a guild-only server)
-        if ($guild_id === 0) {
-            echo "<td>$server_name</td>";
-        } else {
-            echo "<td><strong>$server_name</strong></td>";
-        }
+        echo $guild_id === 0 ? "<td>$server_name</td>" : "<td><b>$server_name</b></td>";
 
         // if open, echo the population
-        if (strtolower($status) == 'open' || $population > 0) {
-            echo "<td>$population online</td>";
-        } else {
-            echo "<td><strong>down</strong></td>";
-        }
+        echo strtolower($status) === 'open' || $pop > 0 ? "<td>$pop online</td>" : "<td><b>down</b></td>";
 
         // echo status of a happy hour
         echo "<td>$happy_hour</td>";
@@ -69,8 +61,8 @@ try {
     // end table
     echo "</table>";
 } catch (Exception $e) {
-    $safe_message = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    echo "Error: $safe_message";
+    $error = $e->getMessage();
+    echo "Error: $error";
 } finally {
     echo "</center>";
     output_footer();

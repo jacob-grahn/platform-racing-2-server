@@ -2,34 +2,27 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/pr2/pr2_fns.php';
-require_once QUERIES_DIR . '/users/user_select.php';
-require_once QUERIES_DIR . '/guilds/guild_select_members.php';
-require_once QUERIES_DIR . '/messages/message_insert.php';
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/messages.php';
 
-$message = default_val($_POST['message']);
+$message = default_post('message', '');
 $ip = get_ip();
 
 $ret = new stdClass();
-$ret->success = true;
+$ret->success = false;
 
 try {
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception("Invalid request method.");
+        throw new Exception('Invalid request method.');
     }
 
     // check referrer
     require_trusted_ref('message your guild');
 
     // rate limit
-    rate_limit(
-        'guildMessage-attempt-'.$ip,
-        15,
-        1,
-        "Please wait at least 15 seconds before trying to message your guild again."
-    );
+    $rl_msg = 'Please wait at least 15 seconds before trying to message your guild again.';
+    rate_limit('guildMessage-attempt-'.$ip, 15, 1, $rl_msg);
 
     // connect
     $pdo = pdo_connect();
@@ -44,10 +37,8 @@ try {
         throw new Exception('You are not in a guild.');
     }
     if ($user->power <= 0) {
-        throw new Exception(
-            "Guests can't send guild messages. ".
-            "To access this feature, please create your own account."
-        );
+        $e = 'Guests can\'t send guild messages. To access this feature, please create your own account.'
+        throw new Exception($e);
     }
 
     // confirm that there's a message
@@ -65,9 +56,9 @@ try {
         message_insert($pdo, $member->user_id, $user_id, $message, $ip);
     }
 
+    $ret->success = true;
     $ret->message = 'Your message was sent successfully!';
 } catch (Exception $e) {
-    $ret->success = false;
     $ret->error = $e->getMessage();
 } finally {
     die(json_encode($ret));

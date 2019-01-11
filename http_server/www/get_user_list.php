@@ -1,12 +1,16 @@
 <?php
 
 header("Content-type: text/plain");
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/friends/friends_select.php';
-require_once QUERIES_DIR . '/ignored/ignored_select_list.php';
 
-$mode = find_no_cookie('mode');
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/friends.php';
+require_once QUERIES_DIR . '/ignored.php';
+
+$mode = default_get('mode', '');
 $ip = get_ip();
+
+$ret = new stdClass();
+$ret->success = false;
 
 try {
     // rate limiting
@@ -16,18 +20,15 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($pdo);
-    $power = user_select_power($pdo, $user_id);
+    $user_id = (int) token_login($pdo);
+    $power = (int) user_select_power($pdo, $user_id);
     if ($power <= 0) {
-        $mode = htmlspecialchars($mode, ENT_QUOTES);
-        throw new Exception(
-            "Guests can't add players to their $mode list. ".
-            "To access this feature, please create your own account."
-        );
+        $e = 'Guests can\'t make user lists. To access this feature, please create your own account.';
+        throw new Exception($e);
     }
 
     // more rate limiting
-    rate_limit("user-list-$user_id", 5, 2);
+    rate_limit('user-list-'.$user_id, 5, 2);
 
     switch ($mode) {
         case 'friends':
@@ -37,42 +38,26 @@ try {
             $users = ignored_select_list($pdo, $user_id);
             break;
         default:
-            throw new Exception("Invalid list mode specified.");
+            throw new Exception('Invalid list mode specified.');
     }
 
     // make individual list entries
     $num = 0;
+    $data = array();
     foreach ($users as $row) {
-        $name = urlencode(htmlspecialchars($row->name, ENT_QUOTES));
-        $group = $row->power;
-        $status = $row->status;
-        $rank = $row->rank;
-
-        if (isset($row->used_tokens)) {
-            $used_tokens = $row->used_tokens;
-        } else {
-            $used_tokens = 0;
-        }
-
-        $active_rank = $rank + $used_tokens;
-        $hats = count(explode(',', $row->hat_array)) - 1;
-
-        if (strpos($status, 'Playing on ') !== false) {
-            $status = substr($status, 11);
-        }
-
-        if ($num > 0) {
-            echo "&";
-        }
-
-        echo ("name$num=$name"
-        ."&group$num=$group"
-        ."&status$num=$status"
-        ."&rank$num=$active_rank"
-        ."&hats$num=$hats");
-        $num++;
+        $user = new stdClass();
+        $user->name = $row->name;
+        $user->group = (int) $row->power;
+        $user->status = strpos($row->status, 'Playing on ') !== false ? substr($row->status, 11) : $row->status;
+        $user->rank = $row->rank + (!is_empty($row->used_tokens, false) ? $row->used_tokens : 0);
+        $user->hats = count(explode(',', $row->hat_array)) - 1;
+        $data[] = $user;
     }
+
+    $ret->success = true;
+    $ret->users = $data;
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    echo "error=$error";
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }

@@ -1,10 +1,11 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/pr2/register_user_fns.php';
+require_once GEN_HTTP_FNS;
+require_once HTTP_FNS . '/rand_crypt/to_hash.php';
+require_once HTTP_FNS . '/messages.php';
 
-$name = $_POST['name'];
-$password = $_POST['password'];
+$name = default_post('name');
+$password = default_post('password');
 $time = time();
 $ip = get_ip();
 
@@ -23,15 +24,11 @@ try {
     require_trusted_ref('create new accounts');
 
     // rate limiting (check if the IP address is spamming)
-    rate_limit(
-        'register-account-attempt-'.$ip,
-        10,
-        2,
-        'Please wait at least 10 seconds before trying to create another account.'
-    );
+    $rl_msg = 'Please wait at least 10 seconds before trying to create another account.';
+    rate_limit('register-account-attempt-'.$ip, 10, 2, $rl_msg);
 
     // error check
-    if (empty($name) || !is_string($password) || $password == '') {
+    if (is_empty($name) || !is_string($password) || is_empty($password)) {
         throw new Exception('You must enter a name and a password to register an account.');
     }
     if (trim(strlen($name)) < 2) {
@@ -61,27 +58,23 @@ try {
     check_if_banned($pdo, -1, $ip);
 
     // check if this name has been taken already
-    $existing_user = user_select_by_name($pdo, $name, true);
-    if ($existing_user) {
+    if (user_select_by_name($pdo, $name, true) !== false) {
         throw new Exception('Sorry, that name has already been registered.');
     }
 
     // more rate limiting (check if too many accounts have been made from this ip today)
-    rate_limit(
-        'register-account-'.$ip,
-        86400,
-        5,
-        'You may create a maximum of five accounts from the same IP address per day.'
-    );
+    $rl_msg = 'You may create a maximum of five accounts from the same IP address per day.';
+    rate_limit('register-account-'.$ip, 86400, 5, $rl_msg);
 
     // register user
     do_register_user($pdo, $name, $password, $ip, $time, $email);
 
     $ret = new stdClass();
-    $ret->result = 'success';
+    $ret->success = true;
 } catch (Exception $e) {
     $ret = new stdClass();
+    $ret->success = false;
     $ret->error = $e->getMessage();
 } finally {
-    echo json_encode($ret);
+    die(json_encode($ret));
 }

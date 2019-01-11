@@ -2,11 +2,10 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/levels/levels_search.php';
+require_once GEN_HTTP_FNS;
 
 $mode = default_post('mode', 'user');
-$search_str = default_post('search_str', '');
+$search_str = default_post('search_str');
 $order = default_post('order', 'date');
 $dir = default_post('dir', 'desc');
 $page = (int) default_post('page', 1);
@@ -14,12 +13,17 @@ $ip = get_ip();
 
 $page = min(25, $page);
 $key = "search-$mode-$search_str-$order-$dir-$page";
-$cache_expire = 600; //10 minutes
+$cache_expire = 600; // keep results cached for 10 minutes
 
 try {
     // check request method
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception("Invalid request method.");
+        throw new Exception('Invalid request method.');
+    }
+
+    // sanity check: did they search for something?
+    if (is_empty($search_str)) {
+        throw new Exception('You can\'t search for nothing!');
     }
 
     $page_str = apcu_fetch($key);

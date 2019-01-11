@@ -1,12 +1,10 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/changing_emails/changing_email_select.php';
-require_once QUERIES_DIR . '/changing_emails/changing_email_complete.php';
-require_once QUERIES_DIR . '/users/user_update_email.php';
+require_once QUERIES_DIR . '/changing_emails.php';
 
-$code = $_GET['code'];
+$code = default_get('code', '');
 $ip = get_ip();
 
 try {
@@ -25,10 +23,10 @@ try {
     $row = changing_email_select($pdo, $code);
 
     // get the variables from the pending change
-    $user_id = $row->user_id;
+    $user_id = (int) $row->user_id;
     $old_email = $row->old_email;
     $new_email = $row->new_email;
-    $change_id = $row->change_id;
+    $change_id = (int) $row->change_id;
 
     // push the change through
     changing_email_complete($pdo, $change_id, $ip);
@@ -43,7 +41,7 @@ try {
     echo "Great success! Your email address has been changed from $safe_old_email to $safe_new_email.";
 } catch (Exception $e) {
     output_header('Confirm Email Change');
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    $error = $e->getMessage();
     echo "Error: $error";
 } finally {
     output_footer();

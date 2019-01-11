@@ -1,11 +1,13 @@
 <?php
 
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once HTTP_FNS . '/data_fns.php';
+require_once HTTP_FNS . '/http_data_fns.php';
 
-// rate limiting
+$ip = get_ip();
+
 try {
-    $ip = get_ip();
+    // rate limiting
     rate_limit('gui-hint-' . $ip, 5, 2);
 
     // get data, make variables
@@ -43,10 +45,10 @@ try {
 
     // seeya
     echo '</center>';
-    output_footer();
 } catch (Exception $e) {
     output_header('Error');
     $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "Error: $error";
+} finally {
     output_footer();
 }

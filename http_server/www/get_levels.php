@@ -2,14 +2,13 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/levels/levels_select_by_owner.php';
+require_once GEN_HTTP_FNS;
 
-$count = find_no_cookie('count', 100);
+$count = default_get('count', 100);
 $ip = get_ip();
 
 $ret = new stdClass();
-$ret->success = true;
+$ret->success = false;
 
 try {
     // rate limiting
@@ -19,13 +18,11 @@ try {
     $pdo = pdo_connect();
 
     // check login
-    $user_id = token_login($pdo);
-    $power = user_select_power($pdo, $user_id);
+    $user_id = (int) token_login($pdo);
+    $power = (int) user_select_power($pdo, $user_id);
     if ($power <= 0) {
-        throw new Exception(
-            "Guests can't load or save levels. ".
-            "To access this feature, please create your own account."
-        );
+        $e = "Guests can't load or save levels. To access this feature, please create your own account.";
+        throw new Exception($e);
     }
 
     // more rate limiting
@@ -33,9 +30,9 @@ try {
 
     // get levels
     $levels = levels_select_by_owner($pdo, $user_id);
+    $ret->success = true;
     $ret->levels = $levels;
 } catch (Exception $e) {
-    $ret->success = false;
     $ret->error = $e->getMessage();
 } finally {
     die(json_encode($ret));

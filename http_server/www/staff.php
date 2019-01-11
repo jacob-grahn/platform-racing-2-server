@@ -1,8 +1,7 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/users/users_select_staff.php';
 
 output_header('PR2 Staff Team');
 
@@ -30,42 +29,44 @@ try {
 
     foreach ($staff_list as $row) {
         // make nice variables for our data
-        $safe_name = htmlspecialchars($row->name, ENT_QUOTES);
-        $safe_name = str_replace(' ', '&nbsp;', $safe_name);
-        $group = (int) $row->power;
-        $group_color = $group_colors[$group];
+        $safe_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->name, ENT_QUOTES));
+        $group_color = $group_colors[(int) $row->power];
         $status = $row->status;
         $register_date = date('j/M/Y', $row->register_time);
-        $active_date = $row->active_date;
-        $active_date = date_create($active_date);
-        $active_date = date_format($active_date, 'j/M/Y');
+        $active_date = date_format(date_create($row->active_date), 'j/M/Y');
 
         // start the row
         echo "<tr>";
 
-        // display the name with the color and link to the player search page
-        $url_name = urlencode($row->name);
-        echo "<td><a href='player_search.php?name=$url_name' style='color: #$group_color; ".
-            "text-decoration: underline;'>$safe_name</a></td>";
+        try {
+            // check for a name
+            if (is_empty($safe_name) && strlen(trim($safe_name)) === 0) {
+                throw new Exception('Invalid name.');
+            }
 
-        if (empty($safe_name) && strlen(trim($safe_name)) === 0) {
-            throw new Exception("Invalid name.");
+            // display the name with the color and link to the player search page
+            $link = 'player_search.php?name=' . urlencode($row->name);
+            $style = "color: #$group_color; text-decoration: underline;";
+            echo "<td><a href='$link' style='$style'>$safe_name</a></td>";
+
+            // display the status
+            echo "<td>$status</td>";
+
+            // display the register date
+            if ($register_date === "1/Jan/1970") {
+                echo "<td>Age of Heroes</td>";
+            } elseif (!is_empty($register_date)) {
+                echo "<td>$register_date</td>";
+            } else {
+                throw new Exception('No register date received.');
+            }
+
+            // display the active date
+            echo "<td>$active_date</td>";
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+            echo "<td>Error: $error</td>";
         }
-
-        // display the status
-        echo "<td>$status</td>";
-
-        // display the register date
-        if ($register_date == "1/Jan/1970") {
-            echo "<td>Age of Heroes</td>";
-        } elseif (!empty($register_date)) {
-            echo "<td>$register_date</td>";
-        } else {
-            throw new Exception("No register date received.");
-        }
-
-        // display the active date
-        echo "<td>$active_date</td>";
 
         // end the row
         echo "</tr>";
@@ -74,7 +75,7 @@ try {
     // end the table
     echo '</table>';
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    $error = $e->getMessage();
     echo "<br><i>Error: $error</i>";
 } finally {
     echo '</center>';

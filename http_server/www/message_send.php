@@ -2,20 +2,26 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/pr2/pr2_fns.php';
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/ignored.php';
+require_once QUERIES_DIR . '/messages.php';
 
-$to_name = $_POST['to_name'];
-$message = $_POST['message'];
+$to_name = default_post('to_name', '');
+$message = default_post('message', '');
 $ip = get_ip();
 
 $ret = new stdClass();
-$ret->success = true;
+$ret->success = false;
 
 try {
     // POST check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
+    }
+
+    // sanity check
+    if (is_empty($to_name) || is_empty($message)) {
+        throw new Exception('Some data is missing. Make sure you enter a name and a message.');
     }
 
     // ref check
@@ -28,16 +34,16 @@ try {
     $pdo = pdo_connect();
 
     // variables
-    $from_user_id = token_login($pdo, false);
-    $to_user_id = name_to_id($pdo, $to_name);
+    $from_user_id = (int) token_login($pdo, false);
+    $to_user_id = (int) name_to_id($pdo, $to_name);
 
     // send it
     send_pm($pdo, $from_user_id, $to_user_id, $message);
 
     // tell the world
+    $ret->success = true;
     $ret->message = 'Your message was sent successfully!';
 } catch (Exception $e) {
-    $ret->success = false;
     $ret->error = $e->getMessage();
 } finally {
     die(json_encode($ret));

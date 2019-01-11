@@ -2,28 +2,35 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
-require_once QUERIES_DIR . '/levels/level_select.php';
 
-$level_id = (int) default_val($_GET['courseID'], 0);
-$hash = find_no_cookie('hash', '');
+$level_id = (int) default_post('courseID', 0);
+$hash = default_post('hash', '');
 $ip = get_ip();
 
+$ret = new stdClass();
+$ret->success = false;
+
 try {
+    // check request method
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception("Invalid request method.");
+    }
+
     // rate limiting
     rate_limit('level-pass-'.$ip, 3, 2);
 
     // sanity
     if (is_empty($level_id, false) || is_empty($hash)) {
-        throw new Exception('Invalid input. ' . join(', ', $_GET));
+        throw new Exception('Some data was missing.');
     }
 
     // connect
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false);
 
     // more rate limiting
     rate_limit('level-pass-'.$user_id, 3, 2);
@@ -37,18 +44,21 @@ try {
     }
 
     // return info
-    $result = new stdClass();
-    $result->access = $match;
-    $result->level_id = $level_id;
-    $result->user_id = $user_id;
-    $str_result = json_encode($result);
+    $res = new stdClass();
+    $res->access = $match;
+    $res->level_id = (int) $level_id;
+    $res->user_id = (int) $user_id;
+    $str_result = json_encode($res);
 
     // set up encryptor
     $encryptor = new \pr2\http\Encryptor();
     $encryptor->setKey($LEVEL_PASS_KEY);
     $enc_result = $encryptor->encrypt($str_result, $LEVEL_PASS_IV);
 
-    echo 'result=' . urlencode($enc_result);
+    $ret->success = true;
+    $ret->result = $enc_result;
 } catch (Exception $e) {
-    echo 'error=' . urlencode($e->getMessage());
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }

@@ -2,14 +2,19 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/users/user_select_expanded.php';
-require_once QUERIES_DIR . '/users/user_update_guild.php';
-require_once QUERIES_DIR . '/guilds/guild_increment_member.php';
+require_once GEN_HTTP_FNS;
 
 $ip = get_ip();
 
+$ret = new stdClass();
+$ret->success = false;
+
 try {
+    // check for post
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Invalid request method.');
+    }
+
     // get and validate referrer
     require_trusted_ref('leave your guild');
 
@@ -20,7 +25,7 @@ try {
     $pdo = pdo_connect();
 
     // get their login
-    $user_id = token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false);
     $account = user_select_expanded($pdo, $user_id);
 
     // sanity check
@@ -33,12 +38,10 @@ try {
     user_update_guild($pdo, $user_id, 0);
 
     // tell it to the world
-    $reply = new stdClass();
-    $reply->success = true;
-    $reply->message = 'You have left the guild.';
+    $ret->success = true;
+    $ret->message = 'You have left the guild.';
 } catch (Exception $e) {
-    $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $ret->error = $e->getMessage();
 } finally {
-    echo json_encode($reply);
+    die(json_encode($ret));
 }

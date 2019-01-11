@@ -1,14 +1,8 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/guild_search_fns.php';
-require_once HTTP_FNS . '/pr2/guild_count_active.php';
-require_once QUERIES_DIR . '/guilds/guild_name_to_id.php';
-require_once QUERIES_DIR . '/guilds/guild_select.php';
-require_once QUERIES_DIR . '/guilds/guild_select_active_member_count.php';
-require_once QUERIES_DIR . '/guilds/guild_select_members.php';
-require_once QUERIES_DIR . '/users/user_select_name_and_power.php';
 
 $guild_name = default_get('name', '');
 $guild_id = (int) default_get('id', 0);

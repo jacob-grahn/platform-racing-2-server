@@ -1,11 +1,12 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/users/user_select.php';
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/users.php';
 
 header("Content-type: text/plain");
 
 $ip = get_ip();
+
 $ret = new stdClass();
 $ret->user_name = "";
 $ret->guild_id = 0;
@@ -18,13 +19,13 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($pdo);
+    $user_id = (int) token_login($pdo);
 
     // get their username
-    $user = user_select($pdo, $user_id);
+    $user = user_select_name_and_power($pdo, $user_id);
 
     // sanity check: guest account?
-    if ($user->power == 0) {
+    if ((int) $user->power === 0) {
         throw new Exception('You are logged in as a guest.');
     }
 

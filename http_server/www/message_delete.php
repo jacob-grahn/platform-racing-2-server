@@ -2,16 +2,24 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/messages/message_delete.php';
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/messages.php';
 
-$message_id = $_POST['message_id'];
+$message_id = (int) default_post('message_id', 0);
 $ip = get_ip();
+
+$ret = new stdClass();
+$ret->success = false;
 
 try {
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception("Invalid request method.");
+        throw new Exception('Invalid request method.');
+    }
+
+    // sanity check
+    if ($message_id <= 0) {
+        throw new Exception('Invalid message specified.');
     }
     
     // referrer check
@@ -24,13 +32,11 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = token_login($pdo);
-    $power = user_select_power($pdo, $user_id);
+    $user_id = (int) token_login($pdo);
+    $power = (int) user_select_power($pdo, $user_id);
     if ($power <= 0) {
-        throw new Exception(
-            "Guests can't use the private messaging system. ".
-            "To access this feature, please create your own account."
-        );
+        $e = "Guests can't use the private messaging system. To access this feature, please create your own account.";
+        throw new Exception($e);
     }
 
     // more rate limiting
@@ -40,9 +46,10 @@ try {
     message_delete($pdo, $user_id, $message_id);
 
     // tell the world
-    echo 'success=true';
+    $ret->success = true;
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    echo "error=$error";
-    exit;
+    $ret->success = false;
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }

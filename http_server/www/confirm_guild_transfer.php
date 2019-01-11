@@ -1,20 +1,17 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/guild_transfers/guild_transfer_select.php';
-require_once QUERIES_DIR . '/guild_transfers/guild_transfer_complete.php';
-require_once QUERIES_DIR . '/guilds/guild_select.php';
-require_once QUERIES_DIR . '/guilds/guild_update.php';
+require_once QUERIES_DIR . '/guild_transfers.php';
 
-$code = $_GET['code'];
+$code = default_get('code', '');
 $ip = get_ip();
 
 try {
     output_header('Confirm Guild Ownership Transfer');
 
     // sanity check: check for a confirmation code
-    if (!isset($code)) {
+    if (is_empty($code)) {
         throw new Exception('No code found.');
     }
 
@@ -26,9 +23,9 @@ try {
 
     // get the pending change information
     $row = guild_transfer_select($pdo, $code);
-    $guild_id = $row->guild_id;
-    $new_owner_id = $row->new_owner_id;
-    $transfer_id = $row->transfer_id;
+    $guild_id = (int) $row->guild_id;
+    $new_owner_id = (int) $row->new_owner_id;
+    $transfer_id = (int) $row->transfer_id;
 
     // get updated guild data
     $guild = guild_select($pdo, $guild_id);

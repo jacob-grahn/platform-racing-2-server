@@ -2,28 +2,28 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/users/user_select_expanded.php';
-require_once QUERIES_DIR . '/users/user_update_guild.php';
-require_once QUERIES_DIR . '/guilds/guild_name_to_id.php';
-require_once QUERIES_DIR . '/guilds/guild_insert.php';
+require_once GEN_HTTP_FNS;
 
-$note = filter_swears(find('note'));
-$guild_name = filter_swears(find('name'));
-$emblem = find('emblem');
+$note = filter_swears(default_post('note', ''));
+$guild_name = filter_swears(default_post('name', ''));
+$emblem = default_post('emblem', '');
 $ip = get_ip();
 
+$ret = new stdClass();
+$ret->success = false;
+
 try {
+    // check for post
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception("Invalid request method.");
+    }
+
     // get and validate referrer
     require_trusted_ref('create a guild');
 
     // rate limiting
-    rate_limit(
-        'guild-create-attempt-'.$ip,
-        10,
-        3,
-        "Please wait at least 10 seconds before attempting to create a guild again."
-    );
+    $rl_msg = 'Please wait at least 10 seconds before attempting to create a guild again.';
+    rate_limit('guild-create-attempt-'.$ip, 10, 3, $rl_msg);
 
     // connect
     $pdo = pdo_connect();
@@ -32,12 +32,7 @@ try {
     $user_id = token_login($pdo, false);
 
     // more rate limiting
-    rate_limit(
-        'guild-create-attempt-'.$user_id,
-        10,
-        3,
-        "Please wait at least 10 seconds before attempting to create a guild again."
-    );
+    rate_limit('guild-create-attempt-'.$user_id, 10, 3, $rl_msg);
 
     // get user info
     $account = user_select_expanded($pdo, $user_id);
@@ -74,34 +69,31 @@ try {
         throw new Exception('Guild name is invalid. You may only use alphanumeric characters, spaces, and hyphens.');
     }
     if (strlen(trim($guild_name)) === 0) {
-        throw new Exception('I\'m not sure what would happen if you didn\'t
-            enter a guild name, but it would probably destroy the world.');
+        $e = 'I\'m not sure, but I think not entering a guild name would probably destroy the world...';
+        throw new Exception($e);
     }
 
     // check if guild exists
-    $guild_exists = guild_name_to_id($pdo, $guild_name, true);
-    if ($guild_exists !== false) {
+    if (guild_name_to_id($pdo, $guild_name, true) !== false) {
         throw new Exception('A guild with this name already exists. Please choose a new name.');
     }
 
     // more rate limiting
-    rate_limit('guild-create-'.$ip, 3600, 1, "You may only create one guild per hour. Try again later.");
-    rate_limit('guild-create-'.$user_id, 3600, 1, "You may only create one guild per hour. Try again later.");
+    rate_limit('guild-create-'.$ip, 3600, 1, 'You may only create one guild per hour. Try again later.');
+    rate_limit('guild-create-'.$user_id, 3600, 1, 'You may only create one guild per hour. Try again later.');
 
     // add guild to db
     $guild_id = guild_insert($pdo, $user_id, $guild_name, $emblem, $note);
     user_update_guild($pdo, $user_id, $guild_id);
 
     // tell it to the world
-    $reply = new stdClass();
-    $reply->success = true;
-    $reply->message = 'Congratulations on starting your own guild! What an auspicious day!';
-    $reply->guildId = $guild_id;
-    $reply->emblem = $emblem;
-    $reply->guildName = $guild_name;
+    $ret->success = true;
+    $ret->message = 'Congratulations on starting your own guild! What an auspicious day!';
+    $ret->guildId = $guild_id;
+    $ret->emblem = $emblem;
+    $ret->guildName = $guild_name;
 } catch (Exception $e) {
-    $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $ret->error = $e->getMessage();
 } finally {
-    echo json_encode($reply);
+    die(json_encode($ret));
 }

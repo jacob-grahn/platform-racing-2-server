@@ -2,16 +2,15 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once HTTP_FNS . '/pr2/pr2_fns.php';
-require_once QUERIES_DIR . '/guilds/guild_select.php';
-require_once QUERIES_DIR . '/guilds/guild_select_by_name.php';
-require_once QUERIES_DIR . '/guilds/guild_select_members.php';
+require_once GEN_HTTP_FNS;
 
-$guild_id = find_no_cookie('id', 0);
-$guild_name = find_no_cookie('name', '');
-$get_members = find_no_cookie('getMembers', 'no');
+$guild_id = (int) default_get('id', 0);
+$guild_name = default_get('name', '');
+$get_members = default_get('getMembers', 'no');
 $ip = get_ip();
+
+$ret = new stdClass();
+$ret->success = false;
 
 try {
     // rate limiting
@@ -21,7 +20,7 @@ try {
     $pdo = pdo_connect();
 
     // sanity check: was any information requested?
-    if ((!is_numeric($guild_id) || $guild_id <= 0) && $guild_name == '') {
+    if ($guild_id <= 0 && is_empty($guild_name)) {
         throw new Exception('No guild name or ID was provided.');
     }
 
@@ -34,26 +33,20 @@ try {
     }
 
     // check for .j instead of .jpg on the end of the emblem file name
-    if (substr($guild->emblem, -2) == '.j') {
+    if (substr($guild->emblem, -2) === '.j') {
         $guild->emblem = str_replace('.j', '.jpg', $guild->emblem);
     }
 
-    // get members
-    $members = array();
-    if ($get_members == 'yes') {
-        $members = guild_select_members($pdo, $guild_id);
-    }
-
-    // count active members
+    // members
+    $members = $get_members === 'yes' ? guild_select_members($pdo, $guild_id) : array();
     $guild->active_count = guild_count_active($pdo, $guild->guild_id);
 
     // tell it to the world
-    $reply = new stdClass();
-    $reply->guild = $guild;
-    $reply->members = $members;
+    $ret->success = true;
+    $ret->guild = $guild;
+    $ret->members = $members;
 } catch (Exception $e) {
-    $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $ret->error = $e->getMessage();
 } finally {
-    echo json_encode($reply);
+    die(json_encode($ret));
 }

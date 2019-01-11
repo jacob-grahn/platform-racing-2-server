@@ -2,10 +2,12 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/users/user_select_expanded.php';
+require_once GEN_HTTP_FNS;
 
 $ip = get_ip();
+
+$ret = new stdClass();
+$ret->success = false;
 
 try {
     // POST check
@@ -18,8 +20,8 @@ try {
 
     // rate limiting
     $rl_msg_sec = 'Please wait at least 15 seconds before trying to upload a guild emblem again.';
-    rate_limit('emblem-upload-attempt-'.$ip, 15, 1, $rl_msg_sec);
     $rl_msg_min = 'Please wait at least 15 minutes before trying to upload a guild emblem again.';
+    rate_limit('emblem-upload-attempt-'.$ip, 15, 1, $rl_msg_sec);
     rate_limit('emblem-upload-attempt-'.$ip, 900, 10, $rl_msg_min);
 
     $image = file_get_contents("php://input");
@@ -28,7 +30,6 @@ try {
     // connect to the db
     $pdo = pdo_connect();
     $s3 = s3_connect();
-
 
     // check their login
     $user_id = token_login($pdo, false);
@@ -45,8 +46,8 @@ try {
         throw new Exception('You must be rank 20 or above to upload an emblem.');
     }
     if ($account->power <= 0) {
-        $e_msg = 'Guests can\'t upload guild emblems. To access this feature, please create your own account.';
-        throw new Exception($e_msg);
+        $e = 'Guests can\'t upload guild emblems. To access this feature, please create your own account.';
+        throw new Exception($e);
     }
     if (!isset($image)) {
         throw new Exception('No image was received.');
@@ -72,13 +73,11 @@ try {
     rate_limit('emblem-upload-'.$user_id, 86400, 2, $rl_msg_day);
 
     // tell it to the world
-    $reply = new stdClass();
-    $reply->success = true;
-    $reply->len = strlen($image);
-    $reply->filename = $filename;
+    $ret->success = true;
+    $ret->len = strlen($image);
+    $ret->filename = $filename;
 } catch (Exception $e) {
-    $reply = new stdClass();
-    $reply->error = $e->getMessage();
+    $ret->error = $e->getMessage();
 } finally {
-    die(json_encode($reply));
+    die(json_encode($ret));
 }
