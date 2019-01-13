@@ -1,15 +1,13 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/contests/part_vars.php';
-require_once QUERIES_DIR . '/contests/contest_select.php';
-require_once QUERIES_DIR . '/contest_prizes/contest_prize_select.php';
-require_once QUERIES_DIR . '/contest_prizes/contest_prizes_select_by_contest.php';
-require_once QUERIES_DIR . '/contest_winners/throttle_awards.php';
-require_once QUERIES_DIR . '/contest_winners/contest_winner_insert.php';
-require_once QUERIES_DIR . '/messages/message_insert.php';
-require_once QUERIES_DIR . '/pr2/pr2_insert.php'; // if pr2 data doesn't exist
+require_once QUERIES_DIR . '/contests.php';
+require_once QUERIES_DIR . '/contest_prizes.php';
+require_once QUERIES_DIR . '/contest_winners.php';
+require_once QUERIES_DIR . '/messages.php';
+require_once QUERIES_DIR . '/part_awards.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
@@ -58,12 +56,11 @@ try {
         $recent_awards = (int) throttle_awards($pdo, $contest_id, $user_id);
         $max_awards = (int) $contest->max_awards;
         if ($recent_awards >= $max_awards) {
-            throw new Exception(
-                "You've reached your maximum amount of awards for this week.<br>".
-                "If you need to award more, please contact a member of the PR2 Staff Team.".
-                "<br><br>".
-                "<a href='contests.php'><- All Contests</a>"
-            );
+            $msg = 'You\'ve reached your maximum amount of awards for this week.<br>'
+                .'If you need to award more, please contact a member of the PR2 Staff Team.'
+                .'<br><br>'
+                .'<a href="contests.php"><- All Contests</a>';
+            throw new Exception($msg);
         }
     }
 
@@ -84,10 +81,7 @@ try {
         $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
         $max_awards = (int) $contest->max_awards;
         $recent_awards = (int) throttle_awards($pdo, $contest->contest_id, $contest->user_id);
-        $lang = ['sets','times'];
-        if ($max_awards === 1) {
-            $lang = ['set','time'];
-        }
+        $lang = $max_awards === 1 ? ['set','time'] : ['sets','times'];
 
         // start page
         echo "Award Prizes for <b>$html_contest_name</b><br><br>";
@@ -113,10 +107,7 @@ try {
             // make the display name
             $part_name = to_part_name($part_type, $part_id);
             $disp_type = ucfirst($part_type);
-            $prize_name = "$part_name $disp_type";
-            if ($is_epic == true) {
-                $prize_name = "Epic " . $prize_name;
-            }
+            $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
 
             echo "<input type='checkbox' name='prize_$prize_id' id='prize_$prize_id'>"
                 ."<label for='prize_$prize_id'> $prize_name</label>"
@@ -167,11 +158,10 @@ try {
         }
 
         // sanity check: does this user exist?
-        $winner_id = name_to_id($pdo, $winner_name, true);
-        if ($winner_id === false) {
+        $winner_id = (int) name_to_id($pdo, $winner_name, true);
+        if ($winner_id === 0) {
             throw new Exception("Could not find a player with that name.");
         }
-        $winner_id = (int) $winner_id;
 
         // safety first
         $html_winner_name = htmlspecialchars($winner_name, ENT_QUOTES);
@@ -203,10 +193,7 @@ try {
             // make the display name
             $part_name = to_part_name($part_type, $part_id);
             $disp_type = ucfirst($part_type);
-            $prize_name = "$part_name $disp_type";
-            if ($is_epic === true) {
-                $prize_name = "Epic " . $prize_name;
-            }
+            $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
 
             if ($has_part === true) {
                 echo "<span style='color: red;'>Error: $html_winner_name already has the $prize_name.</span><br>";
@@ -260,10 +247,7 @@ try {
             // make the display name
             $part_name = to_part_name($part_type, $part_id);
             $disp_type = ucfirst($part_type);
-            $prize_name = "$part_name $disp_type";
-            if ($is_epic === true) {
-                $prize_name = "Epic " . $prize_name;
-            }
+            $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
 
             array_push($prizes_awarded_arr, $prize_name);
             echo "<span style='color: green; font-weight: bold;'>"
@@ -315,13 +299,12 @@ try {
     else {
         throw new Exception('Invalid action specified.');
     }
-
-    output_footer();
 } catch (Exception $e) {
     if ($header === false) {
         output_header("Error", $is_mod, $is_admin);
     }
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }

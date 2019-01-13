@@ -1,11 +1,8 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/level_backups/level_backup_select.php';
-require_once QUERIES_DIR . '/level_backups/level_backups_select.php';
-require_once QUERIES_DIR . '/levels/level_select.php';
-require_once QUERIES_DIR . '/levels/levels_restore_backup.php';
+require_once QUERIES_DIR . '/level_backups.php';
 
 $ip = get_ip();
 $desc = "<p><center>".
@@ -20,7 +17,7 @@ try {
 
     // connect
     $pdo = pdo_connect();
-    $user_id = token_login($pdo);
+    $user_id = (int) token_login($pdo);
 
     // rate limiting
     rate_limit('level-backups-'.$user_id, 5, 1);
@@ -31,22 +28,22 @@ try {
     output_header('Level Backups', $staff->mod, $staff->admin);
 
     // restore a backup
-    $action = find('action');
+    $action = default_get('action');
 
-    if ($action == 'restore') {
+    if ($action === 'restore') {
         // check referrer
         require_trusted_ref('restore level backups');
 
         // get the level_id that this backup_id points to
-        $backup_id = find('backup_id');
+        $backup_id = default_get('backup_id');
         $row = level_backup_select($pdo, $backup_id);
-        if ($row->user_id != $user_id) {
+        if ((int) $row->user_id !== $user_id) {
             throw new Exception('You do not own this backup.');
         }
 
         // initialize some variables
-        $level_id = $row->level_id;
-        $version = $row->version;
+        $level_id = (int) $row->level_id;
+        $version = (int) $row->version;
         $title = $row->title;
 
         // connect
@@ -76,7 +73,7 @@ try {
             $version
         );
         $restored_level = level_select($pdo, $level_id);
-        $new_version = $restored_level->version;
+        $new_version = (int) $restored_level->version;
 
         // increment the version and recalculate the hash of the level body
         $str1 = "&version=$version";
@@ -116,7 +113,7 @@ try {
         echo "<center>You haven't modified or deleted any levels in the past 30 days.</center>";
     }
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    $error = $e->getMessage();
     output_header("Level Backups");
     echo "Error: $error";
 } finally {

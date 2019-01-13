@@ -1,12 +1,14 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/bans/retrieve_ban_list.php';
+require_once QUERIES_DIR . '/bans.php';
 
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 100);
 $ip = get_ip();
+
+$header = false;
 
 try {
     // rate limiting
@@ -16,12 +18,9 @@ try {
     $pdo = pdo_connect();
 
     // header, also check if mod and output the mod links if so
-    $staff = is_staff($pdo, $user_id, false);
+    $staff = is_staff($pdo, token_login($pdo), false);
+    $header = true;
     output_header('Ban Log', $staff->mod, $staff->admin);
-
-    // navigation
-    output_pagination($start, $count);
-    echo '<p>---</p>';
 
     if ($staff->mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10);
@@ -31,8 +30,12 @@ try {
     // retrieve the ban list
     $bans = retrieve_ban_list($pdo, $start, $count);
     if (!$bans) {
-        throw new Exception('Could not retrieve the ban list.');
+        throw new Exception('No bans found for the specified start.');
     }
+
+    // navigation
+    output_pagination($start, $count);
+    echo '<p>---</p>';
 
     // output the page
     foreach ($bans as $row) {
@@ -51,16 +54,9 @@ try {
         $formatted_time = date('M j, Y g:i A', $time);
         $duration = $expire_time - $time;
 
-        $display_name = '';
-        if ($account_ban === 1) {
-            $display_name .= $banned_name;
-        }
-        if ($ip_ban === 1 && $staff->mod) {
-            if ($display_name != '') {
-                $display_name .= ' ';
-            }
-            $display_name .= "[$banned_ip]";
-        }
+        $display_name = $account_ban === 1 ? $banned_name : '';
+        $sep = $display_name === '' ?: ' ';
+        $display_name = $ip_ban === 1 && $staff->mod ? $display_name . $sep . "[$banned_ip]" : $display_name;
 
         $display_name = htmlspecialchars($display_name, ENT_QUOTES);
         $f_dur = format_duration($duration);
@@ -73,10 +69,12 @@ try {
 
     echo '<p>---</p>';
     output_pagination($start, $count);
-    output_footer();
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    output_header('Error');
-    echo "Error: $error";
+    if ($header === false) {
+        output_header('Error');
+    }
+    $error = $e->getMessage();
+    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }

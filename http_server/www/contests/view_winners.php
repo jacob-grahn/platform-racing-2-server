@@ -1,10 +1,9 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/contests/contest_select.php';
-require_once QUERIES_DIR . '/contest_winners/contest_winners_select_by_contest.php';
-require_once QUERIES_DIR . '/users/user_select_name_and_power.php';
+require_once QUERIES_DIR . '/contests.php';
+require_once QUERIES_DIR . '/contest_winners.php';
 
 $ip = get_ip();
 $contest_id = (int) default_get('contest_id', 0);
@@ -120,7 +119,6 @@ try {
                 }
             }
             echo "</td>";
-
 
             // comment
             echo "<td class='noborder'>$comment</td>";

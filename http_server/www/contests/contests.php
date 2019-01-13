@@ -1,10 +1,9 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/contests/contests_select.php';
-require_once QUERIES_DIR . '/users/user_select_name_and_power.php';
-require_once QUERIES_DIR . '/contest_winners/throttle_awards.php';
+require_once QUERIES_DIR . '/contests.php';
+require_once QUERIES_DIR . '/contest_winners.php';
 
 $ip = get_ip();
 
@@ -24,14 +23,14 @@ try {
     output_header("Contests", $staff->mod, $staff->admin);
 
     // output the text at the top of the page
-    echo "<center><p>
-    <font face='Gwibble' class='gwibble'>-- Contests --</font>
-    <br>You can participate in contests to earn prizes!
-    <br>
-    <br>To learn more about a specific contest, click on one of the contests below.
-    <br>To learn how to host your own contest,
-    <a href='https://jiggmin2.com/forums/showthread.php?tid=28' target='_blank'>click here</a>.
-    </p></center>";
+    echo '<center><p>'
+        .'<font face="Gwibble" class="gwibble">-- Contests --</font>'
+        .'<br>You can participate in contests to earn prizes!'
+        .'<br>'
+        .'<br>To learn more about a specific contest, click on one of the contests below.'
+        .'<br>To learn how to host your own contest, '
+        .'<a href="https://jiggmin2.com/forums/showthread.php?tid=28" target="_blank">click here</a>.'
+        .'</p></center>';
 
     // show the link to create a new contest if an admin
     if ($staff->admin === true) {

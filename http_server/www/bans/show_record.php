@@ -1,10 +1,10 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/bans/ban_select.php';
+require_once QUERIES_DIR . '/bans.php';
 
-$ban_id = (int) $_GET['ban_id'];
+$ban_id = (int) default_get('ban_id', 0);
 $ip = get_ip();
 
 try {
@@ -15,8 +15,7 @@ try {
     $pdo = pdo_connect();
 
     // are they a moderator
-    $user_id = token_login($pdo, $user_id, true);
-    $staff = is_staff($pdo, $user_id, false);
+    $staff = is_staff($pdo, token_login($pdo), false);
     if ($staff->mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10, "Please wait at least one minute before trying to view another ban.");
     }
@@ -28,94 +27,73 @@ try {
     output_header('View Ban', $staff->mod, $staff->admin);
 
     // output the page
-    $ban_id = $row->ban_id;
+    $ban_id = (int) $row->ban_id;
     $banned_ip = $row->banned_ip;
-    $mod_user_id = $row->mod_user_id;
-    $banned_user_id = $row->banned_user_id;
-    $time = $row->time;
-    $expire_time = $row->expire_time;
-    $reason = $row->reason;
-    $record = $row->record;
-    $mod_name = $row->mod_name;
-    $banned_name = $row->banned_name;
-    $lifted = $row->lifted;
-    $lifted_by = $row->lifted_by;
-    $lifted_reason = $row->lifted_reason;
-    $ip_ban = $row->ip_ban;
-    $account_ban = $row->account_ban;
-    $notes = $row->notes;
+    $mod_user_id = (int) $row->mod_user_id;
+    $banned_user_id = (int) $row->banned_user_id;
+    $time = date('M j, Y g:i A', $row->time);
+    $expire_time = date('M j, Y g:i A', $row->expire_time);
+    $duration = format_duration($row->expire_time - $row->time);
+    $reason = htmlspecialchars($row->reason, ENT_QUOTES);
+    $record = nl2br(htmlspecialchars($row->record, ENT_QUOTES));
+    $mod_name = htmlspecialchars($row->mod_name, ENT_QUOTES);
+    $banned_name = htmlspecialchars($row->banned_name, ENT_QUOTES);
+    $lifted = (int) $row->lifted;
+    $lifted_by = htmlspecialchars($row->lifted_by, ENT_QUOTES);
+    $lifted_reason = htmlspecialchars($row->lifted_reason, ENT_QUOTES);
+    $ip_ban = (int) $row->ip_ban;
+    $account_ban = (int) $row->account_ban;
+    $notes = nl2br(htmlspecialchars($row->notes, ENT_QUOTES));
 
-    $formatted_time = date('M j, Y g:i A', $time);
-    $expire_formatted_time = date('M j, Y g:i A', $expire_time);
-    $duration = $expire_time - $time;
-    $f_duration = format_duration($duration);
+    $display_name = $account_ban === 1 ? $banned_name : '';
+    $sep = $display_name === '' ?: ' ';
+    $display_name = $ip_ban === 1 && $staff->mod ? $display_name . $sep . "[$banned_ip]" : $display_name;
 
-    $display_name = '';
-    if ($account_ban == 1) {
-        $display_name .= $banned_name;
-    }
-    if ($ip_ban == 1 && $staff->mod) {
-        if ($display_name != '') {
-            $display_name .= ' ';
-        }
-        $display_name .= "[$banned_ip]";
-    }
-
-    $html_lifted_by = htmlspecialchars($lifted_by, ENT_QUOTES);
-    $html_lifted_reason = htmlspecialchars($lifted_reason, ENT_QUOTES);
-    $html_mod_name = htmlspecialchars($mod_name, ENT_QUOTES);
-    $html_banned_name = htmlspecialchars($display_name, ENT_QUOTES);
-    $html_reason = htmlspecialchars($reason, ENT_QUOTES);
-    $html_record = str_replace("\r", '<br/>', htmlspecialchars($record, ENT_QUOTES));
-    $html_notes = str_replace("\n", '<br>', htmlspecialchars($notes, ENT_QUOTES));
-
-
-    if ($lifted == 1) {
+    if ($lifted === 1) {
         echo '<b><p>-----------------------------------------------------------------------------------------------</p>'
-               ."<p>--- This ban has been lifted by $html_lifted_by ---</p>"
-               ."<p>--- Reason: $html_lifted_reason ---</p>"
+               ."<p>--- This ban has been lifted by $lifted_by ---</p>"
+               ."<p>--- Reason: $lifted_reason ---</p>"
                .'<p>-----------------------------------------------------------------------------------------------</p>'
                .'<p>&nbsp;</p></b>';
     }
 
-
-
     // make the names clickable for moderators
     if ($staff->mod === true) {
-        $html_mod_name = "<a href='/mod/player_info.php?user_id=$mod_user_id'>$html_mod_name</a>";
+        $mod_name = "<a href='/mod/player_info.php?user_id=$mod_user_id'>$mod_name</a>";
         if ($banned_user_id != 0 && $account_ban == 1) {
-            $html_banned_name = "<a href='/mod/player_info.php?user_id=$banned_user_id'>$html_banned_name</a>";
+            $banned_name = "<a href='/mod/player_info.php?user_id=$banned_user_id'>$banned_name</a>";
         } else {
-            $html_banned_name = "<a href='/mod/ip_info.php?ip=$banned_ip'>$html_banned_name</a>";
+            $banned_name = "<a href='/mod/ip_info.php?ip=$banned_ip'>$banned_name</a>";
         }
     }
 
+    echo "<p>$mod_name banned $banned_name for $duration on $time.</p>"
+        ."<p>Reason: $reason</p>"
+        ."<p>This ban will expire on $expire_time.</p>"
+        .'<p> --- </p>';
 
-    echo "<p>$html_mod_name banned $html_banned_name for $f_duration on $formatted_time.</p>
-            <p>Reason: $html_reason</p>
-            <p>This ban will expire on $expire_formatted_time.</p>
-            <p> --- </p>
-            <p>$html_record</p>
-            <p> --- </p>";
+    if (!is_empty($record)) {
+        echo "<p>$record</p>"
+            ."<p> --- </p>";
+    }
 
     if ($staff->mod === true) {
-        if (isset($notes) && $notes != '') {
+        if (!is_empty($notes)) {
             echo "<p> --- notes</p>";
-            echo "<p>$html_notes</p>";
+            echo "<p>$notes</p>";
             echo "<p> ---</p>";
         }
-        if ($lifted != 1) {
-            echo "<p><a href='/mod/ban_edit.php?ban_id=$ban_id'>Edit Ban</a></p>";
+        echo "<p><a href='/mod/ban_edit.php?ban_id=$ban_id'>Edit Ban</a></p>";
+        if ($lifted !== 1) {
             echo "<p><a href='/mod/lift_ban.php?ban_id=$ban_id'>Lift Ban</a></p>";
         }
     }
 
     echo '<p><a href="bans.php">Go Back</a></p>';
-
-    output_footer();
 } catch (Exception $e) {
     $error = $e->getMessage();
     output_header('Error Fetching Ban', $staff->mod, $staff->admin);
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+} finally {
     output_footer();
 }
