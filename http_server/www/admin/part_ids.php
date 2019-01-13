@@ -1,6 +1,6 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 
 try {
@@ -74,7 +74,8 @@ try {
 37 - Crocodile
 38 - Valentine
 39 - Bunny
-40+ - *BLANK*
+40 - Gecko
+41+ - *BLANK*
 
 -- Bodies --
 1 - Classic
@@ -116,7 +117,8 @@ try {
 37 - Crocodile
 38 - Valentine
 39 - Bunny
-40+ - *BLANK*
+40 - Gecko
+41+ - *BLANK*
 
 -- Feet --
 1 - Classic
@@ -145,7 +147,7 @@ try {
 24 - Wise King
 25 - Wise Queen
 26 - Sir
-27 - Very Invisible (+ sir outline)
+27 - Very Invisible
 28 - Bubble
 29 - Taco
 30 - Slender
@@ -158,7 +160,8 @@ try {
 37 - Crocodile
 38 - Valentine
 39 - Bunny
-40+ - *BLANK*
+40 - Gecko
+41+ - *BLANK*
 
 -- Full Sets --
 (Key: Head ID, Body ID, Feet ID)
@@ -189,15 +192,17 @@ Reindeer: 36, 36, 36
 Crocodile: 37, 37, 37
 Valentine: 38, 38, 38
 Bunny: 39, 39, 39
+Gecko: 40, 40, 40
 
 -- Blank IDs --
 Hats: 15+
-Heads: 40+
-Bodies: 33, 40+
-Feet: 31-33, 40+</pre>';
+Heads: 41+
+Bodies: 33, 41+
+Feet: 31-33, 41+</pre>';
 } catch (Exception $e) {
     output_header('Error');
-    echo 'Error: ' . $e->getMessage();
+    $error = $e->getMessage();
+    echo "Error: $error";
 } finally {
     output_footer();
 }

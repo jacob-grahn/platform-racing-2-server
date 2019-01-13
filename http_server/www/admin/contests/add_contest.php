@@ -1,13 +1,13 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/contests/add_contest_fns.php';
-require_once QUERIES_DIR . '/contests/contest_insert.php';
-require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
+require_once QUERIES_DIR . '/admin_actions.php';
+require_once QUERIES_DIR . '/contests.php';
 
 $ip = get_ip();
-$action = find('action', 'form');
+$action = default_post('action', 'form');
 
 try {
     // rate limiting

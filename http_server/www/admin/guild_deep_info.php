@@ -1,13 +1,11 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/guild_deep_info_fns.php';
-require_once QUERIES_DIR . '/guilds/guild_select.php';
-require_once QUERIES_DIR . '/guilds/guild_select_members.php';
-require_once QUERIES_DIR . '/guild_transfers/guild_transfers_select_by_guild.php';
+require_once QUERIES_DIR . '/guild_transfers.php';
 
-$guild_id = (int) find('guild_id', 0);
+$guild_id = (int) default_get('guild_id', 0);
 
 try {
     // rate limiting
@@ -20,9 +18,8 @@ try {
     // make sure you're an admin
     is_staff($pdo, token_login($pdo), false, true, 3);
 
-    if ($guild_id == 0) {
-        $guild_id = '';
-    }
+    // make sure "0" doesn't show up in the box
+    $guild_id = $guild_id === 0 ? '' : $guild_id;
 
     output_header('Guild Deep Info', true, true);
 
@@ -40,7 +37,7 @@ try {
             $guild_id = (int) $guild->guild_id;
             echo "<a href='update_guild.php?guild_id=$guild_id'>edit</a><br><br><br>";
         } catch (Exception $e) {
-            $error = htmlspecialchars($e->getMessage, ENT_QUOTES);
+            $error = $e->getMessage;
             echo "<i>Error: $error</i><br><br>";
         }
     }
@@ -48,7 +45,7 @@ try {
     echo '</form>';
 } catch (Exception $e) {
     output_header('Error');
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    $error = $e->getMessage();
     echo "Error: $error";
 } finally {
     output_footer();

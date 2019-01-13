@@ -1,22 +1,17 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/player_deep_logins_fns.php';
-require_once QUERIES_DIR . '/users/user_select_by_name.php';
-require_once QUERIES_DIR . '/recent_logins/recent_logins_select.php';
-require_once QUERIES_DIR . '/recent_logins/recent_logins_count_by_user.php';
+require_once QUERIES_DIR . '/recent_logins.php';
 
-
-$name = find('name', '');
+$name = default_get('name', '');
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 250);
 $ip = get_ip();
 
 // sanity check: ensure the database doesn't overload itself
-if ($count > 500) {
-    $count = 500;
-}
+$count = $count > 500 ? 500 : $count;
 
 // admin check try block
 try {
@@ -39,19 +34,16 @@ try {
         }
 
         // get login data
-        $login_count = recent_logins_count_by_user($pdo, $user_id);
+        $login_count = (int) recent_logins_count_by_user($pdo, $user_id);
         $logins = recent_logins_select($pdo, $user_id, true, $start, $count);
     }
 
     // output
     output_header('Player Deep Logins', true, true);
+
     if ($name) {
         // calculate the number of results and the grammar to go with it
-        if ($login_count != 1) {
-            $logs = 'logins';
-        } else {
-            $logs = 'login';
-        }
+        $logs = $login_count !== 1 ? 'logins' : 'login';
 
         // safety first
         $safe_name = htmlspecialchars($name, ENT_QUOTES);
@@ -59,17 +51,13 @@ try {
         // show the search form
         output_search($safe_name);
 
-        // make dat variable
-        $is_end = false;
-
         // this determines if anything is shown on the page
+        $is_end = false;
         if ($login_count > 0 && count($logins) > 0) {
             $end = $start + count($logins);
             echo "$login_count $logs recorded for the user \"$safe_name\".";
             echo "<br>Showing results $start - $end.<br><br>";
-            if ($end == $login_count) {
-                $is_end = true;
-            }
+            $is_end = $end === $login_count ? true : false;
         } else {
             echo "No results found for the search parameters.";
         }
@@ -83,7 +71,9 @@ try {
         // only gonna get here if there were results
         foreach ($logins as $row) {
             // make nice variables for our data
-            $ip = '<a href="/mod/ip_info?ip='.urlencode($row->ip).'">'.htmlspecialchars($row->ip, ENT_QUOTES).'</a>'; // ip
+            $safe_ip = htmlspecialchars($row->ip, ENT_QUOTES);
+            $url_ip = urlencode($row->ip);
+            $ip = "<a href='/mod/ip_info.php?ip=$url_ip'>$safe_ip</a>"; // ip
             $country = htmlspecialchars($row->country, ENT_QUOTES); // country code
             $date = htmlspecialchars($row->date, ENT_QUOTES); // date
 
@@ -99,11 +89,10 @@ try {
     } else {
         output_search('', false);
     }
-
-    output_footer();
 } catch (Exception $e) {
-    $message = $e->getMessage();
+    $error = $e->getMessage();
     output_header('Error');
-    echo "Error: $message";
+    echo "Error: $error";
+} finally {
     output_footer();
 }

@@ -1,21 +1,14 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/set_campaign_fns.php';
-require_once QUERIES_DIR . '/campaign/campaign_select_by_id.php';
-require_once QUERIES_DIR . '/campaign/campaign_update.php';
-require_once QUERIES_DIR . '/levels/level_select.php';
-require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
+require_once QUERIES_DIR . '/admin_actions.php';
+require_once QUERIES_DIR . '/campaign.php';
 
-$action = $_POST['action'];
-$message = htmlspecialchars(find('message', ''));
+$action = default_post('action', 'lookup');
+$message = htmlspecialchars(default_post('message', ''));
 $campaign_id = 6; // 1 = Original, 2 = Speed, 3 = Luna, 4 = Timeline, 5 = Legendary, 6 = Custom
-
-// if empty or not set
-if (is_empty($action)) {
-    $action = "lookup";
-}
 
 try {
     // rate limiting
@@ -40,7 +33,7 @@ try {
     }
 } catch (Exception $e) {
     output_header('Error');
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    $error = $e->getMessage();
     echo "Error: $error";
 } finally {
     output_footer();

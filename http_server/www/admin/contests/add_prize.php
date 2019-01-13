@@ -1,17 +1,16 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/contests/add_prize_fns.php';
 require_once HTTP_FNS . '/pages/contests/part_vars.php';
-require_once QUERIES_DIR . '/contests/contest_select.php';
-require_once QUERIES_DIR . '/contest_prizes/contest_prize_select_id.php';
-require_once QUERIES_DIR . '/contest_prizes/contest_prize_insert.php';
-require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
+require_once QUERIES_DIR . '/admin_actions.php';
+require_once QUERIES_DIR . '/contests.php';
+require_once QUERIES_DIR . '/contest_prizes.php';
 
 $ip = get_ip();
-$contest_id = (int) find('contest_id', 0);
-$action = find('action', 'form');
+$contest_id = (int) find_no_cookie('contest_id', 0);
+$action = default_post('action', 'form');
 
 try {
     // rate limiting
@@ -20,7 +19,7 @@ try {
 
     // sanity check: is a valid contest ID specified?
     if (is_empty($contest_id, false)) {
-        throw new Exception("Invalid contest ID specified.");
+        throw new Exception('Invalid contest ID specified.');
     }
 
     // connect
@@ -31,8 +30,8 @@ try {
 
     // get contest info
     $contest = contest_select($pdo, $contest_id, false, true);
-    if ($contest == false || empty($contest)) {
-        throw new Exception("Could not find a contest with that ID.");
+    if ($contest === false || empty($contest)) {
+        throw new Exception('Could not find a contest with that ID.');
     }
 
     // form

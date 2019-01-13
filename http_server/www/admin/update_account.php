@@ -1,25 +1,13 @@
 <?php
 
-// output, misc functions
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-
-// user data update functions
-require_once QUERIES_DIR . '/staff/admin/admin_account_update.php';
-
-// guild, email functions
-require_once QUERIES_DIR . '/guilds/guild_select.php';
-require_once QUERIES_DIR . '/guilds/guild_increment_member.php';
-require_once QUERIES_DIR . '/changing_emails/changing_email_insert.php';
-require_once QUERIES_DIR . '/changing_emails/changing_email_select.php';
-require_once QUERIES_DIR . '/changing_emails/changing_email_complete.php';
-
-// admin log
-require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
+require_once QUERIES_DIR . '/admin_actions.php';
+require_once QUERIES_DIR . '/changing_emails.php';
 
 // variables
-$user_id = find('id');
-$action = find('action', 'lookup');
+$user_id = (int) default_get('id', 0);
+$action = default_post('action', 'lookup');
 $header = false;
 
 try {
@@ -27,16 +15,16 @@ try {
     rate_limit('update-account-'.$ip, 60, 10);
     rate_limit('update-account-'.$ip, 5, 2);
 
-    //connect
+    // connect
     $pdo = pdo_connect();
 
-    //make sure you're an admin
+    // make sure you're an admin
     $admin = check_moderator($pdo, null, true, 3);
 
     // form
     if ($action === 'lookup') {
-        output_header('Update PR2 Account', true, true);
         $header = true;
+        output_header('Update PR2 Account', true, true);
     
         echo '<form name="input" action="update_account.php" method="post">';
 
@@ -68,7 +56,7 @@ try {
         }
         echo 'Description of Changes: <input type="text" size="100" name="account_changes"><br>';
         echo '<input type="hidden" name="action" value="update">';
-        echo "<input type='hidden' name='id' value='$user_id'>";
+        echo "<input type='hidden' name='post_id' value='$user_id'>";
 
         echo '<br/>';
         echo '<input type="submit" value="Submit">&nbsp;(no confirmation!)';
@@ -81,30 +69,27 @@ try {
             .'<br>'
             .'Find what each part ID is <a href="part_ids.php" target="blank">here</a>.<br><br>'
             .'NOTE: Make sure the user is logged out of PR2 before trying to change parts.</pre>';
-    }
-
-
-    // update
-    if ($action === 'update') {
+    } // update
+    elseif ($action === 'update') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
         $user_id = $admin;
         // make some nice variables
         $admin_ip = get_ip();
-        $user_id = (int) find('id');
-        $user_name = find('name');
-        $email = find('email');
-        $guild_id = (int) find('guild');
-        $hats = find('hats');
-        $heads = find('heads');
-        $bodies = find('bodies');
-        $feet = find('feet');
-        $ehats = find('eHats');
-        $eheads = find('eHeads');
-        $ebodies = find('eBodies');
-        $efeet = find('eFeet');
-        $account_changes = find('account_changes');
+        $user_id = (int) default_post('post_id');
+        $user_name = default_post('name');
+        $email = default_post('email');
+        $guild_id = (int) default_post('guild');
+        $hats = default_post('hats');
+        $heads = default_post('heads');
+        $bodies = default_post('bodies');
+        $feet = default_post('feet');
+        $ehats = default_post('eHats');
+        $eheads = default_post('eHeads');
+        $ebodies = default_post('eBodies');
+        $efeet = default_post('eFeet');
+        $account_changes = default_post('account_changes');
 
         // check for description of changes
         if (is_empty($account_changes)) {
@@ -112,18 +97,10 @@ try {
         }
 
         // make sure none of the part values are blank to avoid server crashes
-        if (is_empty($hats, false)) {
-            $hats = "1";
-        }
-        if (is_empty($heads, false)) {
-            $heads = "1";
-        }
-        if (is_empty($bodies, false)) {
-            $bodies = "1";
-        }
-        if (is_empty($feet, false)) {
-            $feet = "1";
-        }
+        $hats = is_empty($hats, false) ? '1' : $hats;
+        $heads = is_empty($heads, false) ? '1' : $heads;
+        $bodies = is_empty($bodies, false) ? '1' : $bodies;
+        $feet = is_empty($feet, false) ? '1' : $feet;
 
         // call user information
         $user = user_select($pdo, $user_id);
@@ -209,20 +186,18 @@ try {
         // log the action in the admin log
         $admin_name = $admin->name;
         $admin_id = $admin->user_id;
-        admin_action_insert(
-            $pdo,
-            $admin_id,
-            "$admin_name updated player $user_name from $admin_ip. {
-                update_user: $updated_user,
-                update_pr2: $updated_pr2,
-                update_epic: $updated_epic,
-                changes: $account_changes}",
-            0,
-            $admin_ip
-        );
+        $msg = "$admin_name updated player $user_name from $admin_ip. {"
+            ."update_user: $updated_user, "
+            ."update_pr2: $updated_pr2, "
+            ."update_epic: $updated_epic, "
+            ."changes: $account_changes}";
+        admin_action_insert($pdo, $admin_id, $msg, 0, $admin_ip);
 
         header("Location: player_deep_info.php?name1=" . urlencode($user_name));
         die();
+    } // this won't happen under normal circumstances
+    else {
+        throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
     if ($header === false) {

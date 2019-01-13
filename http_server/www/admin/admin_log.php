@@ -1,24 +1,24 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/staff/actions/admin_actions_select.php';
+require_once QUERIES_DIR . '/admin_actions.php';
 
-$start = find('start', 0);
-$count = find('count', 25);
+$start = (int) default_get('start', 0);
+$count = (int) default_get('count', 25);
 
 try {
     // rate limiting
     rate_limit('admin-log-'.$ip, 60, 10, 'Wait a bit before searching again.');
     rate_limit('admin-log-'.$ip, 5, 2);
-    
+
     // connect
     $pdo = pdo_connect();
 
-    //make sure you're an admin
+    // make sure you're an admin
     is_staff($pdo, token_login($pdo), true, true, 3);
 
-    //get actions for this page
+    // get actions
     $actions = admin_actions_select($pdo, $start, $count);
 
     // output header
@@ -38,7 +38,8 @@ try {
     output_pagination($start, $count);
 } catch (Exception $e) {
     output_header('Error');
-    echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    $error = $e->getMessage();
+    echo "Error: $error";
 } finally {
     output_footer();
 }

@@ -1,14 +1,13 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/contests/edit_contest_fns.php';
-require_once QUERIES_DIR . '/contests/contest_select.php';
-require_once QUERIES_DIR . '/contests/contest_update.php';
-require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
+require_once QUERIES_DIR . '/admin_actions.php';
+require_once QUERIES_DIR . '/contests.php';
 
 $ip = get_ip();
-$action = find_no_cookie('action', 'form');
+$action = default_post('action', 'form');
 $contest_id = (int) find_no_cookie('contest_id', 0);
 $header = false;
 
@@ -31,8 +30,8 @@ try {
 
     // form
     if ($action === 'form') {
-        output_header('Edit Contest', true, true);
         $header = true;
+        output_header('Edit Contest', true, true);
         output_form($contest);
         output_footer();
     } // add

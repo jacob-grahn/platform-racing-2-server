@@ -1,16 +1,15 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/contests/part_vars.php';
-require_once QUERIES_DIR . '/contests/contest_select.php';
-require_once QUERIES_DIR . '/contest_prizes/contest_prizes_select_by_contest.php';
-require_once QUERIES_DIR . '/contest_prizes/contest_prize_delete.php';
-require_once QUERIES_DIR . '/staff/actions/admin_action_insert.php';
+require_once QUERIES_DIR . '/admin_actions.php';
+require_once QUERIES_DIR . '/contests.php';
+require_once QUERIES_DIR . '/contest_prizes.php';
 
 $ip = get_ip();
-$contest_id = (int) find('contest_id', 0);
-$action = find('action', 'form');
+$contest_id = (int) find_no_cookie('contest_id', 0);
+$action = default_post('action', 'form');
 $header = false;
 
 try {
@@ -49,8 +48,8 @@ try {
     if ($action === 'form') {
         $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
         echo "Remove Prizes from <b>$html_contest_name</b>"
-            ."<br><br>"
-            ."<form method='post'>";
+            .'<br><br>'
+            .'<form method="post">';
 
         foreach ($prizes as $prize) {
             $prize_id = (int) $prize->prize_id;
@@ -65,9 +64,7 @@ try {
             $part_name = to_part_name($part_type, $part_id);
             $disp_type = ucfirst($part_type);
             $prize_name = "$part_name $disp_type";
-            if ($is_epic == true) {
-                $prize_name = "Epic " . $prize_name;
-            }
+            $prize_name = $is_epic === true ? "Epic $prize_name" : $prize_name;
 
             echo "<input type='checkbox' name='prize_$prize_id' id='prize_$prize_id'>"
                 ."<label for='prize_$prize_id'> $prize_name</label>"
@@ -85,7 +82,7 @@ try {
         echo '<br>';
         echo '<pre>Check the boxes of the prizes you wish to remove.<br>'
             .'When you\'re done, click "Remove Contest Prize(s)".</pre>';
-    } // add
+    } // remove
     elseif ($action === 'remove') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
@@ -122,18 +119,9 @@ try {
             }
 
             // log the action in the admin log
-            $admin_name = $admin->name;
-            $admin_id = $admin->user_id;
-            admin_action_insert(
-                $pdo,
-                $admin_id,
-                "$admin_name removed the $prize_name from contest $contest_name from $ip. {
-                    contest_id: $contest_id,
-                    contest_name: $contest_name,
-                    prize_id: $prize_id}",
-                0,
-                $ip
-            );
+            $msg = "$admin->name removed the $prize_name from contest $contest_name from $ip. "
+                ."{contest_id: $contest_id, contest_name: $contest_name, prize_id: $prize_id}";
+            admin_action_insert($pdo, $admin->user_id, $msg, 0, $ip);
         }
 
         // if no prizes were selected to be removed, tell the user

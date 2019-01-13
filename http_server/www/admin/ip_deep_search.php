@@ -1,10 +1,8 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/ip_deep_search_fns.php';
-require_once QUERIES_DIR . '/staff/admin/users_count_from_ip_expanded.php';
-require_once QUERIES_DIR . '/staff/admin/users_select_by_ip_expanded.php';
 
 $ip = default_get('ip', '');
 $html_ip = htmlspecialchars($ip, ENT_QUOTES);
@@ -46,9 +44,7 @@ try {
             $end = $start + count($users);
             echo "$user_count $user_s associated with the IP address \"$ip\".";
             echo "<br>Showing results $start - $end.<br>";
-            if ($end == $user_count) {
-                $is_end = true;
-            }
+            $is_end = $end === $user_count ? true : false;
         } else {
             echo "No results found for the search parameters.";
         }
@@ -64,15 +60,14 @@ try {
             $url_name = htmlspecialchars(urlencode($user->name)); // url encode the name
             $group_color = $group_colors[(int) $user->power]; // group color
             $active_date = date('j/M/Y', (int) $user->time); // format the last active date
-            if ($active_date == '30/Nov/-0001') {
-                $active_date = 'Never'; // show never if never logged in
-            }
+            $active_date = $active_date === '30/Nov/-0001' ? 'Never' : $active_date; // show never if never logged in
 
             // display the name with the color and link to the player search page
-            echo "<a href='player_deep_info.php?name1=$url_name'
-                style='color: #$group_color;
-                text-decoration: underline;'>
-                $name</a> | Last Active: $active_date<br>";
+            echo "<a href='player_deep_info.php?name1=$url_name'"
+                ."style='color: #$group_color;"
+                ."text-decoration: underline;'>"
+                ."$name</a> | Last Active: $active_date"
+                ."<br>";
         }
 
         // output page navigation
@@ -84,7 +79,7 @@ try {
         output_search('', false);
     }
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    $error = $e->getMessage();
     output_header('Error');
     echo "Error: $error";
 } finally {
