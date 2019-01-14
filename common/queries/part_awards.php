@@ -85,3 +85,27 @@ function part_awards_select_list($pdo)
 
     return $awards;
 }
+
+
+function part_awards_select_by_user($pdo, $user_id)
+{
+    $stmt = $pdo->prepare('
+        SELECT type, part
+          FROM part_awards
+         WHERE user_id = :user_id
+    ');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not fetch the list of part awards.');
+    }
+
+    $awards = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    if (empty($awards)) {
+        return false;
+    }
+
+    return $awards;
+}
