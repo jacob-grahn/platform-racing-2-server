@@ -2,9 +2,9 @@
 *.icloud
 composer.phar
 env.php
-http_server/www/emblems/*
-http_server/www/files/*
-http_server/www/levels/*
-http_server/www/music/*
+http_server/emblems/*
+http_server/files/*
+http_server/levels/*
+http_server/music/*
 last-pm.txt
 vendor
