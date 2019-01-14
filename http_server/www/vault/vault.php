@@ -2,14 +2,15 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/pages/vault/vault_fns.php';
-require_once QUERIES_DIR . '/users/user_select_expanded.php';
-require_once QUERIES_DIR . '/servers/server_select.php';
-require_once QUERIES_DIR . '/guilds/guild_select.php';
-require_once QUERIES_DIR . '/rank_token_rentals/rank_token_rentals_count.php';
+require_once QUERIES_DIR . '/servers.php';
+require_once QUERIES_DIR . '/rank_token_rentals.php';
 
 $ip = get_ip();
+
+$ret = new stdClass();
+$ret->success = false;
 
 try {
     // rate limiting
@@ -27,24 +28,21 @@ try {
     rate_limit('vault-listing-'.$user_id, 30, 10);
 
     // create listing
-    $raw_listings = describeVault(
-        $pdo,
-        $user_id,
-        [
-            'stats-boost',
-            'epic-everything',
-            'guild-fred',
-            'guild-ghost',
-            'guild-artifact',
-            'happy-hour',
-            'rank-rental',
-            'djinn-set',
-            'king-set',
-            'queen-set',
-            'server-1-day',
-            'server-30-days'
-        ]
-    );
+    $slug_array = [
+        'stats-boost',
+        'epic-everything',
+        'guild-fred',
+        'guild-ghost',
+        'guild-artifact',
+        'happy-hour',
+        'rank-rental',
+        'djinn-set',
+        'king-set',
+        'queen-set',
+        'server-1-day',
+        'server-30-days'
+    ];
+    $raw_listings = describeVault($pdo, $user_id, $slug_array);
 
     // weed out only the info we want to return
     $listings = array();
@@ -53,15 +51,13 @@ try {
     }
 
     // reply
-    $r = new stdClass();
-    $r->success = true;
-    $r->listings = $listings;
-    $r->title = 'Black Friday';
-    $r->sale = true;
-    echo json_encode($r);
+    $ret->success = true;
+    $ret->listings = $listings;
+    $ret->title = 'Vault of Magics';
+    $ret->sale = false;
 } catch (Exception $e) {
-    $r = new stdClass();
-    $r->state = 'canceled';
-    $r->error = $e->getMessage();
-    echo json_encode($r);
+    $ret->state = 'canceled';
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }

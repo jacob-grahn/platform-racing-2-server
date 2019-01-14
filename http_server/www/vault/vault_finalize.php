@@ -2,9 +2,8 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/pages/vault/vault_fns.php';
-require_once QUERIES_DIR . '/users/user_select.php';
 
 $game_auth_token = find('game_auth_token');
 $kong_user_id = find('kong_user_id');
@@ -13,7 +12,7 @@ $item_id = -1;
 $api_key = $KONG_API_PASS;
 
 try {
-    //--- sanity check
+    // sanity checks: is data missing?
     if (!isset($game_auth_token)) {
         throw new Exception('Invalid game_auth_token');
     }
@@ -24,25 +23,22 @@ try {
         throw new Exception('Invalid server_id');
     }
 
-
-    //--- connect
+    // connect
     $pdo = pdo_connect();
 
-
-    //--- gather infos
+    // get user info
     $user_id = token_login($pdo);
     $user = user_select($pdo, $user_id);
 
+    // sanity check: are they a guest?
     if ($user->power <= 0) {
-        throw new Exception('Guests can not buy things...');
+        throw new Exception('Guests can\'t buy things. How about creating your own account?');
     }
 
-
-    //--- get the list of items they own
+    // get the list of items they own
     $items = get_owned_items($api_key, $kong_user_id);
 
-
-    //--- loop through and assign any items to their account
+    // loop through and assign any items to their account
     $results = array();
     foreach ($items as $item) {
         $item_id = $item->id;
@@ -54,15 +50,15 @@ try {
         }
     }
 
-    //--- reply
-    $r = new stdClass();
-    $r->results = $results;
+    // reply
+    $ret = new stdClass();
+    $ret->results = $results;
     if (isset($reply)) {
-        $r->message = $reply;
+        $ret->message = $reply;
     }
-    echo json_encode($r);
 } catch (Exception $e) {
-    $r = new stdClass();
-    $r->error = $e->getMessage();
-    echo json_encode($r);
+    $ret = new stdClass();
+    $ret->error = $e->getMessage();
+} finally {
+    die(json_encode($ret));
 }
