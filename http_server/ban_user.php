@@ -63,11 +63,11 @@ try {
     }
 
     // make some variables
-    $ban_ip = !is_empty($force_ip) ? $force_ip : $target->ip;
+    $ban_ip = !is_empty($force_ip) && filter_var($force_ip, FILTER_VALIDATE_IP) ? $force_ip : $target->ip;
     $banned_power = $target->power;
     $ban_uid = (int) $target->user_id;
 
-    //throw out non-banned info, set ban types
+    // throw out non-banned info, set ban types
     $is_ip = 0;
     $is_acc = 0;
     switch ($type) {
