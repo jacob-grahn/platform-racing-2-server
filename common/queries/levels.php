@@ -250,7 +250,7 @@ function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $son
             min_level = :min_level,
             song = :song
     ');
-    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':user_id', $uid, PDO::PARAM_INT);
     $stmt->bindValue(':title', $name, PDO::PARAM_STR);
     $stmt->bindValue(':note', $note, PDO::PARAM_STR);
     $stmt->bindValue(':live', $live, PDO::PARAM_INT);
@@ -258,11 +258,11 @@ function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $son
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':min_level', $rank, PDO::PARAM_INT);
     $stmt->bindValue(':song', $song, PDO::PARAM_INT);
-    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
-    $stmt->bindValue(':play_count', $play_count, PDO::PARAM_INT);
+    $stmt->bindValue(':level_id', $lid, PDO::PARAM_INT);
+    $stmt->bindValue(':play_count', $plays, PDO::PARAM_INT);
     $stmt->bindValue(':votes', $votes, PDO::PARAM_INT);
     $stmt->bindValue(':rating', $rating, PDO::PARAM_STR);
-    $stmt->bindValue(':version', $version, PDO::PARAM_INT);
+    $stmt->bindValue(':version', $ver, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {

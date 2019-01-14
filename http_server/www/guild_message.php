@@ -37,7 +37,7 @@ try {
         throw new Exception('You are not in a guild.');
     }
     if ($user->power <= 0) {
-        $e = 'Guests can\'t send guild messages. To access this feature, please create your own account.'
+        $e = 'Guests can\'t send guild messages. To access this feature, please create your own account.';
         throw new Exception($e);
     }
 

@@ -84,9 +84,8 @@ Class ChatMessage
     // handle a chat command
     private function handleCommand()
     {
-        // globals and variables
-        global $guild_id, $guild_owner, $player_array, $port, $server_name,
-            $server_id, $server_expire_time, $uptime, $pdo;
+        global $guild_id, $guild_owner;
+
         $t_arr = ['t', 'tournament'];
         $effect_arr = ['b', 'u', 'i', 'li'];
         $emotes_arr = ['emotes', 'emoticons', 'emojis', 'smilies', 'smiles'];
@@ -387,7 +386,7 @@ Class ChatMessage
     // gets time left for server owners
     private function commandSOTimeLeft()
     {
-        global $guild_id;
+        global $guild_id, $server_expire_time;
 
         if ($guild_id !== 0 && $guild_id !== 183) {
             $this->write(
@@ -428,7 +427,7 @@ Class ChatMessage
     // disconnects a player without disciplining them
     private function commandModDisconnect()
     {
-        global $server_name;
+        global $pdo, $server_name;
 
         $msg_lower = strtolower($this->message);
         $dc_name = trim(substr($this->message, 12)); // for /disconnect

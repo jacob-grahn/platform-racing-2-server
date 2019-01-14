@@ -73,7 +73,7 @@ function get_ip()
 function is_trusted_ref()
 {
     $ref = $_SERVER['HTTP_REFERER'];
-    return true; /*(strpos($ref, 'http://pr2hub.com/') === 0
+    return (strpos($ref, 'http://pr2hub.com/') === 0
         || strpos($ref, 'https://pr2hub.com/') === 0
         || strpos($ref, 'http://cdn.jiggmin.com/') === 0
         || strpos($ref, 'http://chat.kongregate.com/') === 0
@@ -81,7 +81,7 @@ function is_trusted_ref()
         || strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') === 0
         || strpos($ref, 'http://game10110.konggames.com/games/Jiggmin/platform-racing-2') === 0
         || strpos($ref, 'http://naxxol.github.io/') === 0 // advanced LE
-    );*/
+    );
 }
 
 

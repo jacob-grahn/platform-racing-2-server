@@ -1,5 +1,6 @@
 <?php
 
+
 // unlock the super booster
 function process_unlock_super_booster($socket, $data)
 {
@@ -12,6 +13,7 @@ function process_unlock_super_booster($socket, $data)
         $socket->write('ok`');
     }
 }
+
 
 // unlock a temporary perk
 function process_unlock_perk($socket, $data)

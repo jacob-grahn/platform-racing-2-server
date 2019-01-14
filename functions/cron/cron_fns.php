@@ -162,7 +162,6 @@ function update_artifact($pdo)
     $perc = $elapsed / 259200; // 3 days
     $perc = $perc > 1 ? 1 : $perc; // full
     $hide_perc = 1 - $perc;
-    $disp_perc = $hide_perc * 100;
     $hide_characters = round($len * $hide_perc);
 
     // generate random
@@ -183,7 +182,7 @@ function update_artifact($pdo)
                 break;
             }
         }
-        $arr[$index  = '_';
+        $arr[$index] = '_';
         $hide_characters--;
     }
     
@@ -280,8 +279,8 @@ function delete_old_accounts($pdo)
     }
     
     // tell the world
-    $total_secs = time() - $start_time;
-    $time = format_duration($total_secs);
+    $t_elapsed = time() - $start_time;
+    $time = format_duration($t_elapsed);
     output(
         "Old account deletion completed. Stats:\n".
         "Spared: $spared / $num_users\n".
