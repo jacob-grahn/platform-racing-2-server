@@ -772,7 +772,7 @@ class Game extends Room
     }
 
 
-    private function sort_finish_array_race($a, $b)
+    protected function sort_finish_array_race($a, $b)
     {
         $a_time = $a->finish_time;
         $b_time = $b->finish_time;
@@ -800,7 +800,7 @@ class Game extends Room
     }
 
 
-    private function sort_finish_array_deathmatch($a, $b)
+    protected function sort_finish_array_deathmatch($a, $b)
     {
         $a_time = $a->finish_time;
         $b_time = $b->finish_time;
@@ -829,7 +829,7 @@ class Game extends Room
 
 
     // more objectives makes the winner. objective ties are determined by finish times
-    private function sort_finish_array_objective($a, $b)
+    protected function sort_finish_array_objective($a, $b)
     {
         $ao = count($a->objectives_reached);
         $bo = count($b->objectives_reached);
@@ -852,7 +852,7 @@ class Game extends Room
     }
 
 
-    private function sort_finish_array_egg($a, $b)
+    protected function sort_finish_array_egg($a, $b)
     {
         if ($a->eggs < $b->eggs) {
             return 1;
