@@ -596,8 +596,7 @@ class Player
                 "type /mod promote *player name here* in the chat. ".
                 "They'll remain modded until they log out.<br><br>".
                 "For more information about what commands you can use, ".
-                "type /help in the chat."
-            );
+                "type /help in the chat.");
         }
     }
 
@@ -608,8 +607,7 @@ class Player
         $this->write("message`Welcome to Platform Racing 2!<br><br>".
             "You're a guest, which means you'll have limited privileges. ".
             "To gain full functionality, log out and create your own account. ".
-            "<br><br>Thanks for playing, I hope you enjoy!<br>-Jiggmin"
-        );
+            "<br><br>Thanks for playing, I hope you enjoy!<br>-Jiggmin");
     }
 
 
@@ -717,12 +715,29 @@ class Player
         }
 
         pr2_update(
-            $pdo, $this->user_id, $rank, $exp_points,
-            $hatCol, $headCol, $bodyCol, $feetCol,
-            $hatCol2, $headCol2, $bodyCol2, $feetCol2,
-            $hat, $head, $body, $feet,
-            $hat_arr, $head_arr, $body_arr, $feet_arr,
-            $speed, $accel, $jump
+            $pdo,
+            $this->user_id,
+            $rank,
+            $exp_points,
+            $hatCol,
+            $headCol,
+            $bodyCol,
+            $feetCol,
+            $hatCol2,
+            $headCol2,
+            $bodyCol2,
+            $feetCol2,
+            $hat,
+            $head,
+            $body,
+            $feet,
+            $hat_arr,
+            $head_arr,
+            $body_arr,
+            $feet_arr,
+            $speed,
+            $accel,
+            $jump
         );
 
         epic_upgrades_upsert($pdo, $this->user_id, $ehat_arr, $ehead_arr, $ebody_arr, $efeet_arr);

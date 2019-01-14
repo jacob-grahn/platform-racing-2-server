@@ -278,9 +278,19 @@ function check_if_banned($pdo, $user_id, $ip)
 
 // backs up a level
 function backup_level(
-    $pdo, $s3,
-    $uid, $lid,
-    $ver, $title, $live = 0, $rate = 0, $vote = 0, $note = '', $rank = 0, $song = 0, $plays = 0
+    $pdo,
+    $s3,
+    $uid,
+    $lid,
+    $ver,
+    $title,
+    $live = 0,
+    $rate = 0,
+    $vote = 0,
+    $note = '',
+    $rank = 0,
+    $song = 0,
+    $plays = 0
 ) {
     $filename = "$lid.txt";
     $backup_filename = "$lid-v$ver.txt";

@@ -1,10 +1,10 @@
 <?php
+// phpcs:ignoreFile
 
 namespace pr2\multi;
 
 class Prize
 {
-
     private $type;
     private $id;
     private $name;
@@ -62,7 +62,6 @@ class Prize
 
 class Prizes
 {
-
     private static $arr;
 
 

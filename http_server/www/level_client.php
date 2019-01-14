@@ -9,5 +9,3 @@ echo '<div class="game_holder">'
     .'</div>';
 
 output_footer();
-
-?>

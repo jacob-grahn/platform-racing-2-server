@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 
 namespace pr2\multi;
 

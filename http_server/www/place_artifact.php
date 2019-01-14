@@ -21,7 +21,7 @@ try {
 
     // check referrer
     if (!is_trusted_ref()) {
-       throw new Exception("Incorrect referrer.");
+        throw new Exception("Incorrect referrer.");
     }
 
     // rate limiting

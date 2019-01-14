@@ -11,6 +11,12 @@ set_time_limit(0);
 // env
 require_once __DIR__ . '/../config.php';
 
+
+// ignore travis warnings and define server salt
+// phpcs:disable
+define('SALT', $COMM_PASS);
+// phpcs:enable
+
 require_once COMMON_DIR . '/multi_queries.php';
 require_once SOCKET_DAEMON_FILES;
 require_once FNS_DIR . '/common_fns.php';
@@ -72,7 +78,6 @@ $server_name = '';
 $guild_id = 0;
 $guild_owner = 0;
 $server_expire_time = '';
-define('SALT', $COMM_PASS);
 
 $login_array = array();
 $game_array = array();

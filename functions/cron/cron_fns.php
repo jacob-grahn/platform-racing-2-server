@@ -488,8 +488,7 @@ function fah_award_token($pdo, $user_id, $name, $score, $column, $available_toke
 
     try {
         // verify that the correct amount of points has been folded for this prize
-        if (
-            ($column == 'r1' && $score < 1)
+        if (($column == 'r1' && $score < 1)
             || ($column == 'r2' && $score < 500)
             || ($column == 'r3' && $score < 1000)
             || ($column == 'r4' && $score < 1000000)

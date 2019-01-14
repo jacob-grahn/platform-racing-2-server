@@ -2,7 +2,7 @@
 
 namespace pr2\multi;
 
-Class ChatMessage
+class ChatMessage
 {
 
     public $from_id;
@@ -645,8 +645,7 @@ Class ChatMessage
                     'Jump: 65<br><br>'.
                     'To turn off tournament mode, type /t off. '.
                     'To find out whether tournament mode is on or off, '.
-                    'type /t status.'
-                );
+                    'type /t status.');
             } elseif ($msg_lower === '/t status') {
                 tournament_status($this->player);
             } else {
@@ -846,5 +845,4 @@ Class ChatMessage
             unset($this->$key, $key, $var);
         }
     }
-
 }

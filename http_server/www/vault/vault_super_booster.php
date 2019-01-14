@@ -41,7 +41,7 @@ try {
 
     // reply
     $ret->success = true;
-    $ret->message = 'Super Booster active! You will start your next race with +10 speed, +10 jump, and +10 acceleration.';
+    $ret->message = 'Super Booster active! You will start your next race with +10 speed, jump, and acceleration.';
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {

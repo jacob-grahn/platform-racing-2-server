@@ -12,10 +12,10 @@ class TemporaryItems
     {
         $match = false;
         foreach (self::$items as $item) {
-            if ($item->type === $type && $item->part_id === $part_id &&
-                ($item->guild_id === $guild_id || $item->user_id === $part_id)
+            if ($item->type === $type
+                && $item->part_id === $part_id
+                && ($item->guild_id === $guild_id || $item->user_id === $part_id)
             ) {
-                var_dump($item->type, $type, $item->part_id, $part_id, $item->guild_id, $guild_id, $item->user_id, $part_id);
                 $item->expire_time += $duration;
                 $match = true;
                 break;
