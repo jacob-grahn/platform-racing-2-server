@@ -79,8 +79,6 @@ class PR2Client extends \chabot\SocketServerClient
 
     public function onRead()
     {
-        output("Read: $this->read_buffer");
-
         if ($this->read_buffer === '<policy-file-request/>'.chr(0x00)) {
             $this->read_buffer = '';
             $this->write_buffer = '<cross-domain-policy>'.
@@ -116,7 +114,6 @@ class PR2Client extends \chabot\SocketServerClient
             $buffer = $hash_bit . '`' . $buffer;
         }
         $buffer .= chr(0x04);
-        output("Write: $buffer");
         parent::write($buffer, $length);
         $this->send_num++;
     }
