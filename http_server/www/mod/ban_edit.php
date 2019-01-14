@@ -1,14 +1,15 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/bans/ban_update.php';
-require_once QUERIES_DIR . '/bans/ban_select.php';
-require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
+require_once QUERIES_DIR . '/bans.php';
+require_once QUERIES_DIR . '/mod_actions.php';
 
-$action = find_no_cookie('action', 'edit');
-$ban_id = (int) find_no_cookie('ban_id', 0);
+$action = default_post('action', 'edit');
+$ban_id = (int) default_get('ban_id', 0);
 $ip = get_ip();
+
+$header = false;
 
 // non-validated try/catch
 try {
@@ -27,68 +28,59 @@ try {
     }
 
     // if they're trying to update
-    if ($action == 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         // update the ban
-        $ban_id = (int) find('ban_id');
-        $account_ban = (int) (bool) find('account_ban');
-        $ip_ban = (int) (bool) find('ip_ban');
-        $expire_time = find('expire_time');
-        $notes = find('notes');
+        $ban_id = (int) default_post('ban_id');
+        $account_ban = (int) (bool) default_post('account_ban');
+        $ip_ban = (int) (bool) default_post('ip_ban');
+        $expire_time = default_post('expire_time');
+        $notes = default_post('notes');
         ban_update($pdo, $ban_id, $account_ban, $ip_ban, $expire_time, $notes);
 
         // action log
-        $is_account_ban = check_value($account_ban, 1);
-        $is_ip_ban = check_value($ip_ban, 1);
-        if (is_empty($notes)) {
-            $disp_notes = "no notes";
-        } else {
-            $disp_notes = "notes: $notes";
-        }
+        $acc = check_value($account_ban, 1);
+        $ip = check_value($ip_ban, 1);
+        $notes = is_empty($notes) ? 'no notes' : "notes: $notes";
 
         // record the change
-        $mod_id = $mod->user_id;
+        $mod_id = (int) $mod->user_id;
         $mod_name = $mod->name;
-        mod_action_insert(
-            $pdo,
-            $mod_id,
-            "$mod_name edited ban $ban_id from $ip
-                {
-                    account_ban: $is_account_ban,
-                    ip_ban: $is_ip_ban,
-                    expire_time: $expire_time, $disp_notes
-                }
-            ",
-            0,
-            $ip
-        );
+        $msg = "$mod_name edited ban $ban_id from $ip {acc_ban: $acc, ip_ban: $ip, expire_time: $expire_time, $notes}";
+        mod_action_insert($pdo, $mod_id, $msg, 0, $ip);
 
         // redirect to the ban listing
-        header("Location: https://pr2hub.com/bans/show_record.php?ban_id=$ban_id");
+        header("Location: /bans/show_record.php?ban_id=$ban_id");
         die();
-    } elseif ($action == 'edit') {
+    } elseif ($action === 'edit') {
         $ban = ban_select($pdo, $ban_id);
-        output_header('Edit Ban', true);
+        $header = true;
+        output_header('Edit Ban', $mod->power >= 2, (int) $mod->power === 3);
 
-        // check if the boxes are checked courtesy of data_fns.php
+        // check if the boxes are checked
         $ip_checked = check_value($ban->ip_ban, 1, 'checked="checked"', '');
         $acc_checked = check_value($ban->account_ban, 1, 'checked="checked"', '');
 
+        // safety first
+        $notes = htmlspecialchars($ban->notes, ENT_QUOTES);
+
         // show the form
-        echo "<form method='post'>
-            <input type='hidden' value='update' name='action'>
-            <input type='hidden' value='$ban->ban_id' name='ban_id'>
-            <p>Expire Date <input type='text' value='$ban->expire_datetime' name='expire_time'></p>
-            <p>IP Ban <input type='checkbox' $ip_checked name='ip_ban'></p>
-            <p>Account Ban <input type='checkbox' $acc_checked name='account_ban'></p>
-            <p>Notes <textarea rows='4' cols='50' name='notes'>$ban->notes</textarea>
-            <p><input type='submit' value='submit'></p>
-            </form>";
+        echo "<form method='post'>"
+            .'<input type="hidden" value="update" name="action">'
+            ."<input type='hidden' value='$ban->ban_id' name='ban_id'>"
+            ."<p>Expire Date <input type='text' value='$ban->expire_datetime' name='expire_time'></p>"
+            ."<p>IP Ban <input type='checkbox' $ip_checked name='ip_ban'></p>"
+            ."<p>Account Ban <input type='checkbox' $acc_checked name='account_ban'></p>"
+            ."<p>Notes <textarea rows='4' cols='50' name='notes'>$notes</textarea>"
+            .'<p><input type="submit" value="submit"></p>'
+            .'</form>';
     } else {
         throw new Exception('Unknown action specified.');
     }
 } catch (Exception $e) {
+    if ($header === false) {
+        output_header('Error');
+    }
     $error = $e->getMessage();
-    output_header('Error');
     echo "Error: $error";
 } finally {
     output_footer();

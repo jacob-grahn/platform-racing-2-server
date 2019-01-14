@@ -37,8 +37,8 @@ try {
         } elseif ((int) $row->account_ban === 1) {
             $ban_type = 'account is';
         }
-        $banned = "<a href='show_record.php?ban_id=$ban_id'>Yes</a>. Your $ban_type banned until $ban_end_date. ".
-                    "Reason: $reason";
+        $banned = "<a href='show_record.php?ban_id=$ban_id'>Yes</a>. Your $ban_type banned until $ban_end_date. "
+            ."Reason: $reason";
     }
 
     // count how many times they have been banned

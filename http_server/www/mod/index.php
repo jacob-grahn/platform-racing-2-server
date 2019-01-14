@@ -1,3 +1,3 @@
 <?php
 
-require_once WWW_ROOT . '/mod/reported_messages.php';
+require_once WWW_ROOT . '/mod/player_info.php';

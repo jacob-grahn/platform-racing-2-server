@@ -1,13 +1,17 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+header("Content-type: text/plain");
+
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/staff/actions/mod_action_insert.php';
-require_once QUERIES_DIR . '/messages_reported/messages_reported_archive.php';
+require_once QUERIES_DIR . '/mod_actions.php';
+require_once QUERIES_DIR . '/messages_reported.php';
 
 $message_id = (int) default_get('message_id', 0);
 $ip = get_ip();
+
 $ret = new stdClass();
+$ret->success = false;
 
 try {
     // rate limiting
@@ -27,13 +31,12 @@ try {
     $mod_name = $mod->name;
     mod_action_insert($pdo, $mod_id, "$mod_name archived the report of PM $message_id from $ip.", 0, $ip);
 
-    // tell the sorry saps trying to debug
+    // tell the world
     $ret->success = true;
     $ret->message_id = $message_id;
 } catch (Exception $e) {
-    $ret->success = false;
     $ret->error = $e->getMessage();
     $ret->message_id = $message_id;
 } finally {
-    echo json_encode($ret);
+    die(json_encode($ret));
 }

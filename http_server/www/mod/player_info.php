@@ -1,16 +1,14 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/player_search_fns.php';
-require_once QUERIES_DIR . '/pr2/pr2_select_true_rank.php';
-require_once QUERIES_DIR . '/bans/bans_select_by_user_id.php';
-require_once QUERIES_DIR . '/bans/bans_select_by_ip.php';
+require_once QUERIES_DIR . '/bans.php';
 
 $user_id = (int) default_get('user_id', 0);
 $name = default_get('name', '');
-$force_ip = find_no_cookie('force_ip');
-$ip = find_no_cookie('ip');
+$force_ip = default_get('force_ip');
+$ip = default_get('ip');
 
 $mod_ip = get_ip();
 
@@ -22,7 +20,7 @@ try {
     $pdo = pdo_connect();
 
     // make sure you're a moderator
-    is_staff($pdo, token_login($pdo), false, true);
+    $staff = is_staff($pdo, token_login($pdo), false, true);
 
     // sanity check: send IP to ip_info.php
     if ((!is_empty($ip) || !is_empty($force_ip)) && is_empty($user_id, false) && is_empty($name)) {
@@ -31,14 +29,14 @@ try {
     }
 
     // header
-    output_header('Player Info', true);
+    output_header('Player Info', $staff->mod, $staff->admin);
 
     // determine mode
     $mode = '';
-    if (!is_empty($name) && ($user_id === 0 || is_empty($user_id, false))) {
+    if (!is_empty($name) && $user_id === 0) {
         $mode = 'name';
         $user = user_select_by_name($pdo, $name, true);
-    } elseif (!is_empty($user_id, false)) {
+    } elseif ($user_id > 0) {
         $mode = 'ID';
         $user = user_select($pdo, $user_id, true);
     } else {
@@ -61,21 +59,21 @@ try {
 
     //give some more info on the current ban in effect if there is one
     if ($row !== false) {
-        $ban_id = $row->ban_id;
+        $ban_id = (int) $row->ban_id;
         $reason = htmlspecialchars($row->reason, ENT_QUOTES);
         $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
-        if ($row->ip_ban == 1 && $row->account_ban == 1 && $row->banned_name == $user_name) {
+        if ((int) $row->ip_ban === 1 && (int) $row->account_ban === 1 && $row->banned_name === $user_name) {
             $ban_type = 'account and ip are';
-        } elseif ($row->ip_ban == 1) {
+        } elseif ((int) $row->ip_ban === 1) {
             $ban_type = 'ip is';
-        } elseif ($row->account_ban == 1) {
+        } elseif ((int) $row->account_ban === 1) {
             $ban_type = 'account is';
         }
         $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes.</a> "
                  ."This $ban_type banned until $ban_end_date. Reason: $reason";
     }
 
-    // get dem infos
+    // get the pr2 information
     $pr2 = pr2_select($pdo, $user->user_id, true);
 
     // make neat variables
@@ -92,10 +90,7 @@ try {
     $account_bans = bans_select_by_user_id($pdo, $user->user_id);
     $account_ban_count = (int) count($account_bans);
     $account_ban_list = create_ban_list($account_bans);
-    $acc_lang = 'time';
-    if ($account_ban_count !== 1) {
-        $acc_lang = 'times';
-    }
+    $acc_lang = $account_ban_count !== 1 ? 'times' : 'time';
 
     // override ip
     $overridden_ip = '';
@@ -108,10 +103,7 @@ try {
     $ip_bans = bans_select_by_ip($pdo, $ip);
     $ip_ban_count = (int) count($ip_bans);
     $ip_ban_list = create_ban_list($ip_bans);
-    $ip_lang = 'time';
-    if ($ip_ban_count !== 1) {
-        $ip_lang = 'times';
-    }
+    $ip_lang = $ip_ban_count !== 1 ? 'times' : 'time';
 
     // safety first
     $html_overridden_ip = htmlspecialchars($overridden_ip, ENT_QUOTES);

@@ -1,12 +1,11 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/users/user_select.php';
 
-$user_id = find_no_cookie('user_id', 0);
-$force_ip = find_no_cookie('force_ip');
-$reason = find_no_cookie('reason');
+$user_id = default_get('user_id', 0);
+$force_ip = default_get('force_ip', '');
+$reason = htmlspecialchars(default_get('reason', ''), ENT_QUOTES);
 $ip = get_ip();
 
 try {
@@ -24,17 +23,13 @@ try {
     // make sure you're a moderator
     $mod = check_moderator($pdo);
 
-    // get the user's name
+    // output header
+    output_header('Ban User', $mod->power >= 2, (int) $mod->power === 3);
+
+    // get the user's info
     $row = user_select($pdo, $user_id);
     $name = $row->name;
-    $target_ip = $row->ip;
-
-    // output header w/ mod nav
-    output_header('Ban User', true);
-
-    if (isset($force_ip) && $force_ip != '') {
-        $target_ip = $force_ip;
-    }
+    $target_ip = filter_var($force_ip, FILTER_VALIDATE_IP) ? $force_ip : $row->ip;
 
     echo "<p>Ban $name [$target_ip]</p>";
 
@@ -45,7 +40,6 @@ try {
             ."<input type='hidden' value='$name' name='banned_name' />"
             ."<input type='text' value='$reason' name='reason' size='70' />"
             .'<select name="duration">'
-                .'<option value="60">1 Minute</option>'
                 .'<option value="3600">1 Hour</option>'
                 .'<option value="86400">1 Day</option>'
                 .'<option value="604800">1 Week</option>'
@@ -53,9 +47,9 @@ try {
                 .'<option value="31536000">1 Year</option>'
             .'</select>'
             .'<select name="type">'
-                .'<option value="account">account</option>'
-                .'<option value="ip">ip</option>'
-                .'<option value="both" selected="selected">ip and account</option>'
+                .'<option value="account">Account Only</option>'
+                .'<option value="ip">IP Only</option>'
+                .'<option value="both" selected="selected">IP and Account</option>'
             .'</select>'
             .'<input type="submit" value="Submit" />'
         .'</form>';

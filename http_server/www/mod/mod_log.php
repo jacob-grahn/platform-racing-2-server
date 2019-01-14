@@ -1,8 +1,8 @@
 <?php
 
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once QUERIES_DIR . '/staff/actions/mod_actions_select.php';
+require_once QUERIES_DIR . '/mod_actions.php';
 
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
@@ -16,13 +16,13 @@ try {
     $pdo = pdo_connect();
 
     // make sure you're a moderator
-    is_staff($pdo, token_login($pdo), false, true);
+    $staff = is_staff($pdo, token_login($pdo), false, true);
 
     // get actions for this page
     $actions = mod_actions_select($pdo, $start, $count);
 
     // output header
-    output_header('Mod Action Log', true);
+    output_header('Mod Action Log', $staff->mod, $staff->admin);
 
     // navigation
     output_pagination($start, $count);
@@ -37,8 +37,8 @@ try {
     echo '<p>---</p>';
     output_pagination($start, $count);
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    output_header("Error");
+    $error = $e->getMessage();
+    output_header("Error", $staff->mod, $staff->admin);
     echo "Error: $error";
 } finally {
     output_footer();
