@@ -31,7 +31,7 @@ function process_check_status($socket)
 }
 
 
-// disconnect player (purge tokens script for admins)
+// disconnect player
 function process_disconnect_player($socket, $data)
 {
     if ($socket->process === true) {
@@ -55,7 +55,7 @@ function process_message_player($socket, $data)
 {
     global $server_name;
     
-    if ($socket->process == true) {
+    if ($socket->process === true) {
         $obj = json_decode($data);
         $user_id = $obj->user_id;
         $message = $obj->message;
@@ -72,7 +72,7 @@ function process_message_player($socket, $data)
 // clear player's daily exp levels
 function process_start_new_day($socket)
 {
-    if ($socket->process == true) {
+    if ($socket->process === true) {
         global $player_array;
         foreach ($player_array as $player) {
             $player->start_exp_today = $player->exp_today = 0;
@@ -85,20 +85,21 @@ function process_start_new_day($socket)
 // run update cycle
 function process_update_cycle($socket, $data)
 {
-    if ($socket->process == true) {
+    if ($socket->process === true) {
         $obj = json_decode($data);
         place_artifact($obj->artifact);
         pm_notify($obj->recent_pms);
         apply_bans($obj->recent_bans);
+        set_campaign($obj->campaign);
 
-        $rep = new stdClass();
-        $rep->plays = drain_plays();
-        $rep->gp = \pr2\multi\GuildPoints::drain();
-        $rep->population = get_population();
-        $rep->status = get_status();
-        $rep->happy_hour = \pr2\multi\HappyHour::isActive();
+        $ret = new stdClass();
+        $ret->plays = drain_plays();
+        $ret->gp = \pr2\multi\GuildPoints::drain();
+        $ret->population = get_population();
+        $ret->status = get_status();
+        $ret->happy_hour = \pr2\multi\HappyHour::isActive();
 
-        $socket->write(json_encode($rep));
+        $socket->write(json_encode($ret));
     }
 }
 
@@ -110,9 +111,9 @@ function process_register_login($server_socket, $data)
         global $login_array, $player_array, $guild_id, $guild_owner;
 
         $login_obj = json_decode($data);
-        $login_id = $login_obj->login->login_id;
-        $group = $login_obj->user->power;
-        $user_id = $login_obj->user->user_id;
+        $login_id = (int) $login_obj->login->login_id;
+        $group = (int) $login_obj->user->power;
+        $user_id = (int) $login_obj->user->user_id;
 
         $socket = @$login_array[$login_id];
         unset($login_array[$login_id]);
@@ -126,7 +127,7 @@ function process_register_login($server_socket, $data)
                 $socket->write('message`There\'s an IP mismatch. Check your network settings.');
                 $socket->close();
                 $socket->onDisconnect();
-            } elseif ($guild_id != 0 && $guild_id != $login_obj->user->guild) {
+            } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild) {
                 $socket->write('message`You are not a member of this guild.');
                 $socket->close();
                 $socket->onDisconnect();
@@ -135,11 +136,13 @@ function process_register_login($server_socket, $data)
                     $existing_player = $player_array[$user_id];
                     $existing_player->write('message`You were disconnected because you logged in somewhere else.');
                     $existing_player->remove();
-                    $socket->write('message`Your account was already running on this server. '.
-                        'It has been logged out to save your data. Please log in again.');
+                    $dc_msg = 'Your account was already running on this server. '
+                        .'It has been logged out to save your data. Please log in again.';
+                    $socket->write("message`$dc_msg");
                 } else {
-                    $socket->write('message`This guest account is already online on this server. '.
-                                  'Please try again later, or create your own account.');
+                    $dc_msg = 'This guest account is already online on this server. '
+                        .'Please try again later, or create your own account.';
+                    $socket->write("message`$dc_msg");
                 }
                 $socket->close();
                 $socket->onDisconnect();
@@ -150,7 +153,7 @@ function process_register_login($server_socket, $data)
             } else {
                 $player = new \pr2\multi\Player($socket, $login_obj);
                 $socket->player = $player;
-                if ($player->user_id == $guild_owner) {
+                if ((int) $player->user_id === $guild_owner) {
                     $player->becomeServerOwner();
                 } elseif ($player->group <= 0) {
                     $player->becomeGuest();

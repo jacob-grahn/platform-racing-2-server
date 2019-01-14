@@ -12,10 +12,10 @@ class GuildPoints
     {
         $obj = self::idToObj($user_id);
         $obj->gp += $gp;
-        if (isset($obj->levels[ $level_id ])) {
-            $obj->levels[ $level_id ] += $gp;
+        if (isset($obj->levels[$level_id])) {
+            $obj->levels[$level_id] += $gp;
         } else {
-            $obj->levels[ $level_id ] = $gp;
+            $obj->levels[$level_id] = $gp;
         }
     }
 
@@ -24,8 +24,8 @@ class GuildPoints
     {
         $obj = self::idToObj($user_id);
         $prev_gp = 0;
-        if (isset($obj->levels[ $level_id ])) {
-            $prev_gp = $obj->levels[ $level_id ];
+        if (isset($obj->levels[$level_id])) {
+            $prev_gp = $obj->levels[$level_id];
         }
         return $prev_gp;
     }
@@ -36,7 +36,7 @@ class GuildPoints
         $cup = array();
         foreach (self::$arr as $obj) {
             if ($obj->gp > 0) {
-                $cup[ $obj->user_id ] = $obj->gp;
+                $cup[$obj->user_id] = $obj->gp;
                 $obj->gp = 0;
             }
         }

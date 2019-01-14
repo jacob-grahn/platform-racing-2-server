@@ -4,19 +4,13 @@
 // checks if a player has already found this artifact
 function has_found_artifact($pdo, $player)
 {
-    $user_id = $player->user_id;
-
     try {
         // make sure they haven't found this artifact before
-        $last_found_at = artifacts_found_select_time($pdo, $user_id);
-        if ($last_found_at > \pr2\multi\Artifact::$updated_time || $player->group <= 0) {
-            return true;
-        }
-
-        return false;
+        $last_found_at = artifacts_found_select_time($pdo, $player->user_id);
+        return $last_found_at > \pr2\multi\Artifact::$updated_time || $player->group <= 0;
     } catch (Exception $e) {
-        $message = $e->getMessage();
-        echo "Error: ".$message;
+        $error = $e->getMessage();
+        echo "Error: $error";
         return false;
     }
 }
@@ -35,8 +29,7 @@ function save_finder($pdo, $player)
         artifacts_found_insert($pdo, $player->user_id);
 
         // check if you were the very first
-        $first_finder = (int) \pr2\multi\Artifact::$first_finder;
-        if ($first_finder === 0) {
+        if ((int) \pr2\multi\Artifact::$first_finder === 0) {
             save_first_finder($pdo, $player);
         }
 

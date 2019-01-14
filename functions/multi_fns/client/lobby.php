@@ -147,7 +147,8 @@ function client_get_chat_rooms($socket)
         $chat_room = $temp_array[$i];
         $room_name = $chat_room->chat_room_name;
         $players = count($chat_room->player_array);
-        $str .= "`$room_name - $players chatting";
+        $lang = $players !== 1 ? 'players' : 'player';
+        $str .= "`$room_name - $players $lang";
     }
 
     if ($str === 'setChatRoomList') {

@@ -1,6 +1,7 @@
 <?php
 
-//--- loose hat ----------------------------------------------------------------------------
+
+// lose hat
 function client_loose_hat($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -10,8 +11,7 @@ function client_loose_hat($socket, $data)
 }
 
 
-
-//--- pick up a lost hat ----------------------------------------------------------------------------
+// pick up a lost hat
 function client_get_hat($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -21,8 +21,7 @@ function client_get_hat($socket, $data)
 }
 
 
-
-//--- set pos ------------------------------------------------------------------
+// set pos
 function client_p($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -32,8 +31,7 @@ function client_p($socket, $data)
 }
 
 
-
-//--- set exact pos ----------------------------------------------------------------
+// set exact pos
 function client_exact_pos($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -44,7 +42,7 @@ function client_exact_pos($socket, $data)
 
 
 
-//--- squash another player ---------------------------------------------------------------
+// squash another player
 function client_squash($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -55,7 +53,7 @@ function client_squash($socket, $data)
 
 
 
-//--- set variable ----------------------------------------------------------------
+// set variable
 function client_set_var($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -66,7 +64,7 @@ function client_set_var($socket, $data)
 
 
 
-//--- add an effect -------------------------------------------------------------
+// add an effect
 function client_add_effect($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -77,7 +75,7 @@ function client_add_effect($socket, $data)
 
 
 
-//---- use a lightning item -------------------------------------------------------
+// use a lightning item
 function client_zap($socket)
 {
     $player = $socket->getPlayer();
@@ -87,7 +85,7 @@ function client_zap($socket)
 }
 
 
-//--- hit a block ---------------------------------------------------------------
+// hit a block
 function client_hit($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -97,8 +95,7 @@ function client_hit($socket, $data)
 }
 
 
-
-//--- touch a block ---------------------------------------------------------------
+// touch a block
 function client_activate($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -108,8 +105,7 @@ function client_activate($socket, $data)
 }
 
 
-
-//--- bump a heart block ---------------------------------
+// bump a heart block
 function client_heart($socket)
 {
     $player = $socket->getPlayer();
@@ -120,8 +116,7 @@ function client_heart($socket)
 }
 
 
-
-//--- finish drawing ------------------------------------------------------------
+// finish drawing
 function client_finish_drawing($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -131,8 +126,7 @@ function client_finish_drawing($socket, $data)
 }
 
 
-
-//--- finish race ------------------------------------------------------------
+// finish race
 function client_finish_race($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -142,8 +136,7 @@ function client_finish_race($socket, $data)
 }
 
 
-
-//--- quit race -----------------------------------------------------------------
+// quit race (forfeit)
 function client_quit_race($socket)
 {
     $player = $socket->getPlayer();
@@ -153,7 +146,7 @@ function client_quit_race($socket)
 }
 
 
-//--- grab egg -----------------------------------------------------------------
+// grab egg
 function client_grab_egg($socket, $data)
 {
     $player = $socket->getPlayer();
@@ -163,8 +156,7 @@ function client_grab_egg($socket, $data)
 }
 
 
-
-//-- record single finish in objective mode -----------------------------------------------
+// record single finish in objective mode
 function client_objective_reached($socket, $data)
 {
     $player = $socket->getPlayer();

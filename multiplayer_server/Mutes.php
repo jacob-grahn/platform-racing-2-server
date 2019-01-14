@@ -20,9 +20,9 @@ class Mutes
     public static function remove($user_name)
     {
         $len = count(self::$arr);
-        for ($i=0; $i<$len; $i++) {
+        for ($i = 0; $i < $len; $i++) {
             $mute = self::$arr[$i];
-            if (strtolower(trim($mute->user_name)) == strtolower(trim($user_name))) {
+            if (strtolower(trim($mute->user_name)) === strtolower(trim($user_name))) {
                 array_splice(self::$arr, $i, 1);
                 return true;
             }
@@ -54,7 +54,7 @@ class Mutes
     private static function getMute($user_name)
     {
         foreach (self::$arr as $mute) {
-            if (strtolower(trim($mute->user_name)) == strtolower(trim($user_name))) {
+            if (strtolower(trim($mute->user_name)) === strtolower(trim($user_name))) {
                 return $mute;
             }
         }
@@ -71,8 +71,8 @@ class Mutes
     {
         $time = time();
         $len = count(self::$arr);
-        for ($i=0; $i<$len; $i++) {
-            $mute = self::$arr[ $i ];
+        for ($i = 0; $i < $len; $i++) {
+            $mute = self::$arr[$i];
             if ($mute->expire_time < $time) {
                 array_splice(self::$arr, $i, 1);
                 $len--;

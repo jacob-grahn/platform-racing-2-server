@@ -7,7 +7,7 @@ function demote_mod($user_name, $admin, $demoted_player)
     // safety first
     $html_name = htmlspecialchars($user_name, ENT_QUOTES);
 
-    // sanity check: is the admin valid and online?
+    // make sure the admin is valid and online
     if (!isset($admin)) {
         output("CRITICAL FAILURE: An invalid user tried to demote $html_name.");
         return false;
@@ -65,14 +65,8 @@ function demote_mod($user_name, $admin, $demoted_player)
 
         // demote trial/perma mod and log it in the action log
         if ((int) $user_row->power >= 2) {
-            // action log variables
-            $ip = $admin->ip;
-            $admin_id = $admin->user_id;
-            $admin_name = $admin->name;
-            $demoted_name = $user_name;
-
             // log action in action log
-            $a_msg = "$admin_name demoted $demoted_name from $ip on $server_name.";
+            $a_msg = "$admin->name demoted $user_name from $admin->ip on $server_name.";
             admin_action_insert($pdo, $admin->user_id, $a_msg, $admin->user_id, $admin->ip);
 
             // do it!

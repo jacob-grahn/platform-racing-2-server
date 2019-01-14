@@ -19,8 +19,6 @@ class PR2Client extends \chabot\SocketServerClient
     public function __construct($socket)
     {
         parent::__construct($socket);
-        global $key;
-        $this->key = $key;
         $time = time();
         $this->last_action = $time;
         $this->last_user_action = $time;
@@ -37,53 +35,53 @@ class PR2Client extends \chabot\SocketServerClient
                 $data = join('`', $array);
             } else {
                 $hash = $array[0];
-                $send_num = $array[1];
+                $send_num = (int) $array[1];
                 $call = $array[2];
                 $function = "client_$call";
 
                 array_splice($array, 0, 3);
                 $data = join('`', $array);
 
-                $str_to_hash = $this->key . $send_num.'`'.$call.'`'.$data;
+                $str_to_hash = SALT . $send_num . '`' . $call . '`' . $data;
                 $local_hash = md5($str_to_hash);
                 $sub_hash = substr($local_hash, 0, 3);
 
-                if ($sub_hash != $hash) {
+                if ($sub_hash !== $hash) {
                     $this->close();
                     $this->onDisconnect();
-                    throw new \Exception(
-                        output("Error: The received hash doesn't match. Recieved: $hash | Local: $sub_hash \n")
-                    );
+                    throw new \Exception("The received hash doesn't match. Recieved: $hash | Local: $sub_hash");
                 }
 
-                if ($send_num > 2 && $send_num != $this->rec_num+1 && $send_num != 13) {
+                if ($send_num > 2 && $send_num !== $this->rec_num + 1 && $send_num !== 13) {
                     $this->close();
                     $this->onDisconnect();
-                    throw new \Exception(output("Error: A command was recieved out of order."));
+                    throw new \Exception('A command was recieved out of order.');
                 }
 
                 $this->rec_num = $send_num;
             }
 
             if (!function_exists($function)) {
-                throw new \Exception(output("Error: $function is not a function."));
+                throw new \Exception("$function is not a function.");
             }
 
             $function($this, $data);
 
             $time = time();
             $this->last_action = $time;
-            if ($function != 'ping') {
+            if ($function !== 'client_ping') {
                 $this->last_user_action = $time;
             }
         } catch (\Exception $e) {
-            echo 'Error: '.$e->getMessage()."\n";
+            output('Error: '.$e->getMessage());
         }
     }
 
     public function onRead()
     {
-        if ($this->read_buffer == '<policy-file-request/>'.chr(0x00)) {
+        output("Read: $this->read_buffer");
+
+        if ($this->read_buffer === '<policy-file-request/>'.chr(0x00)) {
             $this->read_buffer = '';
             $this->write_buffer = '<cross-domain-policy>'.
                 '<allow-access-from domain="*" to-ports="*" />'.
@@ -102,8 +100,8 @@ class PR2Client extends \chabot\SocketServerClient
 
         // prevent a data attack
         if (strlen($this->read_buffer) > 5000 && !$this->process) {
-            echo("\nKill read buffer -------------------------------\n");
             $this->read_buffer = '';
+            output(" --- KILLED READ BUFFER --- ");
             $this->close();
             $this->onDisconnect();
         }
@@ -112,12 +110,13 @@ class PR2Client extends \chabot\SocketServerClient
     public function write($buffer, $length = 4096)
     {
         if (!$this->process) {
-            $buffer = $this->send_num.'`'.$buffer;
-            $str_to_hash = $this->key . $buffer;
+            $buffer = $this->send_num . '`' . $buffer;
+            $str_to_hash = SALT . $buffer;
             $hash_bit = substr(md5($str_to_hash), 0, 3);
-            $buffer = $hash_bit.'`'.$buffer;
+            $buffer = $hash_bit . '`' . $buffer;
         }
         $buffer .= chr(0x04);
+        output("Write: $buffer");
         parent::write($buffer, $length);
         $this->send_num++;
     }
@@ -128,17 +127,10 @@ class PR2Client extends \chabot\SocketServerClient
         $this->ip = $ip;
 
         $ip_count = @PR2Client::$ip_array[$ip];
-        if ($ip_count == null) {
-            $ip_count = 1;
-        } else {
-            $ip_count++;
-        }
+        $ip_count = !isset($ip_count) ? 1 : ++$ip_count;
         PR2Client::$ip_array[$ip] = $ip_count;
 
-        //echo "$ip ($ip_count)\n";
-
         if ($ip_count > 5) {
-            //echo("too many connections from this ip\n");
             $this->close();
             $this->onDisconnect();
         } else {
@@ -157,7 +149,7 @@ class PR2Client extends \chabot\SocketServerClient
             $this->player = null;
         }
 
-        if ($this->login_id != null) {
+        if (isset($this->login_id)) {
             global $login_array;
             $login_array[$this->login_id] = null;
             $this->login_id = null;
@@ -166,9 +158,9 @@ class PR2Client extends \chabot\SocketServerClient
         if (!$this->subtracted_ip) {
             $this->subtracted_ip = true;
             $ip = $this->remote_address;
-            if (PR2Client::$ip_array[$ip] != null) {
+            if (isset(PR2Client::$ip_array[$ip])) {
                 PR2Client::$ip_array[$ip]--;
-                if (PR2Client::$ip_array[$ip] == 0) {
+                if (PR2Client::$ip_array[$ip] <= 0) {
                     unset(PR2Client::$ip_array[$ip]);
                 }
             }
@@ -178,15 +170,11 @@ class PR2Client extends \chabot\SocketServerClient
     // once every 2 seconds
     public function onTimer()
     {
-        if ($this->last_action != 0) {
+        if ($this->last_action !== 0) {
             $time = time();
             $action_elapsed = $time - $this->last_action;
             $user_elapsed = $time - $this->last_user_action;
-            if ($action_elapsed > 35) {
-                $this->close();
-                $this->onDisconnect();
-            }
-            if ($user_elapsed > 60*30) {
+            if ($action_elapsed > 35 || $user_elapsed > 1800) {
                 $this->close();
                 $this->onDisconnect();
             }
@@ -196,7 +184,7 @@ class PR2Client extends \chabot\SocketServerClient
     public function getPlayer()
     {
         if (!isset($this->player)) {
-            throw new \Exception(output('Error: This socket does not have a player.'));
+            throw new \Exception('This socket does not have a player.');
         }
         return $this->player;
     }

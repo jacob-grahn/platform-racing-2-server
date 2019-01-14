@@ -7,10 +7,10 @@ function tournament_status($requester)
     if (\pr2\multi\PR2SocketServer::$tournament) {
         $requester->write(
             'systemChat`Tournament mode is on!<br/>'
-            .'Hat: '.\pr2\multi\Hats::idToStr(\pr2\multi\PR2SocketServer::$tournament_hat).'<br/>'
-            .'Speed: '.\pr2\multi\PR2SocketServer::$tournament_speed.'<br/>'
-            .'Accel: '.\pr2\multi\PR2SocketServer::$tournament_acceleration.'<br/>'
-            .'Jump: '.\pr2\multi\PR2SocketServer::$tournament_jumping
+            .'Hat: ' . \pr2\multi\Hats::idToStr(\pr2\multi\PR2SocketServer::$tournament_hat) . '<br/>'
+            .'Speed: ' . \pr2\multi\PR2SocketServer::$tournament_speed . '<br/>'
+            .'Accel: ' . \pr2\multi\PR2SocketServer::$tournament_acceleration . '<br/>'
+            .'Jump: ' . \pr2\multi\PR2SocketServer::$tournament_jumping
         );
     } else {
         $requester->write('systemChat`Tournament mode is off.');
@@ -24,10 +24,10 @@ function announce_tournament($chat)
     if (\pr2\multi\PR2SocketServer::$tournament) {
         $chat->sendToAll(
             'systemChat`Tournament mode is on!<br/>'
-            .'Hat: '.\pr2\multi\Hats::idToStr(\pr2\multi\PR2SocketServer::$tournament_hat).'<br/>'
-            .'Speed: '.\pr2\multi\PR2SocketServer::$tournament_speed.'<br/>'
-            .'Accel: '.\pr2\multi\PR2SocketServer::$tournament_acceleration.'<br/>'
-            .'Jump: '.\pr2\multi\PR2SocketServer::$tournament_jumping
+            .'Hat: ' . \pr2\multi\Hats::idToStr(\pr2\multi\PR2SocketServer::$tournament_hat) . '<br/>'
+            .'Speed: ' . \pr2\multi\PR2SocketServer::$tournament_speed . '<br/>'
+            .'Accel: ' . \pr2\multi\PR2SocketServer::$tournament_acceleration . '<br/>'
+            .'Jump: ' . \pr2\multi\PR2SocketServer::$tournament_jumping
         );
     } else {
         $chat->sendToAll('systemChat`Tournament mode is off.');
@@ -39,19 +39,19 @@ function announce_tournament($chat)
 function issue_tournament($str)
 {
     // if nothing was passed to the function, disable tournament mode
-    if (!isset($str) || $str == '') {
+    if (is_empty($str)) {
         \pr2\multi\PR2SocketServer::$tournament = false;
     } else {
         $arr = explode(' ', $str); // add an array item on every space
         array_shift($arr); // don't include /t in the array
 
         // did the user say /t on? if so, let's ignore 'on' and handle the rest of the data as normal (if any)
-        if (isset($arr[0]) && strtolower($arr[0]) == 'on') {
+        if (isset($arr[0]) && strtolower($arr[0]) === 'on') {
             // take 'on' out of the array
             array_shift($arr);
 
             // if they didn't give any values after "on", start the default tournament
-            if (!isset($arr[0]) || trim(strtolower($str)) == '/t on') {
+            if (!isset($arr[0]) || trim(strtolower($str)) === '/t on') {
                 $arr[0] = "None";
                 $arr[1] = "65";
                 $arr[2] = "65";
@@ -60,7 +60,7 @@ function issue_tournament($str)
         }
 
         // did the user say /t off? if so, let's turn off the tournament
-        if (!isset($arr[0]) || strtolower($arr[0]) == 'off' || $arr[0] == '') {
+        if (is_empty($arr[0]) || strtolower($arr[0]) === 'off') {
             \pr2\multi\PR2SocketServer::$tournament = false;
         } // if not /t off
         else {

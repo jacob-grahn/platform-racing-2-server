@@ -28,7 +28,7 @@ class LoiterDetector
             foreach ($level_list->course_array as $course) {
                 if (count($course->slot_array) >= 4) {
                     foreach ($course->slot_array as $player) {
-                        if (!$player->confirmed) {
+                        if ($player->confirmed === false) {
                             $ip = $player->ip;
                             if (!isset(self::$loitering_ips[$ip])) {
                                 self::$loitering_ips[$ip] = 0;
@@ -47,7 +47,6 @@ class LoiterDetector
 
     public static function stopLoiterer($ip)
     {
-        output("LoiterDetector::stopLoiterer $ip");
         foreach (self::$level_lists as $level_list) {
             foreach ($level_list->player_array as $player) {
                 if ($player->ip === $ip) {

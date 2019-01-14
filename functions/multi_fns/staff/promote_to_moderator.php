@@ -8,35 +8,34 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     $html_name = htmlspecialchars($name, ENT_QUOTES);
     $html_type = htmlspecialchars($type, ENT_QUOTES);
 
-    // sanity check: is the admin valid and online?
+    // make sure the admin is valid and online
     if (!isset($admin)) {
         output("CRITICAL FAILURE: An invalid user tried to promote $name to a $type moderator.");
         return false;
     }
 
-    // sanity check: if the user isn't an admin on the server or is a server owner,
-    // kill the function (2nd line of defense)
+    // if the user isn't an admin on the server or is a server owner, kill the function
     if ((int) $admin->group !== 3 || $admin->server_owner === true) {
         output("$admin->name lacks the server power to promote $name to a $type moderator.");
         $admin->write("message`Error: You lack the power to promote $html_name to a $html_type moderator.");
         return false;
     }
 
-    // sanity check: if the user being promoted is an admin, end the function
+    // if the user being promoted is an admin, kill the function
     if ((int) $promoted->group === 3) {
-        $err = 'I\'m not sure what would happen if you promoted an admin to a moderator, '.
-            'but it would probably make the world explode.';
+        $err = 'I\'m not sure what would happen if you promoted an admin to a moderator, '
+            .'but it would probably make the world explode.';
         $admin->write("message`Error: $err");
         return false;
     }
 
-    // sanity check: validate mod type
+    // validate mod type
     if ($type !== 'temporary' && $type !== 'trial' && $type !== 'permanent') {
         $admin->write('message`Error: Unknown moderator type specified.');
         return false;
     }
 
-    // sanity check: if promoting to a temp, make sure the user is online
+    // if promoting to a temp, make sure the user is online
     if ($type === 'temporary' && !isset($promoted)) {
         $admin->write("message`Error: Could not find a user named \"$html_name\" on this server.");
         return false;
@@ -49,8 +48,7 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     // get info about the user promoting
     $admin_row = user_select($pdo, $admin->user_id);
 
-    // sanity check: if the user doesn't have proper permission in the db,
-    // kill the function (3rd + final line of defense)
+    // if the user doesn't have proper permission in the db, kill the function
     if ((int) $admin_row->power !== 3) {
         $admin->write("message`Error: You lack the power to promote $html_name to a $html_type moderator.");
         return false;
@@ -79,11 +77,11 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     if ($type === 'trial' || $type === 'permanent') {
         try {
             // throttle mod promotions
-            /*$recent_promotion_count = promotion_log_count($pdo, $min_time);
-            if ($recent_promotion_count > 0) {
-                throw new Exception('Someone has already been promoted to a '.
-                    'moderator recently. Wait a bit before trying to promote again.');
-            }*/
+            if (promotion_log_count($pdo, $min_time) > 0) {
+                $msg = 'Someone has already been promoted to a moderator recently. '
+                    .'Wait a bit before trying to promote again.';
+                throw new Exception($msg);
+            }
 
             // log the power change
             promotion_log_insert($pdo, "$user_id has been promoted to $type moderator by $admin->name.", $time);
@@ -93,11 +91,11 @@ function promote_to_moderator($name, $type, $admin, $promoted)
 
             // set power limits
             if ($type === 'trial') {
-                $max_ban = 86400; // 1 day
+                $max_ban = 86400;
                 $bans_per_hour = 30;
                 $can_unpublish_level = 0;
             } elseif ($type === 'permanent') {
-                $max_ban = 31536000; // 1 year
+                $max_ban = 31536000;
                 $bans_per_hour = 101;
                 $can_unpublish_level = 1;
             }
@@ -126,10 +124,11 @@ function promote_to_moderator($name, $type, $admin, $promoted)
             $admin->write("message`$html_name has been promoted to a $html_type moderator!");
             return true;
         } catch (Exception $e) {
-            $admin->write('message`Error: '.$e->getMessage());
+            $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+            $admin->write("message`Error: $error");
             return false;
         }
-    } elseif ($type == 'temporary') {
+    } elseif ($type === 'temporary') {
         $promoted->becomeTempMod();
         $admin->write("message`$html_name has been promoted to a temporary moderator!");
         return true;

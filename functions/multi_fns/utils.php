@@ -31,7 +31,7 @@ function name_to_player($name)
 
     $return_player = null;
     foreach ($player_array as $player) {
-        if (strtolower($player->name) == strtolower($name)) {
+        if (strtolower($player->name) === strtolower($name)) {
             $return_player = $player;
             break;
         }
@@ -62,7 +62,7 @@ function apply_bans($bans)
 
     foreach ($bans as $ban) {
         foreach ($player_array as $player) {
-            if ($player->ip == $ban->banned_ip || $player->user_id == $ban->banned_user_id) {
+            if ($player->ip === $ban->banned_ip || (int) $player->user_id === (int) $ban->banned_user_id) {
                 $player->remove();
             }
         }
@@ -87,11 +87,11 @@ function pm_notify($pms)
 // place the artifact
 function place_artifact($artifact)
 {
-    \pr2\multi\Artifact::$level_id = $artifact->level_id;
-    \pr2\multi\Artifact::$x = $artifact->x;
-    \pr2\multi\Artifact::$y = $artifact->y;
+    \pr2\multi\Artifact::$level_id = (int) $artifact->level_id;
+    \pr2\multi\Artifact::$x = (int) $artifact->x;
+    \pr2\multi\Artifact::$y = (int) $artifact->y;
     \pr2\multi\Artifact::$updated_time = strtotime($artifact->updated_time);
-    \pr2\multi\Artifact::$first_finder = $artifact->first_finder;
+    \pr2\multi\Artifact::$first_finder = (int) $artifact->first_finder;
 }
 
 
@@ -115,9 +115,7 @@ function drain_plays()
 function get_population()
 {
     global $player_array;
-
-    $pop = count($player_array);
-    return $pop;
+    return count($player_array);
 }
 
 
@@ -125,13 +123,7 @@ function get_population()
 function get_status()
 {
     global $player_array, $max_players;
-
-    $status = 'open';
-    if (count($player_array) >= $max_players) {
-        $status = 'full';
-    }
-
-    return $status;
+    return count($player_array) >= $max_players ? 'full' : 'open';
 }
 
 
@@ -152,7 +144,7 @@ function send_to_guild($guild_id, $str)
     global $player_array;
 
     foreach ($player_array as $player) {
-        if ($player->guild_id == $guild_id) {
+        if ((int) $player->guild_id === $guild_id) {
             $player->write($str);
         }
     }
@@ -202,7 +194,7 @@ function get_priors($pdo, $mod, $name)
     $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
     // sanity: make sure they're online and a staff member
-    if (!isset($mod) || $mod->group < 2 || $mod->temp_mod == true || $mod->server_owner == true) {
+    if (!isset($mod) || $mod->group < 2 || $mod->temp_mod === true || $mod->server_owner === true) {
         $mod->write("message`Error: You lack the power to view priors for $safe_name.");
         return false;
     }
@@ -223,13 +215,12 @@ function get_priors($pdo, $mod, $name)
     }
 
     // make user vars
-    $name = $user->name;
-    $safe_name = htmlspecialchars($name, ENT_QUOTES);
+    $safe_name = htmlspecialchars($user->name, ENT_QUOTES);
     $ip = $user->ip;
     $power = (int) $user->power;
 
     // initialize return string var
-    $url_name = htmlspecialchars(urlencode($name), ENT_QUOTES);
+    $url_name = htmlspecialchars(urlencode($user->name), ENT_QUOTES);
     $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $safe_name, '#' . $group_colors[$power]);
     $str = "<b>Ban Data for $u_link</b><br><br>";
 
@@ -241,7 +232,7 @@ function get_priors($pdo, $mod, $name)
         $ban_id = $row->ban_id;
         $reason = htmlspecialchars($row->reason, ENT_QUOTES);
         $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
-        if ($row->ip_ban == 1 && $row->account_ban == 1 && $row->banned_name == $name) {
+        if ($row->ip_ban == 1 && $row->account_ban == 1 && $row->banned_name == $user->name) {
             $ban_type = 'account and IP are';
         } elseif ($row->ip_ban == 1) {
             $ban_type = 'IP is';
@@ -251,7 +242,7 @@ function get_priors($pdo, $mod, $name)
         $ban_link = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'Yes');
         $str .= "$ban_link, this $ban_type banned until $ban_end_date. Reason: $reason<br><br>";
     } else {
-        $str .= $is_banned . '<br><br>';
+        $str .= "$is_banned<br><br>";
     }
 
     // get account bans of target user
@@ -279,24 +270,17 @@ function get_priors($pdo, $mod, $name)
             // var init
             $nameip_str = '';
             $lifted_str = '';
-            if (strlen(trim($reason)) === 0) {
-                $reason = 'No reason was given.';
-            }
+            $reason = is_empty($reason) ? 'No reason was given.' : $reason;
 
             // make name/ip str
-            if ($acc_ban === true) {
-                $nameip_str .= $banned_name;
-            }
-            if ($ip_ban === true) {
-                $nameip_str .= ' [' . $banned_ip . ']';
-            }
+            $nameip_str = $acc_ban === true ? $nameip_str . $banned_name : $nameip_str;
+            $nameip_str = $ip_ban === true ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
             $nameip_str = trim($nameip_str);
 
             // check if lifted
             if ($lifted === true) {
                 $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
                 $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
-                $lifted_date = '';
                 $at_loc = strrpos($lifted_reason, '@');
                 if ($at_loc !== false) {
                     $lifted_datetime = date('M j, Y \a\t g:i A', strtotime(trim(substr($lifted_reason, $at_loc + 1))));
@@ -310,11 +294,7 @@ function get_priors($pdo, $mod, $name)
             $ban_str = "$date_url: $mod_name banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
-            if ($lifted === true) {
-                $str .= $ban_str . '<br>' . $lifted_str;
-            } else {
-                $str .= $ban_str;
-            }
+            $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
 
             // move to the next ban
             $str .= '</li>';
@@ -350,24 +330,17 @@ function get_priors($pdo, $mod, $name)
             // var init
             $nameip_str = '';
             $lifted_str = '';
-            if (strlen(trim($reason)) === 0) {
-                $reason = 'No reason was given.';
-            }
+            $reason = is_empty($reason) ? 'No reason was given.' : $reason;
 
             // make name/ip str
-            if ($acc_ban === true) {
-                $nameip_str .= $banned_name;
-            }
-            if ($ip_ban === true) {
-                $nameip_str .= ' [' . $banned_ip . ']';
-            }
+            $nameip_str = $acc_ban === true ? $nameip_str . $banned_name : $nameip_str;
+            $nameip_str = $ip_ban === true ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
             $nameip_str = trim($nameip_str);
 
             // check if lifted
             if ($lifted === true) {
                 $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
                 $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
-                $lifted_date = '';
                 $at_loc = strrpos($lifted_reason, '@');
                 if ($at_loc !== false) {
                     $lifted_datetime = date('M j, Y \a\t g:i A', strtotime(trim(substr($lifted_reason, $at_loc + 1))));
@@ -381,11 +354,7 @@ function get_priors($pdo, $mod, $name)
             $ban_str = "$date_url: $mod_name banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
-            if ($lifted === true) {
-                $str .= $ban_str . '<br>' . $lifted_str;
-            } else {
-                $str .= $ban_str;
-            }
+            $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
 
             // move to the next ban
             $str .= '</li>';
@@ -408,8 +377,12 @@ function kill_socket()
     global $server;
 
     output("Closing socket and unbinding port...");
-    $server->__destruct();
-    output("Socket closed.");
+    if (!$server) {
+        output("No port bound; no server socket to close.");
+    } else {
+        $server->__destruct();
+        output("Socket closed.");
+    }
 }
 
 

@@ -119,25 +119,13 @@ function client_warn($socket, $data)
     $mod = $socket->getPlayer();
 
     // safety first
+    $num = (int) $num;
     $safe_wname = htmlspecialchars($name, ENT_QUOTES);
 
-    switch ($num) {
-        case 1:
-            $w_str = 'warning';
-            $time = 15;
-            break;
-        case 2:
-            $w_str = 'warnings';
-            $time = 30;
-            break;
-        case 3:
-            $w_str = 'warnings';
-            $time = 60;
-            break;
-        default:
-            $mod->write('message`Error: Invalid warning number.');
-            return false;
-    }
+    // warning number and duration
+    $num = limit($num, 1, 3);
+    $w_str = $num !== 1 ? 'warnings' : 'warning';
+    $time = $num * 15;
 
     // if they're a mod, and the user is on this server, warn the user
     if ($mod->group >= 2 && $warned != $mod) {
@@ -183,9 +171,8 @@ function client_warn($socket, $data)
         $mod_url = userify($mod, $mod->name);
         $warned_url = userify($warned, $name);
 
-        $mod->chat_room->sendChat("systemChat`$mod_url has given ".
-            "$warned_url $num $w_str. They have been muted from the chat ".
-            "for $time seconds.");
+        $msg = "$mod_url has given $warned_url $num $w_str. They have been muted from the chat for $time seconds.";
+        $mod->chat_room->sendChat("systemChat`$msg");
     }
 }
 
@@ -224,51 +211,22 @@ function client_ban($socket, $data)
     $mod = $socket->getPlayer();
     $banned = name_to_player($banned_name);
 
-    // safety first
+    // reason
     $safe_reason = htmlspecialchars($reason, ENT_QUOTES);
+    $disp_reason = $reason === '' ? 'There was no reason given' : "Reason: $safe_reason";
 
-    // set a variable that uses seconds to make friendly times
-    switch ($seconds) {
-        case 60:
-            $disp_time = '1 minute';
-            break;
-        case 3600:
-            $disp_time = '1 hour';
-            break;
-        case 86400:
-            $disp_time = '1 day';
-            break;
-        case 604800:
-            $disp_time = '1 week';
-            break;
-        case 2419200:
-            $disp_time = '1 month';
-            break;
-        case 29030400:
-            $disp_time = '1 year';
-            break;
-         // if all else fails, echo the seconds
-        default:
-            $disp_time = $seconds.' seconds';
-            break;
-    }
-
-    // instead of overwriting the $reason variable, set a new one
-    $disp_reason = "Reason: $safe_reason";
-    if ($reason == '') {
-        $disp_reason = 'There was no reason given';
-    }
+    // make friendly time
+    $disp_time = format_duration($seconds);
 
     // tell the world
     if ($mod->group >= 2 && isset($banned)) {
         $mod_url = userify($mod, $mod->name);
         $banned_url = userify($banned, $banned_name);
-    
+
         if (isset($mod->chat_room)) {
-            $ban_log = urlify('https://pr2hub.com/bans', 'the ban log');
-            $mod->chat_room->sendChat("systemChat`$mod_url has banned $banned_url for $disp_time. ".
-                "$disp_reason. ".
-                "This ban has been recorded on $ban_log.");
+            $log = urlify('https://pr2hub.com/bans', 'the ban log');
+            $msg = "$mod_url has banned $banned_url for $disp_time. $disp_reason. This ban has been recorded on $log.";
+            $mod->chat_room->sendChat("systemChat`$msg");
         }
         if (isset($banned) && ($banned->group < 2 || $banned->temp_mod === true)) {
             $banned->remove();
@@ -290,7 +248,7 @@ function client_promote_to_moderator($socket, $data)
     $safe_pname = htmlspecialchars($name, ENT_QUOTES);
 
     // if they're an admin and not a server owner, continue with the promotion (1st line of defense)
-    if ($admin->group >= 3 && $admin->server_owner == false) {
+    if ($admin->group >= 3 && $admin->server_owner === false) {
         $result = promote_to_moderator($name, $type, $admin, $promoted);
 
         switch ($type) {
@@ -305,17 +263,14 @@ function client_promote_to_moderator($socket, $data)
                 break;
         }
 
-        if (isset($admin->chat_room) && (isset($promoted) || $type != 'temporary') && $result == true) {
+        if (isset($admin->chat_room) && (isset($promoted) || $type !== 'temporary') && $result === true) {
             $admin_url = userify($admin, $admin->name);
-            $promoted_url = userify($promoted, $name);
+            $promoted_url = userify($promoted, $name, 2);
             $mod_guide = urlify('https://jiggmin2.com/forums/showthread.php?tid=12', 'moderator guidelines');
-            
-            $admin->chat_room->sendChat(
-                "systemChat`$admin_url has promoted $promoted_url to a $type moderator! ".
-                "May they reign in $reign_time of peace and prosperity! ".
-                "Make sure you read the $mod_guide.",
-                $admin->user_id
-            );
+
+            $msg = "$admin_url has promoted $promoted_url to a $type moderator! "
+                ."May they reign in $reign_time of peace and prosperity! Make sure you read the $mod_guide.";
+            $admin->chat_room->sendChat("systemChat`$msg", $admin->user_id);
         }
     } // if they're not an admin, tell them
     else {
@@ -331,7 +286,7 @@ function client_demote_moderator($socket, $name)
     $admin = $socket->getPlayer();
     $demoted = name_to_player($name);
 
-    if ($admin->group == 3 && $admin->server_owner == false) {
+    if ($admin->group === 3 && $admin->server_owner === false) {
         demote_mod($name, $admin, $demoted);
     }
 }

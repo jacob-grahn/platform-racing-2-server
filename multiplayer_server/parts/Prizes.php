@@ -2,9 +2,71 @@
 
 namespace pr2\multi;
 
+class Prize
+{
+
+    private $type;
+    private $id;
+    private $name;
+    private $desc;
+    private $universal;
+
+
+    public function __construct($type, $id, $name = '', $desc = '', $universal = false)
+    {
+        $this->type = $type;
+        $this->id = (int) $id;
+        $this->name = $name;
+        $this->desc = $desc;
+        $this->universal = (bool) $universal;
+        Prizes::add($this);
+    }
+
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+
+    public function getId()
+    {
+        return (int) $this->id;
+    }
+
+
+    public function isUniversal()
+    {
+        return (bool) $this->universal;
+    }
+
+
+    public function toObj()
+    {
+        $obj = new \stdClass();
+        $obj->type = $this->type;
+        $obj->id = (int) $this->id;
+        $obj->name = $this->name;
+        $obj->desc = $this->desc;
+        $obj->universal = (bool) $this->universal;
+        return $obj;
+    }
+
+
+    public function toStr()
+    {
+        return json_encode($this->toObj());
+    }
+}
+
+
 class Prizes
 {
 
+    private static $arr;
+
+
+    // prize types
     const TYPE_HAT = 'hat';
     const TYPE_HEAD = 'head';
     const TYPE_BODY = 'body';
@@ -14,10 +76,20 @@ class Prizes
     const TYPE_EPIC_BODY = 'eBody';
     const TYPE_EPIC_FEET = 'eFeet';
 
-    private static $arr;
+
+    // hat descriptions
+    const DESC_EXP_HAT = 'If you finish a race with this hat, it will increase your EXP gain by 100%!';
+    const DESC_PROP_HAT = 'Hold up while wearing this hat to float!';
+    const DESC_SANTA_HAT = 'Briefly freezes the blocks you stand on!';
+    const DESC_PARTY_HAT = 'Wear this hat to become immune to lightning!';
+    const DESC_TOP_HAT = 'Stroll through vanish blocks with class!';
+    const DESC_JS_HAT = 'Waiting is slow! Start racing right away.';
+    const DESC_MOON_HAT = 'Earn even more GP than ever!';
+    const DESC_THIEF_HAT = 'Steal other player\'s hats --even crowns!';
+    const DESC_JIGG_HAT = 'Jump on the heads of your opponents!';
 
 
-    //---
+    // hats
     public static $NO_HAT;
     public static $KONG_HAT;
     public static $EXP_HAT;
@@ -33,6 +105,7 @@ class Prizes
     public static $JIGG_HAT;
     public static $ARTIFACT_HAT;
 
+    // epic hats
     public static $EPIC_KONG_HAT;
     public static $EPIC_EXP_HAT;
     public static $EPIC_PROPELLER_HAT;
@@ -48,7 +121,7 @@ class Prizes
     public static $EPIC_ARTIFACT_HAT;
 
 
-    //---
+    // heads
     public static $CLASSIC_HEAD;
     public static $TIRED_HEAD;
     public static $SMILER_HEAD;
@@ -88,7 +161,9 @@ class Prizes
     public static $CROCODILE_HEAD;
     public static $VALENTINE_HEAD;
     public static $BUNNY_HEAD;
+    public static $GECKO_HEAD;
 
+    // epic heads
     public static $EPIC_CLASSIC_HEAD;
     public static $EPIC_TIRED_HEAD;
     public static $EPIC_SMILER_HEAD;
@@ -128,10 +203,10 @@ class Prizes
     public static $EPIC_CROCODILE_HEAD;
     public static $EPIC_VALENTINE_HEAD;
     public static $EPIC_BUNNY_HEAD;
+    public static $EPIC_GECKO_HEAD;
 
 
-
-    //---
+    // bodies
     public static $CLASSIC_BODY;
     public static $STRAP_BODY;
     public static $DRESS_BODY;
@@ -170,7 +245,9 @@ class Prizes
     public static $CROCODILE_BODY;
     public static $VALENTINE_BODY;
     public static $BUNNY_BODY;
+    public static $GECKO_BODY;
 
+    // epic bodies
     public static $EPIC_CLASSIC_BODY;
     public static $EPIC_STRAP_BODY;
     public static $EPIC_DRESS_BODY;
@@ -209,10 +286,10 @@ class Prizes
     public static $EPIC_CROCODILE_BODY;
     public static $EPIC_VALENTINE_BODY;
     public static $EPIC_BUNNY_BODY;
+    public static $EPIC_GECKO_BODY;
 
 
-
-    //---
+    // feet
     public static $CLASSIC_FEET;
     public static $HEEL_FEET;
     public static $LOAFER_FEET;
@@ -249,7 +326,9 @@ class Prizes
     public static $CROCODILE_FEET;
     public static $VALENTINE_FEET;
     public static $BUNNY_FEET;
+    public static $GECKO_FEET;
 
+    // epic feet
     public static $EPIC_CLASSIC_FEET;
     public static $EPIC_HEEL_FEET;
     public static $EPIC_LOAFER_FEET;
@@ -286,54 +365,47 @@ class Prizes
     public static $EPIC_CROCODILE_FEET;
     public static $EPIC_VALENTINE_FEET;
     public static $EPIC_BUNNY_FEET;
+    public static $EPIC_GECKO_FEET;
 
 
     public static function init()
     {
-
         self::$arr = array();
 
 
-        //---
+        // hats
         self::$NO_HAT = new Prize(self::TYPE_HAT, Hats::NONE, 'No Hat!');
         self::$KONG_HAT = new Prize(self::TYPE_HAT, Hats::KONG, 'Kongregate Hat!');
-        self::$EXP_HAT = new Prize(self::TYPE_HAT, Hats::EXP, 'Exp Hat!', 'Increase your exp gain by 100%!');
-        self::$PROPELLER_HAT = new Prize(self::TYPE_HAT, Hats::PROPELLER, 'Propeller Hat!', 'Float!', true);
+        self::$EXP_HAT = new Prize(self::TYPE_HAT, Hats::EXP, 'EXP Hat!', self::DESC_EXP_HAT);
+        self::$PROPELLER_HAT = new Prize(self::TYPE_HAT, Hats::PROPELLER, 'Propeller Hat!', self::DESC_PROP_HAT, true);
         self::$COWBOY_HAT = new Prize(self::TYPE_HAT, Hats::COWBOY, 'Cowboy Hat!');
         self::$CROWN_HAT = new Prize(self::TYPE_HAT, Hats::CROWN, 'Crown!');
-        self::$SANTA_HAT = new Prize(self::TYPE_HAT, Hats::SANTA, 'Santa Hat!', 'Freeze blocks!');
-        self::$PARTY_HAT = new Prize(self::TYPE_HAT, Hats::PARTY, 'Party Hat!', 'Immune to lightning!');
-        self::$TOP_HAT = new Prize(self::TYPE_HAT, Hats::TOP_HAT, 'Top Hat!', 'Stroll through vanish blocks!', true);
-        self::$JUMP_START_HAT = new Prize(self::TYPE_HAT, Hats::JUMP_START, 'Jump Start Hat!', 'Start racing first!');
-        self::$MOON_HAT = new Prize(self::TYPE_HAT, Hats::MOON, 'Moon Hat!', 'Earn even more GP than ever!', true);
-        self::$THIEF_HAT = new Prize(self::TYPE_HAT, Hats::THIEF, 'Thief Hat!', 'Steal other player\'s hats!', true);
-        //buto (EXACT) by ZePHiR
-        self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat!', 'Squash your opponents!', true);
+        self::$SANTA_HAT = new Prize(self::TYPE_HAT, Hats::SANTA, 'Santa Hat!', self::DESC_SANTA_HAT);
+        self::$PARTY_HAT = new Prize(self::TYPE_HAT, Hats::PARTY, 'Party Hat!', self::DESC_PARTY_HAT);
+        self::$TOP_HAT = new Prize(self::TYPE_HAT, Hats::TOP_HAT, 'Top Hat!', self::DESC_TOP_HAT, true);
+        self::$JUMP_START_HAT = new Prize(self::TYPE_HAT, Hats::JUMP_START, 'Jump Start Hat!', self::DESC_JS_HAT);
+        self::$MOON_HAT = new Prize(self::TYPE_HAT, Hats::MOON, 'Moon Hat!', self::DESC_MOON_HAT, true);
+        self::$THIEF_HAT = new Prize(self::TYPE_HAT, Hats::THIEF, 'Thief Hat!', self::DESC_THIEF_HAT, true);
+        self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat!', self::DESC_JIGG_HAT, true);
         self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'Artifact Hat!');
 
+        // epic hats
         self::$EPIC_KONG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::KONG, 'Epic Upgrade!');
-        // campaign 5 level 9
         self::$EPIC_EXP_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::EXP, 'Epic Upgrade!', '', true);
-        // jiggmin.com/threads/104505-The-Ultimate-Jiggmin-Gaming-Tournament
         self::$EPIC_PROPELLER_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::PROPELLER, 'Epic Upgrade!');
         self::$EPIC_COWBOY_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::COWBOY, 'Epic Upgrade!');
-        // cheetah racing leage
         self::$EPIC_CROWN_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::CROWN, 'Epic Upgrade!');
-        // PR2 Quests jiggmin.com/threads/109956-PR2-Quests
         self::$EPIC_SANTA_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::SANTA, 'Epic Upgrade!');
         self::$EPIC_PARTY_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::PARTY, 'Epic Upgrade!');
-        // Sir Sirlington
         self::$EPIC_TOP_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::TOP_HAT, 'Epic Upgrade!');
-        // campaign 6
         self::$EPIC_JUMP_START_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::JUMP_START, 'Epic Upgrade!', '', true);
         self::$EPIC_MOON_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::MOON, 'Epic Upgrade!');
         self::$EPIC_THIEF_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::THIEF, 'Epic Upgrade!');
-        // caption of the week
         self::$EPIC_JIGG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::JIGG, 'Epic Upgrade!');
         self::$EPIC_ARTIFACT_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::ARTIFACT, 'Epic Upgrade!');
 
 
-        //---
+        // heads
         self::$CLASSIC_HEAD = new Prize(self::TYPE_HEAD, Heads::CLASSIC, 'Classic Head!');
         self::$TIRED_HEAD = new Prize(self::TYPE_HEAD, Heads::TIRED, 'Tired Head!');
         self::$SMILER_HEAD = new Prize(self::TYPE_HEAD, Heads::SMILER, 'Smiling Head!');
@@ -365,9 +437,7 @@ class Prizes
         self::$QUEEN_HEAD = new Prize(self::TYPE_HEAD, Heads::QUEEN, 'Wise Queen Head!');
         self::$SIR_HEAD = new Prize(self::TYPE_HEAD, Heads::SIR, 'Sir Head!');
         self::$VERY_INVISIBLE_HEAD = new Prize(self::TYPE_HEAD, Heads::VERY_INVISIBLE, 'Very Invisible Head!');
-        // random levels
         self::$TACO_HEAD = new Prize(self::TYPE_HEAD, Heads::TACO, 'Taco Head!');
-        // -Deliverance- by changelings
         self::$SLENDER_HEAD = new Prize(self::TYPE_HEAD, Heads::SLENDER, 'Slender Head!');
         self::$SANTA_HEAD = new Prize(self::TYPE_HEAD, Heads::SANTA, 'Santa Head!');
         self::$FROST_DJINN_HEAD = new Prize(self::TYPE_HEAD, Heads::FROST_DJINN, 'Frost Djinn Head!');
@@ -375,60 +445,41 @@ class Prizes
         self::$CROCODILE_HEAD = new Prize(self::TYPE_HEAD, Heads::CROCODILE, 'Crocodile Head!');
         self::$VALENTINE_HEAD = new Prize(self::TYPE_HEAD, Heads::VALENTINE, 'Valentine Head!');
         self::$BUNNY_HEAD = new Prize(self::TYPE_HEAD, Heads::BUNNY, 'Bunny Head!');
+        self::$GECKO_HEAD = new Prize(self::TYPE_HEAD, Heads::GECKO, 'Gecko Head!');
 
-        // random levels
+        // epic heads
         self::$EPIC_CLASSIC_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade!');
-        // random levels
         self::$EPIC_TIRED_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::TIRED, 'Epic Upgrade!');
         self::$EPIC_SMILER_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SMILER, 'Epic Upgrade!');
-        // random levels
         self::$EPIC_FLOWER_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::FLOWER, 'Epic Upgrade!');
         self::$EPIC_CLASSIC_GIRL_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CLASSIC_GIRL, 'Epic Upgrade!');
         self::$EPIC_GOOF_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::GOOF, 'Epic Upgrade!');
         self::$EPIC_DOWNER_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::DOWNER, 'Epic Upgrade!');
         self::$EPIC_BALLOON_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BALLOON, 'Epic Upgrade!');
-        // jiggmin.com/threads/111373-Campaign-of-the-Fortnight-Theme-Suggestions!
         self::$EPIC_WORM_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::WORM, 'Epic Upgrade!');
-        // campaign 6
         self::$EPIC_UNICORN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::UNICORN, 'Epic Upgrade!');
-        // campaign 5 level 1
         self::$EPIC_BIRD_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BIRD, 'Epic Upgrade!');
-        // jiggmin.com/threads/108828-Survivor-Jiggmin-s-Village
         self::$EPIC_SUN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SUN, 'Epic Upgrade!');
-        // campaign 6
         self::$EPIC_CANDY_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CANDY, 'Epic Upgrade!');
-        // NA
         self::$EPIC_INVISIBLE_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::INVISIBLE, 'Epic Upgrade!');
-        // campaign 6
         self::$EPIC_FOOTBALL_HELMET_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::FOOTBALL_HELMET, 'Epic Upgrade!');
-        // Jiggmin Grand Prix jiggmin.com/threads/104222-Jiggmin-Grand-Prix
         self::$EPIC_BASKETBALL_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BASKETBALL, 'Epic Upgrade!');
-        // Styler of The Week //Curve Fever Tournament
         self::$EPIC_STICK_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::STICK, 'Epic Upgrade!');
-        // cheetah racing leage
         self::$EPIC_CAT_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CAT, 'Epic Upgrade!');
         self::$EPIC_ELEPHANT_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::ELEPHANT, 'Epic Upgrade!');
         self::$EPIC_ANT_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::ANT, 'Epic Upgrade!');
         self::$EPIC_ASTRONAUT_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::ASTRONAUT, 'Epic Upgrade!');
-        // free rice of the week
         self::$EPIC_ALIEN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::ALIEN, 'Epic Upgrade!');
-        // campaign 5 level 4
         self::$EPIC_DINO_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::DINO, 'Epic Upgrade!');
         self::$EPIC_ARMOR_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::ARMOR, 'Epic Upgrade!');
-        // Draw the JVer!
         self::$EPIC_FAIRY_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::FAIRY, 'Epic Upgrade!');
         self::$EPIC_GINGERBREAD_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::GINGERBREAD, 'Epic Upgrade!');
         self::$EPIC_BUBBLE_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BUBBLE, 'Epic Upgrade!');
-        // built in
         self::$EPIC_KING_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::KING, 'Epic Upgrade!');
-        // build in
         self::$EPIC_QUEEN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::QUEEN, 'Epic Upgrade!');
-        // Sir Sirlington
         self::$EPIC_SIR_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SIR, 'Epic Upgrade!');
         self::$EPIC_VERY_INVISIBLE_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::VERY_INVISIBLE, 'Epic Upgrade!');
-        // Racer of the week
         self::$EPIC_TACO_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::TACO, 'Epic Upgrade!');
-        // campaign 6
         self::$EPIC_SLENDER_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SLENDER, 'Epic Upgrade!');
         self::$EPIC_SANTA_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SANTA, 'Epic Upgrade!');
         self::$EPIC_FROST_DJINN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::FROST_DJINN, 'Epic Upgrade!');
@@ -436,9 +487,10 @@ class Prizes
         self::$EPIC_CROCODILE_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CROCODILE, 'Epic Upgrade!');
         self::$EPIC_VALENTINE_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::VALENTINE, 'Epic Upgrade!');
         self::$EPIC_BUNNY_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BUNNY, 'Epic Upgrade!');
+        self::$EPIC_GECKO_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::GECKO, 'Epic Upgrade!');
 
 
-        //---
+        // bodies
         self::$CLASSIC_BODY = new Prize(self::TYPE_BODY, Bodies::CLASSIC, 'Classic Body!');
         self::$STRAP_BODY = new Prize(self::TYPE_BODY, Bodies::STRAP, 'Strap Body!');
         self::$DRESS_BODY = new Prize(self::TYPE_BODY, Bodies::DRESS, 'Dress Body!');
@@ -469,9 +521,7 @@ class Prizes
         self::$SIR_BODY = new Prize(self::TYPE_BODY, Bodies::SIR, 'Sir Body!');
         self::$FRED_BODY = new Prize(self::TYPE_BODY, Bodies::FRED, 'Fred Body!');
         self::$VERY_INVISIBLE_BODY = new Prize(self::TYPE_BODY, Bodies::VERY_INVISIBLE, 'Very Invisible Body!');
-        // random levels
         self::$TACO_BODY = new Prize(self::TYPE_BODY, Bodies::TACO, 'Taco Body!');
-        // -Deliverance- by changelings
         self::$SLENDER_BODY = new Prize(self::TYPE_BODY, Bodies::SLENDER, 'Slender Body!');
         self::$SANTA_BODY = new Prize(self::TYPE_BODY, Bodies::SANTA, 'Santa Body!');
         self::$FROST_DJINN_BODY = new Prize(self::TYPE_BODY, Bodies::FROST_DJINN, 'Frost Djinn Body!');
@@ -479,12 +529,11 @@ class Prizes
         self::$CROCODILE_BODY = new Prize(self::TYPE_BODY, Bodies::CROCODILE, 'Crocodile Body!');
         self::$VALENTINE_BODY = new Prize(self::TYPE_BODY, Bodies::VALENTINE, 'Valentine Body!');
         self::$BUNNY_BODY = new Prize(self::TYPE_BODY, Bodies::BUNNY, 'Bunny Body!');
+        self::$GECKO_BODY = new Prize(self::TYPE_BODY, Bodies::GECKO, 'Gecko Body!');
 
-        // random levels
+        // epic bodies
         self::$EPIC_CLASSIC_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::CLASSIC, 'Epic Upgrade!');
-        // random levels
         self::$EPIC_STRAP_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::STRAP, 'Epic Upgrade!');
-        // random levels
         self::$EPIC_DRESS_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::DRESS, 'Epic Upgrade!');
         self::$EPIC_PEC_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::PEC, 'Epic Upgrade!');
         self::$EPIC_GUT_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::GUT, 'Epic Upgrade!');
@@ -492,43 +541,28 @@ class Prizes
         self::$EPIC_MISS_PR2_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::MISS_PR2, 'Epic Upgrade!');
         self::$EPIC_BELT_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BELT, 'Epic Upgrade!');
         self::$EPIC_SNAKE_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::SNAKE, 'Epic Upgrade!');
-        // campaign 5 level 2
         self::$EPIC_BIRD_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BIRD, 'Epic Upgrade!');
         self::$EPIC_INVISIBLE_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::INVISIBLE, 'Epic Upgrade!');
         self::$EPIC_BEE_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BEE, 'Epic Upgrade!');
-        // Styler of The Week //Curve Fever Tournament
         self::$EPIC_STICK_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::STICK, 'Epic Upgrade!');
-        // cheetah racing leage
         self::$EPIC_CAT_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::CAT, 'Epic Upgrade!');
-        // Jiggmin Grand Prix top 8 jiggmin.com/threads/104222-Jiggmin-Grand-Prix
         self::$EPIC_CAR_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::CAR, 'Epic Upgrade!');
-        // campaign 6
         self::$EPIC_BEAN_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BEAN, 'Epic Upgrade!');
         self::$EPIC_ANT_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::ANT, 'Epic Upgrade!');
         self::$EPIC_ASTRONAUT_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::ASTRONAUT, 'Epic Upgrade!');
-        // free rice of the week
         self::$EPIC_ALIEN_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::ALIEN, 'Epic Upgrade!');
-        // campaign 5 level 7
         self::$EPIC_GALAXY_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::GALAXY, 'Epic Upgrade!');
         self::$EPIC_BUBBLE_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BUBBLE, 'Epic Upgrade!');
-        // campaign 5 level 5
         self::$EPIC_DINO_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::DINO, 'Epic Upgrade!');
         self::$EPIC_ARMOR_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::ARMOR, 'Epic Upgrade!');
-        // Draw the JVer!
         self::$EPIC_FAIRY_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::FAIRY, 'Epic Upgrade!');
         self::$EPIC_GINGERBREAD_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::GINGERBREAD, 'Epic Upgrade!');
-        // built in
         self::$EPIC_KING_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::KING, 'Epic Upgrade!');
-        // built in
         self::$EPIC_QUEEN_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::QUEEN, 'Epic Upgrade!');
-        // Sir Sirlington
         self::$EPIC_SIR_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::SIR, 'Epic Upgrade!');
-        // built in
         self::$EPIC_FRED_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::FRED, 'Epic Upgrade!');
         self::$EPIC_VERY_INVISIBLE_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::VERY_INVISIBLE, 'Epic Upgrade!');
-        // racer of the week
         self::$EPIC_TACO_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::TACO, 'Epic Upgrade!');
-        // campaign 6
         self::$EPIC_SLENDER_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::SLENDER, 'Epic Upgrade!');
         self::$EPIC_SANTA_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::SANTA, 'Epic Upgrade!');
         self::$EPIC_FROST_DJINN_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::FROST_DJINN, 'Epic Upgrade!');
@@ -536,9 +570,10 @@ class Prizes
         self::$EPIC_CROCODILE_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::CROCODILE, 'Epic Upgrade!');
         self::$EPIC_VALENTINE_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::VALENTINE, 'Epic Upgrade!');
         self::$EPIC_BUNNY_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BUNNY, 'Epic Upgrade!');
+        self::$EPIC_GECKO_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::GECKO, 'Epic Upgrade!');
 
 
-        //---
+        // feet
         self::$CLASSIC_FEET = new Prize(self::TYPE_FEET, Feet::CLASSIC, 'Classic Foot!');
         self::$HEEL_FEET = new Prize(self::TYPE_FEET, Feet::HEEL, 'Heel Foot!');
         self::$LOAFER_FEET = new Prize(self::TYPE_FEET, Feet::LOAFER, 'Loafer Foot!');
@@ -567,9 +602,7 @@ class Prizes
         self::$SIR_FEET = new Prize(self::TYPE_FEET, Feet::SIR, 'Sir Foot!');
         self::$VERY_INVISIBLE_FEET = new Prize(self::TYPE_FEET, Feet::VERY_INVISIBLE, 'Very Invisible Foot!');
         self::$BUBBLE_FEET = new Prize(self::TYPE_FEET, Feet::BUBBLE, 'Bubble Foot!');
-        // random levels
         self::$TACO_FEET = new Prize(self::TYPE_FEET, Feet::TACO, 'Taco Foot!');
-        // -Deliverance- by changelings
         self::$SLENDER_FEET = new Prize(self::TYPE_FEET, Feet::SLENDER, 'Slender Foot!');
         self::$SANTA_FEET = new Prize(self::TYPE_FEET, Feet::SANTA, 'Santa Foot!');
         self::$FROST_DJINN_FEET = new Prize(self::TYPE_FEET, Feet::FROST_DJINN, 'Frost Djinn Foot!');
@@ -577,56 +610,38 @@ class Prizes
         self::$CROCODILE_FEET = new Prize(self::TYPE_FEET, Feet::CROCODILE, 'Crocodile Foot!');
         self::$VALENTINE_FEET = new Prize(self::TYPE_FEET, Feet::VALENTINE, 'Valentine Foot!');
         self::$BUNNY_FEET = new Prize(self::TYPE_FEET, Feet::BUNNY, 'Bunny Foot!');
+        self::$GECKO_FEET = new Prize(self::TYPE_FEET, Feet::GECKO, 'Gecko Foot!');
 
-        // random levels
+        // epic feet
         self::$EPIC_CLASSIC_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::CLASSIC, 'Epic Upgrade!');
-        // random levels
         self::$EPIC_HEEL_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::HEEL, 'Epic Upgrade!');
-        // jiggmin.com/threads/111373-Campaign-of-the-Fortnight-Theme-Suggestions!
         self::$EPIC_LOAFER_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::LOAFER, 'Epic Upgrade!');
-        // jiggmin.com/threads/111373-Campaign-of-the-Fortnight-Theme-Suggestions!
         self::$EPIC_SOCCER_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SOCCER, 'Epic Upgrade!');
         self::$EPIC_MAGNET_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::MAGNET, 'Epic Upgrade!');
         self::$EPIC_TINY_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::TINY, 'Epic Upgrade!');
-        // random levels
         self::$EPIC_SANDAL_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SANDAL, 'Epic Upgrade!');
         self::$EPIC_BARE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BARE, 'Epic Upgrade!');
         self::$EPIC_NICE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::NICE, 'Epic Upgrade!');
-        // campaign 5 level 3
         self::$EPIC_BIRD_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BIRD, 'Epic Upgrade!');
         self::$EPIC_INVISIBLE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::INVISIBLE, 'Epic Upgrade!');
-        // Styler of The Week //Curve Fever Tournament
         self::$EPIC_STICK_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::STICK, 'Epic Upgrade!');
-        // cheetah racing leage
         self::$EPIC_CAT_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::CAT, 'Epic Upgrade!');
-        // jiggmin grand prix
         self::$EPIC_TIRE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::TIRE, 'Epic Upgrade!');
-        // campaign 6
         self::$EPIC_ELEPHANT_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::ELEPHANT, 'Epic Upgrade!');
         self::$EPIC_ANT_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::ANT, 'Epic Upgrade!');
         self::$EPIC_ASTRONAUT_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::ASTRONAUT, 'Epic Upgrade!');
-        // free rice of the week
         self::$EPIC_ALIEN_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::ALIEN, 'Epic Upgrade!');
-        // campaign 5 level 8
         self::$EPIC_GALAXY_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::GALAXY, 'Epic Upgrade!');
-        // campaign 5 level 6
         self::$EPIC_DINO_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::DINO, 'Epic Upgrade!');
         self::$EPIC_ARMOR_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::ARMOR, 'Epic Upgrade!');
-        // Draw the JVer!
         self::$EPIC_FAIRY_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::FAIRY, 'Epic Upgrade!');
         self::$EPIC_GINGERBREAD_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::GINGERBREAD, 'Epic Upgrade!');
-        // included
         self::$EPIC_KING_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::KING, 'Epic Upgrade!');
-        // included
         self::$EPIC_QUEEN_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::QUEEN, 'Epic Upgrade!');
-        // Sir Sirlington
         self::$EPIC_SIR_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SIR, 'Epic Upgrade!');
-        // n/a
         self::$EPIC_VERY_INVISIBLE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::VERY_INVISIBLE, 'Epic Upgrade!');
         self::$EPIC_BUBBLE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BUBBLE, 'Epic Upgrade!');
-        // racer of the week
         self::$EPIC_TACO_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::TACO, 'Epic Upgrade!');
-        // campaign 6
         self::$EPIC_SLENDER_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SLENDER, 'Epic Upgrade!');
         self::$EPIC_SANTA_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SANTA, 'Epic Upgrade!');
         self::$EPIC_FROST_DJINN_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::FROST_DJINN, 'Epic Upgrade!');
@@ -634,8 +649,8 @@ class Prizes
         self::$EPIC_CROCODILE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::CROCODILE, 'Epic Upgrade!');
         self::$EPIC_VALENTINE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::VALENTINE, 'Epic Upgrade!');
         self::$EPIC_BUNNY_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BUNNY, 'Epic Upgrade!');
+        self::$EPIC_GECKO_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::GECKO, 'Epic Upgrade!');
     }
-
 
 
     public static function add($prize)
@@ -644,12 +659,11 @@ class Prizes
     }
 
 
-
     public static function find($type, $id)
     {
         $match = null;
         foreach (self::$arr as $prize) {
-            if ($prize->getType() == $type && $prize->getId() == $id) {
+            if ($prize->getType() === $type && $prize->getId() === $id) {
                 $match = $prize;
                 break;
             }

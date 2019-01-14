@@ -5,6 +5,7 @@ require_once HTTP_FNS . '/cron/cron_fns.php';
 require_once HTTP_FNS . '/rand_crypt/PseudoRandom.php';
 require_once QUERIES_DIR . '/artifact_locations.php';
 require_once QUERIES_DIR . '/bans.php';
+require_once QUERIES_DIR . '/campaigns.php';
 require_once QUERIES_DIR . '/gp/gp_increment.php';
 require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/servers.php';
