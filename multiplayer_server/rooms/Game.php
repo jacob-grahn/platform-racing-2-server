@@ -193,11 +193,6 @@ class Game extends Room
             $this->prize = Prizes::$TOP_HAT;
         }
 
-        // DEBUGGING
-        if ($this->course_id == 5960781) { // journey to fred
-            $this->prize = Prizes::$EPIC_GECKO_FEET;
-        }
-
         // random part/upgrade prizes
         if (!isset($this->prize) && $player_count >= 1) {
             if (rand($player_count*2, 20) >= 19) {
