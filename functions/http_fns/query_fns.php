@@ -379,7 +379,7 @@ function is_staff($pdo, $user_id, $check_ref = true, $exception = false, $group 
     $is_mod = false;
     $is_admin = false;
 
-    if ($user_id !== false) {
+    if ($user_id !== false && $user_id !== 0) {
         if ($check_ref === true) {
             require_trusted_ref('', true);
         }
