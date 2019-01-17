@@ -44,9 +44,11 @@ try {
         $banned_user_id = $row->banned_user_id;
         $time = $row->time;
         $expire_time = $row->expire_time;
+
         $reason = htmlspecialchars($row->reason, ENT_QUOTES);
         $mod_name = htmlspecialchars($row->mod_name, ENT_QUOTES);
         $banned_name = $row->banned_name;
+
         $ip_ban = $row->ip_ban;
         $account_ban = $row->account_ban;
 
@@ -54,9 +56,15 @@ try {
         $duration = $expire_time - $time;
 
         $display_name = '';
+        // display name if account ban
         if ($account_ban == 1) {
             $display_name .= $banned_name;
         }
+        // display "an IP" if ip ban and you're not a mod
+        if ($ip_ban == 1 && $account_ban == 0 && !$is_mod) {
+            $display_name .= "<i>an IP</i>";
+        }
+        // if ip ban and you're a mod, display the ip
         if ($ip_ban == 1 && $is_mod) {
             if ($display_name != '') {
                 $display_name .= ' ';
@@ -75,10 +83,10 @@ try {
 
     echo '<p>---</p>';
     output_pagination($start, $count);
-    output_footer();
 } catch (Exception $e) {
     $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_header('Error');
     echo "Error: $error";
+} finally {
     output_footer();
 }
