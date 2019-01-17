@@ -1,7 +1,6 @@
 <?php
 
 require_once GEN_HTTP_FNS;
-require_once QUERIES_DIR . '/users.php';
 
 header("Content-type: text/plain");
 
@@ -22,7 +21,7 @@ try {
     $user_id = (int) token_login($pdo);
 
     // get their username
-    $user = user_select_name_and_power($pdo, $user_id);
+    $user = user_select_name_guild_power($pdo, $user_id);
 
     // sanity check: guest account?
     if ((int) $user->power === 0) {
