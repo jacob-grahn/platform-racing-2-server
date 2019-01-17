@@ -23,7 +23,7 @@ function restart_servers($pdo, $output = true)
             continue;
         }
     }
-    
+
     // output
     if ($output === true) {
         output('All server restart operations complete.');
@@ -73,7 +73,7 @@ function test_server($script, $address, $port, $salt, $server_id)
 
     // connect
     $result = connect_to_server($address, $port, $salt);
-    
+
     // test the server if able to connect
     if ($result !== false) {
         output("GOOD - Server #$server_id is running.");
@@ -192,7 +192,7 @@ function kill_pid($pid)
 function talk_to_server($address, $port, $salt, $process_function, $receive = true, $output = true)
 {
     global $PROCESS_PASS;
-    
+
     if ($receive === false) {
         $output = false;
     }
@@ -233,7 +233,7 @@ function talk_to_server($address, $port, $salt, $process_function, $receive = tr
             output("Error $errno: $errstr. Could not connect to $address:$port.");
         }
     }
-    
+
     // skip output if told to do so
     if ($output === false) {
         return $reply;
@@ -272,11 +272,4 @@ function poll_servers($servers, $message, $output = true, $server_ids = array())
     }
 
     return $results;
-}
-
-
-// shell output format
-function output($str)
-{
-    echo "* $str\n";
 }
