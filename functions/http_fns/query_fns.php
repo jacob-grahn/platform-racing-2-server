@@ -376,21 +376,23 @@ function check_moderator($pdo, $user_id = null, $check_ref = true, $min_power = 
 // determine if a user is a staff member and returns which groups
 function is_staff($pdo, $user_id, $check_ref = true, $exception = false, $group = 2)
 {
-    if ($check_ref === true) {
-        require_trusted_ref('', true);
-    }
-
     $is_mod = false;
     $is_admin = false;
 
-    // determine power and if staff
-    $power = (int) user_select_power($pdo, $user_id, true);
-    $is_mod = ($power >= 2);
-    $is_admin = ($power === 3);
+    if ($user_id !== false) {
+        if ($check_ref === true) {
+            require_trusted_ref('', true);
+        }
+        
+        // determine power and if staff
+        $power = (int) user_select_power($pdo, $user_id, true);
+        $is_mod = ($power >= 2);
+        $is_admin = ($power === 3);
 
-    // exception handler
-    if ($exception === true && ($is_mod === false || ($group > 2 && $is_admin === false))) {
-        throw new Exception('You lack the power to access this resource.');
+        // exception handler
+        if ($exception === true && ($is_mod === false || ($group > 2 && $is_admin === false))) {
+            throw new Exception('You lack the power to access this resource.');
+        }
     }
 
     // tell the world
