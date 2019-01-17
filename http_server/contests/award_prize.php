@@ -29,7 +29,7 @@ try {
 
     // determine user id
     $user_id = (int) token_login($pdo, true);
-    $is_staff = is_staff($pdo, $user_id);
+    $is_staff = is_staff($pdo, $user_id, false);
     $is_mod = $is_staff->mod;
     $is_admin = $is_staff->admin;
 
