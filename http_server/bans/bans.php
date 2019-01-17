@@ -18,7 +18,7 @@ try {
     $pdo = pdo_connect();
 
     // header, also check if mod and output the mod links if so
-    $staff = is_staff($pdo, token_login($pdo), false);
+    $staff = is_staff($pdo, token_login($pdo, true, true), false);
     $header = true;
     output_header('Ban Log', $staff->mod, $staff->admin);
 
@@ -54,17 +54,13 @@ try {
         $formatted_time = date('M j, Y g:i A', $time);
         $duration = $expire_time - $time;
 
-        $display_name = '';
         // display name if account ban
-        if ($account_ban == 1) {
+        $display_name = '';
+        if ($account_ban === 1) {
             $display_name .= $banned_name;
         }
-        // display "an IP" if ip ban and you're not a mod
-        if ($ip_ban == 1 && $account_ban == 0 && !$is_mod) {
-            $display_name .= "<i>an IP</i>";
-        }
         // if ip ban and you're a mod, display the ip
-        if ($ip_ban == 1 && $is_mod) {
+        if ($ip_ban === 1 && $staff->mod) {
             if ($display_name != '') {
                 $display_name .= ' ';
             }
@@ -73,6 +69,11 @@ try {
 
         $display_name = htmlspecialchars($display_name, ENT_QUOTES);
         $f_dur = format_duration($duration);
+
+        // display "an IP" if ip ban and you're not a mod
+        if ($ip_ban === 1 && $account_ban === 0 && !$staff->mod) {
+            $display_name .= "<i>an IP</i>";
+        }
 
         echo "<p>"
             ."$formatted_time <a href='show_record.php?ban_id=$ban_id'>$mod_name banned $display_name for $f_dur.</a>"
