@@ -24,7 +24,7 @@ function run_update_cycle($pdo)
     foreach ($servers as $server) {
         if ($server->result != false && $server->result != null) {
             $happy_hour = (int)$server->result->happy_hour;
-            output("$server->server_name (ID #$server->server_id) is up.");
+            output("(ID #$server->server_id) is up.");
             save_plays($pdo, $server->result->plays);
             save_gp($pdo, $server->server_id, $server->result->gp);
             server_update_status(
