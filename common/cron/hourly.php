@@ -7,7 +7,7 @@ require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/part_awards.php';
 
 // folding_at_home data select/insert/update from/into/in db
-require_once HTTP_FNS . '/cron/fah_fns.php';
+require_once FNS_DIR . '/cron/cron_fns.php';
 require_once QUERIES_DIR . '/folding.php';
 
 // message, insert rank token
