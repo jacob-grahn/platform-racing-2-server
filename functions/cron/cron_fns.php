@@ -35,7 +35,6 @@ function run_update_cycle($pdo)
                 $happy_hour
             );
         } else {
-            $server_str = json_encode($server);
             output("$server->server_id is down.");
             server_update_status($pdo, $server->server_id, 'down', 0, 0);
         }

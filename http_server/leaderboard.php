@@ -15,7 +15,7 @@ try {
     $pdo = pdo_connect();
 
     // header, also check if mod and output the mod links if so
-    $staff = is_staff($pdo, token_login($pdo), false);
+    $staff = is_staff($pdo, token_login($pdo, true, true), false);
     output_header('Leaderboard', $staff->mod, $staff->admin);
 
     // limit amount of entries to be obtained from the db at a time
