@@ -376,10 +376,10 @@ function user_select_name_active_power($pdo, $user_id, $suppress_error = false)
 }
 
 
-function user_select_name_and_guild($pdo, $user_id)
+function user_select_name_guild_power($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT name, guild
+        SELECT name, guild, power
           FROM users
          WHERE user_id = :user_id
          LIMIT 1
@@ -388,7 +388,7 @@ function user_select_name_and_guild($pdo, $user_id)
     $result = $stmt->execute();
     
     if ($result === false) {
-        throw new Exception("Could not perform query user_select_name_and_guild.");
+        throw new Exception("Could not perform query user_select_name_guild_power.");
     }
     
     $user = $stmt->fetch(PDO::FETCH_OBJ);
