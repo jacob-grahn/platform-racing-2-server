@@ -27,9 +27,6 @@ class ChatRoom extends Room
     {
         global $pdo, $guild_id, $server_name;
         
-        // safety first
-        $guild_id = (int) $guild_id;
-        
         // preserve chatroom data
         $room_name = $this->chat_room_name;
         $old_chat_array = $this->chat_array;
@@ -43,8 +40,9 @@ class ChatRoom extends Room
         // notify the player
         foreach ($this->player_array as $player) {
             if ($player->user_id !== $mod->user_id) {
-                $player->write('message`A moderator has just cleared the chat log. '.
-                                'Please re-enter the chatroom by clicking "Join Room".');
+                $msg = 'A moderator has just cleared the chat log. '
+                    .'Please re-enter the chatroom by clicking "Join Room".';
+                $player->write("message`$msg");
             }
             $this->removePlayer($player);
         }
@@ -60,7 +58,7 @@ class ChatRoom extends Room
         }
         
         // log mod action if on a public server and in main
-        if ((int) $guild_id === 0 && $room_name === 'main' && count($old_chat_array) > 0) {
+        if ($guild_id === 0 && $room_name === 'main' && count($old_chat_array) > 0) {
             $log_chat = array();
             
             foreach ($old_chat_array as $key => $value) {
@@ -82,14 +80,9 @@ class ChatRoom extends Room
             $chat_count = count($log_chat);
             if ($chat_count > 0) {
                 $chat_str = join(' | ', $log_chat);
-                mod_action_insert(
-                    $pdo,
-                    $mod->user_id,
-                    "$mod->name cleared the main chatroom on $server_name from $mod->ip. ".
-                    "{chat_count: $chat_count, chat_array: $chat_str}",
-                    $mod->user_id,
-                    $mod->ip
-                );
+                $msg = "$mod->name cleared the main chatroom on $server_name from $mod->ip. "
+                    ."{chat_count: $chat_count, chat_array: $chat_str}";
+                mod_action_insert($pdo, $mod->user_id, $msg, $mod->user_id, $mod->ip);
             }
         }
         
@@ -126,18 +119,17 @@ class ChatRoom extends Room
         if (count($this->player_array) <= 1) {
             $welcome_message .= 'You\'re the only person here!';
         } else {
-            $welcome_message .= 'There are '.count($player_array).
-            ' people online, and '.count($this->player_array).
-            ' people in this chat room.';
+            $welcome_message .= 'There are ' . count($player_array) . ' people online, '
+                . 'and ' . count($this->player_array) . ' people in this chat room.';
         }
-        if ($this->chat_room_name == 'main' && $guild_id == 0) {
+        if ($this->chat_room_name === 'main' && $guild_id === 0) {
             $rules_link = urlify('https://pr2hub.com/rules', 'PR2 rules');
             $welcome_message .= " Before chatting, please read the $rules_link.";
         }
         $player->socket->write($welcome_message);
 
         foreach ($this->chat_array as $chat_message) {
-            if ($chat_message != '' && !$player->isIgnoredId($chat_message->from_id) && isset($player->socket)) {
+            if ($chat_message !== '' && !$player->isIgnoredId($chat_message->from_id) && isset($player->socket)) {
                 $player->socket->write($chat_message->message);
             }
         }
@@ -147,11 +139,8 @@ class ChatRoom extends Room
     public function removePlayer($player)
     {
         Room::removePlayer($player);
-        if (count($this->player_array) <= 0 &&
-            $this->chat_room_name != "main" &&
-            $this->chat_room_name != "mod" &&
-            $this->chat_room_name != "admin"
-        ) {
+        $keep_rooms = ['main', 'mod', 'admin'];
+        if (count($this->player_array) <= 0 && !in_array($this->chat_room_name, $keep_rooms)) {
             $this->remove();
         }
     }
@@ -159,10 +148,11 @@ class ChatRoom extends Room
 
     public function sendChat($message, $user_id = -1)
     {
-        $chat_message = new ChatMessage($user_id, $message);
+        $chat_message = new \stdClass();
+        $chat_message->from_id = $user_id;
+        $chat_message->message = $message;
 
         array_push($this->chat_array, $chat_message);
-
         $this->chat_array[0] = null;
         array_shift($this->chat_array);
 

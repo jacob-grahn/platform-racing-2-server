@@ -12,8 +12,9 @@ class TemporaryItems
     {
         $match = false;
         foreach (self::$items as $item) {
-            if ($item->type == $type && $item->part_id == $part_id &&
-                ($item->guild_id == $guild_id || $item->user_id == $part_id)
+            if ($item->type === $type
+                && $item->part_id === $part_id
+                && ($item->guild_id === $guild_id || $item->user_id === $part_id)
             ) {
                 $item->expire_time += $duration;
                 $match = true;
@@ -24,9 +25,9 @@ class TemporaryItems
         if (!$match) {
             $item = new \stdClass();
             $item->type = $type;
-            $item->part_id = $part_id;
-            $item->user_id = $user_id;
-            $item->guild_id = $guild_id;
+            $item->part_id = (int) $part_id;
+            $item->user_id = (int) $user_id;
+            $item->guild_id = (int) $guild_id;
             $item->expire_time = time() + $duration;
             self::$items[] = $item;
         }
@@ -38,7 +39,7 @@ class TemporaryItems
         $arr = array();
         foreach (self::$items as $item) {
             if ($item->user_id == $user_id ||
-                ($guild_id != 0 && $item->guild_id == $guild_id) ||
+                ($guild_id != 0 && $item->guild_id === $guild_id) ||
                 $item->guild_id == -1
             ) {
                 $arr[] = $item;
@@ -65,8 +66,8 @@ class TemporaryItems
     {
         $time = time();
         $len = count(self::$items);
-        for ($i=0; $i<$len; $i++) {
-            $item = self::$items[ $i ];
+        for ($i = 0; $i < $len; $i++) {
+            $item = self::$items[$i];
             if ($item->expire_time < $time) {
                 array_splice(self::$items, $i, 1);
                 $len--;

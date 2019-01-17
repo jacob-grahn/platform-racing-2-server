@@ -11,7 +11,6 @@ class HappyHour
     public static function activate($duration = 3600)
     {
         $time = time();
-
         if (self::$hh_active_until < $time) {
             self::$hh_active_until = $time;
         }
@@ -38,7 +37,6 @@ class HappyHour
     public static function deactivate()
     {
         $time = time();
-
         if (self::$hh_active_until > $time) {
             self::$hh_active_until = $time;
         }

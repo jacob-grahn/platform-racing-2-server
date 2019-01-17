@@ -1,9 +1,11 @@
 <?php
 
-// env
-require_once __DIR__ . '/../../config.php';
+if (!defined(ROOT_DIR)) {
+    require_once __DIR__ . '/../../config.php'; // env
+}
 
-require_once QUERIES_DIR . '/servers/servers_select.php';
+require_once FNS_DIR . '/common_fns.php';
+require_once QUERIES_DIR . '/servers.php';
 require_once COMMON_DIR . '/manage_socket/socket_manage_fns.php';
 
 // connect
