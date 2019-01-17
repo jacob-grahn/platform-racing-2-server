@@ -56,7 +56,6 @@ class Player
     public $version = '0.0';
 
     public $last_exp_time;
-    public $last_user_action = 0;
     public $chat_count = 0;
     public $chat_time = 0;
 
@@ -80,6 +79,7 @@ class Player
     public $ip;
 
     public $temp_mod = false;
+    public $trial_mod = false;
     public $server_owner = false;
 
     public $hh_warned = false;
@@ -157,9 +157,8 @@ class Player
         global $max_players;
 
         // check if the server is full
-        if ((count($player_array) > $max_players && $this->group < 2) ||
-            (count($player_array) > ($max_players-10) && $this->group == 0)
-        ) {
+        $pCount = count($player_array);
+        if (($pCount > $max_players && $this->group < 2) || ($pCount > ($max_players - 10) && $this->group === 0)) {
             $this->write('loginFailure`');
             $this->write('message`Sorry, this server is full. Try back later.');
             $this->remove();
@@ -173,6 +172,12 @@ class Player
             $player_array[$this->user_id] = $this;
         }
 
+        // if they're a trial, tell the client
+        if ($this->group === 2 && isset($login->user->trial_mod)) {
+            $this->trial_mod = true;
+            $this->write("becomeTrialMod`");
+        }
+
         if (isset($player_array[$this->user_id])) {
             $this->awardKongHat();
             $this->applyTempItems();
@@ -181,54 +186,44 @@ class Player
         }
     }
 
-
     private function safeExplode($str_arr)
     {
-        if (isset($str_arr) && strlen($str_arr) > 0) {
-            $arr = explode(',', $str_arr);
-        } else {
-            $arr = array();
-        }
-        return $arr;
+        return (isset($str_arr) && strlen($str_arr) > 0) ? explode(',', $str_arr) : array();
     }
-
 
     private function applyTempItems()
     {
         $temp_items = TemporaryItems::getItems($this->user_id, $this->guild_id);
         foreach ($temp_items as $item) {
-            // $this->gainPart('e'.ucfirst($item->type), $item->part_id);
             $this->setPart($item->type, $item->part_id, true);
         }
     }
 
-
     public function incExp($exp)
     {
-        $max_rank = RankupCalculator::getExpRequired($this->active_rank+1);
-        $this->write('setExpGain`'.$this->exp_points.'`'.($this->exp_points+$exp).'`'.$max_rank);
+        $max_rank = RankupCalculator::getExpRequired($this->active_rank + 1);
+        $new_exp_total = $this->exp_points + $exp;
+        $this->write("setExpGain`$this->exp_points`$new_exp_total`$max_rank");
         $this->exp_points += $exp;
         $this->exp_today += $exp;
 
-        //rank up
+        // rank up
         if ($this->exp_points >= $max_rank) {
             $this->rank++;
             $this->active_rank++;
-            $this->exp_points = ($this->exp_points - $max_rank);
-            $this->write('setRank`'.$this->active_rank);
+            $this->exp_points = $this->exp_points - $max_rank;
+            $this->write("setRank`$this->active_rank");
         }
     }
-
 
     public function maybeSave()
     {
         $time = time();
-        if ($time - $this->last_save_time > 60 * 2) {
+        if ($time - $this->last_save_time > 120) {
             $this->last_save_time = $time;
             $this->saveInfo();
         }
     }
-
 
     public function useRankToken()
     {
@@ -237,7 +232,6 @@ class Player
         }
         $this->active_rank = $this->rank + $this->rt_used;
     }
-
 
     public function unuseRankToken()
     {
@@ -253,728 +247,18 @@ class Player
     }
 
 
-    public function sendChat($chat_message)
-    {
-
-        // globals and variables
-        global $guild_id, $guild_owner, $player_array, $port, $server_name,
-            $server_id, $server_expire_time, $uptime, $pdo;
-        $admin_name = $this->name;
-        $admin_id = $this->user_id;
-        $ip = $this->ip;
-
-        // sanity check: is the message more than 100 characters?
-        if (strlen($chat_message) > 100) {
-            $chat_message = substr($chat_message, 0, 100);
-        }
-
-        // find what room the player is in
-        if (isset($this->chat_room) && !isset($this->game_room)) {
-            $room_type = "c"; // c for chat
-            $player_room = $this->chat_room;
-        } elseif (isset($this->game_room) && !isset($this->chat_room)) {
-            $room_type = "g"; // g for game
-            $player_room = $this->game_room;
-        } // this should never happen
-        elseif (isset($this->chat_room) && isset($this->game_room)) {
-            $room_type = "b"; // b for both
-        } // this also should never happen
-        else {
-            $room_type = "n"; // n for none
-        }
-
-        //special text emotes
-        if ($room_type == 'c') {
-            $think_array = [":thinking:", ":think:", ":what:", ":hmm:"];
-            $lol_array = [":lol:", ":laugh:", ":lmao:", ":joy:"];
-            $fred_array = [":fred:", ":cactus:"];
-            $yay_array = [":yay:", ":woohoo:", ":wow:"];
-            $hooray_array = [":hooray:", ":tada:", ":party:"];
-            $hello_array = [":hi:", ":hello:", ":hey:"];
-            
-            $chat_message = str_ireplace(":shrug:", "¯\_(ツ)_/¯", $chat_message);
-            $chat_message = str_ireplace(":lenny:", "( ͡° ͜ʖ ͡°)", $chat_message);
-            $chat_message = str_ireplace($yay_array, "╰(ᴖ◡ᴖ)╯", $chat_message);
-            $chat_message = str_ireplace($hello_array, "ー( ◉▽◉ )ﾉ", $chat_message);
-            $chat_message = str_ireplace($think_array, "🤔", $chat_message);
-            $chat_message = str_ireplace($lol_array, "😂", $chat_message);
-            $chat_message = str_ireplace($hooray_array, "🎉", $chat_message);
-            $chat_message = str_ireplace($fred_array, "🌵", $chat_message);
-        }
-
-        // html killer for systemChat
-        $safe_chat_message = htmlspecialchars($chat_message);
-
-        // switch for text effects
-        switch ($chat_message) {
-            case '/b':
-                $chat_effect = 'bold';
-                $chat_effect_tag = '<b>';
-                break;
-            case '/i':
-                $chat_effect = 'italicized';
-                $chat_effect_tag = '<i>';
-                break;
-            case '/u':
-                $chat_effect = 'underlined';
-                $chat_effect_tag = '<u>';
-                break;
-            case '/li':
-                $chat_effect = 'bulleted';
-                $chat_effect_tag = '<li>';
-                break;
-            default:
-                $chat_effect = null;
-                $chat_effect_tag = null;
-                break;
-        }
-
-        // make sure they're in exactly one valid room
-        if ($room_type != 'n' && $room_type != 'b' && isset($player_room)) {
-            // --- chat commands --- \\
-            // tournament mode
-            if (strpos($chat_message, '/t ') === 0 ||
-                strpos($chat_message, '/tournament ') === 0 ||
-                $chat_message == '/t' ||
-                $chat_message == '/tournament'
-            ) {
-                // if server owner, allow them to do server owner things
-                if ($this->server_owner == true) {
-                    // help
-                    if ($chat_message == '/t help' || $chat_message == '/t' || $chat_message == '/tournament') {
-                        $this->write('systemChat`Welcome to tournament mode!<br><br>'.
-                            'To enable a tournament, use /t followed by a hat '.
-                            'name and stat values for the desired speed, '.
-                            'acceleration, and jumping of the tournament.<br><br>'.
-                            'Example: /t none 65 65 65<br>Hat: None<br>'.
-                            'Speed: 65<br>'.
-                            'Accel: 65<br>'.
-                            'Jump: 65<br><br>'.
-                            'To turn off tournament mode, type /t off. '.
-                            'To find out whether tournament mode is on or off, '.
-                            'type /t status.');
-                    } // status
-                    elseif ($chat_message == '/t status') {
-                        tournament_status($this);
-                    } // tournament mode
-                    else {
-                        try {
-                            //handle exceptions
-                            $caught_exception = false;
-
-                            // attempt to start a tournament using the specified parameters
-                            issue_tournament($safe_chat_message);
-                        } catch (\Exception $e) {
-                            $caught_exception = true;
-                            $err = $e->getMessage();
-                            $err_supl = " Make sure you typed everything ".
-                                "correctly! For help with tournaments, type /t help.";
-                            $this->write('systemChat`Error: ' . $err . $err_supl);
-                        }
-
-                        // if an error was not encountered, announce the tournament to the chatroom
-                        if (!$caught_exception) {
-                            announce_tournament($player_room);
-                        }
-                    }
-                } // if not the guild owner, limit their ability to checking the status of a tournament only
-                else {
-                    // status
-                    if ($chat_message == '/t status' || $chat_message == '/t' || $chat_message == '/tournament') {
-                        tournament_status($this);
-                    } // tell them how to get the status
-                    else {
-                        $this->write('systemChat`To find out whether tournament mode is on or off, type /t status.');
-                    }
-                }
-            } // chat effects
-            elseif (!is_null($chat_effect) &&
-                $this->group >= 2 &&
-                ($this->temp_mod == false || $this->server_owner == true)
-            ) {
-                if ($room_type == 'c') {
-                    $player_room->sendChat('systemChat`' . $chat_effect_tag .
-                        userify($this, $this->name) . ' has temporarily activated ' .
-                        $chat_effect . ' chat!');
-                } else {
-                    $this->write('systemChat`This command cannot be used in levels.');
-                }
-            } // chat announcements
-            elseif (strpos($chat_message, '/a ') === 0 &&
-                $this->group >= 2 &&
-                ($this->temp_mod == false || $this->server_owner == true)
-            ) {
-                $announcement = trim(substr($chat_message, 3));
-                $safe_announcement = htmlspecialchars($announcement); // html killer
-                $announce_length = strlen($safe_announcement);
-
-                if ($announce_length >= 1) {
-                    $player_room->sendChat('systemChat`Chatroom Announcement from '
-                        .userify($this, $this->name).': ' . $safe_announcement);
-                } else {
-                    $this->write('systemChat`Your announcement must be at least 1 character.');
-                }
-            } // "give" command
-            elseif (strpos($chat_message, '/give ') === 0 &&
-                $this->group >= 2 &&
-                ($this->temp_mod == false || $this->server_owner == true)
-            ) {
-                $give_this = trim(substr($chat_message, 6));
-                $safe_give_this = htmlspecialchars($give_this); // html killer
-                $give_this_length = strlen($safe_give_this);
-
-                if ($give_this_length >= 1) {
-                    $mod_url = userify($this, $this->name);
-                    $player_room->sendChat('systemChat`'.$mod_url.' has given ' . $safe_give_this);
-                } else {
-                    $this->write('systemChat`The thing you\'re giving must be at least 1 character.');
-                }
-            } // "promote" command
-            elseif (strpos($chat_message, '/promote ') === 0 && $this->group >= 3 && $this->server_owner == false) {
-                $promote_this = trim(substr($chat_message, 9));
-                $safe_promote_this = htmlspecialchars($promote_this); // html killer
-                $promote_this_length = strlen($safe_promote_this);
-
-                if ($promote_this_length >= 1) {
-                    $admin_url = userify($this, $this->name);
-                    $player_room->sendChat('systemChat`'.$admin_url.' has promoted ' . $safe_promote_this);
-                } else {
-                    $this->write('systemChat`The thing you\'re promoting must be at least 1 character.');
-                }
-            } // population command
-            elseif ($chat_message == '/pop' || $chat_message == '/population') {
-                $pop_counted = count($player_array); // count players
-                $pop_singular = array("is", "user"); // language for 1 player
-                $pop_plural = array("are", "users"); // language for multiple players
-
-                if ($pop_counted === 1) {
-                    // if there is only one player, associate the singular language with the called variable
-                    $pop_lang = $pop_singular;
-                } else {
-                    // if there is more than one player, associate the plural language with the called variable
-                    $pop_lang = $pop_plural;
-                }
-
-                $this->write('systemChat`There '.$pop_lang[0].' currently '.
-                    $pop_counted.' '.$pop_lang[1].' playing on this server.');
-            } // clear command
-            elseif (($chat_message == '/clear' || $chat_message == '/cls') &&
-                $this->group >= 2 &&
-                ($this->temp_mod == false || $this->server_owner == true)
-            ) {
-                if ($player_room == $this->chat_room) {
-                    $player_room->clear($this);
-                } else {
-                    $this->write('systemChat`This command cannot be used in levels.');
-                }
-            } // here command
-            elseif ($chat_message == '/here') {
-                if ($player_room == $this->chat_room) {
-                    $this->write('systemChat`' . $player_room->whoIsHere());
-                } else {
-                    $this->write('systemChat`This command cannot be used in levels.');
-                }
-            } // debug command for admins
-            elseif (($chat_message == '/debug' || strpos($chat_message, '/debug ') === 0) &&
-                $this->group >= 3 && $this->server_owner == false
-            ) {
-                $is_ps = 'no';
-                if ($guild_id != '0') {
-                    $is_ps = 'yes';
-                }
-
-                if ($chat_message == '/debug help') {
-                    $this->write("systemChat`Acceptable Arguments:<br><br>".
-                        "- help<br>".
-                        "- player *name*<br>".
-                        "- restart_server<br>".
-                        "- server");
-                } elseif ($chat_message == '/debug restart_server') {
-                    $this->write("message`chat_message: $chat_message<br>".
-                        "admin_name: $admin_name<br>".
-                        "admin_id: $admin_id<br>".
-                        "ip: $ip<br>".
-                        "server_name: $server_name<br>".
-                        "server_id: $server_id<br>".
-                        "port: $port");
-                } elseif ($chat_message == '/debug server') {
-                    $this->write("message`chat_message: $chat_message<br>".
-                        "port: $port<br>".
-                        "server_name: $server_name<br>".
-                        "server_id: $server_id<br>".
-                        "uptime: $uptime<br>".
-                        "private_server: $is_ps<br>".
-                        "server_guild: $guild_id<br>".
-                        "server_owner: $guild_owner<br>".
-                        "server_expire_time: $server_expire_time");
-                } elseif (strpos($chat_message, '/debug player ') === 0) {
-                    $player_name = trim(substr($chat_message, 14));
-                    $player = name_to_player($player_name);
-
-                    if (isset($player)) {
-                        $pip = $player->ip;
-                        $pname = $player->name;
-                        $puid = $player->user_id;
-                        $pstatus = $player->status;
-                        $pgroup = $player->group;
-                        $pguild = $player->guild_id;
-                        $parank = $player->active_rank;
-                        $prank = $player->rank;
-                        $prtused = $player->rt_used;
-                        $prtavail = $player->rt_available;
-                        $pexp2day = $player->exp_today;
-                        $pexppoints = $player->exp_points;
-                        $pspeed = $player->speed;
-                        $paccel = $player->acceleration;
-                        $pjump = $player->jumping;
-                        $phat = $player->hat;
-                        $phead = $player->head;
-                        $pbody = $player->body;
-                        $pfeet = $player->feet;
-                        $phatc = $player->hat_color;
-                        $pheadc = $player->head_color;
-                        $pbodyc = $player->body_color;
-                        $pfeetc = $player->feet_color;
-                        $pehatc = $player->hat_color_2;
-                        $peheadc = $player->head_color_2;
-                        $pebodyc = $player->body_color_2;
-                        $pefeetc = $player->feet_color_2;
-                        $pdomain = $player->domain;
-                        $pversion = $player->version;
-                        $plaction = $player->socket->last_user_action;
-                        $plaction = format_duration(time() - $plaction) . " ago ($plaction)";
-                        $plexp = format_duration(time() - $player->last_exp_time) . " ago ($player->last_exp_time)";
-                        if ($player->temp_mod === true) {
-                            $ptemp = 'yes';
-                        } else {
-                            $ptemp = 'no';
-                        }
-                        if ($player->server_owner === true) {
-                            $pso = 'yes';
-                        } else {
-                            $pso = 'no';
-                        }
-
-                        $this->write(
-                            "message`"
-                            ."chat_message: $chat_message<br>"
-                            ."ip: $pip<br>"
-                            ."name: $pname | user_id: $puid<br>"
-                            ."status: $pstatus<br>"
-                            ."last_user_action: $plaction<br>"
-                            ."group: $pgroup | temp_mod: $ptemp | server_owner: $pso<br>"
-                            ."guild_id: $pguild<br>"
-                            ."active_rank: $parank | rank (no rt): $prank | rt_used: $prtused | rt_avail: $prtavail<br>"
-                            ."exp_today: $pexp2day | exp_points: $pexppoints<br>"
-                            ."last_exp_time: $plexp<br>"
-                            ."speed: $pspeed | acceleration: $paccel | jumping: $pjump<br>"
-                            ."hat: $phat | head: $phead | body: $pbody | feet: $pfeet<br>"
-                            ."hat_color: $phatc | hat_color_2: $pehatc<br>"
-                            ."head_color: $pheadc | head_color_2: $peheadc<br>"
-                            ."body_color: $pbodyc | body_color_2: $pebodyc<br>"
-                            ."feet_color: $pfeetc | feet_color_2: $pefeetc<br>"
-                            ."domain: $pdomain<br>"
-                            ."version: $pversion"
-                        );
-                    } else {
-                        $this->write('message`Error: Could not find a player with that name on this server.');
-                    }
-                } else {
-                    $this->write("systemChat`Enter an argument to get the data ".
-                        "you want. For a list of acceptable arguments, type /debug help.");
-                }
-            } // restart server command for admins
-            elseif ($chat_message == '/restart_server' &&
-                $this->group >= 3 &&
-                ($this->server_owner == false || $guild_id == 183)
-            ) {
-                if ($room_type == 'c') {
-                    if ($this->restart_warned == false) {
-                        $this->restart_warned = true;
-                        $this->write('systemChat`WARNING: You just typed the '.
-                            'server restart command. If you choose to proceed, '.
-                            'this action will disconnect EVERY player on this '.
-                            'server. Are you sure you want to disconnect ALL '.
-                            'players and restart the server? If so, type the '.
-                            'command again.');
-                    } elseif ($this->restart_warned == true) {
-                        admin_action_insert(
-                            $pdo,
-                            $admin_id,
-                            "$admin_name restarted $server_name from $ip.",
-                            $admin_id,
-                            $ip
-                        );
-                        output("$this->name initiated a server shutdown.");
-                        shutdown_server();
-                    }
-                } else {
-                    $this->write('systemChat`This command cannot be used in levels.');
-                }
-            } // time left in a private server command
-            elseif ($chat_message == '/timeleft' && $this->server_owner == true) {
-                if ($server_id > 10) {
-                    $this->write("systemChat`Your server will expire on ".
-                        "$server_expire_time. To extend your time, buy either ".
-                        "Private Server 1 or Private Server 30 from the Vault of Magics.");
-                } else {
-                    $this->write("systemChat`This is not a private server.");
-                }
-            } // be awesome command
-            elseif ($chat_message == '/be_awesome' || $chat_message == '/beawesome') {
-                $this->write("message`<b>You're awesome!</b>");
-            } // kick command
-            elseif (strpos($chat_message, '/kick ') === 0 &&
-                $this->group >= 2 &&
-                ($this->temp_mod === false || $this->server_owner == true)
-            ) {
-                $kicked_name = trim(substr($chat_message, 6));
-                client_kick($this->socket, $kicked_name);
-            } // unkick command
-            elseif (strpos($chat_message, '/unkick ') === 0 &&
-                $this->group >= 2 &&
-                ($this->temp_mod === false || $this->server_owner == true)
-            ) {
-                $unkicked_name = trim(substr($chat_message, 8));
-                client_unkick($this->socket, $unkicked_name);
-            } // unwarn/unmute command
-            elseif ($this->group >= 2 &&
-                (strpos($chat_message, '/unmute ') === 0 || strpos($chat_message, '/unwarn ') === 0) &&
-                ($this->temp_mod === false || $this->server_owner == true)
-            ) {
-                $unmuted_name = trim(substr($chat_message, 8));
-                client_unmute($this->socket, $unmuted_name);
-            } // disconnect command
-            elseif ((strpos($chat_message, '/dc ') === 0 || strpos($chat_message, '/disconnect ') === 0) &&
-                 $this->group >= 2 &&
-                 ($this->temp_mod === false || $this->server_owner == true)
-             ) {
-                $dc_name = trim(substr($chat_message, 12)); // for /disconnect
-                if (strpos($chat_message, '/dc ') === 0) {
-                    $dc_name = trim(substr($chat_message, 4)); // for /dc
-                }
-                $dc_player = name_to_player($dc_name);
-                $safe_dc_name = htmlspecialchars($dc_name); // make the name safe to echo back to the user
-
-                // permission checks
-                if (isset($dc_player) &&
-                    ($dc_player->group < 2 || $this->server_owner == true || $dc_player->temp_mod == true)
-                ) {
-                    $mod_id = $this->user_id;
-                    $mod_name = $this->name;
-                    $mod_ip = $this->ip;
-
-                    // do it
-                    $dc_player->remove();
-
-                    // if they're an actual mod, log it
-                    if ($this->server_owner == false || $mod_id == FRED) {
-                        mod_action_insert(
-                            $pdo,
-                            $mod_id,
-                            "$mod_name disconnected $dc_name from $server_name from $mod_ip.",
-                            $mod_id,
-                            $mod_ip
-                        );
-                    }
-
-                    // tell the world
-                    $this->write("message`$safe_dc_name has been disconnected."); // tell the disconnector
-                } elseif (isset($dc_player) && ($dc_player->group > 2 || $this->server_owner == false)) {
-                    $this->write("message`Error: You lack the power to disconnect $safe_dc_name.");
-                } else {
-                    $this->write(
-                        "message`Error: Could not find a user with the name \"$safe_dc_name\" on this server."
-                    ); // they're not online or don't exist ^^
-                }
-            } // hh status for everyone, activate for admins, deactivate for admins and server owners
-            elseif (($chat_message == '/hh' || strpos($chat_message, '/hh ') === 0)) {
-                $args = explode(' ', $chat_message);
-                array_shift($args);
-
-                if ($chat_message == '/hh' || $args[0] == 'status') {
-                    $hh_timeleft = HappyHour::timeLeft();
-                    if ($hh_timeleft != false) {
-                        $this->write('systemChat`There is currently a Happy '.
-                            'Hour on this server! It will expire in '.
-                            format_duration($hh_timeleft) . '.');
-                    } else {
-                        $this->write('systemChat`There is not currently a Happy Hour on this server.');
-                    }
-                } elseif ($args[0] == 'help') {
-                    $hhmsg_admin = '';
-                    $hhmsg_server_owner = '';
-                    $hhmsg_warning = 'WARNING: This will remove all stacked '.
-                        'Happy Hours bought by all users on this server from '.
-                        'the Vault of Magics, as well as ending the current one.';
-                    if ($this->group >= 3 && $this->server_owner == false) {
-                        $hhmsg_admin = "To activate a Happy Hour, type /hh ".
-                            "activate. To deactivate the current Happy Hour, ".
-                            "type /hh deactivate. $hhmsg_warning";
-                    } elseif ($this->group >= 3 && $this->server_owner == true) {
-                        $hhmsg_server_owner = "To deactivate the current ".
-                            "Happy Hour, type /hh deactivate. $hhmsg_warning";
-                    }
-                    $this->write('systemChat`To find out if a Happy Hour is '.
-                        'active and when it expires, type /hh status. '.
-                        $hhmsg_admin.$hhmsg_server_owner);
-                } elseif ($args[0] == 'activate' && $this->group >=3 && $this->server_owner == false) {
-                    if (HappyHour::isActive() != true && PR2SocketServer::$tournament == false) {
-                        if (!isset($args[1])) {
-                            HappyHour::activate();
-                        } else {
-                            $args[1] = (int) $args[1];
-                            if ($args[1] > 3600) {
-                                $args[1] = 3600;
-                            }
-                            HappyHour::activate($args[1]);
-                        }
-                        $player_room->sendChat('systemChat`'.
-                            userify($this, $this->name).
-                            ' just triggered a Happy Hour!');
-                    } elseif (PR2SocketServer::$tournament == true) {
-                        $this->write('systemChat`You can\'t activate a Happy '.
-                            'Hour on a server with tournament mode enabled. '.
-                            'Disable tournament mode and try again.');
-                    } else {
-                        $hh_timeleft = HappyHour::timeLeft();
-                        $this->write('systemChat`There is already a Happy Hour on this server. It will expire in '.
-                            format_duration($hh_timeleft) . '.');
-                    }
-                } elseif ($args[0] == 'deactivate' && $this->group >= 3) {
-                    if (!$this->hh_warned) {
-                        $this->hh_warned = true;
-                        $this->write("systemChat`WARNING: This will remove ALL ".
-                            "stacked Happy Hours bought by ALL users on this ".
-                            "server from the Vault of Magics, as well as ".
-                            "ending the current one. If you're sure you want ".
-                            "to do this, type the command again.");
-                    } elseif (HappyHour::isActive() && $this->hh_warned) {
-                        HappyHour::deactivate();
-                        $player_room->sendChat('systemChat`' .
-                            userify($this, $this->name) .
-                            ' just ended the current Happy Hour.');
-                    } else {
-                        $this->write('systemChat`There isn\'t an active Happy Hour right now.');
-                    }
-                } else {
-                    $this->write('systemChat`Error: Invalid argument specified. Type /hh help for more information.');
-                }
-            } // server mod command for server owners
-            elseif (($chat_message == '/mod' || strpos($chat_message, '/mod ') === 0) &&
-                $this->group >= 3 &&
-                $this->server_owner == true &&
-                $this->user_id != FRED
-            ) {
-                if ($chat_message == '/mod help') {
-                    $this->write('systemChat`To promote someone to a server '.
-                        'moderator, type "/mod promote" followed by their '.
-                        'username. They will be a server moderator until '.
-                        'they log out or are demoted. To demote an existing '.
-                        'server moderator, type "/mod demote" followed by '.
-                        'their username.');
-                } elseif (strpos($chat_message, '/mod promote ') === 0 || strpos($chat_message, '/mod demote ') === 0) {
-                    if (strpos($chat_message, '/mod promote ') === 0) {
-                        $action = 'promote';
-                        $to_name = trim(substr($chat_message, 13));
-                    } elseif (strpos($chat_message, '/mod demote ') === 0) {
-                        $action = 'demote';
-                        $to_name = trim(substr($chat_message, 12));
-                    }
-                    $target = name_to_player($to_name);
-                    $owner = $this;
-
-                    // do the appropriate action
-                    if ($action == 'promote') {
-                        promote_server_mod($to_name, $owner, $target);
-                    } elseif ($action == 'demote') {
-                        demote_server_mod($to_name, $owner, $target);
-                    }
-                } else {
-                    $this->write('Invalid action. For more information on how '.
-                        'to use this command, type /mod help.');
-                }
-            } // get priors (for lazy mods)
-            elseif (strpos($chat_message, '/priors ') === 0 &&
-                    $this->group >= 2 &&
-                    $this->temp_mod === false &&
-                    $this->server_owner === false
-            ) {
-                $name = trim(substr($chat_message, 8));
-                get_priors($pdo, $this, $name);
-            } // rules command
-            elseif ($chat_message == '/rules') {
-                $rules_link = urlify('https://pr2hub.com/rules', 'pr2hub.com/rules');
-                $message = "systemChat`The PR2 rules can be found at $rules_link.";
-                if ($guild_id != 0) {
-                    $message .= ' Since this is a private server, your guild '.
-                        'owner may have different rules for the chatrooms and '.
-                        'the server. Check with them if you\'re unsure.';
-                }
-                $this->write($message);
-            } // emotes command
-            elseif ($chat_message == '/emotes' ||
-                $chat_message == '/emoticons' ||
-                $chat_message == '/emojis' ||
-                $chat_message == '/smilies' ||
-                $chat_message == '/smiles'
-            ) {
-                if ($room_type == 'c') {
-                    $this->write('systemChat`PR2 Emoticons:<br>'
-                                .':shrug: = ¯\_(ツ)_/¯<br>'
-                                .':lenny: = ( ͡° ͜ʖ ͡°)<br>'
-                                .':yay: = ╰(ᴖ◡ᴖ)╯<br>'
-                                .':hello: = ー( ◉▽◉ )ﾉ<br>'
-                                .':think: = 🤔<br>'
-                                .':laugh: = 😂<br>'
-                                .':hooray: = 🎉<br>'
-                                .':fred: = 🌵<br>'
-                                .'Note: Emoticons can\'t be used in races.');
-                } else {
-                    $this->write('systemChat`To get a list of emoticons that can be used in the chatroom,'
-                                .' go to the chat tab in the lobby and type /emotes.');
-                }
-            } elseif ($chat_message == '/guides' || $chat_message == '/guide') {
-                if ($room_type == 'c') {
-                    $hats_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Hats');
-                    $eups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=123', 'Epic Upgrades');
-                    $groups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Groups');
-                    $fah_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=19', 'Folding at Home (F@H)');
-                    $this->write('systemChat`Helpful Resources:<br>'
-                                ."- $hats_link<br>"
-                                ."- $eups_link<br>"
-                                ."- $groups_link<br>"
-                                ."- $fah_link");
-                } else {
-                    $this->write('systemChat`To get a list of guides that explain different parts of PR2,'
-                                .' go to the chat tab in the lobby and type /guides.');
-                }
-            } // help command
-            elseif ($chat_message == '/help' ||
-                $chat_message == '/commands' ||
-                $chat_message == '/?' ||
-                $chat_message == '/'
-            ) {
-                $mod = '';
-                $effects = '';
-                $admin = '';
-                $server_owner = '';
-
-                if ($room_type == 'g') {
-                    $this->write('systemChat`To get a list of commands that can be used in the chatroom,'
-                                .' go to the chat tab in the lobby and type /help.');
-                } else {
-                    if ($this->group >= 2) {
-                        if ($this->temp_mod === false) {
-                            $mod = '<br>Moderator:<br>'.
-                                '- /a (Announcement)<br>'.
-                                '- /give *text*<br>'.
-                                '- /kick *name*<br>'.
-                                '- /unkick *name*<br>'.
-                                '- /disconnect *name*<br>'.
-                                '- /priors *name*<br>'.
-                                '- /clear';
-                            $effects = '<br>Chat Effects:<br>'.
-                                '- /b (Bold)<br>'.
-                                '- /i (Italics)<br>'.
-                                '- /u (Underlined)<br>'.
-                                '- /li (Bulleted)';
-                        }
-                        if ($this->group >= 3 && $this->server_owner == false) {
-                            $admin = '<br>Admin:<br>'.
-                                '- /promote *message*<br>'.
-                                '- /restart_server<br>'.
-                                '- /debug *arg*<br>'.
-                                '- /hh help';
-                        }
-                        if ($this->server_owner == true) {
-                            $server_owner = '<br>Server Owner:<br>'.
-                                '- /timeleft<br>'.
-                                '- /mod help<br>'.
-                                '- /hh help<br>'.
-                                '- /t (Tournament)<br>'.
-                                'For more information on tournaments, use /t help.';
-                        }
-                    }
-                    $this->write('systemChat`PR2 Chat Commands:<br>'.
-                        '- /rules<br>'.
-                        '- /here (in this chatroom)<br>'.
-                        '- /view *player*<br>'.
-                        '- /guild *guild name*<br>'.
-                        '- /hint (Artifact)<br>'.
-                        '- /hh status<br>'.
-                        '- /t status<br>'.
-                        '- /population<br>'.
-                        '- /beawesome<br>'.
-                        '- /emotes<br>'.
-                        '- /guides'.$mod.$effects.$admin.$server_owner);
-                }
-            } // --- send chat message --- \\
-            else {
-                // get time of mute expiry
-                $isMuted = Mutes::isMuted($this->name);
-
-                // guest check
-                if ($this->group <= 0 || $this->guest == true) {
-                    $this->write("systemChat`Sorries, guests can't send chat messages.");
-                } // rank 3 check
-                elseif ($this->active_rank < 3 && $this->group < 2) {
-                    $this->write('systemChat`Sorries, you must be rank 3 or above to chat.');
-                } // muted check (warnings, auto-warn, manual mute duration)
-                elseif ($isMuted === true) {
-                    $cb_secs = (int) Mutes::remainingTime($this->name);
-                    $this->write("systemChat`You have been temporarily muted from the chat. ".
-                        "The mute will be lifted in $cb_secs seconds.");
-                } // spam check
-                elseif ($this->getChatCount() > 6 && ($this->group < 2 || $this->temp_mod === true)) {
-                    Mutes::add($this->name, 60);
-                    $this->write('systemChat`Slow down a bit, yo.');
-                } // illegal character in username/message check
-                elseif (strpos($this->name, '`') !== false || strpos($chat_message, '`') !== false) {
-                    $this->write('message`Error: Illegal character detected.');
-                } // if caught by NOTHING above, send the message
-                else {
-                    $message = 'chat`'.$this->name.'`'.$this->group.'`'.$chat_message;
-                    $this->chat_count++;
-                    $this->chat_time = time();
-                    $player_room->sendChat($message, $this->user_id);
-                }
-            }
-        } // this should never happen
-        elseif ($room_type == 'b') {
-            $this->write("message`Error: You can't be in two places at once!");
-        } // this should also never happen
-        elseif ($room_type == 'n') {
-            $this->write("message`Error: You don't seem to be in a valid chatroom.");
-        } // aaaaand this most certainly will never happen
-        else {
-            $this->write("message`Error: The server encountered an error ".
-                "when trying to determine what chatroom you're in. ".
-                "Try rejoining the chatroom and sending your message again. ".
-                "If this error persists, contact a member of the PR2 Staff Team.");
-        }
-    }
-
-
-
-    private function getChatCount()
+    public function getChatCount()
     {
         $seconds = time() - $this->chat_time;
         $this->chat_count -= $seconds / 2;
-        if ($this->chat_count < 0) {
-            $this->chat_count = 0;
-        }
+        $this->chat_count = $this->chat_count >= 0 ?: 0;
         return $this->chat_count;
     }
 
 
     public function isIgnoredId($id)
     {
-        if (array_search($id, $this->ignored_array) === false) {
-            return false;
-        } else {
-            return true;
-        }
+        return !array_search($id, $this->ignored_array) ? false : true;
     }
 
 
@@ -1043,11 +327,7 @@ class Player
             $epic_arr = $this->epic_feet_array;
         }
 
-        if (array_search($id, $epic_arr) === false && array_search('*', $epic_arr) === false) {
-            $color = -1;
-        }
-
-        return( $color );
+        return (array_search($id, $epic_arr) === false && array_search('*', $epic_arr) === false) ? -1 : $color;
     }
 
 
@@ -1055,8 +335,10 @@ class Player
     {
         if (strpos($this->domain, 'kongregate.com') !== false) {
             $added = $this->gainPart('hat', 3, true);
-            if ($added) {
-                $this->hat_color = 10027008;
+            $this->hat_color = $added === true ? 10027008 : $this->hat_color;
+            if ($this->guest === false && $added === true) {
+                $this->write("message`Thanks for playing PR2 on Kongregate! "
+                    ."As a token of our thanks, the Kong Hat has been added to your account.\n\nxoxo -Kong & Jiggmin");
             }
         }
     }
@@ -1068,7 +350,6 @@ class Player
         $this->gainPart('body', 17, true);
         $this->gainPart('feet', 16, true);
     }
-
 
 
     public function gainPart($type, $id, $autoset = false)
@@ -1090,7 +371,7 @@ class Player
         } elseif ($type === 'eFeet') {
             $arr = &$this->epic_feet_array;
         } else {
-            echo("Player->gainPart - unknown part type: $type \n");
+            output("Player->gainPart - unknown part type: $type");
             return false;
         }
 
@@ -1104,7 +385,6 @@ class Player
             return false;
         }
     }
-
 
 
     public function setPart($type, $id)
@@ -1124,7 +404,6 @@ class Player
             $this->feet = $id;
         }
     }
-
 
 
     private function getStatStr()
@@ -1147,18 +426,13 @@ class Player
             $accel += 10;
             $jump += 10;
         }
-        $str = "$speed`$accel`$jump";
-        return $str;
+        return "$speed`$accel`$jump";
     }
 
 
     private function getRealStatStr()
     {
-        $speed = $this->speed;
-        $accel = $this->acceleration;
-        $jump = $this->jumping;
-        $str = "$speed`$accel`$jump";
-        return $str;
+        return "$this->speed`$this->acceleration`$this->jumping";
     }
 
 
@@ -1204,7 +478,6 @@ class Player
     }
 
 
-
     private function verifyStats()
     {
         if ($this->speed < 0) {
@@ -1235,7 +508,6 @@ class Player
     }
 
 
-
     private function verifyParts($strict = false)
     {
         $this->verifyPart($strict, 'hat');
@@ -1243,7 +515,6 @@ class Player
         $this->verifyPart($strict, 'body');
         $this->verifyPart($strict, 'feet');
     }
-
 
 
     private function verifyPart($strict, $type)
@@ -1272,12 +543,8 @@ class Player
 
     private function getOwnedParts($type)
     {
-        if (substr($type, 0, 1) == 'e') {
-            $arr = $this->{'epic_'.strtolower(substr($type, 1)).'_array'};
-        } else {
-            $arr = $this->{$type.'_array'};
-        }
-        return $arr;
+        $is_e = substr($type, 0, 1) === 'e' ? true : false;
+        return $is_e === true ? $this->{'epic_'.strtolower(substr($type, 1)).'_array'} : $this->{$type.'_array'};
     }
 
 
@@ -1285,8 +552,7 @@ class Player
     {
         $perm = $this->getOwnedParts($type);
         $temp = TemporaryItems::getParts($type, $this->user_id, $this->guild_id);
-        $full = array_merge($perm, $temp);
-        return $full;
+        return array_merge($perm, $temp);
     }
 
 
@@ -1296,7 +562,6 @@ class Player
             $this->socket->write($str);
         }
     }
-
 
 
     public function wearingHat($hat_num)
@@ -1311,14 +576,12 @@ class Player
     }
 
 
-
     public function becomeTempMod()
     {
         $this->group = 2;
         $this->temp_mod = true;
         $this->write('becomeTempMod`');
     }
-
 
 
     public function becomeServerOwner()
@@ -1338,16 +601,14 @@ class Player
     }
 
 
-
     public function becomeGuest()
     {
         $this->guest = true;
         $this->write("message`Welcome to Platform Racing 2!<br><br>".
             "You're a guest, which means you'll have limited privileges. ".
             "To gain full functionality, log out and create your own account. ".
-            "<br><br>Thanks for playing, I hope you enjoy!<br>-Jacob");
+            "<br><br>Thanks for playing, I hope you enjoy!<br>-Jiggmin");
     }
-
 
 
     public function saveInfo()
@@ -1408,65 +669,49 @@ class Player
         $rank = $this->rank;
         $exp_points = $this->exp_points;
 
-        $hat_color = $this->hat_color;
-        $head_color = $this->head_color;
-        $body_color = $this->body_color;
-        $feet_color = $this->feet_color;
+        $hatCol = $this->hat_color;
+        $headCol = $this->head_color;
+        $bodyCol = $this->body_color;
+        $feetCol = $this->feet_color;
 
-        $hat_color_2 = $this->hat_color_2;
-        $head_color_2 = $this->head_color_2;
-        $body_color_2 = $this->body_color_2;
-        $feet_color_2 = $this->feet_color_2;
+        $hatCol2 = $this->hat_color_2;
+        $headCol2 = $this->head_color_2;
+        $bodyCol2 = $this->body_color_2;
+        $feetCol2 = $this->feet_color_2;
 
         $hat = $this->hat;
         $head = $this->head;
         $body = $this->body;
         $feet = $this->feet;
 
-        $hat_array = join(',', $this->hat_array);
-        $head_array = join(',', $this->head_array);
-        $body_array = join(',', $this->body_array);
-        $feet_array = join(',', $this->feet_array);
+        $hat_arr = join(',', $this->hat_array);
+        $head_arr = join(',', $this->head_array);
+        $body_arr = join(',', $this->body_array);
+        $feet_arr = join(',', $this->feet_array);
 
-        $epic_hat_array = join(',', $this->epic_hat_array);
-        $epic_head_array = join(',', $this->epic_head_array);
-        $epic_body_array = join(',', $this->epic_body_array);
-        $epic_feet_array = join(',', $this->epic_feet_array);
+        $ehat_arr = join(',', $this->epic_hat_array);
+        $ehead_arr = join(',', $this->epic_head_array);
+        $ebody_arr = join(',', $this->epic_body_array);
+        $efeet_arr = join(',', $this->epic_feet_array);
 
         $speed = $this->speed;
-        $acceleration = $this->acceleration;
-        $jumping = $this->jumping;
+        $accel = $this->acceleration;
+        $jump = $this->jumping;
 
         $status = $this->status;
-        $e_server_id = $server_id;
+        $e_server_id = $status === 'offline' ? 0 : $server_id;
 
         $rt_used = $this->rt_used;
         $ip = $this->ip;
-        $tot_exp_gained = $this->exp_today - $this->start_exp_today;
+        $exp_gain = $this->exp_today - $this->start_exp_today;
 
-        if ($status == 'offline') {
-            $e_server_id = 0;
-        }
-
-        if ($this->group == 0 || $this->guest === true) {
-            $rank = 0;
-            $exp_points = 0;
-            $hat_array = '1';
-            $head_array = '1,2,3,4,5,6,7,8,9';
-            $body_array = '1,2,3,4,5,6,7,8,9';
-            $feet_array = '1,2,3,4,5,6,7,8,9';
-            $epic_hat_array = '';
-            $epic_head_array = '';
-            $epic_body_array = '';
-            $epic_feet_array = '';
-            $hat = 1;
-            $head = 1;
-            $body = 1;
-            $feet = 1;
-            $rt_used = 0;
-            $speed = 50;
-            $acceleration = 50;
-            $jumping = 50;
+        if ($this->group === 0 || $this->guest === true) {
+            $rank = $exp_points = $rt_used = 0;
+            $hat_arr = '1';
+            $head_arr = $body_arr = $feet_arr = '1,2,3,4,5,6,7,8,9';
+            $ehat_arr = $ehead_arr = $ebody_arr = $efeet_arr = '';
+            $hat = $head = $body = $feet = 1;
+            $speed = $accel = $jump = 50;
         }
 
         pr2_update(
@@ -1474,39 +719,32 @@ class Player
             $this->user_id,
             $rank,
             $exp_points,
-            $hat_color,
-            $head_color,
-            $body_color,
-            $feet_color,
-            $hat_color_2,
-            $head_color_2,
-            $body_color_2,
-            $feet_color_2,
+            $hatCol,
+            $headCol,
+            $bodyCol,
+            $feetCol,
+            $hatCol2,
+            $headCol2,
+            $bodyCol2,
+            $feetCol2,
             $hat,
             $head,
             $body,
             $feet,
-            $hat_array,
-            $head_array,
-            $body_array,
-            $feet_array,
+            $hat_arr,
+            $head_arr,
+            $body_arr,
+            $feet_arr,
             $speed,
-            $acceleration,
-            $jumping
+            $accel,
+            $jump
         );
 
-        epic_upgrades_upsert(
-            $pdo,
-            $this->user_id,
-            $epic_hat_array,
-            $epic_head_array,
-            $epic_body_array,
-            $epic_feet_array
-        );
+        epic_upgrades_upsert($pdo, $this->user_id, $ehat_arr, $ehead_arr, $ebody_arr, $efeet_arr);
         user_update_status($pdo, $this->user_id, $status, $e_server_id);
         rank_token_update($pdo, $this->user_id, $rt_used);
-        exp_today_add($pdo, 'id-' . $this->user_id, $tot_exp_gained);
-        exp_today_add($pdo, 'ip-' . $ip, $tot_exp_gained);
+        exp_today_add($pdo, 'id-' . $this->user_id, $exp_gain);
+        exp_today_add($pdo, 'ip-' . $ip, $exp_gain);
     }
 
 

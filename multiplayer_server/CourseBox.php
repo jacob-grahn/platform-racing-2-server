@@ -21,7 +21,7 @@ class CourseBox
     public function fillSlot($player, $slot)
     {
         $slot = (int) $slot;
-        if (($slot < 0) || ($slot > 3)) {
+        if ($slot < 0 || $slot > 3) {
             return;
         }
         if (!isset($this->slot_array[$slot])) {
@@ -32,11 +32,13 @@ class CourseBox
             $player->slot = $slot;
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
-            $this->room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
-            $player->write($this->getFillStr($player, $slot).'`me');
+            $fill_str = $this->getFillStr($player, $slot);
+            $this->room->sendToRoom($fill_str, $player->user_id);
+            $player->write("$fill_str`me");
 
             if (isset($this->force_time)) {
-                $player->write('forceTime`'.(time()-$this->force_time));
+                $force_time = time() - $this->force_time;
+                $player->write("forceTime`$force_time");
             }
         }
     }
@@ -92,17 +94,17 @@ class CourseBox
 
     private function getFillStr($player, $slot)
     {
-        return 'fillSlot'.$this->course_id.'`'.$slot.'`'.$player->name.'`'.$player->active_rank;
+        return "fillSlot$this->course_id`$slot`$player->name`$player->active_rank";
     }
 
     private function getConfirmStr($slot)
     {
-        return 'confirmSlot'.$this->course_id.'`'.$slot;
+        return "confirmSlot$this->course_id`$slot";
     }
 
     private function getClearStr($slot)
     {
-        return 'clearSlot'.$this->course_id.'`'.$slot;
+        return "clearSlot$this->course_id`$slot";
     }
 
     private function checkConfirmed()

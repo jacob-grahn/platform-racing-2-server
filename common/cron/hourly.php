@@ -1,31 +1,21 @@
 <?php
 
-// env
-require_once __DIR__ . '/../../config.php';
-
 // all fns
-require_once HTTP_FNS . '/all_fns.php';
+require_once GEN_HTTP_FNS;
 
 // ensure part awards
-require_once QUERIES_DIR . '/part_awards/part_awards_select_list.php';
-require_once QUERIES_DIR . '/part_awards/part_awards_delete_old.php';
-require_once QUERIES_DIR . '/part_awards/ensure_awards.php';
+require_once QUERIES_DIR . '/part_awards.php';
 
 // folding_at_home data select/insert/update from/into/in db
 require_once HTTP_FNS . '/cron/fah_fns.php';
-require_once QUERIES_DIR . '/folding/folding_insert.php';
-require_once QUERIES_DIR . '/folding/folding_select_by_user_id.php';
-require_once QUERIES_DIR . '/folding/folding_select_list.php';
-require_once QUERIES_DIR . '/folding/folding_update.php';
+require_once QUERIES_DIR . '/folding.php';
 
 // message, insert rank token
-require_once QUERIES_DIR . '/messages/message_insert.php';
-require_once QUERIES_DIR . '/rank_tokens/rank_token_select.php';
-require_once QUERIES_DIR . '/rank_tokens/rank_token_upsert.php';
+require_once QUERIES_DIR . '/messages.php';
+require_once QUERIES_DIR . '/rank_tokens.php';
 
 // remove expired servers
-require_once QUERIES_DIR . '/servers/servers_deactivate_expired.php';
-require_once QUERIES_DIR . '/servers/servers_delete_old.php';
+require_once QUERIES_DIR . '/servers.php';
 
 // tell the command line
 $time = date('r');

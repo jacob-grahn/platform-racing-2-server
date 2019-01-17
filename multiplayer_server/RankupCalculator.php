@@ -11,7 +11,7 @@ class RankupCalculator
     public static function init()
     {
         $exp_points = 30;
-        for ($i=1; $i<100; $i++) {
+        for ($i = 1; $i < 150; $i++) {
             self::$exp_req[$i] = round($exp_points);
             $exp_points = $exp_points * 1.25;
         }
