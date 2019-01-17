@@ -10,6 +10,7 @@ define('PR2_ROOT', $directory . '/multiplayer_server'); // socket server root
 define('PR2_FNS_DIR', $directory . '/multiplayer_server/fns'); // socket server fns
 
 define('HTTP_FNS', $directory . '/functions/http_fns'); // http_server/fns
+define('GEN_HTTP_FNS', $directory . '/functions/http_fns/gen_http_fns.php'); // http_server/fns
 define('WWW_ROOT', $directory . '/http_server'); // main folder
 
 define('SOCKET_DAEMON_FILES', $directory . '/vend/socket/index.php'); // files for phpSocketDaemon
