@@ -9,8 +9,8 @@ define('QUERIES_DIR', $directory . '/common/queries'); // queries
 define('PR2_ROOT', $directory . '/multiplayer_server'); // socket server root
 define('PR2_FNS_DIR', $directory . '/multiplayer_server/fns'); // socket server fns
 
-define('HTTP_FNS', $directory . '/http_server/fns'); // http_server/fns
-define('WWW_ROOT', $directory . "/http_server/www"); // main folder
+define('HTTP_FNS', $directory . '/functions/http_fns'); // http_server/fns
+define('WWW_ROOT', $directory . '/http_server'); // main folder
 
 define('SOCKET_DAEMON_FILES', $directory . '/vend/socket/index.php'); // files for phpSocketDaemon
 
