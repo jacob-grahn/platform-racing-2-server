@@ -14,7 +14,7 @@ try {
 
     // connect
     $pdo = pdo_connect();
-    $user_id = (int) token_login($pdo);
+    $user_id = (int) token_login($pdo, true, true);
     $staff = is_staff($pdo, $user_id, false);
 
     output_header("View Priors", $staff->mod, $staff->admin);
