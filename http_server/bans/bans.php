@@ -54,18 +54,9 @@ try {
         $formatted_time = date('M j, Y g:i A', $time);
         $duration = $expire_time - $time;
 
-        // display name if account ban
-        $display_name = '';
-        if ($account_ban === 1) {
-            $display_name .= $banned_name;
-        }
-        // if ip ban and you're a mod, display the ip
-        if ($ip_ban === 1 && $staff->mod) {
-            if ($display_name != '') {
-                $display_name .= ' ';
-            }
-            $display_name .= "[$banned_ip]";
-        }
+        $display_name = $account_ban === 1 ? $banned_name : '';
+        $sep = is_empty($display_name) ? '' : ' ';
+        $display_name = $ip_ban === 1 && $staff->mod ? $display_name . $sep . "[$banned_ip]" : $display_name;
 
         $display_name = htmlspecialchars($display_name, ENT_QUOTES);
         $f_dur = format_duration($duration);
