@@ -376,14 +376,13 @@ function check_moderator($pdo, $user_id = null, $check_ref = true, $min_power = 
 // determine if a user is a staff member and returns which groups
 function is_staff($pdo, $user_id, $check_ref = true, $exception = false, $group = 2)
 {
-    $is_mod = false;
-    $is_admin = false;
+    $is_mod = $is_admin = false;
+
+    if ($check_ref === true) {
+        require_trusted_ref('', true);
+    }
 
     if ($user_id !== false && $user_id !== 0) {
-        if ($check_ref === true) {
-            require_trusted_ref('', true);
-        }
-        
         // determine power and if staff
         $power = (int) user_select_power($pdo, $user_id, true);
         $is_mod = ($power >= 2);
