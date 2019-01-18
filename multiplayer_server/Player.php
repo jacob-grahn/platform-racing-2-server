@@ -251,7 +251,7 @@ class Player
     {
         $seconds = time() - $this->chat_time;
         $this->chat_count -= $seconds / 2;
-        $this->chat_count = $this->chat_count >= 0 ?: 0;
+        $this->chat_count = $this->chat_count >= 0 ? $this->chat_count : 0;
         return $this->chat_count;
     }
 
