@@ -321,7 +321,7 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
                l.pass,
                l.type,
                u.name,
-               u.power,
+               u.power
           FROM levels l, users u
          WHERE $where
            AND l.user_id = u.user_id
