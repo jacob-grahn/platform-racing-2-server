@@ -1,12 +1,10 @@
 <?php
 
+require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once HTTP_FNS . '/all_fns.php';
 require_once HTTP_FNS . '/pages/player_search_fns.php';
-require_once QUERIES_DIR . '/users/user_select_expanded.php';
-require_once QUERIES_DIR . '/guilds/guild_select.php';
 
-$name = find_no_cookie("name", "");
+$name = default_get('name', '');
 $ip = get_ip();
 
 output_header("Player Search");
