@@ -173,7 +173,7 @@ class Player
         }
 
         // if they're a trial, tell the client
-        if ($this->group === 2 && isset($login->user->trial_mod)) {
+        if ($this->group === 2 && $login->user->trial_mod) {
             $this->trial_mod = true;
             $this->write("becomeTrialMod`");
         }
