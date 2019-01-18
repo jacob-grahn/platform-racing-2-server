@@ -103,6 +103,21 @@ function is_obscene($str)
 }
 
 
+// checks if a string is empty (includes a variety of checks)
+function is_empty($str, $incl_zero = true)
+{
+    if (strlen(trim($str)) === 0 || !isset($str)) { // if the string length is 0 or it isn't set
+        return true;
+    } elseif ($incl_zero === true && empty($str) && $str != '0') { // if the string is empty and not 0, it's empty
+        return true;
+    } elseif (empty($str)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 // slow down a bit, yo.
 function rate_limit($key, $interval, $max, $error = 'Slow down a bit, yo.')
 {
