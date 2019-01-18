@@ -82,7 +82,7 @@ function level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song,
     $stmt->bindValue(':time', $time, PDO::PARAM_INT);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':min_level', $min_level, PDO::PARAM_INT);
-    $stmt->bindValue(':song', $song, PDO::PARAM_INT);
+    $stmt->bindValue(':song', (int) $song, PDO::PARAM_INT);
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
@@ -203,7 +203,7 @@ function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_le
                pass = :pass,
                type = :type
          WHERE level_id = :level_id
-         LIMIT 1;
+         LIMIT 1
     ');
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_STR);
     $stmt->bindValue(':title', $title, PDO::PARAM_STR);
@@ -212,7 +212,7 @@ function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_le
     $stmt->bindValue(':time', $time, PDO::PARAM_INT);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':min_level', $min_level, PDO::PARAM_INT);
-    $stmt->bindValue(':song', $song, PDO::PARAM_INT);
+    $stmt->bindValue(':song', (int) $song, PDO::PARAM_INT);
     $stmt->bindValue(':version', $version, PDO::PARAM_INT);
     $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
