@@ -1,8 +1,8 @@
 <?php
 
-require_once GEN_HTTP_FNS;
-
 header("Content-type: text/plain");
+
+require_once GEN_HTTP_FNS;
 
 $ip = get_ip();
 
