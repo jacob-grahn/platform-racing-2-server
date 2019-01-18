@@ -22,7 +22,7 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     }
 
     // if the user being promoted is an admin, kill the function
-    if ((int) $promoted->group === 3) {
+    if (isset($promoted) && (int) $promoted->group === 3) {
         $err = 'I\'m not sure what would happen if you promoted an admin to a moderator, '
             .'but it would probably make the world explode.';
         $admin->write("message`Error: $err");
@@ -104,7 +104,7 @@ function promote_to_moderator($name, $type, $admin, $promoted)
             mod_power_insert($pdo, $user_id, $max_ban, $bans_per_hour, $can_unpublish_level);
 
             // log action in admin action log
-            $a_msg = "$admin->name promoted $promoted->name to a $type moderator from $admin->ip on $server_name.";
+            $a_msg = "$admin->name promoted $user_row->name to a $type moderator from $admin->ip on $server_name.";
             admin_action_insert($pdo, $admin->user_id, $a_msg, $admin->user_id, $admin->ip);
 
             // update everyone (server, client menus)
