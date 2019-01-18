@@ -46,9 +46,9 @@ try {
     ignored_delete($pdo, $user_id, $ignored_id);
 
     // tell the world
-    $safe_ignored_name = htmlspecialchars($ignored_name, ENT_QUOTES);
+    $safe_in = htmlspecialchars($ignored_name, ENT_QUOTES);
     $ret->success = true;
-    $ret->message = "$safe_ignored_name has been un-ignored. You will now recieve any chat or private messages they send you.";
+    $ret->message = "$safe_in has been un-ignored. You will now recieve any chat or private messages they send you.";
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {
