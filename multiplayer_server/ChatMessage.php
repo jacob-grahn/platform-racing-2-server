@@ -61,23 +61,21 @@ class ChatMessage
     // special text emotes
     private function handleEmotes()
     {
-        if ($this->room_type === 'c') {
-            $think_array = [':thinking:', ':think:', ':what:', ':hmm:'];
-            $lol_array = [':lol:', ':laugh:', ':lmao:', ':joy:'];
-            $fred_array = [':fred:', ':cactus:'];
-            $yay_array = [':yay:', ':woohoo:', ':wow:'];
-            $hooray_array = [':hooray:', ':tada:', ':party:'];
-            $hello_array = [':hi:', ':hello:', ':hey:'];
-            
-            $this->message = str_ireplace(':shrug:', '¯\_(ツ)_/¯', $this->message);
-            $this->message = str_ireplace(':lenny:', '( ͡° ͜ʖ ͡°)', $this->message);
-            $this->message = str_ireplace($yay_array, '╰(ᴖ◡ᴖ)╯', $this->message);
-            $this->message = str_ireplace($hello_array, 'ー( ◉▽◉ )ﾉ', $this->message);
-            $this->message = str_ireplace($think_array, '🤔', $this->message);
-            $this->message = str_ireplace($lol_array, '😂', $this->message);
-            $this->message = str_ireplace($hooray_array, '🎉', $this->message);
-            $this->message = str_ireplace($fred_array, '🌵', $this->message);
-        }
+        $think_array = [':thinking:', ':think:', ':what:', ':hmm:'];
+        $lol_array = [':lol:', ':laugh:', ':lmao:', ':joy:'];
+        $fred_array = [':fred:', ':cactus:'];
+        $yay_array = [':yay:', ':woohoo:', ':wow:'];
+        $hooray_array = [':hooray:', ':tada:', ':party:'];
+        $hello_array = [':hi:', ':hello:', ':hey:'];
+
+        $this->message = str_ireplace(':shrug:', '¯\_(ツ)_/¯', $this->message);
+        $this->message = str_ireplace(':lenny:', '( ͡° ͜ʖ ͡°)', $this->message);
+        $this->message = str_ireplace($yay_array, '╰(ᴖ◡ᴖ)╯', $this->message);
+        $this->message = str_ireplace($hello_array, 'ー( ◉▽◉ )ﾉ', $this->message);
+        $this->message = str_ireplace($think_array, '🤔', $this->message);
+        $this->message = str_ireplace($lol_array, '😂', $this->message);
+        $this->message = str_ireplace($hooray_array, '🎉', $this->message);
+        $this->message = str_ireplace($fred_array, '🌵', $this->message);
     }
 
 
