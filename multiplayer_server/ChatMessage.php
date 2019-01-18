@@ -17,9 +17,9 @@ class ChatMessage
         $this->from_id = $this->player->user_id;
         $this->message = $chat_message;
 
-        // sanity check: is the message more than 100 characters?
-        if (strlen($this->message) > 100) {
-            $this->message = substr($this->message, 0, 100);
+        // sanity check: is the message more than 150 characters?
+        if (strlen($this->message) > 150) {
+            $this->message = substr($this->message, 0, 150);
         }
 
         // find what room the player is in
