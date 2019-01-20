@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
+require_once HTTP_FNS . '/pr2/pr2_fns.php';
 require_once QUERIES_DIR . '/guild_invitations.php';
 
 $target_id = (int) default_post('user_id', 0);
