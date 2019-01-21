@@ -4,15 +4,16 @@ header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
 
+$token = default_get('token');
 $ip = get_ip();
 
 $ret = new stdClass();
 $ret->success = false;
 
 try {
-    // check for post
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception('Invalid request method.');
+    // check for token presence
+    if (is_empty($token)) {
+        throw new Exception('No token was received.');
     }
 
     // get and validate referrer
@@ -21,7 +22,7 @@ try {
     // rate limiting
     rate_limit('guild-leave-attempt-'.$ip, 5, 1);
 
-    // connect to the db
+    // connect
     $pdo = pdo_connect();
 
     // get their login
