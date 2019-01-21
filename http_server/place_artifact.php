@@ -3,7 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
-require_once QUERIES_DIR . '/artifact_locations.php';
+require_once QUERIES_DIR . '/artifact_location.php';
 
 $x = (int) default_post('x', 0);
 $y = (int) default_post('y', 0);
