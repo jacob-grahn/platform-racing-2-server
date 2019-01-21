@@ -1,7 +1,7 @@
 <?php
 
 
-function token_delete($pdo, $token)
+function token_delete($pdo, $token, $ret_count = false)
 {
     $stmt = $pdo->prepare('
         DELETE FROM tokens
@@ -14,7 +14,7 @@ function token_delete($pdo, $token)
         throw new Exception('Could not delete your login token from the database.');
     }
 
-    return $result;
+    return $ret_count === true ? $stmt->rowCount() > 0 : $result;
 }
 
 
