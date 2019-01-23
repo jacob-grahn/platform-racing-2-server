@@ -847,7 +847,7 @@ class ChatMessage
 
 
     // order campaign levels
-    private function orderCampaignLevels($a, $b)
+    protected function orderCampaignLevels($a, $b)
     {
         if ($a->level_num === $b->level_num) {
             return 0;
