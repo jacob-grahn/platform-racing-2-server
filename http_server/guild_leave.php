@@ -11,11 +11,6 @@ $ret = new stdClass();
 $ret->success = false;
 
 try {
-    // check for token presence
-    if (is_empty($token)) {
-        throw new Exception('No token was received.');
-    }
-
     // get and validate referrer
     require_trusted_ref('leave your guild');
 
@@ -30,7 +25,7 @@ try {
     $account = user_select_expanded($pdo, $user_id);
 
     // sanity check
-    if ($account->guild == 0) {
+    if ((int) $account->guild === 0) {
         throw new Exception('You are not a member of a guild.');
     }
 
