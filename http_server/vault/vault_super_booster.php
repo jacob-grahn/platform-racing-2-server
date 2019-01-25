@@ -2,8 +2,8 @@
 
 header("Content-type: text/plain");
 
-require_once HTTP_FNS . '/all_fns.php';
-require_once QUERIES_DIR . '/servers/server_select.php';
+require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/servers.php';
 
 $server_id = (int) default_get('server_id', 0);
 $ip = get_ip();
@@ -25,7 +25,7 @@ try {
     $pdo = pdo_connect();
 
     // get user id
-    $user_id = token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false);
 
     // more rate limiting
     rate_limit('super-booster-'.$user_id, 60, 1, $rl_msg);
