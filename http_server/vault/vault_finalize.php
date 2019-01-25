@@ -4,6 +4,10 @@ header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/pages/vault/vault_fns.php';
+require_once QUERIES_DIR . '/messages.php';
+require_once QUERIES_DIR . '/purchases.php';
+require_once QUERIES_DIR . '/rank_token_rentals.php';
+require_once QUERIES_DIR . '/servers.php';
 
 $game_auth_token = find('game_auth_token');
 $kong_user_id = find('kong_user_id');
