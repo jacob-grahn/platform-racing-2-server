@@ -288,7 +288,7 @@ function user_select_guest($pdo)
 }
 
 
-function user_select_level_plays($pdo, $user_id)
+function user_select_level_plays($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
           SELECT SUM(play_count) as total_play_count
@@ -300,7 +300,10 @@ function user_select_level_plays($pdo, $user_id)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not count the number of plays for this user.');
+        if ($suppress_error === false) {
+            throw new Exception('Could not count the number of plays for this user.');
+        }
+        return 0;
     }
 
     $row = $stmt->fetch(PDO::FETCH_OBJ);
