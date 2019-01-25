@@ -1,6 +1,7 @@
 <?php
 
 require_once GEN_HTTP_FNS;
+require_once FNS_DIR . '/cron/cron_fns.php';
 require_once QUERIES_DIR . '/changing_emails.php';
 require_once QUERIES_DIR . '/exp_today.php';
 require_once QUERIES_DIR . '/gp.php';
