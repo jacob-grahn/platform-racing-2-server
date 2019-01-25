@@ -27,6 +27,7 @@ all_optimize($pdo, $DB_NAME);
 
 // deletes old accounts every four weeks
 if (date('W') % 4 === 0) {
+    require_once FNS_DIR . '/cron/cron_fns.php';
     delete_old_accounts($pdo);
 }
 
