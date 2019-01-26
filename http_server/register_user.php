@@ -2,7 +2,8 @@
 
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/to_hash.php';
-require_once HTTP_FNS . '/messages.php';
+require_once QUERIES_DIR . '/bans.php';
+require_once QUERIES_DIR . '/messages.php';
 
 $name = default_post('name');
 $password = default_post('password');
@@ -11,8 +12,7 @@ $ip = get_ip();
 
 // sanitize email
 $problematic_chars = array('&', '"', "'", "<", ">");
-$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-$email = str_replace($problematic_chars, '', $email);
+$email = str_replace($problematic_chars, '', $_POST['email']);
 
 try {
     // POST check
@@ -40,7 +40,8 @@ try {
     if (strpos($name, '`') !== false) {
         throw new Exception('The ` character is not allowed.');
     }
-    if ($email != '' && !valid_email($email)) {
+    if (!is_empty($email) && !valid_email($email)) {
+        $email = htmlspecialchars($email, ENT_QUOTES);
         throw new Exception("'$email' is not a valid email address.");
     }
     if (is_obscene($name)) {
@@ -51,7 +52,7 @@ try {
         throw new Exception('Your name is invalid. You may only use alphanumeric characters, spaces and !-.:;=?~.');
     }
 
-    // connect to the db
+    // connect
     $pdo = pdo_connect();
 
     // check if banned
