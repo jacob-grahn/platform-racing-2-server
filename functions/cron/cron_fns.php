@@ -250,20 +250,23 @@ function delete_old_accounts($pdo)
 
     // get data
     $users = users_select_old($pdo);
+    $nopr2 = users_select_no_pr2($pdo);
 
     // tell the world
-    $num_users = number_format(count($users));
-    output("$num_users accounts meet the time criteria for deletion.");
+    $num_users = number_format(count($users) + count($nopr2));
+    $lang = $num_users === '1' ? 'account meets' : 'accounts meet';
+    output("$num_users $lang the criteria for deletion.");
 
     // count
     $spared = 0;
     $deleted = 0;
 
-    // delete or spare
+    // delete or spare users with pr2 data
+    output('Now processing users with pr2 data...');
     foreach ($users as $row) {
-        $user_id = $row->user_id;
-        $rank = $row->rank;
-        $play_count = user_select_level_plays($pdo, $user_id);
+        $user_id = (int) $row->user_id;
+        $rank = (int) $row->rank;
+        $play_count = user_select_level_plays($pdo, $user_id, true);
 
         $str = "$user_id has $play_count level plays and is rank $rank.";
         if ($play_count > 100 || $rank > 15) {
@@ -276,6 +279,18 @@ function delete_old_accounts($pdo)
             $deleted++;
         }
     }
+    output('Processing for users with pr2 data finished.');
+
+    // delete or spare users without pr2 data
+    output('Now processing users without pr2 data...');
+    foreach ($nopr2 as $row) {
+        $user_id = (int) $row->user_id;
+        output("$user_id has no pr2 data. DELETING...");
+        user_delete($pdo, $user_id);
+        output("$user_id was successfully deleted.");
+        $deleted++;
+    }
+    output('Processing for users without pr2 data finished.');
 
     // tell the world
     $t_elapsed = time() - $start_time;

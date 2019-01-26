@@ -292,7 +292,7 @@ function format_level_list($levels)
         $num++;
     }
 
-    if (!empty(str)) {
+    if (!is_empty($str)) {
         $hash = md5($str . $LEVEL_LIST_SALT);
         $str .= '&hash='.$hash;
     }

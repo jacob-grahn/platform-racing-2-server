@@ -173,7 +173,7 @@ class Player
         }
 
         // if they're a trial, tell the client
-        if ($this->group === 2 && isset($login->user->trial_mod)) {
+        if ($this->group === 2 && $login->user->trial_mod) {
             $this->trial_mod = true;
             $this->write("becomeTrialMod`");
         }
@@ -251,7 +251,7 @@ class Player
     {
         $seconds = time() - $this->chat_time;
         $this->chat_count -= $seconds / 2;
-        $this->chat_count = $this->chat_count >= 0 ?: 0;
+        $this->chat_count = $this->chat_count >= 0 ? $this->chat_count : 0;
         return $this->chat_count;
     }
 

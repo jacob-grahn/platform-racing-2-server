@@ -146,7 +146,7 @@ function level_select($pdo, $level_id)
 function level_unpublish($pdo, $level_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        UPDATE pr2_levels
+        UPDATE levels
            SET live = 0,
                pass = NULL
          WHERE level_id = :level_id

@@ -93,9 +93,10 @@ function user_delete_from_friends($pdo, $user_id)
     $stmt = $pdo->prepare('
         DELETE FROM friends
         WHERE user_id = :user_id
-        OR friend_id = :user_id
+        OR friend_id = :friend_id
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':friend_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -142,9 +143,10 @@ function user_delete_from_ignored($pdo, $user_id)
     $stmt = $pdo->prepare('
         DELETE FROM ignored
         WHERE user_id = :user_id
-        OR ignore_id = :user_id
+        OR ignore_id = :ignore_id
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':ignore_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -190,10 +192,11 @@ function user_delete_from_messages($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         DELETE FROM messages
-        WHERE to_user_id = :user_id
-        OR from_user_id = :user_id
+        WHERE to_user_id = :to_id
+        OR from_user_id = :from_id
     ');
-    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':to_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':from_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -207,10 +210,11 @@ function user_delete_from_messages_reported($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         DELETE FROM messages_reported
-        WHERE to_user_id = :user_id
-        OR from_user_id = :user_id
+        WHERE to_user_id = :to_id
+        OR from_user_id = :from_id
     ');
-    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':to_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':from_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {

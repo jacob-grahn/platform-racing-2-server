@@ -24,7 +24,9 @@ try {
     // client has token, token sent via post
     if (!is_empty($_POST['token']) && is_empty($data)) {
         $ret->errorType = 'token';
-        token_delete($pdo, $token);
+        if (token_delete($pdo, $token, true) === false) {
+            throw new Exception('Could not find this token in the database.');
+        }
         setcookie("token", "", time() - 3600);
     } // client doesn't have token, user pass is used to verify an token logout from cookie instead
     elseif (isset($data)) {

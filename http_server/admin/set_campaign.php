@@ -4,7 +4,7 @@ require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/set_campaign_fns.php';
 require_once QUERIES_DIR . '/admin_actions.php';
-require_once QUERIES_DIR . '/campaign.php';
+require_once QUERIES_DIR . '/campaigns.php';
 
 $action = default_post('action', 'lookup');
 $message = htmlspecialchars(default_post('message', ''));

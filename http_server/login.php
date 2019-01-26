@@ -19,7 +19,7 @@ require_once QUERIES_DIR . '/servers.php';
 $encrypted_login = default_post('i', '');
 $version = default_post('version', '');
 $in_token = find('token');
-$allowed_versions = array('24-dec-2013-v1', '19-jan-2019-v152');
+$allowed_versions = array('19-jan-2019-v152');
 $guest_login = false;
 $token_login = false;
 $has_email = false;
@@ -154,8 +154,8 @@ try {
 
     // if a mod, get their trial mod status
     if ($group === 2) {
-        $unpub = (int) mod_power_select($pdo, $user_id, true)->can_unpublish_level;
-        $user->trial_mod = $unpub === 1 ? false : true;
+        $unpub = (bool) (int) mod_power_select($pdo, $user_id, true)->can_unpublish_level;
+        $user->trial_mod = !$unpub;
     }
 
     // get their pr2 and epic_upgrades info

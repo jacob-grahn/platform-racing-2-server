@@ -5,8 +5,8 @@ header("Content-type: text/plain");
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/messages.php';
 
-$start = (int) default_get('start', 0);
-$count = (int) default_get('count', 10);
+$start = (int) find_no_cookie('start', 0);
+$count = (int) find_no_cookie('count', 10);
 $ip = get_ip();
 
 $ret = new stdClass();

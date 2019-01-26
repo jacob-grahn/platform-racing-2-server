@@ -39,13 +39,13 @@ try {
 
         // action log
         $acc = check_value($account_ban, 1);
-        $ip = check_value($ip_ban, 1);
+        $ipc = check_value($ip_ban, 1);
         $notes = is_empty($notes) ? 'no notes' : "notes: $notes";
 
         // record the change
         $mod_id = (int) $mod->user_id;
         $mod_name = $mod->name;
-        $msg = "$mod_name edited ban $ban_id from $ip {acc_ban: $acc, ip_ban: $ip, expire_time: $expire_time, $notes}";
+        $msg = "$mod_name edited ban $ban_id from $ip {acc_ban: $acc, ip_ban: $ipc, expire_time: $expire_time, $notes}";
         mod_action_insert($pdo, $mod_id, $msg, 0, $ip);
 
         // redirect to the ban listing

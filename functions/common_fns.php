@@ -7,8 +7,8 @@ function query_if_banned($pdo, $user_id, $ip)
     if (!function_exists('ban_select')) {
         require_once QUERIES_DIR . '/bans.php';
     }
-    $ban = (isset($user_id) && $user_id != 0) ? ban_select_active_by_user_id($pdo, $user_id) : false; // user_id
-    $ban = (!$ban && isset($ip)) ? ban_select_active_by_ip($pdo, $ip) : false; // ip if user_id isn't found
+    $ban = isset($user_id) && $user_id != 0 ? ban_select_active_by_user_id($pdo, $user_id) : false; // user_id
+    $ban = !$ban && isset($ip) ? ban_select_active_by_ip($pdo, $ip) : $ban; // ip if user_id isn't found
     return $ban;
 }
 

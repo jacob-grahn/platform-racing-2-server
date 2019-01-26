@@ -158,6 +158,13 @@ function ban_update($pdo, $ban_id, $account_ban, $ip_ban, $expire_time, $notes)
 }
 
 
+// alias for ban_insert
+function ban_user($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc)
+{
+    ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc);
+}
+
+
 function bans_delete_old($pdo)
 {
     $result = $pdo->exec('DELETE FROM bans WHERE expire_time < UNIX_TIMESTAMP(NOW() - INTERVAL 1 YEAR)');

@@ -6,8 +6,8 @@ require_once QUERIES_DIR . '/admin_actions.php';
 require_once QUERIES_DIR . '/servers.php';
 
 $ip = get_ip();
-$action = find('action', 'warning');
-$token = $_POST['token'];
+$action = default_post('action', 'warning');
+$token = default_post('token');
 
 try {
     // rate limiting
@@ -18,7 +18,7 @@ try {
     $pdo = pdo_connect();
 
     // check permission
-    is_staff($pdo, token_login($pdo), false, true, 3);
+    $admin = check_moderator($pdo, null, true, 3);
 
     // output
     output_header('Restart Servers', true, true);

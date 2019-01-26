@@ -4,24 +4,20 @@ header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
 
+$token = default_get('token');
 $ip = get_ip();
 
 $ret = new stdClass();
 $ret->success = false;
 
 try {
-    // check for post
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception('Invalid request method.');
-    }
-
     // get and validate referrer
     require_trusted_ref('leave your guild');
 
     // rate limiting
     rate_limit('guild-leave-attempt-'.$ip, 5, 1);
 
-    // connect to the db
+    // connect
     $pdo = pdo_connect();
 
     // get their login
@@ -29,7 +25,7 @@ try {
     $account = user_select_expanded($pdo, $user_id);
 
     // sanity check
-    if ($account->guild == 0) {
+    if ((int) $account->guild === 0) {
         throw new Exception('You are not a member of a guild.');
     }
 

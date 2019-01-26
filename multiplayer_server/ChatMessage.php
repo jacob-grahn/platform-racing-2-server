@@ -17,9 +17,9 @@ class ChatMessage
         $this->from_id = $this->player->user_id;
         $this->message = $chat_message;
 
-        // sanity check: is the message more than 100 characters?
-        if (strlen($this->message) > 100) {
-            $this->message = substr($this->message, 0, 100);
+        // sanity check: is the message more than 150 characters?
+        if (strlen($this->message) > 150) {
+            $this->message = substr($this->message, 0, 150);
         }
 
         // find what room the player is in
@@ -61,21 +61,14 @@ class ChatMessage
     // special text emotes
     private function handleEmotes()
     {
-        $think_array = [':thinking:', ':think:', ':what:', ':hmm:'];
-        $lol_array = [':lol:', ':laugh:', ':lmao:', ':joy:'];
-        $fred_array = [':fred:', ':cactus:'];
-        $yay_array = [':yay:', ':woohoo:', ':wow:'];
-        $hooray_array = [':hooray:', ':tada:', ':party:'];
-        $hello_array = [':hi:', ':hello:', ':hey:'];
-
         $this->message = str_ireplace(':shrug:', '¯\_(ツ)_/¯', $this->message);
         $this->message = str_ireplace(':lenny:', '( ͡° ͜ʖ ͡°)', $this->message);
-        $this->message = str_ireplace($yay_array, '╰(ᴖ◡ᴖ)╯', $this->message);
-        $this->message = str_ireplace($hello_array, 'ー( ◉▽◉ )ﾉ', $this->message);
-        $this->message = str_ireplace($think_array, '🤔', $this->message);
-        $this->message = str_ireplace($lol_array, '😂', $this->message);
-        $this->message = str_ireplace($hooray_array, '🎉', $this->message);
-        $this->message = str_ireplace($fred_array, '🌵', $this->message);
+        $this->message = str_ireplace([':yay:', ':woohoo:', ':wow:'], '╰(ᴖ◡ᴖ)╯', $this->message);
+        $this->message = str_ireplace([':hi:', ':hello:', ':hey:'], 'ー( ◉▽◉ )ﾉ', $this->message);
+        $this->message = str_ireplace([':thinking:', ':think:', ':what:', ':hmm:'], '🤔', $this->message);
+        $this->message = str_ireplace([':lol:', ':laugh:', ':lmao:', ':joy:'], '😂', $this->message);
+        $this->message = str_ireplace([':hooray:', ':tada:', ':party:'], '🎉', $this->message);
+        $this->message = str_ireplace([':fred:', ':cactus:'], '🌵', $this->message);
     }
 
 
@@ -216,13 +209,14 @@ class ChatMessage
     // advanced information for admins
     private function commandAdminDebug()
     {
-        global $server_id, $server_name, $uptime, $port, $guild_id, $guild_owner, $server_expire_time;
+        global $server_id, $server_name, $uptime, $port, $guild_id, $guild_owner, $server_expire_time, $campaign_array;
 
         $is_ps = ($guild_id !== 0 && $guild_id !== 183) ? 'yes' : 'no';
         if ($this->message === '/debug help') {
             $this->write(
                 "systemChat`Acceptable Arguments:<br><br>".
                 "- help<br>".
+                "- campaign<br>".
                 "- player *name*<br>".
                 "- server"
             );
@@ -239,6 +233,30 @@ class ChatMessage
                 "server_owner: $guild_owner<br>".
                 "server_expire_time: $server_expires"
             );
+        } elseif (strpos($this->message, '/debug campaign') === 0) {
+            $campaign = json_decode(json_encode($campaign_array));
+            $ret = "";
+            foreach (range(1, 6) as $campaign_id) {
+                ${"c" . $campaign_id . "_arr"} = array();
+            }
+            foreach ($campaign as $level) {
+                array_push(${"c" . $level->campaign . "_arr"}, $level);
+            }
+            foreach (range(1, 6) as $campaign_id) {
+                $levels = json_decode(json_encode(${"c" . $campaign_id . "_arr"}));
+                if (empty($levels)) {
+                    $ret .= "No levels for campaign #$campaign_id.<br><br>";
+                } else {
+                    usort($levels, array($this, "orderCampaignLevels"));
+                    $ret .= "Campaign #$campaign_id:";
+                    foreach ($levels as $level) {
+                        $ret .= "<br>Level $level->level_num (ID: $level->level_id)"
+                            ." | Prize: $level->prize_type #$level->prize_id ($level->prize)";
+                    }
+                    $ret .= '<br><br>';
+                }
+            }
+            $this->write("message`$ret");
         } elseif (strpos($this->message, '/debug player ') === 0) {
             $player_name = trim(substr($this->message, 14));
             $player = name_to_player($player_name);
@@ -825,6 +843,16 @@ class ChatMessage
     {
         $player = isset($player) ? $player : $this->player;
         return ($player->group === 3 && $player->server_owner === true) ? true : false;
+    }
+
+
+    // order campaign levels
+    protected function orderCampaignLevels($a, $b)
+    {
+        if ($a->level_num === $b->level_num) {
+            return 0;
+        }
+        return $a->level_num < $b->level_num ? -1 : 1;
     }
 
 
