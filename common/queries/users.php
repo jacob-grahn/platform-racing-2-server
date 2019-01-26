@@ -107,18 +107,16 @@ function user_insert($pdo, $name, $pass_hash, $ip, $time, $email)
         INSERT INTO users
            SET name = :name,
                pass_hash = :pass_hash,
-               register_ip = :register_ip,
+               register_ip = :ip,
                ip = :ip,
                time = :time,
-               register_time = :register_time,
+               register_time = :time,
                email = :email
     ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':pass_hash', $pass_hash, PDO::PARAM_STR);
-    $stmt->bindValue(':register_ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':time', $time, PDO::PARAM_INT);
-    $stmt->bindValue(':register_time', $time, PDO::PARAM_INT);
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
     $result = $stmt->execute();
 
