@@ -356,9 +356,11 @@ class ChatMessage
                     'If so, type the command again.'
                 );
             } elseif ($this->player->restart_warned === true) {
-                $message = "$this->player->name ($this->from_id) restarted $server_name from $this->player->ip.";
+                $name_str = (string) $this->player->name; // not having these crashes the server
+                $ip_str = (string) $this->player->ip; //     for some reason...
+                $message = "$name_str ($this->from_id) restarted $server_name from $ip_str.";
                 admin_action_insert($pdo, $this->from_id, $message, $this->from_id, $this->player->ip);
-                output("$this->player->name ($this->from_id) initiated a server shutdown.");
+                output("$name_str ($this->from_id) initiated a server shutdown.");
                 $this->write('systemChat`Restarting...');
                 restart_server();
             }
