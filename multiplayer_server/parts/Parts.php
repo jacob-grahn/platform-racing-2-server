@@ -142,6 +142,7 @@ class Heads
     const VALENTINE = 38;
     const BUNNY = 39;
     const GECKO = 40;
+    const BAT = 41;
 }
 
 
@@ -186,6 +187,7 @@ class Bodies
     const VALENTINE = 38;
     const BUNNY = 39;
     const GECKO = 40;
+    const BAT = 41;
 }
 
 
@@ -228,4 +230,5 @@ class Feet
     const VALENTINE = 38;
     const BUNNY = 39;
     const GECKO = 40;
+    const BAT = 41;
 }

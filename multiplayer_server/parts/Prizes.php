@@ -161,6 +161,7 @@ class Prizes
     public static $VALENTINE_HEAD;
     public static $BUNNY_HEAD;
     public static $GECKO_HEAD;
+    public static $BAT_HEAD;
 
     // epic heads
     public static $EPIC_CLASSIC_HEAD;
@@ -203,6 +204,7 @@ class Prizes
     public static $EPIC_VALENTINE_HEAD;
     public static $EPIC_BUNNY_HEAD;
     public static $EPIC_GECKO_HEAD;
+    public static $EPIC_BAT_HEAD;
 
 
     // bodies
@@ -245,6 +247,7 @@ class Prizes
     public static $VALENTINE_BODY;
     public static $BUNNY_BODY;
     public static $GECKO_BODY;
+    public static $BAT_BODY;
 
     // epic bodies
     public static $EPIC_CLASSIC_BODY;
@@ -286,6 +289,7 @@ class Prizes
     public static $EPIC_VALENTINE_BODY;
     public static $EPIC_BUNNY_BODY;
     public static $EPIC_GECKO_BODY;
+    public static $EPIC_BAT_BODY;
 
 
     // feet
@@ -326,6 +330,7 @@ class Prizes
     public static $VALENTINE_FEET;
     public static $BUNNY_FEET;
     public static $GECKO_FEET;
+    public static $BAT_FEET;
 
     // epic feet
     public static $EPIC_CLASSIC_FEET;
@@ -365,6 +370,7 @@ class Prizes
     public static $EPIC_VALENTINE_FEET;
     public static $EPIC_BUNNY_FEET;
     public static $EPIC_GECKO_FEET;
+    public static $EPIC_BAT_FEET;
 
 
     public static function init()
@@ -445,6 +451,7 @@ class Prizes
         self::$VALENTINE_HEAD = new Prize(self::TYPE_HEAD, Heads::VALENTINE, 'Valentine Head!');
         self::$BUNNY_HEAD = new Prize(self::TYPE_HEAD, Heads::BUNNY, 'Bunny Head!');
         self::$GECKO_HEAD = new Prize(self::TYPE_HEAD, Heads::GECKO, 'Gecko Head!');
+        self::$BAT_HEAD = new Prize(self::TYPE_HEAD, Heads::BAT, 'Bat Head!');
 
         // epic heads
         self::$EPIC_CLASSIC_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade!');
@@ -487,6 +494,7 @@ class Prizes
         self::$EPIC_VALENTINE_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::VALENTINE, 'Epic Upgrade!');
         self::$EPIC_BUNNY_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BUNNY, 'Epic Upgrade!');
         self::$EPIC_GECKO_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::GECKO, 'Epic Upgrade!');
+        self::$EPIC_BAT_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BAT, 'Epic Upgrade!');
 
 
         // bodies
@@ -529,6 +537,7 @@ class Prizes
         self::$VALENTINE_BODY = new Prize(self::TYPE_BODY, Bodies::VALENTINE, 'Valentine Body!');
         self::$BUNNY_BODY = new Prize(self::TYPE_BODY, Bodies::BUNNY, 'Bunny Body!');
         self::$GECKO_BODY = new Prize(self::TYPE_BODY, Bodies::GECKO, 'Gecko Body!');
+        self::$BAT_BODY = new Prize(self::TYPE_BODY, Heads::BAT, 'Bat Body!');
 
         // epic bodies
         self::$EPIC_CLASSIC_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::CLASSIC, 'Epic Upgrade!');
@@ -570,6 +579,7 @@ class Prizes
         self::$EPIC_VALENTINE_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::VALENTINE, 'Epic Upgrade!');
         self::$EPIC_BUNNY_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BUNNY, 'Epic Upgrade!');
         self::$EPIC_GECKO_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::GECKO, 'Epic Upgrade!');
+        self::$EPIC_BAT_BODY = new Prize(self::TYPE_EPIC_BODY, Heads::BAT, 'Epic Upgrade!');
 
 
         // feet
@@ -610,6 +620,7 @@ class Prizes
         self::$VALENTINE_FEET = new Prize(self::TYPE_FEET, Feet::VALENTINE, 'Valentine Foot!');
         self::$BUNNY_FEET = new Prize(self::TYPE_FEET, Feet::BUNNY, 'Bunny Foot!');
         self::$GECKO_FEET = new Prize(self::TYPE_FEET, Feet::GECKO, 'Gecko Foot!');
+        self::$BAT_FEET = new Prize(self::TYPE_FEET, Heads::BAT, 'Bat Foot!');
 
         // epic feet
         self::$EPIC_CLASSIC_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::CLASSIC, 'Epic Upgrade!');
@@ -649,6 +660,7 @@ class Prizes
         self::$EPIC_VALENTINE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::VALENTINE, 'Epic Upgrade!');
         self::$EPIC_BUNNY_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BUNNY, 'Epic Upgrade!');
         self::$EPIC_GECKO_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::GECKO, 'Epic Upgrade!');
+        self::$EPIC_BAT_FEET = new Prize(self::TYPE_EPIC_FEET, Heads::BAT, 'Epic Upgrade!');
     }
 
 
