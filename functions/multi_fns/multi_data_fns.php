@@ -20,7 +20,7 @@ function userify($player, $name, $power = null)
         $link = "event:user`" . $player->group . '`' . $name;
         $url = urlify($link, $name, "#$color");
         return $url;
-    } elseif (@is_null($player->group) && !is_null($power)) {
+    } elseif (!is_null($power)) {
         $color = $group_colors[$power];
         $link = "event:user`" . $power . '`' . $name;
         $url = urlify($link, $name, "#$color");
