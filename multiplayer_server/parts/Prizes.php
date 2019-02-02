@@ -83,9 +83,9 @@ class Prizes
     const DESC_PARTY_HAT = 'Wear this hat to become immune to lightning!';
     const DESC_TOP_HAT = 'Stroll through vanish blocks with class!';
     const DESC_JS_HAT = 'Waiting is slow! Start racing right away.';
-    const DESC_MOON_HAT = 'Earn even more GP than ever!';
+    const DESC_MOON_HAT = 'Soar to new heights by defying the laws of gravity!';
     const DESC_THIEF_HAT = 'Steal other player\'s hats --even crowns!';
-    const DESC_JIGG_HAT = 'Jump on the heads of your opponents!';
+    const DESC_JIGG_HAT = 'Bounce on the heads of your opponents!';
 
 
     // hats
