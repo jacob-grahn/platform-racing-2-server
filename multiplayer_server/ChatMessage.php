@@ -220,8 +220,8 @@ class ChatMessage
             $this->write(
                 "systemChat`Acceptable Arguments:<br><br>".
                 "- help<br>".
-                "- campaign [format|dump|refresh]<br>".
-                "- player [*name*]<br>".
+                "- campaign [dump <b>|</b> refresh]<br>".
+                "- player (*name*)<br>".
                 "- server"
             );
         } elseif ($debug_arg === 'server') {
