@@ -349,8 +349,8 @@ function generate_level_list($pdo, $mode)
     foreach (range(0, 8) as $j) {
         $str = format_level_list(array_slice($levels, $j * 9, 9));
         $filename = $dir . ($j + 1);
-        $ret = file_put_contents($filename, $str);
-        if (!$ret) {
+        $ret = (bool) file_put_contents($filename, $str);
+        if ($ret === false) {
             throw new Exception("Could not write level list to $filename.");
         }
     }
