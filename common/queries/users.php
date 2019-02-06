@@ -24,24 +24,6 @@ function admin_user_update($pdo, $user_id, $name, $email, $guild)
 }
 
 
-// TODO: This is not a function containing a PDO query. Move to a different file.
-function do_register_user($pdo, $name, $password, $ip, $time, $email)
-{
-    // user insert
-    $pass_hash = to_hash($password);
-    unset($password); // don't keep pass in memory
-    user_insert($pdo, $name, $pass_hash, $ip, $time, $email);
-    unset($pass_hash); // don't keep hash in memory
-
-    // pr2 insert
-    $user_id = name_to_id($pdo, $name);
-    pr2_insert($pdo, $user_id);
-
-    // welcome them
-    message_send_welcome($pdo, $name, $user_id);
-}
-
-
 function id_to_name($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
@@ -137,7 +119,7 @@ function user_insert($pdo, $name, $pass_hash, $ip, $time, $email)
     $stmt->bindValue(':time', $time, PDO::PARAM_INT);
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not create a new account.');
     }

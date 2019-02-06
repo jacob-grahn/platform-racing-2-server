@@ -125,7 +125,8 @@ function client_warn($socket, $data)
     // warning number and duration
     $num = limit($num, 1, 3);
     $w_str = $num !== 1 ? 'warnings' : 'warning';
-    $time = $num * 15;
+    $time = $num === 3 ? 120 : $num * 30;
+    $time_str = format_duration($time);
 
     // if they're a mod, and the user is on this server, warn the user
     if ($mod->group >= 2 && $warned != $mod) {
@@ -171,7 +172,7 @@ function client_warn($socket, $data)
         $mod_url = userify($mod, $mod->name);
         $warned_url = userify($warned, $name);
 
-        $msg = "$mod_url has given $warned_url $num $w_str. They have been muted from the chat for $time seconds.";
+        $msg = "$mod_url has given $warned_url $num $w_str. They have been muted from the chat for $time_str.";
         $mod->chat_room->sendChat("systemChat`$msg");
     }
 }

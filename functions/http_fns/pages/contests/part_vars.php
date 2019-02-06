@@ -60,7 +60,8 @@ function to_part_name($type, $id)
         37 => 'Crocodile',
         38 => 'Valentine',
         39 => 'Bunny',
-        40 => 'Gecko'
+        40 => 'Gecko',
+        41 => 'Bat'
     ];
 
     // bodies
@@ -103,7 +104,8 @@ function to_part_name($type, $id)
         37 => 'Crocodile',
         38 => 'Valentine',
         39 => 'Bunny',
-        40 => 'Gecko'
+        40 => 'Gecko',
+        41 => 'Bat'
     ];
 
     // feet
@@ -144,7 +146,8 @@ function to_part_name($type, $id)
         37 => 'Crocodile',
         38 => 'Valentine',
         39 => 'Bunny',
-        40 => 'Gecko'
+        40 => 'Gecko',
+        41 => 'Bat'
     ];
 
     $lookup = [
@@ -182,7 +185,7 @@ function validate_prize($type, $id)
     // check for a valid head id
     if ($type === 'head' || $type === 'ehead') {
         $type = 'head';
-        if ($id < 1 || $id > 40) {
+        if ($id < 1 || $id > 41) {
             throw new Exception("Invalid head ID ($id) specified.");
         }
     }
@@ -190,7 +193,7 @@ function validate_prize($type, $id)
     // check for a valid body id
     if ($type === 'body' || $type === 'ebody') {
         $type = 'body';
-        if ($id < 1 || $id > 40 || $id === 33) {
+        if ($id < 1 || $id > 41 || $id === 33) {
             throw new Exception("Invalid body ID ($id) specified.");
         }
     }
@@ -198,7 +201,7 @@ function validate_prize($type, $id)
     // check for a valid feet id
     if ($type === 'feet' || $type === 'efeet') {
         $type = 'feet';
-        if ($id < 1 || $id > 40 || ($id >= 31 && $id <= 33)) {
+        if ($id < 1 || $id > 41 || ($id >= 31 && $id <= 33)) {
             throw new Exception("Invalid feet ID ($id) specified.");
         }
     }

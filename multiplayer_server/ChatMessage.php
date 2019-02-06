@@ -209,18 +209,22 @@ class ChatMessage
     // advanced information for admins
     private function commandAdminDebug()
     {
-        global $server_id, $server_name, $uptime, $port, $guild_id, $guild_owner, $server_expire_time, $campaign_array;
+        global $pdo, $server_id, $server_name, $uptime, $port,
+            $guild_id, $guild_owner, $server_expire_time, $campaign_array;
 
         $is_ps = ($guild_id !== 0 && $guild_id !== 183) ? 'yes' : 'no';
-        if ($this->message === '/debug help') {
+        $args = explode(' ', $this->message);
+        array_shift($args);
+        $debug_arg = strtolower($args[0]);
+        if ($debug_arg === 'help') {
             $this->write(
                 "systemChat`Acceptable Arguments:<br><br>".
                 "- help<br>".
-                "- campaign<br>".
-                "- player *name*<br>".
+                "- campaign [dump <b>|</b> refresh]<br>".
+                "- player (*name*)<br>".
                 "- server"
             );
-        } elseif ($this->message === '/debug server') {
+        } elseif ($debug_arg === 'server') {
             $server_expires = $is_ps === 'no' ? 'never' : $server_expire_time;
             $this->write(
                 "message`chat_message: $this->message<br>".
@@ -233,31 +237,40 @@ class ChatMessage
                 "server_owner: $guild_owner<br>".
                 "server_expire_time: $server_expires"
             );
-        } elseif (strpos($this->message, '/debug campaign') === 0) {
-            $campaign = json_decode(json_encode($campaign_array));
-            $ret = "";
-            foreach (range(1, 6) as $campaign_id) {
-                ${"c" . $campaign_id . "_arr"} = array();
-            }
-            foreach ($campaign as $level) {
-                array_push(${"c" . $level->campaign . "_arr"}, $level);
-            }
-            foreach (range(1, 6) as $campaign_id) {
-                $levels = json_decode(json_encode(${"c" . $campaign_id . "_arr"}));
-                if (empty($levels)) {
-                    $ret .= "No levels for campaign #$campaign_id.<br><br>";
-                } else {
-                    usort($levels, array($this, "orderCampaignLevels"));
-                    $ret .= "Campaign #$campaign_id:";
-                    foreach ($levels as $level) {
-                        $ret .= "<br>Level $level->level_num (ID: $level->level_id)"
-                            ." | Prize: $level->prize_type #$level->prize_id ($level->prize)";
+        } elseif ($debug_arg === 'campaign') {
+            $campaign_arg = strtolower((string) @$args[1]);
+            if ($campaign_arg === 'dump') {
+                $ret = json_encode($campaign_array);
+            } elseif ($campaign_arg === 'refresh') {
+                $new_campaign = campaign_select($pdo);
+                set_campaign($new_campaign);
+                $ret = "Great success! Campaign data refreshed. New:\n\n" . json_encode($new_campaign);
+            } else {
+                $campaign = json_decode(json_encode($campaign_array));
+                $ret = "";
+                foreach (range(1, 6) as $campaign_id) {
+                    ${"c" . $campaign_id . "_arr"} = array();
+                }
+                foreach ($campaign as $level) {
+                    array_push(${"c" . $level->campaign . "_arr"}, $level);
+                }
+                foreach (range(1, 6) as $campaign_id) {
+                    $levels = json_decode(json_encode(${"c" . $campaign_id . "_arr"}));
+                    if (empty($levels)) {
+                        $ret .= "No levels for campaign #$campaign_id.<br><br>";
+                    } else {
+                        usort($levels, array($this, "orderCampaignLevels"));
+                        $ret .= "Campaign #$campaign_id:";
+                        foreach ($levels as $level) {
+                            $ret .= "<br>Level $level->level_num (ID: $level->level_id)"
+                                ." | Prize: $level->prize_type #$level->prize_id ($level->prize)";
+                        }
+                        $ret .= '<br><br>';
                     }
-                    $ret .= '<br><br>';
                 }
             }
             $this->write("message`$ret");
-        } elseif (strpos($this->message, '/debug player ') === 0) {
+        } elseif ($debug_arg === 'player') {
             $player_name = trim(substr($this->message, 14));
             $player = name_to_player($player_name);
 
@@ -356,9 +369,11 @@ class ChatMessage
                     'If so, type the command again.'
                 );
             } elseif ($this->player->restart_warned === true) {
-                $message = "$this->player->name ($this->from_id) restarted $server_name from $this->player->ip.";
+                $name_str = (string) $this->player->name;
+                $ip_str = (string) $this->player->ip;
+                $message = "$name_str ($this->from_id) restarted $server_name from $ip_str.";
                 admin_action_insert($pdo, $this->from_id, $message, $this->from_id, $this->player->ip);
-                output("$this->player->name ($this->from_id) initiated a server shutdown.");
+                output("$name_str ($this->from_id) initiated a server shutdown.");
                 $this->write('systemChat`Restarting...');
                 restart_server();
             }

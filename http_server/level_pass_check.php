@@ -5,7 +5,7 @@ header("Content-type: text/plain");
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
 
-$level_id = (int) default_post('courseID', 0);
+$level_id = (int) default_post('course_id', 0);
 $hash = default_post('hash', '');
 $ip = get_ip();
 

@@ -69,7 +69,7 @@ try {
         $type = 'r';
     } elseif ($game_mode == 'deathmatch') {
         $type = 'd';
-    } elseif ($game_mode == 'egg') {
+    } elseif ($game_mode == 'eggs') {
         $type = 'e';
     } elseif ($game_mode == 'objective') {
         $type = 'o';

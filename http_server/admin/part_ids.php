@@ -75,7 +75,8 @@ try {
 38 - Valentine
 39 - Bunny
 40 - Gecko
-41+ - *BLANK*
+41 - Bat
+42+ - *BLANK*
 
 -- Bodies --
 1 - Classic
@@ -118,7 +119,8 @@ try {
 38 - Valentine
 39 - Bunny
 40 - Gecko
-41+ - *BLANK*
+41 - Bat
+42+ - *BLANK*
 
 -- Feet --
 1 - Classic
@@ -161,7 +163,8 @@ try {
 38 - Valentine
 39 - Bunny
 40 - Gecko
-41+ - *BLANK*
+41 - Bat
+42+ - *BLANK*
 
 -- Full Sets --
 (Key: Head ID, Body ID, Feet ID)
@@ -193,12 +196,13 @@ Crocodile: 37, 37, 37
 Valentine: 38, 38, 38
 Bunny: 39, 39, 39
 Gecko: 40, 40, 40
+Bat: 41, 41, 41
 
 -- Blank IDs --
 Hats: 15+
-Heads: 41+
-Bodies: 33, 41+
-Feet: 31-33, 41+</pre>';
+Heads: 42+
+Bodies: 33, 42+
+Feet: 31-33, 42+</pre>';
 } catch (Exception $e) {
     output_header('Error');
     $error = $e->getMessage();

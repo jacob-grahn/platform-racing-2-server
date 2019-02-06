@@ -59,6 +59,7 @@ try {
         echo 'Your Email Address: <input type="text" name="email"><br>';
         echo 'Your Password: <input type="password" name="pass"><br>';
         echo 'New Guild Owner\'s Username: <input type="text" name="new_owner"><br><br>';
+        echo "<input type='hidden' name='old_owner' value='$user->name'>";
         echo '<input type="hidden" name="action" value="submit">';
 
         echo 'NOTE: You may only transfer guild ownership once per week. '
@@ -82,6 +83,7 @@ try {
         // receive variables from post
         $email = default_post('email', '');
         $pass = default_post('pass', '');
+        $old_name = default_post('old_owner', '');
         $new_name = default_post('new_owner', '');
 
         // check pass
@@ -98,7 +100,7 @@ try {
 
         // check if the emails match
         if (strtolower($email) != strtolower($old_email)) {
-            throw new Exception("The email address you entered is incorrect.");
+            throw new Exception('The email address you entered is incorrect.');
         }
 
         // get new user's info
