@@ -264,7 +264,7 @@ class ChatMessage
                         foreach ($levels as $level) {
                             $ret .= "<br>Level $level->level_num (ID: $level->level_id)"
                                 ." | Prize: $level->prize_type #$level->prize_id ($level->prize)";
-                         }
+                        }
                         $ret .= '<br><br>';
                     }
                 }
