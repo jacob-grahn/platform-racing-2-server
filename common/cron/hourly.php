@@ -6,9 +6,10 @@ require_once GEN_HTTP_FNS;
 // ensure part awards
 require_once QUERIES_DIR . '/part_awards.php';
 
-// folding_at_home data select/insert/update from/into/in db
+// folding_at_home data select/insert/update from/into/in db, send confirmation message
 require_once FNS_DIR . '/cron/cron_fns.php';
 require_once QUERIES_DIR . '/folding_at_home.php';
+require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/rank_tokens.php';
 
 // remove expired servers
