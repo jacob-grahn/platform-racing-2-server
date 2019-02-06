@@ -216,6 +216,29 @@ function failover_servers($pdo)
 }
 
 
+function ensure_awards($pdo)
+{
+    // select all records, they get cleared out weekly or somesuch
+    $awards = part_awards_select_list($pdo);
+
+    // give users their awards
+    foreach ($awards as $row) {
+        $part = (int) $row->part === 0 ? '*' : $row->part;
+        $type = $row->type;
+        $user_id = (int) $row->user_id;
+        try {
+            award_part($pdo, $user_id, $type, $part, false);
+            echo "user_id: $user_id, type: $type, part: $part \n";
+        } catch (Exception $e) {
+            echo "Error: $e \n";
+        }
+    }
+
+    // delete older records
+    part_awards_delete_old($pdo);
+}
+
+
 function servers_restart_all($pdo)
 {
     // tell the command line
