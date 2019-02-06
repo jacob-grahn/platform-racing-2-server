@@ -90,7 +90,6 @@ function process_update_cycle($socket, $data)
         place_artifact($obj->artifact);
         pm_notify($obj->recent_pms);
         apply_bans($obj->recent_bans);
-        set_campaign($obj->campaign);
 
         $ret = new stdClass();
         $ret->plays = drain_plays();
