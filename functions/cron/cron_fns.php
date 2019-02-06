@@ -13,7 +13,6 @@ function run_update_cycle($pdo)
     $send->artifact = artifact_location_select($pdo);
     $send->recent_pms = get_recent_pms($pdo);
     $send->recent_bans = bans_select_recent($pdo);
-    $send->campaign = levels_select_campaign($pdo);
     $send_str = json_encode($send);
 
     // send the data
