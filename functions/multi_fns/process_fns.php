@@ -69,6 +69,17 @@ function process_message_player($socket, $data)
 }
 
 
+// set the campaign
+function process_set_campaign($socket, $data)
+{
+    if ($socket->process === true) {
+        $obj = json_decode($data);
+        set_campaign((object) $obj->campaign);
+        $socket->write('Campaign updated.');
+    }
+}
+
+
 // clear player's daily exp levels
 function process_start_new_day($socket)
 {
