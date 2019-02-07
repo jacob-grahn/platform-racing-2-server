@@ -216,6 +216,33 @@ function failover_servers($pdo)
 }
 
 
+function set_campaign($pdo)
+{
+    output("Starting campaign update process...");
+
+    // get campaign data
+    $send = new stdClass();
+    $send->campaign = campaign_select($pdo);
+    $send = json_encode($send);
+
+    // send update function to the servers
+    $servers = servers_select($pdo);
+    foreach ($servers as $server) {
+        output("Updating campaign on $server->server_name (ID: #$server->server_id)...");
+        try {
+            $reply = talk_to_server($server->address, $server->port, $server->salt, "set_campaign`$send", true, false);
+            output("Reply: $reply");
+            output("$server->server_name (ID #$server->server_id) campaign update successful.");
+        } catch (Exception $e) {
+            output($e->getMessage());
+        }
+    }
+
+    // tell the command line
+    output('Campaign update complete.');
+}
+
+
 function ensure_awards($pdo)
 {
     // select all records, they get cleared out weekly or somesuch
