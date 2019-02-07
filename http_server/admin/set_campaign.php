@@ -7,7 +7,7 @@ require_once QUERIES_DIR . '/admin_actions.php';
 require_once QUERIES_DIR . '/campaigns.php';
 
 $action = default_post('action', 'lookup');
-$message = htmlspecialchars(default_post('message', ''));
+$message = htmlspecialchars(default_get('message', ''));
 $campaign_id = 6; // 1 = Original, 2 = Speed, 3 = Luna, 4 = Timeline, 5 = Legendary, 6 = Custom
 
 try {
