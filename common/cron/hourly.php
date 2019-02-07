@@ -12,7 +12,8 @@ require_once QUERIES_DIR . '/folding_at_home.php';
 require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/rank_tokens.php';
 
-// remove expired servers
+// speak to servers (campaign prizes update), remove expired servers
+require_once QUERIES_DIR . '/campaigns.php';
 require_once QUERIES_DIR . '/servers.php';
 
 // tell the command line
@@ -27,6 +28,7 @@ try {
     generate_level_list($pdo, 'best');
     generate_level_list($pdo, 'best_today');
     generate_level_list($pdo, 'campaign');
+    set_campaign($pdo);
     ensure_awards($pdo);
     servers_deactivate_expired($pdo);
     servers_delete_old($pdo);
