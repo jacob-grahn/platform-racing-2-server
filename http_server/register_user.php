@@ -5,7 +5,7 @@ require_once HTTP_FNS . '/rand_crypt/to_hash.php';
 require_once QUERIES_DIR . '/bans.php';
 require_once QUERIES_DIR . '/messages.php';
 
-$name = default_post('name');
+$name = trim(default_post('name'));
 $password = default_post('password');
 $time = time();
 $ip = get_ip();
