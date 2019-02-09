@@ -674,7 +674,7 @@ class Prizes
     {
         $match = null;
         foreach (self::$arr as $prize) {
-            if ($prize->getType() === $type && $prize->getId() === $id) {
+            if ($prize->getType() === $type && $prize->getId() === (int) $id) {
                 $match = $prize;
                 break;
             }
