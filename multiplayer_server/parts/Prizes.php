@@ -400,7 +400,7 @@ class Prizes
         self::$EPIC_PROPELLER_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::PROPELLER, 'Epic Upgrade!');
         self::$EPIC_COWBOY_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::COWBOY, 'Epic Upgrade!');
         self::$EPIC_CROWN_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::CROWN, 'Epic Upgrade!');
-        self::$EPIC_SANTA_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::SANTA, 'Epic Upgrade!');
+        self::$EPIC_SANTA_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::SANTA, 'Epic Upgrade!', '', true);
         self::$EPIC_PARTY_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::PARTY, 'Epic Upgrade!');
         self::$EPIC_TOP_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::TOP_HAT, 'Epic Upgrade!');
         self::$EPIC_JUMP_START_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::JUMP_START, 'Epic Upgrade!', '', true);
