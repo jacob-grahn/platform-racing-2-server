@@ -1146,8 +1146,10 @@ class Game extends Room
     public function remove()
     {
         foreach ($this as $key => $var) {
-            $this->$key = null;
-            unset($this->$key, $key, $var);
+            if ($key !== 'mode') {
+                $this->$key = null;
+                unset($this->$key, $key, $var);
+            }
         }
 
         parent::remove();
