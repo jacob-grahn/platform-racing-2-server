@@ -3,7 +3,7 @@
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/all_optimize.php';
 require_once QUERIES_DIR . '/bans.php';
-require_once QUERIES_DIR . '/best_levels/best_levels_reset.php';
+require_once QUERIES_DIR . '/best_levels.php';
 require_once QUERIES_DIR . '/level_backups.php';
 require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/new_levels.php';
