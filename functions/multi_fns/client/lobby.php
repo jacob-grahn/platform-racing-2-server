@@ -164,7 +164,7 @@ function client_ignore_user($socket, $data)
 {
     $player = $socket->getPlayer();
     $ignored_player = name_to_player($data);
-    if (isset($ignored_player)) {
+    if (isset($ignored_player) && $ignored_player !== $player) {
         array_push($player->ignored_array, $ignored_player->user_id);
     }
 }
