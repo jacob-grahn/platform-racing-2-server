@@ -157,7 +157,7 @@ class ChatRoom extends Room
         array_shift($this->chat_array);
 
         foreach ($this->player_array as $player) {
-            if (!$player->isIgnoredId($user_id)) {
+            if ($player->isIgnoredId($user_id) === false) {
                 $player->socket->write($message);
             }
         }
