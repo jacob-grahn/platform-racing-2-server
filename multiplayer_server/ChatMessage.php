@@ -61,7 +61,7 @@ class ChatMessage
     // special text emotes
     private function handleEmotes()
     {
-        $this->message = str_ireplace(':shrug:', '¯\_(ツ)_/¯', $this->message);
+        $this->message = str_ireplace(':shrug:', '‾\_(ツ)_/‾', $this->message);
         $this->message = str_ireplace(':lenny:', '( ͡° ͜ʖ ͡°)', $this->message);
         $this->message = str_ireplace([':yay:', ':woohoo:', ':wow:'], '╰(ᴖ◡ᴖ)╯', $this->message);
         $this->message = str_ireplace([':hi:', ':hello:', ':hey:'], 'ー( ◉▽◉ )ﾉ', $this->message);
