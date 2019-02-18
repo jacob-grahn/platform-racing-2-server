@@ -258,7 +258,7 @@ class Player
 
     public function isIgnoredId($id)
     {
-        return !array_search($id, $this->ignored_array) ? false : true;
+        return array_search($id, $this->ignored_array) === false ? false : true;
     }
 
 
