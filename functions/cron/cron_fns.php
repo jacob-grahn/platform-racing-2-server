@@ -13,7 +13,6 @@ function run_update_cycle($pdo)
     $send->artifact = artifact_location_select($pdo);
     $send->recent_pms = get_recent_pms($pdo);
     $send->recent_bans = bans_select_recent($pdo);
-    $send->campaign = levels_select_campaign($pdo);
     $send_str = json_encode($send);
 
     // send the data
@@ -214,6 +213,56 @@ function failover_servers($pdo)
 
     // tell the world
     output('The correct address of all active servers has been ensured.');
+}
+
+
+function set_campaign($pdo)
+{
+    output("Starting campaign update process...");
+
+    // get campaign data
+    $send = new stdClass();
+    $send->campaign = campaign_select($pdo);
+    $send = json_encode($send);
+
+    // send update function to the servers
+    $servers = servers_select($pdo);
+    foreach ($servers as $server) {
+        output("Updating campaign on $server->server_name (ID: #$server->server_id)...");
+        try {
+            $reply = talk_to_server($server->address, $server->port, $server->salt, "set_campaign`$send", true, false);
+            output("Reply: $reply");
+            output("$server->server_name (ID #$server->server_id) campaign update successful.");
+        } catch (Exception $e) {
+            output($e->getMessage());
+        }
+    }
+
+    // tell the command line
+    output('Campaign update complete.');
+}
+
+
+function ensure_awards($pdo)
+{
+    // select all records, they get cleared out weekly or somesuch
+    $awards = part_awards_select_list($pdo);
+
+    // give users their awards
+    foreach ($awards as $row) {
+        $part = (int) $row->part === 0 ? '*' : $row->part;
+        $type = $row->type;
+        $user_id = (int) $row->user_id;
+        try {
+            award_part($pdo, $user_id, $type, $part, false);
+            echo "user_id: $user_id, type: $type, part: $part \n";
+        } catch (Exception $e) {
+            echo "Error: $e \n";
+        }
+    }
+
+    // delete older records
+    part_awards_delete_old($pdo);
 }
 
 
