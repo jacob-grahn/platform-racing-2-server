@@ -74,15 +74,15 @@ try {
         echo "</pre>";
         echo '<br><br><a href="javascript:history.back()"><- Go Back</a>';
     } else {
-        throw new Exception("Invalid action specified.");
+        throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
     if ($header === false) {
         output_header('Error');
     }
     $error = $e->getMessage();
-    if ($error === "Database Error -> " || strpos($error, "SQL") === 0) {
-        echo "Database Error: " . print_r($error, true);
+    if ($error === 'Database Error -> ' || strpos($error, 'SQL') === 0) {
+        echo 'Database Error: ' . print_r($error, true);
     } else {
         echo "Error: $error";
     }
