@@ -9,6 +9,11 @@ function order_placed_handler($pdo, $request)
     list($pr2_user_id, $slug) = explode(',', $order_info);
     $pr2_user_id = (int) $pr2_user_id;
 
+    // debugging
+    if ($pr2_user_id != 4505943) {
+        throw new Exception('Nope');
+    }
+
     // check that the item is available
     $descs = describeVault($pdo, $pr2_user_id, array($slug));
     $desc = $descs[0];
@@ -17,10 +22,12 @@ function order_placed_handler($pdo, $request)
     }
 
     // apply item to player's account
+    message_insert($pdo, 4505943, 1, "SELECTING EXPANDED -- order_placed_handler from $calling_file", '0');
     $user = user_select_expanded($pdo, $pr2_user_id);
     $guild = (int) $user->guild;
     $server = (int) $user->server_id;
     $pr2_name = $user->name;
+    message_insert($pdo, 4505943, 1, "UNLOCKING ITEM -- order_placed_handler from $calling_file", '0');
     unlock_item($pdo, $pr2_user_id, $guild, $server, $slug, $pr2_name, $recipient_id, $order_id, $desc->title);
 
     // tell it
@@ -32,8 +39,18 @@ function order_placed_handler($pdo, $request)
 
 function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id, $title)
 {
+    if ($user_id !== 4505943) {
+        throw new Exception("Purchases are disabled for now :/ sorry bout that");
+    }
+    // debugging
+    $key = array_search(__FUNCTION__, array_column(debug_backtrace(), 'function'));
+    $calling_file = debug_backtrace()[$key]['file'];
+
+    message_insert($pdo, $user_id, 1, "STARTING UNLOCK_ITEM -- $calling_file", '0');
+
     error_log("unlock_item: $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id");
     purchase_insert($pdo, $user_id, $guild_id, $slug, $kong_user_id, $order_id);
+    message_insert($pdo, $user_id, 1, "INSERTED PURCHASE -- $calling_file", '0');
     $command = "unlock_perk`$slug`$user_id`$guild_id`$user_name";
     $reply = '';
     $target_servers = array();
@@ -63,12 +80,15 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         $command = "unlock_set_queen`$user_id";
         $reply = 'The Wise Queen set has been added your account!';
     } elseif ($slug === 'djinn-set') {
+        message_insert($pdo, $user_id, 1, "AWARDING DJINN -- $calling_file", '0');
         award_part($pdo, $user_id, 'head', 35);
         award_part($pdo, $user_id, 'body', 35);
         award_part($pdo, $user_id, 'feet', 35);
+        message_insert($pdo, $user_id, 1, "AWARDING EPIC DJINN -- $calling_file", '0');
         award_part($pdo, $user_id, 'eHead', 35);
         award_part($pdo, $user_id, 'eBody', 35);
         award_part($pdo, $user_id, 'eFeet', 35);
+        message_insert($pdo, $user_id, 1, "AWARDED DJINN -- $calling_file", '0');
         $command = "unlock_set_djinn`$user_id";
         $reply = 'The Frost Djinn set has been added your account!';
     } elseif ($slug === 'epic-everything') {
@@ -108,6 +128,7 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
     }
 
     $servers = servers_select($pdo);
+    message_insert($pdo, $user_id, 1, "SELECTED SERVERS -- $calling_file", '0');
 
     if (!empty($command)) {
         poll_servers($servers, $command, false, $target_servers);
@@ -120,7 +141,9 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         poll_servers($servers, "message_player`$data", false, array($server_id));
     }
 
+    message_insert($pdo, $user_id, 1, "SENDING CONFIRMATION PM -- $calling_file", '0');
     send_confirmation_pm($pdo, $user_id, $title, $order_id);
+    message_insert($pdo, $user_id, 1, "FINISHED UNLOCK_ITEM. RETURNING TO $calling_file", '0');
     return $reply;
 }
 
