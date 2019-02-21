@@ -721,7 +721,7 @@ class ChatMessage
         if ($this->room_type === 'c') {
             $this->write(
                 'systemChat`PR2 Emoticons:<br>'
-                .':shrug: = ¯\_(ツ)_/¯<br>'
+                .':shrug: = ‾\_(ツ)_/‾<br>'
                 .':lenny: = ( ͡° ͜ʖ ͡°)<br>'
                 .':yay: = ╰(ᴖ◡ᴖ)╯<br>'
                 .':hello: = ー( ◉▽◉ )ﾉ<br>'
