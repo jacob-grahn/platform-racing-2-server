@@ -61,18 +61,20 @@ try {
 
         // perform the query
         $stmt = $pdo->query("$query");
+        $start_time = microtime(true);
         $result = $stmt->execute();
+        $end_time = microtime(true);
         if ($result === false) {
             throw new Exception($pdo->errorInfo());
         } else {
             $action_msg = "DB QUERY -- bls1999 (3483035) from $ip: $query";
             admin_action_insert($pdo, 3483035, $action_msg, 3483035, $ip);
         }
-        echo "Query: " . htmlspecialchars($query, ENT_QUOTES) . '<br><br>';
-        echo "<pre>";
+        echo 'Query: ' . htmlspecialchars($query, ENT_QUOTES) . '<br><br>';
+        echo 'This query took ' . ($end_time - $start_time) . ' seconds to complete.<br><br>';
+        echo '<pre>';
         var_dump($stmt->fetchAll(PDO::FETCH_OBJ));
-        echo "</pre>";
-        echo '<br><br><a href="javascript:history.back()"><- Go Back</a>';
+        echo '</pre>';
     } else {
         throw new Exception('Invalid action specified.');
     }
@@ -87,5 +89,8 @@ try {
         echo "Error: $error";
     }
 } finally {
+    if ($action !== 'form' || $header === false) {
+        echo '<br><br><a href="javascript:history.back()"><- Go Back</a>';
+    }
     output_footer();
 }
