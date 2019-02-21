@@ -9,11 +9,6 @@ function order_placed_handler($pdo, $request)
     list($pr2_user_id, $slug) = explode(',', $order_info);
     $pr2_user_id = (int) $pr2_user_id;
 
-    // debugging
-    if ($pr2_user_id != 4505943) {
-        throw new Exception('Nope');
-    }
-
     // check that the item is available
     $descs = describeVault($pdo, $pr2_user_id, array($slug));
     $desc = $descs[0];
@@ -68,15 +63,12 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         $command = "unlock_set_queen`$user_id";
         $reply = 'The Wise Queen set has been added your account!';
     } elseif ($slug === 'djinn-set') {
-        message_insert($pdo, 4505943, 1, "AWARDING DJINN -- unlock_item", '0');
         award_part($pdo, $user_id, 'head', 35);
         award_part($pdo, $user_id, 'body', 35);
         award_part($pdo, $user_id, 'feet', 35);
-        message_insert($pdo, 4505943, 1, "AWARDING EPIC DJINN -- unlock_item", '0');
         award_part($pdo, $user_id, 'eHead', 35);
         award_part($pdo, $user_id, 'eBody', 35);
         award_part($pdo, $user_id, 'eFeet', 35);
-        message_insert($pdo, 4505943, 1, "AWARDED DJINN -- unlock_item", '0');
         $command = "unlock_set_djinn`$user_id";
         $reply = 'The Frost Djinn set has been added your account!';
     } elseif ($slug === 'epic-everything') {
@@ -116,7 +108,6 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
     }
 
     $servers = servers_select($pdo);
-    message_insert($pdo, $user_id, 1, "SELECTED SERVERS -- unlock_item", '0');
 
     if (!empty($command)) {
         poll_servers($servers, $command, false, $target_servers);
@@ -129,9 +120,7 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         poll_servers($servers, "message_player`$data", false, array($server_id));
     }
 
-    message_insert($pdo, $user_id, 1, "SENDING CONFIRMATION PM -- unlock_item", '0');
     send_confirmation_pm($pdo, $user_id, $title, $order_id);
-    message_insert($pdo, $user_id, 1, "FINISHED UNLOCK_ITEM. REPLY: $reply. RETURNING TO CALLING FILE", '0');
     return $reply;
 }
 
