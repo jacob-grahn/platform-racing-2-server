@@ -4,6 +4,7 @@ require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/servers.php';
 
+$ip = get_ip();
 $file = default_get('file', '');
 $header = false;
 
@@ -14,7 +15,7 @@ try {
     // connect
     $pdo = pdo_connect();
 
-    if (token_login($pdo) !== 3483035) {
+    if (token_login($pdo) !== 3483035 || strpos($ip, $BLS_IP_PREFIX) === false) {
         throw new Exception('You lack the power to access this resource.');
     }
 
