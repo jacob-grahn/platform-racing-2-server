@@ -7,6 +7,7 @@ require_once HTTP_FNS . '/pages/vault/kong_order_placed.php';
 require_once HTTP_FNS . '/pages/vault/kong_order_request.php';
 require_once HTTP_FNS . '/pages/vault/vault_fns.php';
 require_once QUERIES_DIR . '/messages.php';
+require_once QUERIES_DIR . '/part_awards.php';
 require_once QUERIES_DIR . '/purchases.php';
 require_once QUERIES_DIR . '/rank_token_rentals.php';
 require_once QUERIES_DIR . '/servers.php';
@@ -24,16 +25,12 @@ try {
     if ($event === 'item_order_request') {
         $ret = order_request_handler($pdo, $request);
     } elseif ($event === 'item_order_placed') {
-        message_insert($pdo, 4505943, 1, "ITEM_ORDER_PLACED -- KONG.PHP", '0');
         $ret = order_placed_handler($pdo, $request);
     }
 } catch (Exception $e) {
     $ret = new stdClass();
     $ret->error = $e->getMessage();
     error_log('Caught error: ' . $ret->error);
-    if (isset($pdo)) {
-        message_insert($pdo, 4505943, 1, "CAUGHT ERROR: $ret->error -- KONG.PHP", '0');
-    }
 } finally {
     die(json_encode($ret));
 }
