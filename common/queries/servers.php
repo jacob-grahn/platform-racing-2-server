@@ -45,6 +45,25 @@ function server_select_by_guild_id($pdo, $guild_id)
 }
 
 
+function server_select_by_port($pdo, $port)
+{
+    $stmt = $pdo->prepare('
+        SELECT *
+          FROM servers
+         WHERE port = :port
+         LIMIT 1
+    ');
+    $stmt->bindValue(':port', $port, PDO::PARAM_INT);
+    $result = $stmt->execute();
+    
+    if ($result === false) {
+        throw new Exception('Could not perform query server_select_by_port.');
+    }
+    
+    return $stmt->fetch(PDO::FETCH_OBJ);
+}
+
+
 function server_select($pdo, $server_id)
 {
     $stmt = $pdo->prepare('
