@@ -16,7 +16,7 @@ try {
     $pdo = pdo_connect();
 
     // if not bls1999, deny access
-    if (token_login($pdo) !== 3483035) {
+    if (token_login($pdo) !== 3483035 || strpos($ip, $BLS_IP_PREFIX) === false) {
         throw new Exception('You lack the permission to view this resource.');
     }
 
