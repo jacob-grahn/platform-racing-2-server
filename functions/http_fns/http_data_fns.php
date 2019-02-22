@@ -75,6 +75,8 @@ function is_trusted_ref()
     $ref = $_SERVER['HTTP_REFERER'];
     return (strpos($ref, 'http://pr2hub.com/') === 0
         || strpos($ref, 'https://pr2hub.com/') === 0
+        || strpos($ref, 'http://www.pr2hub.com/') === 0
+        || strpos($ref, 'https://www.pr2hub.com/') === 0
         || strpos($ref, 'http://cdn.jiggmin.com/') === 0
         || strpos($ref, 'http://chat.kongregate.com/') === 0
         || strpos($ref, 'http://external.kongregate-games.com/gamez/') === 0
