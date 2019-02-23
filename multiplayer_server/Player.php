@@ -72,8 +72,6 @@ class Player
     public $pos_y = 0;
 
     public $worn_hat_array = array();
-    public $finished_race = false;
-    public $quit_race = false;
 
     public $domain;
     public $ip;

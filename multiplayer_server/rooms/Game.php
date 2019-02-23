@@ -50,6 +50,7 @@ class Game extends Room
     {
         if (count($this->finish_array) < 4) {
             Room::addPlayer($player);
+            $player->socket->write('tournamentMode`' . (int) PR2SocketServer::$tournament);
             $player->socket->write('startGame`'.$this->course_id);
             $player->temp_id = $this->temp_id;
             $player->pos_x = 0;
@@ -57,10 +58,8 @@ class Game extends Room
             $player->average_vel_x = 0;
             $player->average_vel_y = 0;
             $player->lives = 3;
-            $player->finished_race = false;
-            $player->quit_race = false;
             $this->temp_id++;
-            $race_stats = new RaceStats($player->temp_id, $player->name, $player->active_rank, $player->ip);
+            $race_stats = new RaceStats($player);
             array_push($this->finish_array, $race_stats);
             $player->race_stats = $race_stats;
         }
@@ -97,7 +96,7 @@ class Game extends Room
 
         //send character info
         foreach ($this->player_array as $player) {
-            $player->finished_race = false;
+            $player->race_stats->finished_race = false;
             $player->socket->write($player->getLocalInfo());
             $this->sendToRoom($player->getRemoteInfo(), $player->user_id);
         }
@@ -358,6 +357,9 @@ class Game extends Room
             $this->start_time = microtime(true);
             $this->sendToAll('ping`' . time());
             $this->sendToAll('beginRace`');
+
+            // if anyone forfeited, show it properly
+            $this->broadcastFinishTimes();
         }
     }
 
@@ -441,7 +443,7 @@ class Game extends Room
     {
         global $pdo;
 
-        if ($player->finished_race === false
+        if ($player->race_stats->finished_race === false
             && !isset($player->race_stats->finish_time)
             && $player->race_stats->drawing === false
             && $this->begun === true
@@ -658,7 +660,7 @@ class Game extends Room
             $this->setFinishTime($player, 'forfeit');
         }
 
-        $player->finished_race = true;
+        $player->race_stats->finished_race = true;
 
         // everyone finishes at the same time in egg mode
         $this->maybeEndEgg();
@@ -701,7 +703,7 @@ class Game extends Room
             }
             if ($unfinished === 1) {
                 foreach ($this->player_array as $player) {
-                    if (!$player->finished_race && !isset($player->auto_win_deathmatch)) {
+                    if (!$player->race_stats->finished_race && !isset($player->auto_win_deathmatch)) {
                         $last_player = $player;
                     }
                 }
@@ -723,7 +725,7 @@ class Game extends Room
             $everyone_quit = true;
 
             foreach ($this->player_array as $player) {
-                if ($player->finished_race) {
+                if ($player->race_stats->finished_race) {
                     $someone_finished = true;
                     break;
                 }
@@ -739,7 +741,7 @@ class Game extends Room
             if ($someone_finished || $everyone_quit) {
                 $this->ending_egg = true;
                 foreach ($this->player_array as $player) {
-                    if (!$player->finished_race) {
+                    if (!$player->race_stats->finished_race) {
                         $this->finishRace($player);
                     }
                 }
@@ -751,8 +753,8 @@ class Game extends Room
     public function quitRace($player)
     {
         $this->finishDrawing($player);
-        if ($player->finished_race == false) {
-            $player->quit_race = true;
+        if ($player->race_stats->finished_race == false) {
+            $player->race_stats->quit_race = true;
             if ($this->mode == self::MODE_DEATHMATCH && $this->begun) {
                 $this->finishRace($player);
             } elseif ($this->mode == self::MODE_OBJECTIVE && $this->begun) {
@@ -760,7 +762,7 @@ class Game extends Room
             } elseif ($this->mode === self::MODE_EGG) {
                 $this->maybeEndEgg();
             } elseif ($this->mode === self::MODE_RACE) {
-                $player->finished_race = true;
+                $player->race_stats->finished_race = true;
                 $this->setFinishTime($player, 'forfeit');
             }
         }
@@ -859,13 +861,13 @@ class Game extends Room
     }
 
 
-    private function setFinishTime($player, $finish_time)
+    private function setFinishTime($player, $finish_time, $broadcast = true)
     {
         if (!isset($player->race_stats->finish_time)) {
             $player->race_stats->finish_time = $finish_time;
         }
-        $ucmode = ucfirst($this->mode);
-        usort($this->finish_array, array($this, "sortFinishArray$ucmode"));
+        $function_name = 'sortFinishArray' . ucfirst($this->mode);
+        usort($this->finish_array, array($this, $function_name));
 
         $this->broadcastFinishTimes();
 
@@ -877,16 +879,39 @@ class Game extends Room
     private function broadcastFinishTimes()
     {
         $str = 'finishTimes';
-        foreach ($this->finish_array as $race_stats) {
-            if ($this->mode === self::MODE_EGG) {
-                $finish_time = $race_stats->eggs;
-            } else {
-                $finish_time = $race_stats->finish_time;
-            }
-            if (isset($finish_time)) {
-                $str .= '`'.$race_stats->name.'`'.$finish_time.'`'.$race_stats->still_here;
+
+        // still drawing?
+        $drawing = false;
+        foreach ($this->player_array as $player) {
+            $rs = $player->race_stats;
+            if ($rs->drawing === true) {
+                $drawing = true;
+                break;
             }
         }
+
+        // if still drawing, preserve the drawing animation
+        if ($drawing === true) {
+            foreach ($this->finish_array as $rs) {
+                $player = $this->idToPlayer($rs->temp_id);
+                $forfeit = $rs->quit_race ? ($this->mode === self::MODE_EGG ? '0' : 'forfeit') : '';
+                $str .= '`' . $rs->name . '`' . $forfeit . '`' . $rs->drawing . '`' . $rs->still_here;
+            }
+        } // if not, broadcast as normal
+        else {
+            foreach ($this->finish_array as $rs) {
+                if ($this->mode === self::MODE_EGG) {
+                    $finish_time = $rs->eggs;
+                } else {
+                    $finish_time = $rs->finish_time;
+                }
+                if (isset($finish_time) || $rs->quit_race) {
+                    $finish_time = isset($finish_time) ? $finish_time : ($rs->quit_race ? 'forfeit' : $finish_time);
+                    $str .= '`' . $rs->name . '`' . $finish_time . '`' . $rs->drawing . '`' . $rs->still_here;
+                }
+            }
+        }
+        output($str);
         $this->sendToAll($str);
     }
 
@@ -963,7 +988,7 @@ class Game extends Room
 
     public function setVar($player, $data)
     {
-        if (!$player->finished_race) {
+        if (!$player->race_stats->finished_race) {
             $this->sendToRoom('var'.$player->temp_id.'`'.$data, $player->user_id);
 
             if ($data === 'state`bumped' && $this->mode === self::MODE_DEATHMATCH) {
@@ -996,7 +1021,7 @@ class Game extends Room
 
     public function grabEgg($player, $data)
     {
-        if (!$player->finished_race) {
+        if (!$player->race_stats->finished_race) {
             $player->race_stats->eggs++;
             $this->sendToRoom("removeEgg$data`", $player->user_id);
             $this->broadcastFinishTimes();
@@ -1146,7 +1171,7 @@ class Game extends Room
     public function remove()
     {
         foreach ($this as $key => $var) {
-            if ($key !== 'mode') {
+            if ($key !== 'mode' && $key !== 'finish_array') {
                 $this->$key = null;
                 unset($this->$key, $key, $var);
             }
