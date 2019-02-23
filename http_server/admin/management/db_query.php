@@ -56,7 +56,10 @@ try {
 
         // don't overload the db
         if (strpos($lower_query, 'select') === 0 && strpos($lower_query, 'limit') === false) {
-            $query = $query . ' LIMIT 0,30';
+            if (substr($query, -1) === ';') {
+                $query = substr($query, 0, strlen($query) - 1);
+            }
+            $query = $query . ' LIMIT 0,30;';
         }
 
         // perform the query
