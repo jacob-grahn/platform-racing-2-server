@@ -5,6 +5,8 @@ require_once HTTP_FNS . '/output_fns.php';
 
 output_header('PR2 Staff Team');
 
+$ip = get_ip();
+
 try {
     // rate limiting
     rate_limit('gui-staff-list-'.$ip, 5, 2, 'Please wait at least 10 seconds before refreshing the page again.');

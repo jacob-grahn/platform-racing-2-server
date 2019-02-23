@@ -25,6 +25,10 @@ try {
 
     // no file specified
     if (is_empty($file)) {
+        // make sure this completes
+        ini_set('memory_limit', '-1');
+        set_time_limit(0);
+
         // get directory contents
         $contents = array_diff(scandir(ROOT_DIR . '/../pr2/log'), array('..', '.'));
 
