@@ -729,7 +729,6 @@ class ChatMessage
                 .':laugh: = 😂<br>'
                 .':hooray: = 🎉<br>'
                 .':fred: = 🌵<br>'
-                .'Note: Emoticons can\'t be used in races.'
             );
         } else {
             $ret = 'To get a list of usable emoticons, go to the chat tab in the lobby and type /emotes.';
