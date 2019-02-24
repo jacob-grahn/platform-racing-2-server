@@ -73,15 +73,16 @@ function get_ip()
 function is_trusted_ref()
 {
     $ref = $_SERVER['HTTP_REFERER'];
-    return (strpos($ref, 'http://pr2hub.com/') === 0
-        || strpos($ref, 'https://pr2hub.com/') === 0
-        || strpos($ref, 'http://www.pr2hub.com/') === 0
-        || strpos($ref, 'https://www.pr2hub.com/') === 0
-        || strpos($ref, 'http://cdn.jiggmin.com/') === 0
-        || strpos($ref, 'http://chat.kongregate.com/') === 0
-        || strpos($ref, 'http://external.kongregate-games.com/gamez/') === 0
-        || strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') === 0
-        || strpos($ref, 'http://game10110.konggames.com/games/Jiggmin/platform-racing-2') === 0
+    return (strpos($ref, 'http://pr2hub.com/') === 0 // pr2hub
+        || strpos($ref, 'https://pr2hub.com/') === 0 // pr2hub
+        || strpos($ref, 'http://www.pr2hub.com/') === 0 // pr2hub
+        || strpos($ref, 'https://www.pr2hub.com/') === 0 // pr2hub
+        || strpos($ref, 'http://cdn.jiggmin.com/') === 0 // jv
+        || strpos($ref, 'http://chat.kongregate.com/') === 0 // kong
+        || strpos($ref, 'http://external.kongregate-games.com/gamez/') === 0 // kong
+        || strpos($ref, 'http://game10110.konggames.com/games/Jiggmin/platform-racing-2') === 0 // kong
+        || strpos($ref, 'http://uploads.ungrounded.net/439000/') === 0 // newgrounds
+        || strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') === 0 // jv2
         || strpos($ref, 'http://naxxol.github.io/') === 0 // advanced LE
     );
 }
