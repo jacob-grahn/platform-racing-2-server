@@ -1,3 +1,6 @@
+##### Credit for this file goes to kenorb @ stackoverflow
+##### https://stackoverflow.com/questions/20396329/how-to-download-github-release-from-private-repo-using-command-line
+
 # Validate settings.
 [ -f ~/.secrets ] && source ~/.secrets
 [ "$GITHUB_API_TOKEN" ] || { echo "Error: Please define GITHUB_API_TOKEN variable." >&2; exit 1; }
