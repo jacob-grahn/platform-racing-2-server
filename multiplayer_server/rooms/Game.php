@@ -861,7 +861,7 @@ class Game extends Room
     }
 
 
-    private function setFinishTime($player, $finish_time, $broadcast = true)
+    private function setFinishTime($player, $finish_time)
     {
         if (!isset($player->race_stats->finish_time)) {
             $player->race_stats->finish_time = $finish_time;
