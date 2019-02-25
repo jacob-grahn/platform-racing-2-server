@@ -30,7 +30,9 @@ try {
         echo '<form method="post">'
             .'<input type="hidden" name="action" value="restart">'
             .'<input type="hidden" name="token" value="'.$_COOKIE['token'].'">'
-            .'<input type="submit" value="Yes, RESTART ALL PR2 SERVERS">&nbsp;(no confirmation!)'
+            .'<input type="submit" value="Yes, RESTART ALL PR2 SERVERS">&nbsp;(no confirmation!)<br><br>'
+            .'Alternatively, restart only one server (server ID): <input type="text" name="server_id"> '
+            .'<input type="submit" value="Yes, restart this one server.">&nbsp;(no confirmation!)'
             .'</form>';
     } elseif ($action === 'restart') {
         // referrer check
@@ -42,32 +44,52 @@ try {
             throw new Exception('Could not validate token.');
         }
 
-        // only let the servers be restarted with this method once per hour
-        $rl_msg = 'Please wait at least one hour before attempting to restart all active servers again.';
-        rate_limit('do-restart-servers', 3600, 1, $rl_msg);
+        // if set, only restart specific server
+        $server_id = (int) default_post('server_id', 0);
+        if ($server_id > 0) {
+            // get server info
+            $server = server_select($pdo, $server_id);
 
-        // get servers
-        $servers = servers_select($pdo);
-
-        // test all active servers at this address
-        foreach ($servers as $server) {
-            echo "Shutting down $server->server_name ($server->server_id)...<br>";
+            // restart, yo
             try {
+                echo "Shutting down $server->server_name ($server->server_id)...<br>";
                 $reply = talk_to_server($server->address, $server->port, $server->salt, 'shut_down`', true);
                 echo "Server Reply: $reply";
             } catch (Exception $e) {
                 echo $e->getMessage();
-            } finally {
-                echo '<br><br>';
             }
+
+            // action log
+            $server_name = htmlspecialchars($server->server_name, ENT_QUOTES);
+            $msg = "$admin->name restarted $server_name from $ip.";
+        } else {
+            // only let the servers be restarted with this method once per hour
+            $rl_msg = 'Please wait at least one hour before attempting to restart all active servers again.';
+            rate_limit('do-restart-servers', 3600, 1, $rl_msg);
+
+            // get servers
+            $servers = servers_select($pdo);
+
+            // test all active servers at this address
+            foreach ($servers as $server) {
+                echo "Shutting down $server->server_name ($server->server_id)...<br>";
+                try {
+                    $reply = talk_to_server($server->address, $server->port, $server->salt, 'shut_down`', true);
+                    echo "Server Reply: $reply";
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                }
+            }
+
+            // action log
+            $msg = "$admin->name restarted ALL ACTIVE PR2 SERVERS from $ip.";
         }
 
         // record action
-        $msg = "$admin->name restarted ALL ACTIVE PR2 SERVERS from $ip.";
         admin_action_insert($pdo, $admin->user_id, $msg, $admin->user_id, $ip);
 
         // tell the world
-        echo '<span style="color: green;">All operations completed.</span>';
+        echo '<br><br><span style="color: green;">All operations completed.</span>';
     }
 } catch (Exception $e) {
     output_header('Error');

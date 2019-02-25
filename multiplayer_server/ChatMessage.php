@@ -111,7 +111,7 @@ class ChatMessage
             } elseif ((strpos($msg, '/dc ') === 0 || strpos($msg, '/disconnect ') === 0)) {
                 $this->commandModDisconnect(); // dc for mods
                 $handled = true;
-            } elseif (strpos($msg, '/priors ') === 0 && $this->isServerOwner() === false) {
+            } elseif (strpos($msg, '/priors ') === 0 && ($this->isServerOwner() === false || $guild_id === 183)) {
                 $this->commandModViewPriors(); // view a user's priors for mods (NOT server owners)
                 $handled = true;
             }
