@@ -148,7 +148,7 @@ try {
     }
 
     // sanity check: if a guild server, is the user in the guild?
-    if ((int) $server->guild_id !== 0 && (int) $user->guild !== (int) $server->guild_id) {
+    if ((int) $server->guild_id !== 0 && (int) $user->guild !== (int) $server->guild_id && $group !== 3) {
         throw new Exception('You must be a member of this guild to join this server.');
     }
 
