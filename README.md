@@ -26,4 +26,5 @@ To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com
 - fourst4r
 - Grovbi
 - isokissa3
+- Shane1334
 - Stxtics
