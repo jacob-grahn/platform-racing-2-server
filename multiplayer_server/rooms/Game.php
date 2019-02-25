@@ -911,7 +911,6 @@ class Game extends Room
                 }
             }
         }
-        output($str);
         $this->sendToAll($str);
     }
 
