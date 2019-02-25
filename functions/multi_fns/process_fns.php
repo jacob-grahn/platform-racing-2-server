@@ -137,7 +137,7 @@ function process_register_login($server_socket, $data)
                 $socket->write('message`There\'s an IP mismatch. Check your network settings.');
                 $socket->close();
                 $socket->onDisconnect();
-            } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild) {
+            } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild && $group < 3) {
                 $socket->write('message`You are not a member of this guild.');
                 $socket->close();
                 $socket->onDisconnect();
