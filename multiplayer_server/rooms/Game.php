@@ -867,7 +867,7 @@ class Game extends Room
             $player->race_stats->finish_time = $finish_time;
         }
         $function_name = 'sortFinishArray' . ucfirst($this->mode);
-        usort($this->finish_array, array($this, $function_name));
+        @usort($this->finish_array, array($this, $function_name));
 
         $this->broadcastFinishTimes();
 
