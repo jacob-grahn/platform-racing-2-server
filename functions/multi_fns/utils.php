@@ -216,13 +216,12 @@ function get_priors($pdo, $mod, $name)
     }
 
     // make user vars
-    $safe_name = htmlspecialchars($user->name, ENT_QUOTES);
     $ip = $user->ip;
     $power = (int) $user->power;
 
     // initialize return string var
     $url_name = htmlspecialchars(urlencode($user->name), ENT_QUOTES);
-    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $safe_name, '#' . $group_colors[$power]);
+    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $user->name, '#' . $group_colors[$power]);
     $str = "<b>Ban Data for $u_link</b><br><br>";
 
     // check if the user is currently banned
