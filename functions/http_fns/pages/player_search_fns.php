@@ -7,7 +7,7 @@ function create_ban_list($bans)
     $str = '<p><ul>';
     foreach ($bans as $row) {
         $ban_date = date("F j, Y, g:i a", $row->time);
-        $reason = htmlspecialchars($row->reason);
+        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
         $ban_id = (int) $row->ban_id;
         $lifted_reason = (int) $row->lifted === 1 ? htmlspecialchars($row->lifted_reason, ENT_QUOTES) : '';
         $lifted = (int) $row->lifted === 1 ? " | <b>LIFTED</b> ($lifted_reason)" : '';
@@ -37,7 +37,7 @@ function find_user($pdo, $name)
 function output_search($name = '', $gwibble = true)
 {
     // safety first
-    $safe_name = htmlspecialchars($name);
+    $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
     // gwibble output
     if ($gwibble === true) {
@@ -95,13 +95,13 @@ function output_page($pdo, $user)
     }
 
     // safety first
-    $safe_name = htmlspecialchars($user_name);
-    $safe_status = htmlspecialchars($status);
+    $safe_name = htmlspecialchars($user_name, ENT_QUOTES);
+    $safe_status = htmlspecialchars($status, ENT_QUOTES);
     if ($guild_name == '<i>none</i>') {
         $safe_guild = $guild_name;
     } else {
         $url_guild_name = urlencode($guild_name);
-        $html_guild_name = htmlspecialchars($guild_name);
+        $html_guild_name = htmlspecialchars($guild_name, ENT_QUOTES);
         $safe_guild = "<a href='/guild_search.php?name=$url_guild_name'>$html_guild_name</a>";
     }
 
