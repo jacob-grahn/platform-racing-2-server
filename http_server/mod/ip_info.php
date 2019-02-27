@@ -108,7 +108,7 @@ try {
         $active = date('j/M/Y', (int) $user->time);
 
         // echo results
-        echo "<a href='https://pr2hub.com/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>$name</a>
+        echo "<a href='/mod/player_info.php?user_id=$user_id' style='color: #$power_color'>$name</a>
             | Last Active: $active<br>";
     }
 } catch (Exception $e) {
