@@ -12,7 +12,7 @@ function output_form($contest)
 
     echo '<form action="add_prize.php" method="post">';
 
-    echo 'Add Contest Prize for <b>'.htmlspecialchars($contest->contest_name).'</b><br><br>';
+    echo 'Add Contest Prize for <b>'.htmlspecialchars($contest->contest_name, ENT_QUOTES).'</b><br><br>';
 
     $part_type_sel = '<select name="part_type">'
         .'<option value="" selected="selected">Choose a type...</option>'
@@ -42,7 +42,7 @@ function add_contest_prize($pdo, $admin, $contest)
     $contest_id = (int) $contest->contest_id;
     $part_type = default_post('part_type');
     $part_id = (int) default_post('part_id');
-    $html_contest_name = htmlspecialchars($contest->contest_name);
+    $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
 
     // validate the prize and get a nice stdClass back
     $prize = validate_prize($part_type, $part_id);
