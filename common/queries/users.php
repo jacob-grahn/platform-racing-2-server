@@ -274,7 +274,7 @@ function user_select_level_plays($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
           SELECT SUM(play_count) as total_play_count
-            FROM pr2_levels
+            FROM levels
            WHERE user_id = :user_id
         GROUP BY user_id
     ');
