@@ -65,7 +65,7 @@ try {
             echo "<span style='font-size: 11px; color: slategray;'><i>$prose</i></span><br>";
         }
         echo '<br>'
-        ."<img src='https://pr2hub.com/emblems/$emblem'>"
+        ."<img src='/emblems/$emblem'>"
         .'<br><br>'
         ."Owner: <a href='player_search.php?name=$owner_url_name' "
         ."style='color: #$owner_color; text-decoration: underline;'>$owner_name</a><br>"
@@ -100,7 +100,7 @@ try {
 
                 // if the guild owner, display a crown next to their name
                 if ($member_id === $owner_id) {
-                    echo '<img src="img/vault/Crown-40x40.png" height="12" title="Guild Owner"> ';
+                    echo '<img src="/img/vault/Crown-40x40.png" height="12" title="Guild Owner"> ';
                 }
 
                 // member name column
