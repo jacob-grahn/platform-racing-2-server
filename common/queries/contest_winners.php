@@ -33,16 +33,16 @@ function contest_winner_insert($pdo, $contest_id, $winner_id, $awarder_ip, $awar
 function contest_winners_select_all($pdo, $start, $count)
 {
     $stmt = $pdo->prepare('
-        SELECT contest_winners.contest_id AS contest_id,
-               contest_winners.winner_id AS winner_id,
-               contest_winners.win_time AS win_time,
-               contest_winners.awarder_ip AS awarder_ip,
-               contest_winners.awarded_by AS awarded_by,
-               contest_winners.prizes_awarded AS prizes_awarded,
-               contest_winners.comment AS comment,
-               contests.contest_name AS contest_name
-          FROM contest_winners
-          LEFT JOIN contests ON contests.contest_id = contest_winners.contest_id
+        SELECT cw.contest_id AS contest_id,
+               cw.winner_id AS winner_id,
+               cw.win_time AS win_time,
+               cw.awarder_ip AS awarder_ip,
+               cw.awarded_by AS awarded_by,
+               cw.prizes_awarded AS prizes_awarded,
+               cw.comment AS comment,
+               c.contest_name AS contest_name
+          FROM contest_winners cw
+          LEFT JOIN contests c ON c.contest_id = cw.contest_id
          ORDER BY win_time DESC
          LIMIT :start, :count
     ');
