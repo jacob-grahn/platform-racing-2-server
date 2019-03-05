@@ -3,6 +3,7 @@
 function user_delete($pdo, $user_id)
 {
     user_delete_from_artifacts_found($pdo, $user_id);
+    user_delete_from_contest_winners($pdo, $user_id);
     user_delete_from_bans($pdo, $user_id);
     user_delete_from_epic_upgrades($pdo, $user_id);
     user_delete_from_folding_at_home($pdo, $user_id);
@@ -53,6 +54,22 @@ function user_delete_from_bans($pdo, $user_id)
         throw new Exception('Could not delete user from bans.');
     }
     
+    return $result;
+}
+
+function user_delete_from_contest_winners($pdo, $user_id)
+{
+    $stmt = $pdo->prepare('
+        DELETE FROM contest_winners
+        WHERE winner_id = :user_id
+    ');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not delete user from contest_winners.');
+    }
+
     return $result;
 }
 
