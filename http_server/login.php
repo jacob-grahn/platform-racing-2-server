@@ -53,7 +53,7 @@ try {
     }
 
     // correct referrer?
-    if (strpos($ip, $BLS_IP_PREFIX) === false) {
+    if (strpos($ip, $BLS_IP_PREFIX) !== 0) {
         require_trusted_ref('log in');
     }
 
