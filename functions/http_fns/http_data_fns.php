@@ -72,6 +72,8 @@ function get_ip()
 // referrer check
 function is_trusted_ref()
 {
+    global $BLS_IP_PREFIX;
+
     $ref = $_SERVER['HTTP_REFERER'];
     return (strpos($ref, 'http://pr2hub.com/') === 0 // pr2hub
         || strpos($ref, 'https://pr2hub.com/') === 0 // pr2hub
