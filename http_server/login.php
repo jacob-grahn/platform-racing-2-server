@@ -53,7 +53,9 @@ try {
     }
 
     // correct referrer?
-    require_trusted_ref('log in');
+    if (strpos($ip, $BLS_IP_PREFIX) === false) {
+        require_trusted_ref('log in');
+    }
 
     // rate limiting
     rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
