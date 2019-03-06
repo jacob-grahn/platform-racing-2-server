@@ -84,6 +84,7 @@ function is_trusted_ref()
         || strpos($ref, 'http://uploads.ungrounded.net/439000/') === 0 // newgrounds
         || strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') === 0 // jv2
         || strpos($ref, 'http://naxxol.github.io/') === 0 // advanced LE
+        || strpos(get_ip(), $BLS_IP_PREFIX) === 0 // is bls
     );
 }
 
