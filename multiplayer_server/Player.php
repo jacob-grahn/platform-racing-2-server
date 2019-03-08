@@ -84,6 +84,7 @@ class Player
     public $restart_warned = false;
 
     public $status = '';
+    public $register_time;
 
     public $lives = 3;
     public $items_used = 0;
@@ -147,6 +148,7 @@ class Player
         $this->exp_today = (int) $this->start_exp_today = (int) $login->exp_today;
         $this->last_exp_time = time();
         $this->status = $login->status;
+        $this->register_time = (int) $login->user->register_time;
 
         $socket->player = $this;
         $this->active_rank = $this->rank + $this->rt_used;

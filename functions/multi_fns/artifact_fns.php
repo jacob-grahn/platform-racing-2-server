@@ -29,7 +29,9 @@ function save_finder($pdo, $player)
         artifacts_found_insert($pdo, $player->user_id);
 
         // check if you were the very first
-        if ((int) \pr2\multi\Artifact::$first_finder === 0) {
+        $meets_rank_req = $player->active_rank > 30 ? true : false;
+        $meets_age_req = time() - $player->register_time > 7776000 ? true : false;
+        if ((int) \pr2\multi\Artifact::$first_finder === 0 && $meets_rank_req && $meets_age_req) {
             save_first_finder($pdo, $player);
         }
 
