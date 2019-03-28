@@ -150,6 +150,9 @@ function curl_get($url, array $get = null, array $options = array())
 // populate descriptions for vault items
 function describeVault($pdo, $user_id, $arr)
 {
+    // sale?
+    $sale = true;
+    $discount = 0.5;
 
     // gather user info
     $user = user_select_expanded($pdo, $user_id);
@@ -187,7 +190,12 @@ function describeVault($pdo, $user_id, $arr)
             throw new Exception('Unknown item type.');
         }
 
-        $item->price = round($item->price * 0.5);
+        // activate sale
+        if ($sale === true) {
+            $item->price = round($item->price * $discount);
+            $item->discount = (string) ($discount * 100) . '% off!';
+        }
+
         $descriptions[] = $item;
     }
 
