@@ -68,6 +68,21 @@ try {
         $ignored = (int) (bool) ignored_select($pdo, $user_id, $target_id, true);
     }
 
+    // april fools! :)
+    if (date('M d') === 'Apr 01') {
+        switch ($target->power) {
+            case 1:
+                $target->power = 3;
+                break;
+            case 2:
+            case 3:
+                $target->power = 1;
+                break;
+            default:
+                break;
+        }
+    }
+
     // reply
     $ret->success = true;
     $ret->rank = $active_rank;
