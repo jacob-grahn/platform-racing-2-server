@@ -152,7 +152,7 @@ function describeVault($pdo, $user_id, $arr)
 {
     // sale?
     $sale = true;
-    $discount = 0.5;
+    $discount = 0.25;
 
     // gather user info
     $user = user_select_expanded($pdo, $user_id);
@@ -192,7 +192,7 @@ function describeVault($pdo, $user_id, $arr)
 
         // activate sale
         if ($sale === true) {
-            $item->price = round($item->price * $discount);
+            $item->price = round($item->price * (1 - $discount));
             $item->discount = (string) ($discount * 100) . '% off!';
         }
 
