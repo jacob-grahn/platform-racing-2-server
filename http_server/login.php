@@ -19,7 +19,7 @@ require_once QUERIES_DIR . '/servers.php';
 $encrypted_login = default_post('i', '');
 $version = default_post('version', '');
 $in_token = find('token');
-$allowed_versions = array('28-mar-2019-v153-2-2');
+$allowed_versions = array('4-apr-2019-v154');
 $guest_login = false;
 $token_login = false;
 $has_email = false;
