@@ -41,3 +41,22 @@ function artifacts_found_select_time($pdo, $user_id)
 
     return (int) $stmt->fetchColumn();
 }
+
+
+function artifacts_found_select_first_count($pdo, $user_id)
+{
+    $stmt = $pdo->prepare('
+        SELECT artifacts_first
+        FROM artifacts_found
+        WHERE user_id = :user_id
+        LIMIT 1
+    ');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not select artifacts found count.');
+    }
+
+    return (int) $stmt->fetchColumn();
+}
