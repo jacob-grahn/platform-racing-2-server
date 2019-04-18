@@ -171,7 +171,7 @@ class PR2Client extends \chabot\SocketServerClient
             $time = time();
             $action_elapsed = $time - $this->last_action;
             $user_elapsed = $time - $this->last_user_action;
-            if ($action_elapsed > 35 || $user_elapsed > 1800) {
+            if ($action_elapsed > 60 || $user_elapsed > 1800) {
                 $this->close();
                 $this->onDisconnect();
             }
