@@ -352,7 +352,7 @@ class Player
     }
 
 
-    public function gainPart($type, $id, $autoset = false)
+    private function determinePartArray($type)
     {
         if ($type === 'hat') {
             $arr = &$this->hat_array;
@@ -371,11 +371,27 @@ class Player
         } elseif ($type === 'eFeet') {
             $arr = &$this->epic_feet_array;
         } else {
-            output("Player->gainPart - unknown part type: $type");
+            output("Player->determinePartArray - unknown part type: $type");
             return false;
         }
+        return $arr;
+    }
 
-        if (isset($arr) && array_search($id, $arr) === false) {
+
+    public function hasPart($type, $id)
+    {
+        $arr = $this->determinePartArray($type);
+        if ($arr !== false && array_search($id, $arr) !== false) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public function gainPart($type, $id, $autoset = false)
+    {
+        $arr = $this->determinePartArray($type);
+        if ($this->hasPart($type, $id) === false) {
             array_push($arr, $id);
             if ($autoset) {
                 $this->setPart($type, $id);
@@ -394,14 +410,8 @@ class Player
             $type = strtolower($type);
         }
 
-        if ($type == 'hat') {
-            $this->hat = $id;
-        } elseif ($type == 'head') {
-            $this->head = $id;
-        } elseif ($type == 'body') {
-            $this->body = $id;
-        } elseif ($type == 'feet') {
-            $this->feet = $id;
+        if ($type === 'hat' || $type === 'head' || $type === 'body' || $type === 'feet') {
+            $this->{$type} = $id;
         }
     }
 
