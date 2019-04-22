@@ -148,15 +148,19 @@ function update_artifact($pdo)
     if ($first_finder !== 0) {
         $finder = user_select($pdo, $first_finder);
         $finder_name = $finder->name;
+        $finder_group = (int) $finder->power;
     } else {
         $finder_name = '';
+        $finder_group = 0;
     }
 
     if ($bubbles_winner !== 0) {
         $bubbles = user_select($pdo, $bubbles_winner);
         $bubbles_name = $bubbles->name;
+        $bubbles_group = (int) $bubbles->power;
     } else {
         $bubbles_name = '';
+        $bubbles_group = 0;
     }
 
     // form the base string we'll be creating
@@ -197,7 +201,9 @@ function update_artifact($pdo)
     $r = new stdClass();
     $r->hint = join('', $arr);
     $r->finder_name = $finder_name;
+    $r->finder_group = $finder_group;
     $r->bubbles_name = $bubbles_name;
+    $r->bubbles_group = $bubbles_group;
     $r->updated_time = $updated_time;
     $r_str = json_encode($r);
 
