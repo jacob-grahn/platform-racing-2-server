@@ -92,6 +92,7 @@ function place_artifact($artifact)
     \pr2\multi\Artifact::$y = (int) $artifact->y;
     \pr2\multi\Artifact::$updated_time = strtotime($artifact->updated_time);
     \pr2\multi\Artifact::$first_finder = (int) $artifact->first_finder;
+    \pr2\multi\Artifact::$bubbles_winner = (int) $artifact->bubbles_winner;
 }
 
 
