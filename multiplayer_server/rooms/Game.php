@@ -636,11 +636,15 @@ class Game extends Room
                     if ($artifact_bonus > $max_artifact_bonus) {
                         $artifact_bonus = $max_artifact_bonus;
                     }
+                    $user_id = (int) $player->user_id;
+                    if (Artifact::$first_finder === $user_id && Artifact::$bubbles_winner !== $user_id) {
+                        $artifact_bonus += 10000;
+                    }
                     $tot_exp_gain += $artifact_bonus;
                     $player->write('award`Artifact Found!`+ ' . number_format($artifact_bonus));
                 }
             }
-            
+
             // resets unrealistic EXP gain
             if ($tot_exp_gain > 100000) {
                 $tot_exp_gain = 0;

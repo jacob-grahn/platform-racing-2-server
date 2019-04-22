@@ -14,6 +14,26 @@ function artifact_location_select($pdo)
 }
 
 
+function artifact_location_update_bubbles_winner($pdo, $user_id)
+{
+    $stmt = $pdo->prepare('
+        UPDATE artifact_location
+        SET bubbles_winner = :user_id
+        WHERE artifact_id = 1
+        AND bubbles_winner = 0
+        LIMIT 1
+    ');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not update artifact first finder.');
+    }
+
+    return $result;
+}
+
+
 function artifact_location_update_first_finder($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
@@ -42,7 +62,8 @@ function artifact_location_update($pdo, $level_id, $x, $y)
                x = :x,
                y = :y,
                updated_time = NOW(),
-               first_finder = 0
+               first_finder = 0,
+               bubbles_winner = 0
          WHERE artifact_id = 1
     ');
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);

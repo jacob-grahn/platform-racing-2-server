@@ -136,6 +136,7 @@ function update_artifact($pdo)
     $level_id = (int) $artifact->level_id;
     $updated_time = strtotime($artifact->updated_time);
     $first_finder = (int) $artifact->first_finder;
+    $bubbles_winner = (int) $artifact->bubbles_winner;
 
     $level = level_select($pdo, $level_id);
     $title = $level->title;
@@ -149,6 +150,13 @@ function update_artifact($pdo)
         $finder_name = $finder->name;
     } else {
         $finder_name = '';
+    }
+
+    if ($bubbles_winner !== 0) {
+        $bubbles = user_select($pdo, $bubbles_winner);
+        $bubbles_name = $bubbles->name;
+    } else {
+        $bubbles_name = '';
     }
 
     // form the base string we'll be creating
@@ -189,6 +197,7 @@ function update_artifact($pdo)
     $r = new stdClass();
     $r->hint = join('', $arr);
     $r->finder_name = $finder_name;
+    $r->bubbles_name = $bubbles_name;
     $r->updated_time = $updated_time;
     $r_str = json_encode($r);
 
