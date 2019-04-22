@@ -352,37 +352,40 @@ class Player
     }
 
 
+    // call with & to write directly to the array
     private function determinePartArray($type)
     {
         if ($type === 'hat') {
-            $arr = &$this->hat_array;
+            return 'hat_array';
         } elseif ($type === 'head') {
-            $arr = &$this->head_array;
+            return 'head_array';
         } elseif ($type === 'body') {
-            $arr = &$this->body_array;
+            return 'body_array';
         } elseif ($type === 'feet') {
-            $arr = &$this->feet_array;
+            return 'feet_array';
         } elseif ($type === 'eHat') {
-            $arr = &$this->epic_hat_array;
+            return 'epic_hat_array';
         } elseif ($type === 'eHead') {
-            $arr = &$this->epic_head_array;
+            return 'epic_head_array';
         } elseif ($type === 'eBody') {
-            $arr = &$this->epic_body_array;
+            return 'epic_body_array';
         } elseif ($type === 'eFeet') {
-            $arr = &$this->epic_feet_array;
+            return 'epic_feet_array';
         } else {
             output("Player->determinePartArray - unknown part type: $type");
             return false;
         }
-        return $arr;
     }
 
 
     public function hasPart($type, $id)
     {
-        $arr = $this->determinePartArray($type);
-        if ($arr !== false && array_search($id, $arr) !== false) {
-            return true;
+        $arr_name = $this->determinePartArray($type);
+        if ($arr_name !== false) {
+            $arr = &$this->{$arr_name};
+            if ($arr !== false && array_search($id, $arr) !== false) {
+                return true;
+            }
         }
         return false;
     }
@@ -390,16 +393,18 @@ class Player
 
     public function gainPart($type, $id, $autoset = false)
     {
-        $arr = $this->determinePartArray($type);
-        if ($this->hasPart($type, $id) === false) {
-            array_push($arr, $id);
-            if ($autoset) {
-                $this->setPart($type, $id);
+        $arr_name = $this->determinePartArray($type);
+        if ($arr_name !== false) {
+            $arr = &$this->{$arr_name};
+            if ($this->hasPart($type, $id) === false) {
+                array_push($arr, $id);
+                if ($autoset) {
+                    $this->setPart($type, $id);
+                }
+               return true;
             }
-            return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
