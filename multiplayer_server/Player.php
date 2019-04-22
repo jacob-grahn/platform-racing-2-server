@@ -401,7 +401,7 @@ class Player
                 if ($autoset) {
                     $this->setPart($type, $id);
                 }
-               return true;
+                return true;
             }
         }
         return false;
