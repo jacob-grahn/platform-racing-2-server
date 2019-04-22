@@ -45,20 +45,19 @@ function has_found_artifact($pdo, $player)
 // save the first finder and/or award bubbles
 function artifact_special_check($pdo, $player)
 {
-    $user_id = (int) $player->user_id;
     $has_bubbles = has_bubbles($player);
     $first_finder = (int) \pr2\multi\Artifact::$first_finder;
     $bubbles_winner = (int) \pr2\multi\Artifact::$bubbles_winner;
 
     // check if first finder
     if ($first_finder === 0) {
-        save_first_finder($pdo, $user_id, $has_bubbles);
+        save_first_finder($pdo, $player, $has_bubbles);
         $first_finder = (int) \pr2\multi\Artifact::$first_finder;
     }
 
     // check if bubbles are still up for grabs
     if ($bubbles_winner === 0 && $has_bubbles === false) {
-        save_bubbles_winner($pdo, $user_id, $first_finder);
+        save_bubbles_winner($pdo, $player, $first_finder);
     }
 }
 
@@ -78,15 +77,17 @@ function has_bubbles($player)
 
 
 // save the first finder
-function save_first_finder($pdo, $user_id, $has_bubbles)
+function save_first_finder($pdo, $player, $has_bubbles)
 {
+    $user_id = (int) $player->user_id;
     artifact_location_update_first_finder($pdo, $user_id);
     artifacts_found_increment_first_count($pdo, $user_id);
     \pr2\multi\Artifact::$first_finder = $user_id;
 
     // if they have bubbles, give them 10,000 EXP (if they don't, it'll trigger the bubble winner sequence)
     if ($has_bubbles === true) {
-        $desc = "You found the artifact first! Since you have the bubble set, here's a 10,000 EXP bonus instead!";
+        $desc = 'You found the artifact first! '
+            .'Since you already own the bubble set, here\'s a 10,000 EXP bonus instead!';
         $player->write('winPrize`' . json_encode(
             array(
                 "type" => "exp",
@@ -100,8 +101,9 @@ function save_first_finder($pdo, $user_id, $has_bubbles)
 
 
 // save the bubbles winner
-function save_bubbles_winner($pdo, $user_id, $first_finder)
+function save_bubbles_winner($pdo, $player, $first_finder)
 {
+    $user_id = (int) $player->user_id;
     artifact_location_update_bubbles_winner($pdo, $user_id);
     \pr2\multi\Artifact::$bubbles_winner = $user_id;
 
