@@ -592,6 +592,11 @@ class Game extends Room
                 $tot_exp_gain *= 2;
             }
 
+            // anniversary bonus
+            if (date('M j') === 'May 2') {
+                $tot_exp_gain *= 2;
+            }
+
             // tell the user about the hat/hh/campaign bonus(es)
             if ($hat_bonus > 1 || isset($this->campaign) || HappyHour::isActive() == true) {
                 // hat bonus only

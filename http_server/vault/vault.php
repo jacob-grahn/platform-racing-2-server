@@ -53,7 +53,7 @@ try {
     // reply
     $ret->success = true;
     $ret->listings = $listings;
-    $ret->title = 'PR2 Lives!';
+    $ret->title = '11 Years of PR2!';
     $ret->sale = true;
 } catch (Exception $e) {
     $ret->state = 'canceled';
