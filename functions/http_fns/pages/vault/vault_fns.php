@@ -151,7 +151,7 @@ function curl_get($url, array $get = null, array $options = array())
 function describeVault($pdo, $user_id, $arr)
 {
     // sale?
-    $sale = date('M j') === 'May 2' ? true : false;
+    $sale = date('M j') === 'May 4' || date('M j') === 'May 5' ? true : false;
     $discount = 0.25;
 
     // gather user info

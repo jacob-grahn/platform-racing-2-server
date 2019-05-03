@@ -185,9 +185,9 @@ class Player
             $this->verifyParts();
         }
 
-        if (date('M j') === 'May 2') {
-            $message = "PR2 turns 11 years old today! Happy anniversary!\n\n"
-                ."To celebrate, Fred will give you double EXP on all servers today "
+        if (date('M j') === 'May 4' || date('M j') === 'May 5') {
+            $message = "PR2 turned 11 years old on May 2! Happy anniversary!\n\n"
+                ."To celebrate, Fred will give you double EXP on all servers this weekend "
                 ."(in addition to any other bonuses in effect). "
                 ."He also set up a sale in the vault (which is only available on "
                 .urlify('https://kongregate.com/games/Jiggmin/platform-racing-2', 'Kongregate')
