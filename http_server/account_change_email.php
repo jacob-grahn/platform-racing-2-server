@@ -102,7 +102,7 @@ try {
         $safe_new_email = htmlspecialchars($new_email, ENT_QUOTES);
 
         // send a confirmation email
-        $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
+        $from = 'Fred the Giant Cactus <no-reply@pr2hub.com>';
         $to = $old_email;
         $subject = 'PR2 Email Change Confirmation';
         $body = "Howdy $safe_user_name,\n\n"
