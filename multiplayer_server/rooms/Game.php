@@ -593,7 +593,7 @@ class Game extends Room
             }
 
             // anniversary bonus
-            if (date('M j') === 'May 2') {
+            if (date('M j') === 'May 4' || date('M j') === 'May 5') {
                 $tot_exp_gain *= 2;
             }
 
