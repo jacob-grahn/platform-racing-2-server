@@ -474,11 +474,11 @@ class Game extends Room
             // prize
             $prize = null;
 
-            if ($this->course_id == self::LEVEL_BUTO && $player->wearingHat(Hats::JIGG)) {
-                $prize = Prizes::$JIGG_HAT;
-            }
             if (isset($this->prize) && ($place == 0 || $this->prize->isUniversal())) {
                 $prize = $this->prize;
+            }
+            if ($this->course_id == self::LEVEL_BUTO && $player->wearingHat(Hats::JIGG)) {
+                $prize = Prizes::$JIGG_HAT;
             }
 
             if (isset($prize)) {
