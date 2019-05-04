@@ -471,13 +471,17 @@ class Game extends Room
                 $this->broadcastResults($player, $broadcast_time);
             }
 
-            // prize
+            // init winning prize
             $prize = null;
 
+            // set for winner or universal
             if (isset($this->prize) && ($place == 0 || $this->prize->isUniversal())) {
                 $prize = $this->prize;
             }
-            if ($this->course_id == self::LEVEL_BUTO && $player->wearingHat(Hats::JIGG) && !$player->hasPart('hat', Hats::JIGG)) {
+
+            // set for buto
+            $isButo = $this->course_id == self::LEVEL_BUTO;
+            if ($isButo && $player->wearingHat(Hats::JIGG) && !$player->hasPart('hat', Hats::JIGG)) {
                 $prize = Prizes::$JIGG_HAT;
             }
 
