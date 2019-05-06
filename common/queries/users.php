@@ -862,7 +862,7 @@ function users_select_top($pdo, $start, $count)
           FROM users u
           LEFT JOIN pr2 ON pr2.user_id = u.user_id
           LEFT JOIN rank_tokens rt ON rt.user_id = pr2.user_id
-         WHERE pr2.rank > 44
+         WHERE pr2.rank > 44 AND u.user_id <> 4291976
          GROUP BY name, power, pr2.rank, rt.used_tokens, hats
         HAVING active_rank > 49
          ORDER BY active_rank DESC, name ASC
