@@ -427,7 +427,7 @@ function levels_select_by_owner($pdo, $user_id)
          WHERE l.user_id = u.user_id
            AND l.user_id = :user_id
          ORDER BY l.time DESC
-         LIMIT 0, 100
+         LIMIT 0, 1000
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
