@@ -21,6 +21,7 @@ To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com
 
 ## Contributors
 - [aaaaaa123456789](https://github.com/aaaaaa123456789)
+- [AshleyJ14](https://github.com/AshleyJ14)
 - [BrokenBulb78](https://github.com/BrokenBulb78)
 - [Dex472](https://github.com/Dex472)
 - [EternalUF](https://github.com/EternalUF)
