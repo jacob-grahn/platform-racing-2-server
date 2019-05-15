@@ -745,12 +745,14 @@ class ChatMessage
             $eups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=123', 'Epic Upgrades');
             $groups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Groups');
             $fah_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=19', 'Folding at Home (F@H)');
+            $artifact_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=1677', 'Artifact Guide');
             $this->write(
                 'systemChat`Helpful Resources:<br>'
                 ."- $hats_link<br>"
                 ."- $eups_link<br>"
                 ."- $groups_link<br>"
-                ."- $fah_link"
+                ."- $fah_link<br>"
+                ."- $artifact_link"
             );
         } else {
             $ret = 'To get a list of PR2-related guides, go to the chat tab in the lobby and type /guides.';
