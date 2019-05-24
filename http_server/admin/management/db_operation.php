@@ -1,6 +1,7 @@
 <?php
 
 require_once GEN_HTTP_FNS;
+require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/bans.php';
 
 $ip = get_ip();

@@ -30,7 +30,6 @@ try {
 
     // get ban info
     $ban = ban_select($pdo, $ban_id);
-    $ban->expire_datetime = date($ban->expire_time);
 
     // if they're trying to update
     if ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -41,14 +40,14 @@ try {
         $exp_time = default_post('expire_time');
         $notes = default_post('notes');
 
-        // lifting?
+        // lift info
         $lifted = (int) (bool) default_post('lifted');
         $lift_reason = default_post('lifted_reason');
         $lift_time = !is_empty($ban->lifted_time) ? $ban->lifted_time : 0;
-        $lifted_by = $ban->lifted === $lifted && $ban->lifted_reason === $lift_reason ? $ban->lifted_by : $mod->name;
+        $lifted_by = $ban->lifted == $lifted && $ban->lifted_reason === $lift_reason ? $ban->lifted_by : $mod->name;
 
         // lift logging
-        $lift_changed = $lifted === 1 && ($lifted_by !== $ban->lifted_by || $lift_reason !== $ban->lifted_reason || $ban->lifted === 0);
+        $lift_changed = $lifted_by !== $ban->lifted_by || $lift_reason !== $ban->lifted_reason || $ban->lifted == 0;
         if ($lifted === 1) {
             $lift_reason = is_empty($lift_reason) ? 'They bribed me with skittles!' : $lift_reason;
             $lift_time = $lift_changed ? time() : $ban->lifted_time;
@@ -93,11 +92,11 @@ try {
         echo "<form method='post'>"
             .'<input type="hidden" value="update" name="action">'
             ."<input type='hidden' value='$ban->ban_id' name='ban_id'>"
-            ."<p>Expire Date <input type='text' value='$expire_date' name='expire_time'></p>"
-            ."<p>IP Ban <input type='checkbox' $ip_checked name='ip_ban'></p>"
-            ."<p>Account Ban <input type='checkbox' $acc_checked name='account_ban'></p>"
+            ."<p>Expire Date: <input type='text' value='$expire_date' name='expire_time'></p>"
+            ."<p>IP Ban? <input type='checkbox' $ip_checked name='ip_ban'></p>"
+            ."<p>Account Ban? <input type='checkbox' $acc_checked name='account_ban'></p>"
             .'<p>' . get_lifted_html($ban->lifted, $lifted_reason) . '</p>'
-            ."<p>Notes <textarea rows='4' cols='50' name='notes'>$notes</textarea>"
+            ."<p>Notes:<br><br> <textarea rows='4' cols='50' name='notes'>$notes</textarea>"
             .'<p><input type="submit" value="submit"></p>'
             .'</form>';
     } else {
