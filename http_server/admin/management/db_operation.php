@@ -5,7 +5,7 @@ require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/bans.php';
 
 $ip = get_ip();
-$enabled = true;
+$enabled = false;
 
 try {
     // verify origin
@@ -40,6 +40,7 @@ try {
             echo "$ban->ban_id -- nothing to edit\n";
             continue;
         }
+
         // separate reason info
         $arr = explode(' @', $ban->lifted_reason);
         $time = strtotime(array_pop($arr));
