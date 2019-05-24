@@ -87,9 +87,6 @@ try {
             echo "<p> ---</p>";
         }
         echo "<p><a href='/mod/ban_edit.php?ban_id=$ban_id'>Edit Ban</a></p>";
-        if ($lifted !== 1) {
-            echo "<p><a href='/mod/lift_ban.php?ban_id=$ban_id'>Lift Ban</a></p>";
-        }
     }
 
     echo '<p><a href="bans.php">Go Back</a></p>';
