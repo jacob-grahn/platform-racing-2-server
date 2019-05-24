@@ -41,6 +41,7 @@ try {
     $lifted = (int) $row->lifted;
     $lifted_by = htmlspecialchars($row->lifted_by, ENT_QUOTES);
     $lifted_reason = htmlspecialchars($row->lifted_reason, ENT_QUOTES);
+    $lifted_time = date('M j, Y g:i A', $row->lifted_time);
     $ip_ban = (int) $row->ip_ban;
     $account_ban = (int) $row->account_ban;
     $notes = nl2br(htmlspecialchars($row->notes, ENT_QUOTES));
@@ -52,7 +53,7 @@ try {
     if ($lifted === 1) {
         echo '<b><p>-----------------------------------------------------------------------------------------------</p>'
                ."<p>--- This ban has been lifted by $lifted_by ---</p>"
-               ."<p>--- Reason: $lifted_reason ---</p>"
+               ."<p>--- Reason: $lifted_reason @$lifted_time ---</p>"
                .'<p>-----------------------------------------------------------------------------------------------</p>'
                .'<p>&nbsp;</p></b>';
     }
