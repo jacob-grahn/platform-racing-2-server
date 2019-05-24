@@ -36,6 +36,10 @@ try {
     echo '<pre>';
     $i = 0;
     foreach ($bans as $ban) {
+        if (strpos($ban->lifted_reason, ' @') === false) {
+            echo "$ban->ban_id -- nothing to edit\n";
+            continue;
+        }
         // separate reason info
         $arr = explode(' @', $ban->lifted_reason);
         $time = strtotime(array_pop($arr));
@@ -50,10 +54,10 @@ try {
 
         // increment
         $reason = htmlspecialchars($reason, ENT_QUOTES);
-        echo "$ban->ban_id done -- Reason: $reason | Time: $time";
+        echo "$ban->ban_id done -- Reason: $reason | Time: $time\n";
         $i++;
     }
-    echo 'Success! $i rows affected.';
+    echo "Success! $i rows affected.";
     echo '</pre>';
 } catch (Exception $e) {
     echo $e->getMessage();
