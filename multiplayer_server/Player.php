@@ -184,17 +184,6 @@ class Player
             $this->verifyStats();
             $this->verifyParts();
         }
-
-        if (date('M j') === 'May 4' || date('M j') === 'May 5') {
-            $message = "PR2 turned 11 years old on May 2! Happy anniversary!\n\n"
-                ."To celebrate, Fred will give you double EXP on all servers this weekend "
-                ."(in addition to any other bonuses in effect). "
-                ."He also set up a sale in the vault (which is only available on "
-                .urlify('https://kongregate.com/games/Jiggmin/platform-racing-2', 'Kongregate')
-                ."). Thanks, Fred! :)\n\n"
-                ."Thanks for your support over the years. Here's to many more!\n- Jiggmin";
-            $this->write("message`$message");
-        }
     }
 
     private function safeExplode($str_arr)
