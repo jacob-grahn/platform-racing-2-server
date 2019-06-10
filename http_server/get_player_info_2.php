@@ -107,7 +107,7 @@ try {
     $ret->userId = $target->user_id;
 
     // epic upgrades
-    if (is_empty($target->epic_hats)) {
+    if (!isset($target->epic_hats)) {
         $ret->hatColor2 = -1;
         $ret->headColor2 = -1;
         $ret->bodyColor2 = -1;
