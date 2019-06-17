@@ -553,17 +553,16 @@ class Game extends Room
                 $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
             }
 
-            // hat, campaign, hh bonuses
-            $hat_bonus = 1;
+            // multipliers
+            $exp_multiplier = 1;
             $gp_multiplier = 1;
+
+            // handle hats
+            $hat_bonus = 0;
             $wearing_moon = false;
             foreach ($player->worn_hat_array as $hat) {
                 if ($hat->num == 2) {
-                    if (isset($this->campaign)) {
-                        $hat_bonus += .4;
-                    } elseif (!isset($this->campaign)) {
-                        $hat_bonus += 1;
-                    }
+                    $hat_bonus += 1;
                 } elseif ($hat->num == 3) {
                     $hat_bonus += .25;
                 } elseif ($hat->num == 11) {
@@ -571,60 +570,46 @@ class Game extends Room
                     $gp_multiplier += 1;
                 }
             }
-            
-            //another sanity check, humanly impossible hat bonus?
-            if ($hat_bonus > 5) {
-                $hat_bonus = 5;
-            }
-            
-            if ($hat_bonus > 1) {
-                $tot_exp_gain *= $hat_bonus;
-            }
 
-            // gp bonus
+            // handle gp gain
             if (($place == 0 || $wearing_moon === true) && count($this->finish_array) > 1 && $finish_time > 10) {
                 $this->giveGp($player, $wearing_moon, $gp_multiplier);
             }
 
-            // happy hour bonus
-            if (HappyHour::isActive()) {
-                $tot_exp_gain *= 2;
-            }
+            // apply exp bonuses to multiplier and multiply total exp gain by anything less than 12
+            $exp_multiplier += $hat_bonus > 4 ? 4 : $hat_bonus;
+            $exp_multiplier *= HappyHour::isActive() ? 2 : 1;
+            $exp_multiplier += isset($this->campaign) ? 2 : 0;
+            $tot_exp_gain = round($tot_exp_gain * ($exp_multiplier > 12 ? 12 : $exp_multiplier));
 
-            // campaign bonus
-            if (isset($this->campaign)) {
-                $tot_exp_gain *= 2;
-            }
+            // exp award notification
+            if ($exp_multiplier > 1) {
+                $bonuses = new \stdClass();
+                $bonuses->hat = $hat_bonus > 0;
+                $bonuses->campaign = isset($this->campaign);
+                $bonuses->hh = HappyHour::isActive();
 
-            // anniversary bonus
-            if (date('M j') === 'May 4' || date('M j') === 'May 5') {
-                $tot_exp_gain *= 2;
-            }
+                // determine number of awards
+                $awards_arr = array();
+                $num = 0;
+                foreach ($bonuses as $key => $var) {
+                    // not awarding?
+                    if ($var !== true) {
+                        continue;
+                    }
 
-            // tell the user about the hat/hh/campaign bonus(es)
-            if ($hat_bonus > 1 || isset($this->campaign) || HappyHour::isActive() == true) {
-                // hat bonus only
-                if ($hat_bonus > 1 && !isset($this->campaign) && HappyHour::isActive() != true) {
-                    $player->write('award`Hat Bonus`exp X '.($hat_bonus));
-                } // campaign bonus only
-                elseif ($hat_bonus == 1 && isset($this->campaign) && HappyHour::isActive() != true) {
-                    $player->write('award`Campaign Bonus`exp X 2');
-                } // hh bonus only
-                elseif ($hat_bonus == 1 && !isset($this->campaign) && HappyHour::isActive() == true) {
-                    $player->write('award`Happy Hour Bonus`exp X 2');
-                } // hat + campaign bonuses
-                elseif ($hat_bonus > 1 && isset($this->campaign) && HappyHour::isActive() != true) {
-                    $player->write('award`Hat & Campaign Bonuses`exp X '.($hat_bonus+1));
-                } // hat + hh bonuses
-                elseif ($hat_bonus > 1 && !isset($this->campaign) && HappyHour::isActive() == true) {
-                    $player->write('award`Hat/Happy Hour Bonuses`exp X '.($hat_bonus+1));
-                } // hh + campaign bonuses
-                elseif ($hat_bonus == 1 && isset($this->campaign) && HappyHour::isActive() == true) {
-                    $player->write('award`Campaign/HH Bonuses`exp X 4');
-                } // hat+ campaign + hh bonuses
-                elseif ($hat_bonus > 1 && isset($this->campaign) && HappyHour::isActive() == true) {
-                    $player->write('award`Hat/Campaign/HH Bonuses`exp X '.($hat_bonus+3));
+                    // format, push to array, increment loop count
+                    $key = $key === 'hh' ? ($bonuses->campaign ? strtoupper($key) : 'Happy Hour') : ucfirst($key);
+                    array_push($awards_arr, $key);
+                    $num++;
                 }
+
+                // build string
+                $awards_str = $num > 2 || $bonuses->hh ? join('/', $awards_arr) : join(' & ', $awards_arr);
+                $awards_str .= $num > 1 ? ' Bonuses' : ' Bonus';
+
+                // return to player
+                $player->write("award`$awards_str`exp X $exp_multiplier");
             }
 
             // apply welcome back bonus after all multipliers
@@ -656,12 +641,10 @@ class Game extends Room
                 }
             }
 
-            // resets unrealistic EXP gain
-            if ($tot_exp_gain > 100000) {
-                $tot_exp_gain = 0;
-            }
+            // reset unrealistic EXP gain
+            $tot_exp_gain = $tot_exp_gain > 100000 ? 0 : $tot_exp_gain;
 
-            // disconnects anyone trying to earn exp too quick
+            // disconnect anyone trying to earn exp too quick
             if ($player->last_exp_time >= (time() - 2)) {
                 $player->socket->write("message`Botting is a no-no. :(");
                 $player->remove();
@@ -675,6 +658,7 @@ class Game extends Room
             $this->setFinishTime($player, 'forfeit');
         }
 
+        // they finished
         $player->race_stats->finished_race = true;
 
         // everyone finishes at the same time in egg mode
