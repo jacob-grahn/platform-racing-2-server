@@ -680,11 +680,11 @@ class Game extends Room
             $main = $chat_room_array['main'];
             $message = '';
             $names = array();
-            foreach ($this->finish_array as $race_stats) {
-                $names[] = "[$race_stats->name]";
+            foreach ($this->finish_array as $rs) {
+                $names[] = userify($this->idToPlayer($rs->temp_id), $rs->name, $rs->group);
             }
             $vs_names = join(' vs ', $names);
-            $html_name = htmlspecialchars($player->name, ENT_QUOTES);
+            $html_name = userify($player, $player->name, $player->group);
             $message = "$vs_names: // $html_name wins with a time of $str!";
             $main->sendChat("systemChat`$message", -1);
         }

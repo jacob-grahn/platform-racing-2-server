@@ -7,6 +7,7 @@ class RaceStats
 
     public $temp_id;
     public $name;
+    public $group;
     public $rank;
     public $ip;
 
@@ -31,6 +32,7 @@ class RaceStats
     {
         $this->temp_id = $player->temp_id;
         $this->name = $player->name;
+        $this->group = $player->group;
         $this->rank = $player->active_rank;
         $this->ip = $player->ip;
     }
