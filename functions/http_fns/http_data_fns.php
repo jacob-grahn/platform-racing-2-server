@@ -74,7 +74,7 @@ function is_trusted_ref()
 {
     global $trusted_refs;
 
-    $ref = (string) $_SERVER['HTTP_REFERER'];
+    $ref = (string) default_val(@$_SERVER['HTTP_REFERER'], '');
     foreach ($trusted_refs as $trusted) {
         if (@strpos($ref, $trusted) === 0 || $ref === $trusted) {
             return true;
@@ -216,6 +216,7 @@ function award_special_parts($stats, $group, $prizes)
         $part = (int) $award->part;
 
         $array = $epic === true ? $epic_upgrades->$db_field : ${$db_field};
+        $array = !is_array($array) ? array($array) : $array;
         $stats->$base_type = add_item($array, $part) ? $part : $stats->$base_type;
     }
 
