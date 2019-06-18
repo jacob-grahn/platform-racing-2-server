@@ -84,10 +84,22 @@ function process_set_campaign($socket, $data)
 function process_start_new_day($socket)
 {
     if ($socket->process === true) {
-        global $player_array;
+        global $player_array, $pdo;
+
+        // log a new day
+        output('New day! It is now ' . date('r') . '.');
+
+        // reset today's exp
         foreach ($player_array as $player) {
             $player->start_exp_today = $player->exp_today = 0;
         }
+
+        // renew database connection (prevent crashes due to query limit per connection)
+        $pdo = null;
+        $pdo = pdo_connect();
+        output('Renewed database connection for the new day.');
+
+        // tell calling script
         $socket->write('Another day, another destiny!');
     }
 }

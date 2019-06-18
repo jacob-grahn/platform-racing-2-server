@@ -612,7 +612,7 @@ class ChatMessage
         $args = explode(' ', $this->message);
         array_shift($args);
 
-        $args[0] = strtolower($args[0]);
+        $args[0] = @strtolower($args[0]);
         if ($this->message === '/hh' || $args[0] === 'status') {
             $hh_timeleft = HappyHour::timeLeft();
             if ($hh_timeleft !== false) {
