@@ -72,19 +72,16 @@ function get_ip()
 // referrer check
 function is_trusted_ref()
 {
-    $ref = $_SERVER['HTTP_REFERER'];
-    return (strpos($ref, 'http://pr2hub.com/') === 0 // pr2hub
-        || strpos($ref, 'https://pr2hub.com/') === 0 // pr2hub
-        || strpos($ref, 'http://www.pr2hub.com/') === 0 // pr2hub
-        || strpos($ref, 'https://www.pr2hub.com/') === 0 // pr2hub
-        || strpos($ref, 'http://cdn.jiggmin.com/') === 0 // jv
-        || strpos($ref, 'http://chat.kongregate.com/') === 0 // kong
-        || strpos($ref, 'http://external.kongregate-games.com/gamez/') === 0 // kong
-        || strpos($ref, 'http://game10110.konggames.com/games/Jiggmin/platform-racing-2') === 0 // kong
-        || strpos($ref, 'http://uploads.ungrounded.net/439000/') === 0 // newgrounds
-        || strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') === 0 // jv2
-        || strpos($ref, 'http://naxxol.github.io/') === 0 // advanced LE
-    );
+    global $trusted_refs;
+
+    $ref = (string) $_SERVER['HTTP_REFERER'];
+    foreach ($trusted_refs as $trusted) {
+        if (@strpos($ref, $trusted) === 0 || $ref === $trusted) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
