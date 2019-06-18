@@ -53,7 +53,7 @@ try {
     // send message to each member
     $members = guild_select_members($pdo, $guild_id);
     foreach ($members as $member) {
-        message_insert($pdo, $member->user_id, $user_id, $message, $ip);
+        message_insert($pdo, $member->user_id, $user_id, $message, $ip, 1);
     }
 
     $ret->success = true;

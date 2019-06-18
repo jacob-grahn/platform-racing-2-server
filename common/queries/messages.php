@@ -21,19 +21,21 @@ function message_delete($pdo, $user_id, $message_id)
 }
 
 
-function message_insert($pdo, $to_user_id, $from_user_id, $message, $ip)
+function message_insert($pdo, $to_user_id, $from_user_id, $message, $ip, $guild_message = 0)
 {
     $stmt = $pdo->prepare('
         INSERT INTO messages
         SET to_user_id = :to_user_id,
             from_user_id = :from_user_id,
             message = :message,
+            guild_message = :gm,
             ip = :ip,
             time = UNIX_TIMESTAMP(NOW())
     ');
     $stmt->bindValue(':to_user_id', $to_user_id, PDO::PARAM_INT);
     $stmt->bindValue(':from_user_id', $from_user_id, PDO::PARAM_INT);
     $stmt->bindValue(':message', $message, PDO::PARAM_STR);
+    $stmt->bindValue(':gm', $guild_message, PDO::PARAM_INT);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $result = $stmt->execute();
 
@@ -159,7 +161,7 @@ function messages_select($pdo, $to_user_id, $start, $count)
     $count = (int) $count;
 
     $stmt = $pdo->prepare('
-        SELECT message_id, message, time, from_user_id
+        SELECT message_id, message, guild_message, time, from_user_id
           FROM messages
          WHERE to_user_id = :to_user_id
          ORDER BY time desc

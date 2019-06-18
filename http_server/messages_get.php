@@ -58,6 +58,7 @@ try {
         $message->user_id = (int) $row->from_user_id;
         $message->name = $from_user->name;
         $message->group = (int) $from_user->power;
+        $message->guild_message = (bool) (int) $row->guild_message;
         $messages_array[] = $message;
     }
 
