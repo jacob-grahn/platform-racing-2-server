@@ -553,30 +553,23 @@ class Game extends Room
                 $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
             }
 
-            // multipliers
-            $exp_multiplier = 1;
-            $gp_multiplier = 1;
+            // handle gp gain
+            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10) {
+                $this->giveGp($player);
+            }
 
             // handle hats
             $hat_bonus = 0;
-            $wearing_moon = false;
             foreach ($player->worn_hat_array as $hat) {
                 if ($hat->num == 2) {
                     $hat_bonus += 1;
                 } elseif ($hat->num == 3) {
                     $hat_bonus += .25;
-                } elseif ($hat->num == 11) {
-                    $wearing_moon = true;
-                    $gp_multiplier += 1;
                 }
             }
 
-            // handle gp gain
-            if (($place == 0 || $wearing_moon === true) && count($this->finish_array) > 1 && $finish_time > 10) {
-                $this->giveGp($player, $wearing_moon, $gp_multiplier);
-            }
-
-            // apply exp bonuses to multiplier and multiply total exp gain by anything less than 12
+            // apply exp bonuses to total exp multiplier and multiply total exp gain by anything less than 12
+            $exp_multiplier = 1;
             $exp_multiplier += $hat_bonus > 4 ? 4 : $hat_bonus;
             $exp_multiplier *= HappyHour::isActive() ? 2 : 1;
             $exp_multiplier += isset($this->campaign) ? 2 : 0;
@@ -914,19 +907,23 @@ class Game extends Room
     }
 
 
-    private function giveGp($player, $wearing_moon = false, $multiplier = 1)
+    private function giveGp($player)
     {
         $user_id = $player->user_id;
         $prev_gp = GuildPoints::getPreviousGP($user_id, $this->course_id);
-        $earned_gp = floor($player->race_stats->finish_time / 60 * count($this->player_array) / 4) * $multiplier;
-        if ($earned_gp <= 0 && $wearing_moon === true) {
-            $earned_gp += 1; // give at least 1 lux for moon hat users
+        $earned_gp = round($player->race_stats->finish_time / 60 * count($this->player_array) / 4);
+
+        // limit gp gain to 10 per race
+        if ($earned_gp > 10) {
+            $earned_gp = 10;
         }
-        if ($prev_gp + $earned_gp > 10 && $wearing_moon === false) {
-            $earned_gp -= ( $prev_gp + $earned_gp ) - 10; // limit non-moon hat gp to 10
-        } elseif ($prev_gp + $earned_gp > 20 && $wearing_moon === true) {
-            $earned_gp -= ( $prev_gp + $earned_gp ) - 20; // limit moon hat gp to 20
+
+        // limit gp gain to 10 per course per day
+        if ($prev_gp + $earned_gp > 10) {
+            $earned_gp -= 10 - ($prev_gp - $earned_gp);
         }
+
+        // increment gp
         if ($earned_gp >= 1) {
             GuildPoints::submit($user_id, $this->course_id, $earned_gp);
             $player->write("gpGain`$earned_gp");
