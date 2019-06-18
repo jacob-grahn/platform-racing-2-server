@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/mod_actions.php';
 
 $guild_id = (int) default_post('guild_id', 0);
@@ -87,29 +88,43 @@ try {
     // edit guild in db
     guild_update($pdo, $guild->guild_id, $guild_name, $emblem, $note, $guild->owner_id);
 
-    // log update if a mod
+    // log and send update if a mod
     if ($log_action === true) {
+        // mod action log
         $str = "$account->name edited guild #$guild->guild_id from $ip";
+        $changes_arr = array();
         if ($guild_name !== $guild->guild_name || $note !== $guild->note || $guild->emblem !== $emblem) {
-            $changes = false;
+            $punc = false;
             $str .= ' {';
             if ($guild_name !== $guild->guild_name) {
+                array_push($changes_arr, 'Name (old: ' . htmlspecialchars($guild->guild_name, ENT_QUOTES) . ')');
                 $str .= "old_name: $guild->guild_name, new_name: $guild_name";
-                $changes = true;
+                $punc = true;
             }
             if ($note !== $guild->note) {
-                $str = $str . ($changes === true ? '; ' : '');
-                $str .= "old_note: $guild->note, new_note: $note";
-                $changes = true;
+                array_push($changes_arr, 'Prose (old: ' . htmlspecialchars($guild->note, ENT_QUOTES) . ')');
+                $str = $str . ($punc === true ? '; ' : '') . "old_note: $guild->note, new_note: $note";
+                $punc = true;
             }
             if ($emblem !== $guild->emblem) {
-                $str = $str . ($changes === true ? '; ' : '');
-                $str .= "old_emblem: $guild->emblem, new_emblem: $emblem";
-                $changes = true;
+                array_push($changes_arr, "Emblem (contact for old)");
+                $str = $str . ($prev === true ? '; ' : '') . "old_emblem: $guild->emblem, new_emblem: $emblem";
             }
             $str .= '}';
         }
         mod_action_insert($pdo, $account->user_id, $str, 0, $ip);
+
+        // send the guild owner a PM
+        $owner_name = id_to_name($pdo, $guild->owner_id);
+        $owner_name = htmlspecialchars($owner_name, ENT_QUOTES);
+        $pm = "Dear $owner_name,\n\n"
+            ."This is an automatic message generated to let you know that I have edited your guild.\n\n"
+            ."What Changed:\n - "
+            .join("\n - ", $changes_arr)
+            ."\n\nIf you have any questions, please contact me or another member of the PR2 staff team.\n\n"
+            ."All the best,\n"
+            .htmlspecialchars($account->name, ENT_QUOTES);
+        message_insert($pdo, $guild->owner_id, $account->user_id, $pm, 0);
     }
 
     // tell it to the world
