@@ -23,7 +23,7 @@ To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com
 - [aaaaaa123456789](https://github.com/aaaaaa123456789)
 - [AshleyJ14](https://github.com/AshleyJ14)
 - [BrokenBulb78](https://github.com/BrokenBulb78)
-- [Dex472](https://github.com/Dex472)
+- [Azymous](https://github.com/Azymous)
 - [EternalUF](https://github.com/EternalUF)
 - [famelegend1](https://github.com/famelegend1)
 - [fourst4r](https://github.com/fourst4r)
