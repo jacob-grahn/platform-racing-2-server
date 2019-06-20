@@ -34,8 +34,8 @@ $ignored = array();
 
 // get the user's IP and run it through an IP info API
 $ip = get_ip();
-// $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
-// $country_code = ($ip_info !== false && !empty($ip_info)) ? $ip_info->data->geo->country_code : '?';
+$ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
+$country_code = ($ip_info !== false && !empty($ip_info)) ? $ip_info->data->geo->country_code : '?';
 $country_code = '?';
 
 $ret = new stdClass();
@@ -296,5 +296,6 @@ try {
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {
+    $ret->notes = "IP Location Finder by KeyCDN: https://tools.keycdn.com/geo";
     die(json_encode($ret));
 }
