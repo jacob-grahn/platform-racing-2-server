@@ -296,6 +296,5 @@ try {
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {
-    $ret->notes = "IP Location Finder by KeyCDN: https://tools.keycdn.com/geo";
     die(json_encode($ret));
 }
