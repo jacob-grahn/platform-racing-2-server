@@ -56,7 +56,7 @@ function client_sting($socket, $data)
 {
     $player = $socket->getPlayer();
     if (isset($player->game_room)) {
-        $player->game_room->sting($player, $data);
+        $player->game_room->sting($player, $data[0]);
     }
 }
 

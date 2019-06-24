@@ -963,15 +963,14 @@ class Game extends Room
             $tempID = $player->temp_id;
             $posX = $target->pos_x;
             $posY = $target->pos_y/* - 40*/; // maybe fixes this: https://jiggmin2.com/forums/showthread.php?tid=1782
-            //$this->sendToRoom("exactPos$tempID`$posX`$posY", $player->user_id);
+            $this->sendToRoom("exactPos$tempID`$posX`$posY", $player->user_id); // is this needed?
             $this->sendToRoom("squash$target->temp_id`", $player->user_id);
         }
     }
 
 
-    public function sting($from, $data)
+    public function sting($from, $target_id)
     {
-        list($target_id, $x, $y) = explode('`', $data);
         if ($target_id == $from->temp_id) {
             return; // this should never happen
         }
