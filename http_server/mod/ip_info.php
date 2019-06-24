@@ -29,10 +29,10 @@ try {
     }
 
     // get IP info
-    $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
+    //$ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
 
     // check if it's valid
-    $skip_fanciness = $ip_info->status !== 'success';
+    $skip_fanciness = true; //$ip_info->status !== 'success';
 
     // if the data retrieval was successful, define our fancy variables
     if ($skip_fanciness === false) {
