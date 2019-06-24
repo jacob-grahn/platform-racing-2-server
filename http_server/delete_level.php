@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/artifact_location.php';
 require_once QUERIES_DIR . '/campaigns.php';
 require_once QUERIES_DIR . '/level_backups.php';
 
@@ -50,6 +51,14 @@ try {
     $row = level_select($pdo, $level_id);
     if ((int) $row->user_id !== $user_id) {
         throw new Exception('This is not your level.');
+    }
+
+    // check if the artifact is currently here
+    $arti = artifact_location_select($pdo);
+    if ($arti->level_id == $level->level_id) {
+        $msg = 'Your level could not be deleted because it is currently where the artifact is hidden. '
+            .'Please contact a member of the PR2 Staff Team for more information.';
+        throw new Exception($msg);
     }
 
     // check to see if this is a campaign level

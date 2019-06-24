@@ -32,7 +32,8 @@ try {
 12 - Thief
 13 - Jigg
 14 - Artifact
-15+ - *BLANK*
+15 - Jellyfish
+16+ - *BLANK*
 
 -- Heads --
 1 - Classic (Male)
@@ -76,7 +77,9 @@ try {
 39 - Bunny
 40 - Gecko
 41 - Bat
-42+ - *BLANK*
+42 - Sea
+43 - Brew
+44+ - *BLANK*
 
 -- Bodies --
 1 - Classic
@@ -120,7 +123,9 @@ try {
 39 - Bunny
 40 - Gecko
 41 - Bat
-42+ - *BLANK*
+42 - Sea
+43 - Brew
+44+ - *BLANK*
 
 -- Feet --
 1 - Classic
@@ -164,7 +169,9 @@ try {
 39 - Bunny
 40 - Gecko
 41 - Bat
-42+ - *BLANK*
+42 - Sea
+43 - Brew
+44+ - *BLANK*
 
 -- Full Sets --
 (Key: Head ID, Body ID, Feet ID)
@@ -197,12 +204,14 @@ Valentine: 38, 38, 38
 Bunny: 39, 39, 39
 Gecko: 40, 40, 40
 Bat: 41, 41, 41
+Sea: 42, 42, 42
+Brew: 43, 43, 43
 
 -- Blank IDs --
-Hats: 15+
-Heads: 42+
-Bodies: 33, 42+
-Feet: 31-33, 42+</pre>';
+Hats: 16+
+Heads: 44+
+Bodies: 33, 44+
+Feet: 31-33, 44+</pre>';
 } catch (Exception $e) {
     output_header('Error');
     $error = $e->getMessage();

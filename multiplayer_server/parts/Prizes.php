@@ -86,6 +86,7 @@ class Prizes
     const DESC_MOON_HAT = 'Soar to new heights by defying the laws of gravity!';
     const DESC_THIEF_HAT = 'Steal other player\'s hats --even crowns!';
     const DESC_JIGG_HAT = 'Bounce on the heads of your opponents!';
+    const DESC_JELLYFISH_HAT = 'Give nearby opponents a nasty sting!';
 
 
     // hats
@@ -103,6 +104,7 @@ class Prizes
     public static $THIEF_HAT;
     public static $JIGG_HAT;
     public static $ARTIFACT_HAT;
+    public static $JELLYFISH_HAT;
 
     // epic hats
     public static $EPIC_KONG_HAT;
@@ -118,6 +120,7 @@ class Prizes
     public static $EPIC_THIEF_HAT;
     public static $EPIC_JIGG_HAT;
     public static $EPIC_ARTIFACT_HAT;
+    public static $EPIC_JELLYFISH_HAT;
 
 
     // heads
@@ -162,6 +165,8 @@ class Prizes
     public static $BUNNY_HEAD;
     public static $GECKO_HEAD;
     public static $BAT_HEAD;
+    public static $SEA_HEAD;
+    public static $BREW_HEAD;
 
     // epic heads
     public static $EPIC_CLASSIC_HEAD;
@@ -205,6 +210,8 @@ class Prizes
     public static $EPIC_BUNNY_HEAD;
     public static $EPIC_GECKO_HEAD;
     public static $EPIC_BAT_HEAD;
+    public static $EPIC_SEA_HEAD;
+    public static $EPIC_BREW_HEAD;
 
 
     // bodies
@@ -248,6 +255,8 @@ class Prizes
     public static $BUNNY_BODY;
     public static $GECKO_BODY;
     public static $BAT_BODY;
+    public static $SEA_BODY;
+    public static $BREW_BODY;
 
     // epic bodies
     public static $EPIC_CLASSIC_BODY;
@@ -290,6 +299,8 @@ class Prizes
     public static $EPIC_BUNNY_BODY;
     public static $EPIC_GECKO_BODY;
     public static $EPIC_BAT_BODY;
+    public static $EPIC_SEA_BODY;
+    public static $EPIC_BREW_BODY;
 
 
     // feet
@@ -331,6 +342,8 @@ class Prizes
     public static $BUNNY_FEET;
     public static $GECKO_FEET;
     public static $BAT_FEET;
+    public static $SEA_FEET;
+    public static $BREW_FEET;
 
     // epic feet
     public static $EPIC_CLASSIC_FEET;
@@ -371,6 +384,8 @@ class Prizes
     public static $EPIC_BUNNY_FEET;
     public static $EPIC_GECKO_FEET;
     public static $EPIC_BAT_FEET;
+    public static $EPIC_SEA_FEET;
+    public static $EPIC_BREW_FEET;
 
 
     public static function init()
@@ -393,6 +408,7 @@ class Prizes
         self::$THIEF_HAT = new Prize(self::TYPE_HAT, Hats::THIEF, 'Thief Hat', self::DESC_THIEF_HAT, true);
         self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat', self::DESC_JIGG_HAT, true);
         self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'Artifact Hat');
+        self::$JELLYFISH_HAT = new Prize(self::TYPE_HAT, Hats::JELLYFISH, 'Jellyfish Hat', self::DESC_JELLYFISH_HAT);
 
         // epic hats
         self::$EPIC_KONG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::KONG, 'Epic Upgrade');
@@ -408,6 +424,7 @@ class Prizes
         self::$EPIC_THIEF_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::THIEF, 'Epic Upgrade');
         self::$EPIC_JIGG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::JIGG, 'Epic Upgrade');
         self::$EPIC_ARTIFACT_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::ARTIFACT, 'Epic Upgrade');
+        self::$EPIC_JELLYFISH_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::JELLYFISH, 'Epic Upgrade');
 
 
         // heads
@@ -452,6 +469,8 @@ class Prizes
         self::$BUNNY_HEAD = new Prize(self::TYPE_HEAD, Heads::BUNNY, 'Bunny Head');
         self::$GECKO_HEAD = new Prize(self::TYPE_HEAD, Heads::GECKO, 'Gecko Head');
         self::$BAT_HEAD = new Prize(self::TYPE_HEAD, Heads::BAT, 'Bat Head');
+        self::$SEA_HEAD = new Prize(self::TYPE_HEAD, Heads::SEA, 'Sea Head');
+        self::$BREW_HEAD = new Prize(self::TYPE_HEAD, Heads::BREW, 'Brew Head');
 
         // epic heads
         self::$EPIC_CLASSIC_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade');
@@ -495,6 +514,8 @@ class Prizes
         self::$EPIC_BUNNY_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BUNNY, 'Epic Upgrade');
         self::$EPIC_GECKO_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::GECKO, 'Epic Upgrade');
         self::$EPIC_BAT_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BAT, 'Epic Upgrade');
+        self::$EPIC_SEA_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SEA, 'Epic Upgrade');
+        self::$EPIC_BREW_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BREW, 'Epic Upgrade');
 
 
         // bodies
@@ -537,7 +558,9 @@ class Prizes
         self::$VALENTINE_BODY = new Prize(self::TYPE_BODY, Bodies::VALENTINE, 'Valentine Body');
         self::$BUNNY_BODY = new Prize(self::TYPE_BODY, Bodies::BUNNY, 'Bunny Body');
         self::$GECKO_BODY = new Prize(self::TYPE_BODY, Bodies::GECKO, 'Gecko Body');
-        self::$BAT_BODY = new Prize(self::TYPE_BODY, Heads::BAT, 'Bat Body');
+        self::$BAT_BODY = new Prize(self::TYPE_BODY, Bodies::BAT, 'Bat Body');
+        self::$SEA_BODY = new Prize(self::TYPE_BODY, Bodies::SEA, 'Sea Body');
+        self::$BREW_BODY = new Prize(self::TYPE_BODY, Bodies::BREW, 'Brew Body');
 
         // epic bodies
         self::$EPIC_CLASSIC_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::CLASSIC, 'Epic Upgrade');
@@ -579,7 +602,9 @@ class Prizes
         self::$EPIC_VALENTINE_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::VALENTINE, 'Epic Upgrade');
         self::$EPIC_BUNNY_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BUNNY, 'Epic Upgrade');
         self::$EPIC_GECKO_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::GECKO, 'Epic Upgrade');
-        self::$EPIC_BAT_BODY = new Prize(self::TYPE_EPIC_BODY, Heads::BAT, 'Epic Upgrade');
+        self::$EPIC_BAT_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BAT, 'Epic Upgrade');
+        self::$EPIC_SEA_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::SEA, 'Epic Upgrade');
+        self::$EPIC_BREW_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BREW, 'Epic Upgrade');
 
 
         // feet
@@ -620,7 +645,9 @@ class Prizes
         self::$VALENTINE_FEET = new Prize(self::TYPE_FEET, Feet::VALENTINE, 'Valentine Feet');
         self::$BUNNY_FEET = new Prize(self::TYPE_FEET, Feet::BUNNY, 'Bunny Feet');
         self::$GECKO_FEET = new Prize(self::TYPE_FEET, Feet::GECKO, 'Gecko Feet');
-        self::$BAT_FEET = new Prize(self::TYPE_FEET, Heads::BAT, 'Bat Feet');
+        self::$BAT_FEET = new Prize(self::TYPE_FEET, Feet::BAT, 'Bat Feet');
+        self::$SEA_FEET = new Prize(self::TYPE_FEET, Feet::SEA, 'Sea Feet');
+        self::$BREW_FEET = new Prize(self::TYPE_FEET, Feet::BREW, 'Brew Feet');
 
         // epic feet
         self::$EPIC_CLASSIC_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::CLASSIC, 'Epic Upgrade');
@@ -660,7 +687,9 @@ class Prizes
         self::$EPIC_VALENTINE_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::VALENTINE, 'Epic Upgrade');
         self::$EPIC_BUNNY_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BUNNY, 'Epic Upgrade');
         self::$EPIC_GECKO_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::GECKO, 'Epic Upgrade');
-        self::$EPIC_BAT_FEET = new Prize(self::TYPE_EPIC_FEET, Heads::BAT, 'Epic Upgrade');
+        self::$EPIC_BAT_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BAT, 'Epic Upgrade');
+        self::$EPIC_SEA_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SEA, 'Epic Upgrade');
+        self::$EPIC_BREW_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BREW, 'Epic Upgrade');
     }
 
 

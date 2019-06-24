@@ -452,6 +452,7 @@ function __crashHandler()
     output("Data successfully saved.");
 
     // start a new server
+    sleep(3);
     $server_id = (int) $server_id;
     echo shell_exec('php ' . COMMON_DIR . "/manage_socket/restart_server.php $server_id");
     die(output("Server started."));

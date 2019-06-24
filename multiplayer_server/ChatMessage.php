@@ -146,6 +146,12 @@ class ChatMessage
         if ($msg === '/be_awesome' || $msg === '/beawesome') {
             $this->commandBeAwesome(); // be awesome
             $handled = true;
+        } elseif ($msg === '/community') {
+            $this->commandCommunity(); // community links
+            $handled = true;
+        } elseif ($msg === '/contests' || $msg === '/contest') {
+            $this->commandContests(); // contests link
+            $handled = true;
         } elseif (($msg === '/hh' || strpos($msg, '/hh ') === 0)) {
             $this->commandHappyHour(); // happy hour-related functions (start/stop, status)
             $handled = true;
@@ -581,6 +587,24 @@ class ChatMessage
         $this->write("message`<b>You're awesome!</b>");
     }
 
+    // community command (links to JV2, discord)
+    private function commandCommunity()
+    {
+        $msg = 'systemChat`Join the community!<br>'
+            .'<br> - '.urlify('https://jiggmin2.com/forums', 'Jiggmin\'s Village')
+            .'<br> - '.urlify('https://discord.gg/kcWBBBj', 'JV Discord')
+            .'<br> - '.urlify('https://discord.gg/T3xxT6q', 'PRG Discord (Unofficial)');
+        $this->write($msg);
+    }
+
+    // contests command (links to contests hub)
+    private function commandContests()
+    {
+        $msg = 'systemChat`'
+            .'PR2 has a variety of contests in which you can participate to earn in-game prizes! '
+            .'For more information, visit ' . urlify('https://pr2hub.com/contests', 'pr2hub.com/contests') . '.';
+        $this->write($msg);
+    }
 
     // change happy hour settings (admins only) or check status
     private function commandHappyHour()
@@ -588,7 +612,7 @@ class ChatMessage
         $args = explode(' ', $this->message);
         array_shift($args);
 
-        $args[0] = strtolower($args[0]);
+        $args[0] = @strtolower($args[0]);
         if ($this->message === '/hh' || $args[0] === 'status') {
             $hh_timeleft = HappyHour::timeLeft();
             if ($hh_timeleft !== false) {
@@ -804,6 +828,7 @@ class ChatMessage
             }
             $this->write('systemChat`PR2 Chat Commands:<br>'.
                 '- /rules<br>'.
+                '- /community<br>'.
                 '- /here (in this chatroom)<br>'.
                 '- /view *player*<br>'.
                 '- /guild *guild name*<br>'.

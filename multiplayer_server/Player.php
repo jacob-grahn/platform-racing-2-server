@@ -583,7 +583,7 @@ class Player
     {
         $wearing = false;
         foreach ($this->worn_hat_array as $hat) {
-            if ($hat->num === $hat_num) {
+            if ((int) $hat->num === $hat_num) {
                 $wearing = true;
             }
         }
