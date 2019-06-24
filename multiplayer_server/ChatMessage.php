@@ -828,7 +828,6 @@ class ChatMessage
             }
             $this->write('systemChat`PR2 Chat Commands:<br>'.
                 '- /rules<br>'.
-                '- /community<br>'.
                 '- /here (in this chatroom)<br>'.
                 '- /view *player*<br>'.
                 '- /guild *guild name*<br>'.
@@ -839,7 +838,9 @@ class ChatMessage
                 '- /population<br>'.
                 '- /beawesome<br>'.
                 '- /emotes<br>'.
-                '- /guides'.$mod.$effects.$admin.$server_owner);
+                '- /guides<br>'.
+                '- /community<br>'.
+                '- /contests'.$mod.$effects.$admin.$server_owner);
         }
     }
 
