@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/artifact_location.php';
 require_once QUERIES_DIR . '/level_backups.php';
 require_once QUERIES_DIR . '/new_levels.php';
 
@@ -93,6 +94,15 @@ try {
     $org_play_count = 0;
     $level = level_select_by_title($pdo, $user_id, $title);
     if ($level) {
+        // check if the artifact is currently here
+        $arti = artifact_location_select($pdo);
+        if ($arti->level_id == $level->level_id) {
+            $msg = 'Your level could not be modified because it is currently where the artifact is hidden. '
+                .'To save your progress, save this level under a different name. '
+                .'Please contact a member of the PR2 Staff Team for more information.';
+            throw new Exception($msg);
+        }
+
         // backup the file that is about to be overwritten
         if ($time - $level->time > 1209600) { // 2 weeks
             backup_level(

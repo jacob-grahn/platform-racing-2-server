@@ -41,7 +41,6 @@ function client_exact_pos($socket, $data)
 }
 
 
-
 // squash another player
 function client_squash($socket, $data)
 {
@@ -51,6 +50,15 @@ function client_squash($socket, $data)
     }
 }
 
+
+// hit by jellyfish hat sting
+function client_sting($socket, $data)
+{
+    $player = $socket->getPlayer();
+    if (isset($player->game_room)) {
+        $player->game_room->sting($player, $data);
+    }
+}
 
 
 // set variable
@@ -63,7 +71,6 @@ function client_set_var($socket, $data)
 }
 
 
-
 // add an effect
 function client_add_effect($socket, $data)
 {
@@ -74,13 +81,12 @@ function client_add_effect($socket, $data)
 }
 
 
-
 // use a lightning item
 function client_zap($socket)
 {
     $player = $socket->getPlayer();
     if (isset($player->game_room)) {
-        $player->game_room->sendToRoom('zap`', $player->user_id);
+        $player->game_room->sendToAll("zap`$player->temp_id", $player->user_id);
     }
 }
 

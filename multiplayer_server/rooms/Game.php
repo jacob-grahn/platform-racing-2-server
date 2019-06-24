@@ -954,6 +954,7 @@ class Game extends Room
         $player->pos_y = (int)$y;
         $target = $this->idToPlayer($target_id);
         if (isset($target)
+            && $player->wearingHat(Hats::JIGG)
             && $target->pos_y < $player->pos_y + 105
             && $target->pos_y > $player->pos_y + 0
             && $target->pos_x > $player->pos_x - 50
@@ -961,9 +962,28 @@ class Game extends Room
         ) {
             $tempID = $player->temp_id;
             $posX = $target->pos_x;
-            $posY = $target->pos_y - 40;
-            $this->sendToRoom("exactPos$tempID`$posX`$posY", $player->user_id);
+            $posY = $target->pos_y/* - 40*/; // maybe fixes this: https://jiggmin2.com/forums/showthread.php?tid=1782
+            //$this->sendToRoom("exactPos$tempID`$posX`$posY", $player->user_id);
             $this->sendToRoom("squash$target->temp_id`", $player->user_id);
+        }
+    }
+
+
+    public function sting($from, $data)
+    {
+        list($target_id, $x, $y) = explode('`', $data);
+        if ($target_id == $from->temp_id) {
+            return; // this should never happen
+        }
+        $target = $this->idToPlayer($target_id);
+        if (isset($target)
+            && $from->wearingHat(Hats::JELLYFISH)
+            && $target->pos_y < $from->pos_y + 75
+            && $target->pos_y > $from->pos_y - 75
+            && $target->pos_x > $from->pos_x - 75
+            && $target->pos_x < $from->pos_x + 75
+        ) {
+            $this->sendToAll("sting$target->temp_id`$from->temp_id", $from->temp_id);
         }
     }
 
