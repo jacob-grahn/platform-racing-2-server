@@ -124,6 +124,7 @@ try {
             ."\n\nIf you have any questions, please contact me or another member of the PR2 staff team.\n\n"
             ."All the best,\n"
             .htmlspecialchars($account->name, ENT_QUOTES);
+        $pm = $account->power < 3 ? html_entity_decode($pm) : $pm;
         message_insert($pdo, $guild->owner_id, $account->user_id, $pm, 0);
     }
 
