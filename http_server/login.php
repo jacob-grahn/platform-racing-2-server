@@ -153,7 +153,7 @@ try {
     }
 
     // sanity check: if a guild server, is the user in the guild?
-    $ps_staff_cond = $group === 3 || ($group === 2 && $guild_id === 205);
+    $ps_staff_cond = $group === 3 || ($group === 2 && (int) $server->guild_id === 205);
     if ((int) $server->guild_id !== 0 && (int) $user->guild !== (int) $server->guild_id && !$ps_staff_cond) {
         throw new Exception('You must be a member of this guild to join this server.');
     }
