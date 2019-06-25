@@ -970,7 +970,7 @@ class Game extends Room
         ) {
             $tempID = $player->temp_id;
             $posX = $target->pos_x;
-            $posY = $target->pos_y/* - 40*/; // maybe fixes this: https://jiggmin2.com/forums/showthread.php?tid=1782
+            $posY = $target->pos_y - 60; // maybe fixes this: https://jiggmin2.com/forums/showthread.php?tid=1782
             $this->sendToRoom("exactPos$tempID`$posX`$posY", $player->user_id); // is this needed?
             $this->sendToRoom("squash$target->temp_id`", $player->user_id);
         }
