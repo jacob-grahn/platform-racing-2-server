@@ -8,6 +8,7 @@ class Game extends Room
     const LEVEL_COMPASS = 3236908; // for top hat
     const LEVEL_BUTO = 1738847; // for jigg hat
     const LEVEL_DELIVERANCE = 1896157; // for slender set
+    const LEVEL_SEA = 2255404; // for sea set
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -183,8 +184,15 @@ class Game extends Room
 
         // -Deliverance- by changelings; Awards: Slender Set
         if ($this->course_id == self::LEVEL_DELIVERANCE) {
-            $slender_prizes = array( Prizes::$SLENDER_HEAD, Prizes::$SLENDER_BODY, Prizes::$SLENDER_FEET );
-            $this->prize = $slender_prizes[ array_rand($slender_prizes) ];
+            $slender_prizes = array(Prizes::$SLENDER_HEAD, Prizes::$SLENDER_BODY, Prizes::$SLENDER_FEET);
+            $this->prize = $slender_prizes[array_rand($slender_prizes)];
+        }
+
+        // ~Under the sea~ by Rammjet; Awards: Sea Set
+        global $guild_id; // remove after beta
+        if ($this->course_id == self::LEVEL_SEA && $guild_id === 205) {
+            $sea_prizes = array(Prizes::$SEA_HEAD, Prizes::$SEA_BODY, Prizes::$SEA_FEET);
+            $this->prize = $sea_prizes[array_rand($sea_prizes)];
         }
 
         // The Golden Compass by -Shadowfax-; Awards: Top Hat
