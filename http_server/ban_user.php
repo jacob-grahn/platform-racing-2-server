@@ -130,7 +130,7 @@ try {
 
     if ($using_mod_site === 'yes' && $redirect === 'yes') {
         $url_ip = urlencode($force_ip);
-        header("Location: //pr2hub.com/mod/player_info.php?user_id=$ban_uid&force_ip=$url_ip");
+        header("Location: /mod/player_info.php?user_id=$ban_uid&force_ip=$url_ip");
         die();
     } else {
         $disp_name = htmlspecialchars($ban_name, ENT_QUOTES);

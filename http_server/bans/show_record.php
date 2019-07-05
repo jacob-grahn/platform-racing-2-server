@@ -41,6 +41,8 @@ try {
     $lifted = (int) $row->lifted;
     $lifted_by = htmlspecialchars($row->lifted_by, ENT_QUOTES);
     $lifted_reason = htmlspecialchars($row->lifted_reason, ENT_QUOTES);
+    $lifted_time = $row->lifted_time > 0 ? ' @' . date('M j, Y g:i A', $row->lifted_time) : '';
+    $disp_lifted_info = $lifted_reason . $lifted_time;
     $ip_ban = (int) $row->ip_ban;
     $account_ban = (int) $row->account_ban;
     $notes = nl2br(htmlspecialchars($row->notes, ENT_QUOTES));
@@ -52,7 +54,7 @@ try {
     if ($lifted === 1) {
         echo '<b><p>-----------------------------------------------------------------------------------------------</p>'
                ."<p>--- This ban has been lifted by $lifted_by ---</p>"
-               ."<p>--- Reason: $lifted_reason ---</p>"
+               ."<p>--- Reason: $disp_lifted_info ---</p>"
                .'<p>-----------------------------------------------------------------------------------------------</p>'
                .'<p>&nbsp;</p></b>';
     }
@@ -86,9 +88,6 @@ try {
             echo "<p> ---</p>";
         }
         echo "<p><a href='/mod/ban_edit.php?ban_id=$ban_id'>Edit Ban</a></p>";
-        if ($lifted !== 1) {
-            echo "<p><a href='/mod/lift_ban.php?ban_id=$ban_id'>Lift Ban</a></p>";
-        }
     }
 
     echo '<p><a href="bans.php">Go Back</a></p>';

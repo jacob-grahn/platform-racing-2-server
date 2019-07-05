@@ -72,8 +72,6 @@ class Player
     public $pos_y = 0;
 
     public $worn_hat_array = array();
-    public $finished_race = false;
-    public $quit_race = false;
 
     public $domain;
     public $ip;
@@ -86,6 +84,7 @@ class Player
     public $restart_warned = false;
 
     public $status = '';
+    public $register_time;
 
     public $lives = 3;
     public $items_used = 0;
@@ -149,6 +148,7 @@ class Player
         $this->exp_today = (int) $this->start_exp_today = (int) $login->exp_today;
         $this->last_exp_time = time();
         $this->status = $login->status;
+        $this->register_time = (int) $login->user->register_time;
 
         $socket->player = $this;
         $this->active_rank = $this->rank + $this->rt_used;
@@ -352,38 +352,59 @@ class Player
     }
 
 
-    public function gainPart($type, $id, $autoset = false)
+    // call with & to write directly to the array
+    private function determinePartArray($type)
     {
         if ($type === 'hat') {
-            $arr = &$this->hat_array;
+            return 'hat_array';
         } elseif ($type === 'head') {
-            $arr = &$this->head_array;
+            return 'head_array';
         } elseif ($type === 'body') {
-            $arr = &$this->body_array;
+            return 'body_array';
         } elseif ($type === 'feet') {
-            $arr = &$this->feet_array;
+            return 'feet_array';
         } elseif ($type === 'eHat') {
-            $arr = &$this->epic_hat_array;
+            return 'epic_hat_array';
         } elseif ($type === 'eHead') {
-            $arr = &$this->epic_head_array;
+            return 'epic_head_array';
         } elseif ($type === 'eBody') {
-            $arr = &$this->epic_body_array;
+            return 'epic_body_array';
         } elseif ($type === 'eFeet') {
-            $arr = &$this->epic_feet_array;
+            return 'epic_feet_array';
         } else {
-            output("Player->gainPart - unknown part type: $type");
+            output("Player->determinePartArray - unknown part type: $type");
             return false;
         }
+    }
 
-        if (isset($arr) && array_search($id, $arr) === false) {
-            array_push($arr, $id);
-            if ($autoset) {
-                $this->setPart($type, $id);
+
+    public function hasPart($type, $id)
+    {
+        $arr_name = $this->determinePartArray($type);
+        if ($arr_name !== false) {
+            $arr = &$this->{$arr_name};
+            if ($arr !== false && array_search($id, $arr) !== false) {
+                return true;
             }
-            return true;
-        } else {
-            return false;
         }
+        return false;
+    }
+
+
+    public function gainPart($type, $id, $autoset = false)
+    {
+        $arr_name = $this->determinePartArray($type);
+        if ($arr_name !== false) {
+            $arr = &$this->{$arr_name};
+            if ($this->hasPart($type, $id) === false) {
+                array_push($arr, $id);
+                if ($autoset) {
+                    $this->setPart($type, $id);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -394,14 +415,8 @@ class Player
             $type = strtolower($type);
         }
 
-        if ($type == 'hat') {
-            $this->hat = $id;
-        } elseif ($type == 'head') {
-            $this->head = $id;
-        } elseif ($type == 'body') {
-            $this->body = $id;
-        } elseif ($type == 'feet') {
-            $this->feet = $id;
+        if ($type === 'hat' || $type === 'head' || $type === 'body' || $type === 'feet') {
+            $this->{$type} = $id;
         }
     }
 
@@ -568,7 +583,7 @@ class Player
     {
         $wearing = false;
         foreach ($this->worn_hat_array as $hat) {
-            if ($hat->num === $hat_num) {
+            if ((int) $hat->num === $hat_num) {
                 $wearing = true;
             }
         }

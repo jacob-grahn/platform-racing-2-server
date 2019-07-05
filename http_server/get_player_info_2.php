@@ -68,6 +68,21 @@ try {
         $ignored = (int) (bool) ignored_select($pdo, $user_id, $target_id, true);
     }
 
+    // april fools! :)
+    if (date('M d') === 'Apr 01') {
+        switch ($target->power) {
+            case 1:
+                $target->power = 3;
+                break;
+            case 2:
+            case 3:
+                $target->power = 1;
+                break;
+            default:
+                break;
+        }
+    }
+
     // reply
     $ret->success = true;
     $ret->rank = $active_rank;
@@ -92,7 +107,7 @@ try {
     $ret->userId = $target->user_id;
 
     // epic upgrades
-    if (is_empty($target->epic_hats)) {
+    if (!isset($target->epic_hats)) {
         $ret->hatColor2 = -1;
         $ret->headColor2 = -1;
         $ret->bodyColor2 = -1;

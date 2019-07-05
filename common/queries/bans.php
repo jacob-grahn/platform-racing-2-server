@@ -38,30 +38,6 @@ function ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $
 }
 
 
-function ban_lift($pdo, $ban_id, $lifted_by, $lifted_reason)
-{
-    $stmt = $pdo->prepare('
-        UPDATE bans
-        SET lifted = "1",
-            lifted_by = :lifted_by,
-            lifted_reason = :lifted_reason
-        WHERE ban_id = :ban_id
-        LIMIT 1
-    ');
-    $stmt->bindValue(':ban_id', $ban_id, PDO::PARAM_INT);
-    $stmt->bindValue(':lifted_by', $lifted_by, PDO::PARAM_STR);
-    $stmt->bindValue(':lifted_reason', $lifted_reason, PDO::PARAM_STR);
-    $result = $stmt->execute();
-
-    if ($result === false) {
-        $ban_id = (int) $ban_id;
-        throw new Exception("Could not lift ban #$ban_id.");
-    }
-
-    return $result;
-}
-
-
 function ban_select_active_by_ip($pdo, $ip)
 {
     $stmt = $pdo->prepare('
@@ -109,7 +85,7 @@ function ban_select_active_by_user_id($pdo, $user_id)
 function ban_select($pdo, $ban_id)
 {
     $stmt = $pdo->prepare('
-        SELECT *, FROM_UNIXTIME(expire_time) AS expire_datetime
+        SELECT *
         FROM bans
         WHERE ban_id = :ban_id
         LIMIT 1
@@ -131,22 +107,30 @@ function ban_select($pdo, $ban_id)
 }
 
 
-function ban_update($pdo, $ban_id, $account_ban, $ip_ban, $expire_time, $notes)
+function ban_update($pdo, $ban_id, $acc_ban, $ip_ban, $exp_time, $lifted, $lifted_by, $lift_reason, $lift_time, $notes)
 {
     $stmt = $pdo->prepare('
         UPDATE bans
-        SET account_ban = :account_ban,
+        SET account_ban = :acc_ban,
             ip_ban = :ip_ban,
-            expire_time = UNIX_TIMESTAMP(:expire_time),
+            expire_time = :exp_time,
+            lifted = :lifted,
+            lifted_by = :lifted_by,
+            lifted_reason = :lift_reason,
+            lifted_time = :lift_time,
             notes = :notes,
             modified_time = NOW()
         WHERE ban_id = :ban_id
         LIMIT 1
     ');
     $stmt->bindValue(':ban_id', $ban_id, PDO::PARAM_INT);
-    $stmt->bindValue(':account_ban', $account_ban, PDO::PARAM_INT);
+    $stmt->bindValue(':acc_ban', $acc_ban, PDO::PARAM_INT);
     $stmt->bindValue(':ip_ban', $ip_ban, PDO::PARAM_INT);
-    $stmt->bindValue(':expire_time', $expire_time, PDO::PARAM_STR);
+    $stmt->bindValue(':exp_time', strtotime($exp_time), PDO::PARAM_STR);
+    $stmt->bindValue(':lifted', $lifted, PDO::PARAM_STR);
+    $stmt->bindValue(':lifted_by', $lifted_by, PDO::PARAM_STR);
+    $stmt->bindValue(':lift_reason', $lift_reason, PDO::PARAM_STR);
+    $stmt->bindValue(':lift_time', $lift_time, PDO::PARAM_INT);
     $stmt->bindValue(':notes', $notes, PDO::PARAM_STR);
     $result = $stmt->execute();
 

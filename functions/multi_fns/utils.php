@@ -92,6 +92,7 @@ function place_artifact($artifact)
     \pr2\multi\Artifact::$y = (int) $artifact->y;
     \pr2\multi\Artifact::$updated_time = strtotime($artifact->updated_time);
     \pr2\multi\Artifact::$first_finder = (int) $artifact->first_finder;
+    \pr2\multi\Artifact::$bubbles_winner = (int) $artifact->bubbles_winner;
 }
 
 
@@ -189,19 +190,20 @@ function assign_guild_part($type, $part_id, $user_id, $guild_id, $seconds_durati
 // get ban priors (for lazy mods)
 function get_priors($pdo, $mod, $name)
 {
-    global $group_colors;
+    global $group_colors, $guild_id;
 
     $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
     // sanity: make sure they're online and a staff member
-    if (!isset($mod) || $mod->group < 2 || $mod->temp_mod === true || $mod->server_owner === true) {
+    $not_staff = $guild_id !== 183;
+    if (!isset($mod) || $mod->group < 2 || $mod->temp_mod === true || ($mod->server_owner === true && $not_staff)) {
         $mod->write("message`Error: You lack the power to view priors for $safe_name.");
         return false;
     }
 
     // get player info for mod
     $mod_power = (int) user_select_power($pdo, $mod->user_id, true);
-    if ($mod_power < 2 || $mod_power === false) {
+    if ($mod_power < 2) {
         $mod->write("message`Error: You lack the power to view priors for $safe_name.");
         return false;
     }
@@ -215,13 +217,12 @@ function get_priors($pdo, $mod, $name)
     }
 
     // make user vars
-    $safe_name = htmlspecialchars($user->name, ENT_QUOTES);
     $ip = $user->ip;
     $power = (int) $user->power;
 
     // initialize return string var
     $url_name = htmlspecialchars(urlencode($user->name), ENT_QUOTES);
-    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $safe_name, '#' . $group_colors[$power]);
+    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $user->name, '#' . $group_colors[$power]);
     $str = "<b>Ban Data for $u_link</b><br><br>";
 
     // check if the user is currently banned
@@ -451,6 +452,7 @@ function __crashHandler()
     output("Data successfully saved.");
 
     // start a new server
+    sleep(3);
     $server_id = (int) $server_id;
     echo shell_exec('php ' . COMMON_DIR . "/manage_socket/restart_server.php $server_id");
     die(output("Server started."));

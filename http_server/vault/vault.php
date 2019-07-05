@@ -53,8 +53,8 @@ try {
     // reply
     $ret->success = true;
     $ret->listings = $listings;
-    $ret->title = 'Vault of Magics';
-    $ret->sale = false;
+    $ret->title = 'Summer Sale';
+    $ret->sale = true;
 } catch (Exception $e) {
     $ret->state = 'canceled';
     $ret->error = $e->getMessage();

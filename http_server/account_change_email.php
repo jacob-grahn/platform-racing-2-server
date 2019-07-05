@@ -102,13 +102,13 @@ try {
         $safe_new_email = htmlspecialchars($new_email, ENT_QUOTES);
 
         // send a confirmation email
-        $from = 'Fred the Giant Cactus <contact@jiggmin.com>';
+        $from = 'Fred the Giant Cactus <no-reply@pr2hub.com>';
         $to = $old_email;
         $subject = 'PR2 Email Change Confirmation';
         $body = "Howdy $safe_user_name,\n\n"
             ."We received a request to change the email on your PR2 account from $safe_old_email to $safe_new_email. "
             ."If you requested this change, please click the link below to confirm the change.\n\n"
-            ."http://pr2hub.com/account_confirm_email_change.php?code=$code\n\n"
+            ."https://pr2hub.com/account_confirm_email_change.php?code=$code\n\n"
             ."If you didn't request this change, you may need to change your password.\n\n"
             ."All the best,\n"
             .'Fred';

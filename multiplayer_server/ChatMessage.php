@@ -111,7 +111,7 @@ class ChatMessage
             } elseif ((strpos($msg, '/dc ') === 0 || strpos($msg, '/disconnect ') === 0)) {
                 $this->commandModDisconnect(); // dc for mods
                 $handled = true;
-            } elseif (strpos($msg, '/priors ') === 0 && $this->isServerOwner() === false) {
+            } elseif (strpos($msg, '/priors ') === 0 && ($this->isServerOwner() === false || $guild_id === 183)) {
                 $this->commandModViewPriors(); // view a user's priors for mods (NOT server owners)
                 $handled = true;
             }
@@ -145,6 +145,12 @@ class ChatMessage
         // for everyone
         if ($msg === '/be_awesome' || $msg === '/beawesome') {
             $this->commandBeAwesome(); // be awesome
+            $handled = true;
+        } elseif ($msg === '/community') {
+            $this->commandCommunity(); // community links
+            $handled = true;
+        } elseif ($msg === '/contests' || $msg === '/contest') {
+            $this->commandContests(); // contests link
             $handled = true;
         } elseif (($msg === '/hh' || strpos($msg, '/hh ') === 0)) {
             $this->commandHappyHour(); // happy hour-related functions (start/stop, status)
@@ -581,6 +587,24 @@ class ChatMessage
         $this->write("message`<b>You're awesome!</b>");
     }
 
+    // community command (links to JV2, discord)
+    private function commandCommunity()
+    {
+        $msg = 'systemChat`Join the community!<br>'
+            .'<br> - '.urlify('https://jiggmin2.com/forums', 'Jiggmin\'s Village')
+            .'<br> - '.urlify('https://discord.gg/kcWBBBj', 'JV Discord')
+            .'<br> - '.urlify('https://discord.gg/T3xxT6q', 'PRG Discord (Unofficial)');
+        $this->write($msg);
+    }
+
+    // contests command (links to contests hub)
+    private function commandContests()
+    {
+        $msg = 'systemChat`'
+            .'PR2 has a variety of contests in which you can participate to earn in-game prizes! '
+            .'For more information, visit ' . urlify('https://pr2hub.com/contests', 'pr2hub.com/contests') . '.';
+        $this->write($msg);
+    }
 
     // change happy hour settings (admins only) or check status
     private function commandHappyHour()
@@ -588,7 +612,7 @@ class ChatMessage
         $args = explode(' ', $this->message);
         array_shift($args);
 
-        $args[0] = strtolower($args[0]);
+        $args[0] = @strtolower($args[0]);
         if ($this->message === '/hh' || $args[0] === 'status') {
             $hh_timeleft = HappyHour::timeLeft();
             if ($hh_timeleft !== false) {
@@ -745,12 +769,14 @@ class ChatMessage
             $eups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=123', 'Epic Upgrades');
             $groups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Groups');
             $fah_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=19', 'Folding at Home (F@H)');
+            $artifact_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=1677', 'Artifact Guide');
             $this->write(
                 'systemChat`Helpful Resources:<br>'
                 ."- $hats_link<br>"
                 ."- $eups_link<br>"
                 ."- $groups_link<br>"
-                ."- $fah_link"
+                ."- $fah_link<br>"
+                ."- $artifact_link"
             );
         } else {
             $ret = 'To get a list of PR2-related guides, go to the chat tab in the lobby and type /guides.';
@@ -812,7 +838,9 @@ class ChatMessage
                 '- /population<br>'.
                 '- /beawesome<br>'.
                 '- /emotes<br>'.
-                '- /guides'.$mod.$effects.$admin.$server_owner);
+                '- /guides<br>'.
+                '- /community<br>'.
+                '- /contests'.$mod.$effects.$admin.$server_owner);
         }
     }
 

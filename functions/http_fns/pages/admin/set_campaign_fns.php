@@ -14,8 +14,8 @@ function prize_check($type, $id, $err_prefix)
     $type_array = ['hat', 'head', 'body', 'feet', 'eHat', 'eHead', 'eBody', 'eFeet'];
 
     // safety first
-    $safe_type = htmlspecialchars($type);
-    $safe_id = htmlspecialchars($id);
+    $safe_type = htmlspecialchars($type, ENT_QUOTES);
+    $id = (int) $id;
 
     // check for a valid prize type
     if (!in_array($type, $type_array)) {
@@ -23,36 +23,36 @@ function prize_check($type, $id, $err_prefix)
     }
 
     // check for a valid hat id
-    if ($type === "hat" || $type === "eHat") {
+    if ($type === 'hat' || $type === 'eHat') {
         if ($id < 2 || $id > 14) {
-            throw new Exception("$err_prefix (invalid hat ID ($safe_id) specified).");
+            throw new Exception("$err_prefix (invalid hat ID ($id) specified).");
         } else {
             return true;
         }
     }
 
     // check for a valid head id
-    if ($type === "head" || $type === "eHead") {
-        if ($id < 1 || $id > 39) {
-            throw new Exception("$err_prefix (invalid head ID ($safe_id) specified).");
+    if ($type === 'head' || $type === 'eHead') {
+        if ($id < 1 || $id > 41) {
+            throw new Exception("$err_prefix (invalid head ID ($id) specified).");
         } else {
             return true;
         }
     }
 
     // check for a valid body id
-    if ($type === "body" || $type === "eBody") {
-        if ($id < 1 || $id > 39 || $id === 33) {
-            throw new Exception("$err_prefix (invalid body ID ($safe_id) specified).");
+    if ($type === 'body' || $type === 'eBody') {
+        if ($id < 1 || $id > 41 || $id === 33) {
+            throw new Exception("$err_prefix (invalid body ID ($id) specified).");
         } else {
             return true;
         }
     }
 
     // check for a valid feet id
-    if ($type === "feet" || $type === "eFeet") {
-        if ($id < 1 || $id > 39 || ($id >= 31 && $id <= 33)) {
-            throw new Exception("$err_prefix (invalid feet ID ($safe_id) specified).");
+    if ($type === 'feet' || $type === 'eFeet') {
+        if ($id < 1 || $id > 41 || ($id >= 31 && $id <= 33)) {
+            throw new Exception("$err_prefix (invalid feet ID ($id) specified).");
         } else {
             return true;
         }
@@ -79,10 +79,10 @@ function output_form($pdo, $message, $campaign_id)
 
     foreach ($campaign as $row) {
         // get level/prize information
-        $num = $row->level_num;
-        $level_id = $row->level_id;
+        $num = (int) $row->level_num;
+        $level_id = (int) $row->level_id;
         $prize_type = $row->prize_type;
-        $prize_id = $row->prize_id;
+        $prize_id = (int) $row->prize_id;
 
         // define prize types
         $prize_types = ['hat', 'head', 'body', 'feet', 'eHat', 'eHead', 'eBody', 'eFeet'];
@@ -129,8 +129,8 @@ function update($pdo, $admin, $campaign_id)
         $prize_id = (int) find("prize_id_$id");
 
         try {
-            //level_select($pdo, $level_id); // will throw error if level does not exist
-            //prize_check($prize_type, $prize_id, "The prize for level $id is invalid");
+            level_select($pdo, $level_id); // will throw error if level does not exist
+            prize_check($prize_type, $prize_id, "The prize for level #$id is invalid");
             campaign_update($pdo, $campaign_id, $id, $level_id, $prize_type, $prize_id);
         } catch (Exception $e) {
             $error = "Error: " . $e->getMessage();

@@ -14,7 +14,7 @@ try {
     } elseif ($testing !== true) {
         echo 'Error: Testing mode is disabled.';
     } else {
-        echo 'not testing anything rn';
+        echo 'nothing to test...';
     }
     die();
 } catch (Exception $e) {

@@ -11,7 +11,7 @@ try {
     rate_limit('gui-hint-' . $ip, 5, 2);
 
     // get data, make variables
-    $decode = json_decode(file_get_contents("https://pr2hub.com/files/artifact_hint.txt"));
+    $decode = json_decode(file_get_contents(WWW_ROOT . "/files/artifact_hint.txt"));
     $safe_hint = htmlspecialchars($decode->hint, ENT_QUOTES);
     $safe_finder = htmlspecialchars($decode->finder_name, ENT_QUOTES);
 

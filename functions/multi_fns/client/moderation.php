@@ -1,6 +1,16 @@
 <?php
 
 
+// get priors for a user
+function client_view_priors($socket, $data)
+{
+    global $pdo;
+
+    $player = $socket->getPlayer();
+    get_priors($pdo, $player, $data);
+}
+
+
 // kick a player
 function client_kick($socket, $data)
 {

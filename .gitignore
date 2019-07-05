@@ -7,4 +7,6 @@ http_server/files/*
 http_server/levels/*
 http_server/music/*
 last-pm.txt
+/search.php
 vendor
+.vscode/*

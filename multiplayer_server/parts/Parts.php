@@ -19,6 +19,7 @@ class Hats
     const THIEF = 12;
     const JIGG = 13;
     const ARTIFACT = 14;
+    const JELLYFISH = 15;
 
 
     public static function idToStr($id)
@@ -53,6 +54,8 @@ class Hats
             $str = 'Jigg';
         } elseif ($id == Hats::ARTIFACT) {
             $str = 'Artifact';
+        } elseif ($id == Hats::JELLYFISH) {
+            $str = 'Jellyfish';
         }
 
         return $str;
@@ -93,6 +96,8 @@ class Hats
             $id = Hats::JIGG;
         } elseif ($str === 'artifact' || $str === 'a' || $str == 14) {
             $id = Hats::ARTIFACT;
+        } elseif ($str === 'jellyfish' || $str === 'jelly' || $str === 'fish' || $str === 'jf' || $str == 15) {
+            $id = Hats::JELLYFISH;
         }
 
         return $id;
@@ -143,6 +148,8 @@ class Heads
     const BUNNY = 39;
     const GECKO = 40;
     const BAT = 41;
+    const SEA = 42;
+    const BREW = 43;
 }
 
 
@@ -188,6 +195,8 @@ class Bodies
     const BUNNY = 39;
     const GECKO = 40;
     const BAT = 41;
+    const SEA = 42;
+    const BREW = 43;
 }
 
 
@@ -231,4 +240,6 @@ class Feet
     const BUNNY = 39;
     const GECKO = 40;
     const BAT = 41;
+    const SEA = 42;
+    const BREW = 43;
 }

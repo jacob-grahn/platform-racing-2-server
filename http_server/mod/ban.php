@@ -28,7 +28,7 @@ try {
 
     // get the user's info
     $row = user_select($pdo, $user_id);
-    $name = $row->name;
+    $name = htmlspecialchars($row->name, ENT_QUOTES);
     $target_ip = filter_var($force_ip, FILTER_VALIDATE_IP) ? $force_ip : $row->ip;
 
     echo "<p>Ban $name [$target_ip]</p>";

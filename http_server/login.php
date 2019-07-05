@@ -16,10 +16,12 @@ require_once QUERIES_DIR . '/rank_token_rentals.php';
 require_once QUERIES_DIR . '/recent_logins.php';
 require_once QUERIES_DIR . '/servers.php';
 
+$ip = get_ip();
+
 $encrypted_login = default_post('i', '');
-$version = default_post('version', '');
+$version = isset($_POST['build']) ? default_post('build', '') : default_post('version', '');
 $in_token = find('token');
-$allowed_versions = array('14-feb-2019-v153-1', '31-jan-2019-v153');
+$allowed_versions = array('22-apr-2019-v155', '24-jun-2019-v156');
 $guest_login = false;
 $token_login = false;
 $has_email = false;
@@ -31,11 +33,6 @@ $emblem = '';
 $guild_name = '';
 $friends = array();
 $ignored = array();
-
-// get the user's IP and run it through an IP info API
-$ip = get_ip();
-$ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
-$country_code = ($ip_info !== false && !empty($ip_info)) ? $ip_info->data->geo->country_code : '?';
 
 $ret = new stdClass();
 $ret->success = false;
@@ -53,17 +50,25 @@ try {
     }
 
     // correct referrer?
-    require_trusted_ref('log in');
+    if (strpos($ip, $BLS_IP_PREFIX) !== 0) {
+        require_trusted_ref('log in');
+    }
 
     // rate limiting
     rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
     rate_limit('login-'.$ip, 60, 10, 'Only 10 logins per minute per IP are accepted.');
+
+    // get the user's IP and run it through an IP info API
+    // $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
+    // $country_code = ($ip_info !== false && !empty($ip_info)) ? $ip_info->data->geo->country_code : '?';
+    $country_code = '?';
 
     // decrypt login data
     $encryptor = new \pr2\http\Encryptor();
     $encryptor->setKey($LOGIN_KEY);
     $str_login = $encryptor->decrypt($encrypted_login, $LOGIN_IV);
     $login = json_decode($str_login);
+    $login->version = isset($login->build) ? $login->build : $login->version; // remove after 156's release
     $login->ip = $ip;
     $user_name = $login->user_name;
     $user_pass = $login->user_pass;
@@ -148,7 +153,8 @@ try {
     }
 
     // sanity check: if a guild server, is the user in the guild?
-    if ((int) $server->guild_id !== 0 && (int) $user->guild !== (int) $server->guild_id) {
+    $ps_staff_cond = $group === 3 || ($group === 2 && (int) $server->guild_id === 205);
+    if ((int) $server->guild_id !== 0 && (int) $user->guild !== (int) $server->guild_id && !$ps_staff_cond) {
         throw new Exception('You must be a member of this guild to join this server.');
     }
 

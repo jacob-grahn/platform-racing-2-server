@@ -9,4 +9,5 @@ class Artifact
     public static $y = 0;
     public static $updated_time = 0;
     public static $first_finder;
+    public static $bubbles_winner;
 }

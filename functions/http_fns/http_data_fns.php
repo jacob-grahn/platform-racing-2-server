@@ -72,18 +72,16 @@ function get_ip()
 // referrer check
 function is_trusted_ref()
 {
-    $ref = $_SERVER['HTTP_REFERER'];
-    return (strpos($ref, 'http://pr2hub.com/') === 0
-        || strpos($ref, 'https://pr2hub.com/') === 0
-        || strpos($ref, 'http://www.pr2hub.com/') === 0
-        || strpos($ref, 'https://www.pr2hub.com/') === 0
-        || strpos($ref, 'http://cdn.jiggmin.com/') === 0
-        || strpos($ref, 'http://chat.kongregate.com/') === 0
-        || strpos($ref, 'http://external.kongregate-games.com/gamez/') === 0
-        || strpos($ref, 'https://jiggmin2.com/games/platform-racing-2') === 0
-        || strpos($ref, 'http://game10110.konggames.com/games/Jiggmin/platform-racing-2') === 0
-        || strpos($ref, 'http://naxxol.github.io/') === 0 // advanced LE
-    );
+    global $trusted_refs;
+
+    $ref = (string) default_val(@$_SERVER['HTTP_REFERER'], '');
+    foreach ($trusted_refs as $trusted) {
+        if (@strpos($ref, $trusted) === 0 || $ref === $trusted) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
@@ -218,6 +216,7 @@ function award_special_parts($stats, $group, $prizes)
         $part = (int) $award->part;
 
         $array = $epic === true ? $epic_upgrades->$db_field : ${$db_field};
+        $array = !is_array($array) ? array($array) : $array;
         $stats->$base_type = add_item($array, $part) ? $part : $stats->$base_type;
     }
 

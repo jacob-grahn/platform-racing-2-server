@@ -84,10 +84,22 @@ function process_set_campaign($socket, $data)
 function process_start_new_day($socket)
 {
     if ($socket->process === true) {
-        global $player_array;
+        global $player_array, $pdo;
+
+        // log a new day
+        output('New day! It is now ' . date('r') . '.');
+
+        // reset today's exp
         foreach ($player_array as $player) {
             $player->start_exp_today = $player->exp_today = 0;
         }
+
+        // renew database connection (prevent crashes due to query limit per connection)
+        $pdo = null;
+        $pdo = pdo_connect();
+        output('Renewed database connection for the new day.');
+
+        // tell calling script
         $socket->write('Another day, another destiny!');
     }
 }
@@ -124,6 +136,7 @@ function process_register_login($server_socket, $data)
         $login_id = (int) $login_obj->login->login_id;
         $group = (int) $login_obj->user->power;
         $user_id = (int) $login_obj->user->user_id;
+        $ps_staff_cond = $group === 3 || ($group === 2 && $guild_id === 205);
 
         $socket = @$login_array[$login_id];
         unset($login_array[$login_id]);
@@ -137,7 +150,7 @@ function process_register_login($server_socket, $data)
                 $socket->write('message`There\'s an IP mismatch. Check your network settings.');
                 $socket->close();
                 $socket->onDisconnect();
-            } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild) {
+            } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild && !$ps_staff_cond) {
                 $socket->write('message`You are not a member of this guild.');
                 $socket->close();
                 $socket->onDisconnect();

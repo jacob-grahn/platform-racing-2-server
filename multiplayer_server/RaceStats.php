@@ -7,12 +7,16 @@ class RaceStats
 
     public $temp_id;
     public $name;
+    public $group;
     public $rank;
     public $ip;
+
     public $finish_time;
     public $drawing = true;
     public $still_here = true;
     public $give_artifact = true;
+    public $finished_race = false;
+    public $quit_race = false;
 
     public $level_hash = '';
     public $mode = '';
@@ -24,11 +28,12 @@ class RaceStats
     public $objectives_reached = array();
     public $last_objective_time = 0;
 
-    public function __construct($temp_id, $name, $rank, $ip)
+    public function __construct($player)
     {
-        $this->temp_id = $temp_id;
-        $this->name = $name;
-        $this->rank = $rank;
-        $this->ip = $ip;
+        $this->temp_id = $player->temp_id;
+        $this->name = $player->name;
+        $this->group = $player->group;
+        $this->rank = $player->active_rank;
+        $this->ip = $player->ip;
     }
 }

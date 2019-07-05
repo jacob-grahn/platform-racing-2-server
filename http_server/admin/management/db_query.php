@@ -63,16 +63,18 @@ try {
         }
 
         // perform the query
-        $stmt = $pdo->query("$query");
         $start_time = microtime(true);
-        $result = $stmt->execute();
+        $stmt = $pdo->query("$query");
         $end_time = microtime(true);
-        if ($result === false) {
+        if (!$stmt || (int) $pdo->errorInfo()[1] > 0) {
             throw new Exception($pdo->errorInfo());
-        } else {
-            $action_msg = "DB QUERY -- bls1999 (3483035) from $ip: $query";
-            admin_action_insert($pdo, 3483035, $action_msg, 3483035, $ip);
         }
+
+        // record the query in the action log
+        $action_msg = "DB QUERY -- bls1999 (3483035) from $ip: $query";
+        admin_action_insert($pdo, 3483035, $action_msg, 3483035, $ip);
+
+        // return results
         echo 'Query: ' . htmlspecialchars($query, ENT_QUOTES) . '<br><br>';
         echo 'This query took ' . ($end_time - $start_time) . ' seconds to complete.<br><br>';
         echo '<pre>';

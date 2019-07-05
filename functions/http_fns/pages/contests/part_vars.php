@@ -16,7 +16,8 @@ function to_part_name($type, $id)
         11 => 'Moon',
         12 => 'Thief',
         13 => 'Jigg',
-        14 => 'Artifact'
+        14 => 'Artifact',
+        15 => 'Jellyfish'
     ];
 
     // heads
@@ -61,7 +62,9 @@ function to_part_name($type, $id)
         38 => 'Valentine',
         39 => 'Bunny',
         40 => 'Gecko',
-        41 => 'Bat'
+        41 => 'Bat',
+        42 => 'Sea',
+        43 => 'Brew'
     ];
 
     // bodies
@@ -105,7 +108,9 @@ function to_part_name($type, $id)
         38 => 'Valentine',
         39 => 'Bunny',
         40 => 'Gecko',
-        41 => 'Bat'
+        41 => 'Bat',
+        42 => 'Sea',
+        43 => 'Brew'
     ];
 
     // feet
@@ -147,7 +152,9 @@ function to_part_name($type, $id)
         38 => 'Valentine',
         39 => 'Bunny',
         40 => 'Gecko',
-        41 => 'Bat'
+        41 => 'Bat',
+        42 => 'Sea',
+        43 => 'Brew'
     ];
 
     $lookup = [
