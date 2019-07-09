@@ -189,7 +189,6 @@ class Game extends Room
         }
 
         // ~Under the sea~ by Rammjet; Awards: Sea Set
-        global $guild_id; // remove after beta
         if ($this->course_id == self::LEVEL_SEA) {
             $sea_prizes = array(Prizes::$SEA_HEAD, Prizes::$SEA_BODY, Prizes::$SEA_FEET);
             $this->prize = $sea_prizes[array_rand($sea_prizes)];
