@@ -20,7 +20,7 @@ function begin_loadup($pdo, $server_id)
     place_artifact($artifact_location);
 
     // start a happy hour, but only if this server is Carina
-    if ($server_id === 2) {
+    if ($server_id === 2 && \pr2\multi\HappyHour::isActive() === false) {
         \pr2\multi\HappyHour::activate();
     }
 }
@@ -39,6 +39,12 @@ function configure_server($pdo, $server)
     // no prizes on tournament
     \pr2\multi\PR2SocketServer::$tournament = (bool) (int) $server->tournament;
     \pr2\multi\PR2SocketServer::$no_prizes = \pr2\multi\PR2SocketServer::$tournament;
+
+    // restore happy hour if there was one when the server restarted
+    // one is always activated on startup on carina, so excl. if time remaining doesn't exceed 3600
+    if ((int) $server->server_id !== 2 || $server->happy_hour > 3600) {
+        \pr2\multi\HappyHour::activate($server->happy_hour);
+    }
 
     // set server owner
     if ($guild_id !== 0) {
