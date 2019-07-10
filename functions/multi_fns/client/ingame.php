@@ -86,12 +86,7 @@ function client_zap($socket)
 {
     $player = $socket->getPlayer();
     if (isset($player->game_room)) {
-        global $guild_id;
-        if ($guild_id === 205) {
-            $player->game_room->sendToAll("zap`$player->temp_id", $player->user_id);
-        } else {
-            $player->game_room->sendToRoom("zap`$player->temp_id", $player->user_id);
-        }
+        $player->game_room->sendToAll("zap`$player->temp_id", $player->user_id);
     }
 }
 
