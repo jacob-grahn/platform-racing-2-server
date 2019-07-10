@@ -184,7 +184,7 @@ function validate_prize($type, $id)
     // check for a valid hat id
     if ($type === 'hat' || $type === 'ehat') {
         $type = 'hat';
-        if ($id < 2 || $id > 14) {
+        if ($id < 2 || $id > 15) {
             throw new Exception("Invalid hat ID ($id) specified.");
         }
     }
@@ -192,7 +192,7 @@ function validate_prize($type, $id)
     // check for a valid head id
     if ($type === 'head' || $type === 'ehead') {
         $type = 'head';
-        if ($id < 1 || $id > 41) {
+        if ($id < 1 || $id > 43) {
             throw new Exception("Invalid head ID ($id) specified.");
         }
     }
@@ -200,7 +200,7 @@ function validate_prize($type, $id)
     // check for a valid body id
     if ($type === 'body' || $type === 'ebody') {
         $type = 'body';
-        if ($id < 1 || $id > 41 || $id === 33) {
+        if ($id < 1 || $id > 43 || $id === 33) {
             throw new Exception("Invalid body ID ($id) specified.");
         }
     }
@@ -208,7 +208,7 @@ function validate_prize($type, $id)
     // check for a valid feet id
     if ($type === 'feet' || $type === 'efeet') {
         $type = 'feet';
-        if ($id < 1 || $id > 41 || ($id >= 31 && $id <= 33)) {
+        if ($id < 1 || $id > 43 || ($id >= 31 && $id <= 33)) {
             throw new Exception("Invalid feet ID ($id) specified.");
         }
     }
