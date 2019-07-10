@@ -68,7 +68,7 @@ output("Initializing startup...");
 
 Prizes::init();
 RankupCalculator::init();
-HappyHour::$random_hour = rand(0, 36);
+HappyHour::$random_hour = rand(0, 23);
 
 $pdo = pdo_connect();
 

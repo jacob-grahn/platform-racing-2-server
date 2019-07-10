@@ -119,7 +119,7 @@ function process_update_cycle($socket, $data)
         $ret->gp = \pr2\multi\GuildPoints::drain();
         $ret->population = get_population();
         $ret->status = get_status();
-        $ret->happy_hour = \pr2\multi\HappyHour::isActive();
+        $ret->happy_hour = (int) \pr2\multi\HappyHour::timeLeft();
 
         $socket->write(json_encode($ret));
     }
