@@ -1030,7 +1030,7 @@ class Game extends Room
         list($command, $name, $power, $text) = explode('`', $message);
 
         // send the message
-        if ($command === 'chat' || $command === 'systemChat') {
+        if ($command === 'chat' || ($command === 'systemChat' && $user_id === -1)) {
             foreach ($this->player_array as $player) {
                 if (!$player->isIgnoredId($user_id)) {
                     $player->socket->write("$command`$name`$power`$text");
