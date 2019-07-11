@@ -1024,13 +1024,13 @@ class Game extends Room
         }
     }
 
-    public function sendChat($message, $user_id)
+    public function sendChat($message, $user_id = -1)
     {
         // any added backticks will cut off the end of $text
         list($command, $name, $power, $text) = explode('`', $message);
 
         // send the message
-        if ($command === 'chat') {
+        if ($command === 'chat' || $command === 'systemChat') {
             foreach ($this->player_array as $player) {
                 if (!$player->isIgnoredId($user_id)) {
                     $player->socket->write("$command`$name`$power`$text");
