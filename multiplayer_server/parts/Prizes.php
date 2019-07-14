@@ -86,7 +86,7 @@ class Prizes
     const DESC_MOON_HAT = 'Soar to new heights by defying the laws of gravity!';
     const DESC_THIEF_HAT = 'Steal other player\'s hats --even crowns!';
     const DESC_JIGG_HAT = 'Bounce on the heads of your opponents!';
-    const DESC_JELLYFISH_HAT = 'Give nearby opponents a nasty sting!';
+    const DESC_JF_HAT = 'Give nearby opponents a nasty sting!';
 
 
     // hats
@@ -408,7 +408,7 @@ class Prizes
         self::$THIEF_HAT = new Prize(self::TYPE_HAT, Hats::THIEF, 'Thief Hat', self::DESC_THIEF_HAT, true);
         self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat', self::DESC_JIGG_HAT, true);
         self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'Artifact Hat');
-        self::$JELLYFISH_HAT = new Prize(self::TYPE_HAT, Hats::JELLYFISH, 'Jellyfish Hat', self::DESC_JELLYFISH_HAT);
+        self::$JELLYFISH_HAT = new Prize(self::TYPE_HAT, Hats::JELLYFISH, 'Jellyfish Hat', self::DESC_JF_HAT, true);
 
         // epic hats
         self::$EPIC_KONG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::KONG, 'Epic Upgrade');
