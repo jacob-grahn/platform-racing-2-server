@@ -9,6 +9,7 @@ class Game extends Room
     const LEVEL_BUTO = 1738847; // for jigg hat
     const LEVEL_DELIVERANCE = 1896157; // for slender set
     const LEVEL_SEA = 2255404; // for sea set
+    const LEVEL_DEEPER = 6493337; // for jellyfish hat
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -197,6 +198,11 @@ class Game extends Room
         // The Golden Compass by -Shadowfax-; Awards: Top Hat
         if ($this->course_id == self::LEVEL_COMPASS) {
             $this->prize = Prizes::$TOP_HAT;
+        }
+
+        // Deeper by Sothal; Awards: Jellyfish Hat
+        if ($this->course_id == self::LEVEL_DEEPER) {
+            $this->prize = Prizes::$JELLYFISH_HAT;
         }
 
         // random part/upgrade prizes
