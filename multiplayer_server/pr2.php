@@ -87,11 +87,11 @@ $chat_room_array = array();
 $campaign_array = array();
 $play_count_array = array();
 
-$campaign_room = new LevelListRoom();
-$best_room = new LevelListRoom();
-$best_today_room = new LevelListRoom();
-$newest_room = new LevelListRoom();
-$search_room = new LevelListRoom();
+$campaign_room = new LevelListRoom('campaign');
+$best_room = new LevelListRoom('best');
+$best_today_room = new LevelListRoom('best_today');
+$newest_room = new LevelListRoom('newest');
+$search_room = new LevelListRoom('search');
 
 $max_players = 200;
 $min_version = .60;
