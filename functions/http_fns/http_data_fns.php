@@ -273,18 +273,19 @@ function format_level_list($levels)
     $num = 0;
     $str = '';
     foreach ($levels as $row) {
-        $level_id = $row->level_id;
-        $version = $row->version;
+        $level_id = (int) $row->level_id;
+        $version = (int) $row->version;
         $title = urlencode($row->title);
         $rating = round($row->rating, 2);
-        $play_count = $row->play_count;
-        $min_level = $row->min_level;
+        $play_count = (int) $row->play_count;
+        $min_level = (int) $row->min_level;
         $note = urlencode($row->note);
         $user_name = urlencode($row->name);
-        $group = $row->power;
-        $live = $row->live;
+        $group = (int) $row->power;
+        $live = (int) $row->live;
         $pass = isset($row->pass);
         $type = $row->type;
+        $time = (int) $row->time;
 
         if ($num > 0) {
             $str .= "&";
@@ -300,7 +301,8 @@ function format_level_list($levels)
         ."&group$num=$group"
         ."&live$num=$live"
         ."&pass$num=$pass"
-        ."&type$num=$type";
+        ."&type$num=$type"
+        ."&time$num=$time";
         $num++;
     }
 

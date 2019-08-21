@@ -320,6 +320,7 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
                l.live,
                l.pass,
                l.type,
+               l.time,
                u.name,
                u.power
           FROM levels l, users u
@@ -352,6 +353,7 @@ function levels_select_best_today($pdo)
                l.note,
                l.live,
                l.type,
+               l.time,
                u.name,
                u.power,
                u.user_id
@@ -387,6 +389,7 @@ function levels_select_best($pdo)
                  l.note,
                  l.live,
                  l.type,
+                 l.time,
                  u.name,
                  u.power,
                  u.user_id
@@ -420,6 +423,7 @@ function levels_select_by_owner($pdo, $user_id)
                l.note,
                l.live,
                l.type,
+               l.time,
                u.name,
                u.power,
                u.user_id
@@ -480,6 +484,7 @@ function levels_select_campaign($pdo)
                  l.note,
                  l.live,
                  l.type,
+                 l.time,
                  u.name,
                  u.power,
                  u.user_id
@@ -513,6 +518,7 @@ function levels_select_newest($pdo)
                  l.note,
                  l.live,
                  l.type,
+                 l.time,
                  u.name,
                  u.power,
                  u.user_id
