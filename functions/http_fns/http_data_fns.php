@@ -72,10 +72,10 @@ function get_ip()
 // referrer check
 function is_trusted_ref()
 {
-    global $trusted_refs;
+    global $TRUSTED_REFS;
 
     $ref = (string) default_val(@$_SERVER['HTTP_REFERER'], '');
-    foreach ($trusted_refs as $trusted) {
+    foreach ($TRUSTED_REFS as $trusted) {
         if (@strpos($ref, $trusted) === 0 || $ref === $trusted) {
             return true;
         }
