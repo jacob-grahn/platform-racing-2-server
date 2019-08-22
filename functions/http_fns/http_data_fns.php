@@ -102,7 +102,7 @@ function require_trusted_ref($action = 'perform this action', $mod = false)
 // send an email to a user
 function send_email($from, $to, $subject, $body)
 {
-    global $EMAIL_HOST, $EMAIL_USER, $EMAIL_PASS;
+    global $EMAIL_HOST, $EMAIL_PORT, $EMAIL_USER, $EMAIL_PASS;
 
     $recipients = $to;
 
@@ -113,7 +113,7 @@ function send_email($from, $to, $subject, $body)
 
     // Define SMTP Parameters
     $params['host'] = $EMAIL_HOST;
-    $params['port'] = '465';
+    $params['port'] = $EMAIL_PORT;
     $params['auth'] = 'PLAIN';
     $params['username'] = $EMAIL_USER;
     $params['password'] = $EMAIL_PASS;

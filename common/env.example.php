@@ -18,6 +18,7 @@ $COMM_PASS = 'def';
 $KONG_API_PASS = 'ghi';
 
 $EMAIL_HOST = 'ssl://some.emailhost.com';
+$EMAIL_PORT = 'port';
 $EMAIL_USER = '2@2.com';
 $EMAIL_PASS = 'pass';
 
