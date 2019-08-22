@@ -76,6 +76,7 @@ class Player
     public $domain;
     public $ip;
 
+    public $special_user = false;
     public $temp_mod = false;
     public $trial_mod = false;
     public $server_owner = false;
@@ -94,6 +95,8 @@ class Player
 
     public function __construct($socket, $login)
     {
+        global $player_array, $max_players, $special_ids;
+
         $this->socket = $socket;
         $this->ip = $socket->ip;
         $this->last_save_time = time();
@@ -153,9 +156,6 @@ class Player
         $socket->player = $this;
         $this->active_rank = $this->rank + $this->rt_used;
 
-        global $player_array;
-        global $max_players;
-
         // check if the server is full
         $pCount = count($player_array);
         if (($pCount > $max_players && $this->group < 2) || ($pCount > ($max_players - 10) && $this->group === 0)) {
@@ -176,6 +176,12 @@ class Player
         if ($this->group === 2 && $login->user->trial_mod) {
             $this->trial_mod = true;
             $this->write("becomeTrialMod`");
+        }
+
+        // if they're special, tell the client
+        if (in_array($this->user_id, $special_ids)) {
+            $this->special_user = true;
+            $this->write('becomeSpecialUser`');
         }
 
         if (isset($player_array[$this->user_id])) {

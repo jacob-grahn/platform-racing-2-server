@@ -20,19 +20,6 @@ define('SOCKET_DAEMON_FILES', $directory . '/vend/socket/index.php'); // files f
 define('FRED', 4291976); // fred id
 $special_ids = [FRED, 5321458, 5451130]; // fred, sir, clint
 $group_colors = ['676666', '047b7b', '1c369f', '870a6f']; // group colors as defined in the client
-$trusted_refs = [ // trusted referrers for the pr2 client
-    'http://pr2hub.com/', // pr2hub
-    'https://pr2hub.com/', // pr2hub
-    'http://www.pr2hub.com/', // pr2hub
-    'https://www.pr2hub.com/', // pr2hub
-    'http://cdn.jiggmin.com/', // jv
-    'http://chat.kongregate.com/', // kong
-    'http://external.kongregate-games.com/gamez/', // kong
-    'http://game10110.konggames.com/games/Jiggmin/platform-racing-2', // kong
-    'http://uploads.ungrounded.net/439000/', // newgrounds
-    'https://jiggmin2.com/games/platform-racing-2', // jv2
-    'http://naxxol.github.io/' // advanced LE
-];
 
 // call globally needed files
 require_once COMMON_DIR . '/env.php';

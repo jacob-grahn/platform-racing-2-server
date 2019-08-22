@@ -26,6 +26,7 @@ class Game extends Room
     private $loose_hat_array = array();
     private $next_hat_id = 0;
     private $prize;
+    private $prize_cancelled = false;
     private $campaign;
 
     private $mode = self::MODE_RACE;
@@ -264,6 +265,28 @@ class Game extends Room
         // tell the world
         if (isset($this->prize)) {
             $this->sendToAll('setPrize`'.$this->prize->toStr());
+        }
+    }
+
+
+    public function cancelPrize($player)
+    {
+        if ($this->prize_cancelled === true) {
+            return; // no point in continuing...
+        }
+        $clint_cond = $player->user_id === self::PLAYER_CLINT && $this->prize == Prizes::$EPIC_COWBOY_HAT;
+        $sir_cond = $player->user_id === self::PLAYER_SIR && (
+            $this->prize == Prizes::$EPIC_TOP_HAT ||
+            $this->prize == Prizes::$EPIC_SIR_HEAD ||
+            $this->prize == Prizes::$EPIC_SIR_BODY ||
+            $this->prize == Prizes::$EPIC_SIR_FEET
+        );
+        if ($sir_cond || $clint_cond || $player->group === 3) {
+            $this->prize = null;
+            $this->prize_cancelled = true;
+            $this->sendToAll("cancelPrize`$player->name");
+        } else {
+            $player->write('message`Error: You lack the power to perform this action.');
         }
     }
 

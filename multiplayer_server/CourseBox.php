@@ -6,21 +6,23 @@ class CourseBox
 {
 
     public $slot_array = array();
-    public $course_id;
     public $room;
+    public $course_id;
+    public $page_number;
     private $force_time;
 
-    public function __construct($course_id, $room)
+    public function __construct($room, $course_id, $page_number = 0)
     {
-        $this->course_id = $course_id;
         $this->room = $room;
+        $this->course_id = $course_id;
+        $this->page_number = (int) $page_number;
 
-        $room->course_array[$course_id] = $this;
+        $this->room->maybeHighlight('add', $this->page_number);
+        $this->room->course_array[$this->course_id] = $this;
     }
 
-    public function fillSlot($player, $slot)
+    public function fillSlot($player, int $slot)
     {
-        $slot = (int) $slot;
         if ($slot < 0 || $slot > 3) {
             return;
         }
@@ -32,9 +34,8 @@ class CourseBox
             $player->slot = $slot;
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
-            $fill_str = $this->getFillStr($player, $slot);
-            $this->room->sendToRoom($fill_str, $player->user_id);
-            $player->write("$fill_str`me");
+            $this->room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
+            $player->write($this->getFillStr($player, $slot, true));
 
             if (isset($this->force_time)) {
                 $force_time = time() - $this->force_time;
@@ -92,9 +93,10 @@ class CourseBox
         }
     }
 
-    private function getFillStr($player, $slot)
+    private function getFillStr($player, $slot, $is_me = false)
     {
-        return "fillSlot$this->course_id`$slot`$player->name`$player->active_rank";
+        $me = $is_me ? 'me' : '';
+        return "fillSlot$this->course_id`$slot`$player->name`$player->active_rank`$me";
     }
 
     private function getConfirmStr($slot)
@@ -184,6 +186,11 @@ class CourseBox
 
     public function remove()
     {
+        $this->room->course_array[$this->course_id] = null;
+        unset($this->room->course_array[$this->course_id]);
+
+        $this->room->maybeHighlight('remove', $this->page_number);
+
         foreach ($this->slot_array as $player) {
             $this->clearSlot($player);
         }
@@ -191,7 +198,10 @@ class CourseBox
         $this->slot_array = null;
         unset($this->slot_array);
 
-        $this->room->course_array[$this->course_id] = null;
-        unset($this->room->course_array[$this->course_id]);
+        // delete the rest
+        foreach ($this as $key => $var) {
+            $this->$key = null;
+            unset($this->$key, $key, $var);
+        }
     }
 }
