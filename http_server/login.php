@@ -21,7 +21,6 @@ $ip = get_ip();
 $encrypted_login = default_post('i', '');
 $version = isset($_POST['build']) ? default_post('build', '') : default_post('version', '');
 $in_token = find('token');
-$allowed_versions = array('15-jul-2019-v156-1', '22-aug-2019-v157');
 $guest_login = false;
 $token_login = false;
 $has_email = false;
@@ -45,7 +44,7 @@ try {
     if (!isset($encrypted_login)) {
         throw new Exception('Login data not recieved.');
     } // sanity check: is it an allowed version?
-    if (array_search($version, $allowed_versions) === false) {
+    if (array_search($version, $ALLOWED_CLIENT_VERSIONS) === false) {
         throw new Exception('PR2 has recently been updated. Please refresh the page to download the latest version.');
     }
 
