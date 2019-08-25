@@ -17,7 +17,7 @@ class CourseBox
     {
         // make sure this room exists
         $this->room_name = $room_type . '_room';
-        if (!in_array($room_type, ['campaign', 'best', 'best_today', 'newest', 'search'])) {
+        if (empty($this->room) || !in_array($room_type, ['campaign', 'best', 'best_today', 'newest', 'search'])) {
             output('room exception on construct! $room_type = ' . (isset($room_type) ? $room_type : 'null'));
             return;
         }
@@ -36,7 +36,7 @@ class CourseBox
         if ($slot < 0 || $slot > 3) {
             return;
         }
-        if ($this->room == null) { // debugging
+        if (empty($this->room)) { // debugging
             $str = "room exception on fillSlot! player id: $player->user_id | room_name = ";
             output($str . (isset($this->room_name) ? $this->room_name : 'null'));
             $this->remove();
@@ -61,7 +61,7 @@ class CourseBox
 
     public function confirmSlot($player)
     {
-        if ($this->room == null) { // debugging
+        if (empty($this->room)) { // debugging
             $str = "room exception on confirmSlot! player id: $player->user_id | room_name = ";
             output($str . (isset($this->room_name) ? $this->room_name : 'null'));
             $this->remove();
@@ -82,7 +82,7 @@ class CourseBox
 
     public function clearSlot($player)
     {
-        if ($this->room == null) { // debugging
+        if (empty($this->room)) { // debugging
             $str = "room exception on clearSlot! player id: $player->user_id | room_name = ";
             output($str . (isset($this->room_name) ? $this->room_name : 'null'));
             $this->remove();
