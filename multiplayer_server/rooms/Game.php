@@ -760,7 +760,7 @@ class Game extends Room
             }
 
             foreach ($this->player_array as $player) {
-                if (!$player->quit_race) {
+                if (!$player->race_stats->quit_race) {
                     $everyone_quit = false;
                     break;
                 }
