@@ -39,6 +39,7 @@ $LOGIN_IV = 'there';
 
 $BLS_IP_PREFIX = 'no ddos plz';
 
+$ALLOWED_CLIENT_VERSIONS = array('weeeee version', 'weeeee new version');
 $TRUSTED_REFS = [ // trusted referrers for the pr2 client
     'http://pr2hub.com/', // pr2hub
     'https://pr2hub.com/', // pr2hub
