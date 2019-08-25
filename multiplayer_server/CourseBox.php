@@ -11,9 +11,17 @@ class CourseBox
     public $page_number;
     private $force_time;
 
-    public function __construct($room, $course_id, $page_number = 0)
+    public function __construct($room_type, $course_id, $page_number = 0)
     {
-        $this->room = $room;
+        // make sure this room exists
+        $room_name = $room_type . '_room';
+        if (!in_array($room_type, ['campaign', 'best', 'best_today', 'newest', 'search'])) {
+            output('room exception! $room_type = ' . (isset($room_type) ? $room_type : 'null'));
+            return;
+        }
+
+        global ${$room_name};
+        $this->room = ${$room_name};
         $this->course_id = $course_id;
         $this->page_number = (int) $page_number;
 
