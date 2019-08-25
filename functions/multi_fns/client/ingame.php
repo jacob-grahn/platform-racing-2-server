@@ -6,7 +6,7 @@ function client_cancel_prize($socket)
 {
     $player = $socket->getPlayer();
     if (isset($player->game_room)) {
-        if ($player->special_user === true || ($player->group === 3 && $player->server_owner === true)) {
+        if ($player->special_user === true || $player->group === 3) {
             $player->game_room->cancelPrize($player);
         }
     }
