@@ -78,7 +78,7 @@ try {
     $remember = $login->remember;
 
     // more sanity checks
-    if (array_search($version2, $allowed_versions) === false) {
+    if (array_search($version2, $ALLOWED_CLIENT_VERSIONS) === false) {
         $e = "PR2 has recently been updated. Please refresh the page to download the latest version. $version2";
         throw new Exception($e);
     }
