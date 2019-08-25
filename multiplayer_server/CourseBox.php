@@ -26,6 +26,11 @@ class CourseBox
         if ($slot < 0 || $slot > 3) {
             return;
         }
+        if (empty($this->room)) { // debugging
+            $str = "room exception on fillSlot! player id: $player->user_id | room_name = ";
+            output($str . (isset($this->room_name) ? $this->room_name : 'null'));
+            $this->remove();
+        }
         if (!isset($this->slot_array[$slot])) {
             if (isset($player->course_box)) {
                 $player->course_box->clearSlot($player);
@@ -46,6 +51,12 @@ class CourseBox
 
     public function confirmSlot($player)
     {
+        if (empty($this->room)) { // debugging
+            $str = "room exception on confirmSlot! player id: $player->user_id | room_name = ";
+            output($str . (isset($this->room_name) ? $this->room_name : 'null'));
+            $this->remove();
+        }
+
         if ($player->confirmed == false) {
             $player->confirmed = true;
             $this->room->sendToAll($this->getConfirmStr($player->slot));
@@ -61,6 +72,12 @@ class CourseBox
 
     public function clearSlot($player)
     {
+        if (empty($this->room)) { // debugging
+            $str = "room exception on clearSlot! player id: $player->user_id | room_name = ";
+            output($str . (isset($this->room_name) ? $this->room_name : 'null'));
+            $this->remove();
+        }
+
         $slot = $player->slot;
 
         $player->confirmed = false;
