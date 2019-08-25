@@ -11,17 +11,19 @@ class CourseBox
     public $page_number;
     private $force_time;
 
+    private $room_name; // debugging
+
     public function __construct($room_type, $course_id, $page_number = 0)
     {
         // make sure this room exists
-        $room_name = $room_type . '_room';
+        $this->room_name = $room_type . '_room';
         if (!in_array($room_type, ['campaign', 'best', 'best_today', 'newest', 'search'])) {
-            output('room exception! $room_type = ' . (isset($room_type) ? $room_type : 'null'));
+            output('room exception on construct! $room_type = ' . (isset($room_type) ? $room_type : 'null'));
             return;
         }
 
-        global ${$room_name};
-        $this->room = ${$room_name};
+        global ${$this->room_name};
+        $this->room = ${$this->room_name};
         $this->course_id = $course_id;
         $this->page_number = (int) $page_number;
 
@@ -33,6 +35,11 @@ class CourseBox
     {
         if ($slot < 0 || $slot > 3) {
             return;
+        }
+        if ($this->room == null) { // debugging
+            $str = "room exception on fillSlot! player id: $player->user_id | room_name = ";
+            output($str . (isset($this->room_name) ? $this->room_name : 'null'));
+            $this->remove();
         }
         if (!isset($this->slot_array[$slot])) {
             if (isset($player->course_box)) {
@@ -54,6 +61,12 @@ class CourseBox
 
     public function confirmSlot($player)
     {
+        if ($this->room == null) { // debugging
+            $str = "room exception on confirmSlot! player id: $player->user_id | room_name = ";
+            output($str . (isset($this->room_name) ? $this->room_name : 'null'));
+            $this->remove();
+        }
+
         if ($player->confirmed == false) {
             $player->confirmed = true;
             $this->room->sendToAll($this->getConfirmStr($player->slot));
@@ -69,6 +82,12 @@ class CourseBox
 
     public function clearSlot($player)
     {
+        if ($this->room == null) { // debugging
+            $str = "room exception on clearSlot! player id: $player->user_id | room_name = ";
+            output($str . (isset($this->room_name) ? $this->room_name : 'null'));
+            $this->remove();
+        }
+
         $slot = $player->slot;
 
         $player->confirmed = false;
