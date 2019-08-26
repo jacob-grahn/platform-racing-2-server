@@ -35,6 +35,7 @@ class CourseBox
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
             if (empty($this->room)) {
+                $this->room = $player->right_room;
                 output('room exception! dumping below... $player->user_id: ' . $player->user_id);
                 var_dump($this);
             }
