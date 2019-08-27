@@ -25,7 +25,12 @@ class CourseBox
     private function ensureRoom($player)
     {
         if (empty($this->room)) {
-            $this->room = $player->right_room;
+            var_dump($this->room, $player->right_room);
+            if (!empty($player->right_room)) {
+                $this->room = $player->right_room;
+            } else {
+                throw new Exception("Exception encountered on ensureRoom by $player->name");
+            }
         }
     }
 
@@ -38,7 +43,13 @@ class CourseBox
         }
 
         // sanity check (what room am I in? who am I? where am I going?)
-        $this->ensureRoom($player);
+        try {
+            $this->ensureRoom($player);
+        } catch (Exception $e) {
+            output('exception from: fillSlot');
+            $this->remove(true);
+            return;
+        }
 
         // add player to slot array
         if (!isset($this->slot_array[$slot])) {
@@ -62,7 +73,13 @@ class CourseBox
     public function confirmSlot($player)
     {
         // sanity check (what room am I in? who am I? where am I going?)
-        $this->ensureRoom($player);
+        try {
+            $this->ensureRoom($player);
+        } catch (Exception $e) {
+            output('exception from: confirmSlot');
+            $this->remove(true);
+            return;
+        }
 
         // notify everyone that this is no joke
         if ($player->confirmed == false) {
@@ -82,7 +99,13 @@ class CourseBox
     public function clearSlot($player)
     {
         // sanity check (what room am I in? who am I? where am I going?)
-        $this->ensureRoom($player);
+        try {
+            $this->ensureRoom($player);
+        } catch (Exception $e) {
+            output('exception from: clearSlot');
+            $this->remove(true);
+            return;
+        }
 
         $slot = $player->slot;
 
@@ -207,12 +230,14 @@ class CourseBox
         return $num;
     }
 
-    public function remove()
+    public function remove($fromE = false)
     {
         $this->room->course_array[$this->course_id] = null;
         unset($this->room->course_array[$this->course_id]);
 
-        $this->room->maybeHighlight('remove', $this->page_number);
+        if (!empty($this->room) || $fromE === true) {
+            $this->room->maybeHighlight('remove', $this->page_number);
+        }
 
         foreach ($this->slot_array as $player) {
             $this->clearSlot($player);
