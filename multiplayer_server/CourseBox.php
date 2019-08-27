@@ -21,11 +21,26 @@ class CourseBox
         $this->room->course_array[$this->course_id] = $this;
     }
 
+
+    private function ensureRoom($player)
+    {
+        if (empty($this->room)) {
+            $this->room = $player->right_room;
+        }
+    }
+
+
     public function fillSlot($player, int $slot)
     {
+        // sanity check (slot to fill?)
         if ($slot < 0 || $slot > 3) {
             return;
         }
+
+        // sanity check (what room am I in? who am I? where am I going?)
+        $this->ensureRoom($player);
+
+        // add player to slot array
         if (!isset($this->slot_array[$slot])) {
             if (isset($player->course_box)) {
                 $player->course_box->clearSlot($player);
@@ -34,11 +49,6 @@ class CourseBox
             $player->slot = $slot;
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
-            if (empty($this->room)) {
-                $this->room = $player->right_room;
-                output('room exception! dumping below... $player->user_id: ' . $player->user_id);
-                var_dump($this);
-            }
             $this->room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
             $player->write($this->getFillStr($player, $slot, true));
 
@@ -51,11 +61,16 @@ class CourseBox
 
     public function confirmSlot($player)
     {
+        // sanity check (what room am I in? who am I? where am I going?)
+        $this->ensureRoom($player);
+
+        // notify everyone that this is no joke
         if ($player->confirmed == false) {
             $player->confirmed = true;
             $this->room->sendToAll($this->getConfirmStr($player->slot));
         }
 
+        // initiate the countdown if it hasn't already started
         if (!isset($this->force_time)) {
             $this->force_time = time();
             $this->sendToAll('forceTime`0');
@@ -66,6 +81,9 @@ class CourseBox
 
     public function clearSlot($player)
     {
+        // sanity check (what room am I in? who am I? where am I going?)
+        $this->ensureRoom($player);
+
         $slot = $player->slot;
 
         $player->confirmed = false;
