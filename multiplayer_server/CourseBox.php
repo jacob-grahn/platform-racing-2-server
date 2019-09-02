@@ -17,7 +17,7 @@ class CourseBox
         $this->course_id = $course_id;
         $this->page_number = (int) $page_number;
 
-        $this->room->maybeHighlight('add', $this->page_number);
+        $this->room->maybeHighlight($this, 'add', $this->page_number);
         $this->room->course_array[$this->course_id] = $this;
     }
 
@@ -236,7 +236,7 @@ class CourseBox
         unset($this->room->course_array[$this->course_id]);
 
         if (!empty($this->room) || $fromE === true) {
-            $this->room->maybeHighlight('remove', $this->page_number);
+            $this->room->maybeHighlight($this, 'remove', $this->page_number);
         }
 
         foreach ($this->slot_array as $player) {

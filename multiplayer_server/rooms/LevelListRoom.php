@@ -38,8 +38,10 @@ class LevelListRoom extends Room
 
 
     // adds a page highlight for a new coursebox if one isn't already active for this page
-    public function maybeHighlight($mode, int $page)
+    public function maybeHighlight($box, $mode, int $page)
     {
+        $box->room = $this;
+
         $max = $this->type === 'campaign' ? 6 : 9;
         if ($page < 1 || $page > $max || ($mode !== 'add' && $mode !== 'remove') || $this->type === 'search') {
             return; // don't continue when out of bounds of nav, invalid mode)
