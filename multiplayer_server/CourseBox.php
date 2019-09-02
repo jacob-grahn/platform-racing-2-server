@@ -34,6 +34,7 @@ class CourseBox
 
     public function fillSlot($room, $player, int $slot)
     {
+        var_dump($this->course_id);
         // sanity check (slot to fill?)
         if ($slot < 0 || $slot > 3) {
             return;
