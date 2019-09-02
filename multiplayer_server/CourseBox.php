@@ -24,7 +24,7 @@ class CourseBox
 
     private function ensureRoom($player)
     {
-        if (empty($this->room)) {
+        if (empty($this->room) || !$this->room) {
             var_dump($this->room, $player->right_room);
             if (!empty($player->right_room)) {
                 $this->room = $player->right_room;
