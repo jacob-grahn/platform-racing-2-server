@@ -34,8 +34,6 @@ class CourseBox
 
     public function fillSlot($room, $player, int $slot)
     {
-        $this->room = $room; // ensure room is set
-
         // sanity check (slot to fill?)
         if ($slot < 0 || $slot > 3) {
             return;
@@ -50,7 +48,8 @@ class CourseBox
             $player->slot = $slot;
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
-            $this->room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
+            $room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
+            $this->room = $room;
             $player->write($this->getFillStr($player, $slot, true));
 
             if (isset($this->force_time)) {
