@@ -51,7 +51,7 @@ class CourseBox
         // add player to slot array
         if (!isset($this->slot_array[$slot])) {
             if (isset($player->course_box)) {
-                $player->course_box->clearSlot($player);
+                $player->course_box->clearSlot($player, true);
             }
             $player->confirmed = false;
             $player->slot = $slot;
@@ -93,7 +93,7 @@ class CourseBox
         $this->checkConfirmed();
     }
 
-    public function clearSlot($player)
+    public function clearSlot($player, $fromFill = false)
     {
         // sanity check (what room am I in? who am I? where am I going?)
         try {
@@ -105,6 +105,7 @@ class CourseBox
         }
 
         $slot = $player->slot;
+        $box = $player->course_box;
 
         $player->confirmed = false;
         $player->slot = null;
@@ -119,7 +120,7 @@ class CourseBox
             $this->sendToAll('forceTime`-1');
         }
 
-        if (count($this->slot_array) <= 0) {
+        if (count($this->slot_array) <= 0 && (!$fromFill || $box != $this)) {
             $this->remove();
         } else {
             $this->checkConfirmed();
