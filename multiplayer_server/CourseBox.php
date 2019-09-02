@@ -22,6 +22,16 @@ class CourseBox
     }
 
 
+    private function ensureRoom($room)
+    {
+        if (empty($this->room) && !empty($room)) {
+            $this->room = $room;
+        } elseif (empty($this->room) && empty($room)) {
+            throw new \Exception("Exception encountered on ensureRoom.");
+        }
+    }
+
+
     public function fillSlot($room, $player, int $slot)
     {
         // back up data, just in case...
@@ -78,6 +88,15 @@ class CourseBox
 
     public function clearSlot($player, $recursed = false)
     {
+        // sanity check (what room am I in? who am I? where am I going?)
+        try {
+            $this->ensureRoom($player->right_room);
+        } catch (\Exception $e) {
+            output('exception from: confirmSlot');
+            $this->remove(true);
+            return;
+        }
+
         $slot = $player->slot;
 
         $player->confirmed = false;
@@ -201,7 +220,7 @@ class CourseBox
         return $num;
     }
 
-    public function remove()
+    public function remove($fromE = false)
     {
         foreach ($this->slot_array as $player) {
             $this->clearSlot($player, true);
@@ -210,8 +229,7 @@ class CourseBox
         $this->slot_array = null;
         unset($this->slot_array);
 
-        var_dump($this->room);
-        if (!empty($this->room)) {
+        if (!empty($this->room) && $fromE === false) {
             $this->room->maybeHighlight('remove', $this->page_number);
         }
 
