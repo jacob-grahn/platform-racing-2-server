@@ -82,6 +82,10 @@ class LevelListRoom extends Room
             $this->course_array[$course_id]->fillSlot($player, $slot);
         } else {
             $course = new CourseBox($this, $course_id, $page_num);
+            global $verbose;
+            if ($verbose) {
+                var_dump($course);
+            }
             $course->fillSlot($player, $slot);
         }
     }
