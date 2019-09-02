@@ -6,6 +6,7 @@ class CourseBox
 {
 
     public $slot_array = array();
+    public $starting = false;
     public $room;
     public $course_id;
     public $page_number;
@@ -161,6 +162,7 @@ class CourseBox
 
     private function startGame()
     {
+        $this->starting = true;
         $course_id = substr($this->course_id, 0, strpos($this->course_id, '_'));
         $game = new Game($course_id);
         foreach ($this->slot_array as $player) {
@@ -178,7 +180,7 @@ class CourseBox
             }
         }
         $game->init();
-        // $this->remove(); -- this should happen when all of the players leave
+        $this->remove(false, true);
     }
 
     public function forceStart()
@@ -220,8 +222,12 @@ class CourseBox
         return $num;
     }
 
-    public function remove($fromE = false)
+    public function remove($fromE = false, $fromGame = false)
     {
+        if ($this->starting === true && $fromGame === false) {
+            return;
+        }
+
         foreach ($this->slot_array as $player) {
             $this->clearSlot($player, true);
         }
