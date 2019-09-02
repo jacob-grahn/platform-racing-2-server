@@ -22,16 +22,6 @@ class CourseBox
     }
 
 
-    private function ensureRoom($room)
-    {
-        if (empty($this->room) && !empty($room)) {
-            $this->room = $room;
-        } elseif (empty($this->room) && empty($room)) {
-            throw new \Exception("Exception encountered on ensureRoom.");
-        }
-    }
-
-
     public function fillSlot($room, $player, int $slot)
     {
         // back up data, just in case...
@@ -54,7 +44,7 @@ class CourseBox
             $this->slot_array[$slot] = $player;
 
             // restore data
-            $this->room = $room;
+            $this->room = $player->right_room = $room;
             $this->page_number = $page_number;
             $this->course_id = $course_id;
 
@@ -71,15 +61,6 @@ class CourseBox
 
     public function confirmSlot($player)
     {
-        // sanity check (what room am I in? who am I? where am I going?)
-        try {
-            $this->ensureRoom($player->right_room);
-        } catch (\Exception $e) {
-            output('exception from: confirmSlot');
-            $this->remove(true);
-            return;
-        }
-
         // notify everyone that this is no joke
         if ($player->confirmed == false) {
             $player->confirmed = true;
@@ -95,7 +76,7 @@ class CourseBox
         $this->checkConfirmed();
     }
 
-    public function clearSlot($player)
+    public function clearSlot($player, $recursed = false)
     {
         $slot = $player->slot;
 
@@ -112,7 +93,7 @@ class CourseBox
             $this->sendToAll('forceTime`-1');
         }
 
-        if (count($this->slot_array) <= 0) {
+        if (count($this->slot_array) <= 0 && $recursed === false) {
             $this->remove();
         } else {
             $this->checkConfirmed();
@@ -220,16 +201,17 @@ class CourseBox
         return $num;
     }
 
-    public function remove($fromE = false)
+    public function remove()
     {
         foreach ($this->slot_array as $player) {
-            $this->clearSlot($player);
+            $this->clearSlot($player, true);
         }
 
         $this->slot_array = null;
         unset($this->slot_array);
 
-        if (!empty($this->room) || $fromE === true) {
+        var_dump($this->room);
+        if (!empty($this->room)) {
             $this->room->maybeHighlight('remove', $this->page_number);
         }
 
