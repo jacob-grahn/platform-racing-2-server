@@ -231,19 +231,19 @@ class CourseBox
 
     public function remove($fromE = false)
     {
-        $this->room->course_array[$this->course_id] = null;
-        unset($this->room->course_array[$this->course_id]);
-
-        if (!empty($this->room) || $fromE === true) {
-            $this->room->maybeHighlight('remove', $this->page_number);
-        }
-
         foreach ($this->slot_array as $player) {
             $this->clearSlot($player);
         }
 
         $this->slot_array = null;
         unset($this->slot_array);
+
+        if (!empty($this->room) || $fromE === true) {
+            $this->room->maybeHighlight('remove', $this->page_number);
+        }
+
+        $this->room->course_array[$this->course_id] = null;
+        unset($this->room->course_array[$this->course_id]);
 
         // delete the rest
         foreach ($this as $key => $var) {
