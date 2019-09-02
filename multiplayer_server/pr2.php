@@ -73,6 +73,7 @@ HappyHour::$random_hour = rand(0, 23);
 $pdo = pdo_connect();
 
 $server_id = (int) $argv[1];
+$verbose = $argc > 2 ? (strtolower($argv[2]) === 'true' ? true : false) : false;
 $port = 0;
 $server_name = '';
 $guild_id = 0;
