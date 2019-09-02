@@ -97,15 +97,6 @@ class CourseBox
 
     public function clearSlot($player)
     {
-        // sanity check (what room am I in? who am I? where am I going?)
-        try {
-            $this->ensureRoom($player->right_room);
-        } catch (\Exception $e) {
-            output('exception from: clearSlot');
-            $this->remove(true);
-            return;
-        }
-
         $slot = $player->slot;
 
         $player->confirmed = false;
