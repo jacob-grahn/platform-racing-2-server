@@ -79,7 +79,7 @@ function client_confirm_slot($socket)
 {
     $player = $socket->getPlayer();
     $course_box = $player->course_box;
-    if (isset($course_box)) {
+    if (isset($player->right_room) && isset($course_box)) {
         $course_box->confirmSlot($player);
     }
 }
@@ -90,7 +90,7 @@ function client_clear_slot($socket)
 {
     $player = $socket->getPlayer();
     $course_box = $player->course_box;
-    if (isset($course_box)) {
+    if (isset($player->right_room) && isset($course_box)) {
         $course_box->clearSlot($player);
     }
 }
@@ -101,7 +101,7 @@ function client_force_start($socket)
 {
     $player = $socket->getPlayer();
     $course_box = $player->course_box;
-    if (isset($course_box)) {
+    if (isset($player->right_room) && isset($course_box)) {
         $course_box->forceStart();
     }
 }
