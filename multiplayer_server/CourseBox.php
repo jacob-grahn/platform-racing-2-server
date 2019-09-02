@@ -97,7 +97,6 @@ class CourseBox
         }
 
         $slot = $player->slot;
-        $box = $player->course_box;
 
         $player->confirmed = false;
         $player->slot = null;
