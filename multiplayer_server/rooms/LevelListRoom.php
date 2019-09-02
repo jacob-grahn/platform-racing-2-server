@@ -77,7 +77,7 @@ class LevelListRoom extends Room
             $slot = 0;
         }
         if (isset($this->course_array[$course_id])) {
-            $this->course_array[$course_id]->fillSlot($player, $slot);
+            $this->course_array[$course_id]->fillSlot($this, $player, $slot);
         } else {
             $course = new CourseBox($this, $course_id, $page_num);
             $course->fillSlot($this, $player, $slot);
