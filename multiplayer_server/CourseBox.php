@@ -52,13 +52,15 @@ class CourseBox
             $player->slot = $slot;
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
-            $room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
-            $player->write($this->getFillStr($player, $slot, true));
 
             // restore data
             $this->room = $room;
             $this->page_number = $page_number;
             $this->course_id = $course_id;
+
+            // notify players
+            $room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
+            $player->write($this->getFillStr($player, $slot, true));
 
             if (isset($this->force_time)) {
                 $force_time = time() - $this->force_time;
