@@ -90,9 +90,9 @@ class CourseBox
     {
         // sanity check (what room am I in? who am I? where am I going?)
         try {
-            $this->ensureRoom($player->right_room);
+            $this->ensureRoom(@$player->right_room);
         } catch (\Exception $e) {
-            output('exception from: confirmSlot');
+            output('Exception from: confirmSlot');
             $this->remove(true);
             return;
         }
@@ -178,7 +178,7 @@ class CourseBox
             }
         }
         $game->init();
-        $this->remove();
+        // $this->remove(); -- this should happen when all of the players leave
     }
 
     public function forceStart()
