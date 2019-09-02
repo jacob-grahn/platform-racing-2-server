@@ -31,17 +31,15 @@ class LevelListRoom extends Room
     {
         if (isset($player->course_id)) {
             $course = $this->course_array[$player->course_id];
-            $course->clearSlot($player);
+            $course->clearSlot($this, $player);
         }
         Room::removePlayer($player);
     }
 
 
     // adds a page highlight for a new coursebox if one isn't already active for this page
-    public function maybeHighlight($box, $mode, int $page)
+    public function maybeHighlight($mode, int $page)
     {
-        $box->room = $this;
-
         $max = $this->type === 'campaign' ? 6 : 9;
         if ($page < 1 || $page > $max || ($mode !== 'add' && $mode !== 'remove') || $this->type === 'search') {
             return; // don't continue when out of bounds of nav, invalid mode)
@@ -82,10 +80,7 @@ class LevelListRoom extends Room
             $this->course_array[$course_id]->fillSlot($player, $slot);
         } else {
             $course = new CourseBox($this, $course_id, $page_num);
-            /*global $verbose;
-            if ($verbose) {
-                var_dump($course);
-            }*/
+            $course->fillSlot($this, $player, $slot);
         }
     }
 }

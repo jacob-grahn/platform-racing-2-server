@@ -17,25 +17,22 @@ class CourseBox
         $this->course_id = $course_id;
         $this->page_number = (int) $page_number;
 
-        $this->room->maybeHighlight($this, 'add', $this->page_number);
+        $this->room->maybeHighlight('add', $this->page_number);
         $this->room->course_array[$this->course_id] = $this;
     }
 
 
-    private function ensureRoom($player)
+    private function ensureRoom($room)
     {
-        if (empty($this->room) || !$this->room) {
-            var_dump($this->room, $player->right_room);
-            if (!empty($player->right_room)) {
-                $this->room = $player->right_room;
-            } else {
-                throw new \Exception("Exception encountered on ensureRoom by $player->name");
-            }
+        if (empty($this->room) && !empty($room)) {
+            $this->room = $room;
+        } elseif (empty($this->room) && empty($room)) {
+            throw new \Exception("Exception encountered on ensureRoom.");
         }
     }
 
 
-    public function fillSlot($player, int $slot)
+    public function fillSlot($room, $player, int $slot)
     {
         // sanity check (slot to fill?)
         if ($slot < 0 || $slot > 3) {
@@ -44,7 +41,7 @@ class CourseBox
 
         // sanity check (what room am I in? who am I? where am I going?)
         try {
-            $this->ensureRoom($player);
+            $this->ensureRoom($room);
         } catch (\Exception $e) {
             output('exception from: fillSlot');
             $this->remove(true);
@@ -74,7 +71,7 @@ class CourseBox
     {
         // sanity check (what room am I in? who am I? where am I going?)
         try {
-            $this->ensureRoom($player);
+            $this->ensureRoom($player->right_room);
         } catch (\Exception $e) {
             output('exception from: confirmSlot');
             $this->remove(true);
@@ -100,7 +97,7 @@ class CourseBox
     {
         // sanity check (what room am I in? who am I? where am I going?)
         try {
-            $this->ensureRoom($player);
+            $this->ensureRoom($player->right_room);
         } catch (\Exception $e) {
             output('exception from: clearSlot');
             $this->remove(true);
@@ -236,7 +233,7 @@ class CourseBox
         unset($this->room->course_array[$this->course_id]);
 
         if (!empty($this->room) || $fromE === true) {
-            $this->room->maybeHighlight($this, 'remove', $this->page_number);
+            $this->room->maybeHighlight('remove', $this->page_number);
         }
 
         foreach ($this->slot_array as $player) {
