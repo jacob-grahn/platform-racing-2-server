@@ -34,7 +34,10 @@ class CourseBox
 
     public function fillSlot($room, $player, int $slot)
     {
-        var_dump($this->course_id);
+        // back up data, just in case...
+        $page_number = $this->page_number;
+        $course_id = $this->course_id;
+
         // sanity check (slot to fill?)
         if ($slot < 0 || $slot > 3) {
             return;
@@ -50,8 +53,12 @@ class CourseBox
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
             $room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
-            $this->room = $room;
             $player->write($this->getFillStr($player, $slot, true));
+
+            // restore data
+            $this->room = $room;
+            $this->page_number = $page_number;
+            $this->course_id = $course_id;
 
             if (isset($this->force_time)) {
                 $force_time = time() - $this->force_time;
