@@ -29,7 +29,7 @@ class CourseBox
             if (!empty($player->right_room)) {
                 $this->room = $player->right_room;
             } else {
-                throw new Exception("Exception encountered on ensureRoom by $player->name");
+                throw new \Exception("Exception encountered on ensureRoom by $player->name");
             }
         }
     }
@@ -45,7 +45,7 @@ class CourseBox
         // sanity check (what room am I in? who am I? where am I going?)
         try {
             $this->ensureRoom($player);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             output('exception from: fillSlot');
             $this->remove(true);
             return;
@@ -75,7 +75,7 @@ class CourseBox
         // sanity check (what room am I in? who am I? where am I going?)
         try {
             $this->ensureRoom($player);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             output('exception from: confirmSlot');
             $this->remove(true);
             return;
@@ -101,7 +101,7 @@ class CourseBox
         // sanity check (what room am I in? who am I? where am I going?)
         try {
             $this->ensureRoom($player);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             output('exception from: clearSlot');
             $this->remove(true);
             return;
