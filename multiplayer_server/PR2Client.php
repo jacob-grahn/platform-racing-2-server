@@ -26,6 +26,10 @@ class PR2Client extends \chabot\SocketServerClient
 
     private function handleRequest($string)
     {
+        global $verbose;
+        if ($verbose === true) {
+            output('READ: ' . $string);
+        }
         try {
             $array = explode('`', $string);
             if ($this->process) {
@@ -112,6 +116,10 @@ class PR2Client extends \chabot\SocketServerClient
             $str_to_hash = SALT . $buffer;
             $hash_bit = substr(md5($str_to_hash), 0, 3);
             $buffer = $hash_bit . '`' . $buffer;
+        }
+        global $verbose;
+        if ($verbose === true) {
+            output('WRITE: ' . $buffer);
         }
         $buffer .= chr(0x04);
         parent::write($buffer, $length);
