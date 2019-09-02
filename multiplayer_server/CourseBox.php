@@ -41,6 +41,7 @@ class CourseBox
 
         // sanity check (what room am I in? who am I? where am I going?)
         try {
+            var_dump('DUMPING FROM LINE 44:', $this->room, $room);
             $this->ensureRoom($room);
         } catch (\Exception $e) {
             output('exception from: fillSlot');
@@ -50,13 +51,16 @@ class CourseBox
 
         // add player to slot array
         if (!isset($this->slot_array[$slot])) {
+            var_dump('DUMPING FROM LINE 54:', $this->room, $room);
             if (isset($player->course_box)) {
-                $player->course_box->clearSlot($player, true);
+                $player->course_box->clearSlot($player);
             }
+            var_dump('DUMPING FROM LINE 58:', $this->room, $room);
             $player->confirmed = false;
             $player->slot = $slot;
             $player->course_box = $this;
             $this->slot_array[$slot] = $player;
+            var_dump('DUMPING FROM LINE 63:', $this->room, $room);
             $this->room->sendToRoom($this->getFillStr($player, $slot), $player->user_id);
             $player->write($this->getFillStr($player, $slot, true));
 
@@ -93,7 +97,7 @@ class CourseBox
         $this->checkConfirmed();
     }
 
-    public function clearSlot($player, $fromFill = false)
+    public function clearSlot($player)
     {
         // sanity check (what room am I in? who am I? where am I going?)
         try {
@@ -120,7 +124,7 @@ class CourseBox
             $this->sendToAll('forceTime`-1');
         }
 
-        if (count($this->slot_array) <= 0 && (!$fromFill || $box != $this)) {
+        if (count($this->slot_array) <= 0) {
             $this->remove();
         } else {
             $this->checkConfirmed();
