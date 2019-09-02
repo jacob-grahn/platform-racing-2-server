@@ -17,7 +17,7 @@ class CourseBox
         $this->course_id = $course_id;
         $this->page_number = (int) $page_number;
 
-        $this->room->maybeHighlight($this, 'add', $this->page_number);
+        $this->room->maybeHighlight('add', $this->page_number);
         $this->room->course_array[$this->course_id] = $this;
     }
 
@@ -67,11 +67,11 @@ class CourseBox
         }
     }
 
-    public function confirmSlot($room, $player)
+    public function confirmSlot($player)
     {
         // sanity check (what room am I in? who am I? where am I going?)
         try {
-            $this->ensureRoom($room);
+            $this->ensureRoom($player->right_room);
         } catch (\Exception $e) {
             output('exception from: confirmSlot');
             $this->remove(true);
@@ -93,11 +93,11 @@ class CourseBox
         $this->checkConfirmed();
     }
 
-    public function clearSlot($room, $player)
+    public function clearSlot($player)
     {
         // sanity check (what room am I in? who am I? where am I going?)
         try {
-            $this->ensureRoom($room);
+            $this->ensureRoom($player->right_room);
         } catch (\Exception $e) {
             output('exception from: clearSlot');
             $this->remove(true);
@@ -233,7 +233,7 @@ class CourseBox
         unset($this->room->course_array[$this->course_id]);
 
         if (!empty($this->room) || $fromE === true) {
-            $this->room->maybeHighlight($this, 'remove', $this->page_number);
+            $this->room->maybeHighlight('remove', $this->page_number);
         }
 
         foreach ($this->slot_array as $player) {
