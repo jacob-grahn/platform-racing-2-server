@@ -31,7 +31,7 @@ class LevelListRoom extends Room
     {
         if (isset($player->course_id)) {
             $course = $this->course_array[$player->course_id];
-            $course->clearSlot($player);
+            $course->clearSlot($this, $player);
         }
         Room::removePlayer($player);
     }
@@ -82,10 +82,7 @@ class LevelListRoom extends Room
             $this->course_array[$course_id]->fillSlot($player, $slot);
         } else {
             $course = new CourseBox($this, $course_id, $page_num);
-            /*global $verbose;
-            if ($verbose) {
-                var_dump($course);
-            }*/
+            $course->fillSlot($this, $player, $slot);
         }
     }
 }
