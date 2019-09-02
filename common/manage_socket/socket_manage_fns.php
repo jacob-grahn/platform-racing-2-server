@@ -88,12 +88,13 @@ function test_server($script, $address, $port, $salt, $server_id)
 
 
 // starts a server
-function start_server($script, $port, $server_id)
+function start_server($script, $port, $server_id, $verbose = false)
 {
     output("STARTING SERVER | Script: $script | Port: $port");
 
     $log = ROOT_DIR . '/../pr2/log/' . $port . '-' . date("Fj-Y-g:ia") . '.log';
-    $command = "nohup php $script $server_id > $log & echo $!";
+    $verbose = $verbose === true ? 'true' : '';
+    $command = "nohup php $script $server_id $verbose > $log & echo $!";
     output("Executing command: $command");
     $pid = exec($command);
 
