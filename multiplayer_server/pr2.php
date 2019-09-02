@@ -106,5 +106,5 @@ $uptime = date('r');
 output("Starting PR2 server $server_name (ID: #$server_id) on port $port...");
 $daemon = new \chabot\SocketDaemon();
 $server = $daemon->createServer('\pr2\multi\PR2SocketServer', '\pr2\multi\PR2Client', 0, $port);
-output("Success! Server started on $uptime.");
+output("Success! Server started" . ($verbose ? ' (in verbose mode)' : '') . " on $uptime.");
 $daemon->process();
