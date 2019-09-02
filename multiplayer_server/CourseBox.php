@@ -22,20 +22,17 @@ class CourseBox
     }
 
 
-    private function ensureRoom($player)
+    private function ensureRoom($room)
     {
-        if (empty($this->room) || !$this->room) {
-            var_dump($this->room, $player->right_room);
-            if (!empty($player->right_room)) {
-                $this->room = $player->right_room;
-            } else {
-                throw new \Exception("Exception encountered on ensureRoom by $player->name");
-            }
+        if (empty($this->room) && !empty($room)) {
+            $this->room = $room;
+        } elseif (empty($this->room) && empty($room)) {
+            throw new \Exception("Exception encountered on ensureRoom.");
         }
     }
 
 
-    public function fillSlot($player, int $slot)
+    public function fillSlot($room, $player, int $slot)
     {
         // sanity check (slot to fill?)
         if ($slot < 0 || $slot > 3) {
@@ -44,7 +41,7 @@ class CourseBox
 
         // sanity check (what room am I in? who am I? where am I going?)
         try {
-            $this->ensureRoom($player);
+            $this->ensureRoom($room);
         } catch (\Exception $e) {
             output('exception from: fillSlot');
             $this->remove(true);
@@ -70,11 +67,11 @@ class CourseBox
         }
     }
 
-    public function confirmSlot($player)
+    public function confirmSlot($room, $player)
     {
         // sanity check (what room am I in? who am I? where am I going?)
         try {
-            $this->ensureRoom($player);
+            $this->ensureRoom($room);
         } catch (\Exception $e) {
             output('exception from: confirmSlot');
             $this->remove(true);
@@ -96,11 +93,11 @@ class CourseBox
         $this->checkConfirmed();
     }
 
-    public function clearSlot($player)
+    public function clearSlot($room, $player)
     {
         // sanity check (what room am I in? who am I? where am I going?)
         try {
-            $this->ensureRoom($player);
+            $this->ensureRoom($room);
         } catch (\Exception $e) {
             output('exception from: clearSlot');
             $this->remove(true);
