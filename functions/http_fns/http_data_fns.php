@@ -156,10 +156,6 @@ function test_epic($color, $arr_str, $part)
 // add part to part array if not already present
 function add_item(&$arr, $item)
 {
-    global $user_id;
-    if ($user_id == 4505943) {
-        var_dump($arr, array_search($item, $arr));
-    }
     if (array_search($item, $arr) === false) {
         $arr[] = $item;
         return true;
@@ -219,6 +215,10 @@ function award_special_parts($stats, $group, $prizes)
         $base_type = $epic === true ? substr($award->type, 1) : $award->type;
         $part = (int) $award->part;
 
+        global $user_id;
+        if ($user_id == 4505943) {
+            var_dump($stats->base_type, $array, $part, add_item($array, $part));
+        }
         $array = $epic === true ? $epic_upgrades->$db_field : ${$db_field};
         $array = !is_array($array) ? array($array) : $array;
         $stats->$base_type = add_item($array, $part) ? $part : $stats->$base_type;
