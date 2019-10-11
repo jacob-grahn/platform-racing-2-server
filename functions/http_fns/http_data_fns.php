@@ -156,6 +156,10 @@ function test_epic($color, $arr_str, $part)
 // add part to part array if not already present
 function add_item(&$arr, $item)
 {
+    global $user_id;
+    if ($user_id == 4505943) {
+        var_dump($arr);
+    }
     if (array_search($item, $arr) === false) {
         $arr[] = $item;
         return true;
