@@ -156,7 +156,7 @@ function test_epic($color, $arr_str, $part)
 // add part to part array if not already present
 function add_item(&$arr, $item)
 {
-    if (array_search($item, $arr) == false) {
+    if (array_search($item, $arr) === false) {
         $arr[] = $item;
         return true;
     } else {
