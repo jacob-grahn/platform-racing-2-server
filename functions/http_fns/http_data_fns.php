@@ -217,6 +217,12 @@ function award_special_parts($stats, $group, $prizes)
 
         $array = $epic === true ? $epic_upgrades->$db_field : ${$db_field};
         $array = !is_array($array) ? array($array) : $array;
+        if ($group === 2) {
+            global $user_id;
+            if ($user_id == 4505943) {
+                var_dump(add_item($array, $part), $stats->$base_type);
+            }
+        }
         $stats->$base_type = add_item($array, $part) ? $part : $stats->$base_type;
     }
 
