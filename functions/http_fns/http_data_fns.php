@@ -157,7 +157,7 @@ function test_epic($color, $arr_str, $part)
 function add_item(&$arr, $item)
 {
     global $user_id;
-    if ($user_id == 4505943) {
+    if ($user_id == 4505943 && $item != 6) {
         var_dump($item, $arr, array_search($item, $arr));
     }
     if (array_search($item, $arr) == false) {
