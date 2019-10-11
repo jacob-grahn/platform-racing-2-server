@@ -215,17 +215,9 @@ function award_special_parts($stats, $group, $prizes)
         $base_type = $epic === true ? substr($award->type, 1) : $award->type;
         $part = (int) $award->part;
 
-        $array = $epic === true ? explode(',', $epic_upgrades->$db_field) : ${$db_field};
+        $array = $epic === true ? $epic_upgrades->$db_field : ${$db_field};
         $array = !is_array($array) ? array($array) : $array;
-        global $user_id;
-        if ($user_id == 4505943) {
-            var_dump($array);
-        }
         $stats->$base_type = add_item($array, $part) ? $part : $stats->$base_type;
-
-        if ($epic === true) {
-            $epic_upgrades->$db_field = join(',', $array);
-        }
     }
 
     return $stats;
