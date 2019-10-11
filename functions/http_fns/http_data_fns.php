@@ -158,7 +158,7 @@ function add_item(&$arr, $item)
 {
     global $user_id;
     if ($user_id == 4505943) {
-        var_dump($arr);
+        var_dump($arr, array_search($item, $arr));
     }
     if (array_search($item, $arr) === false) {
         $arr[] = $item;
