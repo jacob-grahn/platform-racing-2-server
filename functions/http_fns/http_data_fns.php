@@ -212,12 +212,26 @@ function award_special_parts($stats, $group, $prizes)
     foreach ($prizes as $award) {
         $db_field = type_to_db_field($award->type);
         $epic = strpos($award->type, 'e') === 0 ? true : false;
-        $base_type = $epic === true ? substr($award->type, 1) : $award->type;
+        $base_type = $epic === true ? strtolower(substr($award->type, 1)) : $award->type;
         $part = (int) $award->part;
 
-        $array = $epic === true ? $epic_upgrades->$db_field : ${$db_field};
-        $array = !is_array($array) ? array($array) : $array;
-        $stats->$base_type = add_item($array, $part) ? $part : $stats->$base_type;
+        // determine array to use and add part
+        if ($epic === true) {
+            $arr = explode(',', $epic_upgrades->$db_field);
+            $added = add_item($arr, $part);
+        } else {
+            $added = add_item(${$base_type . '_array'}, $part);
+        }
+
+        // if it succeeded and they have the base part, then switch to that part
+        if ($added && array_search($part, ${$base_type . '_array'}) !== false) {
+            $stats->$base_type = $part;
+        }
+
+        // if epic, reapply it to the epic_upgrades object
+        if ($epic === true) {
+            $epic_upgrades->$db_field = join(',', $arr);
+        }
     }
 
     return $stats;
