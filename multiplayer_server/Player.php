@@ -219,6 +219,7 @@ class Player
             $this->active_rank++;
             $this->exp_points = $this->exp_points - $max_rank;
             $this->write("setRank`$this->active_rank");
+            $this->saveInfo();
         }
     }
 
