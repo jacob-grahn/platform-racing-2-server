@@ -219,7 +219,11 @@ class Player
             $this->active_rank++;
             $this->exp_points = $this->exp_points - $max_rank;
             $this->write("setRank`$this->active_rank");
-            $this->saveInfo();
+            if ($this->rank === 3 || $this->rank === 20) {
+                $this->saveInfo();
+            } else {
+                $this->maybeSave();
+            }
         }
     }
 
