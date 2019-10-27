@@ -224,8 +224,10 @@ class CourseBox
 
     public function remove($fromE = false, $fromGame = false)
     {
+        // backup (this environment is being weird)
         $course_id = $this->course_id;
         $room = $this->room;
+        $page_number = $this->page_number;
 
         if ($this->starting === true && $fromGame === false) {
             return;
@@ -242,10 +244,12 @@ class CourseBox
         unset($this->room->course_array[$course_id]);
 
         if (!empty($room) && $fromE === false) {
-            $room->maybeHighlight('remove', $this->page_number);
+            $room->maybeHighlight('remove', $page_number);
         }
 
         // delete the rest
+        $course_id = $room = $page_number = null;
+        unset($course_id, $room, $page_number);
         foreach ($this as $key => $var) {
             $this->$key = null;
             unset($this->$key, $key, $var);
