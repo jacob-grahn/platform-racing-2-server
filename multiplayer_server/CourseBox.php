@@ -225,6 +225,7 @@ class CourseBox
     public function remove($fromE = false, $fromGame = false)
     {
         $course_id = $this->course_id;
+        $room = $this->room;
 
         if ($this->starting === true && $fromGame === false) {
             return;
@@ -240,8 +241,8 @@ class CourseBox
         $this->room->course_array[$course_id] = null;
         unset($this->room->course_array[$course_id]);
 
-        if (!empty($this->room) && $fromE === false) {
-            $this->room->maybeHighlight('remove', $this->page_number);
+        if (!empty($room) && $fromE === false) {
+            $room->maybeHighlight('remove', $this->page_number);
         }
 
         // delete the rest
