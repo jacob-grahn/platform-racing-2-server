@@ -187,6 +187,11 @@ function award_special_parts($stats, $group, $prizes)
         $stats->feet = add_item($feet_array, 39) ? 39 : $stats->feet;
     }
 
+    // jack-o-lantern head (halloween)
+    if ($date === 'October 31' || $date === 'November 1' || $date === 'November 2') { // WILL CHANGE AFTER 2019
+        $stats->head = add_item($head_array, 44) ? 44 : $stats->head;
+    }
+
     // santa set (christmas)
     if ($date === 'December 24' || $date === 'December 25') {
         $stats->hat = add_item($hat_array, 7) ? 7 : $stats->hat;
