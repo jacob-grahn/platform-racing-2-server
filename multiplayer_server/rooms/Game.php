@@ -10,6 +10,7 @@ class Game extends Room
     const LEVEL_DELIVERANCE = 1896157; // for slender set
     const LEVEL_SEA = 2255404; // for sea set
     const LEVEL_DEEPER = 6493337; // for jellyfish hat
+    const LEVEL_HAUNTED = 1782114; // for epic jack-o'-lantern head
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -176,12 +177,17 @@ class Game extends Room
                 Prizes::$EPIC_SIR_BODY,
                 Prizes::$EPIC_SIR_FEET
             ];
-            $this->prize = $sir_prizes[ array_rand($sir_prizes) ];
+            $this->prize = $sir_prizes[array_rand($sir_prizes)];
         }
 
         // Clint the Cowboy; Awards: Epic Cowboy Hat
         if ($this->isPlayerHere(self::PLAYER_CLINT)) {
             $this->prize = Prizes::$EPIC_COWBOY_HAT;
+        }
+
+        // Haunted House 2 by DareDevil1510; Awards: Epic Jack-o'-Lantern Head
+        if ($this->course_id == self::LEVEL_HAUNTED) {
+            $this->prize = Prizes::$EPIC_JACKOLANTERN_HEAD;
         }
 
         // -Deliverance- by changelings; Awards: Slender Set

@@ -64,7 +64,8 @@ function to_part_name($type, $id)
         40 => 'Gecko',
         41 => 'Bat',
         42 => 'Sea',
-        43 => 'Brew'
+        43 => 'Brew',
+        44 => 'Jack-o\'-Lantern'
     ];
 
     // bodies
@@ -192,7 +193,7 @@ function validate_prize($type, $id)
     // check for a valid head id
     if ($type === 'head' || $type === 'ehead') {
         $type = 'head';
-        if ($id < 1 || $id > 43) {
+        if ($id < 1 || $id > 44) {
             throw new Exception("Invalid head ID ($id) specified.");
         }
     }

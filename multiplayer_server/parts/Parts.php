@@ -150,6 +150,7 @@ class Heads
     const BAT = 41;
     const SEA = 42;
     const BREW = 43;
+    const JACKOLANTERN = 44;
 }
 
 
