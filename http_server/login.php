@@ -187,9 +187,9 @@ try {
     }
 
     // sanity check: are they renting more than 21 guild tokens?
-    /*if ($rt_rented > 21) {
+    if ($rt_rented > 21) {
         throw new Exception('Too many guild tokens. Please use a different account.');
-    }*/
+    }
 
     // sanity check: are more tokens used than available?
     $rt_available = $rt_available + $rt_rented;
