@@ -152,9 +152,7 @@ function process_register_login($server_socket, $data)
                 $socket->close();
                 $socket->onDisconnect();
             } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild && !$ps_staff_cond && !$is_fred) {
-                if ($user_id == FRED) {
-                    var_dump($guild_id, $ps_staff_cond, $is_fred);
-                }
+                var_dump($user_id, FRED, $guild_id, $ps_staff_cond, $is_fred);
                 $socket->write('message`You are not a member of this guild.');
                 $socket->close();
                 $socket->onDisconnect();
