@@ -136,8 +136,7 @@ function process_register_login($server_socket, $data)
         $login_id = (int) $login_obj->login->login_id;
         $group = (int) $login_obj->user->power;
         $user_id = (int) $login_obj->user->user_id;
-        $is_fred = $user_id === FRED;
-        $ps_staff_cond = $group === 3 || ($group === 2 && $guild_id === 205);
+        $ps_staff_cond = $group === 3 || ($group >= 2 && ($guild_id === 205 || $guild_id === 183));
 
         $socket = @$login_array[$login_id];
         unset($login_array[$login_id]);
@@ -151,8 +150,7 @@ function process_register_login($server_socket, $data)
                 $socket->write('message`There\'s an IP mismatch. Check your network settings.');
                 $socket->close();
                 $socket->onDisconnect();
-            } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild && !$ps_staff_cond && !$is_fred) {
-                var_dump($user_id, FRED, $guild_id, $ps_staff_cond, $is_fred);
+            } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild && !$ps_staff_cond) {
                 $socket->write('message`You are not a member of this guild.');
                 $socket->close();
                 $socket->onDisconnect();
