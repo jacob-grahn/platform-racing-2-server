@@ -53,7 +53,7 @@ try {
     // reply
     $ret->success = true;
     $ret->listings = $listings;
-    $ret->title = date('F j') == 'October 31' || date('F j') === 'November 1' ? 'Happy Halloween!' : 'Vault of Magics';
+    $ret->title = 'Vault of Magics';
     $ret->sale = true;
 } catch (Exception $e) {
     $ret->state = 'canceled';
