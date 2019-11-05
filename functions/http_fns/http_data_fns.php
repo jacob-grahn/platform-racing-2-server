@@ -188,7 +188,7 @@ function award_special_parts($stats, $group, $prizes)
     }
 
     // jack-o-lantern head (halloween)
-    if ($date === 'October 31' || $date === 'November 3' || $date === 'November 4') { // WILL CHANGE AFTER 2019
+    if ($date === 'October 30' || $date === 'October 31') {
         $stats->head = add_item($head_array, 44) ? 44 : $stats->head;
     }
 
