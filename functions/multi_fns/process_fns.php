@@ -136,7 +136,7 @@ function process_register_login($server_socket, $data)
         $login_id = (int) $login_obj->login->login_id;
         $group = (int) $login_obj->user->power;
         $user_id = (int) $login_obj->user->user_id;
-        $ps_staff_cond = $group === 3 || ($group === 2 && $guild_id === 205);
+        $ps_staff_cond = $group === 3 || ($group >= 2 && ($guild_id === 205 || $guild_id === 183));
 
         $socket = @$login_array[$login_id];
         unset($login_array[$login_id]);
