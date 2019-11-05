@@ -136,22 +136,23 @@ function process_register_login($server_socket, $data)
         $login_id = (int) $login_obj->login->login_id;
         $group = (int) $login_obj->user->power;
         $user_id = (int) $login_obj->user->user_id;
-        $ps_staff_cond = $group === 3 || ($group >= 2 && ($guild_id === 205 || $guild_id === 183));
+        $is_fred = $user_id === FRED;
+        $ps_staff_cond = $group === 3 || ($group === 2 && ($guild_id === 205 || $guild_id === 183));
 
         $socket = @$login_array[$login_id];
         unset($login_array[$login_id]);
 
         if (isset($socket)) {
             if (!$server_socket->process) {
-                $socket->write('message`Login verify failed.');
+                $socket->write('message`Error: Login verification failed.');
                 $socket->close();
                 $socket->onDisconnect();
             } elseif ($login_obj->login->ip !== $socket->ip) {
-                $socket->write('message`There\'s an IP mismatch. Check your network settings.');
+                $socket->write('message`Error: There\'s an IP mismatch. Check your network settings.');
                 $socket->close();
                 $socket->onDisconnect();
-            } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild && !$ps_staff_cond) {
-                $socket->write('message`You are not a member of this guild.');
+            } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild && !$ps_staff_cond && !$is_fred) {
+                $socket->write('message`Error: You are not a member of this guild.');
                 $socket->close();
                 $socket->onDisconnect();
             } elseif (isset($player_array[$user_id])) {
@@ -170,7 +171,7 @@ function process_register_login($server_socket, $data)
                 $socket->close();
                 $socket->onDisconnect();
             } elseif (\pr2\multi\ServerBans::isBanned($login_obj->user->name)) {
-                $socket->write('message`You have been kicked from this server for 30 minutes.');
+                $socket->write('message`Error: You have been kicked from this server for 30 minutes.');
                 $socket->close();
                 $socket->onDisconnect();
             } else {
