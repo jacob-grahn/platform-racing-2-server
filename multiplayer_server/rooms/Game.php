@@ -169,22 +169,6 @@ class Game extends Room
             }
         }
 
-        // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
-        if ($this->isPlayerHere(self::PLAYER_SIR)) {
-            $sir_prizes = [
-                Prizes::$EPIC_TOP_HAT,
-                Prizes::$EPIC_SIR_HEAD,
-                Prizes::$EPIC_SIR_BODY,
-                Prizes::$EPIC_SIR_FEET
-            ];
-            $this->prize = $sir_prizes[array_rand($sir_prizes)];
-        }
-
-        // Clint the Cowboy; Awards: Epic Cowboy Hat
-        if ($this->isPlayerHere(self::PLAYER_CLINT)) {
-            $this->prize = Prizes::$EPIC_COWBOY_HAT;
-        }
-
         // Haunted House 2 by DareDevil1510; Awards: Epic Jack-o'-Lantern Head
         if ($this->course_id == self::LEVEL_HAUNTED) {
             $this->prize = Prizes::$EPIC_JACKOLANTERN_HEAD;
@@ -210,6 +194,23 @@ class Game extends Room
         // Deeper by Sothal; Awards: Jellyfish Hat
         if ($this->course_id == self::LEVEL_DEEPER) {
             $this->prize = Prizes::$JELLYFISH_HAT;
+        }
+        
+        
+        // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
+        if ($this->isPlayerHere(self::PLAYER_SIR)) {
+            $sir_prizes = [
+                Prizes::$EPIC_TOP_HAT,
+                Prizes::$EPIC_SIR_HEAD,
+                Prizes::$EPIC_SIR_BODY,
+                Prizes::$EPIC_SIR_FEET
+            ];
+            $this->prize = $sir_prizes[array_rand($sir_prizes)];
+        }
+
+        // Clint the Cowboy; Awards: Epic Cowboy Hat
+        if ($this->isPlayerHere(self::PLAYER_CLINT)) {
+            $this->prize = Prizes::$EPIC_COWBOY_HAT;
         }
 
         // random part/upgrade prizes
