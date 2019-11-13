@@ -49,9 +49,14 @@ function add_contest($pdo, $admin)
         throw new Exception('Too few awards per week.');
     }
 
-    // make sure the host exists
+    // sanity check: does the host exist?
     if (id_to_name($pdo, $host_id, true) === false) {
         throw new Exception('Could not find a user with that ID.');
+    }
+
+    // sanity check: is the host a guest?
+    if ((int) user_select_power($pdo, $host_id, true) === 0) {
+        throw new Exception('Guests can\'t host contests.');
     }
 
     // add contest
