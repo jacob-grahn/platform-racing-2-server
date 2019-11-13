@@ -59,11 +59,17 @@ function edit_contest($pdo, $contest, $admin)
         throw new Exception('No edits to be made.');
     }
 
-    // make sure the host exists
+    // host sanity checks (if the host is being changed)
     if ($host_id !== (int) $contest->user_id) {
+        // does the new host exist?
         $host_name = id_to_name($pdo, $host_id, false);
         if ($host_name === false) {
             throw new Exception('Could not find a user with that ID.');
+        }
+
+        // is the new host a guest?
+        if ((int) user_select_power($pdo, $host_id, true) === 0) {
+            throw new Exception('Guests can\'t host contests.');
         }
     }
 
