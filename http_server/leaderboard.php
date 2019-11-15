@@ -36,12 +36,18 @@ try {
         .'<br /><br />'
         .'<table>'
         .'<tr>'
+        .'<th>#</th>'
         .'<th>Username</th>'
         .'<th>Rank</th>'
         .'<th>Hats</th>'
         .'</tr>';
 
+    // get row number
+    $i = $start;
     foreach ($users as $user) {
+        // increment row number
+        $i++;
+
         // name
         $name = $user->name;
         $safe_name = htmlspecialchars($name, ENT_QUOTES);
@@ -69,13 +75,12 @@ try {
         }
 
         // echo the row
-        echo '<tr>';
-
-        echo "<td><a href='$info_link' style='color: #$group_color; text-decoration: underline;'>$safe_name</a></td>";
-        echo "<td>$active_rank</td>";
-        echo "<td>$hats</td>";
-
-        echo '</tr>';
+        echo '<tr>'
+            ."<td>$i</td>"
+            ."<td><a href='$info_link' style='color: #$group_color; text-decoration: underline;'>$safe_name</a></td>"
+            ."<td>$active_rank</td>"
+            ."<td>$hats</td>"
+            .'</tr>';
     }
 
     echo "</table>";
