@@ -72,7 +72,7 @@ try {
     user_update_temp_pass($pdo, $user_id, to_hash($pass));
 
     // --- email them their new pass --- \\
-    $from = 'Fred the Giant Cactus <no-reply@pr2hub.com>';
+    $from = 'Fred the Giant Cactus <no-reply@mg.pr2hub.com>';
     $to = $user->email;
     $subject = 'A password and chocolates from PR2';
     $message = "Hi $name,\n\n"
