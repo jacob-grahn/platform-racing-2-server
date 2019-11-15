@@ -9,6 +9,8 @@ class Game extends Room
     const LEVEL_BUTO = 1738847; // for jigg hat
     const LEVEL_DELIVERANCE = 1896157; // for slender set
     const LEVEL_SEA = 2255404; // for sea set
+    const LEVEL_DEEPER = 6493337; // for jellyfish hat
+    const LEVEL_HAUNTED = 1782114; // for epic jack-o'-lantern head
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -25,6 +27,7 @@ class Game extends Room
     private $loose_hat_array = array();
     private $next_hat_id = 0;
     private $prize;
+    private $prize_cancelled = false;
     private $campaign;
 
     private $mode = self::MODE_RACE;
@@ -166,20 +169,9 @@ class Game extends Room
             }
         }
 
-        // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
-        if ($this->isPlayerHere(self::PLAYER_SIR)) {
-            $sir_prizes = [
-                Prizes::$EPIC_TOP_HAT,
-                Prizes::$EPIC_SIR_HEAD,
-                Prizes::$EPIC_SIR_BODY,
-                Prizes::$EPIC_SIR_FEET
-            ];
-            $this->prize = $sir_prizes[ array_rand($sir_prizes) ];
-        }
-
-        // Clint the Cowboy; Awards: Epic Cowboy Hat
-        if ($this->isPlayerHere(self::PLAYER_CLINT)) {
-            $this->prize = Prizes::$EPIC_COWBOY_HAT;
+        // Haunted House 2 by DareDevil1510; Awards: Epic Jack-o'-Lantern Head
+        if ($this->course_id == self::LEVEL_HAUNTED) {
+            $this->prize = Prizes::$EPIC_JACKOLANTERN_HEAD;
         }
 
         // -Deliverance- by changelings; Awards: Slender Set
@@ -189,8 +181,7 @@ class Game extends Room
         }
 
         // ~Under the sea~ by Rammjet; Awards: Sea Set
-        global $guild_id; // remove after beta
-        if ($this->course_id == self::LEVEL_SEA && $guild_id === 205) {
+        if ($this->course_id == self::LEVEL_SEA) {
             $sea_prizes = array(Prizes::$SEA_HEAD, Prizes::$SEA_BODY, Prizes::$SEA_FEET);
             $this->prize = $sea_prizes[array_rand($sea_prizes)];
         }
@@ -198,6 +189,28 @@ class Game extends Room
         // The Golden Compass by -Shadowfax-; Awards: Top Hat
         if ($this->course_id == self::LEVEL_COMPASS) {
             $this->prize = Prizes::$TOP_HAT;
+        }
+
+        // Deeper by Sothal; Awards: Jellyfish Hat
+        if ($this->course_id == self::LEVEL_DEEPER) {
+            $this->prize = Prizes::$JELLYFISH_HAT;
+        }
+        
+        
+        // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
+        if ($this->isPlayerHere(self::PLAYER_SIR)) {
+            $sir_prizes = [
+                Prizes::$EPIC_TOP_HAT,
+                Prizes::$EPIC_SIR_HEAD,
+                Prizes::$EPIC_SIR_BODY,
+                Prizes::$EPIC_SIR_FEET
+            ];
+            $this->prize = $sir_prizes[array_rand($sir_prizes)];
+        }
+
+        // Clint the Cowboy; Awards: Epic Cowboy Hat
+        if ($this->isPlayerHere(self::PLAYER_CLINT)) {
+            $this->prize = Prizes::$EPIC_COWBOY_HAT;
         }
 
         // random part/upgrade prizes
@@ -259,6 +272,28 @@ class Game extends Room
         // tell the world
         if (isset($this->prize)) {
             $this->sendToAll('setPrize`'.$this->prize->toStr());
+        }
+    }
+
+
+    public function cancelPrize($player)
+    {
+        if ($this->prize_cancelled === true) {
+            return; // no point in continuing...
+        }
+        $clint_cond = $player->user_id === self::PLAYER_CLINT && $this->prize == Prizes::$EPIC_COWBOY_HAT;
+        $sir_cond = $player->user_id === self::PLAYER_SIR && (
+            $this->prize == Prizes::$EPIC_TOP_HAT ||
+            $this->prize == Prizes::$EPIC_SIR_HEAD ||
+            $this->prize == Prizes::$EPIC_SIR_BODY ||
+            $this->prize == Prizes::$EPIC_SIR_FEET
+        );
+        if ($sir_cond || $clint_cond || $player->group === 3) {
+            $this->prize = null;
+            $this->prize_cancelled = true;
+            $this->sendToAll("cancelPrize`$player->name");
+        } else {
+            $player->write('message`Error: You lack the power to perform this action.');
         }
     }
 
@@ -732,7 +767,7 @@ class Game extends Room
             }
 
             foreach ($this->player_array as $player) {
-                if (!$player->quit_race) {
+                if (!$player->race_stats->quit_race) {
                     $everyone_quit = false;
                     break;
                 }
@@ -1025,13 +1060,13 @@ class Game extends Room
         }
     }
 
-    public function sendChat($message, $user_id)
+    public function sendChat($message, $user_id = -1)
     {
         // any added backticks will cut off the end of $text
         list($command, $name, $power, $text) = explode('`', $message);
 
         // send the message
-        if ($command === 'chat') {
+        if ($command === 'chat' || ($command === 'systemChat' && $user_id === -1)) {
             foreach ($this->player_array as $player) {
                 if (!$player->isIgnoredId($user_id)) {
                     $player->socket->write("$command`$name`$power`$text");

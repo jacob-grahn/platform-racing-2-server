@@ -79,7 +79,8 @@ try {
 41 - Bat
 42 - Sea
 43 - Brew
-44+ - *BLANK*
+44 - Jack-o\'-Lantern
+45+ - *BLANK*
 
 -- Bodies --
 1 - Classic
@@ -209,7 +210,7 @@ Brew: 43, 43, 43
 
 -- Blank IDs --
 Hats: 16+
-Heads: 44+
+Heads: 45+
 Bodies: 33, 44+
 Feet: 31-33, 44+</pre>';
 } catch (Exception $e) {

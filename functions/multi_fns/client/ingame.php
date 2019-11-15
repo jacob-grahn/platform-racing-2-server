@@ -1,6 +1,18 @@
 <?php
 
 
+// let special accounts cancel a prize
+function client_cancel_prize($socket)
+{
+    $player = $socket->getPlayer();
+    if (isset($player->game_room)) {
+        if ($player->special_user === true || $player->group === 3) {
+            $player->game_room->cancelPrize($player);
+        }
+    }
+}
+
+
 // lose hat
 function client_loose_hat($socket, $data)
 {
@@ -86,12 +98,7 @@ function client_zap($socket)
 {
     $player = $socket->getPlayer();
     if (isset($player->game_room)) {
-        global $guild_id;
-        if ($guild_id === 205) {
-            $player->game_room->sendToAll("zap`$player->temp_id", $player->user_id);
-        } else {
-            $player->game_room->sendToRoom("zap`$player->temp_id", $player->user_id);
-        }
+        $player->game_room->sendToAll("zap`$player->temp_id", $player->user_id);
     }
 }
 

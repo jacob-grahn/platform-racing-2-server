@@ -13,7 +13,7 @@ $ip = get_ip();
 
 $page = min(25, $page);
 $key = "search-$mode-$search_str-$order-$dir-$page";
-$cache_expire = 600; // keep results cached for 10 minutes
+$cache_expire = 120; // keep results cached for two minutes
 
 try {
     // check request method

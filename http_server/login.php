@@ -21,7 +21,6 @@ $ip = get_ip();
 $encrypted_login = default_post('i', '');
 $version = isset($_POST['build']) ? default_post('build', '') : default_post('version', '');
 $in_token = find('token');
-$allowed_versions = array('22-apr-2019-v155', '24-jun-2019-v156');
 $guest_login = false;
 $token_login = false;
 $has_email = false;
@@ -45,7 +44,7 @@ try {
     if (!isset($encrypted_login)) {
         throw new Exception('Login data not recieved.');
     } // sanity check: is it an allowed version?
-    if (array_search($version, $allowed_versions) === false) {
+    if (array_search($version, $ALLOWED_CLIENT_VERSIONS) === false) {
         throw new Exception('PR2 has recently been updated. Please refresh the page to download the latest version.');
     }
 
@@ -79,7 +78,7 @@ try {
     $remember = $login->remember;
 
     // more sanity checks
-    if (array_search($version2, $allowed_versions) === false) {
+    if (array_search($version2, $ALLOWED_CLIENT_VERSIONS) === false) {
         $e = "PR2 has recently been updated. Please refresh the page to download the latest version. $version2";
         throw new Exception($e);
     }
@@ -153,8 +152,9 @@ try {
     }
 
     // sanity check: if a guild server, is the user in the guild?
-    $ps_staff_cond = $group === 3 || ($group === 2 && (int) $server->guild_id === 205);
-    if ((int) $server->guild_id !== 0 && (int) $user->guild !== (int) $server->guild_id && !$ps_staff_cond) {
+    $ps_staff = $group === 3 || ($group === 2 && (int) $server->guild_id === 205);
+    $is_fred = $user_id === FRED;
+    if ((int) $server->guild_id !== 0 && (int) $user->guild !== (int) $server->guild_id && !$ps_staff && !$is_fred) {
         throw new Exception('You must be a member of this guild to join this server.');
     }
 

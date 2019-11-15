@@ -22,7 +22,7 @@ function run_update_cycle($pdo)
     // process replies
     foreach ($servers as $server) {
         if ($server->result != false && $server->result != null) {
-            $happy_hour = (int)$server->result->happy_hour;
+            $happy_hour = (int) $server->result->happy_hour;
             output("(ID #$server->server_id) is up.");
             save_plays($pdo, $server->result->plays);
             save_gp($pdo, $server->server_id, $server->result->gp);
@@ -57,7 +57,7 @@ function write_server_status($pdo)
         $display->status = $server->status;
         $display->guild_id = $server->guild_id;
         $display->tournament = $server->tournament;
-        $display->happy_hour = $server->happy_hour;
+        $display->happy_hour = (int) ($server->happy_hour > 0);
         $displays[] = $display;
         output("Status written for $server->server_name (ID #$server->server_id).");
     }

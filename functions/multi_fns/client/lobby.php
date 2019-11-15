@@ -53,13 +53,23 @@ function client_set_game_room($socket)
 }
 
 
+// checks if a page is supposed to be highlighted
+function client_refresh_highlights($socket)
+{
+    $player = $socket->getPlayer();
+    if (isset($player->right_room)) {
+        $player->right_room->refreshHighlights($player);
+    }
+}
+
+
 // join a slot in a course box
 function client_fill_slot($socket, $data)
 {
-    list($course_id, $slot) = explode('`', $data);
+    list($course_id, $slot, $page) = explode('`', $data);
     $player = $socket->getPlayer();
     if (isset($player->right_room)) {
-        $player->right_room->fillSlot($player, $course_id, $slot);
+        $player->right_room->fillSlot($player, $course_id, $slot, (int) $page);
     }
 }
 
@@ -69,7 +79,7 @@ function client_confirm_slot($socket)
 {
     $player = $socket->getPlayer();
     $course_box = $player->course_box;
-    if (isset($course_box)) {
+    if (isset($player->right_room) && isset($course_box)) {
         $course_box->confirmSlot($player);
     }
 }
@@ -80,7 +90,7 @@ function client_clear_slot($socket)
 {
     $player = $socket->getPlayer();
     $course_box = $player->course_box;
-    if (isset($course_box)) {
+    if (isset($player->right_room) && isset($course_box)) {
         $course_box->clearSlot($player);
     }
 }
@@ -91,7 +101,7 @@ function client_force_start($socket)
 {
     $player = $socket->getPlayer();
     $course_box = $player->course_box;
-    if (isset($course_box)) {
+    if (isset($player->right_room) && isset($course_box)) {
         $course_box->forceStart();
     }
 }

@@ -86,7 +86,7 @@ class Prizes
     const DESC_MOON_HAT = 'Soar to new heights by defying the laws of gravity!';
     const DESC_THIEF_HAT = 'Steal other player\'s hats --even crowns!';
     const DESC_JIGG_HAT = 'Bounce on the heads of your opponents!';
-    const DESC_JELLYFISH_HAT = 'Give nearby opponents a nasty sting!';
+    const DESC_JF_HAT = 'Give nearby opponents a nasty sting!';
 
 
     // hats
@@ -167,6 +167,7 @@ class Prizes
     public static $BAT_HEAD;
     public static $SEA_HEAD;
     public static $BREW_HEAD;
+    public static $JACKOLANTERN_HEAD;
 
     // epic heads
     public static $EPIC_CLASSIC_HEAD;
@@ -212,6 +213,7 @@ class Prizes
     public static $EPIC_BAT_HEAD;
     public static $EPIC_SEA_HEAD;
     public static $EPIC_BREW_HEAD;
+    public static $EPIC_JACKOLANTERN_HEAD;
 
 
     // bodies
@@ -408,7 +410,7 @@ class Prizes
         self::$THIEF_HAT = new Prize(self::TYPE_HAT, Hats::THIEF, 'Thief Hat', self::DESC_THIEF_HAT, true);
         self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat', self::DESC_JIGG_HAT, true);
         self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'Artifact Hat');
-        self::$JELLYFISH_HAT = new Prize(self::TYPE_HAT, Hats::JELLYFISH, 'Jellyfish Hat', self::DESC_JELLYFISH_HAT);
+        self::$JELLYFISH_HAT = new Prize(self::TYPE_HAT, Hats::JELLYFISH, 'Jellyfish Hat', self::DESC_JF_HAT, true);
 
         // epic hats
         self::$EPIC_KONG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::KONG, 'Epic Upgrade');
@@ -471,6 +473,7 @@ class Prizes
         self::$BAT_HEAD = new Prize(self::TYPE_HEAD, Heads::BAT, 'Bat Head');
         self::$SEA_HEAD = new Prize(self::TYPE_HEAD, Heads::SEA, 'Sea Head');
         self::$BREW_HEAD = new Prize(self::TYPE_HEAD, Heads::BREW, 'Brew Head');
+        self::$JACKOLANTERN_HEAD = new Prize(self::TYPE_HEAD, Heads::JACKOLANTERN, 'Jack-o\'-Lantern Head');
 
         // epic heads
         self::$EPIC_CLASSIC_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade');
@@ -516,6 +519,7 @@ class Prizes
         self::$EPIC_BAT_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BAT, 'Epic Upgrade');
         self::$EPIC_SEA_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SEA, 'Epic Upgrade');
         self::$EPIC_BREW_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BREW, 'Epic Upgrade');
+        self::$EPIC_JACKOLANTERN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::JACKOLANTERN, 'Epic Upgrade');
 
 
         // bodies

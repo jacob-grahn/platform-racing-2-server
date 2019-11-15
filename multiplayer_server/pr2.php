@@ -68,11 +68,12 @@ output("Initializing startup...");
 
 Prizes::init();
 RankupCalculator::init();
-HappyHour::$random_hour = rand(0, 36);
+HappyHour::$random_hour = rand(0, 23);
 
 $pdo = pdo_connect();
 
 $server_id = (int) $argv[1];
+$verbose = $argc > 2 ? (strtolower($argv[2]) === 'true' ? true : false) : false;
 $port = 0;
 $server_name = '';
 $guild_id = 0;
@@ -87,11 +88,11 @@ $chat_room_array = array();
 $campaign_array = array();
 $play_count_array = array();
 
-$campaign_room = new LevelListRoom();
-$best_room = new LevelListRoom();
-$best_today_room = new LevelListRoom();
-$newest_room = new LevelListRoom();
-$search_room = new LevelListRoom();
+$campaign_room = new LevelListRoom('campaign');
+$best_room = new LevelListRoom('best');
+$best_today_room = new LevelListRoom('best_today');
+$newest_room = new LevelListRoom('newest');
+$search_room = new LevelListRoom('search');
 
 $max_players = 200;
 $min_version = .60;
@@ -105,5 +106,5 @@ $uptime = date('r');
 output("Starting PR2 server $server_name (ID: #$server_id) on port $port...");
 $daemon = new \chabot\SocketDaemon();
 $server = $daemon->createServer('\pr2\multi\PR2SocketServer', '\pr2\multi\PR2Client', 0, $port);
-output("Success! Server started on $uptime.");
+output("Success! Server started" . ($verbose ? ' (in verbose mode)' : '') . " on $uptime.");
 $daemon->process();

@@ -280,13 +280,9 @@ function get_priors($pdo, $mod, $name)
 
             // check if lifted
             if ($lifted === true) {
-                $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
+                $lifted_datetime = date('M j, Y \a\t g:i A', strtotime($ban->lifted_time));
                 $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
-                $at_loc = strrpos($lifted_reason, '@');
-                if ($at_loc !== false) {
-                    $lifted_datetime = date('M j, Y \a\t g:i A', strtotime(trim(substr($lifted_reason, $at_loc + 1))));
-                    $lifted_reason = trim(substr($lifted_reason, 0, $at_loc));
-                }
+                $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
                 $lifted_str = "<b>^ LIFTED</b> on $lifted_datetime by $lifted_by. Reason: $lifted_reason";
             }
 
@@ -340,13 +336,9 @@ function get_priors($pdo, $mod, $name)
 
             // check if lifted
             if ($lifted === true) {
-                $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
+                $lifted_datetime = date('M j, Y \a\t g:i A', strtotime($ban->lifted_time));
                 $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
-                $at_loc = strrpos($lifted_reason, '@');
-                if ($at_loc !== false) {
-                    $lifted_datetime = date('M j, Y \a\t g:i A', strtotime(trim(substr($lifted_reason, $at_loc + 1))));
-                    $lifted_reason = trim(substr($lifted_reason, 0, $at_loc));
-                }
+                $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
                 $lifted_str = "<b>^ LIFTED</b> on $lifted_datetime by $lifted_by. Reason: $lifted_reason";
             }
 

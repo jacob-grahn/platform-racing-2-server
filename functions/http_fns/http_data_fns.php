@@ -72,10 +72,10 @@ function get_ip()
 // referrer check
 function is_trusted_ref()
 {
-    global $trusted_refs;
+    global $TRUSTED_REFS;
 
     $ref = (string) default_val(@$_SERVER['HTTP_REFERER'], '');
-    foreach ($trusted_refs as $trusted) {
+    foreach ($TRUSTED_REFS as $trusted) {
         if (@strpos($ref, $trusted) === 0 || $ref === $trusted) {
             return true;
         }
@@ -102,7 +102,7 @@ function require_trusted_ref($action = 'perform this action', $mod = false)
 // send an email to a user
 function send_email($from, $to, $subject, $body)
 {
-    global $EMAIL_HOST, $EMAIL_USER, $EMAIL_PASS;
+    global $EMAIL_HOST, $EMAIL_PORT, $EMAIL_USER, $EMAIL_PASS;
 
     $recipients = $to;
 
@@ -113,7 +113,7 @@ function send_email($from, $to, $subject, $body)
 
     // Define SMTP Parameters
     $params['host'] = $EMAIL_HOST;
-    $params['port'] = '465';
+    $params['port'] = $EMAIL_PORT;
     $params['auth'] = 'PLAIN';
     $params['username'] = $EMAIL_USER;
     $params['password'] = $EMAIL_PASS;
@@ -187,6 +187,11 @@ function award_special_parts($stats, $group, $prizes)
         $stats->feet = add_item($feet_array, 39) ? 39 : $stats->feet;
     }
 
+    // jack-o-lantern head (halloween)
+    if ($date === 'October 30' || $date === 'October 31') {
+        $stats->head = add_item($head_array, 44) ? 44 : $stats->head;
+    }
+
     // santa set (christmas)
     if ($date === 'December 24' || $date === 'December 25') {
         $stats->hat = add_item($hat_array, 7) ? 7 : $stats->hat;
@@ -212,12 +217,26 @@ function award_special_parts($stats, $group, $prizes)
     foreach ($prizes as $award) {
         $db_field = type_to_db_field($award->type);
         $epic = strpos($award->type, 'e') === 0 ? true : false;
-        $base_type = $epic === true ? substr($award->type, 1) : $award->type;
+        $base_type = $epic === true ? strtolower(substr($award->type, 1)) : $award->type;
         $part = (int) $award->part;
 
-        $array = $epic === true ? $epic_upgrades->$db_field : ${$db_field};
-        $array = !is_array($array) ? array($array) : $array;
-        $stats->$base_type = add_item($array, $part) ? $part : $stats->$base_type;
+        // determine array to use and add part
+        if ($epic === true) {
+            $arr = explode(',', $epic_upgrades->$db_field);
+            $added = add_item($arr, $part);
+        } else {
+            $added = add_item(${$base_type . '_array'}, $part);
+        }
+
+        // if it succeeded and they have the base part, then switch to that part
+        if ($added && array_search($part, ${$base_type . '_array'}) !== false) {
+            $stats->$base_type = $part;
+        }
+
+        // if epic, reapply it to the epic_upgrades object
+        if ($epic === true) {
+            $epic_upgrades->$db_field = join(',', $arr);
+        }
     }
 
     return $stats;
@@ -273,18 +292,19 @@ function format_level_list($levels)
     $num = 0;
     $str = '';
     foreach ($levels as $row) {
-        $level_id = $row->level_id;
-        $version = $row->version;
+        $level_id = (int) $row->level_id;
+        $version = (int) $row->version;
         $title = urlencode($row->title);
         $rating = round($row->rating, 2);
-        $play_count = $row->play_count;
-        $min_level = $row->min_level;
+        $play_count = (int) $row->play_count;
+        $min_level = (int) $row->min_level;
         $note = urlencode($row->note);
         $user_name = urlencode($row->name);
-        $group = $row->power;
-        $live = $row->live;
+        $group = (int) $row->power;
+        $live = (int) $row->live;
         $pass = isset($row->pass);
         $type = $row->type;
+        $time = (int) $row->time;
 
         if ($num > 0) {
             $str .= "&";
@@ -300,7 +320,8 @@ function format_level_list($levels)
         ."&group$num=$group"
         ."&live$num=$live"
         ."&pass$num=$pass"
-        ."&type$num=$type";
+        ."&type$num=$type"
+        ."&time$num=$time";
         $num++;
     }
 

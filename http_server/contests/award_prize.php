@@ -162,6 +162,12 @@ try {
         if ($winner_id === 0) {
             throw new Exception("Could not find a player with that name.");
         }
+        
+        // sanity check: is this user a guest?
+        $winner_group = (int) user_select_power($pdo, $winner_id, true);
+        if ($winner_group === 0) {
+            throw new Exception("Guests can't win contests.");
+        }
 
         // safety first
         $html_winner_name = htmlspecialchars($winner_name, ENT_QUOTES);
