@@ -138,7 +138,7 @@ try {
         guild_transfer_insert($pdo, $guild->guild_id, $old_id, $new_id, $code, $ip);
 
         // send a confirmation email
-        $from = 'Fred the Giant Cactus <no-reply@pr2hub.com>';
+        $from = 'Fred the Giant Cactus <no-reply@mg.pr2hub.com>';
         $to = $old_user->email;
         $subject = 'PR2 Guild Transfer Confirmation';
         $body = "Howdy $safe_old_name,\n\nWe received a request to change the "
