@@ -1,15 +1,24 @@
 version: "3"
 services:
+
   web:
     build:
       context: ../
       dockerfile: docker/http_server.dockerfile
     ports:
-      - "8080:80"
+      - "9000:80"
+
   mysql:
     image: mysql
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: pr2
       MYSQL_USER: pr2-user
       MYSQL_PASSWORD: pr2-user-password
       MYSQL_ROOT_PASSWORD: root-user-password 
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

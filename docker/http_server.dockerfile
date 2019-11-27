@@ -17,5 +17,8 @@ COPY docker/prepend_file.ini $PHP_INI_DIR/conf.d/
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # install extensions
+RUN docker-php-ext-install pdo_mysql
+
+# install pecl extensions
 RUN pecl install apcu \
     && docker-php-ext-enable apcu
