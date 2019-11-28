@@ -15,7 +15,22 @@ services:
       MYSQL_DATABASE: pr2
       MYSQL_USER: pr2-user
       MYSQL_PASSWORD: pr2-user-password
-      MYSQL_ROOT_PASSWORD: root-user-password 
+      MYSQL_ROOT_PASSWORD: root-user-password
+
+  liquibase:
+    image: webdevops/liquibase
+    command: /scripts/init-liquibase.sh
+    environment:
+      LIQUIBASE_URL: jdbc:mysql://mysql/pr2
+      LIQUIBASE_USERNAME: root
+      LIQUIBASE_PASSWORD: root-user-password
+      LIQUIBASE_CHANGELOG: /liquibase/changelog.yaml
+    volumes:
+      - ../liquibase:/liquibase
+      - ./:/scripts
+    depends_on:
+      - mysql
+    restart: 'no'
 
   adminer:
     image: adminer
