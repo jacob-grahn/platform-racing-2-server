@@ -548,7 +548,8 @@ function levels_select_top($pdo, , $start, $count)
                l.title,
                l.play_count,
                u.user_id,
-               u.name
+               u.name,
+               u.power
           FROM levels l, users u
          WHERE l.play_count > 20000
          AND l.user_id = u.user_id
