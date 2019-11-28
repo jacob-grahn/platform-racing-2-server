@@ -539,3 +539,28 @@ function levels_select_newest($pdo)
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
+
+
+function levels_select_top($pdo, , $start, $count)
+{
+    $stmt = $pdo->prepare('
+        SELECT l.level_id,
+               l.title,
+               l.play_count,
+               u.user_id,
+               u.name
+          FROM levels l, users u
+         WHERE l.play_count > 20000
+         AND l.user_id = u.user_id
+         ORDER BY l.play_count DESC
+         LIMIT :start, :count
+    ');
+    $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+    $stmt->bindValue(':count', $count, PDO::PARAM_INT);
+    $result = $stmt->execute();
+    
+    if ($result === false) {
+        throw new Exception('Could not perform query users_select_top.');
+    }
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
