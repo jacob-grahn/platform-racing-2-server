@@ -152,7 +152,7 @@ function describeVault($pdo, $user_id, $arr)
 {
     // sale?
     $sale = true;
-    $discount = 0.75;
+    $discount = 0.6;
 
     // gather user info
     $user = user_select_expanded($pdo, $user_id);
