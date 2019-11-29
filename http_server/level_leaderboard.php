@@ -16,7 +16,7 @@ try {
 
     // header, also check if mod and output the mod links if so
     $staff = is_staff($pdo, token_login($pdo, true, true), false);
-    output_header('Leaderboard', $staff->mod, $staff->admin);
+    output_header('Level Leaderboard', $staff->mod, $staff->admin);
 
     // limit amount of entries to be obtained from the db at a time
     if ($staff->mod === true) {
@@ -32,7 +32,7 @@ try {
     $levels = levels_select_top($pdo, $start, $count);
 
     echo '<center>'
-        .'<font face="Gwibble" class="gwibble">-- Leaderboard --</font>'
+        .'<font face="Gwibble" class="gwibble">-- Level Leaderboard --</font>'
         .'<br /><br />'
         .'<table>'
         .'<tr>'
