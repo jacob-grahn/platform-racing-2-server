@@ -7,6 +7,25 @@ services:
       dockerfile: docker/http_server.dockerfile
     ports:
       - "8080:80"
+    depends_on:
+      - mysql
+
+  multi:
+    build:
+      context: ../
+      dockerfile: docker/multi_server.dockerfile
+    ports:
+      - "9160:9160"
+    depends_on:
+      - liquibase
+    restart: always
+
+  policy:
+    build:
+      context: ../
+      dockerfile: docker/policy_server.dockerfile
+    ports:
+      - "843:843"
 
   mysql:
     image: mysql
@@ -39,3 +58,5 @@ services:
     restart: always
     ports:
       - 8081:8080
+    depends_on:
+      - mysql

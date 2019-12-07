@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: seed-server-table
+      author: jacob-grahn
+      changes:
+      - loadUpdateData:
+          file: liquibase/servers.csv
+          tableName: servers
+          primaryKey: server_id

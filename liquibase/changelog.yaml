@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: liquibase/base.mysql.sql
+  - include:
+      file: liquibase/seed-servers.yaml

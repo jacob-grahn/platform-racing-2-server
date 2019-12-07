@@ -1,0 +1,2 @@
+server_id,server_name,address,port,expire_date,population,status,active,salt,guild_id,tournament,happy_hour
+1,Derron,127.0.0.1,9160,2099-12-31 06:14:00,0,open,1,test-salt,0,0,0
