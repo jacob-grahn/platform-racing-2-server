@@ -2,11 +2,11 @@
 
 $SERVER_IP = '127.0.0.1';
 
-$DB_ADDRESS = 'localhost';
-$DB_PASS = '123';
-$DB_USER = 'user';
+$DB_ADDRESS = 'mysql';
+$DB_PASS = 'pr2';
+$DB_USER = 'pr2';
 $DB_NAME = 'pr2';
-$DB_PORT = 1234;
+$DB_PORT = 3306;
 
 $S3_SECRET = 'secret';
 $S3_PASS = 'pass';

@@ -1,0 +1,41 @@
+version: "3"
+services:
+
+  web:
+    build:
+      context: ../
+      dockerfile: docker/http_server.dockerfile
+    ports:
+      - "8080:80"
+
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: pr2
+      MYSQL_USER: pr2
+      MYSQL_PASSWORD: pr2
+      MYSQL_ROOT_PASSWORD: root
+
+  liquibase:
+    build:
+      context: ../
+      dockerfile: docker/liquibase.dockerfile
+    command: update
+    environment:
+      LIQUIBASE_URL: jdbc:mysql://mysql/pr2
+      LIQUIBASE_USERNAME: root
+      LIQUIBASE_PASSWORD: root
+      LIQUIBASE_CHANGELOG: /liquibase/changelog.yaml
+    volumes:
+      - ../liquibase:/liquibase
+      - ./:/scripts
+    depends_on:
+      - mysql
+    restart: 'no'
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
