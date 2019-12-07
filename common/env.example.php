@@ -3,8 +3,8 @@
 $SERVER_IP = '127.0.0.1';
 
 $DB_ADDRESS = 'mysql';
-$DB_PASS = 'pr2-user-password';
-$DB_USER = 'pr2-user';
+$DB_PASS = 'pr2';
+$DB_USER = 'pr2';
 $DB_NAME = 'pr2';
 $DB_PORT = 3306;
 
