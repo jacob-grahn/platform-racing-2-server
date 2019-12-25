@@ -168,6 +168,8 @@ class Prizes
     public static $SEA_HEAD;
     public static $BREW_HEAD;
     public static $JACKOLANTERN_HEAD;
+    public static $XMAS_HEAD;
+    public static $SNOWMAN_HEAD;
 
     // epic heads
     public static $EPIC_CLASSIC_HEAD;
@@ -214,6 +216,8 @@ class Prizes
     public static $EPIC_SEA_HEAD;
     public static $EPIC_BREW_HEAD;
     public static $EPIC_JACKOLANTERN_HEAD;
+    public static $EPIC_XMAS_HEAD;
+    public static $EPIC_SNOWMAN_HEAD;
 
 
     // bodies
@@ -259,6 +263,8 @@ class Prizes
     public static $BAT_BODY;
     public static $SEA_BODY;
     public static $BREW_BODY;
+    public static $XMAS_BODY;
+    public static $SNOWMAN_BODY;
 
     // epic bodies
     public static $EPIC_CLASSIC_BODY;
@@ -303,6 +309,8 @@ class Prizes
     public static $EPIC_BAT_BODY;
     public static $EPIC_SEA_BODY;
     public static $EPIC_BREW_BODY;
+    public static $EPIC_XMAS_BODY;
+    public static $EPIC_SNOWMAN_BODY;
 
 
     // feet
@@ -346,6 +354,8 @@ class Prizes
     public static $BAT_FEET;
     public static $SEA_FEET;
     public static $BREW_FEET;
+    public static $XMAS_FEET;
+    public static $SNOWMAN_FEET;
 
     // epic feet
     public static $EPIC_CLASSIC_FEET;
@@ -388,6 +398,8 @@ class Prizes
     public static $EPIC_BAT_FEET;
     public static $EPIC_SEA_FEET;
     public static $EPIC_BREW_FEET;
+    public static $EPIC_XMAS_FEET;
+    public static $EPIC_SNOWMAN_FEET;
 
 
     public static function init()
@@ -474,6 +486,8 @@ class Prizes
         self::$SEA_HEAD = new Prize(self::TYPE_HEAD, Heads::SEA, 'Sea Head');
         self::$BREW_HEAD = new Prize(self::TYPE_HEAD, Heads::BREW, 'Brew Head');
         self::$JACKOLANTERN_HEAD = new Prize(self::TYPE_HEAD, Heads::JACKOLANTERN, 'Jack-o\'-Lantern Head');
+        self::$XMAS_HEAD = new Prize(self::TYPE_HEAD, Heads::XMAS, 'Star Head');
+        self::$SNOWMAN_HEAD = new Prize(self::TYPE_HEAD, Heads::SNOWMAN, 'Snowman Head');
 
         // epic heads
         self::$EPIC_CLASSIC_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade');
@@ -520,6 +534,8 @@ class Prizes
         self::$EPIC_SEA_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SEA, 'Epic Upgrade');
         self::$EPIC_BREW_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BREW, 'Epic Upgrade');
         self::$EPIC_JACKOLANTERN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::JACKOLANTERN, 'Epic Upgrade');
+        self::$EPIC_XMAS_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::XMAS, 'Epic Upgrade');
+        self::$EPIC_SNOWMAN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SNOWMAN, 'Epic Upgrade');
 
 
         // bodies
@@ -565,6 +581,8 @@ class Prizes
         self::$BAT_BODY = new Prize(self::TYPE_BODY, Bodies::BAT, 'Bat Body');
         self::$SEA_BODY = new Prize(self::TYPE_BODY, Bodies::SEA, 'Sea Body');
         self::$BREW_BODY = new Prize(self::TYPE_BODY, Bodies::BREW, 'Brew Body');
+        self::$XMAS_BODY = new Prize(self::TYPE_BODY, Bodies::XMAS, 'Christmas Tree Body');
+        self::$SNOWMAN_BODY = new Prize(self::TYPE_BODY, Bodies::SNOWMAN, 'Snowman Body');
 
         // epic bodies
         self::$EPIC_CLASSIC_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::CLASSIC, 'Epic Upgrade');
@@ -609,6 +627,8 @@ class Prizes
         self::$EPIC_BAT_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BAT, 'Epic Upgrade');
         self::$EPIC_SEA_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::SEA, 'Epic Upgrade');
         self::$EPIC_BREW_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BREW, 'Epic Upgrade');
+        self::$EPIC_XMAS_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::XMAS, 'Epic Upgrade');
+        self::$EPIC_SNOWMAN_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::SNOWMAN, 'Epic Upgrade');
 
 
         // feet
@@ -652,6 +672,8 @@ class Prizes
         self::$BAT_FEET = new Prize(self::TYPE_FEET, Feet::BAT, 'Bat Feet');
         self::$SEA_FEET = new Prize(self::TYPE_FEET, Feet::SEA, 'Sea Feet');
         self::$BREW_FEET = new Prize(self::TYPE_FEET, Feet::BREW, 'Brew Feet');
+        self::$XMAS_FEET = new Prize(self::TYPE_FEET, Feet::XMAS, 'Present Feet');
+        self::$SNOWMAN_FEET = new Prize(self::TYPE_FEET, Feet::SNOWMAN, 'Snowman Feet');
 
         // epic feet
         self::$EPIC_CLASSIC_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::CLASSIC, 'Epic Upgrade');
@@ -694,6 +716,8 @@ class Prizes
         self::$EPIC_BAT_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BAT, 'Epic Upgrade');
         self::$EPIC_SEA_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SEA, 'Epic Upgrade');
         self::$EPIC_BREW_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BREW, 'Epic Upgrade');
+        self::$EPIC_XMAS_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::XMAS, 'Epic Upgrade');
+        self::$EPIC_SNOWMAN_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SNOWMAN, 'Epic Upgrade');
     }
 
 
