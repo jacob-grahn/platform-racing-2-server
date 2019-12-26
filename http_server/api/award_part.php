@@ -21,12 +21,6 @@ try {
         throw new Exception('Wrong password.');
     }
 
-    // is bls?
-    $user_id = token_login($pdo);
-    if ($user_id !== 3483035) {
-        throw new Exception('Hey... you\'re not bls!');
-    }
-
     // award
     $user = user_select_by_name($pdo, $to_name);
     if ($user->server_id != 0) {
@@ -45,7 +39,12 @@ try {
             false
         );
         if ($reply !== false) {
-            echo $reply;
+            $r->message = $reply;
         }
     }
+} catch (Exception $e) {
+    $r->success = false;
+    $r->error = $e->getMessage;
+} finally {
+    die(json_encode($r));
 }
