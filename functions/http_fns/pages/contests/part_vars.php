@@ -155,7 +155,9 @@ function to_part_name($type, $id)
         40 => 'Gecko',
         41 => 'Bat',
         42 => 'Sea',
-        43 => 'Brew'
+        43 => 'Brew',
+        45 => 'Present',
+        46 => 'Snowman'
     ];
 
     $lookup = [
