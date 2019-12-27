@@ -1,5 +1,8 @@
 <?php
 
+header('Location: https://pr2hub.com/');
+die(); // disable this for now
+
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
