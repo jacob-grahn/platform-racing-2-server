@@ -83,4 +83,10 @@ class LevelListRoom extends Room
             $course->fillSlot($this, $player, $slot);
         }
     }
+
+
+    public function getType()
+    {
+        return $this->type;
+    }
 }
