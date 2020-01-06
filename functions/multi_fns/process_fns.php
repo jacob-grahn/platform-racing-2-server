@@ -63,12 +63,18 @@ function process_gain_part($socket, $data)
         if (isset($player)) {
             $ret = $player->gainPart($type, $id, true);
             if ($ret === true) {
-                $player->write('message`You won something! Check your account!!!');
-                $socket->write('They were nice!');
+                if ($player->hasPart(substr($type, 1), $id)) {
+                    $player->sendCustomizeInfo(); // only notify if they own the base part
+                    $player->write('message`You won something! Check your account!!!');
+                }
+                $socket->write('They were nice! The part was awarded.');
                 return;
+            } elseif ($ret === false) {
+                $socket->write('Error: The player already has this part.');
             }
+        } else {
+            $socket->write('Error: This player is not online. Could not award part. :(');
         }
-        $socket->write('Could not award part. :(');
     }
 }
 
