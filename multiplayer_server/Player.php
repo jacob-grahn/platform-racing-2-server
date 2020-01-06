@@ -424,6 +424,9 @@ class Player
         if (strpos($type, 'e') === 0) {
             $type = substr($type, 1);
             $type = strtolower($type);
+            if ($this->hasPart($type, $id) === false) {
+                return; // only set if they have the base part
+            }
         }
 
         if ($type === 'hat' || $type === 'head' || $type === 'body' || $type === 'feet') {
