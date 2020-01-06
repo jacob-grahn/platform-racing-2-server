@@ -50,6 +50,33 @@ function process_disconnect_player($socket, $data)
 }
 
 
+// award a part to a player on the server
+function process_gain_part($socket, $data)
+{
+    if ($socket->process === true) {
+        $obj = json_decode($data);
+        $user_id = (int) $obj->user_id;
+        $type = $obj->type;
+        $id = (int) $obj->part_id;
+        $player = id_to_player($user_id, false);
+        if (isset($player)) {
+            $ret = $player->gainPart($type, $id, true);
+            if ($ret === true) {
+                if ($player->hasPart(substr($type, 1), $id)) {
+                    $player->sendCustomizeInfo(); // only notify if they own the base part
+                    $player->write('message`You won something! Check your account!!!');
+                }
+                $socket->write('They were nice! The part was awarded.');
+                return;
+            } elseif ($ret === false) {
+                $socket->write('Error: The player already has this part.');
+            }
+        }
+        $socket->write('Could not award part. :(');
+    }
+}
+
+
 // message a player on the server
 function process_message_player($socket, $data)
 {
