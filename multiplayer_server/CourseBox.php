@@ -164,7 +164,7 @@ class CourseBox
     {
         $this->starting = true;
         $course_id = substr($this->course_id, 0, strpos($this->course_id, '_'));
-        $game = new Game($course_id);
+        $game = new Game($course_id, $this->room->getType());
         foreach ($this->slot_array as $player) {
             if ($player->active_rank < 100 || $player->user_id === FRED) {
                 $player->confirmed = false;

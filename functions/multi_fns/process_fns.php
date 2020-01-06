@@ -58,6 +58,7 @@ function process_gain_part($socket, $data)
         $user_id = (int) $obj->user_id;
         $type = $obj->type;
         $id = (int) $obj->part_id;
+
         $player = id_to_player($user_id, false);
         if (isset($player)) {
             $ret = $player->gainPart($type, $id, true);
@@ -71,8 +72,9 @@ function process_gain_part($socket, $data)
             } elseif ($ret === false) {
                 $socket->write('Error: The player already has this part.');
             }
+        } else {
+            $socket->write('Error: This player is not online. Could not award part. :(');
         }
-        $socket->write('Could not award part. :(');
     }
 }
 

@@ -22,6 +22,7 @@ class Game extends Room
     
     private $finish_array = array();
     private $course_id;
+    private $from_room;
     private $start_time;
     private $begun = false;
     private $loose_hat_array = array();
@@ -42,9 +43,10 @@ class Game extends Room
     protected $temp_id = 0;
 
 
-    public function __construct($course_id)
+    public function __construct($course_id, $from_room)
     {
         $this->course_id = $course_id;
+        $this->from_room = $from_room;
         $this->tournament = PR2SocketServer::$tournament;
         $this->start_time = microtime(true);
     }
@@ -615,14 +617,14 @@ class Game extends Room
             $exp_multiplier = 1;
             $exp_multiplier += $hat_bonus > 4 ? 4 : $hat_bonus;
             $exp_multiplier *= HappyHour::isActive() ? 2 : 1;
-            $exp_multiplier += isset($this->campaign) ? 2 : 0;
+            $exp_multiplier += isset($this->campaign) && $this->from_room === 'campaign' ? 2 : 0;
             $tot_exp_gain = round($tot_exp_gain * ($exp_multiplier > 12 ? 12 : $exp_multiplier));
 
             // exp award notification
             if ($exp_multiplier > 1) {
                 $bonuses = new \stdClass();
                 $bonuses->hat = $hat_bonus > 0;
-                $bonuses->campaign = isset($this->campaign);
+                $bonuses->campaign = isset($this->campaign) && $this->from_room === 'campaign';
                 $bonuses->hh = HappyHour::isActive();
 
                 // determine number of awards

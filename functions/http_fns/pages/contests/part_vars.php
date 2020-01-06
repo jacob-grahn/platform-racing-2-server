@@ -65,7 +65,9 @@ function to_part_name($type, $id)
         41 => 'Bat',
         42 => 'Sea',
         43 => 'Brew',
-        44 => 'Jack-o\'-Lantern'
+        44 => 'Jack-o\'-Lantern',
+        45 => 'Star',
+        46 => 'Snowman'
     ];
 
     // bodies
@@ -111,7 +113,9 @@ function to_part_name($type, $id)
         40 => 'Gecko',
         41 => 'Bat',
         42 => 'Sea',
-        43 => 'Brew'
+        43 => 'Brew',
+        45 => 'Christmas Tree',
+        46 => 'Snowman'
     ];
 
     // feet
@@ -195,7 +199,7 @@ function validate_prize($type, $id)
     // check for a valid head id
     if ($type === 'head' || $type === 'ehead') {
         $type = 'head';
-        if ($id < 1 || $id > 44) {
+        if ($id < 1 || $id > 46) {
             throw new Exception("Invalid head ID ($id) specified.");
         }
     }
@@ -203,7 +207,7 @@ function validate_prize($type, $id)
     // check for a valid body id
     if ($type === 'body' || $type === 'ebody') {
         $type = 'body';
-        if ($id < 1 || $id > 43 || $id === 33) {
+        if ($id < 1 || $id > 46 || $id === 33 || $id === 44) {
             throw new Exception("Invalid body ID ($id) specified.");
         }
     }
@@ -211,7 +215,7 @@ function validate_prize($type, $id)
     // check for a valid feet id
     if ($type === 'feet' || $type === 'efeet') {
         $type = 'feet';
-        if ($id < 1 || $id > 43 || ($id >= 31 && $id <= 33)) {
+        if ($id < 1 || $id > 46 || ($id >= 31 && $id <= 33) || $id === 44) {
             throw new Exception("Invalid feet ID ($id) specified.");
         }
     }

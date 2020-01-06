@@ -80,7 +80,9 @@ try {
 42 - Sea
 43 - Brew
 44 - Jack-o\'-Lantern
-45+ - *BLANK*
+45 - Star
+46 - Snowman
+47+ - *BLANK*
 
 -- Bodies --
 1 - Classic
@@ -126,7 +128,9 @@ try {
 41 - Bat
 42 - Sea
 43 - Brew
-44+ - *BLANK*
+45 - Star
+46 - Snowman
+47+ - *BLANK*
 
 -- Feet --
 1 - Classic
@@ -172,7 +176,9 @@ try {
 41 - Bat
 42 - Sea
 43 - Brew
-44+ - *BLANK*
+45 - Star
+46 - Snowman
+47+ - *BLANK*
 
 -- Full Sets --
 (Key: Head ID, Body ID, Feet ID)
@@ -197,22 +203,25 @@ Fred: Any #, 29, Any #
 Very Invisible: 31, 30, 27
 Taco: 32, 31, 29
 Slender: 33, 32, 30
-Santa: 34, 34, 34
-Frost Djinn: 35, 35, 35
-Reindeer: 36, 36, 36
-Crocodile: 37, 37, 37
-Valentine: 38, 38, 38
-Bunny: 39, 39, 39
-Gecko: 40, 40, 40
-Bat: 41, 41, 41
-Sea: 42, 42, 42
-Brew: 43, 43, 43
+** From this point on, all parts in a set share the same ID. **
+Santa: 34
+Frost Djinn: 35
+Reindeer: 36
+Crocodile: 37
+Valentine: 38
+Bunny: 39
+Gecko: 40
+Bat: 41
+Sea: 42
+Brew: 43
+Christmas: 45
+Snowman: 46
 
 -- Blank IDs --
 Hats: 16+
-Heads: 45+
-Bodies: 33, 44+
-Feet: 31-33, 44+</pre>';
+Heads: 47+
+Bodies: 33, 44, 47+
+Feet: 31-33, 44, 47+</pre>';
 } catch (Exception $e) {
     output_header('Error');
     $error = $e->getMessage();
