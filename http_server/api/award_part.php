@@ -1,5 +1,8 @@
 <?php
 
+header('Location: https://pr2hub.com/');
+die(); // still disable for now
+
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
@@ -19,7 +22,7 @@ $r->success = false;
 try {
     // authorized?
     rate_limit('api-award-part-'.$ip, 5, 1);
-    validate_api_request($ip, $pass);
+    validate_api_request($ip, $pass, true);
 
     // connect
     $pdo = pdo_connect();
