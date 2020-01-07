@@ -168,7 +168,7 @@ function message_send_welcome($pdo, $name, $user_id)
 
 // -- PARTS (PART_AWARDS, PR2, EPIC_UPGRADES) -- \\
 
-// award hats
+// award parts
 function award_part($pdo, $user_id, $type, $part_id)
 {
     $type = strtolower($type);
@@ -221,6 +221,105 @@ function award_part($pdo, $user_id, $type, $part_id)
         pr2_update_part_array($pdo, $user_id, $type, $new_field_str);
     }
     return true;
+}
+
+
+/**
+ * Awards prizes to a user for various reasons on login.
+ *
+ * @param object stats Contains the user's current stats.
+ * @param int group The value of the user's group (e.g. 1 = member, 2 = moderator, 3 = admin).
+ * @param object prizes Contains any pending prizes for the user.
+ *
+ * @throws Exception if the part_awards_delete query fails.
+ * @return object
+ */
+function award_special_parts($stats, $group, $prizes)
+{
+    global $hat_array, $head_array, $body_array, $feet_array, $epic_upgrades;
+
+    // get current date for holiday parts check
+    $date = date('F j');
+
+    // heart set (valentine)
+    if ($date === 'February 13' || $date === 'February 14') {
+        $stats->head = add_item($head_array, 38) ? 38 : $stats->head;
+        $stats->body = add_item($body_array, 38) ? 38 : $stats->body;
+        $stats->feet = add_item($feet_array, 38) ? 38 : $stats->feet;
+    }
+
+    // bunny set (easter)
+    $easter = date('F j', easter_date(date('Y')));
+    if ($date === $easter || date('F j', time() + 86400) === $easter) {
+        $stats->head = add_item($head_array, 39) ? 39 : $stats->head;
+        $stats->body = add_item($body_array, 39) ? 39 : $stats->body;
+        $stats->feet = add_item($feet_array, 39) ? 39 : $stats->feet;
+    }
+
+    // jack-o-lantern head (halloween)
+    if ($date === 'October 30' || $date === 'October 31') {
+        $stats->head = add_item($head_array, 44) ? 44 : $stats->head;
+    }
+
+    // santa set (christmas)
+    if ($date === 'December 24' || $date === 'December 25') {
+        $stats->hat = add_item($hat_array, 7) ? 7 : $stats->hat;
+        $stats->head = add_item($head_array, 34) ? 34 : $stats->head;
+        $stats->body = add_item($body_array, 34) ? 34 : $stats->body;
+        $stats->feet = add_item($feet_array, 34) ? 34 : $stats->feet;
+    }
+
+    // party hat (new year)
+    if ($date === 'December 31' || $date === 'January 1') {
+        $stats->hat = add_item($hat_array, 8) ? 8 : $stats->hat;
+    }
+
+    // crown for mods
+    $stats->hat = $group >= 2 ? (add_item($hat_array, 6) ? 6 : $stats->hat) : $stats->hat;
+
+    // stop if nothing else to award
+    if ($prizes === false) {
+        return $stats;
+    }
+
+    // contest awards
+    foreach ($prizes as $award) {
+        $type = $award->type;
+        $db_field = type_to_db_field($type);
+        $epic = strpos($award->type, 'e') === 0 ? true : false;
+        $base_type = $epic === true ? strtolower(substr($award->type, 1)) : $award->type;
+        $part = (int) $award->part;
+
+        // select array
+        unset($arr); // this only unsets the reference, not the actual array, so as not to overwrite
+        if ($epic === true) {
+            $arr = explode(',', $epic_upgrades->$db_field);
+        } else {
+            $arr = &${$base_type . '_array'};
+        }
+
+        // check for existence in a part array before continuing
+        if (in_array($part, $arr)) {
+            global $pdo, $user_id;
+            part_awards_delete($pdo, $user_id, $type, $part);
+            continue;
+        }
+
+        // determine array to use and add part
+        $added = add_item($arr, $part); // this should never return false if part_awards_delete works properly
+
+        // if it succeeded and they have the base part, then switch to that part
+        if ($added && array_search($part, ${$base_type . '_array'}) !== false) {
+            $stats->$base_type = $part;
+        }
+
+        // if epic, reapply it to the epic_upgrades object
+        if ($epic === true) {
+            $epic_upgrades->$db_field = join(',', $arr);
+        }
+    }
+
+    return $stats;
 }
 
 
