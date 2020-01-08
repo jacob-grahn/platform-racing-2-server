@@ -175,8 +175,8 @@ try {
     // check if they own rank tokens
     $rank_tokens = rank_token_select($pdo, $user_id);
     if (!empty($rank_tokens)) {
-        $rt_available = $rank_tokens->available_tokens;
-        $rt_used = $rank_tokens->used_tokens;
+        $rt_available = $group > 0 ? $rank_tokens->available_tokens : 0;
+        $rt_used = $group > 0 ? $rank_tokens->used_tokens : 0;
     }
 
     // check if they're renting rank tokens
