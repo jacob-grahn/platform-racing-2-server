@@ -376,7 +376,7 @@ function award_special_parts($stats, $group, $prizes)
         // check for existence in a part array before continuing
         if (in_array($part, $arr)) {
             global $pdo, $user_id;
-            part_awards_delete($pdo, $user_id, $type, $part);
+            part_awards_delete($pdo, $user_id, $award->type, $part);
             continue;
         }
 

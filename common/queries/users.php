@@ -451,7 +451,11 @@ function user_select_server_id($pdo, $user_id, $suppress_error = false)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not perform query user_select_server_id.');
+        if ($suppress_error === false) {
+            throw new Exception('Could not perform query user_select_server_id.');
+        } else {
+            return false;
+        }
     }
 
     return (int) $stmt->fetch(PDO::FETCH_OBJ)->server_id;

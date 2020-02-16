@@ -207,8 +207,6 @@ class Player
 
     public function incExp($exp)
     {
-        global $exp_required;
-
         $max_rank = exp_required_for_ranking($this->active_rank + 1);
         $new_exp_total = $this->exp_points + $exp;
         $this->write("setExpGain`$this->exp_points`$new_exp_total`$max_rank");
