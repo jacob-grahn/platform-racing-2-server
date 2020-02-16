@@ -61,10 +61,14 @@ try {
             $is_epic = (bool) $prize->epic;
 
             // make the display name
-            $part_name = to_part_name($part_type, $part_id);
-            $disp_type = ucfirst($part_type);
-            $prize_name = "$part_name $disp_type";
-            $prize_name = $is_epic === true ? "Epic $prize_name" : $prize_name;
+            if ($part_type !== 'exp') {
+                $part_name = to_part_name($part_type, $part_id);
+                $disp_type = ucfirst($part_type);
+                $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
+            } else {
+                $exp = number_format($part_id);
+                $prize_name = "$exp EXP Prize";
+            }
 
             echo "<input type='checkbox' name='prize_$prize_id' id='prize_$prize_id'>"
                 ."<label for='prize_$prize_id'> $prize_name</label>"

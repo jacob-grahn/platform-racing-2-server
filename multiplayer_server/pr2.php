@@ -58,7 +58,6 @@ require_once PR2_ROOT . '/Player.php';
 require_once PR2_ROOT . '/PR2SocketServer.php';
 require_once PR2_ROOT . '/PR2Client.php';
 require_once PR2_ROOT . '/RaceStats.php';
-require_once PR2_ROOT . '/RankupCalculator.php';
 require_once PR2_ROOT . '/ServerBans.php';
 require_once PR2_ROOT . '/TemporaryItems.php';
 
@@ -67,7 +66,6 @@ register_shutdown_function('__crashHandler'); // ensures no data is lost
 output("Initializing startup...");
 
 Prizes::init();
-RankupCalculator::init();
 HappyHour::$random_hour = rand(0, 23);
 
 $pdo = pdo_connect();

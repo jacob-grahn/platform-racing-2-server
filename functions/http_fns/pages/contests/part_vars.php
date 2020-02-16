@@ -178,7 +178,7 @@ function validate_prize($type, $id)
 {
     $type = htmlspecialchars(strtolower($type));
     $id = (int) $id;
-    $type_array = ['hat', 'head', 'body', 'feet', 'ehat', 'ehead', 'ebody', 'efeet'];
+    $type_array = ['hat', 'head', 'body', 'feet', 'ehat', 'ehead', 'ebody', 'efeet', 'exp'];
 
     // check for a valid prize type
     if (!in_array($type, $type_array)) {
@@ -218,6 +218,11 @@ function validate_prize($type, $id)
         if ($id < 1 || $id > 46 || ($id >= 31 && $id <= 33) || $id === 44) {
             throw new Exception("Invalid feet ID ($id) specified.");
         }
+    }
+
+    // check for a valid amount of exp
+    if ($type === 'exp' && $id <= 0) {
+        throw new Exception("Invalid amount of EXP ($id) specified.");
     }
 
     // if we got here, it means no exceptions were caught -- return our data

@@ -436,6 +436,28 @@ function user_select_power_by_name($pdo, $name)
 }
 
 
+function user_select_server_id($pdo, $user_id, $suppress_error = false)
+{
+    $stmt = $pdo->prepare('
+        SELECT
+          server_id
+        FROM
+          users
+        WHERE
+          user_id = :user_id
+        LIMIT 1
+    ');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not perform query user_select_server_id.');
+    }
+
+    return (int) $stmt->fetch(PDO::FETCH_OBJ)->server_id;
+}
+
+
 function user_select_power($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
