@@ -63,12 +63,12 @@ function add_contest_prize($pdo, $admin, $contest)
     $is_epic = (bool) $prize->epic;
 
     // make the display name
-    if ($part_type !== 'exp') {
-        $part_name = to_part_name($part_type, $part_id);
-        $disp_type = ucfirst($part_type);
+    if ($prize_type !== 'exp') {
+        $part_name = to_part_name($prize_type, $prize_id);
+        $disp_type = ucfirst($prize_type);
         $full_part_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
     } else {
-        $exp = number_format($part_id);
+        $exp = number_format($prize_id);
         $full_part_name = "$exp EXP Prize";
     }
 
