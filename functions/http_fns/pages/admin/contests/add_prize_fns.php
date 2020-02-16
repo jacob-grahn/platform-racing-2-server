@@ -4,7 +4,7 @@
 function output_form($contest)
 {
     // define prize types
-    $prize_types = ['hat', 'head', 'body', 'feet', 'eHat', 'eHead', 'eBody', 'eFeet'];
+    $prize_types = ['hat', 'head', 'body', 'feet', 'eHat', 'eHead', 'eBody', 'eFeet', 'exp'];
     $options_html = '';
     foreach ($prize_types as $pt) {
         $options_html .= "<option value='$pt'>$pt</option>";
@@ -12,7 +12,8 @@ function output_form($contest)
 
     echo '<form action="add_prize.php" method="post">';
 
-    echo 'Add Contest Prize for <b>'.htmlspecialchars($contest->contest_name, ENT_QUOTES).'</b><br><br>';
+    $safe_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
+    echo "Add Contest Prize for <b>$safe_contest_name</b><br><br>";
 
     $part_type_sel = '<select name="part_type">'
         .'<option value="" selected="selected">Choose a type...</option>'
@@ -20,7 +21,7 @@ function output_form($contest)
         .'</select>';
 
     echo "Prize Type: $part_type_sel<br>";
-    echo "Prize ID: <input type='text' name='part_id' maxlength='2'>";
+    echo "Prize ID: <input type='text' name='part_id'>";
 
     echo '<input type="hidden" name="action" value="add"><br>';
     echo '<input type="hidden" name="contest_id" value="'.(int) $contest->contest_id.'">';
@@ -62,10 +63,14 @@ function add_contest_prize($pdo, $admin, $contest)
     $is_epic = (bool) $prize->epic;
 
     // make the display name
-    $part_name = to_part_name($prize_type, $prize_id);
-    $disp_type = ucfirst($prize_type);
-    $full_part_name = "$part_name $disp_type";
-    $full_part_name = $is_epic === true ? "Epic $full_part_name" : $full_part_name;
+    if ($prize_type !== 'exp') {
+        $part_name = to_part_name($prize_type, $prize_id);
+        $disp_type = ucfirst($prize_type);
+        $full_part_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
+    } else {
+        $exp = number_format($prize_id);
+        $full_part_name = "$exp EXP Prize";
+    }
 
     // log the action in the admin log
     $ip = get_ip();

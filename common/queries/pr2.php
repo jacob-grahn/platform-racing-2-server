@@ -43,6 +43,33 @@ function pr2_insert($pdo, $user_id)
 }
 
 
+function pr2_select_rank_progress($pdo, $user_id)
+{
+    $stmt = $pdo->prepare('
+        SELECT
+          pr2.exp_points AS exp,
+          (pr2.rank + IFNULL(rt.used_tokens, 0)) AS rank,
+          IFNULL(rt.used_tokens, 0) AS tokens
+        FROM
+          pr2
+        LEFT JOIN
+          rank_tokens rt ON rt.user_id = pr2.user_id
+        WHERE
+          pr2.user_id = :user_id
+        LIMIT
+          1
+    ');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result == false) {
+        throw new Exception("Could not perform query pr2_select_rank_progress.");
+    }
+
+    return $stmt->fetch(PDO::FETCH_OBJ);
+}
+
+
 function pr2_select_true_rank($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
@@ -134,6 +161,36 @@ function pr2_update_part_array($pdo, $user_id, $type, $part_array)
     if ($result === false) {
         $user_id = (int) $user_id;
         throw new Exception("Could not update user #$user_id's PR2 player data on column $field.");
+    }
+
+    return $result;
+}
+
+
+function pr2_update_rank($pdo, $user_id, $new_rank, $exp_points = null)
+{
+    $exp_str = $exp_points !== null ? 'exp_points = :exp_points,' : '';
+    $stmt = $pdo->prepare("
+        UPDATE
+          pr2
+        SET
+          $exp_str
+          rank = :rank
+        WHERE
+          user_id = :user_id
+          AND rank <= :rank
+        LIMIT
+          1
+    ");
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':rank', $new_rank, PDO::PARAM_INT);
+    if ($exp_points !== null) {
+        $stmt->bindValue(':exp_points', $exp_points, PDO::PARAM_INT);
+    }
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not perform query pr2_update_rank.');
     }
 
     return $result;

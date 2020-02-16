@@ -166,13 +166,13 @@ function message_send_welcome($pdo, $name, $user_id)
 }
 
 
-// -- PARTS (PART_AWARDS, PR2, EPIC_UPGRADES) -- \\
+// -- PARTS/EXP (PART_AWARDS, PR2, EPIC_UPGRADES, USER) -- \\
 
 // award parts
 function award_part($pdo, $user_id, $type, $part_id)
 {
     $type = strtolower($type);
-    $part_types = ['hat','head','body','feet','ehat','ehead','ebody','efeet'];
+    $part_types = ['hat', 'head', 'body',' feet', 'ehat', 'ehead', 'ebody', 'efeet'];
 
     // sanity check: is it a valid type?
     if (!in_array($type, $part_types)) {
@@ -225,6 +225,74 @@ function award_part($pdo, $user_id, $type, $part_id)
 
 
 /**
+ * Awards a specified amount of EXP to a user.
+ *
+ * @param resource pdo Contains the current database connection instance.
+ * @param int user_id The user ID of the EXP award recipient.
+ * @param int exp_points The number of EXP points to award to the user.
+ * @param boolean from_cron If the call is from cron_fns.php.
+ *
+ * @throws Exception if the user doesn't exist.
+ * @throws Exception if any of the queries fail.
+ * @throws Exception if the user is online.
+ * @return boolean
+ */
+function award_exp($pdo, int $user_id, int $exp_points, bool $from_cron = false, bool $from_spec_parts = false)
+{
+    // sanity: awarding anything?
+    if ($exp_points <= 0) {
+        throw new Exception('Invalid number of EXP points to award.');
+    }
+
+    // sanity check: does the user exist?
+    $user = user_select($pdo, $user_id, true);
+    if ($user === false) {
+        throw new Exception('This user does not exist.');
+    }
+
+    // is the user online?
+    $server = user_select_server_id($pdo, $user_id, true);
+    $online = $server > 0;
+    if ($online && !$from_cron && !$from_spec_parts) {
+        part_awards_insert($pdo, $user_id, 'exp', $exp_points);
+        return true;
+    } elseif ($online && ($from_cron || $from_spec_parts)) {
+        throw new Exception('The user is online. We\'ll try this again later.');
+    } else {
+        $data = pr2_select_rank_progress($pdo, $user_id);
+        $exp_needed = exp_required_for_ranking($data->rank + 1);
+
+        // handle ranking
+        $award_exp = $exp_points;
+        while ($data->exp + $exp_points > $exp_needed) {
+            $exp_needed = exp_required_for_ranking($data->rank + 1);
+            $exp_remaining = $exp_needed - $data->exp;
+
+            // if this will make the user's exp negative, break
+            if ($exp_points - $exp_remaining < 0) {
+                break;
+            }
+
+            // rank up
+            $exp_points -= $exp_remaining;
+            $data->rank++;
+            $data->exp = 0;
+        }
+
+        $data->exp += $exp_points; // add remaining exp to the new value
+        $data->rank -= $data->tokens; // remove tokens from base rank update
+
+        pr2_update_rank($pdo, $user_id, $data->rank, $data->exp);
+        part_awards_delete($pdo, $user_id, 'exp', $award_exp);
+
+        if ($from_spec_parts) {
+            return $data;
+        }
+    }
+}
+
+
+/**
  * Awards prizes to a user for various reasons on login.
  *
  * @param object stats Contains the user's current stats.
@@ -236,7 +304,7 @@ function award_part($pdo, $user_id, $type, $part_id)
  */
 function award_special_parts($stats, $group, $prizes)
 {
-    global $hat_array, $head_array, $body_array, $feet_array, $epic_upgrades;
+    global $user_id, $hat_array, $head_array, $body_array, $feet_array, $epic_upgrades;
 
     // get current date for holiday parts check
     $date = date('F j');
@@ -284,8 +352,15 @@ function award_special_parts($stats, $group, $prizes)
 
     // contest awards
     foreach ($prizes as $award) {
-        $type = $award->type;
-        $db_field = type_to_db_field($type);
+        if ($award->type === 'exp') {
+            global $pdo, $user_id;
+            $data = award_exp($pdo, $user_id, (int) $award->part, false, true);
+            $stats->exp_points = $data->exp;
+            $stats->rank = $data->rank;
+            continue;
+        }
+
+        $db_field = type_to_db_field($award->type);
         $epic = strpos($award->type, 'e') === 0 ? true : false;
         $base_type = $epic === true ? strtolower(substr($award->type, 1)) : $award->type;
         $part = (int) $award->part;
@@ -301,7 +376,7 @@ function award_special_parts($stats, $group, $prizes)
         // check for existence in a part array before continuing
         if (in_array($part, $arr)) {
             global $pdo, $user_id;
-            part_awards_delete($pdo, $user_id, $type, $part);
+            part_awards_delete($pdo, $user_id, $award->type, $part);
             continue;
         }
 
@@ -327,7 +402,7 @@ function award_special_parts($stats, $group, $prizes)
 function has_part($pdo, $user_id, $type, $part_id)
 {
     $type = strtolower($type);
-    $part_types = ['hat','head','body','feet','ehat','ehead','ebody','efeet'];
+    $part_types = ['hat', 'head', 'body', 'feet', 'ehat', 'ehead', 'ebody', 'efeet'];
 
     // sanity check: is it a valid type?
     if (!in_array($type, $part_types)) {

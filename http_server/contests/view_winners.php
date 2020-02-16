@@ -80,7 +80,7 @@ try {
 
         // get awards
         $prizes_awarded = $winner->prizes_awarded;
-        $prizes_awarded = explode(",", $prizes_awarded);
+        $prizes_awarded = explode(";", $prizes_awarded);
         $last_prize = end($prizes_awarded);
 
         // other variables

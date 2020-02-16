@@ -105,9 +105,14 @@ try {
             $is_epic = (bool) $prize->epic;
 
             // make the display name
-            $part_name = to_part_name($part_type, $part_id);
-            $disp_type = ucfirst($part_type);
-            $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
+            if ($part_type !== 'exp') {
+                $part_name = to_part_name($part_type, $part_id);
+                $disp_type = ucfirst($part_type);
+                $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
+            } else {
+                $exp = number_format($part_id);
+                $prize_name = "$exp EXP Prize";
+            }
 
             echo "<input type='checkbox' name='prize_$prize_id' id='prize_$prize_id'>"
                 ."<label for='prize_$prize_id'> $prize_name</label>"
@@ -187,8 +192,17 @@ try {
                 continue;
             }
 
+            // check if user is online with EXP award
+            /*if ($part_type === 'exp') {
+                if (user_select_server_id($pdo, $winner_id) > 0) {
+                    //
+                }
+                // DO THIS CODE. MAKE SURE TO ADD VERIFICATION FOR NO DUPLICATES
+                //array_push($prizes_to_award, $prize_id);
+            }*/
+
             // check if the user has the part
-            $has_part = has_part($pdo, $winner_id, $part_type, $part_id);
+            $has_part = $part_type === 'exp' ? false : has_part($pdo, $winner_id, $part_type, $part_id);
 
             // get prize info
             $prize = validate_prize($prize->part_type, $prize->part_id);
@@ -197,9 +211,14 @@ try {
             $is_epic = (bool) $prize->epic;
 
             // make the display name
-            $part_name = to_part_name($part_type, $part_id);
-            $disp_type = ucfirst($part_type);
-            $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
+            if ($part_type !== 'exp') {
+                $part_name = to_part_name($part_type, $part_id);
+                $disp_type = ucfirst($part_type);
+                $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
+            } else {
+                $exp = number_format($part_id);
+                $prize_name = "$exp EXP Prize";
+            }
 
             if ($has_part === true) {
                 echo "<span style='color: red;'>Error: $html_winner_name already has the $prize_name.</span><br>";
@@ -236,7 +255,14 @@ try {
             $part_type = $prize->part_type;
             $part_id = $prize->part_id;
 
-            $award = award_part($pdo, $winner_id, $part_type, $part_id);
+            // award the prize
+            if ($part_type === 'exp') {
+                $award = award_exp($pdo, $winner_id, $part_id);
+            } else {
+                $award = award_part($pdo, $winner_id, $part_type, $part_id);
+            }
+
+            // did it fail?
             if ($award === false) {
                 throw new Exception(
                     "CRITICAL ERROR: Could not award $prize_name to $winner_name. ".
@@ -251,9 +277,14 @@ try {
             $is_epic = (bool) $prize->epic;
 
             // make the display name
-            $part_name = to_part_name($part_type, $part_id);
-            $disp_type = ucfirst($part_type);
-            $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
+            if ($part_type !== 'exp') {
+                $part_name = to_part_name($part_type, $part_id);
+                $disp_type = ucfirst($part_type);
+                $prize_name = $is_epic === true ? "Epic $part_name $disp_type" : "$part_name $disp_type";
+            } else {
+                $exp = number_format($part_id);
+                $prize_name = "$exp EXP Prize";
+            }
 
             array_push($prizes_awarded_arr, $prize_name);
             echo "<span style='color: green; font-weight: bold;'>"
@@ -272,7 +303,7 @@ try {
         }
 
         // make the array a string
-        $prizes_awarded_str = join(",", $prizes_awarded_arr);
+        $prizes_awarded_str = join(";", $prizes_awarded_arr);
 
         // record winner
         contest_winner_insert($pdo, $contest->contest_id, $winner_id, $ip, $user_id, $prizes_awarded_str, $comment);
