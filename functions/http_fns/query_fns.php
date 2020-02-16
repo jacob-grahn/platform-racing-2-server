@@ -360,7 +360,7 @@ function award_special_parts($stats, $group, $prizes)
             continue;
         }
 
-        $db_field = type_to_db_field($type);
+        $db_field = type_to_db_field($award->type);
         $epic = strpos($award->type, 'e') === 0 ? true : false;
         $base_type = $epic === true ? strtolower(substr($award->type, 1)) : $award->type;
         $part = (int) $award->part;
