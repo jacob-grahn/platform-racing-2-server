@@ -68,7 +68,13 @@ output("Initializing startup...");
 Prizes::init();
 HappyHour::$random_hour = rand(0, 23);
 
-$pdo = pdo_connect();
+try {
+    $pdo = pdo_connect();
+} catch (Exception $e) {
+    output('FATAL ERROR: ' . $e->getMessage());
+    die();
+}
+
 
 $server_id = (int) $argv[1];
 $verbose = $argc > 2 ? (strtolower($argv[2]) === 'true' ? true : false) : false;
