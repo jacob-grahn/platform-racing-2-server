@@ -172,7 +172,7 @@ function message_send_welcome($pdo, $name, $user_id)
 function award_part($pdo, $user_id, $type, $part_id)
 {
     $type = strtolower($type);
-    $part_types = ['hat', 'head', 'body',' feet', 'ehat', 'ehead', 'ebody', 'efeet'];
+    $part_types = ['hat', 'head', 'body', 'feet', 'ehat', 'ehead', 'ebody', 'efeet'];
 
     // sanity check: is it a valid type?
     if (!in_array($type, $part_types)) {
