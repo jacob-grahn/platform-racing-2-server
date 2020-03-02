@@ -65,6 +65,8 @@ class ChatMessage
         $this->message = str_ireplace(':lenny:', '( ͡° ͜ʖ ͡°)', $this->message);
         $this->message = str_ireplace([':yay:', ':woohoo:', ':wow:'], '╰(ᴖ◡ᴖ)╯', $this->message);
         $this->message = str_ireplace([':hi:', ':hello:', ':hey:'], 'ー( ◉▽◉ )ﾉ', $this->message);
+        $this->message = str_ireplace([':thumbsup:', ':+1:'], '👍', $this->message);
+        $this->message = str_ireplace([':thumbsdown:', ':-1:'], '👎', $this->message);
         $this->message = str_ireplace([':thinking:', ':think:', ':what:', ':hmm:'], '🤔', $this->message);
         $this->message = str_ireplace([':lol:', ':laugh:', ':lmao:', ':joy:'], '😂', $this->message);
         $this->message = str_ireplace([':hooray:', ':tada:', ':party:'], '🎉', $this->message);
@@ -749,6 +751,8 @@ class ChatMessage
                 .':lenny: = ( ͡° ͜ʖ ͡°)<br>'
                 .':yay: = ╰(ᴖ◡ᴖ)╯<br>'
                 .':hello: = ー( ◉▽◉ )ﾉ<br>'
+                .':thumbsup: = 👍<br>'
+                .':thumbsdown: = 👎<br>'
                 .':think: = 🤔<br>'
                 .':laugh: = 😂<br>'
                 .':hooray: = 🎉<br>'
