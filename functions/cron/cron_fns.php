@@ -195,7 +195,7 @@ function update_artifact($pdo)
 
     // tell it to the world
     $r = new stdClass();
-    $r->hint = join('', $arr);
+    $r->hint = join('', array_map('utf8_encode', $arr));
     $r->finder_name = $finder_name;
     $r->bubbles_name = $bubbles_name;
     $r->updated_time = $updated_time;
