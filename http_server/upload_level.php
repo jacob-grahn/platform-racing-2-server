@@ -21,6 +21,7 @@ $pass_hash = default_post('passHash', '');
 $has_pass = (int) default_post('hasPass', 0);
 $game_mode = default_post('gameMode', 'race');
 $cowboy_chance = (int) default_post('cowboyChance', 5);
+$overwrite_existing = (bool) (int) default_post('overwrite_existing', 0);
 
 $time = time();
 $ip = get_ip();
@@ -101,6 +102,11 @@ try {
     $org_play_count = 0;
     $level = level_select_by_title($pdo, $user_id, $title);
     if ($level) {
+        // make sure the user really wants to overwrite
+        if (!$overwrite_existing) {
+            die("status=exists");
+        }
+
         // check if the artifact is currently here
         $arti = artifact_location_select($pdo);
         if ($arti->level_id == $level->level_id) {
