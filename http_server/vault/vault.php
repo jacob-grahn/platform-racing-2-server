@@ -53,10 +53,8 @@ try {
     // reply
     $ret->success = true;
     $ret->listings = $listings;
-    // phpcs:disable
-    $ret->title = date('Y') === 2020 && date('d') <= 2 ? 'Happy New Year!' : (date('Y') == 2019 ? 'End of the Decade Sale!' : 'Vault of Magics');
-    // phpcs:enable
-    $ret->sale = true;
+    $ret->title = 'Vault of Magics';
+    $ret->sale = false;
 } catch (Exception $e) {
     $ret->state = 'canceled';
     $ret->error = $e->getMessage();
