@@ -17,7 +17,7 @@ $ret->success = false;
 
 try {
     // rate limit
-    rate_limit('get-player-info-2-'.$ip, 3, 2);
+    rate_limit('get-player-info-'.$ip, 3, 2);
 
     // connect
     $pdo = pdo_connect();
