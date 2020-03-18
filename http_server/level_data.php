@@ -12,7 +12,7 @@ $ret->success = true;
 
 try {
     // rate limiting
-    rate_limit('view-level-'.$ip, 5, 2, $rl_msg);
+    rate_limit('view-level-'.$ip, 5, 2);
 
     // sanity: getting a level?
     if ($level_id <= 0) {
