@@ -57,14 +57,12 @@ function output_search($name = '', $gwibble = true)
 // player_search.php
 function output_page($pdo, $user)
 {
+    global $group_colors, $group_names;
+
     // sanity check: is the used tokens value set?
     if (!isset($user->used_tokens)) {
         $user->used_tokens = 0;
     }
-
-    // group arrays
-    $group_colors = ['676666', '047b7b', '1c369f', '870a6f'];
-    $group_names = ['Guest', 'Member', 'Moderator', 'Admin'];
 
     // make some variables
     $user_name = $user->name; // name
