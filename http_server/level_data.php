@@ -53,7 +53,7 @@ try {
     // get level info
     $level = level_select($pdo, $level_id);
     $ret->rating = (float) $level->rating;
-    $ret->play_count = (int) $level->plays;
+    $ret->play_count = (int) $level->play_count;
 
     // get author
     $author = user_select_name_and_power($pdo, $ret->user_id);
