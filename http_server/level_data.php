@@ -7,6 +7,9 @@ require_once GEN_HTTP_FNS;
 $ip = get_ip();
 $level_id = (int) default_get('level_id', 0);
 
+$ret = new stdClass();
+$ret->success = true;
+
 try {
     // rate limiting
     rate_limit('view-level-'.$ip, 5, 2, $rl_msg);
@@ -24,19 +27,15 @@ try {
 
     // parse level data
     parse_str($level_txt, $ldata);
-    $ret = new stdClass();
-    $ret->success = true;
-
-    // these will always be present (and always integers):
-    $ret->level_id = (int) $ldata['level_id']; // done
-    $ret->max_time = (int) $ldata['max_time']; // done
-    $ret->min_rank = (int) $ldata['min_level']; // done
-    $ret->live = (bool) (int) $ldata['live']; // done
-    $ret->time = (int) $ldata['time']; // done
-    $ret->user_id = (int) $ldata['user_id']; // done
-
-    // these either have potential to be or are definitely something other than integers:
-    $ret->gravity = $ldata['gravity'];
+    
+    // assign level data to ret object
+    $ret->level_id = (int) $ldata['level_id'];
+    $ret->max_time = (int) $ldata['max_time'];
+    $ret->min_rank = (int) $ldata['min_level'];
+    $ret->live = (bool) (int) $ldata['live'];
+    $ret->time = (int) $ldata['time'];
+    $ret->user_id = (int) $ldata['user_id'];
+    $ret->gravity = (float) $ldata['gravity'];
     $ret->items = $ldata['items'];
     $ret->song = $ldata['song'];
     $ret->title = htmlspecialchars(urldecode($ldata['title']), ENT_QUOTES);
