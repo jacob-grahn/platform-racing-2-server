@@ -594,8 +594,7 @@ class ChatMessage
     {
         $msg = 'systemChat`Join the community!<br>'
             .'<br> - '.urlify('https://jiggmin2.com/forums', 'Jiggmin\'s Village')
-            .'<br> - '.urlify('https://discord.gg/kcWBBBj', 'JV Discord')
-            .'<br> - '.urlify('https://discord.gg/T3xxT6q', 'PRG Discord (Unofficial)');
+            .'<br> - '.urlify('https://discord.gg/kcWBBBj', 'JV Discord');
         $this->write($msg);
     }
 
