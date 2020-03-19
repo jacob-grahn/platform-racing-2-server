@@ -38,8 +38,8 @@ try {
     $ret->gravity = (float) $ldata['gravity'];
     $ret->items = $ldata['items'];
     $ret->song = $ldata['song'];
-    $ret->title = htmlspecialchars(urldecode($ldata['title']), ENT_QUOTES);
-    $ret->note = htmlspecialchars(urldecode($ldata['note']), ENT_QUOTES);
+    $ret->title = urldecode($ldata['title']);
+    $ret->note = urldecode($ldata['note']);
 
     // handle keys that may not exist
     $ret->gameMode = default_val($ldata['gameMode'], 'race');
