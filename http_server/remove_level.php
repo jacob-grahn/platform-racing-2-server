@@ -31,7 +31,7 @@ try {
     $pdo = pdo_connect();
 
     // make sure the user is a moderator
-    $mod = check_moderator($pdo);
+    $mod = check_moderator($pdo, null, false);
 
     // more rate limiting
     rate_limit('remove-level-'.$mod->user_id, 3, 1);
