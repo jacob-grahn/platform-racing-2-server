@@ -36,7 +36,6 @@ try {
     $ret->time = (int) $ldata['time'];
     $ret->user_id = (int) $ldata['user_id'];
     $ret->gravity = (float) $ldata['gravity'];
-    $ret->items = $ldata['items'];
     $ret->song = $ldata['song'];
     $ret->title = urldecode($ldata['title']);
     $ret->note = urldecode($ldata['note']);
@@ -46,6 +45,12 @@ try {
     $ret->cowboyChance = (int) default_val($ldata['cowboyChance'], 5);
     $ret->has_pass = (bool) (int) default_val($ldata['has_pass'], 0);
     $ret->version = (int) default_val($ldata['version'], 1);
+
+    // handle items (may contain a hash)
+    $ret->items = $ldata['items'];
+    if (strlen($ret->items) >= 32 && substr($level_txt, -32) === substr($ret->items, -32)) {
+        $ret->items = substr($ret->items, 0, strpos($ret->items, substr($level_txt, -32)));
+    }
 
     // connect
     $pdo = pdo_connect();
