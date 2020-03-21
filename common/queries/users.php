@@ -729,6 +729,32 @@ function users_reset_status($pdo)
 }
 
 
+function users_search($pdo, $query)
+{
+    $query = "%$query%";
+    $stmt = $pdo->prepare('
+          SELECT power, name, active_date
+            FROM users
+           WHERE name LIKE :query
+        ORDER BY active_date DESC
+    ');
+    $stmt->bindValue(':query', $query, PDO::PARAM_STR);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not perform search.');
+    }
+
+    $users = $stmt->fetchAll(PDO::FETCH_OBJ);
+    
+    if (empty($users)) {
+        throw new Exception('Could not find any users with names like your search.');
+    }
+
+    return $users;
+}
+
+
 function users_select_by_email($pdo, $email)
 {
     $stmt = $pdo->prepare('
