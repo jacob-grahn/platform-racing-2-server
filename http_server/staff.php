@@ -35,7 +35,7 @@ try {
         $group_color = $group_colors[(int) $row->power];
         $status = $row->status;
         $register_date = date('j/M/Y', $row->register_time);
-        $active_date = date_format(date_create($row->active_date), 'j/M/Y');
+        $active_date = date('j/M/Y', $row->time);
 
         // start the row
         echo "<tr>";

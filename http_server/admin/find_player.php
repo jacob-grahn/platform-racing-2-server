@@ -47,8 +47,7 @@ try {
             $safe_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->name, ENT_QUOTES)); // html name w/ spaces
             $group = (int) $row->power; // power
             $group_color = $group_colors[$group]; // group color
-            $active_date = date_format(date_create($row->active_date), 'j/M/Y'); // active date
-            $active_date = $active_date === '30/Nov/-0001' ? 'Never' : $active_date; // never logged in handler
+            $active_date = date('j/M/Y', $row->time); // active date
 
             // display the name with the color and link to the player search page
             echo "<a href='player_deep_info.php?name1=$url_name'"
