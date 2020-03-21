@@ -18,6 +18,7 @@ try {
     }
 
     // rate limiting
+    $rl_msg = 'Please wait at least 30 seconds before attempting to join another guild.';
     rate_limit('guild-join-attempt-'.$ip, 30, 1, $rl_msg);
 
     // connect
