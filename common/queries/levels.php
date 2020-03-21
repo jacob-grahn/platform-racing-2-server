@@ -143,6 +143,43 @@ function level_select($pdo, $level_id)
 }
 
 
+function level_select_from_search($pdo, $level_id)
+{
+    // get the levels
+    $stmt = $pdo->prepare('
+        SELECT l.level_id,
+               l.version,
+               l.title,
+               l.rating,
+               l.play_count,
+               l.min_level,
+               l.note,
+               l.live,
+               l.pass,
+               l.type,
+               l.time,
+               u.name,
+               u.power
+          FROM levels l, users u
+         WHERE level_id = :level_id
+         LIMIT 1
+    ');
+    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not search levels.');
+    }
+
+    $levels = $stmt->fetchAll(PDO::FETCH_OBJ);
+    if (empty($levels)) {
+        throw new Exception('Could not find a level with that ID.');
+    }
+
+    return $levels;
+}
+
+
 function level_unpublish($pdo, $level_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
@@ -275,6 +312,10 @@ function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $son
 
 function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $order = 'date', $dir = 'desc')
 {
+    if ($mode === 'id') {
+        return level_select_from_search($pdo, $search);
+    }
+
     $start = min(max((int) $start, 0), 100);
     $count = min(max((int) $count, 0), 100);
 

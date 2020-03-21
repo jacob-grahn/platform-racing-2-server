@@ -614,16 +614,8 @@ class ChatMessage
         array_shift($args);
 
         $args[0] = @strtolower($args[0]);
-        if ($this->message === '/hh' || $args[0] === 'status') {
-            $hh_timeleft = HappyHour::timeLeft();
-            if ($hh_timeleft !== false) {
-                $left = format_duration($hh_timeleft);
-                $this->write("systemChat`A Happy Hour is currently active on this server! It will expire in $left.");
-            } else {
-                $this->write('systemChat`There is not currently a Happy Hour on this server.');
-            }
-        } elseif ($args[0] === 'help') {
-            $hhmsg_status = 'systemChat`To find out if a Happy Hour is active and when it expires, type /hh status.';
+        if ($args[0] === 'help') {
+            $hhmsg_status = 'systemChat`To find out if a Happy Hour is active and when it expires, type /hh.';
             $hhmsg_admin = '';
             $hhmsg_server_owner = '';
             $hhmsg_warning = 'WARNING: This will delete all pending purchased Happy Hours and end the current one.';
@@ -666,7 +658,13 @@ class ChatMessage
                 $this->write('systemChat`There isn\'t an active Happy Hour right now.');
             }
         } else {
-            $this->write('systemChat`Error: Invalid argument specified. Type /hh help for more information.');
+            $hh_timeleft = HappyHour::timeLeft();
+            if ($hh_timeleft !== false) {
+                $left = format_duration($hh_timeleft);
+                $this->write("systemChat`A Happy Hour is currently active on this server! It will expire in $left.");
+            } else {
+                $this->write('systemChat`There is not currently a Happy Hour on this server.');
+            }
         }
     }
 
@@ -834,6 +832,7 @@ class ChatMessage
                 '- /here (in this chatroom)<br>'.
                 '- /view *player*<br>'.
                 '- /guild *guild name*<br>'.
+                '- /level *level id*<br>'.
                 '- /pm *player*<br>'.
                 '- /hint (Artifact)<br>'.
                 '- /hh status<br>'.
