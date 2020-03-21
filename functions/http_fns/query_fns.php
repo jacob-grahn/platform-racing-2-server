@@ -100,15 +100,6 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
     $to_power = (int) user_select_power($pdo, $to_user_id);
     $active_rank = (int) pr2_select_true_rank($pdo, $from_user_id);
 
-    // let admins use the [url=][/url] tags
-    if ($from_power >= 3) {
-        $message = preg_replace(
-            '/\[url=(.+?)\](.+?)\[\/url\]/',
-            '<a href="\1" target="_blank"><u><font color="#0000FF">\2</font></u></a>',
-            $message
-        );
-    }
-
     // get sender ip
     $ip = get_ip();
 
