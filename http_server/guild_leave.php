@@ -24,9 +24,17 @@ try {
     $user_id = (int) token_login($pdo, false);
     $account = user_select_expanded($pdo, $user_id);
 
-    // sanity check
+    // sanity: are they in a guild?
     if ((int) $account->guild === 0) {
         throw new Exception('You are not a member of a guild.');
+    }
+
+    // sanity: are they the guild owner?
+    $owner_id = (int) guild_select_owner_id($pdo, $account->guild, true);
+    if ($owner_id === $user_id) {
+        $msg = 'You own this guild. Before leaving, you must '
+            . urlify('https://pr2hub.com/guild_transfer.php', 'transfer guild ownership') . '.';
+        throw new Exception($msg);
     }
 
     // leave the guild
