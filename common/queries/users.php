@@ -729,13 +729,42 @@ function users_reset_status($pdo)
 }
 
 
+<<<<<<< Updated upstream
+=======
+function users_search($pdo, $query)
+{
+    $query = "%$query%";
+    $stmt = $pdo->prepare('
+          SELECT power, name, time
+            FROM users
+           WHERE name LIKE :query
+        ORDER BY time DESC
+    ');
+    $stmt->bindValue(':query', $query, PDO::PARAM_STR);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not perform search.');
+    }
+
+    $users = $stmt->fetchAll(PDO::FETCH_OBJ);
+    
+    if (empty($users)) {
+        throw new Exception('Could not find any users with names like your search.');
+    }
+
+    return $users;
+}
+
+
+>>>>>>> Stashed changes
 function users_select_by_email($pdo, $email)
 {
     $stmt = $pdo->prepare('
-          SELECT power, name, active_date
+          SELECT power, name, time
             FROM users
            WHERE email = :email
-        ORDER BY active_date DESC
+        ORDER BY time DESC
     ');
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
     $result = $stmt->execute();
@@ -862,10 +891,10 @@ function users_select_old($pdo)
 function users_select_staff($pdo)
 {
     $stmt = $pdo->prepare('
-        SELECT power, status, name, active_date, register_time
+        SELECT power, status, name, time, register_time
           FROM users
          WHERE power > 1
-         ORDER BY power DESC, active_date DESC
+         ORDER BY power DESC, time DESC
          LIMIT 100
     ');
     $result = $stmt->execute();

@@ -57,10 +57,9 @@ try {
 
         foreach ($users as $user) {
             $name = str_replace(' ', '&nbsp;', $user->name); // multiple spaces in name
-            $url_name = htmlspecialchars(urlencode($user->name)); // url encode the name
+            $url_name = htmlspecialchars(urlencode($user->name), ENT_QUOTES); // url encode the name
             $group_color = $group_colors[(int) $user->power]; // group color
-            $active_date = date('j/M/Y', (int) $user->time); // format the last active date
-            $active_date = $active_date === '30/Nov/-0001' ? 'Never' : $active_date; // show never if never logged in
+            $active_date = date('j/M/Y', $user->time); // format the last active date
 
             // display the name with the color and link to the player search page
             echo "<a href='player_deep_info.php?name1=$url_name'"

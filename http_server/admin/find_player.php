@@ -2,16 +2,16 @@
 
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once HTTP_FNS . '/pages/admin/search_by_email_fns.php';
+require_once HTTP_FNS . '/pages/admin/find_player_fns.php';
 
 $ip = get_ip();
-$email = find_no_cookie('email', '');
+$query = find_no_cookie('query', '');
 $header = false;
 
 try {
     // rate limiting
-    rate_limit('email-search-'.$ip, 60, 10, 'Wait a bit before searching again.');
-    rate_limit('email-search-'.$ip, 5, 2);
+    rate_limit('find-player-'.$ip, 60, 10, 'Wait a bit before searching again.');
+    rate_limit('find-player-'.$ip, 5, 2);
 
     // connect
     $pdo = pdo_connect();
@@ -20,25 +20,25 @@ try {
     is_staff($pdo, token_login($pdo), false, true, 3);
 
     $header = true;
-    output_header('Deep Email Search', true, true);
+    output_header('Find Player by Keyword', true, true);
 
     // sanity check: no email in search box
-    if (is_empty($email)) {
+    if (is_empty($query)) {
         output_search('', false);
     } else {
         // if there's an email set, let's get data from the db
-        $users = users_select_by_email($pdo, $email);
+        $users = users_search($pdo, $query);
 
         // protect the user
-        $disp_email = htmlspecialchars($email, ENT_QUOTES);
+        $disp_query = htmlspecialchars($query, ENT_QUOTES);
 
         // show the search form
-        output_search($disp_email);
+        output_search($disp_query);
 
         // output the number of results
         $count = count($users);
         $res = $count === 1 ? 'result' : 'results';
-        echo "$count $res found for the email address \"$disp_email\".<br><br>";
+        echo "$count $res found for the keyword \"$disp_query\".<br><br>";
 
         // only gonna get here if there were results
         foreach ($users as $row) {
