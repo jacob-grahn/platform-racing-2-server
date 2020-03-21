@@ -273,6 +273,33 @@ function guild_select_members($pdo, $guild_id, $suppress_error = false)
 }
 
 
+function guild_select_owner_id($pdo, $guild_id, $suppress_error = false)
+{
+    $stmt = $pdo->prepare('
+        SELECT owner_id
+        FROM guilds
+        WHERE guild_id = :guild_id
+        LIMIT 1;
+    ');
+    $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        if ($suppress_error === false) {
+            throw new Exception('Could not perform query guild_select_owner_id.');
+        }
+        return false;
+    }
+
+    $guild = $stmt->fetch(PDO::FETCH_OBJ);
+    if (empty($guild)) {
+        throw new Exception('Could not find a guild with that ID.');
+    }
+
+    return $guild->owner_id;
+}
+
+
 function guild_select($pdo, $guild_id)
 {
     $stmt = $pdo->prepare('
