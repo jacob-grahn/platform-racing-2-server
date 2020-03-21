@@ -729,8 +729,6 @@ function users_reset_status($pdo)
 }
 
 
-<<<<<<< Updated upstream
-=======
 function users_search($pdo, $query)
 {
     $query = "%$query%";
@@ -757,7 +755,6 @@ function users_search($pdo, $query)
 }
 
 
->>>>>>> Stashed changes
 function users_select_by_email($pdo, $email)
 {
     $stmt = $pdo->prepare('
