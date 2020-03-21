@@ -81,7 +81,7 @@ class ChatMessage
 
         $t_arr = ['t', 'tournament'];
         $effect_arr = ['b', 'u', 'i', 'li'];
-        $emotes_arr = ['emotes', 'emoticons', 'emojis', 'smilies', 'smiles'];
+        $emotes_arr = ['emote', 'emotes', 'emoticons', 'emojis', 'smilies', 'smiles'];
         $help_arr = ['help', 'commands', '?'];
         $msg = strtolower($this->message);
         $msg_trim = strtolower(trim($msg, '/'));
