@@ -314,7 +314,10 @@ function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $son
 function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $order = 'date', $dir = 'desc')
 {
     if ($mode === 'id') {
-        return level_select_from_search($pdo, $search);
+        if ($start === 0) { // page 1 only
+            return level_select_from_search($pdo, $search);
+        }
+        return [];
     }
 
     $start = min(max((int) $start, 0), 100);
