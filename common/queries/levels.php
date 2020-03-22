@@ -162,6 +162,7 @@ function level_select_from_search($pdo, $level_id)
                u.power
           FROM levels l, users u
          WHERE level_id = :level_id
+           AND l.user_id = u.user_id
          LIMIT 1
     ');
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
