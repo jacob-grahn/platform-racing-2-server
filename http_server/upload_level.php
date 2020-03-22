@@ -37,10 +37,15 @@ try {
     if ($live == 1 && (is_obscene($title) || is_obscene($note))) {
         throw new Exception('Could not publish level. Check the title and note for obscenities.');
     }
+    
+    // sanity check: title too long?
+    if (strlen($title) > 50) {
+        throw new Exception('The title is too long. Please limit it to 50 characters.');
+    }
 
     // sanity check: note too long?
     if (strlen($note) > 255) {
-        throw new Exception('The description is too long. Please limit it to 255 characters.');
+        throw new Exception('The note is too long. Please limit it to 255 characters.');
     }
 
     // rate limiting
