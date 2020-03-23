@@ -47,7 +47,7 @@ try {
     $ret->version = (int) default_val($ldata['version'], 1);
 
     // handle items (may contain a hash)
-    $ret->items = $ldata['items'];
+    $ret->items = default_val($ldata['items'], '1`2`3`4`5`6`7`8`9');
     if (strlen($ret->items) >= 32 && substr($level_txt, -32) === substr($ret->items, -32)) {
         $ret->items = substr($ret->items, 0, strpos($ret->items, substr($level_txt, -32)));
     }
@@ -55,15 +55,12 @@ try {
     // connect
     $pdo = pdo_connect();
 
-    // get level info
-    $level = level_select($pdo, $level_id);
+    // get level + author info
+    $level = level_select_from_search($pdo, $level_id)[0];
     $ret->rating = (float) $level->rating;
     $ret->play_count = (int) $level->play_count;
-
-    // get author
-    $author = user_select_name_and_power($pdo, $ret->user_id);
-    $ret->user_name = htmlspecialchars($author->name, ENT_QUOTES);
-    $ret->user_group = (int) $author->power >= 0 && (int) $author->power <= 3 ? (int) $author->power : 0;
+    $ret->user_name = htmlspecialchars(level->name, ENT_QUOTES);
+    $ret->user_group = (int) $level->power >= 0 && (int) $level->power <= 3 ? (int) $level->power : 0;
 } catch (Exception $e) {
     $ret = new stdClass();
     $ret->success = false;
