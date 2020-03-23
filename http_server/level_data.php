@@ -59,7 +59,7 @@ try {
     $level = level_select_from_search($pdo, $level_id)[0];
     $ret->rating = (float) $level->rating;
     $ret->play_count = (int) $level->play_count;
-    $ret->user_name = htmlspecialchars(level->name, ENT_QUOTES);
+    $ret->user_name = htmlspecialchars($level->name, ENT_QUOTES);
     $ret->user_group = (int) $level->power >= 0 && (int) $level->power <= 3 ? (int) $level->power : 0;
 } catch (Exception $e) {
     $ret = new stdClass();
