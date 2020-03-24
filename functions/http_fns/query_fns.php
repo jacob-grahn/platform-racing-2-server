@@ -166,6 +166,21 @@ function message_parse_tags($pdo, $message)
         }
     }
 
+    // find guild id (if exists) and replace [guild]name[/guild]
+    $pat = "/(\[guild\])([a-zA-Z0-9-.:;=?~!()@*,+$#% ]+)(\[\/guild\])/i";
+    while (preg_match($pat, $new_msg, $match)) {
+        $name = $match[2];
+        if (strlen($name) >= 2 && strlen($name) <= 20) {
+            $guild_id = guild_name_to_id($pdo, $name, true);
+            if ($guild_id !== false) {
+                $repl = '[guild=' . $guild_id . ']' . $name . '[/guild]';
+                $new_msg = str_replace($match[0], $repl, $new_msg);
+            } else {
+                $new_msg = str_replace($match[0], $name, $new_msg);
+            }
+        }
+    }
+
     return $new_msg;
 }
 
