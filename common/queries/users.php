@@ -34,13 +34,13 @@ function id_to_name($pdo, $user_id, $suppress_error = false)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query id_to_name.');
     }
-    
+
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
     if (empty($user)) {
         if ($suppress_error === false) {
             throw new Exception('id_to_name: Could not find a user with that ID.');
@@ -48,7 +48,7 @@ function id_to_name($pdo, $user_id, $suppress_error = false)
             return false;
         }
     }
-    
+
     return $user->name;
 }
 
@@ -69,7 +69,7 @@ function name_to_id($pdo, $name, $suppress_error = false)
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
     if ($user === false) {
         if ($suppress_error === false) {
             throw new Exception('name_to_id: Could not find a user with that name.');
@@ -149,13 +149,13 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
     ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query user_select_by_name.');
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
     if (empty($user) && $suppress_error === false) {
         throw new Exception('Could not find a user with that name.');
     }
@@ -189,13 +189,13 @@ function user_select_expanded($pdo, $user_id, $suppress_error = false)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query user_select_expanded.');
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
     if (empty($user)) {
         if ($suppress_error === false) {
             throw new Exception('user_select_expanded: Could not find a user with that ID.');
@@ -218,11 +218,11 @@ function user_select_full_by_name($pdo, $name)
     ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query user_select_full_by_name.');
     }
-    
+
     $user = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (empty($user)) {
@@ -316,11 +316,11 @@ function user_select_mod($pdo, $user_id, $suppress_error = false)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query user_select_mod.');
     }
-    
+
     $user = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (empty($user) && $suppress_error === false) {
@@ -342,13 +342,13 @@ function user_select_name_active_power($pdo, $user_id, $suppress_error = false)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query users_select_name_active_power.');
     }
-    
+
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
     if (empty($user)) {
         if ($suppress_error == false) {
             throw new Exception('Could not find any users with that ID.');
@@ -356,7 +356,7 @@ function user_select_name_active_power($pdo, $user_id, $suppress_error = false)
             return false;
         }
     }
-    
+
     return $user;
 }
 
@@ -371,17 +371,17 @@ function user_select_name_guild_power($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not perform query user_select_name_guild_power.");
     }
-    
+
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
     if (empty($user)) {
         throw new Exception("Could not find a user with that ID.");
     }
-    
+
     return $user;
 }
 
@@ -396,22 +396,22 @@ function user_select_name_and_power($pdo, $user_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not perform query user_select_name_and_power.");
     }
-    
+
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
     if (empty($user)) {
         throw new Exception("Could not find a user with that ID.");
     }
-    
+
     return $user;
 }
 
 
-function user_select_power_by_name($pdo, $name)
+function user_select_power_by_name($pdo, $name, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT power
@@ -421,17 +421,20 @@ function user_select_power_by_name($pdo, $name)
     ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not perform query user_select_power_by_name.");
     }
-    
+
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
     if (empty($user)) {
-        throw new Exception("Could not find a user with that name.");
+        if ($suppress_error === false) {
+            throw new Exception("Could not find a user with that name.");
+        }
+        return false;
     }
-    
+
     return $user->power;
 }
 
@@ -472,13 +475,13 @@ function user_select_power($pdo, $user_id, $suppress_error = false)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not perform query user_select_power.");
     }
-    
+
     $user = $stmt->fetch(PDO::FETCH_OBJ);
-    
+
     if (empty($user)) {
         if ($suppress_error === false) {
             throw new Exception("Could not find a user with that ID.");
@@ -486,7 +489,7 @@ function user_select_power($pdo, $user_id, $suppress_error = false)
             return false;
         }
     }
-    
+
     return $user->power;
 }
 
@@ -512,11 +515,11 @@ function user_select($pdo, $user_id, $suppress_error = false)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query user_select.');
     }
-    
+
     $user = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (empty($user) && $suppress_error === false) {
@@ -540,7 +543,7 @@ function user_update_email($pdo, $user_id, $old_email, $new_email)
     $stmt->bindValue(':new_email', $new_email, PDO::PARAM_STR);
     $stmt->bindValue(':old_email', $old_email, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not update the email address of user #$user_id.");
     }
@@ -559,7 +562,7 @@ function user_update_guild($pdo, $user_id, $guild_id)
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not update the guild of user #$user_id.");
     }
@@ -579,7 +582,7 @@ function user_update_ip($pdo, $user_id, $ip)
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not update the IP address for user #$user_id.");
     }
@@ -598,7 +601,7 @@ function user_update_pass($pdo, $user_id, $pass_hash)
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':pass_hash', $pass_hash, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not change the password of user #$user_id.");
     }
@@ -637,7 +640,7 @@ function user_update_read($pdo, $user_id, $read_message_id)
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':read_message_id', $read_message_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not update the last read message ID for user #$user_id.");
     }
@@ -661,7 +664,7 @@ function user_update_status($pdo, $user_id, $status, $server_id)
     $stmt->bindValue(':status', $status, PDO::PARAM_STR);
     $stmt->bindValue(':server_id', $server_id, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not update the status of user #$user_id.");
     }
@@ -680,7 +683,7 @@ function user_update_temp_pass($pdo, $user_id, $temp_pass_hash)
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':temp_pass_hash', $temp_pass_hash, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception("Could not set a temporary password for user #$user_id.");
     }
@@ -702,13 +705,13 @@ function users_count_from_ip_expanded($pdo, $search_ip)
     ");
     $stmt->bindValue(':search_ip', $search_ip, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query users_count_from_ip_expanded.');
     }
-    
+
     $data = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
+
     return (int) $data[0]->count;
 }
 
@@ -746,7 +749,7 @@ function users_search($pdo, $query)
     }
 
     $users = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
+
     if (empty($users)) {
         throw new Exception('Could not find any users with names like your search.');
     }
@@ -765,17 +768,17 @@ function users_select_by_email($pdo, $email)
     ');
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not search for users with that email.');
     }
-    
+
     $users = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
+
     if (empty($users)) {
         throw new Exception('Could not find any users with that email.');
     }
-    
+
     return $users;
 }
 
@@ -829,17 +832,17 @@ function users_select_by_ip($pdo, $ip)
     ');
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not search for users with that IP.');
     }
-    
+
     $users = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
+
     if (empty($users)) {
         throw new Exception('Could not find any users with that IP.');
     }
-    
+
     return $users;
 }
 
@@ -895,7 +898,7 @@ function users_select_staff($pdo)
          LIMIT 100
     ');
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query users_select_staff.');
     }
@@ -923,7 +926,7 @@ function users_select_top($pdo, $start, $count)
     $stmt->bindValue(':start', $start, PDO::PARAM_INT);
     $stmt->bindValue(':count', $count, PDO::PARAM_INT);
     $result = $stmt->execute();
-    
+
     if ($result === false) {
         throw new Exception('Could not perform query users_select_top.');
     }

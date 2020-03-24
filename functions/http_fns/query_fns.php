@@ -134,8 +134,39 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
     rate_limit('pm-'.$from_user_id, 60, 4, $rl_msg);
     rate_limit('pm-'.$ip, 60, 4, $rl_msg);
 
+    // parse tags that can be used in PMs
+    $message = message_parse_tags($pdo, $message);
+
     // add the message to the db
     message_insert($pdo, $to_user_id, $from_user_id, $message, $ip);
+}
+
+
+// parse tags that can be used in PMs
+function message_parse_tags($pdo, $message)
+{
+    $new_msg = $message;
+
+    // replace [user=power]name[/user] with [user]name[/user]
+    $pat = "/(\[user=)(\d{1})(\])([a-zA-Z0-9-.:;=?~!()@*,+$#% ]+)(\[\/user\])/i";
+    $new_msg = preg_replace($pat, '[user]\4[/user]', $new_msg);
+
+    // find user power (if exists) and replace [user]name[/user]
+    $pat = "/(\[user\])([a-zA-Z0-9-.:;=?~!()@*,+$#% ]+)(\[\/user\])/i";
+    while (preg_match($pat, $new_msg, $match)) {
+        $name = $match[2];
+        if (strlen($name) >= 2 && strlen($name) <= 20) {
+            $power = user_select_power_by_name($pdo, $name, true);
+            if ($power !== false) {
+                $repl = '[user=' . $power . ']' . $name . '[/user]';
+                $new_msg = str_replace($match[0], $repl, $new_msg);
+            } else {
+                $new_msg = str_replace($match[0], $name, $new_msg);
+            }
+        }
+    }
+
+    return $new_msg;
 }
 
 
