@@ -130,6 +130,17 @@ class ChatMessage
             } elseif ($msg === '/restart_server') {
                 $this->commandAdminRestartServer(); // server restart for admins
                 $handled = true;
+            } elseif (strpos($msg, '/prizer ') === 0) {
+                $this->commandAdminSetPrizer(); // change prizer for admins
+                $handled = true;
+            }
+        }
+
+        // for prizer
+        if ($this->player->user_id === PR2SocketServer::$prizer_id) {
+            if (strpos($msg, '/set ') === 0) {
+                $this->commandPrizerSetPrize();
+                $handled = true;
             }
         }
 
@@ -234,6 +245,7 @@ class ChatMessage
             );
         } elseif ($debug_arg === 'server') {
             $server_expires = $is_ps === 'no' ? 'never' : $server_expire_time;
+            $prizer = PR2SocketServer::$prizer_id;
             $this->write(
                 "message`chat_message: $this->message<br>".
                 "server_id: $server_id<br>".
@@ -241,6 +253,7 @@ class ChatMessage
                 "uptime: $uptime<br>".
                 "port: $port<br>".
                 "private_server: $is_ps<br>".
+                "prizer: $prizer<br>".
                 "server_guild: $guild_id<br>".
                 "server_owner: $guild_owner<br>".
                 "server_expire_time: $server_expires"
@@ -388,6 +401,64 @@ class ChatMessage
         } else {
             $this->write('systemChat`This command cannot be used in levels.');
         }
+    }
+
+
+    // sets a privileged account (prizer) that can change a prize in-game
+    private function commandAdminSetPrizer()
+    {
+        $prizer_id = (int) trim(substr($this->message, 8));
+
+        // sanity: valid input?
+        if ($prizer_id === 0) {
+            PR2SocketServer::$prizer_id = 0;
+            $this->write('systemChat`The prizer has been disabled.');
+            return;
+        }
+
+        // make sure prizer exists
+        global $pdo;
+        $new_prizer = user_select_name_and_power($pdo, $prizer_id, true);
+        if ($new_prizer === false) {
+            $this->write('systemChat`Error: Could not find a user with that ID.');
+            return;
+        }
+
+        // sanity: are they a guest?
+        if ((int) $new_prizer->power === 0) {
+            $this->write('systemChat`Error: You can\'t make a guest the prizer.');
+            return;
+        }
+
+        // if the old prizer is online, tell their client it's over
+        $old_prizer = id_to_player(PR2SocketServer::$prizer_id, false);
+        if (isset($old_prizer)) {
+            $old_prizer->write('demotePrizer`');
+        }
+
+        // set new prizer
+        PR2SocketServer::$prizer_id = $prizer_id;
+        $new_prizer = userify(null, $new_prizer->name, $new_prizer->power);
+        $this->write("systemChat`Great success! The prizer has been set to $new_prizer.");
+
+        // if the new prizer is online, tell their client it's time
+        $new_prizer = id_to_player(PR2SocketServer::$prizer_id, false);
+        if (isset($new_prizer)) {
+            $new_prizer->write('becomePrizer`');
+        }
+    }
+
+
+    private function commandPrizerSetPrize()
+    {
+        if ($this->room_type !== 'g') {
+            $this->write('systemChat`To set a prize, enter a level and type /set *type* *id*.');
+        }
+
+        // get and send args to game room
+        $args = explode(' ', $this->message);
+        array_shift($args);
+        $this->player->game_room->prizerSetPrize($this->player->user_id, @strtolower($args[0]), (int) $args[1]);
     }
 
 

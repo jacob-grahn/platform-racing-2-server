@@ -11,6 +11,8 @@ class PR2SocketServer extends \chabot\SocketServer
     public static $tournament_acceleration = 65;
     public static $tournament_jumping = 65;
 
+    public static $prizer_id = 0;
+
     // once every 2 seconds
     public function onTimer()
     {
