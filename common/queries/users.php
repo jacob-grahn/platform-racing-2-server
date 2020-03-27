@@ -386,7 +386,7 @@ function user_select_name_guild_power($pdo, $user_id)
 }
 
 
-function user_select_name_and_power($pdo, $user_id)
+function user_select_name_and_power($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT name, power
@@ -404,6 +404,9 @@ function user_select_name_and_power($pdo, $user_id)
     $user = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (empty($user)) {
+        if ($suppress_error === true) {
+            return false;
+        }
         throw new Exception("Could not find a user with that ID.");
     }
 

@@ -278,9 +278,22 @@ class Game extends Room
     }
 
 
+    public function prizerSetPrize($user_id, $type, $id)
+    {
+        if (PR2SocketServer::$prizer_id !== 0 && $user_id === PR2SocketServer::$prizer_id) {
+            $prize = Prizes::find($type, $id);
+            if (isset($prize)) {
+                $this->prize = $prize;
+                $this->prize_cancelled = false;
+                $this->sendToAll('setPrize`'.$this->prize->toStr());
+            }
+        }
+    }
+
+
     public function cancelPrize($player)
     {
-        if ($this->prize_cancelled === true) {
+        if ($this->prize_cancelled === true || !isset($this->prize)) {
             return; // no point in continuing...
         }
         $clint_cond = $player->user_id === self::PLAYER_CLINT && $this->prize == Prizes::$EPIC_COWBOY_HAT;
@@ -290,12 +303,11 @@ class Game extends Room
             $this->prize == Prizes::$EPIC_SIR_BODY ||
             $this->prize == Prizes::$EPIC_SIR_FEET
         );
-        if ($sir_cond || $clint_cond || $player->group === 3) {
+        $prizer_cond = PR2SocketServer::$prizer_id === $player->user_id;
+        if ($sir_cond || $clint_cond || $player->group === 3 || $prizer_cond) {
             $this->prize = null;
             $this->prize_cancelled = true;
             $this->sendToAll("cancelPrize`$player->name");
-        } else {
-            $player->write('message`Error: You lack the power to perform this action.');
         }
     }
 

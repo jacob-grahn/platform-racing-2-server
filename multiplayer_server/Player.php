@@ -184,6 +184,11 @@ class Player
             $this->write('becomeSpecialUser`');
         }
 
+        // if they're the prizer, tell the client
+        if (PR2SocketServer::$prizer_id === $this->user_id) {
+            $this->write('becomePrizer`');
+        }
+
         if (isset($player_array[$this->user_id])) {
             $this->awardKongHat();
             $this->applyTempItems();

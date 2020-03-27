@@ -6,7 +6,8 @@ function client_cancel_prize($socket)
 {
     $player = $socket->getPlayer();
     if (isset($player->game_room)) {
-        if ($player->special_user === true || $player->group === 3) {
+        $is_prizer = \pr2\multi\PR2SocketServer::$prizer_id === $player->user_id;
+        if ($player->special_user === true || $player->group === 3 || $is_prizer) {
             $player->game_room->cancelPrize($player);
         }
     }
