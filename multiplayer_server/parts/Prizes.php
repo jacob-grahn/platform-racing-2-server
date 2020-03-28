@@ -78,7 +78,10 @@ class Prizes
 
     // hat descriptions
     const DESC_EXP_HAT = 'If you finish a race with this hat, it will increase your EXP gain by 100%!';
+    const DESC_KONG_HAT = 'If you finish a race with this hat, it will increase your EXP gain by 25%!';
     const DESC_PROP_HAT = 'Hold up while wearing this hat to float!';
+    const DESC_COWBOY_HAT = 'Fly, cowboy, fly!';
+    const DESC_CROWN_HAT = 'Wear this hat to become immune to mines, laser guns, and swords!';
     const DESC_SANTA_HAT = 'Briefly freezes the blocks you stand on!';
     const DESC_PARTY_HAT = 'Wear this hat to become immune to lightning!';
     const DESC_TOP_HAT = 'Stroll through vanish blocks with class!';
@@ -86,6 +89,7 @@ class Prizes
     const DESC_MOON_HAT = 'Soar to new heights by defying the laws of gravity!';
     const DESC_THIEF_HAT = 'Steal other player\'s hats --even crowns!';
     const DESC_JIGG_HAT = 'Bounce on the heads of your opponents!';
+    const DESC_ARTI_HAT = 'Leave your opponents in the dust for a glorious 30 seconds.';
     const DESC_JF_HAT = 'Give nearby opponents a nasty sting!';
 
 
@@ -409,11 +413,11 @@ class Prizes
 
         // hats
         self::$NO_HAT = new Prize(self::TYPE_HAT, Hats::NONE, 'No Hat');
-        self::$KONG_HAT = new Prize(self::TYPE_HAT, Hats::KONG, 'Kongregate Hat');
+        self::$KONG_HAT = new Prize(self::TYPE_HAT, Hats::KONG, 'Kongregate Hat', self::DESC_KONG_HAT);
         self::$EXP_HAT = new Prize(self::TYPE_HAT, Hats::EXP, 'EXP Hat', self::DESC_EXP_HAT);
         self::$PROPELLER_HAT = new Prize(self::TYPE_HAT, Hats::PROPELLER, 'Propeller Hat', self::DESC_PROP_HAT, true);
-        self::$COWBOY_HAT = new Prize(self::TYPE_HAT, Hats::COWBOY, 'Cowboy Hat');
-        self::$CROWN_HAT = new Prize(self::TYPE_HAT, Hats::CROWN, 'Crown');
+        self::$COWBOY_HAT = new Prize(self::TYPE_HAT, Hats::COWBOY, 'Cowboy Hat', self::DESC_COWBOY_HAT);
+        self::$CROWN_HAT = new Prize(self::TYPE_HAT, Hats::CROWN, 'Crown', self::DESC_CROWN_HAT);
         self::$SANTA_HAT = new Prize(self::TYPE_HAT, Hats::SANTA, 'Santa Hat', self::DESC_SANTA_HAT);
         self::$PARTY_HAT = new Prize(self::TYPE_HAT, Hats::PARTY, 'Party Hat', self::DESC_PARTY_HAT);
         self::$TOP_HAT = new Prize(self::TYPE_HAT, Hats::TOP_HAT, 'Top Hat', self::DESC_TOP_HAT, true);
@@ -421,7 +425,7 @@ class Prizes
         self::$MOON_HAT = new Prize(self::TYPE_HAT, Hats::MOON, 'Moon Hat', self::DESC_MOON_HAT, true);
         self::$THIEF_HAT = new Prize(self::TYPE_HAT, Hats::THIEF, 'Thief Hat', self::DESC_THIEF_HAT, true);
         self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat', self::DESC_JIGG_HAT, true);
-        self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'Artifact Hat');
+        self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'The Artifact', self::DESC_ARTI_HAT);
         self::$JELLYFISH_HAT = new Prize(self::TYPE_HAT, Hats::JELLYFISH, 'Jellyfish Hat', self::DESC_JF_HAT, true);
 
         // epic hats
@@ -731,7 +735,7 @@ class Prizes
     {
         $match = null;
         foreach (self::$arr as $prize) {
-            if (strtolower($prize->getType()) === $type && $prize->getId() === (int) $id) {
+            if (strtolower($prize->getType()) === strtolower($type) && $prize->getId() === (int) $id) {
                 $match = $prize;
                 break;
             }
