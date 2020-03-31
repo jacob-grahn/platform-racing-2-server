@@ -79,7 +79,8 @@ a {
 
 .content {
     border-radius: 7px;
-    max-width: 55%;
+    width: 850px;
+    max-width: 85%;
     margin-left: auto;
     margin-right: auto;
     padding: 20px;
