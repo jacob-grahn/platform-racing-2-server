@@ -27,7 +27,7 @@ try {
     servers_deactivate_expired($pdo);
     servers_delete_old($pdo);
     ensure_awards($pdo);
-    //fah_update($pdo);
+    fah_update($pdo);
     generate_level_list($pdo, 'newest');
     generate_level_list($pdo, 'best');
     generate_level_list($pdo, 'best_today');
