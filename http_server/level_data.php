@@ -26,6 +26,7 @@ try {
     }
 
     // parse level data
+    $level_txt = substr($level_txt, 0, -32); // trim hash
     parse_str($level_txt, $ldata);
     
     // assign level data to ret object
@@ -45,12 +46,7 @@ try {
     $ret->cowboyChance = (int) default_val($ldata['cowboyChance'], 5);
     $ret->has_pass = (bool) (int) default_val($ldata['has_pass'], 0);
     $ret->version = (int) default_val($ldata['version'], 1);
-
-    // handle items (may contain a hash)
     $ret->items = default_val($ldata['items'], '1`2`3`4`5`6`7`8`9');
-    if (strlen($ret->items) >= 32 && substr($level_txt, -32) === substr($ret->items, -32)) {
-        $ret->items = substr($ret->items, 0, strpos($ret->items, substr($level_txt, -32)));
-    }
 
     // connect
     $pdo = pdo_connect();
