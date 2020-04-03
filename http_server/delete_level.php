@@ -55,7 +55,7 @@ try {
 
     // check if the artifact is currently here
     $arti = artifact_location_select($pdo);
-    if ($arti->level_id == $level->level_id) {
+    if ($arti->level_id == $row->level_id) {
         $msg = 'Your level could not be deleted because it is currently where the artifact is hidden. '
             .'Please contact a member of the PR2 Staff Team for more information.';
         throw new Exception($msg);
