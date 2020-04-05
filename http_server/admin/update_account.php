@@ -41,7 +41,7 @@ try {
         echo "<br>---<br>";
         echo "Name: <input type='text' name='name' value='$name'><br>";
         echo "Email: <input type='text' name='email' value='$email'>";
-        echo '<label><input type="checkbox" name="reset_pass" id="reset_pass" /> Generate Forgot Pass Email?</label>';
+        echo '<label><input type="checkbox" name="reset_pass" /> Generate "Forget Your Password?" Email?</label><br>';
         echo "Guild: <input type='text' name='guild' value='$guild'><br>";
         if ($pr2 !== false) {
             echo "Hats: <input type='text' size='100' name='hats' value='$pr2->hat_array'><br>";
