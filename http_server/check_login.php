@@ -13,6 +13,15 @@ $ret->guild_id = 0;
 try {
     // rate limiting
     rate_limit('check-login-'.$ip, 10, 1);
+    
+    // debugging
+    $is_bls = strpos($ip, $BLS_IP_PREFIX) === 0;
+    if ($is_bls) {
+        $r = new stdClass();
+        $r->success = true;
+        $r->message = !empty($_COOKIE['token']) ? $_COOKIE['token'] : 'no token';
+        echo json_encode($r);
+    }
 
     // connect to the db
     $pdo = pdo_connect();
