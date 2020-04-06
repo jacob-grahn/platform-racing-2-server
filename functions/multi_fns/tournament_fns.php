@@ -81,8 +81,8 @@ function issue_tournament($str)
         // if tournament mode was determined to be on, let's set the values
         if (\pr2\multi\PR2SocketServer::$tournament) {
             if (isset($hat)) {
-                if (\pr2\multi\Hats::strToId($hat) <= 14) {
-                    \pr2\multi\PR2SocketServer::$tournament_hat = limit(\pr2\multi\Hats::strToId($hat), 1, 14);
+                if (\pr2\multi\Hats::strToId($hat) <= 15) {
+                    \pr2\multi\PR2SocketServer::$tournament_hat = limit(\pr2\multi\Hats::strToId($hat), 1, 15);
                 } else {
                     throw new Exception('The hat you entered isn\'t a valid hat name.');
                 }
