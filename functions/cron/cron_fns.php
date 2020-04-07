@@ -504,7 +504,10 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
             'crown_hat' => array('hat' => 'crown', 'min_score' => 5000),
             'cowboy_hat' => array('hat' => 'cowboy', 'min_score' => 100000),
             'r4' => array('token' => 4, 'min_score' => 1000000),
-            'r5' => array('token' => 5, 'min_score' => 10000000)
+            'r5' => array('token' => 5, 'min_score' => 10000000),
+            'r6' => array('token' => 6, 'min_score' => 20000000),
+            'r7' => array('token' => 7, 'min_score' => 50000000),
+            'r8' => array('token' => 8, 'min_score' => 100000000)
         );
 
         // get number of folded tokens/hats
@@ -569,6 +572,9 @@ function fah_award_token($pdo, $user_id, $name, $score, $column, $available_toke
             || ($column == 'r3' && $score < 1000)
             || ($column == 'r4' && $score < 1000000)
             || ($column == 'r5' && $score < 10000000)
+            || ($column == 'r6' && $score < 20000000)
+            || ($column == 'r7' && $score < 50000000)
+            || ($column == 'r8' && $score < 100000000)
         ) {
             throw new Exception("$safe_name ($user_id): Insufficient score ($score) for that folding prize ($column).");
         }
@@ -633,6 +639,9 @@ function fah_finalize_award($pdo, $user_id, $name, $prize_code)
         'r3' => array($rt_desc, '1,000 points'),
         'r4' => array($rt_desc, '1,000,000 points'),
         'r5' => array($rt_desc, '10,000,000 points'),
+        'r6' => array($rt_desc, '20,000,000 points'),
+        'r7' => array($rt_desc, '50,000,000 points'),
+        'r8' => array($rt_desc, '100,000,000 points'),
         'crown_hat' => array('the Crown Hat', '5,000 points'),
         'cowboy_hat' => array('the Cowboy Hat', '100,000 points')
     );
