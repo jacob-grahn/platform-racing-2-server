@@ -67,7 +67,7 @@ function folding_select_list($pdo)
 
 function folding_update($pdo, $user_id, $column_name)
 {
-    $columns = ['r1', 'r2', 'r3', 'r4', 'r5', 'crown_hat', 'cowboy_hat'];
+    $columns = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'crown_hat', 'cowboy_hat'];
     if (array_search($column_name, $columns) === false) {
         throw new Exception('Invalid column name in folding_update');
     }
