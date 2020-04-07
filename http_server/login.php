@@ -183,8 +183,8 @@ try {
     // check if they're renting rank tokens
     $rt_rented = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
 
-    // sanity check: do they have more than 5 permanent rank tokens?
-    if ($rt_available > 5) {
+    // sanity check: do they have more than 8 permanent rank tokens?
+    if ($rt_available > 8) {
         throw new Exception("Too many rank tokens. Please use a different account.");
     }
 
