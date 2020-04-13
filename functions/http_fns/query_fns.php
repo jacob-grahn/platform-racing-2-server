@@ -355,7 +355,7 @@ function award_special_parts($stats, $group, $prizes)
 
     // bunny set (easter)
     $easter = date('F j', easter_date(date('Y')));
-    if ($date === $easter || date('F j', time() + 86400) === $easter) {
+    if ($date === $easter || date('F j', time() + 86400) === $easter || date('F j', time() - 86400) === $easter) {
         $stats->head = add_item($head_array, 39) ? 39 : $stats->head;
         $stats->body = add_item($body_array, 39) ? 39 : $stats->body;
         $stats->feet = add_item($feet_array, 39) ? 39 : $stats->feet;
