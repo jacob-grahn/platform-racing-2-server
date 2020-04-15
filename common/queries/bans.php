@@ -119,7 +119,7 @@ function ban_update($pdo, $ban_id, $acc_ban, $ip_ban, $exp_time, $lifted, $lifte
             lifted_reason = :lift_reason,
             lifted_time = :lift_time,
             notes = :notes,
-            modified_time = NOW()
+            modified_time = UNIX_TIMESTAMP(NOW())
         WHERE ban_id = :ban_id
         LIMIT 1
     ');
