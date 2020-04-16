@@ -15,7 +15,8 @@ function ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $
                banned_name = :banned_name,
                mod_name = :mod_name,
                ip_ban = :ip_ban,
-               account_ban = :account_ban
+               account_ban = :account_ban,
+               modified_time = UNIX_TIMESTAMP(NOW())
     ');
     $stmt->bindValue(':banned_ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':banned_user_id', $uid, PDO::PARAM_INT);
