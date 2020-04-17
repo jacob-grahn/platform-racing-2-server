@@ -68,6 +68,7 @@ class ChatMessage
         $this->message = str_ireplace([':thumbsup:', ':+1:'], '👍', $this->message);
         $this->message = str_ireplace([':thumbsdown:', ':-1:'], '👎', $this->message);
         $this->message = str_ireplace([':thinking:', ':think:', ':what:', ':hmm:'], '🤔', $this->message);
+        $this->message = str_ireplace([':eyes:', ':eye:', ':00:'], '👀', $this->message);
         $this->message = str_ireplace([':lol:', ':laugh:', ':lmao:', ':joy:'], '😂', $this->message);
         $this->message = str_ireplace([':hooray:', ':tada:', ':party:'], '🎉', $this->message);
         $this->message = str_ireplace([':fred:', ':cactus:'], '🌵', $this->message);
@@ -822,9 +823,12 @@ class ChatMessage
                 .':thumbsup: = 👍<br>'
                 .':thumbsdown: = 👎<br>'
                 .':think: = 🤔<br>'
+                .':eyes: = 👀<br>'
                 .':laugh: = 😂<br>'
                 .':hooray: = 🎉<br>'
                 .':fred: = 🌵<br>'
+                .'<br>'
+                .'If any of these show as boxes, make sure an emoji font is installed on your device.'
             );
         } else {
             $ret = 'To get a list of usable emoticons, go to the chat tab in the lobby and type /emotes.';
