@@ -276,3 +276,27 @@ function filter_swears($str)
 
     return $str;
 }
+
+
+// makes a banned notice
+function make_banned_notice($ban)
+{
+    $ban_id = $ban->ban_id;
+    $expire_time = $ban->expire_time;
+    $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
+
+    // figure out what the best way to say this is
+    $time_left = format_duration($expire_time - time());
+
+    // tell it to the world
+    $ban_link = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'here');
+    $dispute_link = urlify("https://jiggmin2.com/forums/showthread.php?tid=110", 'dispute it');
+    $banned = $ban->scope === 's' ? 'socially banned' : 'banned';
+    $output = "This account or IP address has been $banned.\n".
+        "Reason: $reason \n".
+        "This ban will expire in $time_left. \n".
+        "You can see more details about this ban $ban_link. \n\n".
+        "If you feel that this ban is unjust, you can $dispute_link.";
+    
+    return $output;
+}

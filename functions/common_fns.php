@@ -1,15 +1,15 @@
 <?php
 
 
-// returns the active ban if the specified user or ip is banned
+// returns the active ban of both game/social if the specified user/ip is banned
 function query_if_banned($pdo, $user_id, $ip)
 {
     if (!function_exists('ban_select')) {
         require_once QUERIES_DIR . '/bans.php';
     }
-    $ban = isset($user_id) && $user_id != 0 ? ban_select_active_by_user_id($pdo, $user_id) : false; // user_id
-    $ban = !$ban && isset($ip) ? ban_select_active_by_ip($pdo, $ip) : $ban; // ip if user_id isn't found
-    return $ban;
+    $bans = isset($user_id) && $user_id != 0 ? bans_select_active_by_user_id($pdo, $user_id) : false; // user_id
+    $bans = !$bans && isset($ip) ? bans_select_active_by_ip($pdo, $ip) : $bans; // ip if user_id isn't found
+    return $bans;
 }
 
 

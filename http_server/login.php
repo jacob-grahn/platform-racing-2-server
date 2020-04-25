@@ -97,24 +97,37 @@ try {
     if (strtolower(trim($login->user_name)) === 'guest') {
         $guest_login = true;
         $user = user_select_guest($pdo);
-        check_if_banned($pdo, $user->user_id, $ip);
+        check_if_banned($pdo, $user->user_id, $ip, 'n');
     } // account login
     else {
         // token login
         if (isset($in_token) && $login->user_name === '' && $login->user_pass === '') {
             $token_login = true;
             $token = $in_token;
-            $user_id = token_login($pdo);
-            $user = user_select($pdo, $user_id);
+            $user = user_select($pdo, token_login($pdo, true, false, 'n'));
         } // or password login
         else {
-            $user = pass_login($pdo, $user_name, $user_pass);
+            $user = pass_login($pdo, $user_name, $user_pass, 'n');
         }
+        $user_id = (int) $user->user_id;
 
         // see if they're trying to log into a guest
         if ((int) $user->power === 0 && $guest_login === false && $token_login === false) {
             $e = 'Direct guest account logins are not allowed. Please instead click "Play as Guest" on the main menu.';
             throw new Exception($e);
+        }
+    }
+
+    // are they banned?
+    $bans = query_if_banned($pdo, $user_id, $ip);
+    if (!empty($bans)) {
+        foreach ($bans as $ban) { // will only iterate twice at most; grouped on scope
+            if ($ban->scope === 'g') {
+                throw new Exception(make_banned_notice($ban));
+            }
+            $user->social_ban_id = $ban->ban_id;
+            $user->social_ban_expire_time = $ban->expire_time;
+            $ban_msg = make_banned_notice($ban);
         }
     }
 
@@ -286,6 +299,7 @@ try {
 
     // tell the world
     $ret->success = true;
+    $ret->message = isset($ban_msg) ? $ban_msg : null;
     $ret->token = $token;
     $ret->email = $has_email;
     $ret->ant = $has_ant;
