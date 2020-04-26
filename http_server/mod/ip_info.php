@@ -71,15 +71,16 @@ try {
 
     // check if they are currently banned
     $banned = 'No';
-    $row = query_if_banned($pdo, 0, $ip);
+    $ban = check_if_banned($pdo, 0, $ip, 'b', false);
 
-    // give some more info on the current ban in effect if there is one
-    if ($row !== false) {
-        $ban_id = $row->ban_id;
-        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
-        $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
+    // give some more info on the most severe ban (g > s scope, latest exp time) currently in effect if there is one
+    if (!empty($ban)) {
+        $ban_id = $ban->ban_id;
+        $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
+        $ban_end_date = date("F j, Y, g:i a", $ban->expire_time);
+        $scope = $ban->scope === 's' ? 'socially banned' : 'banned';
         $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes.</a>"
-            ."This IP is banned until $ban_end_date. Reason: $reason";
+            ." This IP is $scope until $ban_end_date. Reason: $reason";
     }
 
     // look for all historical bans given to this ip address

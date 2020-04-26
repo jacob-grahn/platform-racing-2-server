@@ -39,7 +39,7 @@ try {
 
         // check login and delete from cookie data if details are correct
         $ret->errorType = 'pass';
-        pass_login($pdo, $user_name, $user_pass);
+        pass_login($pdo, $user_name, $user_pass, 'g');
         if (isset($_COOKIE['token'])) {
             $ret->errorType = 'db';
             token_delete($pdo, $_COOKIE['token']);

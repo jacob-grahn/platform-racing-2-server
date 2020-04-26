@@ -38,19 +38,23 @@ try {
             .'<input type="hidden" value="yes" name="redirect" />'
             ."<input type='hidden' value='$target_ip' name='force_ip' />"
             ."<input type='hidden' value='$name' name='banned_name' />"
-            ."<input type='text' value='$reason' name='reason' size='70' />"
+            ."<input type='text' value='$reason' name='reason' size='70' /> "
             .'<select name="duration">'
                 .'<option value="3600">1 Hour</option>'
                 .'<option value="86400">1 Day</option>'
                 .'<option value="604800">1 Week</option>'
                 .'<option value="2592000">1 Month</option>'
                 .'<option value="31536000">1 Year</option>'
-            .'</select>'
+            .'</select> '
             .'<select name="type">'
+                .'<option value="both" selected="selected">Account and IP</option>'
                 .'<option value="account">Account Only</option>'
                 .'<option value="ip">IP Only</option>'
-                .'<option value="both" selected="selected">IP and Account</option>'
-            .'</select>'
+            .'</select> '
+            .'<select name="scope">'
+                .'<option value="game">Game</option>'
+                .'<option value="social">Social</option>'
+            .'</select> '
             .'<input type="submit" value="Submit" />'
         .'</form>';
 } catch (Exception $e) {

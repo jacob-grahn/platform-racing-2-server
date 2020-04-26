@@ -56,7 +56,7 @@ try {
     $pdo = pdo_connect();
 
     // check if banned
-    check_if_banned($pdo, -1, $ip);
+    check_if_banned($pdo, 0, $ip);
 
     // check if this name has been taken already
     if (user_select_by_name($pdo, $name, true) !== false) {

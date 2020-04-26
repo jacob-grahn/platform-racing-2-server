@@ -46,7 +46,7 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = (int) token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false, false, 'g');
     $power = (int) user_select_power($pdo, $user_id);
     if ($power <= 0) {
         $e = 'Guests can\'t use user lists. To access this feature, please create your own account.';

@@ -476,18 +476,26 @@ function has_part($pdo, $user_id, $type, $part_id)
 
 // -- BANS -- \\
 
-// throw an exception if the user is banned
-function check_if_banned($pdo, $user_id, $ip, $scope = 'b')
+// throw an exception or returns the most recent/severe ban (game first) if the user is banned
+function check_if_banned($pdo, $user_id, $ip, $scope = 'b', $throw_exception = true)
 {
+    if ($scope === 'n') {
+        return;
+    }
+
     $bans = query_if_banned($pdo, $user_id, $ip);
     if ($bans !== false) {
         foreach ($bans as $ban) {
-            if ($ban !== false && ($scope == $ban->scope || $scope == 'b')) { // g will supercede s if scope is b
-                $output = make_banned_notice($row);
-                throw new Exception($output);
+            if ($ban !== false && ($scope === $ban->scope || $scope === 'b')) { // g will supercede s if scope is b
+                if ($throw_exception) {
+                    $output = make_banned_notice($row);
+                    throw new Exception($output);
+                }
+                return $ban;
             }
         }
     }
+    return false;
 }
 
 

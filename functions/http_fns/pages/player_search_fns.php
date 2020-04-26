@@ -5,13 +5,14 @@
 function create_ban_list($bans)
 {
     $str = '<p><ul>';
-    foreach ($bans as $row) {
-        $ban_date = date("F j, Y, g:i a", $row->time);
-        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
-        $ban_id = (int) $row->ban_id;
-        $lifted_reason = (int) $row->lifted === 1 ? htmlspecialchars($row->lifted_reason, ENT_QUOTES) : '';
-        $lifted = (int) $row->lifted === 1 ? " | <b>LIFTED</b> ($lifted_reason)" : '';
-        $str .= "<li><a href='/bans/show_record.php?ban_id=$ban_id'>$ban_date</a>: $reason$lifted";
+    foreach ($bans as $ban) {
+        $ban_date = date("F j, Y, g:i a", $ban->time);
+        $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
+        $ban_id = (int) $ban->ban_id;
+        $lifted_reason = (int) $ban->lifted === 1 ? htmlspecialchars($ban->lifted_reason, ENT_QUOTES) : '';
+        $lifted = (int) $ban->lifted === 1 ? " | <b>LIFTED</b> ($lifted_reason)" : '';
+        $scope = $ban->scope === 'g' ? '' : ' (social)';
+        $str .= "<li><a href='/bans/show_record.php?ban_id=$ban_id'>$ban_date</a><u><i>$scope</i></u>: $reason$lifted";
     }
     return $str . '</ul></p>';
 }

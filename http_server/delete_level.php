@@ -36,7 +36,7 @@ try {
     $s3 = s3_connect();
 
     // check their login
-    $user_id = (int) token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false, false, 'g');
     $power = (int) user_select_power($pdo, $user_id);
     if ($power <= 0) {
         throw new Exception('Guests can\'t delete levels. To access this feature, please create your own account.');

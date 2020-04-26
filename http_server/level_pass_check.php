@@ -30,7 +30,7 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = (int) token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false, false, 'g');
 
     // more rate limiting
     rate_limit('level-pass-'.$user_id, 3, 2);

@@ -97,7 +97,7 @@ try {
     if (strtolower(trim($login->user_name)) === 'guest') {
         $guest_login = true;
         $user = user_select_guest($pdo);
-        check_if_banned($pdo, $user->user_id, $ip, 'n');
+        check_if_banned($pdo, $user->user_id, $ip); // don't let anyone banned under any scope log into guest accounts
     } // account login
     else {
         // token login
@@ -113,7 +113,7 @@ try {
 
         // see if they're trying to log into a guest
         if ((int) $user->power === 0 && $guest_login === false && $token_login === false) {
-            $e = 'Direct guest account logins are not allowed. Please instead click "Play as Guest" on the main menu.';
+            $e = 'Direct guest account logins are not allowed. Instead, please click "Play as Guest" on the main menu.';
             throw new Exception($e);
         }
     }

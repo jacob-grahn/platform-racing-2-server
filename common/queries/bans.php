@@ -1,20 +1,8 @@
 <?php
 
 
-function ban_insert(
-    $pdo,
-    $ip,
-    $uid,
-    $mod_uid,
-    $expire_time,
-    $reason,
-    $record,
-    $name,
-    $mod_name,
-    $is_ip,
-    $is_acc,
-    $scope
-) {
+function ban_insert($pdo, $ip, $uid, $mod_uid, $exp_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc, $scope)
+{
     $time = time();
     $stmt = $pdo->prepare("
         INSERT INTO bans
@@ -35,7 +23,7 @@ function ban_insert(
     $stmt->bindValue(':banned_ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':banned_user_id', $uid, PDO::PARAM_INT);
     $stmt->bindValue(':mod_user_id', $mod_uid, PDO::PARAM_INT);
-    $stmt->bindValue(':expire_time', $expire_time, PDO::PARAM_INT);
+    $stmt->bindValue(':expire_time', $exp_time, PDO::PARAM_INT);
     $stmt->bindValue(':reason', $reason, PDO::PARAM_STR);
     $stmt->bindValue(':record', $record, PDO::PARAM_STR);
     $stmt->bindValue(':banned_name', $name, PDO::PARAM_STR);
@@ -53,14 +41,56 @@ function ban_insert(
 }
 
 
+function bans_select_active($pdo, $user_id, $ip)
+{
+    $stmt = $pdo->prepare('
+        SELECT
+          ANY_VALUE(`ban_id`) as ban_id,
+          ANY_VALUE(`banned_name`) as banned_name,
+          ANY_VALUE(`expire_time`) as expire_time,
+          ANY_VALUE(`reason`) as reason,
+          ANY_VALUE(`ip_ban`) as ip_ban,
+          ANY_VALUE(`account_ban`) as account_ban,
+          ANY_VALUE(`scope`) as scope
+        FROM bans
+        WHERE
+          (
+            (banned_user_id = :user_id AND account_ban = 1)
+            OR
+            (banned_ip = :ip AND ip_ban = 1)
+          )
+          AND lifted != 1
+          AND expire_time > :time
+        GROUP BY
+          scope ASC
+        ORDER BY
+          expire_time DESC
+        LIMIT 2
+    ');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
+    $stmt->bindValue(':time', time(), PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not perform query ban_select_active_by_user_id_ip.');
+    }
+
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+
 function bans_select_active_by_ip($pdo, $ip)
 {
     $stmt = $pdo->prepare('
         SELECT
           ANY_VALUE(`ban_id`) as ban_id,
+          ANY_VALUE(`banned_name`) as banned_name,
           ANY_VALUE(`expire_time`) as expire_time,
-          ANY_VALUE(`scope`) as scope,
-          ANY_VALUE(`reason`) as reason
+          ANY_VALUE(`reason`) as reason,
+          ANY_VALUE(`ip_ban`) as ip_ban,
+          ANY_VALUE(`account_ban`) as account_ban,
+          ANY_VALUE(`scope`) as scope
         FROM bans
         WHERE
           banned_ip = :ip
@@ -85,15 +115,17 @@ function bans_select_active_by_ip($pdo, $ip)
 }
 
 
-// select ANY_VALUE(ban_id) as ban_id, ANY_VALUE(`expire_time`) as expire_time, ANY_VALUE(`scope`) as scope from bans where banned_name = 'aaaa' group by scope order by scope asc, expire_time desc;
 function bans_select_active_by_user_id($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
         SELECT
           ANY_VALUE(`ban_id`) as ban_id,
+          ANY_VALUE(`banned_name`) as banned_name,
           ANY_VALUE(`expire_time`) as expire_time,
-          ANY_VALUE(`scope`) as scope,
-          ANY_VALUE(`reason`) as reason
+          ANY_VALUE(`reason`) as reason,
+          ANY_VALUE(`ip_ban`) as ip_ban,
+          ANY_VALUE(`account_ban`) as account_ban,
+          ANY_VALUE(`scope`) as scope
         FROM bans
         WHERE
           banned_user_id = :user_id
@@ -116,55 +148,6 @@ function bans_select_active_by_user_id($pdo, $user_id)
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
-
-
-/*function ban_select_active_social_by_ip($pdo, $ip)
-{
-    $stmt = $pdo->prepare('
-        SELECT ban_id, expire_time, scope, reason
-        FROM bans
-        WHERE banned_ip = :ip
-        AND scope = "s"
-        AND ip_ban = 1
-        AND lifted != 1
-        AND expire_time > :time
-        ORDER BY expire_time DESC
-        LIMIT 1
-    ');
-    $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
-    $stmt->bindValue(':time', time(), PDO::PARAM_INT);
-    $result = $stmt->execute();
-
-    if ($result === false) {
-        throw new Exception('Could not perform query ban_select_active_by_ip.');
-    }
-
-    return $stmt->fetch(PDO::FETCH_OBJ);
-}
-
-
-function ban_select_active_social_by_user_id($pdo, $user_id)
-{
-    $stmt = $pdo->prepare('
-        SELECT ban_id, expire_time, scope, reason
-        WHERE banned_user_id = :user_id
-        AND scope = "s"
-        AND account_ban = 1
-        AND lifted != 1
-        AND expire_time > :time
-        ORDER BY expire_time DESC
-        LIMIT 1
-    ');
-    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->bindValue(':time', time(), PDO::PARAM_INT);
-    $result = $stmt->execute();
-
-    if ($result === false) {
-        throw new Exception('Could not perform query ban_select_active_by_ip.');
-    }
-
-    return $stmt->fetch(PDO::FETCH_OBJ);
-}*/
 
 
 function ban_select($pdo, $ban_id)
@@ -192,19 +175,8 @@ function ban_select($pdo, $ban_id)
 }
 
 
-function ban_update(
-    $pdo,
-    $ban_id,
-    $acc_ban,
-    $ip_ban,
-    $scope,
-    $exp_time,
-    $lifted,
-    $lifted_by,
-    $lift_reason,
-    $lift_time,
-    $notes
-) {
+function ban_update($pdo, $ban_id, $acc, $ip, $scope, $exp_time, $lifted, $lifted_by, $lift_reason, $lift_time, $notes)
+{
     $stmt = $pdo->prepare('
         UPDATE bans
         SET account_ban = :acc_ban,
@@ -221,8 +193,8 @@ function ban_update(
         LIMIT 1
     ');
     $stmt->bindValue(':ban_id', $ban_id, PDO::PARAM_INT);
-    $stmt->bindValue(':acc_ban', $acc_ban, PDO::PARAM_INT);
-    $stmt->bindValue(':ip_ban', $ip_ban, PDO::PARAM_INT);
+    $stmt->bindValue(':acc_ban', $acc, PDO::PARAM_INT);
+    $stmt->bindValue(':ip_ban', $ip, PDO::PARAM_INT);
     $stmt->bindValue(':scope', $scope, PDO::PARAM_STR);
     $stmt->bindValue(':exp_time', strtotime($exp_time), PDO::PARAM_STR);
     $stmt->bindValue(':lifted', $lifted, PDO::PARAM_STR);

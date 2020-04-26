@@ -24,7 +24,7 @@ try {
 
     // check their login
     try {
-        $user_id = (int) token_login($pdo);
+        $user_id = (int) token_login($pdo, true, false, 'n');
         rate_limit('get-player-info-2-'.$user_id, 3, 2);
     } catch (Exception $e) {
         $friend = 0;

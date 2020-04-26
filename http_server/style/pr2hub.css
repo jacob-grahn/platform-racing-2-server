@@ -2,7 +2,7 @@
 /* CSS Document */
 
 html, body {
-    font-family: 'Arial', serif;
+    /*font-family: 'Arial', serif;*/
     width: 100%;
     height: 100%;
     margin: 0;
@@ -11,8 +11,9 @@ html, body {
 
 body {
     color: #000000;
-    font-size: 13px;
-    font-family: Tahoma, Calibri, Verdana, Geneva, sans-serif;
+    font: 13px/1.231 Tahoma, Calibri, Verdana, Geneva, sans-serif;
+    /*font-size: 13px;
+    font-family: Tahoma, Calibri, Verdana, Geneva, sans-serif;*/
     background-color: #5D92B4;
     background-position: top center;
     background-image: url(//pr2hub.com/img/top.jpg);
@@ -94,11 +95,11 @@ a {
 }
 
 .archived {
-    font-color: #666666;
+    color: #666666;
 }
 
 .date {
-    font-color: #666666;
+    color: #666666;
 }
 
 table, th, td {
@@ -111,5 +112,39 @@ table, th, td {
 table.noborder, th.noborder, td.noborder {
     text-align: left;
     border: none;
+}
+
+input[type="text"],
+input[type="datetime-local"],
+textarea,
+select {
+    font: 13px/1.231 Tahoma, Calibri, Verdana, Geneva, sans-serif;
+    color: #000000;
+    background: rgb(255, 255, 255) none;
+    border: 1px solid #52544E;
+    padding: 4px;
+    outline: 0;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px
+}
+
+input#exp_date {
+    width: 150px;
+}
+
+button, input[type="submit"], input[type="reset"] {
+    cursor: pointer;
+    padding: 4px 8px;
+    font: bold 11.5px Tahoma,Calibri,Verdana,Geneva,sans-serif;
+    border: 1px solid #52544E;
+    border-radius: 5px;
+    color: #424242;
+    background: #e9e9e9 url(https://pr2hub.com/img/btn.png) repeat-x top left;
+}
+
+button:hover, input[type="submit"]:hover, input[type="reset"]:hover {
+    border: 1px solid #80827c;
+    color: #55C546;
 }
 
