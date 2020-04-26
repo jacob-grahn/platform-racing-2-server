@@ -31,17 +31,17 @@ try {
     echo '<p>---</p>';
 
     // output the messages
-    foreach ($messages as $row) {
-        $formatted_time = date('M j, Y g:i A', $row->sent_time);
-        $from_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->from_name, ENT_QUOTES));
-        $to_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->to_name, ENT_QUOTES));
-        $from_user_id = (int) $row->from_user_id;
-        $to_user_id = (int) $row->to_user_id;
-        $from_ip = $row->from_ip;
-        $reporter_ip = $row->reporter_ip;
-        $archived = (bool) (int) $row->archived;
-        $message_id = (int) $row->message_id;
-        $html_safe_message = htmlspecialchars(filter_swears($row->message), ENT_QUOTES);
+    foreach ($messages as $message) {
+        $formatted_time = date('M j, Y g:i A', $message->sent_time);
+        $from_name = str_replace(' ', '&nbsp;', htmlspecialchars($message->from_name, ENT_QUOTES));
+        $to_name = str_replace(' ', '&nbsp;', htmlspecialchars($message->to_name, ENT_QUOTES));
+        $from_user_id = (int) $message->from_user_id;
+        $to_user_id = (int) $message->to_user_id;
+        $from_ip = $message->from_ip;
+        $reporter_ip = $message->reporter_ip;
+        $archived = (bool) (int) $message->archived;
+        $message_id = (int) $message->message_id;
+        $html_safe_message = htmlspecialchars(filter_swears($message->message), ENT_QUOTES);
         $html_safe_message = str_replace("\r", '<br>', $html_safe_message);
         $class = $archived === true ? 'archived' : 'not-archived';
 

@@ -29,9 +29,9 @@ try {
     echo '<p>---</p>';
 
     // output actions
-    foreach ($actions as $row) {
-        $message = htmlspecialchars($row->message, ENT_QUOTES);
-        echo "<p><span class='date'>$row->time</span> -- $message</p>";
+    foreach ($actions as $action) {
+        $message = htmlspecialchars($action->message, ENT_QUOTES);
+        echo "<p><span class='date'>$action->time</span> -- $message</p>";
     }
 
     echo '<p>---</p>';

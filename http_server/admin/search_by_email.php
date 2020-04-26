@@ -41,13 +41,13 @@ try {
         echo "$count $res found for the email address \"$disp_email\".<br><br>";
 
         // only gonna get here if there were results
-        foreach ($users as $row) {
+        foreach ($users as $user) {
             // make nice variables for our data
-            $url_name = urlencode($row->name); // url encode the name
-            $safe_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->name, ENT_QUOTES)); // html name w/ spaces
-            $group = (int) $row->power; // power
+            $url_name = urlencode($user->name); // url encode the name
+            $safe_name = str_replace(' ', '&nbsp;', htmlspecialchars($user->name, ENT_QUOTES)); // html name w/ spaces
+            $group = (int) $user->power; // power
             $group_color = $group_colors[$group]; // group color
-            $active_date = date('j/M/Y', $row->time);
+            $active_date = date('j/M/Y', $user->time);
 
             // display the name with the color and link to the player search page
             echo "<a href='player_deep_info.php?name1=$url_name'"
