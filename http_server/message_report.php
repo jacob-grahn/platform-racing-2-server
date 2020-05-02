@@ -18,7 +18,7 @@ try {
         throw new Exception('Invalid request method.');
     }
 
-    // sanity check
+    // sanity: is there an ID being passed?
     if ($message_id <= 0) {
         throw new Exception('Invalid message specified.');
     }
@@ -47,13 +47,20 @@ try {
         throw new Exception("It seems like you've already reported this message.");
     }
 
-    // make sure the message exists and that this user is the recipient of the message
+    // sanity: does the message exist?
     $message = message_select($pdo, $message_id, true);
     if ($message === false) {
-        throw new Exception("The message you tried to report ($message_id) doesn't exist.");
+        throw new Exception("The message you tried to report (#$message_id) doesn't exist.");
     }
+
+    // sanity: is this user the recipient of the message?
     if ($message->to_user_id != $user_id) {
         throw new Exception('This message was not sent to you.');
+    }
+
+    // sanity: is this user reporting a message from themselves?
+    if ($message->to_user_id == $message->from_user_id) {
+        throw new Exception('You can\'t report a message from yourself, silly!');
     }
 
     // insert the message into the reported messages table
