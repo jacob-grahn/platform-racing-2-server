@@ -284,8 +284,14 @@ try {
     $str = "register_login`" . json_encode($send);
     talk_to_server($server_address, $server_port, $server->salt, $str, false, false);
 
+    $msg = "Happy PR2iversary! Platform Racing 2 turns 12 years old today! "
+        .'As a special thank you for all your support over the years, '
+        .'there will be a vault sale of 20.08% and 4x added to the EXP multiplier between now and May 3.'
+        ."Thanks for playing!\n\n - Jiggmin";
+
     // tell the world
     $ret->success = true;
+    $ret->message = $msg;
     $ret->token = $token;
     $ret->email = $has_email;
     $ret->ant = $has_ant;
