@@ -53,8 +53,8 @@ try {
     // reply
     $ret->success = true;
     $ret->listings = $listings;
-    $ret->title = 'Vault of Magics';
-    $ret->sale = false;
+    $ret->title = date('F j') == 'May 2' || date('F j') == 'May 3' ? '12 Years of PR2!' : 'Vault of Magics';
+    $ret->sale = date('F j') == 'May 2' || date('F j') == 'May 3';
 } catch (Exception $e) {
     $ret->state = 'canceled';
     $ret->error = $e->getMessage();
