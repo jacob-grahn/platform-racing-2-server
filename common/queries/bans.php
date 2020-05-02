@@ -280,7 +280,7 @@ function bans_select_recent($pdo)
           expire_time,
           lifted
         FROM bans
-        WHERE modified_time > UNIX_TIMESTAMP(NOW() - INTERVAL 5 DAY) # DEBUGGING
+        WHERE modified_time > UNIX_TIMESTAMP(NOW() - INTERVAL 5 MINUTE)
         AND (account_ban = 1 OR ip_ban = 1);
         #AND expire_time > UNIX_TIMESTAMP(NOW())
         #AND lifted = 0
