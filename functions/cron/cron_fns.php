@@ -8,11 +8,38 @@ function run_update_cycle($pdo)
 {
     output('Running update cycle...');
 
+    // recent bans
+    $bans_to_send = [];
+    $recent_bans = bans_select_recent($pdo);
+    foreach ($recent_bans as $ban) {
+        $ban_time = $expire_time = 0;
+        $scope = 'n';
+
+        // get most severe ban for this user_id and ip
+        $user_id = $ban->user_id;
+        $ip = $ban->ip;
+        $banned = check_if_banned($pdo, $user_id, $ip, 'b', false);
+        if ($banned !== false) {
+            $scope = $banned->scope;
+            $ban_time = $banned->time;
+            $expire_time = $banned->expire_time;
+        }
+
+        // format the ban to prepare for sending to the servers
+        $most_severe = new stdClass();
+        $most_severe->scope = $scope;
+        $most_severe->user_id = $user_id;
+        $most_severe->ip = $ip;
+        $most_severe->time = $ban_time;
+        $most_severe->expire_time = $expire_time;
+        $bans_to_send[] = $most_severe;
+    }
+
     // gather data to send to active servers
     $send = new stdClass();
     $send->artifact = artifact_location_select($pdo);
     $send->recent_pms = get_recent_pms($pdo);
-    $send->recent_bans = bans_select_recent($pdo);
+    $send->recent_bans = $bans_to_send;
     $send_str = json_encode($send);
 
     // send the data

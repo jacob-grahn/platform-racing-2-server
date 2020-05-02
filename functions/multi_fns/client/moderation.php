@@ -216,7 +216,7 @@ function client_unmute($socket, $data)
 // ban a player
 function client_ban($socket, $data)
 {
-    list($banned_name, $seconds, $reason) = explode("`", $data);
+    list($banned_name, $seconds, $scope, $reason) = explode("`", $data);
 
     // get player info
     $mod = $socket->getPlayer();
@@ -233,14 +233,19 @@ function client_ban($socket, $data)
     if ($mod->group >= 2 && isset($banned)) {
         $mod_url = userify($mod, $mod->name);
         $banned_url = userify($banned, $banned_name);
+        $b_type = $scope === 'game' ? 'banned' : 'socially banned';
 
         if (isset($mod->chat_room)) {
             $log = urlify('https://pr2hub.com/bans', 'the ban log');
-            $msg = "$mod_url has banned $banned_url for $disp_time. $disp_reason. This ban has been recorded on $log.";
+            $msg = "$mod_url has $b_type $banned_url for $disp_time. $disp_reason. This ban has been recorded on $log.";
             $mod->chat_room->sendChat("systemChat`$msg");
         }
         if (isset($banned) && ($banned->group < 2 || $banned->temp_mod === true)) {
-            $banned->remove();
+            $banned->temp_mod = false;
+            $banned->social_ban_expire_time = time() + $seconds;
+            if ($scope === 'game') {
+                $banned->remove();
+            }
         }
     }
 }

@@ -125,8 +125,8 @@ try {
             if ($ban->scope === 'g') {
                 throw new Exception(make_banned_notice($ban));
             }
-            $user->social_ban_id = $ban->ban_id;
-            $user->social_ban_expire_time = $ban->expire_time;
+            $user->sban_id = $ban->ban_id;
+            $user->sban_exp_time = $ban->expire_time;
             $ban_msg = make_banned_notice($ban);
         }
     }

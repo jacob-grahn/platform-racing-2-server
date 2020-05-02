@@ -55,15 +55,39 @@ function get_chat_room($chat_room_name)
 }
 
 
-// accept bans from other servers
+// accept bans from other servers or PR2 Hub
 function apply_bans($bans)
 {
     global $player_array;
 
     foreach ($bans as $ban) {
         foreach ($player_array as $player) {
-            if ($player->ip === $ban->banned_ip || (int) $player->user_id === (int) $ban->banned_user_id) {
-                $player->remove();
+            if ($player->ip === $ban->ip || (int) $player->user_id === (int) $ban->user_id) {
+                if ($ban->expire_time > time() && $ban->lifted == 0) { // active ban
+                    if ($ban->scope === 'g') { // remove if game ban
+                        $player->remove();
+                    } elseif ($player->sban_exp_time < $ban_expire_time) {
+                        $player->sban_id = $ban->ban_id;
+                        $player->sban_exp_time = $ban->expire_time;
+                    }
+                } elseif ($ban->lifted == 1 || $ban->expire_time <= time()) { // expire lifted social ban
+                    $player->sban_id = $player->sban_exp_time = 0;
+                }
+            }
+        }
+    }
+}
+
+
+function socialBansRemoveExpired()
+{
+    global $player_array;
+
+    $time = time();
+    foreach ($player_array as $player) {
+        if ($player->sban_exp_time > 0 || $player->sban_id > 0) {
+            if ($player->sban_exp_time - $time <= 0) {
+                $player->sban_id = $player->sban_exp_time = 0;
             }
         }
     }
@@ -240,8 +264,9 @@ function get_priors($pdo, $mod, $name)
         } elseif ($row->account_ban == 1) {
             $ban_type = 'account is';
         }
+        $scope = $row->scope === 'g' ? '' : ' socially';
         $ban_link = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'Yes');
-        $str .= "$ban_link, this $ban_type banned until $ban_end_date. Reason: $reason<br><br>";
+        $str .= "$ban_link, this $ban_type$scope banned until $ban_end_date. Reason: $reason<br><br>";
     } else {
         $str .= "$is_banned<br><br>";
     }
@@ -267,6 +292,7 @@ function get_priors($pdo, $mod, $name)
             $lifted = (bool) $ban->lifted;
             $acc_ban = (bool) $ban->account_ban;
             $ip_ban = (bool) $ban->ip_ban;
+            $scope = $ban->scope === 'g' ? '' : ' socially';
 
             // var init
             $nameip_str = '';
@@ -288,7 +314,7 @@ function get_priors($pdo, $mod, $name)
 
             // craft ban string
             $date_url = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", $date);
-            $ban_str = "$date_url: $mod_name banned $nameip_str for $duration. Reason: $reason";
+            $ban_str = "$date_url: $mod_name$scope banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
             $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
@@ -323,6 +349,7 @@ function get_priors($pdo, $mod, $name)
             $lifted = (bool) $ban->lifted;
             $acc_ban = (bool) $ban->account_ban;
             $ip_ban = (bool) $ban->ip_ban;
+            $scope = $ban->scope === 'g' ? '' : ' socially';
 
             // var init
             $nameip_str = '';
@@ -344,7 +371,7 @@ function get_priors($pdo, $mod, $name)
 
             // craft ban string
             $date_url = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", $date);
-            $ban_str = "$date_url: $mod_name banned $nameip_str for $duration. Reason: $reason";
+            $ban_str = "$date_url: $mod_name$scope banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
             $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;

@@ -205,6 +205,14 @@ class ChatMessage
             $this->write('systemChat`Sorries, guests can\'t send chat messages.'); // guest check
         } elseif ($this->player->active_rank < 3 && $this->player->group < 2) {
             $this->write('systemChat`Sorries, you must be rank 3 or above to chat.'); // rank 3 check
+        } elseif ($this->player->sban_exp_time > 0 && $this->player->sban_exp_time - time() > 0) {
+            $ban_id = (int) $this->player->sban_id;
+            $exp_time = \format_duration($this->player->sban_exp_time - time());
+            $ban_url = \urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'here');
+            $dispute_url = \urlify("https://jiggmin2.com/forums/showthread.php?tid=110", 'dispute it');
+            $msg = "This account or IP address has been socially banned. It will expire in approximately $exp_time. "
+                ."You can view more details $ban_url. If you feel this ban is unjust, you can $dispute_url.";
+            $this->write("systemChat`$msg");
         } elseif (Mutes::isMuted($this->player->name) === true) {
             $cb_secs = (int) Mutes::remainingTime($this->player->name);
             $ret = "You have been temporarily muted from the chat. The mute will be lifted in $cb_secs seconds.";
@@ -330,6 +338,9 @@ class ChatMessage
                 $plexp = format_duration(time() - $player->last_exp_time) . " ago ($player->last_exp_time)";
                 $ptemp = $player->temp_mod === true ? 'yes' : 'no';
                 $pso = $player->server_owner === true ? 'yes' : 'no';
+                $psb = $player->sban_id > 0 && $player->sban_exp_time - time() > 0 ? 'yes' : 'no';
+                $psbid = $player->sban_id;
+                $psbet = $player->sban_exp_time;
 
                 $this->write(
                     "message`chat_message: $this->message<br>"
@@ -348,6 +359,7 @@ class ChatMessage
                     ."head_color: $pheadc | head_color_2: $peheadc<br>"
                     ."body_color: $pbodyc | body_color_2: $pebodyc<br>"
                     ."feet_color: $pfeetc | feet_color_2: $pefeetc<br>"
+                    ."socially_banned: $psb" . ($psbid <= 0 ? " | id: $psbid | exp_time: $psbet" : '') . '<br>'
                     ."domain: $pdomain<br>"
                     ."version: $pversion"
                 );

@@ -57,7 +57,7 @@ try {
     echo "<p>Currently banned: $banned</p>"
         ."<p>Your account has been banned $account_ban_count $acc_lang.</p> $account_ban_list"
         ."<p>Your IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list"
-        .'<p>Priors expire one year after the ban\'s expire date.</p>';
+        .'<p>Priors expire one year after the ban\'s expiration date.</p>';
 } catch (Exception $e) {
     $error = $e->getMessage();
     echo "<br /><center><i>Error: $error</i></center>";

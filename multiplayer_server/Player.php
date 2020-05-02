@@ -76,6 +76,9 @@ class Player
     public $domain;
     public $ip;
 
+    public $sban_id = 0;
+    public $sban_exp_time = 0;
+
     public $special_user = false;
     public $temp_mod = false;
     public $trial_mod = false;
@@ -145,6 +148,12 @@ class Player
 
         $this->domain = $login->login->domain;
         $this->version = $login->login->version;
+
+        // check for an active social ban
+        if (!empty($login->user->sban_id)) {
+            $this->sban_id = (int) $login->user->sban_id;
+            $this->sban_exp_time = (int) $login->user->sban_exp_time;
+        }
 
         $this->rt_used = (int) $login->rt_used;
         $this->rt_available = (int) $login->rt_available;
