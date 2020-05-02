@@ -654,9 +654,7 @@ class Game extends Room
                     }
 
                     // format, push to array, increment loop count
-                    $orig_key = $key; // anni
                     $key = $key === 'hh' ? ($bonuses->campaign ? strtoupper($key) : 'Happy Hour') : ucfirst($key);
-                    $key = $orig_key === 'anni' ? 'Anniversary' : $key; // anni
                     array_push($awards_arr, $key);
                     $num++;
                 }
