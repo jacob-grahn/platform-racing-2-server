@@ -269,21 +269,14 @@ function bans_select_by_user_id($pdo, $user_id)
 }
 
 
-function bans_select_recent($pdo)
+function bans_select_recently_modified($pdo)
 {
     $stmt = $pdo->prepare('
         SELECT
           banned_ip as ip,
-          banned_user_id as user_id,
-          scope,
-          time,
-          expire_time,
-          lifted
+          banned_user_id as user_id
         FROM bans
         WHERE modified_time > UNIX_TIMESTAMP(NOW() - INTERVAL 5 MINUTE)
-        AND (account_ban = 1 OR ip_ban = 1);
-        #AND expire_time > UNIX_TIMESTAMP(NOW())
-        #AND lifted = 0
     ');
     $result = $stmt->execute();
 

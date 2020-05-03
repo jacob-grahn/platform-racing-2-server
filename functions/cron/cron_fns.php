@@ -10,7 +10,7 @@ function run_update_cycle($pdo)
 
     // recent bans
     $bans_to_send = [];
-    $recent_bans = bans_select_recent($pdo);
+    $recent_bans = bans_select_recently_modified($pdo);
     foreach ($recent_bans as $ban) {
         $ban_time = $expire_time = 0;
         $scope = 'n';
