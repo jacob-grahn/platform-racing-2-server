@@ -85,11 +85,13 @@ try {
 
     // reply
     $ret->success = true;
-    $ret->rank = $active_rank;
-    $ret->hats = $hats;
+    $ret->userId = $target->user_id;
+    $ret->name = $target->name;
     $ret->group = $target->power;
-    $ret->friend = $friend;
-    $ret->ignored = $ignored;
+    $ret->rank = $active_rank;
+    $ret->exp_points = $target->exp_points;
+    $ret->exp_to_rank = exp_required_for_ranking($active_rank + 1);
+    $ret->hats = $hats;
     $ret->status = $target->status;
     $ret->loginDate = $login_date;
     $ret->registerDate = $register_date;
@@ -103,8 +105,8 @@ try {
     $ret->feetColor = $target->feet_color;
     $ret->guildId = $target->guild;
     $ret->guildName = $guild_name;
-    $ret->name = $target->name;
-    $ret->userId = $target->user_id;
+    $ret->friend = $friend;
+    $ret->ignored = $ignored;
 
     // epic upgrades
     if (!isset($target->epic_hats)) {
