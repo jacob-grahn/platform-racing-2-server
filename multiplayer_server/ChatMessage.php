@@ -256,15 +256,16 @@ class ChatMessage
             $prizer = PR2SocketServer::$prizer_id;
             $this->write(
                 "message`chat_message: $this->message<br>".
-                "server_id: $server_id<br>".
-                "server_name: $server_name<br>".
-                "uptime: $uptime<br>".
+                "id: $server_id<br>".
+                "name: $server_name<br>".
                 "port: $port<br>".
+                "uptime: $uptime<br>".
+                "expire_time: $server_expires<br>".
                 "private_server: $is_ps<br>".
-                "prizer: $prizer<br>".
-                "server_guild: $guild_id<br>".
-                "server_owner: $guild_owner<br>".
-                "server_expire_time: $server_expires"
+                "guild_id: $guild_id<br>".
+                "guild_owner: $guild_owner<br>".
+                'happy_hour: ' . HappyHour::$random_hour . '<br>'.
+                "prizer: $prizer<br>"
             );
         } elseif ($debug_arg === 'campaign') {
             $campaign_arg = strtolower((string) @$args[1]);
