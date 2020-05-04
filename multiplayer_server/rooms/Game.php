@@ -632,14 +632,12 @@ class Game extends Room
             $exp_multiplier = 1;
             $exp_multiplier += $hat_bonus > 4 ? 4 : $hat_bonus;
             $exp_multiplier *= HappyHour::isActive() ? 2 : 1;
-            $exp_multiplier += date('F j') == 'May 2' || date('F j') == 'May 3' ? 4 : 1; // anni
             $exp_multiplier += isset($this->campaign) && $this->from_room === 'campaign' ? 2 : 0;
-            $tot_exp_gain = round($tot_exp_gain * ($exp_multiplier > 16 ? 16 : $exp_multiplier)); // orig 12
+            $tot_exp_gain = round($tot_exp_gain * ($exp_multiplier > 12 ? 12 : $exp_multiplier)); // orig 12
 
             // exp award notification
             if ($exp_multiplier > 1) {
                 $bonuses = new \stdClass();
-                $bonuses->anni = date('F j') == 'May 2' || date('F j') == 'May 3'; // anni
                 $bonuses->hat = $hat_bonus > 0;
                 $bonuses->campaign = isset($this->campaign) && $this->from_room === 'campaign';
                 $bonuses->hh = HappyHour::isActive();
