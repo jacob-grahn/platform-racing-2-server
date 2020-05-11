@@ -508,6 +508,7 @@ class Player
         $this->body = $body;
         $this->feet = $feet;
 
+        var_dump(!HappyHour::isActive());
         if (!HappyHour::isActive() && $speed + $acceleration + $jumping <= 150 + $this->active_rank) {
             $this->speed = $speed;
             $this->acceleration = $acceleration;
@@ -547,10 +548,12 @@ class Player
             $this->hh_jumping = 100;
         }
         
+        
         $hh_pre = $hh_active ? 'hh_' : '';
         $this->{$hh_pre . 'speed'} = $speed;
         $this->{$hh_pre . 'acceleration'} = $accel;
         $this->{$hh_pre . 'jumping'} = $jump;
+        var_dump($this->{$hh_pre . 'speed'});
     }
 
 
