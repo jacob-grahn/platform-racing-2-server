@@ -7,7 +7,7 @@ require_once QUERIES_DIR . '/level_backups.php';
 $ip = get_ip();
 $desc = "<p><center>".
         "Welcome to PR2's level restore system!<br>".
-        "You can use this tool to restore any level that was modified or deleted in the past month.".
+        "You can use this tool to restore any level that was modified or deleted in the past year.".
         "</center></p>";
 
 try {
@@ -110,7 +110,7 @@ try {
                 ."(<a href='?action=restore&backup_id=$row->backup_id'>restore</a>)</p>";
         }
     } else {
-        echo "<center>You haven't modified or deleted any levels in the past 30 days.</center>";
+        echo "<center>You haven't modified or deleted any levels in the past year.</center>";
     }
 } catch (Exception $e) {
     $error = $e->getMessage();
