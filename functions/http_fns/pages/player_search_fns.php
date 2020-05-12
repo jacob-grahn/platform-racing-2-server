@@ -58,7 +58,7 @@ function output_search($name = '', $gwibble = true)
 // player_search.php
 function output_page($pdo, $user)
 {
-    global $group_colors, $group_names;
+    global $group_colors, $group_names, $mod_colors, $mod_group_names;
 
     // sanity check: is the used tokens value set?
     if (!isset($user->used_tokens)) {
@@ -67,9 +67,9 @@ function output_page($pdo, $user)
 
     // make some variables
     $user_name = $user->name; // name
-    $group = (int) $user->power; // group
-    $group_col = $group_colors[$group];
-    $group_name = $group_names[$group];
+    $group = (int) $user->power;
+    $group_col = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[$group];
+    $group_name = $user->trial_mod == 1 ? $mod_group_names[1] : $group_names[$group];
     $status = $user->status; // status
     $guild_id = (int) $user->guild; // guild id
     $rank = (int) ($user->rank + $user->used_tokens); // rank

@@ -148,7 +148,7 @@ function message_parse_tags($pdo, $message)
     $new_msg = $message;
 
     // replace [user=power]name[/user] with [user]name[/user]
-    $pat = "/(\[user=)(\d{1})(\])([a-zA-Z0-9-.:;=?~!()@*,+$#% ]+)(\[\/user\])/i";
+    $pat = "/(\[user=)(\d{1}(?:\,\d{1}){0,1})(\])([a-zA-Z0-9-.:;=?~!()@*,+$#% ]+)(\[\/user\])/i";
     $new_msg = preg_replace($pat, '[user]\4[/user]', $new_msg);
 
     // find user power (if exists) and replace [user]name[/user]
@@ -476,27 +476,7 @@ function has_part($pdo, $user_id, $type, $part_id)
 
 // -- BANS -- \\
 
-// throw an exception or returns the most recent/severe ban (game first) if the user is banned
-function check_if_banned($pdo, $user_id, $ip, $scope = 'b', $throw_exception = true)
-{
-    if ($scope === 'n') {
-        return;
-    }
-
-    $bans = query_if_banned($pdo, $user_id, $ip);
-    if ($bans !== false) {
-        foreach ($bans as $ban) {
-            if ($ban !== false && ($scope === $ban->scope || $scope === 'b')) { // g will supercede s if scope is b
-                if ($throw_exception) {
-                    $output = make_banned_notice($row);
-                    throw new Exception($output);
-                }
-                return $ban;
-            }
-        }
-    }
-    return false;
-}
+// moved to common_fns.php
 
 
 // -- LEVEL_BACKUPS -- \\

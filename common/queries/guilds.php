@@ -251,10 +251,10 @@ function guild_select_by_name($pdo, $guild_name)
 function guild_select_members($pdo, $guild_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT users.user_id, users.name, users.power, pr2.rank, gp.gp_today, gp.gp_total
-        FROM users LEFT JOIN pr2 ON users.user_id = pr2.user_id
-        LEFT JOIN gp ON (users.user_id = gp.user_id AND gp.guild_id = :guild_id)
-        WHERE users.guild = :guild_id
+        SELECT u.user_id, u.name, u.power, u.trial_mod, p.rank, gp.gp_today, gp.gp_total
+        FROM users u LEFT JOIN pr2 p ON u.user_id = p.user_id
+        LEFT JOIN gp ON (u.user_id = gp.user_id AND gp.guild_id = :guild_id)
+        WHERE u.guild = :guild_id
         ORDER BY gp.gp_today DESC
         LIMIT 0, 101
     ');

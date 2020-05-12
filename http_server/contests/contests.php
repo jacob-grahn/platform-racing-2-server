@@ -63,7 +63,7 @@ try {
 
         // get some info
         $host = user_select_name_and_power($pdo, $host_id);
-        $host_color = $group_colors[(int) $host->power];
+        $host_color = $host->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $host->power];
         $is_host = $user_id === $host_id ? true : false;
 
         // safety first

@@ -35,6 +35,13 @@ function promote_to_moderator($name, $type, $admin, $promoted)
         return false;
     }
 
+    // make sure the user isn't a trial/perma mod being promoted to a trial mod
+    if ($type === 'trial' && !$promoted->temp_mod && $promoted->group === 2) {
+        $trial = $promoted->trial_mod ? ' trial' : '';
+        $admin->write("message`Error: $html_name is already a$trial moderator.");
+        return false;
+    }
+
     // if promoting to a temp, make sure the user is online
     if ($type === 'temporary' && !isset($promoted)) {
         $admin->write("message`Error: Could not find a user named \"$html_name\" on this server.");
@@ -87,7 +94,7 @@ function promote_to_moderator($name, $type, $admin, $promoted)
             promotion_log_insert($pdo, "$user_id has been promoted to $type moderator by $admin->name.", $time);
 
             // do the power change
-            user_update_power($pdo, $user_id, 2);
+            user_update_power($pdo, $user_id, 2, $type === 'trial');
 
             // set power limits
             if ($type === 'trial') {
@@ -129,8 +136,13 @@ function promote_to_moderator($name, $type, $admin, $promoted)
             return false;
         }
     } elseif ($type === 'temporary') {
-        $promoted->becomeTempMod();
-        $admin->write("message`$html_name has been promoted to a temporary moderator!");
-        return true;
+        if ($promoted->group < 2) {
+            $promoted->becomeTempMod();
+            $admin->write("message`$html_name has been promoted to a temporary moderator!");
+            return true;
+        } else {
+            $trial = $promoted->trial_mod ? ' trial' : '';
+            $admin->write("message`Error: $html_name is already a$trial moderator.");
+        }
     }
 }

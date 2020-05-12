@@ -281,7 +281,7 @@ function client_promote_to_moderator($socket, $data)
 
         if (isset($admin->chat_room) && (isset($promoted) || $type !== 'temporary') && $result === true) {
             $admin_url = userify($admin, $admin->name);
-            $promoted_url = userify($promoted, $name, 2);
+            $promoted_url = userify($promoted, $name);
             $mod_guide = urlify('https://jiggmin2.com/forums/showthread.php?tid=12', 'moderator guidelines');
 
             $msg = "$admin_url has promoted $promoted_url to a $type moderator! "

@@ -12,17 +12,20 @@ function sort_chat_room_array($a, $b)
 
 
 // determine a user's display info
-function userify($player, $name, $power = null)
+function userify($player, $name, $power = null, $mod_power = null)
 {
-    global $group_colors;
+    global $group_colors, $mod_colors;
     if (isset($player) && isset($player->group) && is_null($power)) {
-        $color = $group_colors[$player->group];
-        $link = "event:user`" . $player->group . '`' . $name;
+        $mod_power = $player->modPower();
+        $color = $mod_power > -1 ? $mod_colors[$mod_power] : $group_colors[$player->group];
+        $link = "event:user`" . $player->groupStr() . '`' . $name;
         $url = urlify($link, $name, "#$color");
         return $url;
     } elseif (!is_null($power)) {
-        $color = $group_colors[$power];
-        $link = "event:user`" . $power . '`' . $name;
+        $mod_power = !is_null($mod_power) && $mod_power >= 0 && $mod_power <= 2 ? $mod_power : null;
+        $color = !is_null($mod_power) ? $mod_colors[$mod_power] : $group_colors[$power];
+        $group_str = $power . (!is_null($mod_power) ? ",$mod_power" : '');
+        $link = "event:user`" . $group_str . '`' . $name;
         $url = urlify($link, $name, "#$color");
         return $url;
     } else {

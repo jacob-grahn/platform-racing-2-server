@@ -159,7 +159,8 @@ function level_select_from_search($pdo, $level_id)
                l.type,
                l.time,
                u.name,
-               u.power
+               u.power,
+               u.trial_mod
           FROM levels l, users u
          WHERE level_id = :level_id
            AND l.user_id = u.user_id
@@ -368,7 +369,8 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
                l.type,
                l.time,
                u.name,
-               u.power
+               u.power,
+               u.trial_mod
           FROM levels l, users u
          WHERE $where
            AND l.user_id = u.user_id
@@ -402,6 +404,7 @@ function levels_select_best_today($pdo)
                l.time,
                u.name,
                u.power,
+               u.trial_mod,
                u.user_id
           FROM new_levels nl,
                levels l,
@@ -438,6 +441,7 @@ function levels_select_best($pdo)
                  l.time,
                  u.name,
                  u.power,
+                 u.trial_mod,
                  u.user_id
             FROM best_levels bl,
                  levels l,
@@ -472,6 +476,7 @@ function levels_select_by_owner($pdo, $user_id)
                l.time,
                u.name,
                u.power,
+               u.trial_mod,
                u.user_id
           FROM levels l, users u
          WHERE l.user_id = u.user_id
@@ -533,6 +538,7 @@ function levels_select_campaign($pdo)
                  l.time,
                  u.name,
                  u.power,
+                 u.trial_mod,
                  u.user_id
             FROM campaigns c,
                  levels l,
@@ -567,6 +573,7 @@ function levels_select_newest($pdo)
                  l.time,
                  u.name,
                  u.power,
+                 u.trial_mod,
                  u.user_id
             FROM new_levels nl,
                  levels l,

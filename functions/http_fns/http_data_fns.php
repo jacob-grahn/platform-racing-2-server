@@ -222,7 +222,7 @@ function format_level_list($levels)
         $level->min_level = (int) $level->min_level;
         $level->note = utf8_encode($level->note);
         $level->user_name = utf8_encode($level->name);
-        $level->group = $level->power;
+        $level->user_group = $level->power . ($level->trial_mod == 1 ? ',1' : '');
         $level->live = (int) $level->live;
         $level->pass = isset($level->pass);
         $level->type = $level->type;

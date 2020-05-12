@@ -214,7 +214,7 @@ function assign_guild_part($type, $part_id, $user_id, $guild_id, $seconds_durati
 // get ban priors (for lazy mods)
 function get_priors($pdo, $mod, $name)
 {
-    global $group_colors, $guild_id;
+    global $group_colors, $mod_colors, $guild_id;
 
     $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
@@ -246,13 +246,14 @@ function get_priors($pdo, $mod, $name)
 
     // initialize return string var
     $url_name = htmlspecialchars(urlencode($user->name), ENT_QUOTES);
-    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $user->name, '#' . $group_colors[$power]);
+    $group_color = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[$power];
+    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $user->name, "#$group_color");
     $str = "<b>Ban Data for $u_link</b><br><br>";
 
     // check if the user is currently banned
     $str .= "Currently Banned: ";
     $is_banned = 'No';
-    $row = query_if_banned($pdo, $user_id, $ip);
+    $row = check_if_banned($pdo, 0, $ip, 'b', false);
     if ($row !== false) {
         $ban_id = $row->ban_id;
         $reason = htmlspecialchars($row->reason, ENT_QUOTES);

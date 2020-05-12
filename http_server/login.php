@@ -110,6 +110,7 @@ try {
             $user = pass_login($pdo, $user_name, $user_pass, 'n');
         }
         $user_id = (int) $user->user_id;
+        unset($user_pass, $login->user_pass); // don't keep raw pass in memory or send to server
 
         // see if they're trying to log into a guest
         if ((int) $user->power === 0 && $guest_login === false && $token_login === false) {
@@ -260,7 +261,7 @@ try {
             $guild_owner = 1;
         }
         $emblem = $guild->emblem;
-        $guild_name = $guild->guild_name;
+        $guild_name = $user->guild_name = $guild->guild_name;
     }
 
     // get their most recent PM id

@@ -9,6 +9,7 @@ class Player
     public $guild_id;
 
     public $name;
+    public $guild_name;
     public $rank;
     public $active_rank;
     public $exp_points;
@@ -46,8 +47,8 @@ class Player
     public $acceleration;
     public $jumping;
 
-    public $friends;
-    public $ignored;
+    public $friends_array;
+    public $ignored_array;
 
     public $rt_used;
     public $rt_available;
@@ -89,6 +90,7 @@ class Player
 
     public $status = '';
     public $register_time;
+    public $login_time;
 
     public $lives = 3;
     public $items_used = 0;
@@ -107,6 +109,7 @@ class Player
         $this->user_id = (int) $login->user->user_id;
         $this->name = $login->user->name;
         $this->group = (int) $login->user->power;
+        $this->guild_name = !empty($login->user->guild_name) ? $login->user->guild_name : '';
         $this->guild_id = (int) $login->user->guild;
 
         $this->rank = (int) $login->stats->rank;
@@ -161,6 +164,7 @@ class Player
         $this->last_exp_time = time();
         $this->status = $login->status;
         $this->register_time = (int) $login->user->register_time;
+        $this->login_time = time();
 
         $socket->player = $this;
         $this->active_rank = $this->rank + $this->rt_used;
@@ -204,6 +208,39 @@ class Player
             $this->verifyStats();
             $this->verifyParts();
         }
+    }
+
+    public function getInfo()
+    {
+        $ret = new \stdClass();
+        $ret->userId = $this->user_id;
+        $ret->name = $this->name;
+        $ret->status = $this->status;
+        $ret->group = $this->group;
+        $ret->temp_mod = $this->temp_mod;
+        $ret->trial_mod = $this->trial_mod;
+        $ret->guildId = $this->guild_id;
+        $ret->guildName = $this->guild_name;
+        $ret->rank = $this->active_rank;
+        $ret->hats = count($this->hat_array) - 1;
+        $ret->registerDate = date('j/M/Y', $this->register_time);
+        $ret->loginDate = date('j/M/Y', $this->login_time);
+        $ret->hat = $this->hat;
+        $ret->head = $this->head;
+        $ret->body = $this->body;
+        $ret->feet = $this->feet;
+        $ret->hatColor = $this->hat_color;
+        $ret->headColor = $this->head_color;
+        $ret->bodyColor = $this->body_color;
+        $ret->feetColor = $this->feet_color;
+        $ret->hatColor2 = $this->getSecondColor('hat', $this->hat);
+        $ret->headColor2 = $this->getSecondColor('head', $this->head);
+        $ret->bodyColor2 = $this->getSecondColor('body', $this->body);
+        $ret->feetColor2 = $this->getSecondColor('feet', $this->feet);
+        $ret->exp_points = $this->exp_points;
+        $ret->exp_to_rank = exp_required_for_ranking($this->active_rank + 1);
+
+        return $ret;
     }
 
     private function safeExplode($str_arr)
@@ -619,6 +656,41 @@ class Player
     }
 
 
+    public function groupStr()
+    {
+        if ($this->group === 0) {
+            return '0';
+        } elseif ($this->group === 1) {
+            return '1';
+        } elseif ($this->group === 2) {
+            if ($this->temp_mod) {
+                return '2,0';
+            } elseif ($this->trial_mod) {
+                return '2,1';
+            } else {
+                return '2';
+            }
+        } elseif ($this->group === 3) {
+            return '3';
+        }
+    }
+
+
+    public function modPower()
+    {
+        if ($this->group === 2) {
+            if ($this->temp_mod) {
+                return 0;
+            } elseif ($this->trial_mod) {
+                return 1;
+            } else {
+                return 2;
+            }
+        }
+        return -1;
+    }
+
+
     public function becomeTempMod()
     {
         $this->group = 2;
@@ -795,16 +867,6 @@ class Player
     {
         global $player_array;
 
-        unset($player_array[$this->user_id]);
-
-        // make sure the socket is nice and dead
-        if (is_object($this->socket)) {
-            $this->socket->player = null;
-            $this->socket->close();
-            $this->socket->onDisconnect();
-            $this->socket = null;
-        }
-
         // get out of whatever you're in
         if (isset($this->right_room)) {
             $this->right_room->removePlayer($this);
@@ -818,6 +880,17 @@ class Player
         if (isset($this->course_box)) {
             $this->course_box->clearSlot($this);
         }
+
+        // make sure the socket is nice and dead
+        if (is_object($this->socket)) {
+            $this->socket->player = null;
+            $this->socket->close();
+            $this->socket->onDisconnect();
+            $this->socket = null;
+        }
+
+        // remove from player array
+        unset($player_array[$this->user_id]);
 
         // save info
         $this->status = 'offline';

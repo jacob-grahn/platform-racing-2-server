@@ -224,7 +224,7 @@ class ChatMessage
             $this->write('message`Error: Illegal character detected.'); // illegal character in username/message check
         } else {
             $name = $this->player->name;
-            $group = $this->player->group;
+            $group = $this->player->groupStr();
             $message = "chat`$name`$group`$this->message";
             $this->player->chat_count++;
             $this->player->chat_time = time();
@@ -946,7 +946,14 @@ class ChatMessage
     private function isTempMod($player = null)
     {
         $player = isset($player) ? $player : $this->player;
-        return ($player->group === 2 && $player->temp_mod === true) ? true : false;
+        return $player->group === 2 && $player->temp_mod === true;
+    }
+
+
+    private function isTrialMod($player = null)
+    {
+        $player = isset($player) ? $player : $this->player;
+        return $player->group === 2 && $player->trial_mod === true;
     }
 
 
@@ -954,7 +961,7 @@ class ChatMessage
     private function isMod($player = null)
     {
         $player = isset($player) ? $player : $this->player;
-        return ($player->group >= 2 && $player->temp_mod === false) ? true : false;
+        return $player->group >= 2 && $player->temp_mod === false;
     }
 
 
@@ -962,7 +969,7 @@ class ChatMessage
     private function isAdmin($player = null)
     {
         $player = isset($player) ? $player : $this->player;
-        return ($player->group === 3 && $player->server_owner === false) ? true : false;
+        return $player->group === 3 && $player->server_owner === false;
     }
 
 
@@ -970,7 +977,7 @@ class ChatMessage
     private function isServerOwner($player = null)
     {
         $player = isset($player) ? $player : $this->player;
-        return ($player->group === 3 && $player->server_owner === true) ? true : false;
+        return $player->group === 3 && $player->server_owner === true;
     }
 
 

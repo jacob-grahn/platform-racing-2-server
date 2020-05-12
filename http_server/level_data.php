@@ -56,7 +56,7 @@ try {
     $ret->rating = (float) $level->rating;
     $ret->play_count = (int) $level->play_count;
     $ret->user_name = htmlspecialchars($level->name, ENT_QUOTES);
-    $ret->user_group = (int) $level->power >= 0 && (int) $level->power <= 3 ? (int) $level->power : 0;
+    $ret->user_group = $level->power . ($level->power == 2 && $level->trial_mod == 1 ? ',1' : '');
 } catch (Exception $e) {
     $ret = new stdClass();
     $ret->success = false;

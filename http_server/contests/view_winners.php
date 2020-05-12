@@ -93,12 +93,12 @@ try {
             $awarder = user_select_name_and_power($pdo, $awarder_id);
             $awarder_html_name = htmlspecialchars($awarder->name, ENT_QUOTES);
             $awarder_url = $base_url . htmlspecialchars(urlencode($awarder->name), ENT_QUOTES);
-            $awarder_color = $group_colors[(int) $awarder->power];
+            $awarder_color = $awarder->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $awarder->power];
         }
 
         // winner name and color
         $winner = user_select_name_and_power($pdo, $winner->winner_id);
-        $winner_color = $group_colors[$winner->power];
+        $winner_color = $winner->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $winner->power];
         $winner_html_name = htmlspecialchars($winner->name, ENT_QUOTES);
         $winner_url = $base_url . htmlspecialchars(urlencode($winner->name), ENT_QUOTES);
 

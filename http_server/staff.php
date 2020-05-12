@@ -32,7 +32,7 @@ try {
     foreach ($staff_list as $row) {
         // make nice variables for our data
         $safe_name = str_replace(' ', '&nbsp;', htmlspecialchars($row->name, ENT_QUOTES));
-        $group_color = $group_colors[(int) $row->power];
+        $group_color = $row->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $row->power];
         $status = $row->status;
         $register_date = date('j/M/Y', $row->register_time);
         $active_date = date('j/M/Y', $row->time);
