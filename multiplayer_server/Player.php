@@ -800,16 +800,6 @@ class Player
     {
         global $player_array;
 
-        unset($player_array[$this->user_id]);
-
-        // make sure the socket is nice and dead
-        if (is_object($this->socket)) {
-            $this->socket->player = null;
-            $this->socket->close();
-            $this->socket->onDisconnect();
-            $this->socket = null;
-        }
-
         // get out of whatever you're in
         if (isset($this->right_room)) {
             $this->right_room->removePlayer($this);
@@ -823,6 +813,17 @@ class Player
         if (isset($this->course_box)) {
             $this->course_box->clearSlot($this);
         }
+
+        // make sure the socket is nice and dead
+        if (is_object($this->socket)) {
+            $this->socket->player = null;
+            $this->socket->close();
+            $this->socket->onDisconnect();
+            $this->socket = null;
+        }
+
+        // remove from player array
+        unset($player_array[$this->user_id]);
 
         // save info
         $this->status = 'offline';
