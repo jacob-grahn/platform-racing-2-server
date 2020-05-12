@@ -59,6 +59,11 @@ try {
     // get the target's ID
     $target_id = (int) name_to_id($pdo, $target_name);
 
+    // don't let user ignore themselves
+    if ($mode === 'add' && $list === 'ignored' && $user_id === $target_id) {
+        throw new Exception('You can\'t ignore yourself, silly!');
+    }
+
     // create function
     $func_pre = trim($list, 's'); // trim trailing "s" off "friends"
     $func_suf = $mode === 'add' ? 'insert' : 'delete';
