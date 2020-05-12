@@ -526,6 +526,7 @@ class Player
 
     private function verifyStats()
     {
+        // determine which set of stats to check
         $hh_active = HappyHour::isActive();
         $speed = $hh_active ? $this->hh_speed : $this->speed;
         $accel = $hh_active ? $this->hh_acceleration : $this->acceleration;
@@ -536,7 +537,7 @@ class Player
         $accel = $accel < 0 ? 0 : ($accel > 100 ? 100 : $accel);
         $jump = $jump < 0 ? 0 : ($jump > 100 ? 100 : $jump);
 
-        // apply to stat values
+        // sanity check: total stat points out of bounds?
         if (!$hh_active && $speed + $accel + $jump > 150 + $this->active_rank) {
             $this->speed = 50;
             $this->acceleration = 50;
@@ -546,7 +547,8 @@ class Player
             $this->hh_acceleration = 100;
             $this->hh_jumping = 100;
         }
-        
+
+        // apply to active stats
         $hh_pre = $hh_active ? 'hh_' : '';
         $this->{$hh_pre . 'speed'} = $speed;
         $this->{$hh_pre . 'acceleration'} = $accel;
