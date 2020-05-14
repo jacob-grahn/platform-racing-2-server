@@ -108,6 +108,9 @@ class ChatMessage
             } elseif (strpos($msg, '/unkick ') === 0) {
                 $this->commandModUnKick(); // unkick for mods
                 $handled = true;
+            } elseif (strpos($msg, '/mute ') === 0 || strpos($msg, '/warn ') === 0) {
+                $this->commandModMute(); // mute for mods
+                $handled = true;
             } elseif (strpos($msg, '/unmute ') === 0 || strpos($msg, '/unwarn ') === 0) {
                 $this->commandModUnMute(); // unmute for mods
                 $handled = true;
@@ -598,7 +601,17 @@ class ChatMessage
     }
 
 
-    // unmuted a muted user
+    // mutes/warns a user
+    private function commandModMute()
+    {
+        $data = trim(substr($this->message, 6));
+        $warn_num = (int) substr($data, 0, strpos($data, ' '));
+        $target_name = trim(substr($data, strpos($data, ' ')));
+        client_warn($this->player->socket, "$target_name`$warn_num");
+    }
+
+
+    // unmutes a muted user
     private function commandModUnMute()
     {
         $unmuted_name = trim(substr($this->message, 8));
@@ -878,6 +891,8 @@ class ChatMessage
                     '- /give *message*<br>'.
                     '- /kick *name*<br>'.
                     '- /unkick *name*<br>'.
+                    '- /mute *num* *name*<br>'.
+                    '- /unmute *name*<br>'.
                     '- /disconnect *name*<br>'.
                     '- /priors *name*<br>'.
                     '- /clear';
