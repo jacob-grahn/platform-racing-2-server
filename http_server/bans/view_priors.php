@@ -59,6 +59,9 @@ try {
         ."<p>Your IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list"
         .'<p>Priors expire one year after the ban\'s expire date.</p>';
 } catch (Exception $e) {
+    if (!isset($staff)) {
+        output_header('Error');
+    }
     $error = $e->getMessage();
     echo "<br /><center><i>Error: $error</i></center>";
 } finally {
