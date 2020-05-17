@@ -107,11 +107,6 @@ try {
         throw new Exception('Could not record ban.');
     }
 
-    // remove login token if game ban
-    if ($scope === 'g') {
-        tokens_delete_by_user($pdo, $ban_uid);
-    }
-
     // make things pretty
     $disp_duration = format_duration($duration);
     $disp_reason = is_empty($reason) ? 'no reason given' : "reason: $reason";
