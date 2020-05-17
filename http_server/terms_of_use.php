@@ -13,7 +13,9 @@ echo 'By accessing PR2 Hub and/or PR2, you agree to be bound by '
     .'<a href="https://pr2hub.com/rules">these rules ("The Rules")</a>. '
     .'Access of PR2 Hub and/or PR2 is defined as using any service related to PR2 '
     .'(including but not limited to logging in, accessing any file or resource on the PR2 Hub Domain ("pr2hub.com"), '
-    .'and purchasing items in the Vault of Magics (in-game store, "The VoM")).<br><br>';
+    .'and purchasing items in the Vault of Magics (in-game store, "The VoM")). '
+    .'Some data may be collected in order to aid enforcement of The Rules, '
+    .'including (but not limited to) IP addresses. This data is never shared with third parties.<br><br>';
 
 echo 'You agree that failure to comply with The Rules may result in '
     .'loss of access to intellectual property relating to PR2, PR2 Hub, '
