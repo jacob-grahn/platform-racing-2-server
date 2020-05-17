@@ -29,8 +29,6 @@ echo 'The VoM sells premium items that may be rented or bought '
     .'<a href="https://kongregate.com/">Kongregate</a>. '
     .'For support regarding the purchase and use of Kreds, <a href="https://www.kongregate.com/feedbacks/new">contact '
     .'Kongregate</a>. Kongregate has its own set of laws governing the purchase and use of Kreds. '
-    .'These laws can be found at the links below: <br><br>'
-    .'<a href="https://www.kongregate.com/pages/terms_of_sale">Kongregate Terms of Sale</a><br>'
-    .'<a href="https://www.kongregate.com/pages/terms">Kongregate Terms of Service</a>';
+    .'These laws can be found in <a href="https://www.kongregate.com/pages/terms">Kongregate\'s User Agreement</a>.';
 
 output_footer();
