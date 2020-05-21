@@ -346,6 +346,7 @@ class Player
             .'`'.join(',', $this->getFullParts('eHead'))
             .'`'.join(',', $this->getFullParts('eBody'))
             .'`'.join(',', $this->getFullParts('eFeet'))
+            .'`'.((int) HappyHour::isActive())
         );
     }
 
@@ -493,9 +494,9 @@ class Player
     private function getStatStr()
     {
         if (HappyHour::isActive()) {
-            $speed = 100; //$this->hh_speed;
-            $accel = 100; //$this->hh_acceleration;
-            $jump = 100; //$this->hh_jumping;
+            $speed = $this->hh_speed;
+            $accel = $this->hh_acceleration;
+            $jump = $this->hh_jumping;
         } elseif (PR2SocketServer::$tournament) {
             $speed = PR2SocketServer::$tournament_speed;
             $accel = PR2SocketServer::$tournament_acceleration;
