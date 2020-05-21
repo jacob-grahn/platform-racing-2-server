@@ -116,6 +116,7 @@ table.noborder, th.noborder, td.noborder {
 
 input[type="text"],
 input[type="datetime-local"],
+input[type="password"],
 textarea,
 select {
     font: 13px/1.231 Tahoma, Calibri, Verdana, Geneva, sans-serif;
