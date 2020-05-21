@@ -28,7 +28,7 @@ function level_backup_select($pdo, $backup_id)
 
 function level_backups_delete_old($pdo)
 {
-    $result = $pdo->exec('DELETE FROM level_backups WHERE date < DATE_SUB(NOW(), INTERVAL 1 MONTH)');
+    $result = $pdo->exec('DELETE FROM level_backups WHERE date < DATE_SUB(NOW(), INTERVAL 1 YEAR)');
 
     if ($result === false) {
         throw new Exception('could not delete old level backups');

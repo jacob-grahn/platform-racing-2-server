@@ -68,6 +68,7 @@ class ChatMessage
         $this->message = str_ireplace([':thumbsup:', ':+1:'], '👍', $this->message);
         $this->message = str_ireplace([':thumbsdown:', ':-1:'], '👎', $this->message);
         $this->message = str_ireplace([':thinking:', ':think:', ':what:', ':hmm:'], '🤔', $this->message);
+        $this->message = str_ireplace([':eyes:', ':eye:', ':00:'], '👀', $this->message);
         $this->message = str_ireplace([':lol:', ':laugh:', ':lmao:', ':joy:'], '😂', $this->message);
         $this->message = str_ireplace([':hooray:', ':tada:', ':party:'], '🎉', $this->message);
         $this->message = str_ireplace([':fred:', ':cactus:'], '🌵', $this->message);
@@ -106,6 +107,9 @@ class ChatMessage
                 $handled = true;
             } elseif (strpos($msg, '/unkick ') === 0) {
                 $this->commandModUnKick(); // unkick for mods
+                $handled = true;
+            } elseif (strpos($msg, '/mute ') === 0 || strpos($msg, '/warn ') === 0) {
+                $this->commandModMute(); // mute for mods
                 $handled = true;
             } elseif (strpos($msg, '/unmute ') === 0 || strpos($msg, '/unwarn ') === 0) {
                 $this->commandModUnMute(); // unmute for mods
@@ -610,7 +614,17 @@ class ChatMessage
     }
 
 
-    // unmuted a muted user
+    // mutes/warns a user
+    private function commandModMute()
+    {
+        $data = trim(substr($this->message, 6));
+        $warn_num = (int) substr($data, 0, strpos($data, ' '));
+        $target_name = trim(substr($data, strpos($data, ' ')));
+        client_warn($this->player->socket, "$target_name`$warn_num");
+    }
+
+
+    // unmutes a muted user
     private function commandModUnMute()
     {
         $unmuted_name = trim(substr($this->message, 8));
@@ -835,9 +849,12 @@ class ChatMessage
                 .':thumbsup: = 👍<br>'
                 .':thumbsdown: = 👎<br>'
                 .':think: = 🤔<br>'
+                .':eyes: = 👀<br>'
                 .':laugh: = 😂<br>'
                 .':hooray: = 🎉<br>'
                 .':fred: = 🌵<br>'
+                .'<br>'
+                .'If any of these show as boxes, make sure an emoji font is installed on your device.'
             );
         } else {
             $ret = 'To get a list of usable emoticons, go to the chat tab in the lobby and type /emotes.';
@@ -887,6 +904,8 @@ class ChatMessage
                     '- /give *message*<br>'.
                     '- /kick *name*<br>'.
                     '- /unkick *name*<br>'.
+                    '- /mute *num* *name*<br>'.
+                    '- /unmute *name*<br>'.
                     '- /disconnect *name*<br>'.
                     '- /priors *name*<br>'.
                     '- /clear';

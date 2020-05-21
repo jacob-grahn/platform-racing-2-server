@@ -40,7 +40,8 @@ try {
         echo "user_id: $user_id";
         echo "<br>---<br>";
         echo "Name: <input type='text' name='name' value='$name'><br>";
-        echo "Email: <input type='text' name='email' value='$email'><br>";
+        echo "Email: <input type='text' name='email' value='$email'>";
+        echo '<label><input type="checkbox" name="reset_pass" /> Generate "Forget Your Password?" Email?</label><br>';
         echo "Guild: <input type='text' name='guild' value='$guild'><br>";
         if ($pr2 !== false) {
             echo "Hats: <input type='text' size='100' name='hats' value='$pr2->hat_array'><br>";
@@ -74,12 +75,13 @@ try {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
-        $user_id = $admin;
+
         // make some nice variables
         $admin_ip = get_ip();
         $user_id = (int) default_post('post_id');
         $user_name = default_post('name');
         $email = default_post('email');
+        $reset_pass = default_post('reset_pass');
         $guild_id = (int) default_post('guild');
         $hats = default_post('hats');
         $heads = default_post('heads');
@@ -164,6 +166,29 @@ try {
             changing_email_insert($pdo, $user_id, $old_email, $new_email, $code, $admin_ip);
             $change = changing_email_select($pdo, $code);
             changing_email_complete($pdo, $change->change_id, $admin_ip);
+            
+            // send a password reset email (same as forgot_password.php)
+            if (!is_empty($reset_pass)) {
+                include 'Mail.php';
+                require_once HTTP_FNS . '/rand_crypt/to_hash.php';
+
+                // generate a new password
+                $pass = random_str(12);
+                user_update_temp_pass($pdo, $user_id, to_hash($pass));
+
+                // email the new pass
+                $from = 'Fred the Giant Cactus <no-reply@mg.pr2hub.com>';
+                $to = $new_email;
+                $safe_name = htmlspecialchars($user_name, ENT_QUOTES); // safety first
+                $subject = 'A password and chocolates from PR2';
+                $message = "Hi $safe_name,\n\n"
+                    ."An admin generated a new password for you. Here it is: $pass\n\n"
+                    ."If you didn't request this email, then just ignore it. "
+                    ."Your old password will still work as long as you don't log in with this one.\n\n"
+                    ."All the best,\n"
+                    ."Fred";
+                send_email($from, $to, $subject, $message);
+            }
         }
 
         // update the account

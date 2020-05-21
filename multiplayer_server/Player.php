@@ -46,6 +46,10 @@ class Player
     public $speed;
     public $acceleration;
     public $jumping;
+    
+    public $hh_speed;
+    public $hh_acceleration;
+    public $hh_jumping;
 
     public $friends_array;
     public $ignored_array;
@@ -142,9 +146,9 @@ class Player
             $this->epic_feet_array = $this->safeExplode($login->epic_upgrades->epic_feet);
         }
 
-        $this->speed = (int) $login->stats->speed;
-        $this->acceleration = (int) $login->stats->acceleration;
-        $this->jumping = (int) $login->stats->jumping;
+        $this->speed = $this->hh_speed = (int) $login->stats->speed;
+        $this->acceleration = $this->hh_acceleration = (int) $login->stats->acceleration;
+        $this->jumping = $this->hh_jumping = (int) $login->stats->jumping;
 
         $this->friends_array = $login->friends;
         $this->ignored_array = $login->ignored;
@@ -489,9 +493,9 @@ class Player
     private function getStatStr()
     {
         if (HappyHour::isActive()) {
-            $speed = 100;
-            $accel = 100;
-            $jump = 100;
+            $speed = 100; //$this->hh_speed;
+            $accel = 100; //$this->hh_acceleration;
+            $jump = 100; //$this->hh_jumping;
         } elseif (PR2SocketServer::$tournament) {
             $speed = PR2SocketServer::$tournament_speed;
             $accel = PR2SocketServer::$tournament_acceleration;
@@ -512,7 +516,11 @@ class Player
 
     private function getRealStatStr()
     {
-        return "$this->speed`$this->acceleration`$this->jumping";
+        $hh_active = HappyHour::isActive();
+        $speed = $hh_active ? $this->hh_speed : $this->speed;
+        $accel = $hh_active ? $this->hh_acceleration : $this->acceleration;
+        $jump = $hh_active ? $this->hh_jumping : $this->jumping;
+        return "$speed`$accel`$jump";
     }
 
 
@@ -546,10 +554,14 @@ class Player
         $this->body = $body;
         $this->feet = $feet;
 
-        if ($speed + $acceleration + $jumping <= 150 + $this->active_rank) {
+        if (!HappyHour::isActive() && $speed + $acceleration + $jumping <= 150 + $this->active_rank) {
             $this->speed = $speed;
             $this->acceleration = $acceleration;
             $this->jumping = $jumping;
+        } elseif (HappyHour::isActive() && $speed + $acceleration + $jumping <= 300) {
+            $this->hh_speed = $speed;
+            $this->hh_acceleration = $acceleration;
+            $this->hh_jumping = $jumping;
         }
 
         $this->verifyParts();
@@ -560,31 +572,33 @@ class Player
 
     private function verifyStats()
     {
-        if ($this->speed < 0) {
-            $this->speed = 0;
-        }
-        if ($this->acceleration < 0) {
-            $this->acceleration = 0;
-        }
-        if ($this->jumping < 0) {
-            $this->jumping = 0;
-        }
+        // determine which set of stats to check
+        $hh_active = HappyHour::isActive();
+        $speed = $hh_active ? $this->hh_speed : $this->speed;
+        $accel = $hh_active ? $this->hh_acceleration : $this->acceleration;
+        $jump = $hh_active ? $this->hh_jumping : $this->jumping;
 
-        if ($this->speed > 100) {
-            $this->speed = 100;
-        }
-        if ($this->acceleration > 100) {
-            $this->acceleration = 100;
-        }
-        if ($this->jumping > 100) {
-            $this->jumping = 100;
-        }
+        // sanity check: less than 0 or greater than 100?
+        $speed = $speed < 0 ? 0 : ($speed > 100 ? 100 : $speed);
+        $accel = $accel < 0 ? 0 : ($accel > 100 ? 100 : $accel);
+        $jump = $jump < 0 ? 0 : ($jump > 100 ? 100 : $jump);
 
-        if ($this->speed + $this->acceleration + $this->jumping > 150 + $this->active_rank) {
+        // sanity check: total stat points out of bounds?
+        if (!$hh_active && $speed + $accel + $jump > 150 + $this->active_rank) {
             $this->speed = 50;
             $this->acceleration = 50;
             $this->jumping = 50;
+        } elseif ($hh_active && $speed + $accel + $jump > 300) {
+            $this->hh_speed = 100;
+            $this->hh_acceleration = 100;
+            $this->hh_jumping = 100;
         }
+
+        // apply to active stats
+        $hh_pre = $hh_active ? 'hh_' : '';
+        $this->{$hh_pre . 'speed'} = $speed;
+        $this->{$hh_pre . 'acceleration'} = $accel;
+        $this->{$hh_pre . 'jumping'} = $jump;
     }
 
 

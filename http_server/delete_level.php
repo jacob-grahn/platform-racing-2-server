@@ -48,8 +48,8 @@ try {
     rate_limit('delete-level-'.$user_id, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 
     // fetch level data
-    $row = level_select($pdo, $level_id);
-    if ((int) $row->user_id !== $user_id) {
+    $level = level_select($pdo, $level_id);
+    if ((int) $level->user_id !== $user_id) {
         throw new Exception('This is not your level.');
     }
 
@@ -73,15 +73,15 @@ try {
         $s3,
         $user_id,
         $level_id,
-        $row->version,
-        $row->title,
-        $row->live,
-        $row->rating,
-        $row->votes,
-        $row->note,
-        $row->min_level,
-        $row->song,
-        $row->play_count
+        $level->version,
+        $level->title,
+        $level->live,
+        $level->rating,
+        $level->votes,
+        $level->note,
+        $level->min_level,
+        $level->song,
+        $level->play_count
     );
 
     // delete the level in the db

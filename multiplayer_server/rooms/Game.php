@@ -432,6 +432,9 @@ class Game extends Room
             if ($this->tournament) {
                 $hat_id = PR2SocketServer::$tournament_hat;
             }
+            if ($this->course_id == Artifact::$level_id && $hat_id == 14) {
+                $hat_id = 1;
+            }
             if ($this->cowboy_mode) {
                 $hat_id = 5;
             }

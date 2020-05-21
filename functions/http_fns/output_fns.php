@@ -39,6 +39,9 @@ function output_header($title = '', $staff_nav = false, $show_admin = false)
     if ($staff_nav === true) {
         echo "<script src='https://code.jquery.com/jquery-latest.min.js'></script>"
             ."<script src='https://malsup.github.io/jquery.form.js'></script>";
+        if ($show_admin === true) {
+            echo '<script src="/scripts/admin.js"></script>';
+        }
     }
 
     echo "</head>"
