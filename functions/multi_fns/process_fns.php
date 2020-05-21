@@ -79,6 +79,29 @@ function process_gain_part($socket, $data)
 }
 
 
+function process_guild_change($socket, $data)
+{
+    if ($socket->process === true) {
+        global $player_array;
+        $obj = json_decode($data);
+        foreach ($player_array as $player) {
+            if ($player->guild_id === $obj->guild_id) {
+                $deleting = !empty($obj->delete);
+                $transferring = !empty($obj->transferring);
+                $ret = new stdClass();
+                $player->guild_id = $ret->guild_id = !$deleting ? $obj->guild_id : 0;
+                $player->guild_name = $ret->guild_name = !$deleting ? $obj->guild_name : '';
+                $ret->is_owner = $player->user_id === $obj->owner_id && !$deleting;
+                if ($player->user_id !== $obj->changer_id || $transferring) {
+                    $player->write('guildChange`' . json_encode($ret));
+                }
+                output("Edited $player->name. New guild id: $player->guild_id. New guild name: $player->guild_name.");
+            }
+        }
+    }
+}
+
+
 // message a player on the server
 function process_message_player($socket, $data)
 {
@@ -94,6 +117,25 @@ function process_message_player($socket, $data)
             $player->write('message`' . $message);
         }
         $socket->write("Message sent to player on $server_name.");
+    }
+}
+
+
+// update a player's guild
+function process_player_guild_change($socket, $data)
+{
+    if ($socket->process === true) {
+        $obj = json_decode($data);
+        $player = id_to_player($obj->user_id);
+        if (isset($player)) {
+            $kicking = !empty($obj->kicked);
+            $ret = new stdClass();
+            $player->guild_id = $ret->guild_id = !$kicking ? (int) $obj->guild_id : 0;
+            $player->guild_name = $ret->guild_name = !$kicking ? $obj->guild_name : '';
+            $ret->is_owner = !empty($obj->create);
+            $player->write('guildChange`' . json_encode($ret));
+        }
+        output("Edited $player->name. New guild id: $player->guild_id. New guild name: $player->guild_name.");
     }
 }
 

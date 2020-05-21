@@ -5,6 +5,7 @@ header("Content-type: text/plain");
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/mod_actions.php';
+require_once QUERIES_DIR . '/servers.php';
 
 $guild_id = (int) default_post('guild_id', 0);
 $note = filter_swears(default_post('note', ''));
@@ -131,9 +132,12 @@ try {
     // tell it to the world
     $ret->success = true;
     $ret->message = 'Guild edited successfully!';
-    $ret->guildId = $guild->guild_id;
+    $ret->guild_id = (int) $guild->guild_id;
+    $ret->guild_name = $guild_name;
     $ret->emblem = $emblem;
-    $ret->guildName = $guild_name;
+    $ret->owner_id = (int) $guild->owner_id;
+    $ret->changer_id = (int) $user_id;
+    @poll_servers(servers_select($pdo), 'guild_change`' . json_encode($ret), false);
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {

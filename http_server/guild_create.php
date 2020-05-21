@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/servers.php';
 
 $note = filter_swears(default_post('note', ''));
 $guild_name = filter_swears(default_post('name', ''));
@@ -88,10 +89,13 @@ try {
 
     // tell it to the world
     $ret->success = true;
+    $ret->create = true;
     $ret->message = 'Congratulations on starting your own guild! What an auspicious day!';
-    $ret->guildId = $guild_id;
+    $ret->user_id = $user_id;
+    $ret->guild_id = $guild_id;
+    $ret->guild_name = $guild_name;
     $ret->emblem = $emblem;
-    $ret->guildName = $guild_name;
+    @poll_servers(servers_select($pdo), 'player_guild_change`' . json_encode($ret), false);
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {

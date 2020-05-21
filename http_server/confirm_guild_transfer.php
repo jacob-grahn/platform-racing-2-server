@@ -3,6 +3,7 @@
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/guild_transfers.php';
+require_once QUERIES_DIR . '/servers.php';
 
 $code = default_get('code', '');
 $ip = get_ip();
@@ -38,6 +39,15 @@ try {
     $safe_guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
     $safe_new_owner = htmlspecialchars(id_to_name($pdo, $new_owner_id), ENT_QUOTES);
     echo "Great success! The new owner of $safe_guild_name is $safe_new_owner. Long live $safe_guild_name!";
+
+    // tell the socket
+    $ret = new stdClass();
+    $ret->transferring = true;
+    $ret->guild_id = $guild_id;
+    $ret->guild_name = $guild->guild_name;
+    $ret->owner_id = $new_owner_id;
+    $ret->changer_id = (int) $row->old_owner_id;
+    @poll_servers(servers_select($pdo), 'guild_change`' . json_encode($ret));
 } catch (Exception $e) {
     $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "Error: $error";

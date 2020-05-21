@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/servers.php';
 
 $token = default_get('token');
 $ip = get_ip();
@@ -44,6 +45,10 @@ try {
     // tell it to the world
     $ret->success = true;
     $ret->message = 'You have left the guild.';
+    $ret->user_id = $user_id;
+    $ret->guild_id = 0;
+    $ret->guild_name = '';
+    @poll_servers(servers_select($pdo), 'player_guild_change`' . json_encode($ret), false);
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {

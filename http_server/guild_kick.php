@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/servers.php';
 
 $target_id = (int) default_post('user_id', 0);
 $ip = get_ip();
@@ -62,7 +63,10 @@ try {
 
     // tell it to the world
     $ret->success = true;
+    $ret->kicked = true;
+    $ret->user_id = (int) $target_account->user_id;
     $ret->message = "$kicked_name has been kicked from $guild_name.";
+    @poll_servers(servers_select($pdo), 'player_guild_change`' . json_encode($ret), false);
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {
