@@ -14,7 +14,6 @@ class RaceStats
     public $finish_time;
     public $drawing = true;
     public $still_here = true;
-    public $give_artifact = true;
     public $finished_race = false;
     public $quit_race = false;
 

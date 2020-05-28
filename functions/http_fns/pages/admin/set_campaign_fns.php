@@ -24,7 +24,7 @@ function prize_check($type, $id, $err_prefix)
 
     // check for a valid hat id
     if ($type === 'hat' || $type === 'eHat') {
-        if ($id < 2 || $id > 15) {
+        if ($id < 2 || $id > 16) {
             throw new Exception("$err_prefix (invalid hat ID ($id) specified).");
         } else {
             return true;

@@ -11,6 +11,7 @@ class Game extends Room
     const LEVEL_SEA = 2255404; // for sea set
     const LEVEL_DEEPER = 6493337; // for jellyfish hat
     const LEVEL_HAUNTED = 1782114; // for epic jack-o'-lantern head
+    const LEVEL_CHEESE = 6207945; // for cheese hat
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -379,6 +380,16 @@ class Game extends Room
                 $this->sendToAll("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
             }
 
+            // cheese hat
+            if ($this->course_id == self::LEVEL_CHEESE) {
+                $hat = $this->makeHat($this->next_hat_id++, Hats::CHEESE, 0xFFD860, 0x000000);
+                $this->loose_hat_array[$hat->id] = $hat;
+                $x = 13878;
+                $y = 7214;
+                $rot = 0;
+                $this->sendToAll("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
+            }
+
             // place artifact hat
             if ($this->course_id == Artifact::$level_id) {
                 $hat = $this->makeHat($this->next_hat_id++, Hats::ARTIFACT, 0xFFFFFF, -1);
@@ -506,26 +517,35 @@ class Game extends Room
             && $player->race_stats->drawing === false
             && $this->begun === true
         ) {
+            // get/format/validate/set finish time
             $finish_microtime = microtime(true);
             $full_time = $finish_microtime - $this->start_time;
-
-            // get/format/validate/set finish time
             $finish_time = $this->timeFormat($full_time);
             $broadcast_time = $this->timeFormat($full_time, 3);
-            if ($finish_time > 31536000) {
-                $finish_time = 0; // if the race time > 1 year, set it to 0
-            }
+            $finish_time = $finish_time > 31536000 ? 0 : $finish_time; // if the race time > 1 year, set it to 0
             $this->setFinishTime($player, $finish_time);
 
+            // exp time modifier (propotional before 2 mins)
             $time_mod = $finish_time / 120;
-            if ($time_mod > 1) {
-                $time_mod = 1;
+            $time_mod = $time_mod > 1 ? 1 : $time_mod;
+
+            // checks for a "true" finish for awarding prizes
+            $true_fin = strpos($player->race_stats->finish_time, 'forfeit') !== 0;
+
+            // check if all objectives reached
+            $completed_perc = 0;
+            if ($this->mode == self::MODE_OBJECTIVE && $this->finish_count > 0) {
+                $objective_count = count($player->race_stats->objectives_reached);
+                $objective_count = $objective_count > $this->finish_count ? $this->finish_count : $objective_count;
+                $completed_perc = $objective_count / $this->finish_count;
+                $true_fin = $completed_perc == 1; // falsify true finish if all objs not reached
             }
 
+            // get finish placement
             $place = array_search($player->race_stats, $this->finish_array);
 
             // announce on tournament server
-            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10 && PR2SocketServer::$tournament) {
+            if ($true_fin && $place == 0 && count($this->finish_array) > 1 && $finish_time > 10 && $this->tournament) {
                 $this->broadcastResults($player, $broadcast_time);
             }
 
@@ -543,8 +563,15 @@ class Game extends Room
                 $prize = Prizes::$JIGG_HAT;
             }
 
-            if (isset($prize)) {
-                $autoset = ( $prize->getType() == 'hat' );
+            // set for cheese
+            $isCheese = $this->course_id == self::LEVEL_CHEESE;
+            if ($isCheese && $player->wearingHat(Hats::CHEESE) && !$player->hasPart('hat', Hats::CHEESE)) {
+                $prize = Prizes::$CHEESE_HAT;
+            }
+
+            // award prize to player
+            if (isset($prize) && $true_fin) {
+                $autoset = $prize->getType() == 'hat';
                 $result = $player->gainPart($prize->getType(), $prize->getId(), $autoset);
                 if ($result == true) {
                     $player->write('winPrize`' . $prize->toStr());
@@ -561,32 +588,22 @@ class Game extends Room
             } // level bonus
             else {
                 $level_bonus = $this->applyExpCurve($player, 25 * $time_mod);
+                
+                // sanity check, think it works fine here
+                $level_bonus = $level_bonus >= 5 && $finish_time <= 3 ? 0 : $level_bonus;
 
-                $completed_perc = 0;
-                
-                //sanity check, think it works fine here
-                if ($level_bonus >= 5 && $finish_time <= 3) {
-                    $level_bonus = 0;
-                }
-                
+                // update level bonus proportionally according to objs reached in obj mode
                 if ($this->mode == self::MODE_OBJECTIVE && $this->finish_count > 0) {
-                    $objective_count = count($player->race_stats->objectives_reached);
-                    if ($objective_count > $this->finish_count) {
-                        $objective_count = $this->finish_count;
-                    }
-                    $completed_perc = $objective_count / $this->finish_count;
                     $level_bonus *= $completed_perc;
-                    if ($completed_perc < 1) {
-                        $player->race_stats->give_artifact = false;
-                    }
                 }
 
+                // round level bonus for int exp
                 $level_bonus = round($level_bonus);
 
-                if (PR2SocketServer::$no_prizes) {
-                    $level_bonus = 0;
-                }
+                // make level bonus 0 on tournament
+                $level_bonus = PR2SocketServer::$no_prizes ? 0 : $level_bonus;
 
+                // write award back to player and add to total exp gain
                 if ($this->mode == self::MODE_DEATHMATCH) {
                     $player->write('award`Survival Bonus`+ '.$level_bonus);
                 } elseif ($this->mode == self::MODE_OBJECTIVE && $completed_perc < 1) {
@@ -594,12 +611,11 @@ class Game extends Room
                 } else {
                     $player->write('award`Level Completed`+ '.$level_bonus);
                 }
-
                 $tot_exp_gain += $level_bonus;
             }
 
             // opponent bonus
-            for ($i = $place+1; $i < count($this->finish_array); $i++) {
+            for ($i = $place + 1; $i < count($this->finish_array); $i++) {
                 $race_stats = $this->finish_array[$i];
                 if ($race_stats->rank < 100 && PR2SocketServer::$no_prizes === false) {
                     $exp_gain = ($race_stats->rank+5) * $time_mod;
@@ -611,19 +627,20 @@ class Game extends Room
                 $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
             }
 
-            // handle gp gain
-            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10) {
-                $this->giveGp($player);
-            }
-
             // handle hats
             $hat_bonus = 0;
+            $wearing_kong = false;
             foreach ($player->worn_hat_array as $hat) {
                 if ($hat->num == 2) {
                     $hat_bonus += 1;
                 } elseif ($hat->num == 3) {
-                    $hat_bonus += .25;
+                    $wearing_kong = true;
                 }
+            }
+
+            // handle gp gain
+            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10) {
+                $this->giveGp($player, $wearing_kong);
             }
 
             // apply exp bonuses to total exp multiplier and multiply total exp gain by anything less than 12
@@ -670,10 +687,7 @@ class Game extends Room
             }
 
             // apply artifact bonus after all multipliers
-            if ($this->course_id == Artifact::$level_id
-                && $player->wearingHat(Hats::ARTIFACT)
-                && $player->race_stats->give_artifact == true
-            ) {
+            if ($this->course_id == Artifact::$level_id && $player->wearingHat(Hats::ARTIFACT) && $true_fin) {
                 $result = save_finder($player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
@@ -825,16 +839,16 @@ class Game extends Room
         $b_time = $b->finish_time;
 
         if (!isset($a_time)) {
-            $a_time = 9998;
+            $a_time = 9999998;
         }
         if (!isset($b_time)) {
-            $b_time = 9998;
+            $b_time = 9999998;
         }
         if ($a_time == 'forfeit') {
-            $a_time = 9999;
+            $a_time = 9999999;
         }
         if ($b_time == 'forfeit') {
-            $b_time = 9999;
+            $b_time = 9999999;
         }
 
         if ($a_time == $b_time) {
@@ -853,10 +867,10 @@ class Game extends Room
         $b_time = $b->finish_time;
 
         if (!isset($a_time)) {
-            $a_time = 9998;
+            $a_time = 9999998;
         }
         if (!isset($b_time)) {
-            $b_time = 9998;
+            $b_time = 9999998;
         }
         if ($a_time === 'forfeit') {
             $a_time = 0;
@@ -952,6 +966,11 @@ class Game extends Room
             foreach ($this->finish_array as $rs) {
                 if ($this->mode === self::MODE_EGG) {
                     $finish_time = $rs->eggs;
+                } elseif ($this->mode === self::MODE_OBJECTIVE) {
+                    if (!empty($rs->finish_time)) {
+                        $obj_reached = count($rs->objectives_reached);
+                        $finish_time = "$rs->finish_time,$obj_reached,$this->finish_count";
+                    }
                 } else {
                     $finish_time = $rs->finish_time;
                 }
@@ -965,11 +984,16 @@ class Game extends Room
     }
 
 
-    private function giveGp($player)
+    private function giveGp($player, $double = false)
     {
         $user_id = $player->user_id;
         $prev_gp = GuildPoints::getPreviousGP($user_id, $this->course_id);
         $earned_gp = round($player->race_stats->finish_time / 60 * count($this->player_array) / 4);
+
+        // double with kong hat
+        if ($double) {
+            $earned_gp *= 2;
+        }
 
         // limit gp gain to 10 per race
         if ($earned_gp > 10) {
