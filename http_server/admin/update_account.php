@@ -45,7 +45,7 @@ try {
         echo "Guild: <input type='text' name='guild' value='$guild'><br>";
         if ($pr2 !== false) {
             echo "Hats: <input type='text' size='100' name='hats' value='$pr2->hat_array'><br>";
-            echo "Heads: <input type=text' size='100' name='heads' value='$pr2->head_array'><br>";
+            echo "Heads: <input type='text' size='100' name='heads' value='$pr2->head_array'><br>";
             echo "Bodies: <input type='text' size='100' name='bodies' value='$pr2->body_array'><br>";
             echo "Feet: <input type='text' size='100' name='feet' value='$pr2->feet_array'><br>";
         }
