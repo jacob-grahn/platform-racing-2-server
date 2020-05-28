@@ -4,17 +4,15 @@
 // get priors for a user
 function client_view_priors($socket, $data)
 {
-    global $pdo;
-
     $player = $socket->getPlayer();
-    get_priors($pdo, $player, $data);
+    get_priors($player, $data);
 }
 
 
 // kick a player
 function client_kick($socket, $data)
 {
-    global $pdo, $guild_id, $guild_owner, $server_name;
+    global $guild_id, $guild_owner, $server_name;
     $name = $data;
 
     // get players
@@ -30,7 +28,7 @@ function client_kick($socket, $data)
         $kicked_online = true;
         if (!isset($kicked)) {
             $kicked_online = false;
-            $kicked = user_select_by_name($pdo, $name, true);
+            $kicked = db_op('user_select_by_name', array($name, true));
             if ($kicked === false) {
                 $mod->write("message`Error: Could not find a user with the name \"$safe_kname\".");
                 return false;
@@ -73,7 +71,7 @@ function client_kick($socket, $data)
             // log the action if it's on a public server
             if ($guild_id == 0) {
                 $message = "$mod->name kicked $name from $server_name from $mod->ip.";
-                mod_action_insert($pdo, $mod->user_id, $message, $mod->user_id, $mod->ip);
+                db_op('mod_action_insert', array($mod->user_id, $message, $mod->user_id, $mod->ip));
             }
         } else {
             $mod->write("message`Error: You lack the power to kick $safe_kname.");
@@ -89,7 +87,7 @@ function client_kick($socket, $data)
 // unkick a player
 function client_unkick($socket, $data)
 {
-    global $pdo, $guild_id, $server_name;
+    global $guild_id, $server_name;
     $name = $data;
 
     // get some info
@@ -107,7 +105,7 @@ function client_unkick($socket, $data)
             // log the action if it's on a public server
             if ($guild_id == 0) {
                 $message = "$mod->name unkicked $name from $server_name from $mod->ip.";
-                mod_action_insert($pdo, $mod->user_id, $message, $mod->user_id, $mod->ip);
+                db_op('mod_action_insert', array($mod->user_id, $message, $mod->user_id, $mod->ip));
             }
         } else {
             $mod->write("message`Error: $unkicked_name isn't kicked.");
@@ -121,7 +119,7 @@ function client_unkick($socket, $data)
 // administer a chat warning
 function client_warn($socket, $data)
 {
-    global $pdo, $guild_owner;
+    global $guild_owner;
     list($name, $num) = explode("`", $data);
 
     // get player info
@@ -143,7 +141,7 @@ function client_warn($socket, $data)
         $warned_online = true;
         if (!isset($warned)) {
             $warned_online = false;
-            $warned = user_select_by_name($pdo, $name, true);
+            $warned = db_op('user_select_by_name', array($name, true));
             if ($warned === false) {
                 $mod->write("message`Error: Could not find a user with the name \"$safe_wname\".");
                 return false;

@@ -25,7 +25,7 @@ class ChatRoom extends Room
 
     public function clear($mod)
     {
-        global $pdo, $guild_id, $server_name;
+        global $guild_id, $server_name;
         
         // preserve chatroom data
         $room_name = $this->chat_room_name;
@@ -82,7 +82,7 @@ class ChatRoom extends Room
                 $chat_str = join(' | ', $log_chat);
                 $msg = "$mod->name cleared the main chatroom on $server_name from $mod->ip. "
                     ."{chat_count: $chat_count, chat_array: $chat_str}";
-                mod_action_insert($pdo, $mod->user_id, $msg, $mod->user_id, $mod->ip);
+                db_op('mod_action_insert', array($mod->user_id, $msg, $mod->user_id, $mod->ip));
             }
         }
         

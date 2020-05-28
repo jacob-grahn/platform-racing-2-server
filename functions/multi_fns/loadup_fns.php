@@ -1,22 +1,22 @@
 <?php
 
 
-function begin_loadup($pdo, $server_id)
+function begin_loadup($server_id)
 {
     // apply server information to global variables
-    $server = server_select($pdo, $server_id);
-    configure_server($pdo, $server);
+    $server = db_op('server_select', array($server_id));
+    configure_server($server);
 
     // set campaign
-    $campaign = campaign_select($pdo);
+    $campaign = db_op('campaign_select');
     set_campaign($campaign);
 
     // activate vault items
-    $perks = purchases_select_recent($pdo);
+    $perks = db_op('purchases_select_recent');
     activate_perks($perks);
 
     // place the artifact
-    $artifact_location = artifact_location_select($pdo);
+    $artifact_location = db_op('artifact_location_select');
     place_artifact($artifact_location);
 
     // start a happy hour, but only if this server is Carina
@@ -26,7 +26,7 @@ function begin_loadup($pdo, $server_id)
 }
 
 
-function configure_server($pdo, $server)
+function configure_server($server)
 {
     global $port, $server_name, $server_expire_time, $guild_id, $guild_owner;
 
@@ -48,7 +48,7 @@ function configure_server($pdo, $server)
 
     // set server owner
     if ($guild_id !== 0) {
-        $guild = guild_select($pdo, $guild_id);
+        $guild = db_op('guild_select', array($guild_id));
         $guild_owner = (int) @$guild->owner_id;
     } else {
         $guild_owner = FRED;

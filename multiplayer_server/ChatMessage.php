@@ -131,9 +131,6 @@ class ChatMessage
             } elseif (strpos($msg, '/promote ') === 0) {
                 $this->commandAdminFakePromote(); // "promote"
                 $handled = true;
-            } elseif ($msg === '/restart_server') {
-                $this->commandAdminRestartServer(); // server restart for admins
-                $handled = true;
             } elseif (strpos($msg, '/prizer ') === 0) {
                 $this->commandAdminSetPrizer(); // change prizer for admins
                 $handled = true;
@@ -240,7 +237,7 @@ class ChatMessage
     // advanced information for admins
     private function commandAdminDebug()
     {
-        global $pdo, $server_id, $server_name, $uptime, $port,
+        global $server_id, $server_name, $uptime, $port,
             $guild_id, $guild_owner, $server_expire_time, $campaign_array;
 
         $is_ps = ($guild_id !== 0 && $guild_id !== 183) ? 'yes' : 'no';
@@ -253,30 +250,56 @@ class ChatMessage
                 "- help<br>".
                 "- campaign [dump <b>|</b> refresh]<br>".
                 "- player (*name*)<br>".
-                "- server"
+                "- server [info <b>|</b> restart]"
             );
         } elseif ($debug_arg === 'server') {
-            $server_expires = $is_ps === 'no' ? 'never' : $server_expire_time;
-            $prizer = PR2SocketServer::$prizer_id;
-            $this->write(
-                "message`chat_message: $this->message<br>".
-                "id: $server_id<br>".
-                "name: $server_name<br>".
-                "port: $port<br>".
-                "uptime: $uptime<br>".
-                "expire_time: $server_expires<br>".
-                "private_server: $is_ps<br>".
-                "guild_id: $guild_id<br>".
-                "guild_owner: $guild_owner<br>".
-                'happy_hour: ' . HappyHour::$random_hour . '<br>'.
-                "prizer: $prizer<br>"
-            );
+            $server_arg = strtolower((string) @$args[1]);
+            if ($server_arg === 'restart') {
+                global $server_name;
+                if ($this->room_type === 'c') {
+                    if ($this->player->restart_warned === false) {
+                        $this->player->restart_warned = true;
+                        $this->write(
+                            'systemChat`WARNING: You just typed the server restart command. '.
+                            'If you choose to proceed, this action will disconnect EVERY player on this server. '.
+                            'Are you sure you want to disconnect ALL players and restart the server? '.
+                            'If so, type the command again.'
+                        );
+                    } elseif ($this->player->restart_warned === true) {
+                        $name_str = (string) $this->player->name;
+                        $ip_str = (string) $this->player->ip;
+                        $msg = "$name_str ($this->from_id) restarted $server_name from $ip_str.";
+                        db_op('admin_action_insert', array($this->from_id, $msg, $this->from_id, $this->player->ip));
+                        output("$name_str ($this->from_id) initiated a server shutdown.");
+                        $this->write('systemChat`Restarting...');
+                        restart_server();
+                    }
+                } else {
+                    $this->write('systemChat`This command cannot be used in levels.');
+                }
+            } else {
+                $server_expires = $is_ps === 'no' ? 'never' : $server_expire_time;
+                $prizer = PR2SocketServer::$prizer_id;
+                $this->write(
+                    "message`chat_message: $this->message<br>".
+                    "id: $server_id<br>".
+                    "name: $server_name<br>".
+                    "port: $port<br>".
+                    "uptime: $uptime<br>".
+                    "expire_time: $server_expires<br>".
+                    "private_server: $is_ps<br>".
+                    "guild_id: $guild_id<br>".
+                    "guild_owner: $guild_owner<br>".
+                    'happy_hour: ' . HappyHour::$random_hour . '<br>'.
+                    "prizer: $prizer<br>"
+                );
+            }
         } elseif ($debug_arg === 'campaign') {
             $campaign_arg = strtolower((string) @$args[1]);
             if ($campaign_arg === 'dump') {
                 $ret = json_encode($campaign_array);
             } elseif ($campaign_arg === 'refresh') {
-                $new_campaign = campaign_select($pdo);
+                $new_campaign = db_op('campaign_select');
                 set_campaign($new_campaign);
                 $ret = "Great success! Campaign data refreshed. New:\n\n" . json_encode($new_campaign);
             } else {
@@ -392,35 +415,6 @@ class ChatMessage
     }
 
 
-    // server restart for admins
-    private function commandAdminRestartServer()
-    {
-        global $pdo, $server_name;
-
-        if ($this->room_type === 'c') {
-            if ($this->player->restart_warned === false) {
-                $this->player->restart_warned = true;
-                $this->write(
-                    'systemChat`WARNING: You just typed the server restart command. '.
-                    'If you choose to proceed, this action will disconnect EVERY player on this server. '.
-                    'Are you sure you want to disconnect ALL players and restart the server? '.
-                    'If so, type the command again.'
-                );
-            } elseif ($this->player->restart_warned === true) {
-                $name_str = (string) $this->player->name;
-                $ip_str = (string) $this->player->ip;
-                $message = "$name_str ($this->from_id) restarted $server_name from $ip_str.";
-                admin_action_insert($pdo, $this->from_id, $message, $this->from_id, $this->player->ip);
-                output("$name_str ($this->from_id) initiated a server shutdown.");
-                $this->write('systemChat`Restarting...');
-                restart_server();
-            }
-        } else {
-            $this->write('systemChat`This command cannot be used in levels.');
-        }
-    }
-
-
     // sets a privileged account (prizer) that can change a prize in-game
     private function commandAdminSetPrizer()
     {
@@ -434,8 +428,7 @@ class ChatMessage
         }
 
         // make sure prizer exists
-        global $pdo;
-        $new_prizer = user_select_name_and_power($pdo, $prizer_id, true);
+        $new_prizer = db_op('user_select_name_and_power', array($prizer_id, true));
         if ($new_prizer === false) {
             $this->write('systemChat`Error: Could not find a user with that ID.');
             return;
@@ -554,7 +547,7 @@ class ChatMessage
     // disconnects a player without disciplining them
     private function commandModDisconnect()
     {
-        global $pdo, $server_name;
+        global $server_name;
 
         $msg_lower = strtolower($this->message);
         $dc_name = trim(substr($this->message, 12)); // for /disconnect
@@ -574,7 +567,7 @@ class ChatMessage
                 $mod_id = $this->from_id;
                 $mod_ip = $this->player->ip;
                 $message = "$mod_name disconnected $dc_name from $server_name from $mod_ip.";
-                mod_action_insert($pdo, $mod_id, $message, $mod_id, $mod_ip);
+                db_op('mod_action_insert', array($mod_id, $message, $mod_id, $mod_ip));
             }
         } elseif (isset($dc_player) && $dc_player->group >= $this->player->group) {
             $this->write("message`Error: You lack the power to disconnect $safe_dc_name.");
@@ -674,10 +667,8 @@ class ChatMessage
     // view ban priors for a user
     private function commandModViewPriors()
     {
-        global $pdo;
-
         $name = trim(substr($this->message, 8));
-        get_priors($pdo, $this->player, $name);
+        get_priors($this->player, $name);
     }
 
 
@@ -918,7 +909,6 @@ class ChatMessage
             if ($this->isAdmin() === true) {
                 $admin = '<br>Admin:<br>'.
                     '- /promote *message*<br>'.
-                    '- /restart_server<br>'.
                     '- /debug *arg*<br>'.
                     '- /hh help';
             }

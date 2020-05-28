@@ -212,7 +212,7 @@ function assign_guild_part($type, $part_id, $user_id, $guild_id, $seconds_durati
 
 
 // get ban priors (for lazy mods)
-function get_priors($pdo, $mod, $name)
+function get_priors($mod, $name)
 {
     global $group_colors, $mod_colors, $guild_id;
 
@@ -226,14 +226,14 @@ function get_priors($pdo, $mod, $name)
     }
 
     // get player info for mod
-    $mod_power = (int) user_select_power($pdo, $mod->user_id, true);
+    $mod_power = db_op('user_select_power', array($mod->user_id, true));
     if ($mod_power < 2) {
         $mod->write("message`Error: You lack the power to view priors for $safe_name.");
         return false;
     }
 
     // get user info
-    $user = user_select_by_name($pdo, $name, true);
+    $user = db_op('user_select_by_name', array($name, true));
     $user_id = (int) $user->user_id;
     if ($user_id === 0) {
         $mod->write("message`Error: Could not find a user with that name.");
@@ -253,7 +253,7 @@ function get_priors($pdo, $mod, $name)
     // check if the user is currently banned
     $str .= "Currently Banned: ";
     $is_banned = 'No';
-    $row = check_if_banned($pdo, 0, $ip, 'b', false);
+    $row = db_op('check_if_banned', array(0, $ip, 'b', false));
     if ($row !== false) {
         $ban_id = $row->ban_id;
         $reason = htmlspecialchars($row->reason, ENT_QUOTES);
@@ -273,7 +273,7 @@ function get_priors($pdo, $mod, $name)
     }
 
     // get account bans of target user
-    $account_bans = bans_select_by_user_id($pdo, $user_id);
+    $account_bans = db_op('bans_select_by_user_id', array($user_id));
     $account_ban_count = (int) count($account_bans);
     $str .= "This account has been banned $account_ban_count times.<br><br>";
 
@@ -329,7 +329,7 @@ function get_priors($pdo, $mod, $name)
     }
 
     // get IP bans of target user's IP
-    $ip_bans = bans_select_by_ip($pdo, $ip);
+    $ip_bans = db_op('bans_select_by_ip', array($ip));
     $ip_ban_count = (int) count($ip_bans);
     $ip_link = urlify("https://pr2hub.com/mod/ip_info.php?ip=$ip", $ip);
     $str .= "This IP ($ip_link) has been banned $ip_ban_count times.<br><br>";
@@ -388,6 +388,39 @@ function get_priors($pdo, $mod, $name)
     // tell the mod
     $mod->write("message`$str");
     return true;
+}
+
+
+// perform an operation on the db via a query fn (try reconnecting and retrying on failure)
+function db_op($fn, $data = array())
+{
+    global $pdo, $reconnect_attempted;
+
+    try {
+        // build params and call fn
+        $params = array($pdo);
+        foreach ($data as $var) {
+            array_push($params, $var);
+        }
+        $result = call_user_func_array($fn, $params);
+
+        // got here? means it did what it was supposed to do
+        $reconnect_attempted = false;
+        return $result;
+    } catch (Exception $e) {
+        output('Query failed.');
+        if (!$reconnect_attempted) {
+            $reconnect_attempted = true;
+            output('Renewing database connection...');
+            $pdo = null;
+            $pdo = pdo_connect();
+            output('New connection succeeded!');
+            return db_op($fn, $data);
+        } else {
+            output('Could not connect. Crashing.');
+            __crashHandler(true);
+        }
+    }
 }
 
 
@@ -455,11 +488,11 @@ function restart_server()
 
 
 // not so graceful shutdown
-function __crashHandler()
+function __crashHandler($force = false)
 {
     // this function gets called every time the script ends so we want to make sure it's a crash
     $error = error_get_last();
-    if ($error['type'] !== E_ERROR) {
+    if ($error['type'] !== E_ERROR && !$force) {
         return;
     }
 

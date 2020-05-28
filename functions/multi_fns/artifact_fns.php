@@ -2,22 +2,22 @@
 
 
 // save record of a player getting this artifact
-function save_finder($pdo, $player)
+function save_finder($player)
 {
     try {
         // does not count if you have found this artifact already
-        if (has_found_artifact($pdo, $player) === true) {
+        if (has_found_artifact($player) === true) {
             return false;
         }
 
         // yay, record that you found it
-        artifacts_found_insert($pdo, $player->user_id);
+        db_op('artifacts_found_insert', array($player->user_id));
 
         // check if you were the very first
         $meets_rank_req = $player->active_rank > 30 ? true : false;
         $meets_age_req = time() - $player->register_time > 7776000 ? true : false;
         if ($meets_rank_req && $meets_age_req) {
-            artifact_special_check($pdo, $player);
+            artifact_special_check($player);
         }
 
         return true;
@@ -28,11 +28,11 @@ function save_finder($pdo, $player)
 
 
 // checks if a player has already found this artifact
-function has_found_artifact($pdo, $player)
+function has_found_artifact($player)
 {
     try {
         // make sure they haven't found this artifact before
-        $last_found_at = artifacts_found_select_time($pdo, $player->user_id);
+        $last_found_at = db_op('artifacts_found_select_time', array($player->user_id));
         return $last_found_at > \pr2\multi\Artifact::$updated_time || $player->group <= 0;
     } catch (Exception $e) {
         $error = $e->getMessage();
@@ -43,7 +43,7 @@ function has_found_artifact($pdo, $player)
 
 
 // save the first finder and/or award bubbles
-function artifact_special_check($pdo, $player)
+function artifact_special_check($player)
 {
     $has_bubbles = has_bubbles($player);
     $first_finder = (int) \pr2\multi\Artifact::$first_finder;
@@ -51,13 +51,13 @@ function artifact_special_check($pdo, $player)
 
     // check if first finder
     if ($first_finder === 0) {
-        save_first_finder($pdo, $player, $has_bubbles);
+        save_first_finder($player, $has_bubbles);
         $first_finder = (int) \pr2\multi\Artifact::$first_finder;
     }
 
     // check if bubbles are still up for grabs
     if ($bubbles_winner === 0 && $has_bubbles === false) {
-        save_bubbles_winner($pdo, $player, $first_finder);
+        save_bubbles_winner($player, $first_finder);
     }
 }
 
@@ -77,11 +77,11 @@ function has_bubbles($player)
 
 
 // save the first finder
-function save_first_finder($pdo, $player, $has_bubbles)
+function save_first_finder($player, $has_bubbles)
 {
     $user_id = (int) $player->user_id;
-    artifact_location_update_first_finder($pdo, $user_id);
-    artifacts_found_increment_first_count($pdo, $user_id);
+    db_op('artifact_location_update_first_finder', array($user_id));
+    db_op('artifacts_found_increment_first_count', array($user_id));
     \pr2\multi\Artifact::$first_finder = $user_id;
 
     // if they have bubbles, give them 10,000 EXP (if they don't, it'll trigger the bubble winner sequence)
@@ -101,10 +101,10 @@ function save_first_finder($pdo, $player, $has_bubbles)
 
 
 // save the bubbles winner
-function save_bubbles_winner($pdo, $player, $first_finder)
+function save_bubbles_winner($player, $first_finder)
 {
     $user_id = (int) $player->user_id;
-    artifact_location_update_bubbles_winner($pdo, $user_id);
+    db_op('artifact_location_update_bubbles_winner', array($user_id));
     \pr2\multi\Artifact::$bubbles_winner = $user_id;
 
     // award the bubble set
@@ -136,5 +136,5 @@ function save_bubbles_winner($pdo, $player, $first_finder)
     // pm the user (finishing touch!)
     $html_user_name = htmlspecialchars($player->name);
     $artifact_first_pm = "Dear $html_user_name,\n\n$pm_lang\n\nThanks for playing Platform Racing 2!\n\n- Jiggmin";
-    message_insert($pdo, $user_id, 1, $artifact_first_pm, '0');
+    db_op('message_insert', array($user_id, 1, $artifact_first_pm, '0'));
 }

@@ -743,7 +743,7 @@ class Player
 
     public function saveInfo()
     {
-        global $server_id, $pdo;
+        global $server_id;
         
         // make sure there's something to save
         if (!isset($this->user_id)) {
@@ -844,8 +844,7 @@ class Player
             $speed = $accel = $jump = 50;
         }
 
-        pr2_update(
-            $pdo,
+        db_op('pr2_update', array(
             $this->user_id,
             $rank,
             $exp_points,
@@ -868,13 +867,13 @@ class Player
             $speed,
             $accel,
             $jump
-        );
+        ));
 
-        epic_upgrades_upsert($pdo, $this->user_id, $ehat_arr, $ehead_arr, $ebody_arr, $efeet_arr);
-        user_update_status($pdo, $this->user_id, $status, $e_server_id);
-        rank_token_update($pdo, $this->user_id, $rt_used);
-        exp_today_add($pdo, 'id-' . $this->user_id, $exp_gain);
-        exp_today_add($pdo, 'ip-' . $ip, $exp_gain);
+        db_op('epic_upgrades_upsert', array($this->user_id, $ehat_arr, $ehead_arr, $ebody_arr, $efeet_arr));
+        db_op('user_update_status', array($this->user_id, $status, $e_server_id));
+        db_op('rank_token_update', array($this->user_id, $rt_used));
+        db_op('exp_today_add', array('id-' . $this->user_id, $exp_gain));
+        db_op('exp_today_add', array('ip-' . $ip, $exp_gain));
     }
 
 

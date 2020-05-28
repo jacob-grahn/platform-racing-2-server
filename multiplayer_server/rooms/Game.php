@@ -501,8 +501,6 @@ class Game extends Room
 
     public function finishRace($player)
     {
-        global $pdo;
-
         if ($player->race_stats->finished_race === false
             && !isset($player->race_stats->finish_time)
             && $player->race_stats->drawing === false
@@ -676,7 +674,7 @@ class Game extends Room
                 && $player->wearingHat(Hats::ARTIFACT)
                 && $player->race_stats->give_artifact == true
             ) {
-                $result = save_finder($pdo, $player);
+                $result = save_finder($player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
                     $artifact_bonus = round($max_artifact_bonus * $player->active_rank / 60);
