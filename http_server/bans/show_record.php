@@ -11,10 +11,16 @@ try {
     // rate limiting
     rate_limit('show-ban-record-'.$ip, 5, 2);
 
+    // sanity check: valid ban id?
+    if ($ban_id === 0) {
+        header('Location: /bans');
+        die();
+    }
+
     // connect
     $pdo = pdo_connect();
 
-    // are they a moderator
+    // sanity check: are they a moderator?
     $staff = is_staff($pdo, token_login($pdo, true, true, 'n'), false);
     if ($staff->mod === false) {
         rate_limit('list-bans-'.$ip, 60, 10, "Please wait at least one minute before trying to view another ban.");

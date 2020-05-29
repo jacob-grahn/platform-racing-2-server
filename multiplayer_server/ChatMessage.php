@@ -351,24 +351,24 @@ class ChatMessage
                 $phead = $player->head;
                 $pbody = $player->body;
                 $pfeet = $player->feet;
-                $phatc = $player->hat_color;
-                $pheadc = $player->head_color;
-                $pbodyc = $player->body_color;
-                $pfeetc = $player->feet_color;
-                $pehatc = $player->hat_color_2;
-                $peheadc = $player->head_color_2;
-                $pebodyc = $player->body_color_2;
-                $pefeetc = $player->feet_color_2;
+                $phatc = strtoupper(base_convert($player->hat_color, 10, 16));
+                $pheadc = strtoupper(base_convert($player->head_color, 10, 16));
+                $pbodyc = strtoupper(base_convert($player->body_color, 10, 16));
+                $pfeetc = strtoupper(base_convert($player->feet_color, 10, 16));
+                $pehatc = strtoupper(base_convert($player->hat_color_2, 10, 16));
+                $peheadc = strtoupper(base_convert($player->head_color_2, 10, 16));
+                $pebodyc = strtoupper(base_convert($player->body_color_2, 10, 16));
+                $pefeetc = strtoupper(base_convert($player->feet_color_2, 10, 16));
                 $pdomain = $player->domain;
                 $pversion = $player->version;
                 $plaction = $player->socket->last_user_action;
                 $plaction = format_duration(time() - $plaction) . " ago ($plaction)";
                 $plexp = format_duration(time() - $player->last_exp_time) . " ago ($player->last_exp_time)";
-                $ptemp = $player->temp_mod === true ? 'yes' : 'no';
-                $pso = $player->server_owner === true ? 'yes' : 'no';
-                $psb = $player->sban_id > 0 && $player->sban_exp_time - time() > 0 ? 'yes' : 'no';
+                $ptemp = $player->temp_mod ? 'yes' : 'no';
+                $pso = $player->server_owner ? 'yes' : 'no';
+                $psb = $player->sban_exp_time - time() > 0 ? 'yes' : 'no';
                 $psbid = $player->sban_id;
-                $psbet = $player->sban_exp_time;
+                $psbet = format_duration($player->sban_exp_time - time()) . " ($player->sban_exp_time)";
 
                 $this->write(
                     "message`chat_message: $this->message<br>"
@@ -383,11 +383,11 @@ class ChatMessage
                     ."last_exp_time: $plexp<br>"
                     ."speed: $pspeed | acceleration: $paccel | jumping: $pjump<br>"
                     ."hat: $phat | head: $phead | body: $pbody | feet: $pfeet<br>"
-                    ."hat_color: $phatc | hat_color_2: $pehatc<br>"
-                    ."head_color: $pheadc | head_color_2: $peheadc<br>"
-                    ."body_color: $pbodyc | body_color_2: $pebodyc<br>"
-                    ."feet_color: $pfeetc | feet_color_2: $pefeetc<br>"
-                    ."socially_banned: $psb" . ($psbid <= 0 ? " | id: $psbid | exp_time: $psbet" : '') . '<br>'
+                    ."hat_color: #$phatc | hat_color_2: #$pehatc<br>"
+                    ."head_color: #$pheadc | head_color_2: #$peheadc<br>"
+                    ."body_color: #$pbodyc | body_color_2: #$pebodyc<br>"
+                    ."feet_color: #$pfeetc | feet_color_2: #$pefeetc<br>"
+                    ."socially_banned: $psb" . ($psbet > 0 ? " | id: $psbid | exp_time: $psbet" : '') . '<br>'
                     ."domain: $pdomain<br>"
                     ."version: $pversion"
                 );

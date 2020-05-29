@@ -166,6 +166,14 @@ function client_warn($socket, $data)
             if ($warned_online === false) {
                 $mod->write("message`$safe_wname is not currently on this server, but the mute was applied anyway.");
             }
+
+            // tell the world
+            if (isset($mod->chat_room) && $mod->group >= 2 && $mod->group > $warned->group) {
+                $mod_url = userify($mod, $mod->name);
+                $warned_url = userify($warned, $name);
+                $msg = "$mod_url has given $warned_url $num $w_str. They have been muted from the chat for $time_str.";
+                $mod->chat_room->sendChat("systemChat`$msg");
+            }
         } else {
             $mod->write("message`Error: You lack the power to warn $safe_wname.");
         }
@@ -173,15 +181,6 @@ function client_warn($socket, $data)
         $mod->write("message`Error: You can't warn yourself, silly!");
     } else {
         $mod->write("message`Error: You lack the power to warn $safe_wname.");
-    }
-
-    // tell the world
-    if (isset($mod->chat_room) && $mod->group >= 2) {
-        $mod_url = userify($mod, $mod->name);
-        $warned_url = userify($warned, $name);
-
-        $msg = "$mod_url has given $warned_url $num $w_str. They have been muted from the chat for $time_str.";
-        $mod->chat_room->sendChat("systemChat`$msg");
     }
 }
 
@@ -221,29 +220,30 @@ function client_ban($socket, $data)
     $banned = name_to_player($banned_name);
 
     // reason
-    $safe_reason = htmlspecialchars($reason, ENT_QUOTES);
-    $disp_reason = $reason === '' ? 'There was no reason given' : "Reason: $safe_reason";
+    $reason = htmlspecialchars($reason, ENT_QUOTES);
+    $reason = $reason === '' ? 'There was no reason given' : "Reason: $reason";
 
     // make friendly time
-    $disp_time = format_duration($seconds);
+    $duration = format_duration($seconds);
 
     // tell the world
-    if ($mod->group >= 2 && isset($banned)) {
+    if ($mod->group >= 2 && isset($banned) && ($banned->group < 2 || $banned->temp_mod)) {
         $mod_url = userify($mod, $mod->name);
         $banned_url = userify($banned, $banned_name);
-        $b_type = $scope === 'game' ? 'banned' : 'socially banned';
+        $banned = $scope === 'game' ? 'banned' : 'socially banned';
 
+        // send notif to chat
         if (isset($mod->chat_room)) {
             $log = urlify('https://pr2hub.com/bans', 'the ban log');
-            $msg = "$mod_url has $b_type $banned_url for $disp_time. $disp_reason. This ban has been recorded on $log.";
+            $msg = "$mod_url has $banned $banned_url for $duration. $reason. This ban has been recorded on $log.";
             $mod->chat_room->sendChat("systemChat`$msg");
         }
-        if (isset($banned) && ($banned->group < 2 || $banned->temp_mod === true)) {
-            $banned->temp_mod = false;
-            $banned->social_ban_expire_time = time() + $seconds;
-            if ($scope === 'game') {
-                $banned->remove();
-            }
+
+        // increment social ban expire time or remove them from the server
+        $banned->temp_mod = false;
+        $banned->sban_exp_time = time() + $seconds;
+        if ($scope === 'game') {
+            $banned->remove();
         }
     }
 }
