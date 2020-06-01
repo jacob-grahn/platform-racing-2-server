@@ -30,6 +30,15 @@ try {
 
     // get levels
     $levels = levels_select_by_owner($pdo, $user_id);
+
+    // handle special characters
+    foreach ($levels as $key => $level) {
+        $level->title = utf8_encode($level->title);
+        $level->note = utf8_encode($level->note);
+        $levels[$key] = $level;
+    }
+    
+    // tell the world
     $ret->success = true;
     $ret->levels = $levels;
 } catch (Exception $e) {
