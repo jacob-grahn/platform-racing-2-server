@@ -118,7 +118,7 @@ function level_select_by_title($pdo, $user_id, $title)
 }
 
 
-function level_select($pdo, $level_id)
+function level_select($pdo, $level_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT *
@@ -136,7 +136,10 @@ function level_select($pdo, $level_id)
     $level = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (empty($level)) {
-        throw new Exception('Could not find a level with that ID.');
+        if (!$suppress_error) {
+            throw new Exception('Could not find a level with that ID.');
+        }
+        return false;
     }
 
     return $level;

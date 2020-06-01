@@ -61,6 +61,7 @@ try {
                     ."<input type='hidden' value='yes' name='using_mod_site'>"
                     ."<input type='hidden' value='$from_name' name='banned_name'>"
                     ."<input type='hidden' value='$from_ip' name='force_ip'>"
+                    ."<input type='hidden' value='social' name='scope'>"
                     ."<button type='submit' name='reason' value='Flaming in PMs'>Flaming</button>"
                     ."<button type='submit' name='reason' value='Vulgar Language in PMs'>Vulgar Language</button>"
                     ."<button type='submit' name='reason' value='Password Scamming in PMs'>Password Scamming</button>"
@@ -77,11 +78,11 @@ try {
                 ."<script>
                     $('#$form_id').ajaxForm(function() {
                         $('#$div_id').remove();
-                        $.get('archive_message.php', {message_id: $message_id});
+                        $.post('archive_report.php', {message_id: $message_id});
                     });
                     $('#$button_id').click(function() {
                         $('#$div_id').remove();
-                        $.get('archive_message.php', {message_id: $message_id});
+                        $.post('archive_report.php', {message_id: $message_id});
                     });
                 </script>";
         }
