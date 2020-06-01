@@ -26,7 +26,7 @@ function check_if_banned($pdo, $user_id, $ip, $scope = 'b', $throw_exception = t
         foreach ($bans as $ban) {
             if ($ban !== false && ($scope === $ban->scope || $scope === 'b')) { // g will supercede s if scope is b
                 if ($throw_exception) {
-                    $output = make_banned_notice($row);
+                    $output = make_banned_notice($ban);
                     throw new Exception($output);
                 }
                 return $ban;
