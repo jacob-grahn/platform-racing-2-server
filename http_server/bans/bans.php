@@ -45,7 +45,7 @@ try {
         $banned_user_id = (int) $ban->banned_user_id;
         $time = (int) $ban->time;
         $expire_time = (int) $ban->expire_time;
-        $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
+        $reason = empty($ban->reason) ? "<i>No reason was given.</i>" : htmlspecialchars($ban->reason, ENT_QUOTES);
         $mod_name = htmlspecialchars($ban->mod_name, ENT_QUOTES);
         $banned_name = $ban->banned_name;
         $ip_ban = (int) $ban->ip_ban;

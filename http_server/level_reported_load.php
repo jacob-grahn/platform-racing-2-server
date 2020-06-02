@@ -38,7 +38,7 @@ try {
         throw new Exception('Could not find a valid report for this level ID.');
     }
 
-    // retrieve backup from s3 if the level was recently modified
+    // retrieve backup from s3 if the level doesn't exist or was recently modified
     if (empty($level->version) || $level->reported_version != $level->version) {
         $s3 = s3_connect();
         $file = $s3->getObject('pr2backups', "$level_id-v$level->reported_version.txt");

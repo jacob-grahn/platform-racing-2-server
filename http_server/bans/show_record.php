@@ -40,7 +40,7 @@ try {
     $time = date('M j, Y g:i A', $ban->time);
     $expire_time = date('M j, Y g:i A', $ban->expire_time);
     $duration = format_duration($ban->expire_time - $ban->time);
-    $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
+    $reason = empty($ban->reason) ? '<i>No reason was given.</i>' : htmlspecialchars($ban->reason, ENT_QUOTES);
     $record = nl2br(htmlspecialchars($ban->record, ENT_QUOTES));
     $mod_name = htmlspecialchars($ban->mod_name, ENT_QUOTES);
     $banned_name = htmlspecialchars($ban->banned_name, ENT_QUOTES);

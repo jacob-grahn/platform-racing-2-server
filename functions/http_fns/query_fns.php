@@ -568,7 +568,7 @@ function check_moderator($pdo, $user_id = null, $check_ref = true, $min_power = 
         require_trusted_ref('', true);
     }
 
-    $user_id = (int) (is_null($user_id) ? token_login($pdo) : $user_id);
+    $user_id = (int) (is_null($user_id) ? token_login($pdo, true, false, 'n') : $user_id);
     $user = user_select_mod($pdo, $user_id, true);
     if (!$user || $user->power < $min_power) {
         throw new Exception('You lack the power to access this resource.');

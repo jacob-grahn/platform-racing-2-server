@@ -64,7 +64,7 @@ try {
         throw new Exception('You can\'t report your own level, silly!');
     }
 
-    // insert the level into the reported levels table
+    // record the report
     $version = (int) $level->version;
     $cid = (int) $level->user_id;
     $cip = $level->ip;
@@ -73,6 +73,27 @@ try {
     $rid = $user_id;
     $rip = $ip;
     levels_reported_insert($pdo, $level_id, $version, $cid, $cip, $title, $note, $rid, $rip, $reason);
+
+    // back up the current version of the level if one doesn't already exist
+    $s3 = s3_connect();
+    $file = $s3->getObject('pr2backups', "$level_id-v$level->version.txt");
+    if (!$file) {
+        backup_level(
+            $pdo,
+            $s3,
+            $cid,
+            $level_id,
+            $version,
+            $title,
+            (int) $level->live,
+            (float) $level->rating,
+            (int) $level->votes,
+            $note,
+            (int) $level->min_level,
+            $level->song,
+            (int) $level->play_count
+        );
+    }
 
     // tell it to the world
     $ret->success = true;
