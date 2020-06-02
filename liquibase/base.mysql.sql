@@ -4,7 +4,7 @@
 CREATE TABLE admin_actions (action_id INT AUTO_INCREMENT NOT NULL, mod_id INT NOT NULL, message text NOT NULL, type VARCHAR(30) NOT NULL, time BIGINT NOT NULL, ip VARCHAR(100) NOT NULL, CONSTRAINT PK_ADMIN_ACTIONS PRIMARY KEY (action_id));
 
 --changeset root:1574908323264-2
-CREATE TABLE artifact_location (artifact_id INT DEFAULT 0 NOT NULL, level_id INT NOT NULL, x INT NOT NULL, y INT NOT NULL, updated_time datetime NOT NULL, first_finder INT NOT NULL, bubbles_winner INT NOT NULL, CONSTRAINT PK_ARTIFACT_LOCATION PRIMARY KEY (artifact_id));
+CREATE TABLE artifact_location (artifact_id INT DEFAULT 0 NOT NULL, level_id INT NOT NULL, x INT NOT NULL, y INT NOT NULL, rot INT(3) NOT NULL, updated_time datetime NOT NULL, first_finder INT NOT NULL, bubbles_winner INT NOT NULL, CONSTRAINT PK_ARTIFACT_LOCATION PRIMARY KEY (artifact_id));
 
 --changeset root:1574908323264-3
 CREATE TABLE artifacts_found (user_id INT NOT NULL, artifacts MEDIUMINT DEFAULT 0 NOT NULL, artifacts_first MEDIUMINT DEFAULT 0 NOT NULL, time datetime NOT NULL, new_time BIGINT NOT NULL, CONSTRAINT PK_ARTIFACTS_FOUND PRIMARY KEY (user_id));

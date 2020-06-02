@@ -396,7 +396,7 @@ class Game extends Room
                 $this->loose_hat_array[$hat->id] = $hat;
                 $x = Artifact::$x;
                 $y = Artifact::$y;
-                $rot = 0;
+                $rot = Artifact::$rot;
                 $this->sendToAll("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
             }
 
