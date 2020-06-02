@@ -59,7 +59,7 @@ try {
     // record the change
     $mod_msg = "$mod->name unpublished level $level_id from $ip "
         ."{level_title: $l_title, creator: $l_creator, level_note: $l_note}";
-    mod_action_insert($pdo, $mod->user_id, $mod_msg, 0, $ip);
+    mod_action_insert($pdo, $mod->user_id, $mod_msg, 'remove-level', $ip);
 
     // tell it to the world
     $ret->success = true;

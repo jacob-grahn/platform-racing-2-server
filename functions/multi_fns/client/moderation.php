@@ -71,7 +71,7 @@ function client_kick($socket, $data)
             // log the action if it's on a public server
             if ($guild_id == 0) {
                 $message = "$mod->name kicked $name from $server_name from $mod->ip.";
-                db_op('mod_action_insert', array($mod->user_id, $message, $mod->user_id, $mod->ip));
+                db_op('mod_action_insert', array($mod->user_id, $message, 'kick', $mod->ip));
             }
         } else {
             $mod->write("message`Error: You lack the power to kick $safe_kname.");
@@ -105,7 +105,7 @@ function client_unkick($socket, $data)
             // log the action if it's on a public server
             if ($guild_id == 0) {
                 $message = "$mod->name unkicked $name from $server_name from $mod->ip.";
-                db_op('mod_action_insert', array($mod->user_id, $message, $mod->user_id, $mod->ip));
+                db_op('mod_action_insert', array($mod->user_id, $message, 'unkick', $mod->ip));
             }
         } else {
             $mod->write("message`Error: $unkicked_name isn't kicked.");

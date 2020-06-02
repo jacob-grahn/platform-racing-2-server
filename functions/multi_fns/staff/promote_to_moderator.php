@@ -113,7 +113,7 @@ function promote_to_moderator($name, $type, $admin, $promoted)
 
             // log action in admin action log
             $a_msg = "$admin->name promoted $user_row->name to a $type moderator from $admin->ip on $server_name.";
-            db_op('admin_action_insert', array($admin->user_id, $a_msg, $admin->user_id, $admin->ip));
+            db_op('admin_action_insert', array($admin->user_id, $a_msg, 'mod-promote', $admin->ip));
 
             // update everyone (server, client menus)
             if (isset($promoted)) {

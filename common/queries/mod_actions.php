@@ -1,19 +1,20 @@
 <?php
 
 
-function mod_action_insert($pdo, $mod_id, $message, $extra, $ip)
+function mod_action_insert($pdo, $mod_id, $message, $type, $ip)
 {
     $stmt = $pdo->prepare('
         INSERT INTO mod_actions
-           SET time = NOW(),
+           SET time = :time,
                mod_id = :mod_id,
                message = :message,
-               extra = :extra,
+               type = :type,
                ip = :ip
     ');
+    $stmt->bindValue(':time', time(), PDO::PARAM_INT);
     $stmt->bindValue(':mod_id', $mod_id, PDO::PARAM_INT);
     $stmt->bindValue(':message', $message, PDO::PARAM_STR);
-    $stmt->bindValue(':extra', $extra, PDO::PARAM_STR);
+    $stmt->bindValue(':type', $type, PDO::PARAM_STR);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $result = $stmt->execute();
 

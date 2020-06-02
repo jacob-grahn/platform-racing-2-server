@@ -30,8 +30,9 @@ try {
 
     // output actions
     foreach ($actions as $action) {
-        $message = htmlspecialchars($action->message, ENT_QUOTES);
-        echo "<p><span class='date'>$action->time</span> -- $message</p>";
+        $msg = htmlspecialchars($action->message, ENT_QUOTES);
+        $time = date('M j, Y g:i A', $action->time);
+        echo "<p><span class='date'>$time</span> -- $msg</p>";
     }
 
     echo '<p>---</p>';

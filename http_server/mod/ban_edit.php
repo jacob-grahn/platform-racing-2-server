@@ -82,7 +82,7 @@ try {
         $mod_id = (int) $mod->user_id;
         $info = "{type: $type, scope: $scope, expire_time: $exp, $lifted, $notes}";
         $msg = "$mod->name ($mod_id) edited ban $b_id from $ip $info";
-        mod_action_insert($pdo, $mod_id, $msg, 0, $ip);
+        mod_action_insert($pdo, $mod_id, $msg, 'ban-edit', $ip);
 
         // redirect to the ban listing
         header("Location: /bans/show_record.php?ban_id=$b_id");

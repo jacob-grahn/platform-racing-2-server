@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
 --changeset root:1574908323264-1
-CREATE TABLE admin_actions (action_id INT AUTO_INCREMENT NOT NULL, mod_id INT NULL, message TEXT NULL, extra INT NULL, time datetime NULL, ip TEXT NULL, CONSTRAINT PK_ADMIN_ACTIONS PRIMARY KEY (action_id));
+CREATE TABLE admin_actions (action_id INT AUTO_INCREMENT NOT NULL, mod_id INT NOT NULL, message text NOT NULL, type VARCHAR(30) NOT NULL, time BIGINT NOT NULL, ip VARCHAR(100) NOT NULL, CONSTRAINT PK_ADMIN_ACTIONS PRIMARY KEY (action_id));
 
 --changeset root:1574908323264-2
 CREATE TABLE artifact_location (artifact_id INT DEFAULT 0 NOT NULL, level_id INT NOT NULL, x INT NOT NULL, y INT NOT NULL, updated_time datetime NOT NULL, first_finder INT NOT NULL, bubbles_winner INT NOT NULL, CONSTRAINT PK_ARTIFACT_LOCATION PRIMARY KEY (artifact_id));
@@ -76,7 +76,7 @@ CREATE TABLE messages (message_id INT AUTO_INCREMENT NOT NULL, to_user_id MEDIUM
 CREATE TABLE messages_reported (message_id INT NOT NULL, to_user_id MEDIUMINT DEFAULT 0 NOT NULL, from_user_id MEDIUMINT DEFAULT 0 NOT NULL, message TEXT NOT NULL, sent_time INT NOT NULL, reported_time INT DEFAULT 0 NOT NULL, from_ip VARCHAR(100) NOT NULL, reporter_ip VARCHAR(100) NOT NULL, archived BIT DEFAULT 0 NOT NULL, CONSTRAINT PK_MESSAGES_REPORTED PRIMARY KEY (message_id), UNIQUE (message_id));
 
 --changeset root:1574908323264-25
-CREATE TABLE mod_actions (mod_id INT NOT NULL, message TEXT NOT NULL, extra INT NOT NULL, time datetime NOT NULL, ip VARCHAR(100) NOT NULL);
+CREATE TABLE mod_actions (action_id INT AUTO_INCREMENT NOT NULL, mod_id INT NOT NULL, message text NOT NULL, type VARCHAR(30) NOT NULL, time BIGINT NOT NULL, ip VARCHAR(100) NOT NULL, CONSTRAINT PK_MOD_ACTIONS PRIMARY KEY (action_id));
 
 --changeset root:1574908323264-26
 CREATE TABLE mod_power (user_id INT NOT NULL, max_ban INT DEFAULT 60 NOT NULL, bans_per_hour INT DEFAULT 10 NOT NULL, can_ban_ip TINYINT(3) DEFAULT 0 NOT NULL, can_ban_account TINYINT(3) DEFAULT 0 NOT NULL, can_unpublish_level TINYINT(3) DEFAULT 0 NOT NULL, CONSTRAINT PK_MOD_POWER PRIMARY KEY (user_id));

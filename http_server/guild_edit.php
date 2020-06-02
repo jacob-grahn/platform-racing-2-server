@@ -113,7 +113,7 @@ try {
             }
             $str .= '}';
         }
-        mod_action_insert($pdo, $account->user_id, $str, 0, $ip);
+        mod_action_insert($pdo, $account->user_id, $str, 'guild-edit', $ip);
 
         // send the guild owner a PM
         $owner_name = id_to_name($pdo, $guild->owner_id);

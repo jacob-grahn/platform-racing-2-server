@@ -67,7 +67,7 @@ function demote_mod($user_name, $admin, $demoted_player)
         if ((int) $user_row->power >= 2) {
             // log action in action log
             $a_msg = "$admin->name demoted $user_name from $admin->ip on $server_name.";
-            db_op('admin_action_insert', array($admin->user_id, $a_msg, $admin->user_id, $admin->ip));
+            db_op('admin_action_insert', array($admin->user_id, $a_msg, 'mod-demote', $admin->ip));
 
             // do it!
             if (isset($demoted_player) && $demoted_player->group >= 2) {

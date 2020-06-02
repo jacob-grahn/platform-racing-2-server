@@ -127,7 +127,7 @@ try {
         ."scope: $ban_scope, "
         ."expire_time: $disp_expire_time, "
         ."$disp_reason}";
-    mod_action_insert($pdo, $mod_uid, $msg, 0, $ip);
+    mod_action_insert($pdo, $mod_uid, $msg, 'ban', $ip);
 
     if ($using_mod_site === 'yes' && $redirect === 'yes') {
         $url_ip = urlencode($force_ip);

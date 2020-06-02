@@ -152,7 +152,7 @@ try {
             }
             $str .= '}';
         }
-        admin_action_insert($pdo, $admin->user_id, $str, 0, $admin_ip);
+        admin_action_insert($pdo, $admin->user_id, $str, 'guild-update', $admin_ip);
 
         // redirect
         header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));

@@ -145,7 +145,7 @@ function update($pdo, $admin, $campaign_id)
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $ip = get_ip();
-    admin_action_insert($pdo, $admin_id, "$admin_name set a new custom campaign from $ip.", 0, $ip);
+    admin_action_insert($pdo, $admin_id, "$admin_name set a new custom campaign from $ip.", 'campaign-set', $ip);
 
     // did the script get here? great! redirect back to the script with a success message
     $message = "Great success! The new campaign has been set and will take effect shortly.";

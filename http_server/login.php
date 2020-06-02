@@ -220,7 +220,7 @@ try {
 
     // record moderator login
     if ($group > 1 || in_array($user_id, $special_ids)) {
-        mod_action_insert($pdo, $user_id, "$user_name logged into $server->server_name from $ip", $user_id, $ip);
+        mod_action_insert($pdo, $user_id, "$user_name logged into $server->server_name from $ip", 'login', $ip);
     }
 
     // part arrays

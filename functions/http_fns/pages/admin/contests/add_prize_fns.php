@@ -80,7 +80,7 @@ function add_contest_prize($pdo, $admin, $contest)
         "prize_id: $contest_prize_id, ".
         "part_type: $part_type, ".
         "part_id: $part_id}";
-    admin_action_insert($pdo, $admin->user_id, $msg, 0, $ip);
+    admin_action_insert($pdo, $admin->user_id, $msg, 'contest-prize-add', $ip);
 
     // output the page
     output_header("Add Contest Prize", true, true);

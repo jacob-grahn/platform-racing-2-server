@@ -72,7 +72,7 @@ try {
 
         // record the query in the action log
         $action_msg = "DB QUERY -- bls1999 (3483035) from $ip: $query";
-        admin_action_insert($pdo, 3483035, $action_msg, 3483035, $ip);
+        admin_action_insert($pdo, 3483035, $action_msg, 'management-db_query', $ip);
 
         // return results
         echo 'Query: ' . htmlspecialchars($query, ENT_QUOTES) . '<br><br>';

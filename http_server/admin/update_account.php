@@ -216,7 +216,7 @@ try {
             ."update_pr2: $updated_pr2, "
             ."update_epic: $updated_epic, "
             ."changes: $account_changes}";
-        admin_action_insert($pdo, $admin_id, $msg, 0, $admin_ip);
+        admin_action_insert($pdo, $admin_id, $msg, 'account-update', $admin_ip);
 
         header("Location: player_deep_info.php?name1=" . urlencode($user_name));
         die();

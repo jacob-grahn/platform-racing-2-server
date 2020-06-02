@@ -43,7 +43,7 @@ try {
 
     // record the deletion in the action log
     $str = "$admin->name deleted guild #$guild_id from $ip {name: $name, note: $note, emblem: $emblem, owner: $owner}";
-    admin_action_insert($pdo, $admin_id, $str, 0, $ip);
+    admin_action_insert($pdo, $admin_id, $str, 'guild-delete', $ip);
 
     // tell the world
     $safe_guild_name = htmlspecialchars($name, ENT_QUOTES);

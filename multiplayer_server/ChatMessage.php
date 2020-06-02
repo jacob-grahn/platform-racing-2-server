@@ -269,7 +269,7 @@ class ChatMessage
                         $name_str = (string) $this->player->name;
                         $ip_str = (string) $this->player->ip;
                         $msg = "$name_str ($this->from_id) restarted $server_name from $ip_str.";
-                        db_op('admin_action_insert', array($this->from_id, $msg, $this->from_id, $this->player->ip));
+                        db_op('admin_action_insert', array($this->from_id, $msg, 'restart-server', $this->player->ip));
                         output("$name_str ($this->from_id) initiated a server shutdown.");
                         $this->write('systemChat`Restarting...');
                         restart_server();
@@ -567,7 +567,7 @@ class ChatMessage
                 $mod_id = $this->from_id;
                 $mod_ip = $this->player->ip;
                 $message = "$mod_name disconnected $dc_name from $server_name from $mod_ip.";
-                db_op('mod_action_insert', array($mod_id, $message, $mod_id, $mod_ip));
+                db_op('mod_action_insert', array($mod_id, $message, 'dc', $mod_ip));
             }
         } elseif (isset($dc_player) && $dc_player->group >= $this->player->group) {
             $this->write("message`Error: You lack the power to disconnect $safe_dc_name.");

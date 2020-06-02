@@ -74,7 +74,7 @@ function add_contest($pdo, $admin)
             "awarding: $awarding, ".
             "awards_per_week: $max_awards, ".
             "active: $is_active}";
-        admin_action_insert($pdo, $admin->user_id, $msg, 0, $ip);
+        admin_action_insert($pdo, $admin->user_id, $msg, 'contest-add', $ip);
     }
 
     header("Location: add_prize.php?contest_id=$inserted_contest_id");
