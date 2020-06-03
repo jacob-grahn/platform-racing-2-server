@@ -72,6 +72,20 @@ class ChatMessage
         $this->message = str_ireplace([':lol:', ':laugh:', ':lmao:', ':joy:'], '😂', $this->message);
         $this->message = str_ireplace([':hooray:', ':tada:', ':party:'], '🎉', $this->message);
         $this->message = str_ireplace([':fred:', ':cactus:'], '🌵', $this->message);
+        $this->message = str_ireplace([':clown:', ':jmack:'], '🤡', $this->message);
+        $this->message = str_ireplace([':waving:', ':waving-hand:'], '👋', $this->message);
+        $this->message = str_ireplace(':dragon:', '🐉', $this->message);
+        $this->message = str_ireplace(':hammer:', '🔨', $this->message);
+        $this->message = str_ireplace([':sunglasses:', ':cool:'], '😎', $this->message);
+        $this->message = str_ireplace(':100:', '💯', $this->message);
+        $this->message = str_ireplace([':pointup:', ':this:', ':^:'], '☝️', $this->message);
+        $this->message = str_ireplace([':upside-down-face:', ':udf:'], '🙃', $this->message);
+        $this->message = str_ireplace([':ok-hand:', ':ok:'], '👌', $this->message);
+        $this->message = str_ireplace(':whale:', '🐋', $this->message);
+        $this->message = str_ireplace(':finish:', '🏁', $this->message);
+        $this->message = str_ireplace([':plead:', ':plz:'], '🥺', $this->message);
+        $this->message = str_ireplace([':sob:', ':cry:'], '😭', $this->message);
+        $this->message = str_ireplace(':money:', '💸', $this->message);
     }
 
 
@@ -832,18 +846,33 @@ class ChatMessage
     {
         if ($this->room_type === 'c') {
             $this->write(
-                'systemChat`PR2 Emoticons:<br>'
+                'systemChat`Text Emotes:<br>'
                 .':shrug: = ‾\_(ツ)_/‾<br>'
                 .':lenny: = ( ͡° ͜ʖ ͡°)<br>'
                 .':yay: = ╰(ᴖ◡ᴖ)╯<br>'
                 .':hello: = ー( ◉▽◉ )ﾉ<br>'
-                .':thumbsup: = 👍<br>'
-                .':thumbsdown: = 👎<br>'
-                .':think: = 🤔<br>'
-                .':eyes: = 👀<br>'
-                .':laugh: = 😂<br>'
-                .':hooray: = 🎉<br>'
-                .':fred: = 🌵<br>'
+                .'<br>Emojis:<br>'
+                .'💯 = :100:<br>'
+                .'👍 = :+1:<br>'
+                .'👎 = :-1:<br>'
+                .'🌵 = :cactus:<br>'
+                .'🤡 = :clown:<br>'
+                .'😎 = :cool:<br>'
+                .'😭 = :cry:<br>'
+                .'🐉 = :dragon:<br>'
+                .'👀 = :eyes:<br>'
+                .'🏁 = :finish:<br>'
+                .'🔨 = :hammer:<br>'
+                .'😂 = :laugh:<br>'
+                .'💸 = :money:<br>'
+                .'👌 = :ok:<br>'
+                .'🎉 = :party:<br>'
+                .'🥺 = :plead:<br>'
+                .'☝️ = :pointup:<br>'
+                .'🤔 = :think:<br>'
+                .'🙃 = :udf:<br>'
+                .'👋 = :waving:<br>'
+                .'🐋 = :whale:<br>'
                 .'<br>'
                 .'If any of these show as boxes, make sure an emoji font is installed on your device.'
             );
