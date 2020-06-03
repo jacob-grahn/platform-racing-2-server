@@ -9,7 +9,9 @@ require_once QUERIES_DIR . '/messages_reported.php';
 require_once QUERIES_DIR . '/levels_reported.php';
 
 $message_id = (int) default_post('message_id', 0);
+
 $level_id = (int) default_post('level_id', 0);
+$version = (int) default_post('version', 0);
 $ip = get_ip();
 
 $ret = new stdClass();
@@ -29,6 +31,11 @@ try {
         throw new Exception('Please only specify one item.');
     }
 
+    // sanity: invalid level version?
+    if ($level_id > 0 && $version <= 0) {
+        throw new Exception('Invalid level version.');
+    }
+
     // connect
     $pdo = pdo_connect();
 
@@ -38,12 +45,13 @@ try {
     // handle archive operation
     if ($message_id > 0) {
         $mode = 'message';
-        $id = $message_id;
+        $text = $id = $message_id;
         messages_reported_archive($pdo, $message_id);
     } elseif ($level_id > 0) {
         $mode = 'level';
         $id = $level_id;
-        levels_reported_archive($pdo, $level_id);
+        $text = "$level_id (version #$version)";
+        levels_reported_archive($pdo, $level_id, $version);
     } else {
         throw new Exception('Could not archive your item.'); // should never happen
     }
@@ -51,7 +59,7 @@ try {
     // record the change
     $mod_id = $mod->user_id;
     $mod_name = $mod->name;
-    mod_action_insert($pdo, $mod_id, "$mod_name archived the report of $mode #$id from $ip.", 'archive-report', $ip);
+    mod_action_insert($pdo, $mod_id, "$mod_name archived the report of $mode #$text from $ip.", 'archive-report', $ip);
 
     // tell the world
     $ret->success = true;
@@ -59,5 +67,8 @@ try {
     $ret->error = $e->getMessage();
 } finally {
     $ret->{"${mode}_id"} = $id;
+    if ($mode === 'level') {
+        $ret->version = $version;
+    }
     die(json_encode($ret));
 }

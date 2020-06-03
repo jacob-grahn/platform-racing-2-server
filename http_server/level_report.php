@@ -48,11 +48,6 @@ try {
     rate_limit('level-report-'.$user_id, 5, 2, "Please wait at least 5 seconds before trying to report another level.");
     rate_limit('level-report-'.$user_id, 60, 5);
 
-    // check if the level was already reported
-    if (levels_reported_check_existing($pdo, $level_id) === true) {
-        throw new Exception('This level has already been reported.');
-    }
-
     // sanity: does the level exist?
     $level = level_select($pdo, $level_id, true);
     if ($level === false) {
@@ -62,6 +57,11 @@ try {
     // sanity: is this user reporting a level from themselves?
     if ($level->user_id == $user_id) {
         throw new Exception('You can\'t report your own level, silly!');
+    }
+
+    // sanity: has this level version already been reported?
+    if (levels_reported_check_existing($pdo, $level_id, $level->version) === true) {
+        throw new Exception('This level version has already been reported.');
     }
 
     // record the report

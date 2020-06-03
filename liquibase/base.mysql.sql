@@ -67,7 +67,7 @@ CREATE TABLE level_backups (backup_id INT AUTO_INCREMENT NOT NULL, user_id INT N
 CREATE TABLE levels (level_id MEDIUMINT AUTO_INCREMENT NOT NULL, user_id INT DEFAULT 0 NOT NULL, version MEDIUMINT DEFAULT 1 NOT NULL, live BIT DEFAULT 0 NOT NULL, ip VARCHAR(100) NOT NULL, title VARCHAR(50) DEFAULT '' NOT NULL, rating FLOAT(12) DEFAULT 0 NOT NULL, votes INT DEFAULT 0 NOT NULL, time INT DEFAULT 0 NOT NULL, note TINYTEXT NOT NULL, min_level TINYINT(3) DEFAULT 0 NOT NULL, song TINYINT(3) DEFAULT 0 NOT NULL, play_count INT DEFAULT 0 NOT NULL, pass VARCHAR(40) NULL, type VARCHAR(1) DEFAULT 'r' NOT NULL, CONSTRAINT PK_LEVELS PRIMARY KEY (level_id));
 
 --changeset root:1574908323264-64
-CREATE TABLE levels_reported (level_id mediumint(9) NOT NULL, version mediumint(9) DEFAULT 1 NOT NULL, creator_user_id int(9) DEFAULT 0 NOT NULL, creator_ip varchar(100) NOT NULL, title varchar(50) DEFAULT '' NOT NULL, note TINYTEXT NOT NULL, report_reason TINYTEXT NOT NULL, reporter_user_id int(9) DEFAULT 0 NOT NULL, reporter_ip varchar(100) NOT NULL, reported_time int(11) NOT NULL, archived BIT DEFAULT 0 NOT NULL, CONSTRAINT PK_LEVELS PRIMARY KEY (level_id), UNIQUE (level_id));
+CREATE TABLE levels_reported (report_id INT AUTO_INCREMENT NOT NULL, level_id mediumint(9) NOT NULL, version mediumint(9) DEFAULT 1 NOT NULL, creator_user_id int(9) DEFAULT 0 NOT NULL, creator_ip varchar(100) NOT NULL, title varchar(50) DEFAULT '' NOT NULL, note TINYTEXT NOT NULL, report_reason TINYTEXT NOT NULL, reporter_user_id int(9) DEFAULT 0 NOT NULL, reporter_ip varchar(100) NOT NULL, reported_time int(11) NOT NULL, archived BIT DEFAULT 0 NOT NULL, CONSTRAINT PK_LEVELS PRIMARY KEY (report_id));
 
 --changeset root:1574908323264-23
 CREATE TABLE messages (message_id INT AUTO_INCREMENT NOT NULL, to_user_id MEDIUMINT DEFAULT 0 NOT NULL, from_user_id MEDIUMINT DEFAULT 0 NOT NULL, message TEXT NOT NULL, guild_message BIT DEFAULT 0 NOT NULL, time INT DEFAULT 0 NOT NULL, ip VARCHAR(100) NOT NULL, CONSTRAINT PK_MESSAGES PRIMARY KEY (message_id));
@@ -131,6 +131,9 @@ ALTER TABLE friends ADD CONSTRAINT `unique` UNIQUE (user_id, friend_id);
 
 --changeset root:1574908323264-43
 ALTER TABLE ignored ADD CONSTRAINT `unique` UNIQUE (user_id, ignore_id);
+
+--changeset root:1574908323264-65
+ALTER TABLE levels_reported ADD CONSTRAINT `unique` UNIQUE (level_id, version);
 
 --changeset root:1574908323264-62
 CREATE INDEX archived ON levels_reported(archived);

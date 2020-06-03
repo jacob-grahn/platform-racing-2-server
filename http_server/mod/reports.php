@@ -96,15 +96,17 @@ try {
         // if level, define some extra vars
         if (!empty($levels)) {
             $title = htmlspecialchars(filter_swears($item->title), ENT_QUOTES);
+            $version = (int) $item->version;
             $reason4rep = str_replace("\r", '<br>', htmlspecialchars(filter_swears($item->report_reason), ENT_QUOTES));
-            $record = "Level Title: $title\nLevel Note: $note\n";
+            $record = "Level Title: $title\nLevel Note: $note\n\nLevel Version: $version\n";
 
             $text = "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$rname</a> reported a level by ".
                 "<a href='player_info.php?user_id=$oid&force_ip=$oip'>$oname</a> on $formatted_time".
                 '<p>'.
                 "<p><i>Title:</i> $title<br>".
                 "<i>Note:</i> $body</p>".
-                "<p><i>Reason for report:</i> $reason4rep";
+                "<p><i>Version:</i> $version<br>".
+                "<i>Reason for report:</i> $reason4rep";
         } else {
             $text = "<a href='player_info.php?user_id=$oid&force_ip=$oip'>$oname</a> sent this message to ".
                 "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$rname</a> on $formatted_time".
@@ -133,6 +135,9 @@ try {
             }
             $send = new stdClass();
             $send->$item_id = $this_id;
+            if (!empty($levels)) {
+                $send->version = $version;
+            }
             $send = json_encode($send);
             echo ""
                     ."<select name='duration'>"

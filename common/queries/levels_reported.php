@@ -1,14 +1,16 @@
 <?php
 
-function levels_reported_archive($pdo, $level_id)
+function levels_reported_archive($pdo, $level_id, $version)
 {
     $stmt = $pdo->prepare('
         UPDATE levels_reported
            SET archived = 1
          WHERE level_id = :level_id
+           AND version = :version
          LIMIT 1
     ');
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+    $stmt->bindValue(':version', $version, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -19,14 +21,16 @@ function levels_reported_archive($pdo, $level_id)
 }
 
 
-function levels_reported_check_existing($pdo, $level_id)
+function levels_reported_check_existing($pdo, $level_id, $version)
 {
     $stmt = $pdo->prepare('
         SELECT COUNT(*)
           FROM levels_reported
          WHERE level_id = :level_id
+           AND version = :version
     ');
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+    $stmt->bindValue(':version', $version, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -118,16 +122,18 @@ function levels_reported_select_unarchived_recent($pdo)
 }
 
 
-function level_report_select_load_info($pdo, $level_id)
+function level_report_select_load_info($pdo, $level_id, $version)
 {
     $stmt = $pdo->prepare('
         SELECT lr.version as reported_version, l.*
           FROM levels_reported lr
           LEFT JOIN levels l ON l.level_id = lr.level_id
          WHERE lr.level_id = :level_id
+           AND lr.version = :version
          LIMIT 1
     ');
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+    $stmt->bindValue(':version', $version, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {

@@ -6,6 +6,7 @@ require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/levels_reported.php';
 
 $level_id = (int) default_post('level_id', 0);
+$version = (int) default_post('version', 0);
 $ip = get_ip();
 
 try {
@@ -32,8 +33,13 @@ try {
         throw new Exception('Invalid level ID.');
     }
 
+    // sanity: valid version?
+    if ($version <= 0) {
+        throw new Exception('Invalid version number.');
+    }
+
     // check for a valid level report
-    $level = level_report_select_load_info($pdo, $level_id);
+    $level = level_report_select_load_info($pdo, $level_id, $version);
     if (empty($level->reported_version)) {
         throw new Exception('Could not find a valid report for this level ID.');
     }
