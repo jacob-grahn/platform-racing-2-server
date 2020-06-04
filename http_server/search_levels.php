@@ -22,20 +22,22 @@ try {
     }
 
     // sanity check: did they search for something?
-    if (empty($search_str) && $search_str !== '0' && $mode !== 'id') {
+    if ($mode === 'id' && ($search_str != (int) $search_str || (int) $search_str === 0)) {
+        throw new Exception('Invalid level ID specified.');
+    } elseif (empty($search_str)) {
         throw new Exception('You can\'t search for nothing!');
     }
 
-    /*$page_str = apcu_fetch($key);
+    $page_str = apcu_fetch($key);
 
     while ($page_str === 'WAIT') {
         sleep(1);
         $page_str = apcu_fetch($key);
-    }*/
+    }
 
-    //if ($page_str === false) {
-        //rate_limit("$ip-search", 10, 5);
-        //apcu_add($key, 'WAIT', 5); // will not overwrite existing
+    if ($page_str === false) {
+        rate_limit("$ip-search", 10, 5);
+        apcu_add($key, 'WAIT', 5); // will not overwrite existing
         $pdo = pdo_connect();
 
         $start = ($page - 1) * 6;
@@ -43,8 +45,8 @@ try {
         $levels = levels_search($pdo, $search_str, $mode, $start, $count, $order, $dir);
         $page_str = format_level_list($levels);
 
-        //apcu_store($key, $page_str, $cache_expire); // will overwrite existing
-    //}
+        apcu_store($key, $page_str, $cache_expire); // will overwrite existing
+    }
 
     echo $page_str;
 } catch (Exception $e) {
