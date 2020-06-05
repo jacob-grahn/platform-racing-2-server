@@ -36,7 +36,7 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     }
 
     // make sure the user isn't a trial/perma mod being promoted to a trial mod
-    if ($type === 'trial' && !$promoted->temp_mod && $promoted->group === 2) {
+    if ($type === 'trial' && isset($promoted) && !$promoted->temp_mod && $promoted->group === 2) {
         $trial = $promoted->trial_mod ? ' trial' : '';
         $admin->write("message`Error: $html_name is already a$trial moderator.");
         return false;
@@ -68,6 +68,13 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     // sanity check: if the user being promoted is a guest, end the function
     if ((int) $user_row->power < 1) {
         $admin->write("message`Error: Guests can't be promoted to moderators.");
+        return false;
+    }
+
+    // make sure the user isn't a trial/perma mod being promoted to a trial mod
+    if ((int) $user_row->power === 2 && ($type === 'trial' || ($type === 'permanent' && $user_row->trial_mod == 0))) {
+        $trial = (bool) (int) $user_row->trial_mod ? ' trial' : '';
+        $admin->write("message`Error: $html_name is already a$trial moderator.");
         return false;
     }
 

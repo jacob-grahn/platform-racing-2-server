@@ -21,7 +21,7 @@ function demote_mod($user_name, $admin, $demoted_player)
     }
 
     // don't let the admin demote the server owner
-    if ($demoted_player->user_id === $guild_owner) {
+    if (isset($demoted_player) && $demoted_player->user_id === $guild_owner) {
         output("$admin->name lacks the power to demote the server owner.");
         $admin->write("message`Error: The server owner reigns supreme!");
         return false;
