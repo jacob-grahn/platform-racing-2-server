@@ -6,18 +6,26 @@ require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/favorite_levels.php';
 
 $page = (int) default_post('page', 1);
+$token = default_post('token', '');
 $ip = get_ip();
 
 $page = max(1, min($page, 9));
 $cache_expire = 30; // keep results cached for 30 seconds
-
-$key = "favorite-levels-$ip-$page";
 
 try {
     // check request method
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
     }
+
+    // sanity: valid user ID via unauthenticated token?
+    if (strpos($token, '-') === false) {
+        throw new Exception('Could not find a valid login token. Please log in again.');
+    }
+
+    // formats an apcu key by both IP and ID so that people can't maliciously trigger the rate limit via request forging
+    $user_id = (int) explode('-', $token)[0];
+    $key = "favorite-levels-$ip-$user_id-$page";
 
     $page_str = apcu_fetch($key);
     while ($page_str === 'WAIT') {
