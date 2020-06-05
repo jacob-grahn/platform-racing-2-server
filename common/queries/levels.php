@@ -186,6 +186,32 @@ function level_select_from_search($pdo, $level_id)
 }
 
 
+function level_select_title($pdo, $level_id)
+{
+    // get the levels
+    $stmt = $pdo->prepare('
+        SELECT title
+          FROM levels
+         WHERE level_id = :level_id
+           AND (live = 1 OR (live = 0 AND pass IS NOT NULL))
+         LIMIT 1
+    ');
+    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not perform query level_select_title.');
+    }
+
+    $level = $stmt->fetch(PDO::FETCH_OBJ);
+    if (empty($level)) {
+        throw new Exception('Could not find a level with that ID.');
+    }
+
+    return $level->title;
+}
+
+
 function level_unpublish($pdo, $level_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('

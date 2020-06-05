@@ -6,6 +6,7 @@ require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
 require_once HTTP_FNS . '/pages/contests/part_vars.php';
 require_once QUERIES_DIR . '/exp_today.php';
+require_once QUERIES_DIR . '/favorite_levels.php';
 require_once QUERIES_DIR . '/friends.php';
 require_once QUERIES_DIR . '/ignored.php';
 require_once QUERIES_DIR . '/messages.php';
@@ -33,6 +34,7 @@ $emblem = '';
 $guild_name = '';
 $friends = array();
 $ignored = array();
+$favorite_levels = array();
 
 $ret = new stdClass();
 $ret->success = false;
@@ -245,6 +247,12 @@ try {
         $ignored[] = $ir->ignore_id;
     }
 
+    // select their favorites
+    $fav_levels_result = favorite_levels_select_ids($pdo, $user_id);
+    foreach ($fav_levels_result as $level) {
+        $favorite_levels[] = (int) $level->level_id;
+    }
+
     // get their EXP gained today
     $exp_today_id = exp_today_select($pdo, 'id-'.$user_id);
     $exp_today_ip = exp_today_select($pdo, 'ip-'.$ip);
@@ -301,6 +309,7 @@ try {
     // tell the world
     $ret->success = true;
     $ret->message = isset($ban_msg) ? $ban_msg : null;
+    $ret->userId = $user_id;
     $ret->token = $token;
     $ret->email = $has_email;
     $ret->ant = $has_ant;
@@ -311,7 +320,7 @@ try {
     $ret->guildOwner = $guild_owner;
     $ret->guildName = $guild_name;
     $ret->emblem = $emblem;
-    $ret->userId = $user_id;
+    $ret->favoriteLevels = $favorite_levels;
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {
