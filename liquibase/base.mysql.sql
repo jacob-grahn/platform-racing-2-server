@@ -112,7 +112,7 @@ CREATE TABLE servers (server_id INT AUTO_INCREMENT NOT NULL, server_name VARCHAR
 CREATE TABLE tokens (user_id INT NOT NULL, token VARCHAR(55) NOT NULL, time datetime NOT NULL);
 
 --changeset root:1574908323264-38
-CREATE TABLE users (user_id MEDIUMINT AUTO_INCREMENT NOT NULL, name VARCHAR(20) DEFAULT '' NOT NULL, email VARCHAR(100) DEFAULT '' NOT NULL, register_ip VARCHAR(100) NOT NULL, ip VARCHAR(100) NOT NULL, time INT DEFAULT 0 NOT NULL COMMENT 'the last time this user logged in', register_time INT NOT NULL, power TINYINT(3) DEFAULT 1 NOT NULL, status VARCHAR(100) DEFAULT 'offline' NOT NULL, server_id INT DEFAULT 0 NOT NULL, read_message_id INT DEFAULT 0 NOT NULL, guild INT DEFAULT 0 NOT NULL, register_date datetime DEFAULT NOW() NOT NULL, active_date datetime DEFAULT NOW() NOT NULL, pass_hash TINYTEXT NULL, temp_pass_hash TINYTEXT NULL, CONSTRAINT PK_USERS PRIMARY KEY (user_id), UNIQUE (name));
+CREATE TABLE users (user_id MEDIUMINT AUTO_INCREMENT NOT NULL, name VARCHAR(20) DEFAULT '' NOT NULL, email VARCHAR(100) DEFAULT '' NOT NULL, register_ip VARCHAR(100) NOT NULL, ip VARCHAR(100) NOT NULL, time INT DEFAULT 0 NOT NULL COMMENT 'the last time this user logged in', register_time INT NOT NULL, power TINYINT(3) DEFAULT 1 NOT NULL, verified TINYINT(1) DEFAULT 0 NOT NULL, status VARCHAR(100) DEFAULT 'offline' NOT NULL, server_id INT DEFAULT 0 NOT NULL, read_message_id INT DEFAULT 0 NOT NULL, guild INT DEFAULT 0 NOT NULL, pass_hash TINYTEXT NULL, temp_pass_hash TINYTEXT NULL, CONSTRAINT PK_USERS PRIMARY KEY (user_id), UNIQUE (name));
 
 --changeset root:1574908323264-39
 ALTER TABLE campaigns ADD CONSTRAINT `level_id-campaign` UNIQUE (level_id, campaign);
