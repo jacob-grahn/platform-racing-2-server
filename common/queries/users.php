@@ -657,7 +657,6 @@ function user_update_status($pdo, $user_id, $status, $server_id)
     $stmt = $pdo->prepare('
         UPDATE users
            SET time = UNIX_TIMESTAMP(NOW()),
-               active_date = NOW(),
                status = :status,
                server_id = :server_id
          WHERE user_id = :user_id

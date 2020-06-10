@@ -205,7 +205,7 @@ function guild_select_active_member_count($pdo, $guild_id)
         SELECT COUNT(*) AS active_member_count
         FROM users
         WHERE users.guild = :guild_id
-        AND users.active_date > DATE_SUB( NOW(), INTERVAL 1 DAY )
+        AND users.time > UNIX_TIMESTAMP(NOW() - INTERVAL 1 DAY);
     ');
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
     $result = $stmt->execute();
