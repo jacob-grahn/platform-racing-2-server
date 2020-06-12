@@ -283,9 +283,16 @@ try {
 
     $str = "register_login`" . json_encode($send);
     talk_to_server($server_address, $server_port, $server->salt, $str, false, false);
+    
+    // 160 message
+    $link_160 = urlify('https://jiggmin2.com/forums/showthread.php?tid=2613', 'this thread');
+    $msg_160 = 'PR2 will temporarily shut down for about 3 days at midnight on Friday, June 19 (EDT) '
+        ."to allow for testing of a new build being released on or around Monday, June 22 (v160).\n\n"
+        ."For more information, please see $link_160. Thanks for your patience!";
 
     // tell the world
     $ret->success = true;
+    $ret->message = $msg_160;
     $ret->token = $token;
     $ret->email = $has_email;
     $ret->ant = $has_ant;
