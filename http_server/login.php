@@ -58,11 +58,6 @@ try {
     rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
     rate_limit('login-'.$ip, 60, 10, 'Only 10 logins per minute per IP are accepted.');
 
-    // get the user's IP and run it through an IP info API
-    // $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
-    // $country_code = ($ip_info !== false && !empty($ip_info)) ? $ip_info->data->geo->country_code : '?';
-    $country_code = '?';
-
     // decrypt login data
     $encryptor = new \pr2\http\Encryptor();
     $encryptor->setKey($LOGIN_KEY);
@@ -127,6 +122,17 @@ try {
     } else {
         setcookie('token', '', time() - 3600, '/', $_SERVER['SERVER_NAME'], false, true);
     }
+
+    // check IP validity
+    $country_code = '?';
+    $valid = check_ip($ip, $user);
+    if (!$valid) {
+        $aam_link = urlify('https://jiggmin2.com/aam', 'Ask a Mod');
+        $msg = 'Please disable your proxy/VPN to connect to PR2. '.
+            "If you feel this is a mistake, please use $aam_link to contact a member of the PR2 staff team.";
+        throw new Exception($msg);
+    }
+    ensure_ip_country_from_valid_existing($pdo, $ip); // if possible, ensure country code isn't ?
 
     // create variables from user data in db
     $user_id = (int) $user->user_id;

@@ -1,18 +1,20 @@
 <?php
 
 
-function admin_user_update($pdo, $user_id, $name, $email, $guild)
+function admin_user_update($pdo, $user_id, $name, $email, $guild, $verified)
 {
     $stmt = $pdo->prepare('
         UPDATE users
            SET name = :name,
                email = :email,
-               guild = :guild
+               guild = :guild,
+               verified = :verified
          WHERE user_id = :user_id
         ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
     $stmt->bindValue(':guild', $guild, PDO::PARAM_INT);
+    $stmt->bindValue(':verified', $verified, PDO::PARAM_INT);
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
@@ -139,6 +141,7 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
                time,
                register_time,
                power,
+               verified,
                status,
                read_message_id,
                guild,
@@ -174,6 +177,7 @@ function user_select_expanded($pdo, $user_id, $suppress_error = false)
                e.epic_feet,
                u.name,
                u.power,
+               u.verified,
                u.status,
                u.time,
                u.register_time,
@@ -244,6 +248,7 @@ function user_select_guest($pdo)
                time,
                register_time,
                power,
+               verified,
                status,
                read_message_id,
                guild,
@@ -304,6 +309,7 @@ function user_select_mod($pdo, $user_id, $suppress_error = false)
                    u.time,
                    u.register_time,
                    u.power,
+                   u.verified,
                    u.status,
                    u.read_message_id,
                    u.guild,
@@ -508,6 +514,7 @@ function user_select($pdo, $user_id, $suppress_error = false)
                time,
                register_time,
                power,
+               verified,
                status,
                read_message_id,
                guild,

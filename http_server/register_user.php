@@ -58,6 +58,15 @@ try {
     // check if banned
     check_if_banned($pdo, -1, $ip);
 
+    // check IP validity
+    $valid_ip = check_ip($ip, null, false);
+    if (!$valid_ip) {
+        $aam_link = urlify('https://jiggmin2.com/aam', 'Ask a Mod');
+        $msg = 'Please disable your proxy/VPN to connect to PR2. '.
+            "If you feel this is a mistake, please use $aam_link to contact a member of the PR2 staff team.";
+        throw new Exception($msg);
+    }
+
     // check if this name has been taken already
     if (user_select_by_name($pdo, $name, true) !== false) {
         throw new Exception('Sorry, that name has already been registered.');

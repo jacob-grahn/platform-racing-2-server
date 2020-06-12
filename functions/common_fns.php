@@ -139,6 +139,86 @@ function rate_limit($key, $interval, $max, $error = 'Slow down a bit, yo.')
 }
 
 
+// checks the validity of an IP address
+function check_ip($ip, $user = null, $handle_cc = true)
+{
+    global $IP_API_ENABLED, $IP_API_LINK_PRE, $IP_API_LINK_SUF;
+
+    // disabled globally?
+    if (!$IP_API_ENABLED) {
+        return true;
+    }
+
+    $validity = 'VALID';
+    $key = "ip-validity-$ip";
+    $verified = (bool) (int) @$user->verified;
+    $power_cond = (isset($user) && $user->power == 1) || !isset($user);
+    if ($power_cond && !$verified && !apcu_exists($key)) { // if a member, not verified, and ip isn't cached
+        $data = @file_get_contents($IP_API_LINK_PRE . $ip . $IP_API_LINK_SUF); // get ip info
+        if ($data !== false) { // if url query succeeded
+            $data = json_decode($data); // decode return data
+            $validity = ip_is_valid($ip, $data, $handle_cc) ? 'VALID' : 'INVALID'; // determine validity
+            apcu_store($key, $validity, 2678400); // log validity
+        }
+    } elseif (apcu_exists($key)) {
+        $validity = apcu_fetch($key);
+    }
+
+    return $validity === 'VALID';
+}
+
+
+function ip_is_valid($ip, $data, $handle_cc)
+{
+    global $IP_API_SCORE_MIN;
+
+    $valid = true;
+    if ($data->success) {
+        if ($data->fraud_score > $IP_API_SCORE_MIN
+            || $data->proxy
+            || $data->vpn
+            || $data->tor
+            || $data->recent_abuse
+        ) {
+            $valid = false;
+        }
+
+        // update use country code
+        if ($handle_cc) {
+            global $country_code;
+            $country_code = $data->country_code;
+        }
+    }
+
+    return $valid;
+}
+
+
+// ensure correct country from existing data
+function ensure_ip_country_from_valid_existing($pdo, $ip)
+{
+    global $country_code;
+    $key = "ip-country-$ip";
+
+    // don't continue if no country code variable
+    if (!isset($country_code)) {
+        return;
+    }
+
+    // if key exists in apcu, use that. otherwise, retrieve from db (returns ? on no matches)
+    if ($country_code === '?') {
+        // if there are entries with a ? for this IP or the country_code is ?, continue
+        $country_code = apcu_exists($key) ? apcu_fetch($key) : recent_login_select_country_from_ip($pdo, $ip);
+    }
+
+    // store valid data
+    if (!apcu_exists($key) && $country_code !== '?' && strlen($country_code) === 2) {
+        apcu_store($key, $country_code, 2678400); // store in apcu
+        recent_logins_update_missing_country_code($pdo, $ip, $country_code); // store in db (where ? for this IP)
+    }
+}
+
+
 // output to command line or log
 function output($str)
 {
