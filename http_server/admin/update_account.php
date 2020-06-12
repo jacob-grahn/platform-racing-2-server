@@ -34,14 +34,16 @@ try {
 
         $user_id = (int) $user->user_id;
         $name = htmlspecialchars($user->name, ENT_QUOTES);
+        $verified = check_value($user->verified, 1, "checked='checked'", '');
         $email = htmlspecialchars($user->email, ENT_QUOTES);
         $guild = htmlspecialchars($user->guild, ENT_QUOTES);
 
         echo "user_id: $user_id";
         echo "<br>---<br>";
-        echo "Name: <input type='text' name='name' value='$name'><br>";
+        echo "Name: <input type='text' name='name' value='$name'>";
+        echo "<label><input type='checkbox' name='verified' $verified /> Verified</label><br>";
         echo "Email: <input type='text' name='email' value='$email'>";
-        echo '<label><input type="checkbox" name="reset_pass" /> Generate "Forget Your Password?" Email?</label><br>';
+        echo '<label id="pass"><input type="checkbox" name="reset_pass" /> Generate new pass (via email)?</label><br>';
         echo "Guild: <input type='text' name='guild' value='$guild'><br>";
         if ($pr2 !== false) {
             echo "Hats: <input type='text' size='100' name='hats' value='$pr2->hat_array'><br>";
@@ -82,6 +84,7 @@ try {
         $user_name = default_post('name');
         $email = default_post('email');
         $reset_pass = default_post('reset_pass');
+        $verified = (int) !empty(default_post('verified'));
         $guild_id = (int) default_post('guild');
         $hats = default_post('hats');
         $heads = default_post('heads');
@@ -113,7 +116,11 @@ try {
         $update_user = false;
         $update_pr2 = false;
         $update_epic = false;
-        if ($user->name != $user_name || $user->email != $email || $user->guild != $guild_id) {
+        if ($user->name != $user_name
+            || $user->email != $email
+            || $user->guild != $guild_id
+            || $user->verified != $verified
+        ) {
             $update_user = true;
         }
         if ($pr2->hat_array != $hats
@@ -196,7 +203,7 @@ try {
         $updated_pr2 = 'no';
         $updated_epic = 'no';
         if ($update_user === true) {
-            admin_user_update($pdo, $user_id, $user_name, $email, $guild_id);
+            admin_user_update($pdo, $user_id, $user_name, $email, $guild_id, $verified);
             $updated_user = 'yes';
         }
         if ($update_pr2 === true) {

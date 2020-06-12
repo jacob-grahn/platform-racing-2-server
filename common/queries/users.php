@@ -1,18 +1,20 @@
 <?php
 
 
-function admin_user_update($pdo, $user_id, $name, $email, $guild)
+function admin_user_update($pdo, $user_id, $name, $email, $guild, $verified)
 {
     $stmt = $pdo->prepare('
         UPDATE users
            SET name = :name,
                email = :email,
-               guild = :guild
+               guild = :guild,
+               verified = :verified
          WHERE user_id = :user_id
         ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
     $stmt->bindValue(':guild', $guild, PDO::PARAM_INT);
+    $stmt->bindValue(':verified', $verified, PDO::PARAM_INT);
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
@@ -140,6 +142,7 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
                register_time,
                power,
                trial_mod,
+               verified,
                status,
                read_message_id,
                guild,
@@ -176,6 +179,7 @@ function user_select_expanded($pdo, $user_id, $suppress_error = false)
                u.name,
                u.power,
                u.trial_mod,
+               u.verified,
                u.status,
                u.time,
                u.register_time,
@@ -247,6 +251,7 @@ function user_select_guest($pdo)
                register_time,
                power,
                trial_mod,
+               verified,
                status,
                read_message_id,
                guild,
@@ -308,6 +313,7 @@ function user_select_mod($pdo, $user_id, $suppress_error = false)
                    u.register_time,
                    u.power,
                    u.trial_mod,
+                   u.verified,
                    u.status,
                    u.read_message_id,
                    u.guild,
@@ -513,6 +519,7 @@ function user_select($pdo, $user_id, $suppress_error = false)
                register_time,
                power,
                trial_mod,
+               verified,
                status,
                read_message_id,
                guild,
@@ -665,7 +672,6 @@ function user_update_status($pdo, $user_id, $status, $server_id)
     $stmt = $pdo->prepare('
         UPDATE users
            SET time = UNIX_TIMESTAMP(NOW()),
-               active_date = NOW(),
                status = :status,
                server_id = :server_id
          WHERE user_id = :user_id

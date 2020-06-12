@@ -1,5 +1,6 @@
 <?php
 
+$BLS_IP_PREFIX = 'test';
 $SERVER_IP = '127.0.0.1';
 
 $DB_ADDRESS = 'mysql';
@@ -15,19 +16,30 @@ $PROCESS_PASS = 'abc';
 $PROCESS_IP = '127.0.0.1';
 
 $COMM_PASS = 'def';
-$KONG_API_PASS = 'ghi';
 
 $EMAIL_HOST = 'ssl://some.emailhost.com';
 $EMAIL_PORT = 'port';
 $EMAIL_USER = '2@2.com';
 $EMAIL_PASS = 'pass';
 
-$LEVEL_LIST_SALT = 'why does this exist?';
-$PR2_HUB_API_PASS = 'is this still used?';
+$PR2_HUB_API_PASS = 'test';
+$PR2_HUB_API_ALLOWED_IPS = [
+    'an ip',
+    'another ip'
+];
+
+$IP_API_ENABLED = true;
+$IP_API_LINK_PRE = 'a link pre';
+$IP_API_LINK_SUF = 'a link suf';
+$IP_API_SCORE_MIN = /* over */ 9000;
+$IP_API_LINK_2 = 'another link';
+
+$KONG_API_PASS = 'ghi';
 
 $CHANGE_EMAIL_KEY = 'why did I do this';
 $CHANGE_EMAIL_IV = 'why oh why';
 
+$LEVEL_LIST_SALT = 'why does this exist?';
 $LEVEL_SALT = 'fa';
 $LEVEL_SALT_2 = 'ti';
 $LEVEL_PASS_SALT = 'fa';
@@ -36,8 +48,6 @@ $LEVEL_PASS_IV = 'la';
 
 $LOGIN_KEY = 'hello';
 $LOGIN_IV = 'there';
-
-$BLS_IP_PREFIX = 'no ddos plz';
 
 $ALLOWED_CLIENT_VERSIONS = array('weeeee version', 'weeeee new version');
 $TRUSTED_REFS = [ // trusted referrers for the pr2 client

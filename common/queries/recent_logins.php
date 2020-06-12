@@ -76,6 +76,66 @@ function recent_logins_select($pdo, $user_id, $suppress_error = false, $start = 
 }
 
 
+function recent_logins_select_count_missing_country_by_ip($pdo, $ip)
+{
+    $stmt = $pdo->prepare('
+        SELECT count(ip) as count
+          FROM recent_logins
+         WHERE country = "?"
+           AND ip = :ip
+    ');
+    $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not perform query recent_logins_select_count_missing_country_by_ip.');
+    }
+
+    $data = $stmt->fetch(PDO::FETCH_OBJ);
+    return !empty($data) && isset($data->count) ? (int) $data->count : 0;
+}
+
+
+function recent_login_select_country_from_ip($pdo, $ip)
+{
+    $stmt = $pdo->prepare('
+        SELECT country
+          FROM recent_logins
+         WHERE country != "?"
+           AND ip = :ip
+         ORDER BY date DESC
+         LIMIT 1
+    ');
+    $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not perform query recent_login_select_country_from_ip.');
+    }
+
+    $data = $stmt->fetch(PDO::FETCH_OBJ);
+    return !empty($data) && isset($data->country) ? $data->country : '?';
+}
+
+
+function recent_logins_update_missing_country($pdo, $ip, $country_code)
+{
+    $stmt = $pdo->prepare('
+        UPDATE recent_logins
+           SET country = :country_code
+         WHERE ip = :ip
+           AND country = "?"
+    ');
+    $stmt->bindValue(':country_code', $country_code, PDO::PARAM_STR);
+    $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not perform query recent_logins_update_missing_country.');
+    }
+}
+
+
 function recent_logins_user_select_by_ip($pdo, $ip)
 {
     $count = (int) $count;
