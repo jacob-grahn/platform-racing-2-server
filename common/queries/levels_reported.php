@@ -102,11 +102,19 @@ function levels_reported_select_unarchived_recent($pdo)
 {
     $stmt = $pdo->prepare('
         SELECT
-          lr.level_id, lr.title, u.name as author
+          lr.level_id,
+          lr.title,
+          lr.note,
+          lr.version,
+          u1.name as creator,
+          u2.name as reporter,
+          lr.reported_time as report_time,
+          lr.report_reason as reason
         FROM
-          levels_reported lr, users u
+          levels_reported lr, users u1, users u2
         WHERE
-          lr.creator_user_id = u.user_id
+          lr.creator_user_id = u1.user_id
+          AND lr.reporter_user_id = u2.user_id
           AND lr.archived = 0
         ORDER BY
           reported_time DESC

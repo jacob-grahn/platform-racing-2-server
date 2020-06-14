@@ -35,6 +35,7 @@ try {
     foreach ($levels as $key => $level) {
         $level->title = utf8_encode($level->title);
         $level->note = utf8_encode($level->note);
+        $level->rating = round($level->rating, 2);
         $levels[$key] = $level;
     }
     
