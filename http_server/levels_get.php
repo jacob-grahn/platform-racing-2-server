@@ -12,7 +12,7 @@ $ret->success = false;
 
 try {
     // rate limiting
-    rate_limit('get-levels-'.$ip, 3, 2);
+    rate_limit('levels-get-'.$ip, 3, 2);
 
     // connect
     $pdo = pdo_connect();
@@ -26,7 +26,7 @@ try {
     }
 
     // more rate limiting
-    rate_limit('get-levels-'.$user_id, 3, 2);
+    rate_limit('levels-get-'.$user_id, 3, 2);
 
     // get levels
     $levels = levels_select_by_owner($pdo, $user_id);
