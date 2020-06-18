@@ -75,6 +75,7 @@ class Player
     public $temp_id;
     public $pos_x = 0;
     public $pos_y = 0;
+    public $rot = 0;
 
     public $worn_hat_array = array();
 
