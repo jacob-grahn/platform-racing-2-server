@@ -97,6 +97,8 @@ try {
         $type = 'e';
     } elseif ($game_mode == 'objective') {
         $type = 'o';
+    } elseif ($game_mode == 'hat') {
+        $type = 'h';
     } else {
         $type = 'r';
     }

@@ -468,6 +468,11 @@ class Game extends Room
                 $hat_id = 1;
             }
 
+            // cowboy mode
+            if ($this->cowboy_mode) {
+                $hat_id = 5;
+            }
+
             // change the hat to something random during hat attack if they aren't wearing a valid hat
             // this is foolproof. no chance at all that this is a horrible idea. none whatsoever
             $valid_hats = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 16];
@@ -475,11 +480,6 @@ class Game extends Room
                 $hat_id = $valid_hats[rand(0, count($valid_hats) - 1)];
                 $msg = 'Howdy! Here\'s a random hat to use just for this level. Thank me later!!';
                 $player->socket->write("chat`Fred the G. Cactus`3`$msg");
-            }
-
-            // cowboy mode
-            if ($this->cowboy_mode) {
-                $hat_id = 5;
             }
 
             // init the hat and add to this player's worn hat array
