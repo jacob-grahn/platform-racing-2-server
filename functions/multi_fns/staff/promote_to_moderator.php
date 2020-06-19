@@ -91,11 +91,11 @@ function promote_to_moderator($name, $type, $admin, $promoted)
     if ($type === 'trial' || $type === 'permanent') {
         try {
             // throttle mod promotions
-            if (db_op('promotion_log_count', array($min_time)) > 0) {
+            /*if (db_op('promotion_log_count', array($min_time)) > 0) {
                 $msg = 'Someone has already been promoted to a moderator recently. '
                     .'Wait a bit before trying to promote again.';
                 throw new Exception($msg);
-            }
+            }*/
 
             // log the power change
             $msg = "$user_id has been promoted to $type moderator by $admin->name.";
