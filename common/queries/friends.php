@@ -70,13 +70,13 @@ function friend_select($pdo, $user_id, $friend_id, $suppress_error = false)
 function friends_select($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array,
-               rank_tokens.used_tokens, friends.friend_id
-          FROM friends
-         INNER JOIN users ON users.user_id = friends.friend_id
-          LEFT JOIN pr2 ON users.user_id = pr2.user_id
-          LEFT JOIN rank_tokens ON users.user_id = rank_tokens.user_id
-         WHERE friends.user_id = :user_id
+        SELECT u.name, u.power, u.trial_mod, u.status, p.rank, p.hat_array,
+               rt.used_tokens, f.friend_id
+          FROM friends f
+         INNER JOIN users u ON u.user_id = f.friend_id
+          LEFT JOIN pr2 p ON u.user_id = p.user_id
+          LEFT JOIN rank_tokens rt ON u.user_id = rt.user_id
+         WHERE f.user_id = :user_id
          LIMIT 0, 250
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);

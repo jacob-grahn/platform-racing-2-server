@@ -6,6 +6,7 @@ require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
 require_once HTTP_FNS . '/pages/contests/part_vars.php';
 require_once QUERIES_DIR . '/exp_today.php';
+require_once QUERIES_DIR . '/favorite_levels.php';
 require_once QUERIES_DIR . '/friends.php';
 require_once QUERIES_DIR . '/ignored.php';
 require_once QUERIES_DIR . '/messages.php';
@@ -33,6 +34,7 @@ $emblem = '';
 $guild_name = '';
 $friends = array();
 $ignored = array();
+$favorite_levels = array();
 
 $ret = new stdClass();
 $ret->success = false;
@@ -57,18 +59,6 @@ try {
     // rate limiting
     rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
     rate_limit('login-'.$ip, 60, 10, 'Only 10 logins per minute per IP are accepted.');
-    
-    // 160 message
-    $link_160 = urlify('https://jiggmin2.com/forums/showthread.php?tid=2613', 'this thread');
-    $msg_160 = 'PR2 is currently temporarily shut down to allow for testing '
-        ."of a new build being released on or around Monday, June 22 (v160).\n\n"
-        ."For more information, please see $link_160. Thanks for your patience!";
-    throw new Exception($msg_160);
-
-    // get the user's IP and run it through an IP info API
-    // $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
-    // $country_code = ($ip_info !== false && !empty($ip_info)) ? $ip_info->data->geo->country_code : '?';
-    $country_code = '?';
 
     // decrypt login data
     $encryptor = new \pr2\http\Encryptor();
@@ -104,24 +94,47 @@ try {
     if (strtolower(trim($login->user_name)) === 'guest') {
         $guest_login = true;
         $user = user_select_guest($pdo);
-        check_if_banned($pdo, $user->user_id, $ip);
+        check_if_banned($pdo, $user->user_id, $ip); // don't let anyone banned under any scope log into guest accounts
     } // account login
     else {
         // token login
         if (isset($in_token) && $login->user_name === '' && $login->user_pass === '') {
             $token_login = true;
             $token = $in_token;
-            $user_id = token_login($pdo);
-            $user = user_select($pdo, $user_id);
+            $user = user_select($pdo, token_login($pdo, true, false, 'n'));
         } // or password login
         else {
-            $user = pass_login($pdo, $user_name, $user_pass);
+            $user = pass_login($pdo, $user_name, $user_pass, 'n');
         }
+        $user_id = (int) $user->user_id;
+        unset($user_pass, $login->user_pass); // don't keep raw pass in memory or send to server
 
         // see if they're trying to log into a guest
         if ((int) $user->power === 0 && $guest_login === false && $token_login === false) {
-            $e = 'Direct guest account logins are not allowed. Please instead click "Play as Guest" on the main menu.';
+            $e = 'Direct guest account logins are not allowed. Instead, please click "Play as Guest" on the main menu.';
             throw new Exception($e);
+        }
+    }
+  
+    // 160 testing
+    if ($user->guild != 205 && $user->power < 2) {
+        $link_160 = urlify('https://jiggmin2.com/forums/showthread.php?tid=2613', 'this thread');
+        $msg_160 = 'PR2 is currently temporarily shut down to allow for testing '
+            ."of a new build being released on or around Monday, June 22 (v160).\n\n"
+            ."For more information, please see $link_160. Thanks for your patience!";
+        throw new Exception($msg_160);
+    }
+
+    // are they banned?
+    $bans = query_if_banned($pdo, $user_id, $ip);
+    if (!empty($bans)) {
+        foreach ($bans as $ban) { // will only iterate twice at most; grouped on scope
+            if ($ban->scope === 'g') {
+                throw new Exception(make_banned_notice($ban));
+            }
+            $user->sban_id = $ban->ban_id;
+            $user->sban_exp_time = $ban->expire_time;
+            $ban_msg = make_banned_notice($ban);
         }
     }
 
@@ -134,6 +147,17 @@ try {
     } else {
         setcookie('token', '', time() - 3600, '/', $_SERVER['SERVER_NAME'], false, true);
     }
+
+    // check IP validity
+    $country_code = '?';
+    $valid = check_ip($ip, $user);
+    if (!$valid) {
+        $aam_link = urlify('https://jiggmin2.com/aam', 'Ask a Mod');
+        $msg = 'Please disable your proxy/VPN to connect to PR2. '.
+            "If you feel this is a mistake, please use $aam_link to contact a member of the PR2 staff team.";
+        throw new Exception($msg);
+    }
+    ensure_ip_country_from_valid_existing($pdo, $ip); // if possible, ensure country code isn't ?
 
     // create variables from user data in db
     $user_id = (int) $user->user_id;
@@ -213,7 +237,7 @@ try {
 
     // record moderator login
     if ($group > 1 || in_array($user_id, $special_ids)) {
-        mod_action_insert($pdo, $user_id, "$user_name logged into $server->server_name from $ip", $user_id, $ip);
+        mod_action_insert($pdo, $user_id, "$user_name logged into $server->server_name from $ip", 'login', $ip);
     }
 
     // part arrays
@@ -238,6 +262,12 @@ try {
         $ignored[] = $ir->ignore_id;
     }
 
+    // select their favorites
+    $fav_levels_result = favorite_levels_select_ids($pdo, $user_id);
+    foreach ($fav_levels_result as $level) {
+        $favorite_levels[] = (int) $level->level_id;
+    }
+
     // get their EXP gained today
     $exp_today_id = exp_today_select($pdo, 'id-'.$user_id);
     $exp_today_ip = exp_today_select($pdo, 'ip-'.$ip);
@@ -254,7 +284,7 @@ try {
             $guild_owner = 1;
         }
         $emblem = $guild->emblem;
-        $guild_name = $guild->guild_name;
+        $guild_name = $user->guild_name = $guild->guild_name;
     }
 
     // get their most recent PM id
@@ -290,16 +320,11 @@ try {
 
     $str = "register_login`" . json_encode($send);
     talk_to_server($server_address, $server_port, $server->salt, $str, false, false);
-    
-    // 160 message
-    $link_160 = urlify('https://jiggmin2.com/forums/showthread.php?tid=2613', 'this thread');
-    $msg_160 = 'PR2 will temporarily shut down for about 3 days at midnight on Friday, June 19 (EDT) '
-        ."to allow for testing of a new build being released on or around Monday, June 22 (v160).\n\n"
-        ."For more information, please see $link_160. Thanks for your patience!";
 
     // tell the world
     $ret->success = true;
-    $ret->message = $msg_160;
+    $ret->message = isset($ban_msg) ? $ban_msg : null;
+    $ret->userId = $user_id;
     $ret->token = $token;
     $ret->email = $has_email;
     $ret->ant = $has_ant;
@@ -310,7 +335,7 @@ try {
     $ret->guildOwner = $guild_owner;
     $ret->guildName = $guild_name;
     $ret->emblem = $emblem;
-    $ret->userId = $user_id;
+    $ret->favoriteLevels = $favorite_levels;
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {

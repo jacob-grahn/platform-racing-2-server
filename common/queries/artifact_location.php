@@ -54,13 +54,14 @@ function artifact_location_update_first_finder($pdo, $user_id)
 }
 
 
-function artifact_location_update($pdo, $level_id, $x, $y)
+function artifact_location_update($pdo, $level_id, $x, $y, $rot)
 {
     $stmt = $pdo->prepare('
         UPDATE artifact_location
            SET level_id = :level_id,
                x = :x,
                y = :y,
+               rot = :rot,
                updated_time = NOW(),
                first_finder = 0,
                bubbles_winner = 0
@@ -69,6 +70,7 @@ function artifact_location_update($pdo, $level_id, $x, $y)
     $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
     $stmt->bindValue(':x', $x, PDO::PARAM_INT);
     $stmt->bindValue(':y', $y, PDO::PARAM_INT);
+    $stmt->bindValue(':rot', $rot, PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {

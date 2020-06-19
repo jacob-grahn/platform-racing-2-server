@@ -2,7 +2,7 @@
 
 function demote_mod($user_name, $admin, $demoted_player)
 {
-    global $pdo, $server_name, $guild_owner;
+    global $server_name, $guild_owner;
 
     // safety first
     $html_name = htmlspecialchars($user_name, ENT_QUOTES);
@@ -21,7 +21,7 @@ function demote_mod($user_name, $admin, $demoted_player)
     }
 
     // don't let the admin demote the server owner
-    if ($demoted_player->user_id === $guild_owner) {
+    if (isset($demoted_player) && $demoted_player->user_id === $guild_owner) {
         output("$admin->name lacks the power to demote the server owner.");
         $admin->write("message`Error: The server owner reigns supreme!");
         return false;
@@ -43,13 +43,13 @@ function demote_mod($user_name, $admin, $demoted_player)
 
     try {
         // check for proper permission in the db (3rd + final line of defense before promotion)
-        $admin_row = user_select($pdo, $admin->user_id);
+        $admin_row = db_op('user_select', array($admin->user_id));
         if ((int) $admin_row->power !== 3) {
             throw new Exception("You lack the power to demote $html_name.");
         }
 
         // get user info
-        $user_row = user_select_by_name($pdo, $user_name);
+        $user_row = db_op('user_select_by_name', array($user_name));
         $user_id = (int) $user_row->user_id;
 
         // check if the person being demoted is an admin
@@ -58,16 +58,16 @@ function demote_mod($user_name, $admin, $demoted_player)
         }
 
         // delete mod entry
-        mod_power_delete($pdo, $user_id);
+        db_op('mod_power_delete', array($user_id));
 
         // set power to 1
-        user_update_power($pdo, $user_id, 1);
+        db_op('user_update_power', array($user_id, 1));
 
         // demote trial/perma mod and log it in the action log
         if ((int) $user_row->power >= 2) {
             // log action in action log
             $a_msg = "$admin->name demoted $user_name from $admin->ip on $server_name.";
-            admin_action_insert($pdo, $admin->user_id, $a_msg, $admin->user_id, $admin->ip);
+            db_op('admin_action_insert', array($admin->user_id, $a_msg, 'mod-demote', $admin->ip));
 
             // do it!
             if (isset($demoted_player) && $demoted_player->group >= 2) {

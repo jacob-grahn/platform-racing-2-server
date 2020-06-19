@@ -7,6 +7,7 @@ require_once QUERIES_DIR . '/artifact_location.php';
 
 $x = (int) default_post('x', 0);
 $y = (int) default_post('y', 0);
+$rot = (int) default_post('rot', 0);
 $level_id = (int) default_post('level_id', 0);
 $ip = get_ip();
 
@@ -15,14 +16,12 @@ $ret->success = false;
 
 try {
     // sanity check: is data missing?
-    if (is_empty($x, false) || is_empty($y, false) || is_empty($level_id, false)) {
+    if (is_empty($x, false) || is_empty($y, false) || is_empty($level_id, false) || is_null($_POST['rot'])) {
         throw new Exception('Some data is missing.');
     }
 
     // check referrer
-    if (!is_trusted_ref()) {
-        throw new Exception("Incorrect referrer.");
-    }
+    require_trusted_ref('', true);
 
     // rate limiting
     $rl_msg = 'Please wait at least 30 seconds before trying to set a new artifact location again.';
@@ -45,7 +44,7 @@ try {
     }
 
     // update the artifact location in the database
-    artifact_location_update($pdo, $level_id, $x, $y);
+    artifact_location_update($pdo, $level_id, $x, $y, $rot);
 
     // tell the world
     $ret->success = true;

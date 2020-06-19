@@ -55,7 +55,7 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $login = pass_login($pdo, $name, $old_pass);
+    $login = pass_login($pdo, $name, $old_pass, 'g');
 
     // make sure guests aren't getting any funny ideas
     $power = (int) $login->power;

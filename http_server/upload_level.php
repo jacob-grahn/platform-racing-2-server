@@ -21,6 +21,8 @@ $pass_hash = default_post('passHash', '');
 $has_pass = (int) default_post('hasPass', 0);
 $game_mode = default_post('gameMode', 'race');
 $cowboy_chance = (int) default_post('cowboyChance', 5);
+
+$override_banned = (bool) (int) default_post('override_banned', 0);
 $overwrite_existing = (bool) (int) default_post('overwrite_existing', 0);
 
 $time = time();
@@ -57,20 +59,23 @@ try {
     $s3 = s3_connect();
 
     // check their login
-    $user_id = (int) token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false, false, 'n');
     $user_name = id_to_name($pdo, $user_id);
+
+    // check if banned (used later)
+    $ban = check_if_banned($pdo, $user_id, $ip, 'b', false);
 
     // more rate limiting
     rate_limit('upload-level-attempt-'.$user_id, 10, 3, $rl_msg);
 
-    // ensure the level survived the upload without data curruption
+    // ensure the level survived the upload without data corruption
     $local_hash = md5($title . strtolower($user_name) . $data . $LEVEL_SALT);
     if ($local_hash !== $remote_hash) {
         throw new Exception('The level did not upload correctly. Maybe try again?');
     }
 
     // sanity check: are they a guest?
-    $power = user_select_power($pdo, $user_id);
+    $power = (int) user_select_power($pdo, $user_id);
     if ($power <= 0) {
         $msg = 'Guests can\'t load or save levels. To access this feature, please create your own account.';
         throw new Exception($msg);
@@ -92,6 +97,8 @@ try {
         $type = 'e';
     } elseif ($game_mode == 'objective') {
         $type = 'o';
+    } elseif ($game_mode == 'hat') {
+        $type = 'h';
     } else {
         $type = 'r';
     }
@@ -112,6 +119,14 @@ try {
     $org_play_count = 0;
     $level = level_select_by_title($pdo, $user_id, $title);
     if ($level) {
+        // allow saving as unpublished if banned
+        if (!empty($ban) && $live === 1) {
+            if (!$override_banned) {
+                die("status=banned&scope=$ban->scope&ban_id=$ban->ban_id");
+            }
+            $live = 0;
+        }
+
         // make sure the user really wants to overwrite
         if (!$overwrite_existing) {
             die("status=exists");

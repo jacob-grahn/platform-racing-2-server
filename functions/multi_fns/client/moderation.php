@@ -4,17 +4,15 @@
 // get priors for a user
 function client_view_priors($socket, $data)
 {
-    global $pdo;
-
     $player = $socket->getPlayer();
-    get_priors($pdo, $player, $data);
+    get_priors($player, $data);
 }
 
 
 // kick a player
 function client_kick($socket, $data)
 {
-    global $pdo, $guild_id, $guild_owner, $server_name;
+    global $guild_id, $guild_owner, $server_name;
     $name = $data;
 
     // get players
@@ -30,7 +28,7 @@ function client_kick($socket, $data)
         $kicked_online = true;
         if (!isset($kicked)) {
             $kicked_online = false;
-            $kicked = user_select_by_name($pdo, $name, true);
+            $kicked = db_op('user_select_by_name', array($name, true));
             if ($kicked === false) {
                 $mod->write("message`Error: Could not find a user with the name \"$safe_kname\".");
                 return false;
@@ -73,7 +71,7 @@ function client_kick($socket, $data)
             // log the action if it's on a public server
             if ($guild_id == 0) {
                 $message = "$mod->name kicked $name from $server_name from $mod->ip.";
-                mod_action_insert($pdo, $mod->user_id, $message, $mod->user_id, $mod->ip);
+                db_op('mod_action_insert', array($mod->user_id, $message, 'kick', $mod->ip));
             }
         } else {
             $mod->write("message`Error: You lack the power to kick $safe_kname.");
@@ -89,7 +87,7 @@ function client_kick($socket, $data)
 // unkick a player
 function client_unkick($socket, $data)
 {
-    global $pdo, $guild_id, $server_name;
+    global $guild_id, $server_name;
     $name = $data;
 
     // get some info
@@ -107,7 +105,7 @@ function client_unkick($socket, $data)
             // log the action if it's on a public server
             if ($guild_id == 0) {
                 $message = "$mod->name unkicked $name from $server_name from $mod->ip.";
-                mod_action_insert($pdo, $mod->user_id, $message, $mod->user_id, $mod->ip);
+                db_op('mod_action_insert', array($mod->user_id, $message, 'unkick', $mod->ip));
             }
         } else {
             $mod->write("message`Error: $unkicked_name isn't kicked.");
@@ -121,7 +119,7 @@ function client_unkick($socket, $data)
 // administer a chat warning
 function client_warn($socket, $data)
 {
-    global $pdo, $guild_owner;
+    global $guild_owner;
     list($name, $num) = explode("`", $data);
 
     // get player info
@@ -143,7 +141,7 @@ function client_warn($socket, $data)
         $warned_online = true;
         if (!isset($warned)) {
             $warned_online = false;
-            $warned = user_select_by_name($pdo, $name, true);
+            $warned = db_op('user_select_by_name', array($name, true));
             if ($warned === false) {
                 $mod->write("message`Error: Could not find a user with the name \"$safe_wname\".");
                 return false;
@@ -168,6 +166,14 @@ function client_warn($socket, $data)
             if ($warned_online === false) {
                 $mod->write("message`$safe_wname is not currently on this server, but the mute was applied anyway.");
             }
+
+            // tell the world
+            if (isset($mod->chat_room) && $mod->group >= 2 && $mod->group > $warned->group) {
+                $mod_url = userify($mod, $mod->name);
+                $warned_url = userify($warned, $name);
+                $msg = "$mod_url has given $warned_url $num $w_str. They have been muted from the chat for $time_str.";
+                $mod->chat_room->sendChat("systemChat`$msg");
+            }
         } else {
             $mod->write("message`Error: You lack the power to warn $safe_wname.");
         }
@@ -175,15 +181,6 @@ function client_warn($socket, $data)
         $mod->write("message`Error: You can't warn yourself, silly!");
     } else {
         $mod->write("message`Error: You lack the power to warn $safe_wname.");
-    }
-
-    // tell the world
-    if (isset($mod->chat_room) && $mod->group >= 2) {
-        $mod_url = userify($mod, $mod->name);
-        $warned_url = userify($warned, $name);
-
-        $msg = "$mod_url has given $warned_url $num $w_str. They have been muted from the chat for $time_str.";
-        $mod->chat_room->sendChat("systemChat`$msg");
     }
 }
 
@@ -216,30 +213,36 @@ function client_unmute($socket, $data)
 // ban a player
 function client_ban($socket, $data)
 {
-    list($banned_name, $seconds, $reason) = explode("`", $data);
+    list($banned_name, $seconds, $scope, $reason) = explode("`", $data);
 
     // get player info
     $mod = $socket->getPlayer();
     $banned = name_to_player($banned_name);
 
     // reason
-    $safe_reason = htmlspecialchars($reason, ENT_QUOTES);
-    $disp_reason = $reason === '' ? 'There was no reason given' : "Reason: $safe_reason";
+    $reason = htmlspecialchars($reason, ENT_QUOTES);
+    $reason = $reason === '' ? 'There was no reason given' : "Reason: $reason";
 
     // make friendly time
-    $disp_time = format_duration($seconds);
+    $duration = format_duration($seconds);
 
     // tell the world
-    if ($mod->group >= 2 && isset($banned)) {
+    if ($mod->group >= 2 && isset($banned) && ($banned->group < 2 || $banned->temp_mod)) {
         $mod_url = userify($mod, $mod->name);
         $banned_url = userify($banned, $banned_name);
+        $banned = $scope === 'game' ? 'banned' : 'socially banned';
 
+        // send notif to chat
         if (isset($mod->chat_room)) {
             $log = urlify('https://pr2hub.com/bans', 'the ban log');
-            $msg = "$mod_url has banned $banned_url for $disp_time. $disp_reason. This ban has been recorded on $log.";
+            $msg = "$mod_url has $banned $banned_url for $duration. $reason. This ban has been recorded on $log.";
             $mod->chat_room->sendChat("systemChat`$msg");
         }
-        if (isset($banned) && ($banned->group < 2 || $banned->temp_mod === true)) {
+
+        // increment social ban expire time or remove them from the server
+        $banned->temp_mod = false;
+        $banned->sban_exp_time = time() + $seconds;
+        if ($scope === 'game') {
             $banned->remove();
         }
     }
@@ -262,11 +265,14 @@ function client_promote_to_moderator($socket, $data)
     if ($admin->group >= 3 && $admin->server_owner === false) {
         $result = promote_to_moderator($name, $type, $admin, $promoted);
 
+        $mod_power = null;
         switch ($type) {
             case 'temporary':
+                $mod_power = 0;
                 $reign_time = 'hours';
                 break;
             case 'trial':
+                $mod_power = 1;
                 $reign_time = 'days';
                 break;
             case 'permanent':
@@ -276,7 +282,7 @@ function client_promote_to_moderator($socket, $data)
 
         if (isset($admin->chat_room) && (isset($promoted) || $type !== 'temporary') && $result === true) {
             $admin_url = userify($admin, $admin->name);
-            $promoted_url = userify($promoted, $name, 2);
+            $promoted_url = userify($promoted, $name, 2, $mod_power);
             $mod_guide = urlify('https://jiggmin2.com/forums/showthread.php?tid=12', 'moderator guidelines');
 
             $msg = "$admin_url has promoted $promoted_url to a $type moderator! "

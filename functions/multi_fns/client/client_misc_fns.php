@@ -44,3 +44,19 @@ function client_request_login_id($socket)
         $socket->write('setLoginID`'.$socket->login_id);
     }
 }
+
+// get player info (tries from socket first, then HTTP if not online)
+function client_get_player_info($socket, $data)
+{
+    $me = $socket->getPlayer();
+    $target = name_to_player($data);
+    if (isset($target)) {
+        $obj = $target->getInfo();
+        $obj->friend = in_array($obj->userId, $me->friends_array);
+        $obj->ignored = in_array($obj->userId, $me->ignored_array);
+        $ret = json_encode($obj);
+        $socket->write("playerInfo`$ret");
+        return;
+    }
+    $socket->write('playerInfo`0');
+}

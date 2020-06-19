@@ -118,7 +118,7 @@ function level_select_by_title($pdo, $user_id, $title)
 }
 
 
-function level_select($pdo, $level_id)
+function level_select($pdo, $level_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
         SELECT *
@@ -136,7 +136,10 @@ function level_select($pdo, $level_id)
     $level = $stmt->fetch(PDO::FETCH_OBJ);
 
     if (empty($level)) {
-        throw new Exception('Could not find a level with that ID.');
+        if (!$suppress_error) {
+            throw new Exception('Could not find a level with that ID.');
+        }
+        return false;
     }
 
     return $level;
@@ -159,7 +162,8 @@ function level_select_from_search($pdo, $level_id)
                l.type,
                l.time,
                u.name,
-               u.power
+               u.power,
+               u.trial_mod
           FROM levels l, users u
          WHERE level_id = :level_id
            AND l.user_id = u.user_id
@@ -179,6 +183,32 @@ function level_select_from_search($pdo, $level_id)
     }
 
     return $levels;
+}
+
+
+function level_select_title($pdo, $level_id)
+{
+    // get the levels
+    $stmt = $pdo->prepare('
+        SELECT title
+          FROM levels
+         WHERE level_id = :level_id
+           AND (live = 1 OR (live = 0 AND pass IS NOT NULL))
+         LIMIT 1
+    ');
+    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not perform query level_select_title.');
+    }
+
+    $level = $stmt->fetch(PDO::FETCH_OBJ);
+    if (empty($level)) {
+        throw new Exception('Could not find a level with that ID.');
+    }
+
+    return $level->title;
 }
 
 
@@ -368,7 +398,8 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
                l.type,
                l.time,
                u.name,
-               u.power
+               u.power,
+               u.trial_mod
           FROM levels l, users u
          WHERE $where
            AND l.user_id = u.user_id
@@ -402,6 +433,7 @@ function levels_select_best_today($pdo)
                l.time,
                u.name,
                u.power,
+               u.trial_mod,
                u.user_id
           FROM new_levels nl,
                levels l,
@@ -438,6 +470,7 @@ function levels_select_best($pdo)
                  l.time,
                  u.name,
                  u.power,
+                 u.trial_mod,
                  u.user_id
             FROM best_levels bl,
                  levels l,
@@ -472,6 +505,7 @@ function levels_select_by_owner($pdo, $user_id)
                l.time,
                u.name,
                u.power,
+               u.trial_mod,
                u.user_id
           FROM levels l, users u
          WHERE l.user_id = u.user_id
@@ -533,6 +567,7 @@ function levels_select_campaign($pdo)
                  l.time,
                  u.name,
                  u.power,
+                 u.trial_mod,
                  u.user_id
             FROM campaigns c,
                  levels l,
@@ -567,6 +602,7 @@ function levels_select_newest($pdo)
                  l.time,
                  u.name,
                  u.power,
+                 u.trial_mod,
                  u.user_id
             FROM new_levels nl,
                  levels l,

@@ -17,7 +17,7 @@ try {
 
     // connect
     $pdo = pdo_connect();
-    $user_id = (int) token_login($pdo);
+    $user_id = (int) token_login($pdo, true, false, 'g');
 
     // rate limiting
     rate_limit('level-backups-'.$user_id, 5, 1);

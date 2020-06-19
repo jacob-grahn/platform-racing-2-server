@@ -36,7 +36,7 @@ try {
     $s3 = s3_connect();
 
     // check their login
-    $user_id = (int) token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false, false, 'g');
     $power = (int) user_select_power($pdo, $user_id);
     if ($power <= 0) {
         throw new Exception('Guests can\'t delete levels. To access this feature, please create your own account.');
@@ -48,14 +48,14 @@ try {
     rate_limit('delete-level-'.$user_id, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 
     // fetch level data
-    $row = level_select($pdo, $level_id);
-    if ((int) $row->user_id !== $user_id) {
+    $level = level_select($pdo, $level_id);
+    if ((int) $level->user_id !== $user_id) {
         throw new Exception('This is not your level.');
     }
 
     // check if the artifact is currently here
     $arti = artifact_location_select($pdo);
-    if ($arti->level_id == $row->level_id) {
+    if ($arti->level_id == $level->level_id) {
         $msg = 'Your level could not be deleted because it is currently where the artifact is hidden. '
             .'Please contact a member of the PR2 Staff Team for more information.';
         throw new Exception($msg);
@@ -73,15 +73,15 @@ try {
         $s3,
         $user_id,
         $level_id,
-        $row->version,
-        $row->title,
-        $row->live,
-        $row->rating,
-        $row->votes,
-        $row->note,
-        $row->min_level,
-        $row->song,
-        $row->play_count
+        $level->version,
+        $level->title,
+        $level->live,
+        $level->rating,
+        $level->votes,
+        $level->note,
+        $level->min_level,
+        $level->song,
+        $level->play_count
     );
 
     // delete the level in the db

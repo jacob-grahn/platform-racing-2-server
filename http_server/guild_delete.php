@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/admin_actions.php';
+require_once QUERIES_DIR . '/servers.php';
 
 $guild_id = (int) default_post('guild_id', 0);
 $ip = get_ip();
@@ -42,12 +43,16 @@ try {
 
     // record the deletion in the action log
     $str = "$admin->name deleted guild #$guild_id from $ip {name: $name, note: $note, emblem: $emblem, owner: $owner}";
-    admin_action_insert($pdo, $admin_id, $str, 0, $ip);
+    admin_action_insert($pdo, $admin_id, $str, 'guild-delete', $ip);
 
     // tell the world
     $safe_guild_name = htmlspecialchars($name, ENT_QUOTES);
     $ret->success = true;
+    $ret->delete = true;
+    $ret->guild_id = $guild_id;
+    $ret->changer_id = $admin_id;
     $ret->message = "\"$safe_guild_name\" (ID #$guild_id) was successfully deleted.";
+    @poll_servers(servers_select($pdo), 'guild_change`' . json_encode($ret), false);
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {

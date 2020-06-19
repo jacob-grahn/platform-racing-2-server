@@ -4,7 +4,7 @@
 // -- AUTH -- \\
 
 // log in with a username and password
-function pass_login($pdo, $name, $password)
+function pass_login($pdo, $name, $password, $ban_check_scope = 'b')
 {
     // get their ip
     $ip = get_ip();
@@ -36,8 +36,8 @@ function pass_login($pdo, $name, $password)
     unset($user->pass_hash);
     unset($user->temp_pass_hash);
 
-    // check to see if they're banned
-    check_if_banned($pdo, $user->user_id, $ip);
+    // check to see if they're banned (using custom scope)
+    check_if_banned($pdo, $user_id, $ip, $ban_check_scope);
 
     // done
     return $user;
@@ -45,7 +45,7 @@ function pass_login($pdo, $name, $password)
 
 
 // log in with a token
-function token_login($pdo, $use_cookie = true, $suppress_error = false)
+function token_login($pdo, $use_cookie = true, $suppress_error = false, $ban_check_scope = 'b')
 {
     $rec_token = find_no_cookie('token');
     if (isset($rec_token) && !empty($rec_token)) {
@@ -66,7 +66,7 @@ function token_login($pdo, $use_cookie = true, $suppress_error = false)
     $user_id = (int) $token_row->user_id;
 
     $ip = get_ip();
-    check_if_banned($pdo, $user_id, $ip);
+    check_if_banned($pdo, $user_id, $ip, $ban_check_scope);
 
     return $user_id;
 }
@@ -148,7 +148,7 @@ function message_parse_tags($pdo, $message)
     $new_msg = $message;
 
     // replace [user=power]name[/user] with [user]name[/user]
-    $pat = "/(\[user=)(\d{1})(\])([a-zA-Z0-9-.:;=?~!()@*,+$#% ]+)(\[\/user\])/i";
+    $pat = "/(\[user=)(\d{1}(?:\,\d{1}){0,1})(\])([a-zA-Z0-9-.:;=?~!()@*,+$#% ]+)(\[\/user\])/i";
     $new_msg = preg_replace($pat, '[user]\4[/user]', $new_msg);
 
     // find user power (if exists) and replace [user]name[/user]
@@ -355,7 +355,7 @@ function award_special_parts($stats, $group, $prizes)
 
     // bunny set (easter)
     $easter = date('F j', easter_date(date('Y')));
-    if ($date === $easter || date('F j', time() + 86400) === $easter || date('F j', time() - 86400) === $easter) {
+    if ($date === $easter || date('F j', time() + 86400) === $easter) {
         $stats->head = add_item($head_array, 39) ? 39 : $stats->head;
         $stats->body = add_item($body_array, 39) ? 39 : $stats->body;
         $stats->feet = add_item($feet_array, 39) ? 39 : $stats->feet;
@@ -476,31 +476,7 @@ function has_part($pdo, $user_id, $type, $part_id)
 
 // -- BANS -- \\
 
-// throw an exception if the user is banned
-function check_if_banned($pdo, $user_id, $ip)
-{
-    $row = query_if_banned($pdo, $user_id, $ip);
-
-    if ($row !== false) {
-        $ban_id = $row->ban_id;
-        $expire_time = $row->expire_time;
-        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
-
-        // figure out what the best way to say this is
-        $time_left = format_duration($expire_time - time());
-
-        // tell it to the world
-        $ban_link = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'here');
-        $dispute_link = urlify("https://jiggmin2.com/forums/showthread.php?tid=110", 'dispute it');
-        $output = "This account or IP address has been banned.\n".
-            "Reason: $reason \n".
-            "This ban will expire in $time_left. \n".
-            "You can see more details about this ban $ban_link. \n\n".
-            "If you feel that this ban is unjust, you can $dispute_link.";
-
-        throw new Exception($output);
-    }
-}
+// moved to common_fns.php
 
 
 // -- LEVEL_BACKUPS -- \\
@@ -592,7 +568,7 @@ function check_moderator($pdo, $user_id = null, $check_ref = true, $min_power = 
         require_trusted_ref('', true);
     }
 
-    $user_id = (int) (is_null($user_id) ? token_login($pdo) : $user_id);
+    $user_id = (int) (is_null($user_id) ? token_login($pdo, true, false, 'n') : $user_id);
     $user = user_select_mod($pdo, $user_id, true);
     if (!$user || $user->power < $min_power) {
         throw new Exception('You lack the power to access this resource.');

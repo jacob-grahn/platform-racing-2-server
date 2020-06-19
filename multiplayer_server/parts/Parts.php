@@ -20,6 +20,7 @@ class Hats
     const JIGG = 13;
     const ARTIFACT = 14;
     const JELLYFISH = 15;
+    const CHEESE = 16;
 
 
     public static function idToStr($id)
@@ -56,6 +57,8 @@ class Hats
             $str = 'Artifact';
         } elseif ($id == Hats::JELLYFISH) {
             $str = 'Jellyfish';
+        } elseif ($id == Hats::CHEESE) {
+            $str = 'Cheese';
         }
 
         return $str;
@@ -98,6 +101,8 @@ class Hats
             $id = Hats::ARTIFACT;
         } elseif ($str === 'jellyfish' || $str === 'jelly' || $str === 'fish' || $str === 'jf' || $str == 15) {
             $id = Hats::JELLYFISH;
+        } elseif ($str === 'cheese' || $str === 'cheez' || $str === 'chz' || $str === 'ch' || $str == 16) {
+            $id = Hats::CHEESE;
         }
 
         return $id;

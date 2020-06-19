@@ -34,11 +34,28 @@ try {
     // if they're trying to update
     if ($action === 'update' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         // update the ban
-        $ban_id = (int) default_post('ban_id');
-        $acc_ban = (int) (bool) default_post('account_ban');
-        $ip_ban = (int) (bool) default_post('ip_ban');
-        $exp_time = default_post('expire_time');
+        $b_id = (int) default_post('ban_id');
+        $type = default_post('type', 'both');
+        $scope = default_post('scope');
+        $exp = default_post('expire_time');
         $notes = default_post('notes');
+
+        // determine types to be inserted into db
+        $acc_ban = $ip_ban = 0;
+        switch ($type) {
+            case 'both':
+                $acc_ban = $ip_ban = 1;
+                break;
+            case 'ip':
+                $ip_ban = 1;
+                break;
+            case 'acc':
+                $acc_ban = 1;
+                break;
+        }
+
+        // make sure scope is s or g
+        $scope = $scope === 's' || $scope === 'g' ? $scope : 'g';
 
         // lift info
         $lifted = (int) (bool) default_post('lifted');
@@ -54,31 +71,29 @@ try {
         }
 
         // update ban
-        ban_update($pdo, $ban_id, $acc_ban, $ip_ban, $exp_time, $lifted, $lifted_by, $lift_reason, $lift_time, $notes);
+        ban_update($pdo, $b_id, $acc_ban, $ip_ban, $scope, $exp, $lifted, $lifted_by, $lift_reason, $lift_time, $notes);
 
         // action log
-        $acc = check_value($acc_ban, 1);
-        $ipc = check_value($ip_ban, 1);
         $lifted = $lifted === 1 ? "yes, lifted_by: $lifted_by, lift_reason: $lift_reason, lift_time: $lift_time" : 'no';
         $lifted = "lifted: $lifted";
         $notes = is_empty($notes) ? 'no notes' : "notes: $notes";
 
         // record the change
         $mod_id = (int) $mod->user_id;
-        $info = "{acc_ban: $acc, ip_ban: $ipc, expire_time: $exp_time, $lifted, $notes}";
-        $msg = "$mod->name ($mod_id) edited ban $ban_id from $ip $info";
-        mod_action_insert($pdo, $mod_id, $msg, 0, $ip);
+        $info = "{type: $type, scope: $scope, expire_time: $exp, $lifted, $notes}";
+        $msg = "$mod->name ($mod_id) edited ban $b_id from $ip $info";
+        mod_action_insert($pdo, $mod_id, $msg, 'ban-edit', $ip);
 
         // redirect to the ban listing
-        header("Location: /bans/show_record.php?ban_id=$ban_id");
+        header("Location: /bans/show_record.php?ban_id=$b_id");
         die();
     } elseif ($action === 'edit') {
         $header = true;
         output_header('Edit Ban', $mod->power >= 2, (int) $mod->power === 3);
 
-        // check if the boxes are checked
-        $ip_checked = check_value($ban->ip_ban, 1, 'checked="checked"', '');
-        $acc_checked = check_value($ban->account_ban, 1, 'checked="checked"', '');
+        // establish if ip/account ban
+        $ip_ban = (bool) (int) $ban->ip_ban;
+        $account_ban = (bool) (int) $ban->account_ban;
 
         // prepare data to be shown
         $notes = htmlspecialchars($ban->notes, ENT_QUOTES);
@@ -89,15 +104,16 @@ try {
         echo get_lifted_js();
 
         // show the form
+        $date_ph = 'placeholder="YYYY-MM-DD HH:MM:SS"';
         echo "<form method='post'>"
             .'<input type="hidden" value="update" name="action">'
             ."<input type='hidden' value='$ban->ban_id' name='ban_id'>"
-            ."<p>Expire Date: <input type='text' value='$expire_date' name='expire_time'></p>"
-            ."<p>IP Ban? <input type='checkbox' $ip_checked name='ip_ban'></p>"
-            ."<p>Account Ban? <input type='checkbox' $acc_checked name='account_ban'></p>"
-            .'<p>' . get_lifted_html($ban->lifted, $lifted_reason) . '</p>'
-            ."<p>Notes:<br><br> <textarea rows='4' cols='50' name='notes'>$notes</textarea>"
-            .'<p><input type="submit" value="submit"></p>'
+            .'<p><label for="expire_time">Expire Date: </label>' . get_exp_date_html($expire_date) . "</p>"
+            .'<p><label for="type">Type: </label>' . get_type_html($ip_ban, $account_ban) . '</p>'
+            .'<p><label for="scope">Scope: </label>' . get_scope_html($ban->scope) . '</p>'
+            .'<p><label for="lifted">Lifted: </label>' . get_lifted_html($ban->lifted, $lifted_reason) . '</p>'
+            ."<p><label>Notes:<br><textarea rows='4' cols='50' name='notes'>$notes</textarea></label></p>"
+            .'<p><input type="submit" value="Submit"></p>'
             .'</form>';
     } else {
         throw new Exception('Unknown action specified.');

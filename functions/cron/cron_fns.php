@@ -8,11 +8,38 @@ function run_update_cycle($pdo)
 {
     output('Running update cycle...');
 
+    // recent bans
+    $bans_to_send = [];
+    $recent_bans = bans_select_recently_modified($pdo);
+    foreach ($recent_bans as $ban) {
+        $ban_time = $expire_time = 0;
+        $scope = 'n';
+
+        // get most severe ban for this user_id and ip
+        $user_id = $ban->user_id;
+        $ip = $ban->ip;
+        $banned = check_if_banned($pdo, $user_id, $ip, 'b', false);
+        if ($banned !== false) {
+            $scope = $banned->scope;
+            $ban_time = $banned->time;
+            $expire_time = $banned->expire_time;
+        }
+
+        // format the ban to prepare for sending to the servers
+        $most_severe = new stdClass();
+        $most_severe->scope = $scope;
+        $most_severe->user_id = $user_id;
+        $most_severe->ip = $ip;
+        $most_severe->time = $ban_time;
+        $most_severe->expire_time = $expire_time;
+        $bans_to_send[] = $most_severe;
+    }
+
     // gather data to send to active servers
     $send = new stdClass();
     $send->artifact = artifact_location_select($pdo);
     $send->recent_pms = get_recent_pms($pdo);
-    $send->recent_bans = bans_select_recent($pdo);
+    $send->recent_bans = $bans_to_send;
     $send_str = json_encode($send);
 
     // send the data
@@ -457,44 +484,39 @@ function fah_fetch_stats()
 // validate, determine, and award fah prizes
 function fah_award_prizes($pdo, $name, $score, $prize_array)
 {
+    if ($name != 'bls1999') {
+        return;
+    }
     $safe_name = htmlspecialchars($name, ENT_QUOTES);
     $lower_name = strtolower($name);
 
     try {
         if (isset($prize_array[$lower_name])) {
-            $row = $prize_array[$lower_name];
-            $user_id = $row->user_id;
-            $status = $row->status;
+            $user_data = $prize_array[$lower_name];
         } else {
             $user = user_select_by_name($pdo, $name, true);
             if ($user === false) {
                 throw new Exception("Could not find a user with the name $safe_name.");
             }
 
-            // make some variables
-            $user_id = $user->user_id;
-            $status = $user->status;
-
-            folding_insert($pdo, $user_id);
-            $row = folding_select_by_user_id($pdo, $user_id);
+            // make fah entry for this user
+            folding_insert($pdo, $user->user_id);
+            $user_data = folding_select_by_user_id($pdo, $user->user_id);
         }
 
+        // make variables from row data
+        $user_id = (int) $user_data->user_id;
+        $status = $user_data->status;
+        $hat_array = explode(',', $user_data->hat_array);
+        $epic_hats = explode(',', $user_data->epic_hats);
+        $available_tokens = (int) $user_data->available_tokens;
+
+        // don't continue if offline
         if ($status != 'offline') {
             throw new Exception("$safe_name is \"$status\". We'll try again later.");
         }
 
         // --- ensure awards and give new ones --- \\
-
-        // get information from pr2, rank_tokens, and folding_at_home
-        $hat_array = explode(',', pr2_select($pdo, $user_id)->hat_array);
-        $rank_token_row = rank_token_select($pdo, $user_id);
-
-        // avoid getting object of false
-        if ($rank_token_row !== false) {
-            $available_tokens = (int) $rank_token_row->available_tokens;
-        } else {
-            $available_tokens = 0;
-        }
 
         // define columns
         $columns = array(
@@ -503,6 +525,8 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
             'r3' => array('token' => 3, 'min_score' => 1000),
             'crown_hat' => array('hat' => 'crown', 'min_score' => 5000),
             'cowboy_hat' => array('hat' => 'cowboy', 'min_score' => 100000),
+            'epic_crown' => array('ehat' => 'crown', 'min_score' => 500000),
+            'epic_cowboy' => array('ehat', 'cowboy', 'min_score' => 5000000),
             'r4' => array('token' => 4, 'min_score' => 1000000),
             'r5' => array('token' => 5, 'min_score' => 10000000),
             'r6' => array('token' => 6, 'min_score' => 25000000),
@@ -512,8 +536,7 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
 
         // get number of folded tokens/hats
         $token_awards = array();
-        $award_crown = false;
-        $award_cb = false;
+        $award_crown = $award_ecrown = $award_cb = $award_ecb = false;
         foreach ($columns as $column => $data) {
             // sanity check: is the score less than the min_score?
             if ($data['min_score'] > $score) {
@@ -522,10 +545,14 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
             // determine the column to check
             if (strpos($column, 'r') === 0) {
                 array_push($token_awards, $data);
-            } elseif ($column == 'crown_hat') {
+            } elseif ($column === 'crown_hat') {
                 $award_crown = true;
-            } elseif ($column == 'cowboy_hat') {
+            } elseif ($column === 'epic_crown') {
+                $award_ecrown = true;
+            } elseif ($column === 'cowboy_hat') {
                 $award_cb = true;
+            } elseif ($column === 'epic_cowboy') {
+                $award_ecb = true;
             }
         }
 
@@ -539,21 +566,31 @@ function fah_award_prizes($pdo, $name, $score, $prize_array)
         // award crown hat
         $has_crown = in_array('6', $hat_array);
         if (($award_crown === true || $score > 5000) && $has_crown === false) {
-            fah_award_hat($pdo, $user_id, $name, $score, 'crown');
+            fah_award_part($pdo, $user_id, $name, $score, 'hat', 6);
         }
 
         // award cowboy hat
         $has_cb = in_array('5', $hat_array);
         if (($award_cb === true || $score > 100000) && $has_cb === false) {
-            fah_award_hat($pdo, $user_id, $name, $score, 'cowboy');
+            fah_award_part($pdo, $user_id, $name, $score, 'hat', 5);
+        }
+
+        // award epic crown hat
+        $has_ecrown = in_array('6', $epic_hats);
+        if (($award_ecrown === true || $score > 500000) && $has_ecrown === false) {
+            fah_award_part($pdo, $user_id, $name, $score, 'ehat', 6);
+        }
+
+        // award epic cowboy hat
+        $has_ecb = in_array('5', $epic_hats);
+        if (($award_ecb === true || $score > 5000000) && $has_ecb === false) {
+            fah_award_part($pdo, $user_id, $name, $score, 'ehat', 5);
         }
 
         // tell the world
         output("Finished $safe_name.");
     } catch (Exception $e) {
-        $error = $e->getMessage();
-        $safe_error = htmlspecialchars($error, ENT_QUOTES);
-        output($safe_error);
+        output($e->getMessage());
     }
 }
 
@@ -567,14 +604,14 @@ function fah_award_token($pdo, $user_id, $name, $score, $column, $available_toke
 
     try {
         // verify that the correct amount of points has been folded for this prize
-        if (($column == 'r1' && $score < 1)
-            || ($column == 'r2' && $score < 500)
-            || ($column == 'r3' && $score < 1000)
-            || ($column == 'r4' && $score < 1000000)
-            || ($column == 'r5' && $score < 10000000)
-            || ($column == 'r6' && $score < 25000000)
-            || ($column == 'r7' && $score < 50000000)
-            || ($column == 'r8' && $score < 100000000)
+        if (($column === 'r1' && $score < 1)
+            || ($column === 'r2' && $score < 500)
+            || ($column === 'r3' && $score < 1000)
+            || ($column === 'r4' && $score < 1000000)
+            || ($column === 'r5' && $score < 10000000)
+            || ($column === 'r6' && $score < 25000000)
+            || ($column === 'r7' && $score < 50000000)
+            || ($column === 'r8' && $score < 100000000)
         ) {
             throw new Exception("$safe_name ($user_id): Insufficient score ($score) for that folding prize ($column).");
         }
@@ -595,34 +632,44 @@ function fah_award_token($pdo, $user_id, $name, $score, $column, $available_toke
 }
 
 
-// award hats
-function fah_award_hat($pdo, $user_id, $name, $score, $hat)
+// award parts
+function fah_award_part($pdo, $user_id, $name, $score, $type, $id)
 {
+    $allowed_prizes = ['crown_hat', 'epic_crown', 'cowboy_hat', 'epic_cowboy'];
     $safe_name = htmlspecialchars($name, ENT_QUOTES);
-    $code = $hat . '_hat';
 
     try {
-        // define hat id
-        if ($hat == 'crown') {
-            $hat_id = 6;
-        } elseif ($hat == 'cowboy') {
-            $hat_id = 5;
-        } // sanity check: is the prize an actual prize?
-        else {
-            throw new Exception("$safe_name ($user_id): Invalid hat prize ($hat).");
+        // define code
+        $epic = strpos($type, 'e') === 0;
+        $base_type = $epic ? substr($type, 1) : $type;
+        if ($base_type === 'hat') {
+            if ($id === 6) {
+                $column = $epic ? 'epic_crown' : 'crown_hat';
+            } elseif ($id === 5) {
+                $column = $epic ? 'epic_cowboy' : 'cowboy_hat';
+            }
+        }
+
+        // sanity check: is the prize an actual prize?
+        if (!in_array($column, $allowed_prizes)) {
+            throw new Exception("$safe_name ($user_id): Invalid part prize ($column).");
         }
 
         // sanity check: has the correct amount of points been folded for this prize?
-        if (($hat == 'crown' && $score < 5000) || ($hat == 'cowboy' && $score < 100000)) {
-            throw new Exception("$safe_name ($user_id): Insufficient score ($score) for that folding prize ($code).");
+        if (($column === 'crown_hat' && $score < 5000)
+            || ($column === 'cowboy_hat' && $score < 100000)
+            || ($column === 'epic_crown' && $score < 500000)
+            || ($column === 'epic_cowboy' && $score < 5000000)
+        ) {
+            throw new Exception("$safe_name ($user_id): Insufficient score ($score) for that folding prize ($column).");
         }
 
         // do it
-        output("Awarding $code to $safe_name...");
-        award_part($pdo, $user_id, 'hat', $hat_id);
+        output("Awarding $column to $safe_name...");
+        award_part($pdo, $user_id, $type, $id);
 
         // finalize it (send message, mark as awarded in folding_at_home)
-        fah_finalize_award($pdo, $user_id, $name, $code);
+        fah_finalize_award($pdo, $user_id, $name, $column);
     } catch (Exception $e) {
         output($e->getMessage());
     }
@@ -634,22 +681,24 @@ function fah_finalize_award($pdo, $user_id, $name, $prize_code)
 {
     $rt_desc = 'a rank token';
     $prizes = array(
-        'r1' => array($rt_desc, '1 point'),
-        'r2' => array($rt_desc, '500 points'),
-        'r3' => array($rt_desc, '1,000 points'),
-        'r4' => array($rt_desc, '1,000,000 points'),
-        'r5' => array($rt_desc, '10,000,000 points'),
-        'r6' => array($rt_desc, '25,000,000 points'),
-        'r7' => array($rt_desc, '50,000,000 points'),
-        'r8' => array($rt_desc, '100,000,000 points'),
-        'crown_hat' => array('the Crown Hat', '5,000 points'),
-        'cowboy_hat' => array('the Cowboy Hat', '100,000 points')
+        'r1' => array($rt_desc, 1),
+        'r2' => array($rt_desc, 500),
+        'r3' => array($rt_desc, 1000),
+        'r4' => array($rt_desc, 1000000),
+        'r5' => array($rt_desc, 10000000),
+        'r6' => array($rt_desc, 25000000),
+        'r7' => array($rt_desc, 50000000),
+        'r8' => array($rt_desc, 100000000),
+        'crown_hat' => array('the Crown Hat', 5000),
+        'cowboy_hat' => array('the Cowboy Hat', 100000),
+        'epic_crown' => array('the epic upgrade for the Crown Hat', 500000),
+        'epic_cowboy' => array('the epic upgrade for the Cowboy Hat', 5000000)
     );
 
     // compose a PM
     $safe_name = htmlspecialchars($name, ENT_QUOTES);
     $prize_str = $prizes[$prize_code][0];
-    $min_score = $prizes[$prize_code][1];
+    $min_score = number_format($prizes[$prize_code][1]) . ' point' . ($prizes[$prize_code][1] > 1 ? 's' : '');
     $message = "Dear $safe_name,\n\n"
         ."Congratulations on earning $min_score for Team Jiggmin! "
         ."As a special thank you, I've added $prize_str to your account!!\n\n"

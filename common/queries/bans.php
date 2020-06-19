@@ -1,14 +1,15 @@
 <?php
 
 
-function ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc)
+function ban_insert($pdo, $ip, $uid, $mod_uid, $exp_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc, $scope)
 {
-    $stmt = $pdo->prepare('
+    $time = time();
+    $stmt = $pdo->prepare("
         INSERT INTO bans
            SET banned_ip = :banned_ip,
                banned_user_id = :banned_user_id,
                mod_user_id = :mod_user_id,
-               time = :time,
+               time = $time,
                expire_time = :expire_time,
                reason = :reason,
                record = :record,
@@ -16,19 +17,20 @@ function ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $
                mod_name = :mod_name,
                ip_ban = :ip_ban,
                account_ban = :account_ban,
-               modified_time = UNIX_TIMESTAMP(NOW())
-    ');
+               scope = :scope,
+               modified_time = $time
+    ");
     $stmt->bindValue(':banned_ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':banned_user_id', $uid, PDO::PARAM_INT);
     $stmt->bindValue(':mod_user_id', $mod_uid, PDO::PARAM_INT);
-    $stmt->bindValue(':time', time(), PDO::PARAM_INT);
-    $stmt->bindValue(':expire_time', $expire_time, PDO::PARAM_INT);
+    $stmt->bindValue(':expire_time', $exp_time, PDO::PARAM_INT);
     $stmt->bindValue(':reason', $reason, PDO::PARAM_STR);
     $stmt->bindValue(':record', $record, PDO::PARAM_STR);
     $stmt->bindValue(':banned_name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':mod_name', $mod_name, PDO::PARAM_STR);
     $stmt->bindValue(':ip_ban', $is_ip, PDO::PARAM_INT);
     $stmt->bindValue(':account_ban', $is_acc, PDO::PARAM_INT);
+    $stmt->bindValue(':scope', $scope, PDO::PARAM_STR);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -39,17 +41,69 @@ function ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $
 }
 
 
-function ban_select_active_by_ip($pdo, $ip)
+function bans_select_active($pdo, $user_id, $ip)
 {
     $stmt = $pdo->prepare('
-        SELECT * FROM bans
-        WHERE banned_ip = :ip
-        AND ip_ban = 1
-        AND lifted != 1
-        AND expire_time > :time
-        LIMIT 1
+        SELECT
+          ANY_VALUE(`ban_id`) as ban_id,
+          ANY_VALUE(`banned_name`) as banned_name,
+          ANY_VALUE(`expire_time`) as expire_time,
+          ANY_VALUE(`reason`) as reason,
+          ANY_VALUE(`ip_ban`) as ip_ban,
+          ANY_VALUE(`account_ban`) as account_ban,
+          ANY_VALUE(`scope`) as scope
+        FROM bans
+        WHERE
+          (
+            (banned_user_id = :user_id AND account_ban = 1)
+            OR
+            (banned_ip = :ip AND ip_ban = 1)
+          )
+          AND lifted != 1
+          AND expire_time > :time
+        GROUP BY
+          scope ASC
+        ORDER BY
+          expire_time DESC
+        LIMIT 2
     ');
-    $stmt->bindValue(':ip', $ip, PDO::PARAM_INT);
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
+    $stmt->bindValue(':time', time(), PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not perform query bans_select_active.');
+    }
+
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+
+function bans_select_active_by_ip($pdo, $ip)
+{
+    $stmt = $pdo->prepare('
+        SELECT
+          ANY_VALUE(`ban_id`) as ban_id,
+          ANY_VALUE(`banned_name`) as banned_name,
+          ANY_VALUE(`expire_time`) as expire_time,
+          ANY_VALUE(`reason`) as reason,
+          ANY_VALUE(`ip_ban`) as ip_ban,
+          ANY_VALUE(`account_ban`) as account_ban,
+          ANY_VALUE(`scope`) as scope
+        FROM bans
+        WHERE
+          banned_ip = :ip
+          AND ip_ban = 1
+          AND lifted != 1
+          AND expire_time > :time
+        GROUP BY
+          scope ASC
+        ORDER BY
+          expire_time DESC
+        LIMIT 2
+    ');
+    $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $stmt->bindValue(':time', time(), PDO::PARAM_INT);
     $result = $stmt->execute();
 
@@ -57,19 +111,32 @@ function ban_select_active_by_ip($pdo, $ip)
         throw new Exception('Could not perform query ban_select_active_by_ip.');
     }
 
-    return $stmt->fetch(PDO::FETCH_OBJ);
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 
 
-function ban_select_active_by_user_id($pdo, $user_id)
+function bans_select_active_by_user_id($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT * FROM bans
-        WHERE banned_user_id = :user_id
-        AND account_ban = 1
-        AND lifted != 1
-        AND expire_time > :time
-        LIMIT 1
+        SELECT
+          ANY_VALUE(`ban_id`) as ban_id,
+          ANY_VALUE(`banned_name`) as banned_name,
+          ANY_VALUE(`expire_time`) as expire_time,
+          ANY_VALUE(`reason`) as reason,
+          ANY_VALUE(`ip_ban`) as ip_ban,
+          ANY_VALUE(`account_ban`) as account_ban,
+          ANY_VALUE(`scope`) as scope
+        FROM bans
+        WHERE
+          banned_user_id = :user_id
+          AND account_ban = 1
+          AND lifted != 1
+          AND expire_time > :time
+        GROUP BY
+          scope ASC
+        ORDER BY
+          expire_time DESC
+        LIMIT 2
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':time', time(), PDO::PARAM_INT);
@@ -79,7 +146,7 @@ function ban_select_active_by_user_id($pdo, $user_id)
         throw new Exception('Could not perform query ban_select_active_by_user_id.');
     }
 
-    return $stmt->fetch(PDO::FETCH_OBJ);
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 
 
@@ -108,12 +175,13 @@ function ban_select($pdo, $ban_id)
 }
 
 
-function ban_update($pdo, $ban_id, $acc_ban, $ip_ban, $exp_time, $lifted, $lifted_by, $lift_reason, $lift_time, $notes)
+function ban_update($pdo, $ban_id, $acc, $ip, $scope, $exp_time, $lifted, $lifted_by, $lift_reason, $lift_time, $notes)
 {
     $stmt = $pdo->prepare('
         UPDATE bans
         SET account_ban = :acc_ban,
             ip_ban = :ip_ban,
+            scope = :scope,
             expire_time = :exp_time,
             lifted = :lifted,
             lifted_by = :lifted_by,
@@ -125,8 +193,9 @@ function ban_update($pdo, $ban_id, $acc_ban, $ip_ban, $exp_time, $lifted, $lifte
         LIMIT 1
     ');
     $stmt->bindValue(':ban_id', $ban_id, PDO::PARAM_INT);
-    $stmt->bindValue(':acc_ban', $acc_ban, PDO::PARAM_INT);
-    $stmt->bindValue(':ip_ban', $ip_ban, PDO::PARAM_INT);
+    $stmt->bindValue(':acc_ban', $acc, PDO::PARAM_INT);
+    $stmt->bindValue(':ip_ban', $ip, PDO::PARAM_INT);
+    $stmt->bindValue(':scope', $scope, PDO::PARAM_STR);
     $stmt->bindValue(':exp_time', strtotime($exp_time), PDO::PARAM_STR);
     $stmt->bindValue(':lifted', $lifted, PDO::PARAM_STR);
     $stmt->bindValue(':lifted_by', $lifted_by, PDO::PARAM_STR);
@@ -144,9 +213,9 @@ function ban_update($pdo, $ban_id, $acc_ban, $ip_ban, $exp_time, $lifted, $lifte
 
 
 // alias for ban_insert
-function ban_user($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc)
+function ban_user($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc, $scope)
 {
-    ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc);
+    ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc, $scope);
 }
 
 
@@ -170,7 +239,7 @@ function bans_select_by_ip($pdo, $ip)
         AND ip_ban = 1
         ORDER BY time DESC
     ');
-    $stmt->bindValue(':ip', $ip, PDO::PARAM_INT);
+    $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -200,14 +269,14 @@ function bans_select_by_user_id($pdo, $user_id)
 }
 
 
-function bans_select_recent($pdo)
+function bans_select_recently_modified($pdo)
 {
     $stmt = $pdo->prepare('
-        SELECT banned_ip, banned_user_id
+        SELECT
+          banned_ip as ip,
+          banned_user_id as user_id
         FROM bans
-        WHERE time > UNIX_TIMESTAMP(NOW() - INTERVAL 5 MINUTE)
-        AND expire_time > UNIX_TIMESTAMP(NOW())
-        AND lifted = 0
+        WHERE modified_time > UNIX_TIMESTAMP(NOW() - INTERVAL 5 MINUTE)
     ');
     $result = $stmt->execute();
 

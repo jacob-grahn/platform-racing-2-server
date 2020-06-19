@@ -78,7 +78,7 @@ class Prizes
 
     // hat descriptions
     const DESC_EXP_HAT = 'If you finish a race with this hat, it will increase your EXP gain by 100%!';
-    const DESC_KONG_HAT = 'If you finish a race with this hat, it will increase your EXP gain by 25%!';
+    const DESC_KONG_HAT = 'If you finish a race with this hat, it will increase your GP gain by 100%!';
     const DESC_PROP_HAT = 'Hold up while wearing this hat to float!';
     const DESC_COWBOY_HAT = 'Fly, cowboy, fly!';
     const DESC_CROWN_HAT = 'Wear this hat to become immune to mines, laser guns, and swords!';
@@ -91,6 +91,7 @@ class Prizes
     const DESC_JIGG_HAT = 'Bounce on the heads of your opponents!';
     const DESC_ARTI_HAT = 'Leave your opponents in the dust for a glorious 30 seconds.';
     const DESC_JF_HAT = 'Give nearby opponents a nasty sting!';
+    const DESC_CHEESE_HAT = 'Turn crumble blocks into feta cheese --break through with record speed!';
 
 
     // hats
@@ -109,6 +110,7 @@ class Prizes
     public static $JIGG_HAT;
     public static $ARTIFACT_HAT;
     public static $JELLYFISH_HAT;
+    public static $CHEESE_HAT;
 
     // epic hats
     public static $EPIC_KONG_HAT;
@@ -125,6 +127,7 @@ class Prizes
     public static $EPIC_JIGG_HAT;
     public static $EPIC_ARTIFACT_HAT;
     public static $EPIC_JELLYFISH_HAT;
+    public static $EPIC_CHEESE_HAT;
 
 
     // heads
@@ -427,6 +430,7 @@ class Prizes
         self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat', self::DESC_JIGG_HAT, true);
         self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'The Artifact', self::DESC_ARTI_HAT);
         self::$JELLYFISH_HAT = new Prize(self::TYPE_HAT, Hats::JELLYFISH, 'Jellyfish Hat', self::DESC_JF_HAT, true);
+        self::$CHEESE_HAT = new Prize(self::TYPE_HAT, Hats::CHEESE, 'Cheese Hat', self::DESC_CHEESE_HAT, true);
 
         // epic hats
         self::$EPIC_KONG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::KONG, 'Epic Upgrade');
@@ -443,6 +447,7 @@ class Prizes
         self::$EPIC_JIGG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::JIGG, 'Epic Upgrade');
         self::$EPIC_ARTIFACT_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::ARTIFACT, 'Epic Upgrade');
         self::$EPIC_JELLYFISH_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::JELLYFISH, 'Epic Upgrade');
+        self::$EPIC_CHEESE_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::CHEESE, 'Epic Upgrade');
 
 
         // heads

@@ -75,8 +75,17 @@ function output_footer()
 // mod/admin navigation
 function output_staff_nav($formatting_for_admins = true)
 {
+    $reports_link = "<a href='/mod/reports.php?mode=messages'>Reports</a>";
+    if (strpos($_SERVER['REQUEST_URI'], '/mod/reports.php') === 0) {
+        $mode = default_get('mode', 'messages');
+        $mode = $mode !== 'messages' && $mode !== 'levels' ? 'messages' : $mode;
+        $other = $mode === 'messages' ? 'Levels' : 'Messages';
+        $reports_url = '/mod/reports.php?mode=' . strtolower($other);
+        $reports_link = str_replace($other, "<a href='$reports_url'>$other</a>", 'Reported: (Messages | Levels)');
+    }
+
     echo "<p><b>"
-        ."<a href='/mod/reported_messages.php'>Reported Messages</a> - "
+        ."$reports_link - "
         ."<a href='/mod/player_info.php'>Player Search</a> - "
         ."<a href='/bans/bans.php'>Ban Log</a> - "
         ."<a href='/mod/mod_log.php'>Mod Action Log</a>";

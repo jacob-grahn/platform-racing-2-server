@@ -21,9 +21,17 @@ function folding_insert($pdo, $user_id)
 function folding_select_by_user_id($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT fah.*, u.name, u.status
+        SELECT fah.*,
+               u.name,
+               u.status,
+               p.hat_array,
+               IFNULL(eu.epic_hats, "") as epic_hats,
+               IFNULL(rt.available_tokens, 0) as available_tokens
           FROM folding_at_home fah, users u
-         WHERE u.user_id = fah.user_id
+          LEFT JOIN pr2 p ON u.user_id = p.user_id
+          LEFT JOIN epic_upgrades eu ON u.user_id = eu.user_id
+          LEFT JOIN rank_tokens rt ON u.user_id = rt.user_id
+         WHERE fah.user_id = u.user_id
            AND u.user_id = :user_id
          LIMIT 1
     ');
@@ -51,9 +59,17 @@ function folding_select_by_user_id($pdo, $user_id, $suppress_error = false)
 function folding_select_list($pdo)
 {
     $stmt = $pdo->prepare('
-        SELECT folding_at_home.*, users.name, users.status
-          FROM folding_at_home, users
-         WHERE folding_at_home.user_id = users.user_id
+        SELECT fah.*,
+               u.name,
+               u.status,
+               p.hat_array,
+               IFNULL(eu.epic_hats, "") as epic_hats,
+               IFNULL(rt.available_tokens, 0) as available_tokens
+          FROM folding_at_home fah, users u
+          LEFT JOIN pr2 p ON u.user_id = p.user_id
+          LEFT JOIN epic_upgrades eu ON u.user_id = eu.user_id
+          LEFT JOIN rank_tokens rt ON u.user_id = rt.user_id
+         WHERE fah.user_id = u.user_id
     ');
     $result = $stmt->execute();
 
@@ -67,7 +83,7 @@ function folding_select_list($pdo)
 
 function folding_update($pdo, $user_id, $column_name)
 {
-    $columns = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'crown_hat', 'cowboy_hat'];
+    $columns = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'crown_hat', 'epic_crown', 'cowboy_hat', 'epic_cowboy'];
     if (array_search($column_name, $columns) === false) {
         throw new Exception('Invalid column name in folding_update');
     }

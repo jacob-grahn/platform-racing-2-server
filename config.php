@@ -19,8 +19,11 @@ define('SOCKET_DAEMON_FILES', $directory . '/vend/socket/index.php'); // files f
 
 define('FRED', 4291976); // fred id
 $special_ids = [FRED, 5321458, 5451130]; // fred, sir, clint
-$group_colors = ['676666', '047b7b', '1c369f', '870a6f']; // group colors as defined in the client
-$group_names = ['Guest', 'Member', 'Moderator', 'Admin']; // group names as defined in the client
+$group_colors = ['676666', '047b7b', '1c369f', '870a6f']; // group colors defined in client
+$group_names = ['Guest', 'Member', 'Moderator', 'Admin']; // group names defined in client
+$mod_colors = ['006400', '0092ff', '1c369f'];
+$mod_group_names = ['Temp Mod', 'Trial Moderator', 'Moderator'];
+
 
 // call globally needed files
 require_once COMMON_DIR . '/env.php';

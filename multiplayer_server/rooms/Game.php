@@ -11,11 +11,13 @@ class Game extends Room
     const LEVEL_SEA = 2255404; // for sea set
     const LEVEL_DEEPER = 6493337; // for jellyfish hat
     const LEVEL_HAUNTED = 1782114; // for epic jack-o'-lantern head
+    const LEVEL_CHEESE = 6207945; // for cheese hat
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
     const MODE_EGG = 'egg';
     const MODE_OBJECTIVE = 'objective';
+    const MODE_HAT = 'hat';
 
     const PLAYER_SIR = 5321458; // sir sirlington
     const PLAYER_CLINT = 5451130; // clint the cowboy
@@ -32,6 +34,8 @@ class Game extends Room
     private $campaign;
 
     private $mode = self::MODE_RACE;
+    private $hatCountdownEnd = -1;
+    private $hasHats = -1;
     private $ending_egg = false;
     private $finish_count = 0;
     private $finish_positions = array();
@@ -79,6 +83,7 @@ class Game extends Room
         $this->finishDrawing($player);
         $player->race_stats->still_here = false;
 
+        // ATTN: rework to do quitRace instead? so the hat attack mode detection stuff actually works??
         if (!isset($player->race_stats->finish_time)) {
             $this->setFinishTime($player, 'forfeit');
         } else {
@@ -362,6 +367,17 @@ class Game extends Room
                 $this->finish_positions = json_decode($this->finish_positions);
             }
 
+            // don't start a hat attack level if there's only one player in the game
+            if ($this->mode === self::MODE_HAT && count($this->player_array) <= 1) {
+                foreach ($this->player_array as $player) {
+                    $this->quitRace($player);
+                    $player->socket->write("forceQuit`");
+                    $hat_msg = 'Error: You can\'t play a hat attack level by yourself. :(';
+                    $player->socket->write("message`$hat_msg");
+                }
+                return;
+            }
+
             // boot people with the wrong level hash
             foreach ($this->player_array as $player) {
                 if ($this->hash !== $player->race_stats->level_hash) {
@@ -379,13 +395,23 @@ class Game extends Room
                 $this->sendToAll("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
             }
 
+            // cheese hat
+            if ($this->course_id == self::LEVEL_CHEESE) {
+                $hat = $this->makeHat($this->next_hat_id++, Hats::CHEESE, 0xFFD860, 0x000000);
+                $this->loose_hat_array[$hat->id] = $hat;
+                $x = 13878;
+                $y = 7214;
+                $rot = 0;
+                $this->sendToAll("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
+            }
+
             // place artifact hat
             if ($this->course_id == Artifact::$level_id) {
                 $hat = $this->makeHat($this->next_hat_id++, Hats::ARTIFACT, 0xFFFFFF, -1);
                 $this->loose_hat_array[$hat->id] = $hat;
                 $x = Artifact::$x;
                 $y = Artifact::$y;
-                $rot = 0;
+                $rot = Artifact::$rot;
                 $this->sendToAll("addEffect`Hat`$x`$y`$rot`$hat->num`$hat->color`$hat->color2`$hat->id", -1);
             }
 
@@ -429,21 +455,40 @@ class Game extends Room
             $hat_color = $player->hat_color;
             $hat_color2 = $player->getSecondColor('hat', $hat_id);
 
+            // change hat to tournament mode hat when enabled
             if ($this->tournament) {
                 $hat_id = PR2SocketServer::$tournament_hat;
+                if ($this->mode === self::MODE_HAT && $hat_id == 1) {
+                    $hat_id = 2; // change nothing to exp hat when tournament mode is enabled on hat attack
+                }
             }
+
+            // remove artifact hat a player is wearing on artifact level
             if ($this->course_id == Artifact::$level_id && $hat_id == 14) {
                 $hat_id = 1;
             }
+
+            // cowboy mode
             if ($this->cowboy_mode) {
                 $hat_id = 5;
             }
 
+            // change the hat to something random during hat attack if they aren't wearing a valid hat
+            // this is foolproof. no chance at all that this is a horrible idea. none whatsoever
+            $valid_hats = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 16];
+            if ($this->mode === self::MODE_HAT && !in_array($hat_id, $valid_hats)) {
+                $hat_id = $valid_hats[rand(0, count($valid_hats) - 1)];
+                $msg = 'Howdy! Here\'s a random hat to use just for this level. Thank me later!!';
+                $player->socket->write("chat`Fred the G. Cactus`3`$msg");
+            }
+
+            // init the hat and add to this player's worn hat array
             if ($hat_id != 1) {
                 $hat = $this->makeHat($this->next_hat_id++, $hat_id, $hat_color, $hat_color2);
                 $player->worn_hat_array[0] = $hat;
             }
 
+            // send this player's hat array to all players
             $this->sendToAll($this->getHatStr($player));
         }
     }
@@ -482,11 +527,17 @@ class Game extends Room
 
     public function remoteFinishRace($player, $data)
     {
-        if ($this->mode == self::MODE_RACE) {
-            list($finish_id, $x, $y) = explode('`', $data);
-            $this->verifyFinishPosition($x, $y, $finish_id);
+        if ($this->isStillPlaying($player->temp_id)) {
+            if ($this->mode == self::MODE_RACE) {
+                list($finish_id, $x, $y) = explode('`', $data);
+                $this->verifyFinishPosition($x, $y, $finish_id);
+            } elseif ($this->mode == self::MODE_HAT) {
+                $msg = 'Psst... finish blocks don\'t do anything in hat attack mode!';
+                $player->socket->write("chat`Fred the G. Cactus`3`$msg");
+                return;
+            }
+            $this->finishRace($player);
         }
-        $this->finishRace($player);
     }
 
 
@@ -501,33 +552,40 @@ class Game extends Room
 
     public function finishRace($player)
     {
-        global $pdo;
-
         if ($player->race_stats->finished_race === false
             && !isset($player->race_stats->finish_time)
             && $player->race_stats->drawing === false
             && $this->begun === true
         ) {
+            // get/format/validate/set finish time
             $finish_microtime = microtime(true);
             $full_time = $finish_microtime - $this->start_time;
-
-            // get/format/validate/set finish time
             $finish_time = $this->timeFormat($full_time);
             $broadcast_time = $this->timeFormat($full_time, 3);
-            if ($finish_time > 31536000) {
-                $finish_time = 0; // if the race time > 1 year, set it to 0
-            }
+            $finish_time = $finish_time > 31536000 ? 0 : $finish_time; // if the race time > 1 year, set it to 0
             $this->setFinishTime($player, $finish_time);
 
+            // exp time modifier (propotional before 2 mins)
             $time_mod = $finish_time / 120;
-            if ($time_mod > 1) {
-                $time_mod = 1;
+            $time_mod = $time_mod > 1 ? 1 : $time_mod;
+
+            // checks for a "true" finish for awarding prizes
+            $true_fin = strpos($player->race_stats->finish_time, 'forfeit') !== 0;
+
+            // check if all objectives reached
+            $completed_perc = 0;
+            if ($this->mode == self::MODE_OBJECTIVE && $this->finish_count > 0) {
+                $objective_count = count($player->race_stats->objectives_reached);
+                $objective_count = $objective_count > $this->finish_count ? $this->finish_count : $objective_count;
+                $completed_perc = $objective_count / $this->finish_count;
+                $true_fin = $completed_perc == 1; // falsify true finish if all objs not reached
             }
 
+            // get finish placement
             $place = array_search($player->race_stats, $this->finish_array);
 
             // announce on tournament server
-            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10 && PR2SocketServer::$tournament) {
+            if ($true_fin && $place == 0 && count($this->finish_array) > 1 && $finish_time > 10 && $this->tournament) {
                 $this->broadcastResults($player, $broadcast_time);
             }
 
@@ -545,8 +603,15 @@ class Game extends Room
                 $prize = Prizes::$JIGG_HAT;
             }
 
-            if (isset($prize)) {
-                $autoset = ( $prize->getType() == 'hat' );
+            // set for cheese
+            $isCheese = $this->course_id == self::LEVEL_CHEESE;
+            if ($isCheese && $player->wearingHat(Hats::CHEESE) && !$player->hasPart('hat', Hats::CHEESE)) {
+                $prize = Prizes::$CHEESE_HAT;
+            }
+
+            // award prize to player
+            if (isset($prize) && $true_fin) {
+                $autoset = $prize->getType() == 'hat';
                 $result = $player->gainPart($prize->getType(), $prize->getId(), $autoset);
                 if ($result == true) {
                     $player->write('winPrize`' . $prize->toStr());
@@ -563,32 +628,22 @@ class Game extends Room
             } // level bonus
             else {
                 $level_bonus = $this->applyExpCurve($player, 25 * $time_mod);
+                
+                // sanity check, think it works fine here
+                $level_bonus = $level_bonus >= 5 && $finish_time <= 3 ? 0 : $level_bonus;
 
-                $completed_perc = 0;
-                
-                //sanity check, think it works fine here
-                if ($level_bonus >= 5 && $finish_time <= 3) {
-                    $level_bonus = 0;
-                }
-                
+                // update level bonus proportionally according to objs reached in obj mode
                 if ($this->mode == self::MODE_OBJECTIVE && $this->finish_count > 0) {
-                    $objective_count = count($player->race_stats->objectives_reached);
-                    if ($objective_count > $this->finish_count) {
-                        $objective_count = $this->finish_count;
-                    }
-                    $completed_perc = $objective_count / $this->finish_count;
                     $level_bonus *= $completed_perc;
-                    if ($completed_perc < 1) {
-                        $player->race_stats->give_artifact = false;
-                    }
                 }
 
+                // round level bonus for int exp
                 $level_bonus = round($level_bonus);
 
-                if (PR2SocketServer::$no_prizes) {
-                    $level_bonus = 0;
-                }
+                // make level bonus 0 on tournament
+                $level_bonus = PR2SocketServer::$no_prizes ? 0 : $level_bonus;
 
+                // write award back to player and add to total exp gain
                 if ($this->mode == self::MODE_DEATHMATCH) {
                     $player->write('award`Survival Bonus`+ '.$level_bonus);
                 } elseif ($this->mode == self::MODE_OBJECTIVE && $completed_perc < 1) {
@@ -596,12 +651,11 @@ class Game extends Room
                 } else {
                     $player->write('award`Level Completed`+ '.$level_bonus);
                 }
-
                 $tot_exp_gain += $level_bonus;
             }
 
             // opponent bonus
-            for ($i = $place+1; $i < count($this->finish_array); $i++) {
+            for ($i = $place + 1; $i < count($this->finish_array); $i++) {
                 $race_stats = $this->finish_array[$i];
                 if ($race_stats->rank < 100 && PR2SocketServer::$no_prizes === false) {
                     $exp_gain = ($race_stats->rank+5) * $time_mod;
@@ -613,19 +667,25 @@ class Game extends Room
                 $player->write('award`Defeated '.$race_stats->name.'`+ '.$exp_gain);
             }
 
-            // handle gp gain
-            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10) {
-                $this->giveGp($player);
-            }
-
             // handle hats
             $hat_bonus = 0;
+            $wearing_kong = false;
             foreach ($player->worn_hat_array as $hat) {
                 if ($hat->num == 2) {
                     $hat_bonus += 1;
                 } elseif ($hat->num == 3) {
-                    $hat_bonus += .25;
+                    $wearing_kong = true;
                 }
+            }
+
+            // remove hats after finishing in hat attack mode
+            if ($this->mode === self::MODE_HAT) {
+                $this->loseAllHats($player);
+            }
+
+            // handle gp gain
+            if ($place == 0 && count($this->finish_array) > 1 && $finish_time > 10) {
+                $this->giveGp($player, $wearing_kong);
             }
 
             // apply exp bonuses to total exp multiplier and multiply total exp gain by anything less than 12
@@ -633,7 +693,7 @@ class Game extends Room
             $exp_multiplier += $hat_bonus > 4 ? 4 : $hat_bonus;
             $exp_multiplier *= HappyHour::isActive() ? 2 : 1;
             $exp_multiplier += isset($this->campaign) && $this->from_room === 'campaign' ? 2 : 0;
-            $tot_exp_gain = round($tot_exp_gain * ($exp_multiplier > 12 ? 12 : $exp_multiplier)); // orig 12
+            $tot_exp_gain = round($tot_exp_gain * ($exp_multiplier > 12 ? 12 : $exp_multiplier));
 
             // exp award notification
             if ($exp_multiplier > 1) {
@@ -672,11 +732,8 @@ class Game extends Room
             }
 
             // apply artifact bonus after all multipliers
-            if ($this->course_id == Artifact::$level_id
-                && $player->wearingHat(Hats::ARTIFACT)
-                && $player->race_stats->give_artifact == true
-            ) {
-                $result = save_finder($pdo, $player);
+            if ($this->course_id == Artifact::$level_id && $player->wearingHat(Hats::ARTIFACT) && $true_fin) {
+                $result = save_finder($player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
                     $artifact_bonus = round($max_artifact_bonus * $player->active_rank / 60);
@@ -734,10 +791,10 @@ class Game extends Room
             $message = '';
             $names = array();
             foreach ($this->finish_array as $rs) {
-                $names[] = userify($this->idToPlayer($rs->temp_id), $rs->name, $rs->group);
+                $names[] = userify($this->idToPlayer($rs->temp_id), $rs->name, $rs->group, $rs->mod_power);
             }
             $vs_names = join(' vs ', $names);
-            $html_name = userify($player, $player->name, $player->group);
+            $html_name = userify($player, $player->name, $player->group, $player->modPower());
             $message = "$vs_names: // $html_name wins with a time of $str!";
             $main->sendChat("systemChat`$message", -1);
         }
@@ -807,13 +864,18 @@ class Game extends Room
         $this->finishDrawing($player);
         if ($player->race_stats->finished_race == false) {
             $player->race_stats->quit_race = true;
+
+            if ($this->mode === self::MODE_HAT) {
+                $this->loseAllHats($player);
+            }
+
             if ($this->mode == self::MODE_DEATHMATCH && $this->begun) {
                 $this->finishRace($player);
             } elseif ($this->mode == self::MODE_OBJECTIVE && $this->begun) {
                 $this->finishRace($player);
             } elseif ($this->mode === self::MODE_EGG) {
                 $this->maybeEndEgg();
-            } elseif ($this->mode === self::MODE_RACE) {
+            } elseif ($this->mode === self::MODE_RACE || $this->mode === self::MODE_HAT) {
                 $player->race_stats->finished_race = true;
                 $this->setFinishTime($player, 'forfeit');
             }
@@ -827,16 +889,16 @@ class Game extends Room
         $b_time = $b->finish_time;
 
         if (!isset($a_time)) {
-            $a_time = 9998;
+            $a_time = 9999998;
         }
         if (!isset($b_time)) {
-            $b_time = 9998;
+            $b_time = 9999998;
         }
         if ($a_time == 'forfeit') {
-            $a_time = 9999;
+            $a_time = 9999999;
         }
         if ($b_time == 'forfeit') {
-            $b_time = 9999;
+            $b_time = 9999999;
         }
 
         if ($a_time == $b_time) {
@@ -855,10 +917,10 @@ class Game extends Room
         $b_time = $b->finish_time;
 
         if (!isset($a_time)) {
-            $a_time = 9998;
+            $a_time = 9999998;
         }
         if (!isset($b_time)) {
-            $b_time = 9998;
+            $b_time = 9999998;
         }
         if ($a_time === 'forfeit') {
             $a_time = 0;
@@ -913,6 +975,12 @@ class Game extends Room
     }
 
 
+    protected function sortFinishArrayHat($a, $b)
+    {
+        return $this->sortFinishArrayRace($a, $b);
+    }
+
+
     private function setFinishTime($player, $finish_time)
     {
         if (!isset($player->race_stats->finish_time)) {
@@ -954,6 +1022,11 @@ class Game extends Room
             foreach ($this->finish_array as $rs) {
                 if ($this->mode === self::MODE_EGG) {
                     $finish_time = $rs->eggs;
+                } elseif ($this->mode === self::MODE_OBJECTIVE) {
+                    if (!empty($rs->finish_time)) {
+                        $obj_reached = count($rs->objectives_reached);
+                        $finish_time = "$rs->finish_time,$obj_reached,$this->finish_count";
+                    }
                 } else {
                     $finish_time = $rs->finish_time;
                 }
@@ -967,11 +1040,16 @@ class Game extends Room
     }
 
 
-    private function giveGp($player)
+    private function giveGp($player, $double = false)
     {
         $user_id = $player->user_id;
         $prev_gp = GuildPoints::getPreviousGP($user_id, $this->course_id);
         $earned_gp = round($player->race_stats->finish_time / 60 * count($this->player_array) / 4);
+
+        // double with kong hat
+        if ($double) {
+            $earned_gp *= 2;
+        }
 
         // limit gp gain to 10 per race
         if ($earned_gp > 10) {
@@ -1047,16 +1125,32 @@ class Game extends Room
     }
 
 
-    private function idToPlayer($temp_id)
+    private function isStillPlaying($temp_id)
     {
-        $player = null;
-        foreach ($this->player_array as $other_player) {
-            if ($other_player->temp_id == $temp_id) {
-                $player = $other_player;
-                break;
+        $rs = $this->idToRaceStats($temp_id);
+        return isset($rs) && $rs->still_here && !$rs->finished_race && !$rs->quit_race;
+    }
+
+
+    private function idToRaceStats($temp_id)
+    {
+        foreach ($this->finish_array as $rs) {
+            if ($rs->temp_id == $temp_id) {
+                return $rs;
             }
         }
-        return $player;
+        return null;
+    }
+
+
+    private function idToPlayer($temp_id)
+    {
+        foreach ($this->player_array as $player) {
+            if ($player->temp_id == $temp_id) {
+                return $player;
+            }
+        }
+        return null;
     }
 
 
@@ -1074,8 +1168,13 @@ class Game extends Room
             if (substr($data, 4) === 'item') {
                 $player->items_used++;
             }
+            $data = explode('`', $data);
+            if ($data[0] === 'rot') {
+                $player->rot = (int) $data[1];
+            }
         }
     }
+
 
     public function sendChat($message, $user_id = -1)
     {
@@ -1089,6 +1188,80 @@ class Game extends Room
                     $player->socket->write("$command`$name`$power`$text");
                 }
             }
+        }
+    }
+
+
+    private function startHatCountdown($player)
+    {
+        $secs = 5;
+        if ($this->hatCountdownEnd === -1
+            && $this->hasHats === -1
+            && count($player->worn_hat_array) === count($this->finish_array)
+            && $this->isStillPlaying($player->temp_id)
+        ) {
+            $this->hatCountdownEnd = $this->currentMS() + ($secs * 1000);
+            $this->hasHats = $player->temp_id;
+
+            $prospect = userify($player, $player->name, $player->group, $player->modPower());
+            $msg = "If $prospect keeps all hats, they will finish in $secs seconds.<br><br>$secs";
+            $this->sendToAll("systemChat`$msg");
+            $this->sendToAll('startHatCountdown`');
+        }
+    }
+
+
+    public function checkHatCountdown($player)
+    {
+        $prospect = $this->idToPlayer($this->hasHats);
+        if (isset($prospect)
+            && $this->hatCountdownEnd > $this->currentMS()
+            && $this->isStillPlaying($prospect->temp_id)
+            && count($prospect->worn_hat_array) === count($this->finish_array)
+        ) {
+            $secs_remaining = ceil(($this->hatCountdownEnd - $this->currentMS()) / 1000);
+            $player->socket->write("systemChat`$secs_remaining");
+            return;
+        }
+        $this->maybeEndHatCountdown();
+    }
+
+
+    private function cancelHatCountdown($msg = true)
+    {
+        if ($this->hasHats > -1) {
+            $this->sendToAll('cancelHatCountdown`');
+            if ($msg) {
+                $rs = $this->idToRaceStats($this->hasHats);
+                $prospect_url_name = userify($rs, $rs->name, $rs->group, $rs->mod_power);
+                $msg = "$prospect_url_name dropped a hat!";
+                $this->sendToAll("systemChat`$msg<br>");
+            }
+            $this->hatCountdownEnd = $this->hasHats = -1;
+        }
+    }
+
+
+    public function maybeEndHatCountdown()
+    {
+        if ($this->currentMS() >= $this->hatCountdownEnd && $this->hasHats > -1) {
+            $player = $this->idToPlayer($this->hasHats);
+            if (isset($player) && $this->isStillPlaying($player->temp_id)) {
+                $this->finishRace($player);
+                $this->cancelHatCountdown(false);
+                $winner = userify($player, $player->name, $player->group, $player->modPower());
+                $this->sendToAll("systemChat`$winner finished!<br>");
+            } else {
+                $this->cancelHatCountdown();
+            }
+        }
+    }
+
+    private function loseAllHats($player)
+    {
+        foreach ($player->worn_hat_array as $hat) {
+            $y = $player->pos_y - 50;
+            $this->looseHat($player, "$player->pos_x`$y`$player->rot");
         }
     }
 
@@ -1114,6 +1287,12 @@ class Game extends Room
                 $player->user_id
             );
             $this->sendToAll($this->getHatStr($player));
+            if ($this->mode === self::MODE_HAT
+                && $this->hasHats == $player->temp_id
+                && $this->currentMS() < $this->hatCountdownEnd
+            ) {
+                $this->cancelHatCountdown();
+            }
         }
     }
 
@@ -1159,7 +1338,7 @@ class Game extends Room
     public function getHat($player, $hat_id)
     {
         $hat = @$this->loose_hat_array[$hat_id];
-        if (isset($hat)) {
+        if (isset($hat) && $this->isStillPlaying($player->temp_id)) {
             $this->loose_hat_array[$hat_id] = null;
             $this->sendToAll('removeHat'.$hat_id.'`');
             if ($hat->num == 12) {//thief hat
@@ -1169,6 +1348,13 @@ class Game extends Room
             } else {
                 $this->assignHat($player, $hat);
             }
+        }
+        if ($this->mode === self::MODE_HAT
+            && count($player->worn_hat_array) === count($this->finish_array)
+            && $this->hatCountdownEnd === -1
+            && $this->hasHats === -1
+        ) {
+            $this->startHatCountdown($player);
         }
     }
 
@@ -1239,6 +1425,12 @@ class Game extends Room
         }
         $exp *= $tier;
         return $exp;
+    }
+
+
+    private function currentMS()
+    {
+        return microtime(true) * 1000;
     }
 
 

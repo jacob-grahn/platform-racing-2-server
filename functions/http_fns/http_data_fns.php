@@ -211,48 +211,36 @@ function format_level_list($levels)
 {
     global $LEVEL_LIST_SALT;
 
-    $num = 0;
-    $str = '';
-    foreach ($levels as $row) {
-        $level_id = (int) $row->level_id;
-        $version = (int) $row->version;
-        $title = urlencode($row->title);
-        $rating = round($row->rating, 2);
-        $play_count = (int) $row->play_count;
-        $min_level = (int) $row->min_level;
-        $note = urlencode($row->note);
-        $user_name = urlencode($row->name);
-        $group = (int) $row->power;
-        $live = (int) $row->live;
-        $pass = isset($row->pass);
-        $type = $row->type;
-        $time = (int) $row->time;
+    $ret = new stdClass();
+    $ret->levels = [];
+    foreach ($levels as $level) {
+        $level->level_id = (int) $level->level_id;
+        $level->version = (int) $level->version;
+        $level->title = utf8_encode($level->title);
+        $level->rating = round($level->rating, 2);
+        $level->play_count = (int) $level->play_count;
+        $level->min_level = (int) $level->min_level;
+        $level->note = utf8_encode($level->note);
+        $level->user_name = utf8_encode($level->name);
+        $level->user_group = $level->power . ($level->trial_mod == 1 ? ',1' : '');
+        $level->live = (int) $level->live;
+        $level->pass = isset($level->pass);
+        $level->type = $level->type;
+        $level->time = (int) $level->time;
 
-        if ($num > 0) {
-            $str .= "&";
-        }
-        $str .= "levelID$num=$level_id"
-        ."&version$num=$version"
-        ."&title$num=$title"
-        ."&rating$num=$rating"
-        ."&playCount$num=$play_count"
-        ."&minLevel$num=$min_level"
-        ."&note$num=$note"
-        ."&userName$num=$user_name"
-        ."&group$num=$group"
-        ."&live$num=$live"
-        ."&pass$num=$pass"
-        ."&type$num=$type"
-        ."&time$num=$time";
-        $num++;
+        // remove unwanted vars from output
+        unset($level->name, $level->power, $level->trial_mod);
+
+        $ret->levels[] = $level;
     }
 
-    if (!is_empty($str)) {
-        $hash = md5($str . $LEVEL_LIST_SALT);
-        $str .= '&hash='.$hash;
+    $levels_str = json_encode($ret->levels);
+    if (!is_empty($levels_str)) {
+        $hash = md5($levels_str . $LEVEL_LIST_SALT);
+        $ret->hash = $hash;
     }
 
-    return $str;
+    return json_encode($ret);
 }
 
 
@@ -275,4 +263,28 @@ function filter_swears($str)
     $str = str_replace('cunt', $bitchArray[array_rand($bitchArray)], $str);
 
     return $str;
+}
+
+
+// makes a banned notice
+function make_banned_notice($ban)
+{
+    $ban_id = $ban->ban_id;
+    $expire_time = $ban->expire_time;
+    $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
+
+    // figure out what the best way to say this is
+    $time_left = format_duration($expire_time - time());
+
+    // tell it to the world
+    $ban_link = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'here');
+    $dispute_link = urlify("https://jiggmin2.com/forums/showthread.php?tid=110", 'dispute it');
+    $banned = $ban->scope === 's' ? 'socially banned' : 'banned';
+    $output = "This account or IP address has been $banned.\n".
+        "Reason: $reason. \n".
+        "This ban will expire in $time_left. \n".
+        "You can see more details about this ban $ban_link. \n\n".
+        "If you feel that this ban is unjust, you can $dispute_link.";
+    
+    return $output;
 }

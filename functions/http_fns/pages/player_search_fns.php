@@ -5,13 +5,14 @@
 function create_ban_list($bans)
 {
     $str = '<p><ul>';
-    foreach ($bans as $row) {
-        $ban_date = date("F j, Y, g:i a", $row->time);
-        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
-        $ban_id = (int) $row->ban_id;
-        $lifted_reason = (int) $row->lifted === 1 ? htmlspecialchars($row->lifted_reason, ENT_QUOTES) : '';
-        $lifted = (int) $row->lifted === 1 ? " | <b>LIFTED</b> ($lifted_reason)" : '';
-        $str .= "<li><a href='/bans/show_record.php?ban_id=$ban_id'>$ban_date</a>: $reason$lifted";
+    foreach ($bans as $ban) {
+        $ban_date = date("F j, Y, g:i a", $ban->time);
+        $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
+        $ban_id = (int) $ban->ban_id;
+        $lifted_reason = (int) $ban->lifted === 1 ? htmlspecialchars($ban->lifted_reason, ENT_QUOTES) : '';
+        $lifted = (int) $ban->lifted === 1 ? " | <b>LIFTED</b> ($lifted_reason)" : '';
+        $scope = $ban->scope === 'g' ? '' : ' (social)';
+        $str .= "<li><a href='/bans/show_record.php?ban_id=$ban_id'>$ban_date</a><u><i>$scope</i></u>: $reason$lifted";
     }
     return $str . '</ul></p>';
 }
@@ -57,7 +58,7 @@ function output_search($name = '', $gwibble = true)
 // player_search.php
 function output_page($pdo, $user)
 {
-    global $group_colors, $group_names;
+    global $group_colors, $group_names, $mod_colors, $mod_group_names;
 
     // sanity check: is the used tokens value set?
     if (!isset($user->used_tokens)) {
@@ -66,9 +67,9 @@ function output_page($pdo, $user)
 
     // make some variables
     $user_name = $user->name; // name
-    $group = (int) $user->power; // group
-    $group_col = $group_colors[$group];
-    $group_name = $group_names[$group];
+    $group = (int) $user->power;
+    $group_col = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[$group];
+    $group_name = $user->trial_mod == 1 ? $mod_group_names[1] : $group_names[$group];
     $status = $user->status; // status
     $guild_id = (int) $user->guild; // guild id
     $rank = (int) ($user->rank + $user->used_tokens); // rank

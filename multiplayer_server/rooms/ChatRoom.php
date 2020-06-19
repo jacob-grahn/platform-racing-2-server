@@ -25,18 +25,18 @@ class ChatRoom extends Room
 
     public function clear($mod)
     {
-        global $pdo, $guild_id, $server_name;
-        
+        global $guild_id, $server_name;
+
         // preserve chatroom data
         $room_name = $this->chat_room_name;
         $old_chat_array = $this->chat_array;
-    
+
         // send enough systemChat messages to clear the room
         foreach (range(0, 50) as $num) {
             $this->sendChat('systemChat` ');
             unset($num);
         }
-        
+
         // notify the player
         foreach ($this->player_array as $player) {
             if ($player->user_id !== $mod->user_id) {
@@ -46,28 +46,28 @@ class ChatRoom extends Room
             }
             $this->removePlayer($player);
         }
-        
+
         // remove the chatroom
         $this->remove();
-        
+
         // make a new one with the same name if a special chatroom
         if ($room_name === 'main' || $room_name === 'mod' || $room_name === 'admin') {
             $new_room = new ChatRoom($room_name);
             $mod_url = userify($mod, $mod->name);
             $new_room->sendChat("systemChat`$mod_url cleared the chatroom.");
         }
-        
+
         // log mod action if on a public server and in main
         if ($guild_id === 0 && $room_name === 'main' && count($old_chat_array) > 0) {
             $log_chat = array();
-            
+
             foreach ($old_chat_array as $key => $value) {
                 // check to make sure there's a message
                 if (!is_object($value)) {
                     unset($old_chat_array[$key]);
                     continue;
                 }
-                
+
                 // extract the message
                 $message_array = explode('`', $value->message);
                 if ($message_array[0] === 'systemChat') {
@@ -76,16 +76,16 @@ class ChatRoom extends Room
                     array_push($log_chat, 'Chat (' . $message_array[1] . '): ' . $message_array[3]);
                 }
             }
-            
+
             $chat_count = count($log_chat);
             if ($chat_count > 0) {
                 $chat_str = join(' | ', $log_chat);
                 $msg = "$mod->name cleared the main chatroom on $server_name from $mod->ip. "
                     ."{chat_count: $chat_count, chat_array: $chat_str}";
-                mod_action_insert($pdo, $mod->user_id, $msg, $mod->user_id, $mod->ip);
+                db_op('mod_action_insert', array($mod->user_id, $msg, 'chat-clear', $mod->ip));
             }
         }
-        
+
         // tell the mod
         $mod->write('message`Chatroom successfully cleared. You can re-join by clicking "Join Room".');
     }
@@ -95,16 +95,16 @@ class ChatRoom extends Room
     {
         $count = count($this->player_array);
         $str = "Currently in this chatroom ($count):"; // start the return string
-        
+
         foreach ($this->player_array as $player) {
             $str .= "<br> - " . userify($player, $player->name);
         }
-        
+
         // this should never happen (the person in the room is calling the function)
         if ($str === 'Currently in this chatroom:') {
             $str = 'No one is here. :(';
         }
-        
+
         // send the string back
         return $str;
     }

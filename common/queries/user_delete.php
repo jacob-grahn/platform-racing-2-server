@@ -6,6 +6,7 @@ function user_delete($pdo, $user_id)
     user_delete_from_contest_winners($pdo, $user_id);
     user_delete_from_bans($pdo, $user_id);
     user_delete_from_epic_upgrades($pdo, $user_id);
+    user_delete_from_favorite_levels($pdo, $user_id);
     user_delete_from_folding_at_home($pdo, $user_id);
     user_delete_from_friends($pdo, $user_id);
     user_delete_from_gp($pdo, $user_id);
@@ -84,6 +85,26 @@ function user_delete_from_epic_upgrades($pdo, $user_id)
 
     if ($result === false) {
         throw new Exception('Could not delete user from epic_upgrades.');
+    }
+    
+    return $result;
+}
+
+function user_delete_from_favorite_levels($pdo, $user_id)
+{
+    $stmt = $pdo->prepare('
+        SELECT * FROM favorite_levels
+        WHERE user_id = :uid_param_1
+        OR level_id IN (
+            SELECT level_id FROM levels WHERE user_id = :uid_param_2
+        )
+    ');
+    $stmt->bindValue(':uid_param_1', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':uid_param_2', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not delete user from favorite_levels.');
     }
     
     return $result;

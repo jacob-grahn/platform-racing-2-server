@@ -58,7 +58,7 @@ try {
         foreach ($users as $user) {
             $name = str_replace(' ', '&nbsp;', $user->name); // multiple spaces in name
             $url_name = htmlspecialchars(urlencode($user->name), ENT_QUOTES); // url encode the name
-            $group_color = $group_colors[(int) $user->power]; // group color
+            $group_color = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $user->power]; // group color
             $active_date = date('j/M/Y', $user->time); // format the last active date
 
             // display the name with the color and link to the player search page

@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/guild_invitations.php';
+require_once QUERIES_DIR . '/servers.php';
 
 $guild_id = (int) default_post('guild_id', 0);
 $ip = get_ip();
@@ -50,12 +51,13 @@ try {
     user_update_guild($pdo, $user_id, $guild_id);
 
     // tell the world
-    $safe_guild_name = htmlspecialchars($guild->guild_name, ENT_QUOTES);
     $ret->success = true;
-    $ret->message = "Welcome to $safe_guild_name!";
-    $ret->guildId = (int) $guild->guild_id;
-    $ret->guildName = $guild->guild_name;
+    $ret->user_id = $user_id;
+    $ret->guild_id = (int) $guild->guild_id;
+    $ret->guild_name = $guild->guild_name;
     $ret->emblem = $guild->emblem;
+    $ret->message = 'Welcome to ' . htmlspecialchars($guild->guild_name, ENT_QUOTES) . '!';
+    @poll_servers(servers_select($pdo), 'player_guild_change`' . json_encode($ret), false);
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {

@@ -24,7 +24,7 @@ try {
 
     // check their login
     try {
-        $user_id = (int) token_login($pdo);
+        $user_id = (int) token_login($pdo, true, false, 'n');
         rate_limit('get-player-info-2-'.$user_id, 3, 2);
     } catch (Exception $e) {
         $friend = 0;
@@ -85,14 +85,17 @@ try {
 
     // reply
     $ret->success = true;
+    $ret->userId = $target->user_id;
+    $ret->name = $target->name;
+    $ret->status = $target->status;
+    $ret->group = $target->power;
+    $ret->trial_mod = (bool) (int) $target->trial_mod;
+    $ret->guildId = $target->guild;
+    $ret->guildName = $guild_name;
     $ret->rank = $active_rank;
     $ret->hats = $hats;
-    $ret->group = $target->power;
-    $ret->friend = $friend;
-    $ret->ignored = $ignored;
-    $ret->status = $target->status;
-    $ret->loginDate = $login_date;
     $ret->registerDate = $register_date;
+    $ret->loginDate = $login_date;
     $ret->hat = $target->hat;
     $ret->head = $target->head;
     $ret->body = $target->body;
@@ -101,10 +104,6 @@ try {
     $ret->headColor = $target->head_color;
     $ret->bodyColor = $target->body_color;
     $ret->feetColor = $target->feet_color;
-    $ret->guildId = $target->guild;
-    $ret->guildName = $guild_name;
-    $ret->name = $target->name;
-    $ret->userId = $target->user_id;
 
     // epic upgrades
     if (!isset($target->epic_hats)) {
@@ -118,6 +117,11 @@ try {
         $ret->bodyColor2 = test_epic($target->body_color_2, $target->epic_bodies, $target->body);
         $ret->feetColor2 = test_epic($target->feet_color_2, $target->epic_feet, $target->feet);
     }
+
+    $ret->exp_points = $target->exp_points;
+    $ret->exp_to_rank = exp_required_for_ranking($active_rank + 1);
+    $ret->friend = $friend;
+    $ret->ignored = $ignored;
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {

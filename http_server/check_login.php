@@ -18,7 +18,7 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = (int) token_login($pdo);
+    $user_id = (int) token_login($pdo, true, false, 'g');
 
     // get their username
     $user = user_select_name_guild_power($pdo, $user_id);

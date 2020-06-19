@@ -72,6 +72,20 @@ class ChatMessage
         $this->message = str_ireplace([':lol:', ':laugh:', ':lmao:', ':joy:'], '😂', $this->message);
         $this->message = str_ireplace([':hooray:', ':tada:', ':party:'], '🎉', $this->message);
         $this->message = str_ireplace([':fred:', ':cactus:'], '🌵', $this->message);
+        $this->message = str_ireplace([':clown:', ':jmack:'], '🤡', $this->message);
+        $this->message = str_ireplace([':waving:', ':waving-hand:'], '👋', $this->message);
+        $this->message = str_ireplace(':dragon:', '🐉', $this->message);
+        $this->message = str_ireplace(':hammer:', '🔨', $this->message);
+        $this->message = str_ireplace([':sunglasses:', ':cool:'], '😎', $this->message);
+        $this->message = str_ireplace(':100:', '💯', $this->message);
+        $this->message = str_ireplace([':pointup:', ':this:', ':^:'], '☝️', $this->message);
+        $this->message = str_ireplace([':upside-down-face:', ':udf:'], '🙃', $this->message);
+        $this->message = str_ireplace([':ok-hand:', ':ok:'], '👌', $this->message);
+        $this->message = str_ireplace(':whale:', '🐋', $this->message);
+        $this->message = str_ireplace(':finish:', '🏁', $this->message);
+        $this->message = str_ireplace([':plead:', ':plz:'], '🥺', $this->message);
+        $this->message = str_ireplace([':sob:', ':cry:'], '😭', $this->message);
+        $this->message = str_ireplace(':money:', '💸', $this->message);
     }
 
 
@@ -130,9 +144,6 @@ class ChatMessage
                 $handled = true;
             } elseif (strpos($msg, '/promote ') === 0) {
                 $this->commandAdminFakePromote(); // "promote"
-                $handled = true;
-            } elseif ($msg === '/restart_server') {
-                $this->commandAdminRestartServer(); // server restart for admins
                 $handled = true;
             } elseif (strpos($msg, '/prizer ') === 0) {
                 $this->commandAdminSetPrizer(); // change prizer for admins
@@ -209,6 +220,14 @@ class ChatMessage
             $this->write('systemChat`Sorries, guests can\'t send chat messages.'); // guest check
         } elseif ($this->player->active_rank < 3 && $this->player->group < 2) {
             $this->write('systemChat`Sorries, you must be rank 3 or above to chat.'); // rank 3 check
+        } elseif ($this->player->sban_exp_time > 0 && $this->player->sban_exp_time - time() > 0) {
+            $ban_id = (int) $this->player->sban_id;
+            $exp_time = \format_duration($this->player->sban_exp_time - time());
+            $ban_url = \urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'here');
+            $dispute_url = \urlify("https://jiggmin2.com/forums/showthread.php?tid=110", 'dispute it');
+            $msg = "This account or IP address has been socially banned. It will expire in approximately $exp_time. "
+                ."You can view more details $ban_url. If you feel this ban is unjust, you can $dispute_url.";
+            $this->write("systemChat`$msg");
         } elseif (Mutes::isMuted($this->player->name) === true) {
             $cb_secs = (int) Mutes::remainingTime($this->player->name);
             $ret = "You have been temporarily muted from the chat. The mute will be lifted in $cb_secs seconds.";
@@ -220,7 +239,7 @@ class ChatMessage
             $this->write('message`Error: Illegal character detected.'); // illegal character in username/message check
         } else {
             $name = $this->player->name;
-            $group = $this->player->group;
+            $group = $this->player->groupStr();
             $message = "chat`$name`$group`$this->message";
             $this->player->chat_count++;
             $this->player->chat_time = time();
@@ -232,7 +251,7 @@ class ChatMessage
     // advanced information for admins
     private function commandAdminDebug()
     {
-        global $pdo, $server_id, $server_name, $uptime, $port,
+        global $server_id, $server_name, $uptime, $port,
             $guild_id, $guild_owner, $server_expire_time, $campaign_array;
 
         $is_ps = ($guild_id !== 0 && $guild_id !== 183) ? 'yes' : 'no';
@@ -245,29 +264,56 @@ class ChatMessage
                 "- help<br>".
                 "- campaign [dump <b>|</b> refresh]<br>".
                 "- player (*name*)<br>".
-                "- server"
+                "- server [info <b>|</b> restart]"
             );
         } elseif ($debug_arg === 'server') {
-            $server_expires = $is_ps === 'no' ? 'never' : $server_expire_time;
-            $prizer = PR2SocketServer::$prizer_id;
-            $this->write(
-                "message`chat_message: $this->message<br>".
-                "server_id: $server_id<br>".
-                "server_name: $server_name<br>".
-                "uptime: $uptime<br>".
-                "port: $port<br>".
-                "private_server: $is_ps<br>".
-                "prizer: $prizer<br>".
-                "server_guild: $guild_id<br>".
-                "server_owner: $guild_owner<br>".
-                "server_expire_time: $server_expires"
-            );
+            $server_arg = strtolower((string) @$args[1]);
+            if ($server_arg === 'restart') {
+                global $server_name;
+                if ($this->room_type === 'c') {
+                    if ($this->player->restart_warned === false) {
+                        $this->player->restart_warned = true;
+                        $this->write(
+                            'systemChat`WARNING: You just typed the server restart command. '.
+                            'If you choose to proceed, this action will disconnect EVERY player on this server. '.
+                            'Are you sure you want to disconnect ALL players and restart the server? '.
+                            'If so, type the command again.'
+                        );
+                    } elseif ($this->player->restart_warned === true) {
+                        $name_str = (string) $this->player->name;
+                        $ip_str = (string) $this->player->ip;
+                        $msg = "$name_str ($this->from_id) restarted $server_name from $ip_str.";
+                        db_op('admin_action_insert', array($this->from_id, $msg, 'restart-server', $this->player->ip));
+                        output("$name_str ($this->from_id) initiated a server shutdown.");
+                        $this->write('systemChat`Restarting...');
+                        restart_server();
+                    }
+                } else {
+                    $this->write('systemChat`This command cannot be used in levels.');
+                }
+            } else {
+                $server_expires = $is_ps === 'no' ? 'never' : $server_expire_time;
+                $prizer = PR2SocketServer::$prizer_id;
+                $this->write(
+                    "message`chat_message: $this->message<br>".
+                    "id: $server_id<br>".
+                    "name: $server_name<br>".
+                    "port: $port<br>".
+                    "uptime: $uptime<br>".
+                    "expire_time: $server_expires<br>".
+                    "private_server: $is_ps<br>".
+                    "guild_id: $guild_id<br>".
+                    "guild_owner: $guild_owner<br>".
+                    'happy_hour: ' . HappyHour::$random_hour . '<br>'.
+                    "prizer: $prizer<br>"
+                );
+            }
         } elseif ($debug_arg === 'campaign') {
             $campaign_arg = strtolower((string) @$args[1]);
             if ($campaign_arg === 'dump') {
                 $ret = json_encode($campaign_array);
             } elseif ($campaign_arg === 'refresh') {
-                $new_campaign = campaign_select($pdo);
+                $new_campaign = db_op('campaign_select');
                 set_campaign($new_campaign);
                 $ret = "Great success! Campaign data refreshed. New:\n\n" . json_encode($new_campaign);
             } else {
@@ -319,21 +365,24 @@ class ChatMessage
                 $phead = $player->head;
                 $pbody = $player->body;
                 $pfeet = $player->feet;
-                $phatc = $player->hat_color;
-                $pheadc = $player->head_color;
-                $pbodyc = $player->body_color;
-                $pfeetc = $player->feet_color;
-                $pehatc = $player->hat_color_2;
-                $peheadc = $player->head_color_2;
-                $pebodyc = $player->body_color_2;
-                $pefeetc = $player->feet_color_2;
+                $phatc = strtoupper(base_convert($player->hat_color, 10, 16));
+                $pheadc = strtoupper(base_convert($player->head_color, 10, 16));
+                $pbodyc = strtoupper(base_convert($player->body_color, 10, 16));
+                $pfeetc = strtoupper(base_convert($player->feet_color, 10, 16));
+                $pehatc = strtoupper(base_convert($player->hat_color_2, 10, 16));
+                $peheadc = strtoupper(base_convert($player->head_color_2, 10, 16));
+                $pebodyc = strtoupper(base_convert($player->body_color_2, 10, 16));
+                $pefeetc = strtoupper(base_convert($player->feet_color_2, 10, 16));
                 $pdomain = $player->domain;
                 $pversion = $player->version;
                 $plaction = $player->socket->last_user_action;
                 $plaction = format_duration(time() - $plaction) . " ago ($plaction)";
                 $plexp = format_duration(time() - $player->last_exp_time) . " ago ($player->last_exp_time)";
-                $ptemp = $player->temp_mod === true ? 'yes' : 'no';
-                $pso = $player->server_owner === true ? 'yes' : 'no';
+                $ptemp = $player->temp_mod ? 'yes' : 'no';
+                $pso = $player->server_owner ? 'yes' : 'no';
+                $psb = $player->sban_exp_time - time() > 0 ? 'yes' : 'no';
+                $psbid = $player->sban_id;
+                $psbet = format_duration($player->sban_exp_time - time()) . " ($player->sban_exp_time)";
 
                 $this->write(
                     "message`chat_message: $this->message<br>"
@@ -348,10 +397,11 @@ class ChatMessage
                     ."last_exp_time: $plexp<br>"
                     ."speed: $pspeed | acceleration: $paccel | jumping: $pjump<br>"
                     ."hat: $phat | head: $phead | body: $pbody | feet: $pfeet<br>"
-                    ."hat_color: $phatc | hat_color_2: $pehatc<br>"
-                    ."head_color: $pheadc | head_color_2: $peheadc<br>"
-                    ."body_color: $pbodyc | body_color_2: $pebodyc<br>"
-                    ."feet_color: $pfeetc | feet_color_2: $pefeetc<br>"
+                    ."hat_color: #$phatc | hat_color_2: #$pehatc<br>"
+                    ."head_color: #$pheadc | head_color_2: #$peheadc<br>"
+                    ."body_color: #$pbodyc | body_color_2: #$pebodyc<br>"
+                    ."feet_color: #$pfeetc | feet_color_2: #$pefeetc<br>"
+                    ."socially_banned: $psb" . ($psbet > 0 ? " | id: $psbid | exp_time: $psbet" : '') . '<br>'
                     ."domain: $pdomain<br>"
                     ."version: $pversion"
                 );
@@ -379,35 +429,6 @@ class ChatMessage
     }
 
 
-    // server restart for admins
-    private function commandAdminRestartServer()
-    {
-        global $pdo, $server_name;
-
-        if ($this->room_type === 'c') {
-            if ($this->player->restart_warned === false) {
-                $this->player->restart_warned = true;
-                $this->write(
-                    'systemChat`WARNING: You just typed the server restart command. '.
-                    'If you choose to proceed, this action will disconnect EVERY player on this server. '.
-                    'Are you sure you want to disconnect ALL players and restart the server? '.
-                    'If so, type the command again.'
-                );
-            } elseif ($this->player->restart_warned === true) {
-                $name_str = (string) $this->player->name;
-                $ip_str = (string) $this->player->ip;
-                $message = "$name_str ($this->from_id) restarted $server_name from $ip_str.";
-                admin_action_insert($pdo, $this->from_id, $message, $this->from_id, $this->player->ip);
-                output("$name_str ($this->from_id) initiated a server shutdown.");
-                $this->write('systemChat`Restarting...');
-                restart_server();
-            }
-        } else {
-            $this->write('systemChat`This command cannot be used in levels.');
-        }
-    }
-
-
     // sets a privileged account (prizer) that can change a prize in-game
     private function commandAdminSetPrizer()
     {
@@ -421,8 +442,7 @@ class ChatMessage
         }
 
         // make sure prizer exists
-        global $pdo;
-        $new_prizer = user_select_name_and_power($pdo, $prizer_id, true);
+        $new_prizer = db_op('user_select_name_and_power', array($prizer_id, true));
         if ($new_prizer === false) {
             $this->write('systemChat`Error: Could not find a user with that ID.');
             return;
@@ -541,7 +561,7 @@ class ChatMessage
     // disconnects a player without disciplining them
     private function commandModDisconnect()
     {
-        global $pdo, $server_name;
+        global $server_name;
 
         $msg_lower = strtolower($this->message);
         $dc_name = trim(substr($this->message, 12)); // for /disconnect
@@ -561,7 +581,7 @@ class ChatMessage
                 $mod_id = $this->from_id;
                 $mod_ip = $this->player->ip;
                 $message = "$mod_name disconnected $dc_name from $server_name from $mod_ip.";
-                mod_action_insert($pdo, $mod_id, $message, $mod_id, $mod_ip);
+                db_op('mod_action_insert', array($mod_id, $message, 'dc', $mod_ip));
             }
         } elseif (isset($dc_player) && $dc_player->group >= $this->player->group) {
             $this->write("message`Error: You lack the power to disconnect $safe_dc_name.");
@@ -661,10 +681,8 @@ class ChatMessage
     // view ban priors for a user
     private function commandModViewPriors()
     {
-        global $pdo;
-
         $name = trim(substr($this->message, 8));
-        get_priors($pdo, $this->player, $name);
+        get_priors($this->player, $name);
     }
 
 
@@ -828,18 +846,33 @@ class ChatMessage
     {
         if ($this->room_type === 'c') {
             $this->write(
-                'systemChat`PR2 Emoticons:<br>'
+                'systemChat`Text Emotes:<br>'
                 .':shrug: = ‾\_(ツ)_/‾<br>'
                 .':lenny: = ( ͡° ͜ʖ ͡°)<br>'
                 .':yay: = ╰(ᴖ◡ᴖ)╯<br>'
                 .':hello: = ー( ◉▽◉ )ﾉ<br>'
-                .':thumbsup: = 👍<br>'
-                .':thumbsdown: = 👎<br>'
-                .':think: = 🤔<br>'
-                .':eyes: = 👀<br>'
-                .':laugh: = 😂<br>'
-                .':hooray: = 🎉<br>'
-                .':fred: = 🌵<br>'
+                .'<br>Emojis:<br>'
+                .'💯 = :100:<br>'
+                .'👍 = :+1:<br>'
+                .'👎 = :-1:<br>'
+                .'🌵 = :cactus:<br>'
+                .'🤡 = :clown:<br>'
+                .'😎 = :cool:<br>'
+                .'😭 = :cry:<br>'
+                .'🐉 = :dragon:<br>'
+                .'👀 = :eyes:<br>'
+                .'🏁 = :finish:<br>'
+                .'🔨 = :hammer:<br>'
+                .'😂 = :laugh:<br>'
+                .'💸 = :money:<br>'
+                .'👌 = :ok:<br>'
+                .'🎉 = :party:<br>'
+                .'🥺 = :plead:<br>'
+                .'☝️ = :pointup:<br>'
+                .'🤔 = :think:<br>'
+                .'🙃 = :udf:<br>'
+                .'👋 = :waving:<br>'
+                .'🐋 = :whale:<br>'
                 .'<br>'
                 .'If any of these show as boxes, make sure an emoji font is installed on your device.'
             );
@@ -905,7 +938,6 @@ class ChatMessage
             if ($this->isAdmin() === true) {
                 $admin = '<br>Admin:<br>'.
                     '- /promote *message*<br>'.
-                    '- /restart_server<br>'.
                     '- /debug *arg*<br>'.
                     '- /hh help';
             }
@@ -952,7 +984,14 @@ class ChatMessage
     private function isTempMod($player = null)
     {
         $player = isset($player) ? $player : $this->player;
-        return ($player->group === 2 && $player->temp_mod === true) ? true : false;
+        return $player->group === 2 && $player->temp_mod === true;
+    }
+
+
+    private function isTrialMod($player = null)
+    {
+        $player = isset($player) ? $player : $this->player;
+        return $player->group === 2 && $player->trial_mod === true;
     }
 
 
@@ -960,7 +999,7 @@ class ChatMessage
     private function isMod($player = null)
     {
         $player = isset($player) ? $player : $this->player;
-        return ($player->group >= 2 && $player->temp_mod === false) ? true : false;
+        return $player->group >= 2 && $player->temp_mod === false;
     }
 
 
@@ -968,7 +1007,7 @@ class ChatMessage
     private function isAdmin($player = null)
     {
         $player = isset($player) ? $player : $this->player;
-        return ($player->group === 3 && $player->server_owner === false) ? true : false;
+        return $player->group === 3 && $player->server_owner === false;
     }
 
 
@@ -976,7 +1015,7 @@ class ChatMessage
     private function isServerOwner($player = null)
     {
         $player = isset($player) ? $player : $this->player;
-        return ($player->group === 3 && $player->server_owner === true) ? true : false;
+        return $player->group === 3 && $player->server_owner === true;
     }
 
 

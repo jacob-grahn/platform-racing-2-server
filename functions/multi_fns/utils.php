@@ -55,15 +55,39 @@ function get_chat_room($chat_room_name)
 }
 
 
-// accept bans from other servers
+// accept bans from other servers or PR2 Hub
 function apply_bans($bans)
 {
     global $player_array;
 
     foreach ($bans as $ban) {
         foreach ($player_array as $player) {
-            if ($player->ip === $ban->banned_ip || (int) $player->user_id === (int) $ban->banned_user_id) {
-                $player->remove();
+            if ($player->ip === $ban->ip || (int) $player->user_id === (int) $ban->user_id) {
+                if ($ban->expire_time > time() && $ban->lifted == 0) { // active ban
+                    if ($ban->scope === 'g') { // remove if game ban
+                        $player->remove();
+                    } elseif ($player->sban_exp_time < $ban_expire_time) {
+                        $player->sban_id = $ban->ban_id;
+                        $player->sban_exp_time = $ban->expire_time;
+                    }
+                } elseif ($ban->lifted == 1 || $ban->expire_time <= time()) { // expire lifted social ban
+                    $player->sban_id = $player->sban_exp_time = 0;
+                }
+            }
+        }
+    }
+}
+
+
+function socialBansRemoveExpired()
+{
+    global $player_array;
+
+    $time = time();
+    foreach ($player_array as $player) {
+        if ($player->sban_exp_time > 0 || $player->sban_id > 0) {
+            if ($player->sban_exp_time - $time <= 0) {
+                $player->sban_id = $player->sban_exp_time = 0;
             }
         }
     }
@@ -90,6 +114,7 @@ function place_artifact($artifact)
     \pr2\multi\Artifact::$level_id = (int) $artifact->level_id;
     \pr2\multi\Artifact::$x = (int) $artifact->x;
     \pr2\multi\Artifact::$y = (int) $artifact->y;
+    \pr2\multi\Artifact::$rot = (int) $artifact->rot;
     \pr2\multi\Artifact::$updated_time = strtotime($artifact->updated_time);
     \pr2\multi\Artifact::$first_finder = (int) $artifact->first_finder;
     \pr2\multi\Artifact::$bubbles_winner = (int) $artifact->bubbles_winner;
@@ -188,9 +213,9 @@ function assign_guild_part($type, $part_id, $user_id, $guild_id, $seconds_durati
 
 
 // get ban priors (for lazy mods)
-function get_priors($pdo, $mod, $name)
+function get_priors($mod, $name)
 {
-    global $group_colors, $guild_id;
+    global $group_colors, $mod_colors, $guild_id;
 
     $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
@@ -202,14 +227,14 @@ function get_priors($pdo, $mod, $name)
     }
 
     // get player info for mod
-    $mod_power = (int) user_select_power($pdo, $mod->user_id, true);
+    $mod_power = db_op('user_select_power', array($mod->user_id, true));
     if ($mod_power < 2) {
         $mod->write("message`Error: You lack the power to view priors for $safe_name.");
         return false;
     }
 
     // get user info
-    $user = user_select_by_name($pdo, $name, true);
+    $user = db_op('user_select_by_name', array($name, true));
     $user_id = (int) $user->user_id;
     if ($user_id === 0) {
         $mod->write("message`Error: Could not find a user with that name.");
@@ -222,13 +247,14 @@ function get_priors($pdo, $mod, $name)
 
     // initialize return string var
     $url_name = htmlspecialchars(urlencode($user->name), ENT_QUOTES);
-    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $user->name, '#' . $group_colors[$power]);
+    $group_color = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[$power];
+    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $user->name, "#$group_color");
     $str = "<b>Ban Data for $u_link</b><br><br>";
 
     // check if the user is currently banned
     $str .= "Currently Banned: ";
     $is_banned = 'No';
-    $row = query_if_banned($pdo, $user_id, $ip);
+    $row = db_op('check_if_banned', array(0, $ip, 'b', false));
     if ($row !== false) {
         $ban_id = $row->ban_id;
         $reason = htmlspecialchars($row->reason, ENT_QUOTES);
@@ -240,14 +266,15 @@ function get_priors($pdo, $mod, $name)
         } elseif ($row->account_ban == 1) {
             $ban_type = 'account is';
         }
+        $scope = $row->scope === 'g' ? '' : ' socially';
         $ban_link = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'Yes');
-        $str .= "$ban_link, this $ban_type banned until $ban_end_date. Reason: $reason<br><br>";
+        $str .= "$ban_link, this $ban_type$scope banned until $ban_end_date. Reason: $reason<br><br>";
     } else {
         $str .= "$is_banned<br><br>";
     }
 
     // get account bans of target user
-    $account_bans = bans_select_by_user_id($pdo, $user_id);
+    $account_bans = db_op('bans_select_by_user_id', array($user_id));
     $account_ban_count = (int) count($account_bans);
     $str .= "This account has been banned $account_ban_count times.<br><br>";
 
@@ -267,6 +294,7 @@ function get_priors($pdo, $mod, $name)
             $lifted = (bool) $ban->lifted;
             $acc_ban = (bool) $ban->account_ban;
             $ip_ban = (bool) $ban->ip_ban;
+            $scope = $ban->scope === 'g' ? '' : ' socially';
 
             // var init
             $nameip_str = '';
@@ -288,7 +316,7 @@ function get_priors($pdo, $mod, $name)
 
             // craft ban string
             $date_url = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", $date);
-            $ban_str = "$date_url: $mod_name banned $nameip_str for $duration. Reason: $reason";
+            $ban_str = "$date_url: $mod_name$scope banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
             $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
@@ -302,7 +330,7 @@ function get_priors($pdo, $mod, $name)
     }
 
     // get IP bans of target user's IP
-    $ip_bans = bans_select_by_ip($pdo, $ip);
+    $ip_bans = db_op('bans_select_by_ip', array($ip));
     $ip_ban_count = (int) count($ip_bans);
     $ip_link = urlify("https://pr2hub.com/mod/ip_info.php?ip=$ip", $ip);
     $str .= "This IP ($ip_link) has been banned $ip_ban_count times.<br><br>";
@@ -323,6 +351,7 @@ function get_priors($pdo, $mod, $name)
             $lifted = (bool) $ban->lifted;
             $acc_ban = (bool) $ban->account_ban;
             $ip_ban = (bool) $ban->ip_ban;
+            $scope = $ban->scope === 'g' ? '' : ' socially';
 
             // var init
             $nameip_str = '';
@@ -344,7 +373,7 @@ function get_priors($pdo, $mod, $name)
 
             // craft ban string
             $date_url = urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", $date);
-            $ban_str = "$date_url: $mod_name banned $nameip_str for $duration. Reason: $reason";
+            $ban_str = "$date_url: $mod_name$scope banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
             $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
@@ -360,6 +389,39 @@ function get_priors($pdo, $mod, $name)
     // tell the mod
     $mod->write("message`$str");
     return true;
+}
+
+
+// perform an operation on the db via a query fn (try reconnecting and retrying on failure)
+function db_op($fn, $data = array())
+{
+    global $pdo, $reconnect_attempted;
+
+    try {
+        // build params and call fn
+        $params = array($pdo);
+        foreach ($data as $var) {
+            array_push($params, $var);
+        }
+        $result = call_user_func_array($fn, $params);
+
+        // got here? means it did what it was supposed to do
+        $reconnect_attempted = false;
+        return $result;
+    } catch (Exception $e) {
+        output('Query failed.');
+        if (!$reconnect_attempted) {
+            $reconnect_attempted = true;
+            output('Renewing database connection...');
+            $pdo = null;
+            $pdo = pdo_connect();
+            output('New connection succeeded!');
+            return db_op($fn, $data);
+        } else {
+            output('Could not connect. Crashing.');
+            __crashHandler(true);
+        }
+    }
 }
 
 
@@ -427,11 +489,11 @@ function restart_server()
 
 
 // not so graceful shutdown
-function __crashHandler()
+function __crashHandler($force = false)
 {
     // this function gets called every time the script ends so we want to make sure it's a crash
     $error = error_get_last();
-    if ($error['type'] !== E_ERROR) {
+    if ($error['type'] !== E_ERROR && !$force) {
         return;
     }
 

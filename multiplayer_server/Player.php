@@ -9,6 +9,7 @@ class Player
     public $guild_id;
 
     public $name;
+    public $guild_name;
     public $rank;
     public $active_rank;
     public $exp_points;
@@ -50,8 +51,8 @@ class Player
     public $hh_acceleration;
     public $hh_jumping;
 
-    public $friends;
-    public $ignored;
+    public $friends_array;
+    public $ignored_array;
 
     public $rt_used;
     public $rt_available;
@@ -74,11 +75,15 @@ class Player
     public $temp_id;
     public $pos_x = 0;
     public $pos_y = 0;
+    public $rot = 0;
 
     public $worn_hat_array = array();
 
     public $domain;
     public $ip;
+
+    public $sban_id = 0;
+    public $sban_exp_time = 0;
 
     public $special_user = false;
     public $temp_mod = false;
@@ -90,6 +95,7 @@ class Player
 
     public $status = '';
     public $register_time;
+    public $login_time;
 
     public $lives = 3;
     public $items_used = 0;
@@ -108,6 +114,7 @@ class Player
         $this->user_id = (int) $login->user->user_id;
         $this->name = $login->user->name;
         $this->group = (int) $login->user->power;
+        $this->guild_name = !empty($login->user->guild_name) ? $login->user->guild_name : '';
         $this->guild_id = (int) $login->user->guild;
 
         $this->rank = (int) $login->stats->rank;
@@ -150,12 +157,19 @@ class Player
         $this->domain = $login->login->domain;
         $this->version = $login->login->version;
 
+        // check for an active social ban
+        if (!empty($login->user->sban_id)) {
+            $this->sban_id = (int) $login->user->sban_id;
+            $this->sban_exp_time = (int) $login->user->sban_exp_time;
+        }
+
         $this->rt_used = (int) $login->rt_used;
         $this->rt_available = (int) $login->rt_available;
         $this->exp_today = (int) $this->start_exp_today = (int) $login->exp_today;
         $this->last_exp_time = time();
         $this->status = $login->status;
         $this->register_time = (int) $login->user->register_time;
+        $this->login_time = time();
 
         $socket->player = $this;
         $this->active_rank = $this->rank + $this->rt_used;
@@ -199,6 +213,39 @@ class Player
             $this->verifyStats();
             $this->verifyParts();
         }
+    }
+
+    public function getInfo()
+    {
+        $ret = new \stdClass();
+        $ret->userId = $this->user_id;
+        $ret->name = $this->name;
+        $ret->status = $this->status;
+        $ret->group = $this->group;
+        $ret->temp_mod = $this->temp_mod;
+        $ret->trial_mod = $this->trial_mod;
+        $ret->guildId = $this->guild_id;
+        $ret->guildName = $this->guild_name;
+        $ret->rank = $this->active_rank;
+        $ret->hats = count($this->hat_array) - 1;
+        $ret->registerDate = date('j/M/Y', $this->register_time);
+        $ret->loginDate = date('j/M/Y', $this->login_time);
+        $ret->hat = $this->hat;
+        $ret->head = $this->head;
+        $ret->body = $this->body;
+        $ret->feet = $this->feet;
+        $ret->hatColor = $this->hat_color;
+        $ret->headColor = $this->head_color;
+        $ret->bodyColor = $this->body_color;
+        $ret->feetColor = $this->feet_color;
+        $ret->hatColor2 = $this->getSecondColor('hat', $this->hat);
+        $ret->headColor2 = $this->getSecondColor('head', $this->head);
+        $ret->bodyColor2 = $this->getSecondColor('body', $this->body);
+        $ret->feetColor2 = $this->getSecondColor('feet', $this->feet);
+        $ret->exp_points = $this->exp_points;
+        $ret->exp_to_rank = exp_required_for_ranking($this->active_rank + 1);
+
+        return $ret;
     }
 
     private function safeExplode($str_arr)
@@ -300,6 +347,7 @@ class Player
             .'`'.join(',', $this->getFullParts('eHead'))
             .'`'.join(',', $this->getFullParts('eBody'))
             .'`'.join(',', $this->getFullParts('eFeet'))
+            .'`'.((int) HappyHour::isActive())
         );
     }
 
@@ -447,9 +495,9 @@ class Player
     private function getStatStr()
     {
         if (HappyHour::isActive()) {
-            $speed = 100; //$this->hh_speed;
-            $accel = 100; //$this->hh_acceleration;
-            $jump = 100; //$this->hh_jumping;
+            $speed = $this->hh_speed;
+            $accel = $this->hh_acceleration;
+            $jump = $this->hh_jumping;
         } elseif (PR2SocketServer::$tournament) {
             $speed = PR2SocketServer::$tournament_speed;
             $accel = PR2SocketServer::$tournament_acceleration;
@@ -624,6 +672,41 @@ class Player
     }
 
 
+    public function groupStr()
+    {
+        if ($this->group === 0) {
+            return '0';
+        } elseif ($this->group === 1) {
+            return '1';
+        } elseif ($this->group === 2) {
+            if ($this->temp_mod) {
+                return '2,0';
+            } elseif ($this->trial_mod) {
+                return '2,1';
+            } else {
+                return '2';
+            }
+        } elseif ($this->group === 3) {
+            return '3';
+        }
+    }
+
+
+    public function modPower()
+    {
+        if ($this->group === 2) {
+            if ($this->temp_mod) {
+                return 0;
+            } elseif ($this->trial_mod) {
+                return 1;
+            } else {
+                return 2;
+            }
+        }
+        return -1;
+    }
+
+
     public function becomeTempMod()
     {
         $this->group = 2;
@@ -661,7 +744,7 @@ class Player
 
     public function saveInfo()
     {
-        global $server_id, $pdo;
+        global $server_id;
         
         // make sure there's something to save
         if (!isset($this->user_id)) {
@@ -762,8 +845,7 @@ class Player
             $speed = $accel = $jump = 50;
         }
 
-        pr2_update(
-            $pdo,
+        db_op('pr2_update', array(
             $this->user_id,
             $rank,
             $exp_points,
@@ -786,13 +868,13 @@ class Player
             $speed,
             $accel,
             $jump
-        );
+        ));
 
-        epic_upgrades_upsert($pdo, $this->user_id, $ehat_arr, $ehead_arr, $ebody_arr, $efeet_arr);
-        user_update_status($pdo, $this->user_id, $status, $e_server_id);
-        rank_token_update($pdo, $this->user_id, $rt_used);
-        exp_today_add($pdo, 'id-' . $this->user_id, $exp_gain);
-        exp_today_add($pdo, 'ip-' . $ip, $exp_gain);
+        db_op('epic_upgrades_upsert', array($this->user_id, $ehat_arr, $ehead_arr, $ebody_arr, $efeet_arr));
+        db_op('user_update_status', array($this->user_id, $status, $e_server_id));
+        db_op('rank_token_update', array($this->user_id, $rt_used));
+        db_op('exp_today_add', array('id-' . $this->user_id, $exp_gain));
+        db_op('exp_today_add', array('ip-' . $ip, $exp_gain));
     }
 
 

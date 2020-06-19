@@ -69,13 +69,13 @@ try {
         }
 
         // only gonna get here if there were results
-        foreach ($logins as $row) {
+        foreach ($logins as $login) {
             // make nice variables for our data
-            $safe_ip = htmlspecialchars($row->ip, ENT_QUOTES);
-            $url_ip = urlencode($row->ip);
+            $safe_ip = htmlspecialchars($login->ip, ENT_QUOTES);
+            $url_ip = urlencode($login->ip);
             $ip = "<a href='/mod/ip_info.php?ip=$url_ip'>$safe_ip</a>"; // ip
-            $country = htmlspecialchars($row->country, ENT_QUOTES); // country code
-            $date = htmlspecialchars($row->date, ENT_QUOTES); // date
+            $country = htmlspecialchars($login->country, ENT_QUOTES); // country code
+            $date = htmlspecialchars($login->date, ENT_QUOTES); // date
 
             // display the data
             echo "IP: $ip | Country Code: $country | Date: $date<br>";

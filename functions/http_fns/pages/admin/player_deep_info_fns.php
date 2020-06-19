@@ -53,7 +53,7 @@ function output_object_keys($obj, $sep = ', ')
 {
     if ($obj !== false && $obj !== null) {
         foreach ($obj as $var => $val) {
-            if ($val == 1 && $var !== 'user_id') {
+            if ($val == 1 && $var !== 'user_id' && $var !== 'hat_array') {
                 echo $var.$sep;
             }
         }

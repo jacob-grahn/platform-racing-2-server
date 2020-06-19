@@ -86,7 +86,7 @@ try {
         }
 
         // record action
-        admin_action_insert($pdo, $admin->user_id, $msg, $admin->user_id, $ip);
+        admin_action_insert($pdo, $admin->user_id, $msg, 'restart-server', $ip);
 
         // tell the world
         echo '<br><br><span style="color: green;">All operations completed.</span>';

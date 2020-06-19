@@ -51,7 +51,7 @@ try {
     $pdo = pdo_connect();
 
     // check their login
-    $user_id = (int) token_login($pdo, false);
+    $user_id = (int) token_login($pdo, false, false, 'g');
 
     // more rate limiting
     rate_limit('change-email-attempt-'.$user_id, 5, 1);

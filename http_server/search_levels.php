@@ -5,7 +5,7 @@ header("Content-type: text/plain");
 require_once GEN_HTTP_FNS;
 
 $mode = default_post('mode', 'user');
-$search_str = default_post('search_str');
+$search_str = default_post('search_str', '');
 $order = default_post('order', 'date');
 $dir = default_post('dir', 'desc');
 $page = (int) default_post('page', 1);
@@ -22,7 +22,9 @@ try {
     }
 
     // sanity check: did they search for something?
-    if (is_empty($search_str)) {
+    if ($mode === 'id' && ($search_str != (int) $search_str || (int) $search_str === 0)) {
+        throw new Exception('Invalid level ID specified.');
+    } elseif (empty($search_str)) {
         throw new Exception('You can\'t search for nothing!');
     }
 
@@ -48,6 +50,8 @@ try {
 
     echo $page_str;
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    echo "error=$error";
+    $ret = new stdClass();
+    $ret->success = false;
+    $ret->error = $e->getMessage();
+    die(json_encode($ret));
 }

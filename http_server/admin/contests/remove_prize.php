@@ -125,7 +125,7 @@ try {
             // log the action in the admin log
             $msg = "$admin->name removed the $prize_name from contest $contest_name from $ip. "
                 ."{contest_id: $contest_id, contest_name: $contest_name, prize_id: $prize_id}";
-            admin_action_insert($pdo, $admin->user_id, $msg, 0, $ip);
+            admin_action_insert($pdo, $admin->user_id, $msg, 'contest-prize-remove', $ip);
         }
 
         // if no prizes were selected to be removed, tell the user

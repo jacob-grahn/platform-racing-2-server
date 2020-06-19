@@ -4,6 +4,7 @@ require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/player_search_fns.php';
 require_once QUERIES_DIR . '/bans.php';
+require_once QUERIES_DIR . '/recent_logins.php';
 
 $ip = default_get('ip', '');
 $header = false;
@@ -29,10 +30,13 @@ try {
     }
 
     // get IP info
-    //$ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
+    $ip_info = @file_get_contents($IP_API_LINK_2 . $ip);
+    if ($ip_info !== false) {
+        $ip_info = json_decode($ip_info);
+    }
 
     // check if it's valid
-    $skip_fanciness = true; //$ip_info->status !== 'success';
+    $skip_fanciness = $ip_info !== false ? $ip_info->status !== 'success' : true;
 
     // if the data retrieval was successful, define our fancy variables
     if ($skip_fanciness === false) {
@@ -53,6 +57,12 @@ try {
         $loc = !is_empty($html_city) ? $loc . $html_city . ', ' : $loc;
         $loc = !is_empty($html_region) ? $loc . $html_region . ', ' : $loc;
         $loc = !is_empty($html_country) ? $loc . $html_country . ' (' . $html_country_code . ')' : $loc;
+
+        // update missing country code if needed
+        $valid_ip = filter_var($ip, FILTER_VALIDATE_IP);
+        if ($valid_ip && !is_empty($ip_info->country_code) && strlen($ip_info->country_code) === 2) {
+            recent_logins_update_missing_country($pdo, $ip, $ip_info->country_code);
+        }
     }
 
     // we can dance if we want to, we can leave your friends behind
@@ -63,23 +73,24 @@ try {
 
     // if the data retrieval was successful, display our fancy variables
     if ($skip_fanciness === false) {
-        echo is_empty($html_host) ?: "<p>Host: $html_host</p>";
-        echo is_empty($html_dns) ?: "<p>DNS: $html_dns</p>";
-        echo is_empty($html_isp) ?: "<p>ISP: <a href='$url_isp' target='_blank'>$html_isp</a></p>";
-        echo is_empty($loc) ?: "<p>Location: $loc</p>";
+        echo is_empty($html_host) ? '' : "<p>Host: $html_host</p>";
+        echo is_empty($html_dns) ? '' : "<p>DNS: $html_dns</p>";
+        echo is_empty($html_isp) ? '' : "<p>ISP: <a href='$url_isp' target='_blank'>$html_isp</a></p>";
+        echo is_empty($loc) ? '' : "<p>Location: $loc</p>";
     }
 
     // check if they are currently banned
     $banned = 'No';
-    $row = query_if_banned($pdo, 0, $ip);
+    $ban = check_if_banned($pdo, 0, $ip, 'b', false);
 
-    // give some more info on the current ban in effect if there is one
-    if ($row !== false) {
-        $ban_id = $row->ban_id;
-        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
-        $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
+    // give some more info on the most severe ban (g > s scope, latest exp time) currently in effect if there is one
+    if (!empty($ban)) {
+        $ban_id = $ban->ban_id;
+        $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
+        $ban_end_date = date("F j, Y, g:i a", $ban->expire_time);
+        $scope = $ban->scope === 's' ? 'socially banned' : 'banned';
         $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes.</a>"
-            ."This IP is banned until $ban_end_date. Reason: $reason";
+            ." This IP is $scope until $ban_end_date. Reason: $reason";
     }
 
     // look for all historical bans given to this ip address
@@ -104,7 +115,7 @@ try {
     foreach ($users as $user) {
         $user_id = (int) $user->user_id;
         $name = htmlspecialchars($user->name, ENT_QUOTES);
-        $power_color = $group_colors[(int) $user->power];
+        $power_color = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $user->power];
         $active = date('j/M/Y', (int) $user->time);
 
         // echo results

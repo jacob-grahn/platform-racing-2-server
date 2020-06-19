@@ -33,7 +33,8 @@ try {
 13 - Jigg
 14 - Artifact
 15 - Jellyfish
-16+ - *BLANK*
+16 - Cheese
+17+ - *BLANK*
 
 -- Heads --
 1 - Classic (Male)
@@ -218,7 +219,7 @@ Christmas: 45
 Snowman: 46
 
 -- Blank IDs --
-Hats: 16+
+Hats: 17+
 Heads: 47+
 Bodies: 33, 44, 47+
 Feet: 31-33, 44, 47+</pre>';

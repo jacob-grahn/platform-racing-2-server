@@ -43,13 +43,13 @@ function ignored_insert($pdo, $user_id, $ignore_id)
 function ignored_select_list($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT users.name, users.power, users.status, pr2.rank, pr2.hat_array,
-               rank_tokens.used_tokens, ignored.ignore_id
-          FROM ignored
-         INNER JOIN users ON users.user_id = ignored.ignore_id
-          LEFT JOIN pr2 ON users.user_id = pr2.user_id
-          LEFT JOIN rank_tokens ON users.user_id = rank_tokens.user_id
-         WHERE ignored.user_id = :user_id
+        SELECT u.name, u.power, u.trial_mod, u.status, p.rank, p.hat_array,
+               rt.used_tokens, i.ignore_id
+          FROM ignored i
+         INNER JOIN users u ON u.user_id = i.ignore_id
+          LEFT JOIN pr2 p ON u.user_id = p.user_id
+          LEFT JOIN rank_tokens rt ON u.user_id = rt.user_id
+         WHERE i.user_id = :user_id
          LIMIT 0, 250
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);

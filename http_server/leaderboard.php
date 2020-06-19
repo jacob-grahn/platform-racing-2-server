@@ -15,7 +15,7 @@ try {
     $pdo = pdo_connect();
 
     // header, also check if mod and output the mod links if so
-    $staff = is_staff($pdo, token_login($pdo, true, true), false);
+    $staff = is_staff($pdo, token_login($pdo, true, true, 'g'), false);
     output_header('Leaderboard', $staff->mod, $staff->admin);
 
     // limit amount of entries to be obtained from the db at a time
@@ -54,8 +54,7 @@ try {
         $safe_name = str_replace(' ', "&nbsp;", $safe_name);
 
         // group
-        $group = (int) $user->power;
-        $group_color = $group_colors[$group];
+        $group_color = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $user->power];
 
         // rank
         $active_rank = (int) $user->active_rank;

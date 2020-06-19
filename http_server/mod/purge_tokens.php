@@ -82,7 +82,7 @@ try {
 
         // record action
         $mod_id = (int) $mod->user_id;
-        mod_action_insert($pdo, $mod_id, "$mod->name purged $name ($user_id)'s tokens from $ip.", $mod_id, $ip);
+        mod_action_insert($pdo, $mod_id, "$mod->name purged $name ($user_id)'s tokens from $ip.", 'purge-tokens', $ip);
 
         // tell the world
         $header = true;

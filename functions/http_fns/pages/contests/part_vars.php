@@ -17,7 +17,8 @@ function to_part_name($type, $id)
         12 => 'Thief',
         13 => 'Jigg',
         14 => 'Artifact',
-        15 => 'Jellyfish'
+        15 => 'Jellyfish',
+        16 => 'Cheese'
     ];
 
     // heads
@@ -191,7 +192,7 @@ function validate_prize($type, $id)
     // check for a valid hat id
     if ($type === 'hat' || $type === 'ehat') {
         $type = 'hat';
-        if ($id < 2 || $id > 15) {
+        if ($id < 2 || $id > 16) {
             throw new Exception("Invalid hat ID ($id) specified.");
         }
     }

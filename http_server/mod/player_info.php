@@ -45,32 +45,33 @@ try {
         throw new Exception('');
     }
 
+    // sanity check: does the user exist?
     if ($user === false) {
         output_search('', false);
         throw new Exception("Could not find a user with that $mode.");
     }
+    $user_name = $user->name;
 
     // output search without gwibble text
     output_search($user->name, false);
 
-    // check if they are currently banned
+    // give some more info on the most severe ban (game > social, longest duration) currently in effect if there is one
     $banned = 'No';
-    $row = query_if_banned($pdo, $user->user_id, $ip);
-
-    //give some more info on the current ban in effect if there is one
-    if ($row !== false) {
-        $ban_id = (int) $row->ban_id;
-        $reason = htmlspecialchars($row->reason, ENT_QUOTES);
-        $ban_end_date = date("F j, Y, g:i a", $row->expire_time);
-        if ((int) $row->ip_ban === 1 && (int) $row->account_ban === 1 && $row->banned_name === $user_name) {
-            $ban_type = 'account and ip are';
-        } elseif ((int) $row->ip_ban === 1) {
-            $ban_type = 'ip is';
-        } elseif ((int) $row->account_ban === 1) {
+    $ban = check_if_banned($pdo, $user->user_id, $user->ip, 'b', false);
+    if (!empty($ban)) {
+        $ban_id = (int) $ban->ban_id;
+        $reason = htmlspecialchars($ban->reason, ENT_QUOTES);
+        $ban_end_date = date("F j, Y, g:i a", $ban->expire_time);
+        if ((int) $ban->ip_ban === 1 && (int) $ban->account_ban === 1 && $ban->banned_name === $user_name) {
+            $ban_type = 'account and IP are';
+        } elseif ((int) $ban->ip_ban === 1) {
+            $ban_type = 'IP is';
+        } elseif ((int) $ban->account_ban === 1) {
             $ban_type = 'account is';
         }
-        $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes.</a> "
-                 ."This $ban_type banned until $ban_end_date. Reason: $reason";
+        $scope = $ban->scope === 's' ? 'socially banned' : 'banned';
+        $banned = "<a href='show_record.php?ban_id=$ban_id'>Yes</a>. This $ban_type $scope until $ban_end_date. "
+            ."Reason: $reason";
     }
 
     // get the pr2 information
@@ -83,7 +84,6 @@ try {
     }
     $status = $user->status;
     $ip = $user->ip;
-    $user_name = $user->name;
     $user_id = (int) $user->user_id;
 
     // count how many times they have been banned

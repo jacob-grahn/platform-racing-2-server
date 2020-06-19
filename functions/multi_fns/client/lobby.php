@@ -137,7 +137,8 @@ function client_get_online_list($socket)
     global $player_array;
     foreach ($player_array as $player) {
         $hats = count($player->hat_array) - 1;
-        $socket->write("addUser`$player->name`$player->group`$player->active_rank`$hats");
+        $group = $player->groupStr();
+        $socket->write("addUser`$player->name`$group`$player->active_rank`$hats");
     }
 }
 
@@ -166,6 +167,32 @@ function client_get_chat_rooms($socket)
     }
 
     $socket->write($str);
+}
+
+
+// add a user to your friends array
+function client_add_friend($socket, $data)
+{
+    $player = $socket->getPlayer();
+    $new_friend = name_to_player($data);
+    if (isset($new_friend)) {
+        array_push($player->friends_array, $new_friend->user_id);
+    }
+}
+
+
+// remove a user from your friends array
+function client_remove_friend($socket, $data)
+{
+    $player = $socket->getPlayer();
+    $friend = name_to_player($data);
+    if (isset($player)) {
+        $index = @array_search($friend->user_id, $player->friends_array);
+        if ($index !== false) {
+            $player->friends_array[$index] = null;
+            unset($player->friends_array[$index]);
+        }
+    }
 }
 
 
