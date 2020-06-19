@@ -409,6 +409,7 @@ function db_op($fn, $data = array())
         $reconnect_attempted = false;
         return $result;
     } catch (Exception $e) {
+        output('Error: ' . $e->getMessage());
         output('Query failed.');
         if (!$reconnect_attempted) {
             $reconnect_attempted = true;
