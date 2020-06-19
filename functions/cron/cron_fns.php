@@ -13,6 +13,7 @@ function run_update_cycle($pdo)
     $recent_bans = bans_select_recently_modified($pdo);
     foreach ($recent_bans as $ban) {
         $ban_time = $expire_time = 0;
+        $lifted = 1;
         $scope = 'n';
 
         // get most severe ban for this user_id and ip
@@ -20,6 +21,7 @@ function run_update_cycle($pdo)
         $ip = $ban->ip;
         $banned = check_if_banned($pdo, $user_id, $ip, 'b', false);
         if ($banned !== false) {
+            $lifted = 0;
             $scope = $banned->scope;
             $ban_time = $banned->time;
             $expire_time = $banned->expire_time;
@@ -32,6 +34,7 @@ function run_update_cycle($pdo)
         $most_severe->ip = $ip;
         $most_severe->time = $ban_time;
         $most_severe->expire_time = $expire_time;
+        $most_severe->lifted = $lifted;
         $bans_to_send[] = $most_severe;
     }
 
