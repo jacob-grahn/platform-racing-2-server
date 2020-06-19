@@ -66,7 +66,7 @@ function apply_bans($bans)
                 if ($ban->expire_time > time() && $ban->lifted == 0) { // active ban
                     if ($ban->scope === 'g') { // remove if game ban
                         $player->remove();
-                    } elseif ($player->sban_exp_time < $ban_expire_time) {
+                    } elseif ($player->sban_exp_time < $ban->expire_time) {
                         $player->sban_id = $ban->ban_id;
                         $player->sban_exp_time = $ban->expire_time;
                     }
