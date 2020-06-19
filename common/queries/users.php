@@ -627,7 +627,7 @@ function user_update_pass($pdo, $user_id, $pass_hash)
 
 function user_update_power($pdo, $user_id, $power, $trial = false)
 {
-    $trial = $power === 1 ? null : (int) $trial;
+    $trial = $power === 1 ? 0 : (int) $trial;
     $stmt = $pdo->prepare('
         UPDATE users
         SET power = :power,
