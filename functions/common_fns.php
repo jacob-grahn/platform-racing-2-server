@@ -238,7 +238,7 @@ function ensure_ip_country_from_valid_existing($pdo, $ip)
     // store valid data
     if (!apcu_exists($key) && $country_code !== '?' && strlen($country_code) === 2) {
         apcu_store($key, $country_code, 2678400); // store in apcu
-        recent_logins_update_missing_country_code($pdo, $ip, $country_code); // store in db (where ? for this IP)
+        recent_logins_update_missing_country($pdo, $ip, $country_code); // store in db (where ? for this IP)
     }
 }
 
