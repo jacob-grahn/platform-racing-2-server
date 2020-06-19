@@ -57,6 +57,13 @@ try {
     // rate limiting
     rate_limit('login-'.$ip, 5, 2, 'Please wait at least 5 seconds before trying to log in again.');
     rate_limit('login-'.$ip, 60, 10, 'Only 10 logins per minute per IP are accepted.');
+    
+    // 160 message
+    $link_160 = urlify('https://jiggmin2.com/forums/showthread.php?tid=2613', 'this thread');
+    $msg_160 = 'PR2 is currently temporarily shut down to allow for testing '
+        ."of a new build being released on or around Monday, June 22 (v160).\n\n"
+        ."For more information, please see $link_160. Thanks for your patience!";
+    throw new Exception($msg_160);
 
     // get the user's IP and run it through an IP info API
     // $ip_info = json_decode(file_get_contents('https://tools.keycdn.com/geo.json?host=' . $ip));
