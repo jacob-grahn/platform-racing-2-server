@@ -29,7 +29,7 @@ function default_post($str, $default = null)
 // gets any variable, uses default if it doesn't exist
 function default_val($val, $default = null)
 {
-    return is_empty($val) ? $default : $val;
+    return isset($val) ? $default : $val;
 }
 
 
