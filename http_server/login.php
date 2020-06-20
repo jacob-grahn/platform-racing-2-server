@@ -11,7 +11,6 @@ require_once QUERIES_DIR . '/friends.php';
 require_once QUERIES_DIR . '/ignored.php';
 require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/mod_actions.php';
-require_once QUERIES_DIR . '/mod_power.php';
 require_once QUERIES_DIR . '/part_awards.php';
 require_once QUERIES_DIR . '/rank_tokens.php';
 require_once QUERIES_DIR . '/rank_token_rentals.php';
@@ -124,9 +123,6 @@ try {
             ."For more information, please see $link_160. Thanks for your patience!";
         throw new Exception($msg_160);
     }
-    
-    // temporarily disable while doing a management op
-    throw new Exception('Access to the PR2 beta is temporarily disabled. Please contact bls for more info.');
 
     // are they banned?
     $bans = query_if_banned($pdo, $user_id, $ip);
@@ -191,12 +187,6 @@ try {
     $is_fred = $user_id === FRED;
     if ((int) $server->guild_id !== 0 && (int) $user->guild !== (int) $server->guild_id && !$ps_staff && !$is_fred) {
         throw new Exception('You must be a member of this guild to join this server.');
-    }
-
-    // if a mod, get their trial mod status
-    if ($group === 2) {
-        $unpub = (bool) (int) mod_power_select($pdo, $user_id, true)->can_unpublish_level;
-        $user->trial_mod = !$unpub;
     }
 
     // get their pr2 and epic_upgrades info
