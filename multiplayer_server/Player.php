@@ -692,21 +692,6 @@ class Player
     }
 
 
-    public function modPower()
-    {
-        if ($this->group === 2) {
-            if ($this->temp_mod) {
-                return 0;
-            } elseif ($this->trial_mod) {
-                return 1;
-            } else {
-                return 2;
-            }
-        }
-        return -1;
-    }
-
-
     public function becomeTempMod()
     {
         $this->group = 2;

@@ -33,7 +33,7 @@ class RaceStats
         $this->temp_id = $player->temp_id;
         $this->name = $player->name;
         $this->group = $player->group;
-        $this->mod_power = $player->modPower();
+        $this->mod_power = get_mod_power($player);
         $this->rank = $player->active_rank;
         $this->ip = $player->ip;
     }
