@@ -1020,6 +1020,7 @@ class Game extends Room
         } // if not, broadcast as normal
         else {
             foreach ($this->finish_array as $rs) {
+                $obj_reached = $finish_time = null;
                 if ($this->mode === self::MODE_EGG) {
                     $finish_time = $rs->eggs;
                 } elseif ($this->mode === self::MODE_OBJECTIVE) {
