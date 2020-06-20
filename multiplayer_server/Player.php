@@ -672,26 +672,6 @@ class Player
     }
 
 
-    public function groupStr()
-    {
-        if ($this->group === 0) {
-            return '0';
-        } elseif ($this->group === 1) {
-            return '1';
-        } elseif ($this->group === 2) {
-            if ($this->temp_mod) {
-                return '2,0';
-            } elseif ($this->trial_mod) {
-                return '2,1';
-            } else {
-                return '2';
-            }
-        } elseif ($this->group === 3) {
-            return '3';
-        }
-    }
-
-
     public function becomeTempMod()
     {
         $this->group = 2;

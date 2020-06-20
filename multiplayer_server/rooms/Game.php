@@ -794,7 +794,7 @@ class Game extends Room
                 $names[] = userify($this->idToPlayer($rs->temp_id), $rs->name, $rs->group, $rs->mod_power);
             }
             $vs_names = join(' vs ', $names);
-            $html_name = userify($player, $player->name, $player->group, get_mod_power($player));
+            $html_name = userify($player, $player->name, $player->group, mod_power($player));
             $message = "$vs_names: // $html_name wins with a time of $str!";
             $main->sendChat("systemChat`$message", -1);
         }
@@ -1204,7 +1204,7 @@ class Game extends Room
             $this->hatCountdownEnd = $this->currentMS() + ($secs * 1000);
             $this->hasHats = $player->temp_id;
 
-            $prospect = userify($player, $player->name, $player->group, get_mod_power($player));
+            $prospect = userify($player, $player->name, $player->group, mod_power($player));
             $msg = "If $prospect keeps all hats, they will finish in $secs seconds.<br><br>$secs";
             $this->sendToAll("systemChat`$msg");
             $this->sendToAll('startHatCountdown`');
@@ -1250,7 +1250,7 @@ class Game extends Room
             if (isset($player) && $this->isStillPlaying($player->temp_id)) {
                 $this->finishRace($player);
                 $this->cancelHatCountdown(false);
-                $winner = userify($player, $player->name, $player->group, get_mod_power($player));
+                $winner = userify($player, $player->name, $player->group, mod_power($player));
                 $this->sendToAll("systemChat`$winner finished!<br>");
             } else {
                 $this->cancelHatCountdown();

@@ -11,20 +11,24 @@ function sort_chat_room_array($a, $b)
 }
 
 
-function get_mod_power($player)
+// gets the group string from a player object (either online or from the db)
+function group_str($player)
 {
-    $online = isset($player->rank);
     $group = (int) (isset($player->group) ? $player->group : $player->power);
-    if (isset($group) && $group === 2) {
-        if ($online && $player->temp_mod) {
-            return 0;
-        } elseif ((bool) (int) $player->trial_mod) {
-            return 1;
-        } else {
-            return 2;
-        }
+    if ($group === 2) {
+        $mod_power = mod_power($player);
+        return "$group,$mod_power";
     }
-    return -1;
+    return (string) $group;
+}
+
+
+// gets the mod power from a player object (either online or from the db)
+function mod_power($player)
+{
+    $group = (int) (isset($player->group) ? $player->group : $player->power);
+    $trial = (bool) (int) $player->trial_mod;
+    return $group === 2 ? ($trial ? 1 : 2) : -1;
 }
 
 
@@ -32,22 +36,21 @@ function get_mod_power($player)
 function userify($player, $name, $power = null, $mod_power = null)
 {
     global $group_colors, $mod_colors;
+
     if (isset($player) && isset($player->group) && is_null($power)) {
-        $mod_power = get_mod_power($player);
+        $group_str = group_str($player);
+        $mod_power = mod_power($player);
         $color = $mod_power > -1 ? $mod_colors[$mod_power] : $group_colors[$player->group];
-        $link = "event:user`" . $player->groupStr() . '`' . $name;
-        $url = urlify($link, $name, "#$color");
-        return $url;
-    } elseif (!is_null($power)) {
+    } elseif (!is_null($power)) { // explicitly define group/mod power
         $mod_power = !is_null($mod_power) && $mod_power >= 0 && $mod_power <= 2 ? $mod_power : null;
         $color = !is_null($mod_power) ? $mod_colors[$mod_power] : $group_colors[$power];
         $group_str = $power . (!is_null($mod_power) ? ",$mod_power" : '');
-        $link = "event:user`" . $group_str . '`' . $name;
-        $url = urlify($link, $name, "#$color");
-        return $url;
     } else {
         return htmlspecialchars($name, ENT_QUOTES);
     }
+
+    // return to user
+    return urlify("event:user`$group_str`$name", $name, "#$color");
 }
 
 

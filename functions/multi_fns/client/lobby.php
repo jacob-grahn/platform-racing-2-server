@@ -137,7 +137,7 @@ function client_get_online_list($socket)
     global $player_array;
     foreach ($player_array as $player) {
         $hats = count($player->hat_array) - 1;
-        $group = $player->groupStr();
+        $group = group_str($player);
         $socket->write("addUser`$player->name`$group`$player->active_rank`$hats");
     }
 }
