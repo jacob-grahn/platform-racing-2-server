@@ -27,8 +27,16 @@ function group_str($player)
 function mod_power($player)
 {
     $group = (int) (isset($player->group) ? $player->group : $player->power);
-    $trial = (bool) (int) $player->trial_mod;
-    return $group === 2 ? ($trial ? 1 : 2) : -1;
+    if ($group === 2) {
+        if (isset($player->temp_mod) && $player->temp_mod) {
+            return 0;
+        } elseif ((bool) (int) $player->trial_mod) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+    return -1;
 }
 
 
