@@ -229,13 +229,13 @@ function client_ban($socket, $data)
     // tell the world
     if ($mod->group >= 2 && isset($banned) && ($banned->group < 2 || $banned->temp_mod)) {
         $mod_url = userify($mod, $mod->name);
-        $banned_url = userify($banned, $banned_name);
-        $banned = $scope === 'game' ? 'banned' : 'socially banned';
+        $name_url = userify($banned, $banned_name);
+        $scope_lang = $scope === 'game' ? 'banned' : 'socially banned';
 
         // send notif to chat
         if (isset($mod->chat_room)) {
             $log = urlify('https://pr2hub.com/bans', 'the ban log');
-            $msg = "$mod_url has $banned $banned_url for $duration. $reason. This ban has been recorded on $log.";
+            $msg = "$mod_url has $scope_lang $name_url for $duration. $reason. This ban has been recorded on $log.";
             $mod->chat_room->sendChat("systemChat`$msg");
         }
 
