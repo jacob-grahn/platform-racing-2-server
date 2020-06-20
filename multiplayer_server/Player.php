@@ -114,6 +114,7 @@ class Player
         $this->user_id = (int) $login->user->user_id;
         $this->name = $login->user->name;
         $this->group = (int) $login->user->power;
+        $this->trial_mod = (bool) (int) $login->user->trial_mod;
         $this->guild_name = !empty($login->user->guild_name) ? $login->user->guild_name : '';
         $this->guild_id = (int) $login->user->guild;
 
@@ -191,8 +192,7 @@ class Player
         }
 
         // if they're a trial, tell the client
-        if ($this->group === 2 && $login->user->trial_mod) {
-            $this->trial_mod = true;
+        if ($this->group === 2 && $this->trial_mod) {
             $this->write("becomeTrialMod`");
         }
 
