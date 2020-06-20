@@ -11,12 +11,29 @@ function sort_chat_room_array($a, $b)
 }
 
 
+function get_mod_power($player)
+{
+    $online = isset($player->rank);
+    $group = (int) (isset($player->group) ? $player->group : $player->power);
+    if (isset($group) && $group === 2) {
+        if ($online && $player->temp_mod) {
+            return 0;
+        } elseif ((bool) (int) $player->trial_mod) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+    return -1;
+}
+
+
 // determine a user's display info
 function userify($player, $name, $power = null, $mod_power = null)
 {
     global $group_colors, $mod_colors;
     if (isset($player) && isset($player->group) && is_null($power)) {
-        $mod_power = $player->modPower();
+        $mod_power = get_mod_power($player);
         $color = $mod_power > -1 ? $mod_colors[$mod_power] : $group_colors[$player->group];
         $link = "event:user`" . $player->groupStr() . '`' . $name;
         $url = urlify($link, $name, "#$color");
