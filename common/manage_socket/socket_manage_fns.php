@@ -32,12 +32,12 @@ function restart_servers($pdo, $output = true)
 
 
 // restart a server
-function restart_server($script, $address, $port, $salt, $server_id)
+function restart_server($script, $address, $port, $salt, $server_id, $verbose = false)
 {
     $pid = read_pid($port);
     shut_down_server($pid, $address, $port, $salt);
     sleep(1);
-    start_server($script, $port, $server_id);
+    start_server($script, $port, $server_id, $verbose);
 }
 
 
