@@ -166,10 +166,10 @@ function rate_limit($key, $interval, $max, $error = 'Slow down a bit, yo.')
 // checks the validity of an IP address
 function check_ip($ip, $user = null, $handle_cc = true)
 {
-    global $IP_API_ENABLED, $IP_API_LINK_PRE, $IP_API_LINK_SUF;
+    global $IP_API_ENABLED, $IP_API_LINK_PRE, $IP_API_LINK_SUF, $BLS_IP_PREFIX;
 
     // disabled globally?
-    if (!$IP_API_ENABLED) {
+    if (!$IP_API_ENABLED || strpos($ip, $BLS_IP_PREFIX) === 0) {
         return true;
     }
 
