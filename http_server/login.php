@@ -124,6 +124,9 @@ try {
             ."For more information, please see $link_160. Thanks for your patience!";
         throw new Exception($msg_160);
     }
+    
+    // temporarily disable while doing a management op
+    throw new Exception('Access to the PR2 beta is temporarily disabled. Please contact bls for more info.');
 
     // are they banned?
     $bans = query_if_banned($pdo, $user_id, $ip);
