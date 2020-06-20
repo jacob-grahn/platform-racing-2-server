@@ -423,6 +423,8 @@ function db_op($fn, $data = array())
                 output('Could not connect. Crashing.');
                 __crashHandler(true);
             }
+        } else {
+            throw new Exception($error);
         }
     }
 }
