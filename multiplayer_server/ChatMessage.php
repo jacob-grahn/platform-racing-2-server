@@ -239,7 +239,7 @@ class ChatMessage
             $this->write('message`Error: Illegal character detected.'); // illegal character in username/message check
         } else {
             $name = $this->player->name;
-            $group = $this->player->groupStr();
+            $group = group_str($this->player);
             $message = "chat`$name`$group`$this->message";
             $this->player->chat_count++;
             $this->player->chat_time = time();
