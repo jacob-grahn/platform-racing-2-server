@@ -409,18 +409,20 @@ function db_op($fn, $data = array())
         $reconnect_attempted = false;
         return $result;
     } catch (Exception $e) {
-        output('Error: ' . $e->getMessage());
-        output('Query failed.');
-        if (!$reconnect_attempted) {
-            $reconnect_attempted = true;
-            output('Renewing database connection...');
-            $pdo = null;
-            $pdo = pdo_connect();
-            output('New connection succeeded!');
-            return db_op($fn, $data);
-        } else {
-            output('Could not connect. Crashing.');
-            __crashHandler(true);
+        $error = $e->getMessage();
+        output("Query \"$fn\" failed. Error: $error");
+        if ($error === 'Could not connect to the database.') {
+            if (!$reconnect_attempted) {
+                $reconnect_attempted = true;
+                output('Renewing database connection...');
+                $pdo = null;
+                $pdo = pdo_connect();
+                output('New connection succeeded!');
+                return db_op($fn, $data);
+            } else {
+                output('Could not connect. Crashing.');
+                __crashHandler(true);
+            }
         }
     }
 }
