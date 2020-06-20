@@ -9,6 +9,7 @@ require_once QUERIES_DIR . '/servers.php';
 require_once COMMON_DIR . '/manage_socket/socket_manage_fns.php';
 
 @$server_id = (int) $argv[1];
+$verbose = $argc > 2 ? (strtolower($argv[2]) === 'true' ? true : false) : false;
 
 if ($server_id > 0) {
     // connect
@@ -18,7 +19,7 @@ if ($server_id > 0) {
     $server = server_select($pdo, $server_id);
 
     // restart it
-    restart_server(PR2_ROOT . '/pr2.php', $server->address, $server->port, $server->salt, $server->server_id);
+    restart_server(PR2_ROOT . '/pr2.php', $server->address, $server->port, $server->salt, $server->server_id, $verbose);
 } else {
     output('No server ID was passed to restart_server.php');
 }
