@@ -3,6 +3,7 @@
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/level_backups.php';
+require_once QUERIES_DIR . '/new_levels.php';
 
 $ip = get_ip();
 $desc = "<p><center>".
@@ -89,6 +90,13 @@ try {
         $result = $s3->putObjectString($body, 'pr2levels1', "$level_id.txt");
         if (!$result) {
             throw new Exception('Could not restore backup.');
+        }
+
+        // add to newest if the save time was within the last day
+        $live = (bool) (int) $row->live;
+        $to_newest = check_newest($pdo, $user_name, $ip);
+        if ($live && $to_newest === true && $row->time > time() - 86400) {
+            new_level_insert($pdo, $level_id, $row->time, $ip);
         }
 
         // success
