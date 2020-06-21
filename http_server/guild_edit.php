@@ -56,8 +56,7 @@ try {
             throw new Exception('You are not the owner of this guild.');
         } else {
             $mod = user_select_mod($pdo, $user_id, true);
-            $can_unpub = (int) $mod->can_unpublish_level;
-            if ($can_unpub === 0) {
+            if ($mod->trial_mod) {
                 throw new Exception('You lack the power to edit this guild.');
             }
             $log_action = true;

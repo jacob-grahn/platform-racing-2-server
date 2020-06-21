@@ -304,25 +304,23 @@ function user_select_level_plays($pdo, $user_id, $suppress_error = false)
 function user_select_mod($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-            SELECT u.user_id,
-                   u.name,
-                   u.email,
-                   u.register_ip,
-                   u.ip,
-                   u.time,
-                   u.register_time,
-                   u.power,
-                   u.trial_mod,
-                   u.verified,
-                   u.status,
-                   u.read_message_id,
-                   u.guild,
-                   mp.*
-              FROM users u
-        INNER JOIN mod_power mp
-                ON u.user_id = mp.user_id
-             WHERE u.user_id = :user_id
-             LIMIT 1
+         SELECT user_id,
+                name,
+                email,
+                register_ip,
+                ip,
+                time,
+                register_time,
+                power,
+                trial_mod,
+                verified,
+                status,
+                read_message_id,
+                guild
+            FROM users
+            WHERE user_id = :user_id
+            AND power >= 2
+            LIMIT 1
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();

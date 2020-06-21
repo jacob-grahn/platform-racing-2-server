@@ -574,6 +574,7 @@ function check_moderator($pdo, $user_id = null, $check_ref = true, $min_power = 
         throw new Exception('You lack the power to access this resource.');
     }
 
+    $user->trial_mod = (bool) (int) $user->trial_mod;
     return $user;
 }
 

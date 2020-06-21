@@ -37,7 +37,7 @@ try {
     rate_limit('remove-level-'.$mod->user_id, 3, 1);
 
     // make sure the user is a permanent moderator
-    if ($mod->can_unpublish_level != 1) {
+    if ($mod->trial_mod) {
         throw new Exception('You can not unpublish levels.');
     }
 

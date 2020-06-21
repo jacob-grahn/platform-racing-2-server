@@ -104,20 +104,6 @@ function promote_to_moderator($name, $type, $admin, $promoted)
             // do the power change
             db_op('user_update_power', array($user_id, 2, $type === 'trial'));
 
-            // set power limits
-            if ($type === 'trial') {
-                $max_ban = 86400;
-                $bans_per_hour = 30;
-                $can_unpublish_level = 0;
-            } elseif ($type === 'permanent') {
-                $max_ban = 31536000;
-                $bans_per_hour = 101;
-                $can_unpublish_level = 1;
-            }
-
-            // insert power limits into the db
-            db_op('mod_power_insert', array($user_id, $max_ban, $bans_per_hour, $can_unpublish_level));
-
             // log action in admin action log
             $a_msg = "$admin->name promoted $user_row->name to a $type moderator from $admin->ip on $server_name.";
             db_op('admin_action_insert', array($admin->user_id, $a_msg, 'mod-promote', $admin->ip));
