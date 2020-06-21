@@ -236,6 +236,10 @@ function format_level_list($levels)
 
     $levels_str = json_encode($ret->levels, JSON_UNESCAPED_UNICODE);
     if (!is_empty($levels_str)) {
+        if ($level->level_id === 4516249) {
+            var_dump($levels_str);
+            die();
+        }
         $hash = md5($levels_str . $LEVEL_LIST_SALT);
         $ret->hash = $hash;
     }
