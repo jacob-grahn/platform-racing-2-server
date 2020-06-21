@@ -227,7 +227,7 @@ function update_artifact($pdo)
 
     // tell it to the world
     $r = new stdClass();
-    if ($hide_characters === 0) {
+    if ($hide_perc === 0) {
         $r->level_id = $level_id;
         $r->level_title = $title;
         $r->creator_name = $user_name;
