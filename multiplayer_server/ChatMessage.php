@@ -684,7 +684,7 @@ class ChatMessage
         }
 
         // talk about unmuting
-        $str .= '<br /><br />To remove a mute, type:<br />/unkick *name*';
+        $str .= '<br /><br />To remove a mute, type:<br />/unmute *name*';
 
         // send the string back
         $this->write("systemChat`$str");
