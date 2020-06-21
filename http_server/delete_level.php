@@ -6,6 +6,7 @@ require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/artifact_location.php';
 require_once QUERIES_DIR . '/campaigns.php';
 require_once QUERIES_DIR . '/level_backups.php';
+require_once QUERIES_DIR . '/new_levels.php';
 
 $level_id = (int) default_post('level_id', 0);
 $ip = get_ip();
@@ -86,6 +87,7 @@ try {
 
     // delete the level in the db
     level_delete($pdo, $level_id);
+    delete_from_newest($pdo, $level_id);
 
     // delete the file from server
     unlink(__DIR__ . "/levels/$level_id.txt");
