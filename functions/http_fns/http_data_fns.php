@@ -234,7 +234,7 @@ function format_level_list($levels)
         $ret->levels[] = $level;
     }
 
-    $levels_str = json_encode($ret->levels, JSON_UNESCAPED_UNICODE);
+    $levels_str = json_encode($ret->levels);
     if (!is_empty($levels_str)) {
         $hash = md5($levels_str . $LEVEL_LIST_SALT);
         $ret->hash = $hash;
