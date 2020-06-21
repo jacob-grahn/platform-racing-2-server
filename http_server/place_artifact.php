@@ -42,6 +42,12 @@ try {
     if ($user_id !== FRED) {
         throw new Exception('You are not Fred.');
     }
+    
+    // sanity check: does the level exist? is it a hat attack level?
+    $level = level_select($pdo, $level_id);
+    if ($level->type === 'h') {
+        throw new Exception('The artifact can\'t be set on a hat attack level.');
+    }
 
     // update the artifact location in the database
     artifact_location_update($pdo, $level_id, $x, $y, $rot);
