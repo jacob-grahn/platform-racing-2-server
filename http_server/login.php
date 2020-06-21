@@ -283,14 +283,6 @@ try {
     // get their most recent PM id
     $last_recv_id = messages_select_most_recent($pdo, $user_id);
 
-    // update their status
-    $status = "Playing on $server->server_name";
-    user_update_status($pdo, $user_id, $status, $server_id);
-
-    // update their IP and record the recent login
-    user_update_ip($pdo, $user_id, $ip);
-    recent_logins_insert($pdo, $user_id, $ip, $country_code);
-
     // join the part arrays to send to the server
     $stats->hat_array = join(',', $hat_array);
     $stats->head_array = join(',', $head_array);
@@ -307,12 +299,20 @@ try {
     $send->rt_used = $rt_used;
     $send->rt_available = $rt_available;
     $send->exp_today = $exp_today;
-    $send->status = $status;
+    $send->status = "Playing on $server->server_name";
     $send->server = $server;
     $send->epic_upgrades = $epic_upgrades;
 
     $str = "register_login`" . json_encode($send);
-    talk_to_server($server_address, $server_port, $server->salt, $str, false, false);
+    $result = talk_to_server($server_address, $server_port, $server->salt, $str, false, false);
+
+    // update user information if the login was successful
+    $result = json_decode($result);
+    if ($result->success) {
+        user_update_status($pdo, $user_id, $send->status, $server_id); // status
+        user_update_ip($pdo, $user_id, $ip); // last IP address
+        recent_logins_insert($pdo, $user_id, $ip, $country_code); // record recent login
+    }
 
     // tell the world
     $ret->success = true;

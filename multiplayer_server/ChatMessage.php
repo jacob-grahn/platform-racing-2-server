@@ -116,6 +116,9 @@ class ChatMessage
             } elseif (($msg === '/clear' || $msg === '/cls')) {
                 $this->commandModClearChatroom(); // clear the chatroom
                 $handled = true;
+            } elseif ($msg === '/kicked') {
+                $this->commandModWhoIsKicked();
+                $handled = true;
             } elseif (strpos($msg, '/kick ') === 0) {
                 $this->commandModKick(); // kick for mods
                 $handled = true;
@@ -124,6 +127,8 @@ class ChatMessage
                 $handled = true;
             } elseif (strpos($msg, '/mute ') === 0 || strpos($msg, '/warn ') === 0) {
                 $this->commandModMute(); // mute for mods
+            } elseif ($msg === '/muted' || $msg === '/warned') {
+                $this->commandModWhoIsMuted();
                 $handled = true;
             } elseif (strpos($msg, '/unmute ') === 0 || strpos($msg, '/unwarn ') === 0) {
                 $this->commandModUnMute(); // unmute for mods
@@ -215,10 +220,15 @@ class ChatMessage
     // handle a chat message
     private function handleMessage()
     {
+        global $guild_id;
+
+        $player = $this->player;
+        $muted = Mutes::isMuted($player->name, $player->ip);
+
         // make sure they're allowed to send a message
-        if ($this->player->group <= 0 || $this->player->guest === true) {
+        if ($player->group <= 0 || $player->guest === true) {
             $this->write('systemChat`Sorries, guests can\'t send chat messages.'); // guest check
-        } elseif ($this->player->active_rank < 3 && $this->player->group < 2) {
+        } elseif ($player->active_rank < 3 && $player->group < 2) {
             $this->write('systemChat`Sorries, you must be rank 3 or above to chat.'); // rank 3 check
         } elseif ($this->player->sban_exp_time > 0 && $this->player->sban_exp_time - time() > 0) {
             $ban_id = (int) $this->player->sban_id;
@@ -228,21 +238,21 @@ class ChatMessage
             $msg = "This account or IP address has been socially banned. It will expire in approximately $exp_time. "
                 ."You can view more details $ban_url. If you feel this ban is unjust, you can $dispute_url.";
             $this->write("systemChat`$msg");
-        } elseif (Mutes::isMuted($this->player->name) === true) {
-            $cb_secs = (int) Mutes::remainingTime($this->player->name);
+        } elseif ($muted && ((!$this->isMod() && !$this->isTempMod()) || (!$this->isServerOwner() && $guild_id > 0))) {
+            $cb_secs = (int) Mutes::remainingTime($player->name, $player->ip);
             $ret = "You have been temporarily muted from the chat. The mute will be lifted in $cb_secs seconds.";
             $this->write("systemChat`$ret"); // muted check (warnings, auto-warn, manual mute duration)
-        } elseif ($this->player->getChatCount() > 6 && ($this->player->group < 2 || $this->isTempMod() === true)) {
-            Mutes::add($this->player->name, 60);
+        } elseif ($player->getChatCount() > 6 && ($player->group < 2 || $this->isTempMod() === true)) {
+            Mutes::add($player->name, $player->ip, 60);
             $this->write('systemChat`Slow down a bit, yo.'); // spamming check
-        } elseif (strpos($this->player->name, '`') !== false || strpos($this->message, '`') !== false) {
+        } elseif (strpos($player->name, '`') !== false || strpos($this->message, '`') !== false) {
             $this->write('message`Error: Illegal character detected.'); // illegal character in username/message check
         } else {
             $name = $this->player->name;
             $group = group_str($this->player);
             $message = "chat`$name`$group`$this->message";
-            $this->player->chat_count++;
-            $this->player->chat_time = time();
+            $player->chat_count++;
+            $player->chat_time = time();
             $this->room->sendChat($message, $this->from_id); // send message
         }
     }
@@ -558,6 +568,31 @@ class ChatMessage
     }
 
 
+    // shows who is currently kicked from the server
+    public function commandModWhoIsKicked()
+    {
+        $kicks = \pr2\multi\ServerBans::getAll();
+        $count = count($kicks);
+        $str = "Currently kicked from this server ($count):"; // start the return string
+    
+        foreach ($kicks as $kick) {
+            $time_remaining = format_duration(\pr2\multi\ServerBans::remainingTime($kick->user_name, $kick->ip));
+            $str .= "<br> - " . userify(null, $kick->user_name) . ' (' . $time_remaining . ')';
+        }
+
+        // this should never happen (the person in the room is calling the function)
+        if ($str === 'Currently kicked from this server (0):') {
+            $str = 'No one is kicked! \0/';
+        }
+
+        // talk about unkicking
+        $str .= '<br /><br />To remove a kick, type:<br />/unkick *name*';
+        
+        // send the string back
+        $this->write("systemChat`$str");
+    }
+
+
     // disconnects a player without disciplining them
     private function commandModDisconnect()
     {
@@ -628,6 +663,31 @@ class ChatMessage
         $warn_num = (int) substr($data, 0, strpos($data, ' '));
         $target_name = trim(substr($data, strpos($data, ' ')));
         client_warn($this->player->socket, "$target_name`$warn_num");
+    }
+
+
+    // shows who is currently warned/muted
+    public function commandModWhoIsMuted()
+    {
+        $mutes = \pr2\multi\Mutes::getAll();
+        $count = count($mutes);
+        $str = "Currently muted ($count):"; // start the return string
+
+        foreach ($mutes as $mute) {
+            $time_remaining = format_duration(\pr2\multi\Mutes::remainingTime($mute->user_name, $mute->ip));
+            $str .= "<br> - " . userify(null, $mute->user_name) . ' (' . $time_remaining . ')';
+        }
+
+        // this should never happen (the person in the room is calling the function)
+        if ($str === 'Currently muted (0):') {
+            $str = 'No one is muted! \0/';
+        }
+
+        // talk about unmuting
+        $str .= '<br /><br />To remove a mute, type:<br />/unkick *name*';
+
+        // send the string back
+        $this->write("systemChat`$str");
     }
 
 
@@ -785,12 +845,14 @@ class ChatMessage
     }
 
 
-    // change tournament settings (server owner only) or check status
+    // change tournament settings (staff only) or check status
     private function commandTournament()
     {
+        global $guild_id;
+
         $msg_lower = strtolower($this->message);
         // if server owner, allow them to do server owner things
-        if ($this->player->server_owner === true) {
+        if ($this->isMod() || ($this->isServerOwner() && $guild_id > 0)) {
             if ($msg_lower === '/t help' || $msg_lower === '/t' || $msg_lower === '/tournament') {
                 $this->write('systemChat`Welcome to tournament mode!<br><br>'.
                     'To enable a tournament, use /t followed by a hat '.
@@ -922,6 +984,7 @@ class ChatMessage
                 $mod = '<br>Moderator:<br>'.
                     '- /a *announcement*<br>'.
                     '- /give *message*<br>'.
+                    '- /kicked (see who\'s kicked)<br>'.
                     '- /kick *name*<br>'.
                     '- /unkick *name*<br>'.
                     '- /mute *num* *name*<br>'.
@@ -988,11 +1051,12 @@ class ChatMessage
     }
 
 
-    private function isTrialMod($player = null)
+    // returns true if the user is a trial mod
+    /*private function isTrialMod($player = null)
     {
         $player = isset($player) ? $player : $this->player;
         return $player->group === 2 && $player->trial_mod === true;
-    }
+    }*/
 
 
     // returns true if the user is a mod or higher (including server owner)

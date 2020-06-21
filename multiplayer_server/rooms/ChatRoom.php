@@ -101,7 +101,7 @@ class ChatRoom extends Room
         }
 
         // this should never happen (the person in the room is calling the function)
-        if ($str === 'Currently in this chatroom:') {
+        if ($str === 'Currently in this chatroom (0):') {
             $str = 'No one is here. :(';
         }
 
