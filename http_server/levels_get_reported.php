@@ -28,14 +28,6 @@ try {
     // get levels
     $levels = levels_reported_select_unarchived_recent($pdo);
 
-    // handle special characters
-    foreach ($levels as $key => $level) {
-        $level->title = utf8_encode($level->title);
-        $level->note = utf8_encode($level->note);
-        $level->reason = utf8_encode($level->reason);
-        $levels[$key] = $level;
-    }
-
     // tell the world
     $ret->success = true;
     $ret->levels = $levels;
