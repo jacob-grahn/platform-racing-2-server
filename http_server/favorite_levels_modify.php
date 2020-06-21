@@ -56,7 +56,7 @@ try {
     $func($pdo, $user_id, $level_id);
 
     // craft return message
-    $level_title = utf8_encode(htmlspecialchars($level_title, ENT_QUOTES));
+    $level_title = htmlspecialchars($level_title, ENT_QUOTES);
     $moded = $mode === 'add' ? 'added to' : 'removed from';
     $punc = $mode === 'add' ? '!' : '.';
     $msg = "$level_title has been $moded your favorites$punc It may take up to 30 seconds for your list to update.";
