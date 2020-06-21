@@ -215,9 +215,6 @@ function format_level_list($levels)
     $ret->levels = [];
     foreach ($levels as $level) {
         $level->level_id = (int) $level->level_id;
-        if ($level->level_id === 4516249) {
-            var_dump($level);
-        }
         $level->version = (int) $level->version;
         $level->title = utf8_encode($level->title);
         $level->rating = round($level->rating, 2);

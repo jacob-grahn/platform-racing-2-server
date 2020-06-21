@@ -82,15 +82,6 @@ try {
     if ((is_empty($in_token) === true && is_empty($user_name) === true) || strpos($user_name, '`') !== false) {
         throw new Exception('Invalid user name entered.');
     }
-    
-    // 160 testing
-    //if ($user->guild != 205 && $user->power < 2) {
-        $link_160 = urlify('https://jiggmin2.com/forums/showthread.php?tid=2613', 'this thread');
-        $msg_160 = 'PR2 is currently temporarily shut down to allow for testing '
-            ."of a new build being released on or around Monday, June 22 (v160).\n\n"
-            ."For more information, please see $link_160. Thanks for your patience!";
-        throw new Exception($msg_160);
-    //}
 
     // connect
     $pdo = pdo_connect();

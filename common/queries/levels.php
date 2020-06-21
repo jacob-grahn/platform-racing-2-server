@@ -63,6 +63,7 @@ function level_increment_play_count($pdo, $level_id, $play_count)
 
 function level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $pass, $type)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         INSERT INTO levels
            SET title = :title,
@@ -98,6 +99,7 @@ function level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song,
 
 function level_select_by_title($pdo, $user_id, $title)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT *
           FROM levels
@@ -120,6 +122,7 @@ function level_select_by_title($pdo, $user_id, $title)
 
 function level_select($pdo, $level_id, $suppress_error = false)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT *
           FROM levels
@@ -148,7 +151,7 @@ function level_select($pdo, $level_id, $suppress_error = false)
 
 function level_select_from_search($pdo, $level_id)
 {
-    // get the levels
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT l.level_id,
                l.version,
@@ -188,7 +191,7 @@ function level_select_from_search($pdo, $level_id)
 
 function level_select_title($pdo, $level_id)
 {
-    // get the levels
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT title
           FROM levels
@@ -259,6 +262,7 @@ function level_update_rating($pdo, $level_id, $rating, $votes)
 
 function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, $song, $version, $pass, $type)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         UPDATE levels
            SET title = :title,
@@ -297,6 +301,7 @@ function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_le
 
 function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $song, $lid, $plays, $votes, $rating, $ver)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         INSERT INTO levels
         SET level_id = :level_id,
@@ -344,6 +349,8 @@ function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $son
 
 function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $order = 'date', $dir = 'desc')
 {
+    db_set_encoding($pdo, 'utf8mb4');
+
     if ($mode === 'id') {
         if ($start === 0) { // page 1 only
             return level_select_from_search($pdo, $search);
@@ -420,6 +427,7 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
 
 function levels_select_best_today($pdo)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT l.level_id,
                l.version,
@@ -457,6 +465,7 @@ function levels_select_best_today($pdo)
 
 function levels_select_best($pdo)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
           SELECT l.level_id,
                  l.version,
@@ -492,6 +501,7 @@ function levels_select_best($pdo)
 
 function levels_select_by_owner($pdo, $user_id)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT l.level_id,
                l.version,
@@ -526,6 +536,7 @@ function levels_select_by_owner($pdo, $user_id)
 
 function level_select_by_rand($pdo)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT level_id, title, note
           FROM levels
@@ -553,7 +564,7 @@ function level_select_by_rand($pdo)
 
 function levels_select_campaign($pdo)
 {
-
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
           SELECT l.level_id,
                  l.version,
@@ -589,6 +600,7 @@ function levels_select_campaign($pdo)
 
 function levels_select_newest($pdo)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
           SELECT l.level_id,
                  l.version,

@@ -39,6 +39,7 @@ function messages_reported_check_existing($pdo, $message_id)
 
 function messages_reported_insert($pdo, $to_id, $from_id, $reporter_ip, $from_ip, $sent, $reported, $mid, $m)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         INSERT INTO messages_reported
            SET to_user_id = :to_user_id,
@@ -70,6 +71,7 @@ function messages_reported_insert($pdo, $to_id, $from_id, $reporter_ip, $from_ip
 
 function messages_reported_select($pdo, $start, $count)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT messages_reported.*, u1.name as from_name, u2.name as to_name
           FROM messages_reported, users u1, users u2

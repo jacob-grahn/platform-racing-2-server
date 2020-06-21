@@ -1,5 +1,11 @@
 <?php
 
+
+/**
+ * Establishes a database connection.
+ *
+ * @throws Exception if the connection fails.
+ */
 function pdo_connect()
 {
     try {
@@ -8,5 +14,23 @@ function pdo_connect()
     } catch (PDOException $e) {
         // throw a custom error to make sure an error containing db info is not shown
         throw new Exception('Could not connect to the database.');
+    }
+}
+
+
+/**
+ * Sets the character encoding for all queries on this PDO connection.
+ *
+ * @param resource pdo Contains the current database connection instance.
+ * @param string encoding The encoding to set.
+ *
+ * @throws Exception if the query fails.
+ */
+function db_set_encoding($pdo, $encoding)
+{
+    $stmt = $pdo->prepare('SET NAMES :encoding');
+    $stmt->bindValue(':encoding', $encoding);
+    if ($stmt->execute() === false) {
+        throw new Exception('Invalid charset.');
     }
 }

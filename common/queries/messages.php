@@ -23,6 +23,7 @@ function message_delete($pdo, $user_id, $message_id)
 
 function message_insert($pdo, $to_user_id, $from_user_id, $message, $ip, $guild_message = 0)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         INSERT INTO messages
         SET to_user_id = :to_user_id,
@@ -49,6 +50,7 @@ function message_insert($pdo, $to_user_id, $from_user_id, $message, $ip, $guild_
 
 function message_select($pdo, $message_id, $suppress_error = false)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT *
           FROM messages
@@ -157,6 +159,8 @@ function messages_select_recent($pdo, $min_message_id)
 
 function messages_select($pdo, $to_user_id, $start, $count)
 {
+    db_set_encoding($pdo, 'utf8mb4');
+
     $start = (int) $start;
     $count = (int) $count;
 
