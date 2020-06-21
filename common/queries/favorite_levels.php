@@ -61,6 +61,7 @@ function favorite_levels_select_ids($pdo, $user_id)
 
 function favorite_levels_select($pdo, $user_id, $page)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $start = ($page - 1) * 9;
     $stmt = $pdo->prepare('
         SELECT l.level_id,
