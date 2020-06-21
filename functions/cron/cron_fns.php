@@ -177,18 +177,18 @@ function update_artifact($pdo)
     $user = user_select($pdo, $user_id);
     $user_name = $user->name;
 
+    // get the first finder's info
+    $finder_name = '';
     if ($first_finder !== 0) {
         $finder = user_select($pdo, $first_finder);
         $finder_name = $finder->name;
-    } else {
-        $finder_name = '';
     }
 
+    // get the bubbles winner's info
+    $bubbles_name = '';
     if ($bubbles_winner !== 0) {
         $bubbles = user_select($pdo, $bubbles_winner);
         $bubbles_name = $bubbles->name;
-    } else {
-        $bubbles_name = '';
     }
 
     // form the base string we'll be creating
@@ -227,14 +227,19 @@ function update_artifact($pdo)
 
     // tell it to the world
     $r = new stdClass();
+    if ($hide_characters === 0) {
+        $r->level_id = $level_id;
+        $r->level_title = $title;
+        $r->creator_name = $user_name;
+        $r->creator_group = $user->power . ((bool) (int) $user->trial_mod ? ',1' : '');
+    }
     $r->hint = join('', $arr);
     $r->finder_name = $finder_name;
     $r->bubbles_name = $bubbles_name;
     $r->updated_time = $updated_time;
-    $r_str = json_encode($r);
 
-    file_put_contents(WWW_ROOT . '/files/artifact_hint.txt', $r_str);
-    output($r->hint);
+    // write to the file system
+    file_put_contents(WWW_ROOT . '/files/artifact_hint.txt', json_encode($r));
 }
 
 
