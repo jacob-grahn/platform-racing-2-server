@@ -209,23 +209,20 @@ function process_register_login($server_socket, $data)
         $user_id = (int) $login_obj->user->user_id;
         $is_fred = $user_id === FRED;
         $ps_staff_cond = $group === 3 || ($group === 2 && ($guild_id === 205 || $guild_id === 183));
+        $is_guild_owner = $user_id === $guild_owner;
 
         $socket = @$login_array[$login_id];
         unset($login_array[$login_id]);
 
+        $kick_time = \pr2\multi\ServerBans::remainingTime($login_obj->user->name, $socket->ip);
+
         if (isset($socket)) {
             if (!$server_socket->process) {
                 $socket->write('message`Error: Login verification failed.');
-                $socket->close();
-                $socket->onDisconnect();
             } elseif ($login_obj->login->ip !== $socket->ip) {
                 $socket->write('message`Error: There\'s an IP mismatch. Check your network settings.');
-                $socket->close();
-                $socket->onDisconnect();
             } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild && !$ps_staff_cond && !$is_fred) {
                 $socket->write('message`Error: You are not a member of this guild.');
-                $socket->close();
-                $socket->onDisconnect();
             } elseif (isset($player_array[$user_id])) {
                 if ($group > 0) {
                     $existing_player = $player_array[$user_id];
@@ -239,12 +236,11 @@ function process_register_login($server_socket, $data)
                         .'Please try again later, or create your own account.';
                     $socket->write("message`$dc_msg");
                 }
-                $socket->close();
-                $socket->onDisconnect();
-            } elseif (\pr2\multi\ServerBans::isBanned($login_obj->user->name)) {
-                $socket->write('message`Error: You have been kicked from this server for 30 minutes.');
-                $socket->close();
-                $socket->onDisconnect();
+            } elseif ($kick_time > 0 && ($group < 2 || $guild_id > 0) && !$is_guild_owner) {
+                $dur = format_duration($kick_time);
+                $msg = 'Error: This account or IP address has been kicked from this server for 30 minutes. '
+                    ."The kick will expire in approximately $dur.";
+                $socket->write("message`$msg");
             } else {
                 $player = new \pr2\multi\Player($socket, $login_obj);
                 $socket->player = $player;
@@ -258,6 +254,17 @@ function process_register_login($server_socket, $data)
                 $socket->write("setRank`$player->active_rank");
                 $socket->write('ping`' . time());
             }
+
+            // disconnect if an error occurred
+            $ret = new stdClass();
+            $ret->success = !empty($player);
+            if (!$ret->success) {
+                $socket->close();
+                $socket->onDisconnect();
+            }
+
+            // tell the HTTP server the result
+            $server_socket->write(json_encode($ret));
         }
     }
 }

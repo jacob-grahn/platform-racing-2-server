@@ -50,7 +50,7 @@ function client_kick($socket, $data)
         // kick the user
         if (($kicked->group < 2 || $mod->server_owner === true) && $kicked->server_owner === false) {
             // add server ban
-            \pr2\multi\ServerBans::add($name);
+            \pr2\multi\ServerBans::add($name, $kicked->ip);
 
             // let people know that the player is kicking someone
             if (isset($mod->chat_room)) {
@@ -64,7 +64,8 @@ function client_kick($socket, $data)
             if ($kicked_online === false) {
                 $mod->write("message`$safe_kname is not currently on this server, but the kick was applied anyway.");
             } else {
-                $kicked->remove();
+                // kick others on this IP
+                \pr2\multi\ServerBans::applyToIP($kicked->ip);
                 $mod->write("message`$safe_kname has been kicked from this server for 30 minutes.");
             }
 
@@ -162,7 +163,7 @@ function client_warn($socket, $data)
 
         // warn the user if they're not a mod
         if (($warned->group < 2 || $mod->server_owner === true) && $warned->server_owner === false) {
-            \pr2\multi\Mutes::add($name, $time);
+            \pr2\multi\Mutes::add($name, $warned->ip, $time);
             if ($warned_online === false) {
                 $mod->write("message`$safe_wname is not currently on this server, but the mute was applied anyway.");
             }
