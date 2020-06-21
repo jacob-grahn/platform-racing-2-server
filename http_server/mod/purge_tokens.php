@@ -23,7 +23,7 @@ try {
     $mod = check_moderator($pdo);
 
     // exclude trial mods
-    if ((int) $mod->can_unpublish_level !== 1) {
+    if ($mod->trial_mod) {
         throw new Exception("You lack the power to access this resource.");
     }
 

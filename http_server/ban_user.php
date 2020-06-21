@@ -43,18 +43,17 @@ try {
     // get variables from the mod variable
     $mod_uid = (int) $mod->user_id;
     $mod_name = $mod->name;
-    $mod_power = $mod->power;
 
     // limit ban length
-    $duration = $duration > $mod->max_ban ? $mod->max_ban : $duration;
-    $time = (int) time();
-    $ends = $time + $duration;
+    $max_length = $mod->trial_mod ? 86400 : 31536000;
+    $duration = $duration > $max_length ? $max_length : $duration;
+    $ends = time() + $duration;
 
     // throttle bans using PDO
+    $max_bans = $mod->trial_mod ? 30 : 101;
     $throttle = throttle_bans($pdo, $mod_uid);
-    $recent_ban_count = $throttle->recent_ban_count;
-    if ($recent_ban_count > $mod->bans_per_hour) {
-        throw new Exception("You have reached the cap of $mod->bans_per_hour bans per hour.");
+    if ($throttle->recent_ban_count > $max_bans) {
+        throw new Exception("You have reached the cap of $max_bans bans per hour.");
     }
 
     // get the banned user's info using PDO
@@ -89,7 +88,7 @@ try {
     $scope = $scope === 'social' ? 's' : 'g';
 
     // permission check
-    if ($banned_power >= 2 || $mod_power < 2) {
+    if ($banned_power >= 2 || $mod->power < 2) {
         throw new Exception("You lack the power to ban $ban_name.");
     }
 

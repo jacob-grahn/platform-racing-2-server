@@ -57,9 +57,6 @@ function demote_mod($user_name, $admin, $demoted_player)
             throw new Exception("You lack the power to demote $html_name, as they are an admin.");
         }
 
-        // delete mod entry
-        db_op('mod_power_delete', array($user_id));
-
         // set power to 1
         db_op('user_update_power', array($user_id, 1));
 
