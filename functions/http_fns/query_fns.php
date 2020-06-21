@@ -37,7 +37,7 @@ function pass_login($pdo, $name, $password, $ban_check_scope = 'b')
     unset($user->temp_pass_hash);
 
     // check to see if they're banned (using custom scope)
-    check_if_banned($pdo, $user_id, $ip, $ban_check_scope);
+    check_if_banned($pdo, $user->user_id, $ip, $ban_check_scope);
 
     // done
     return $user;

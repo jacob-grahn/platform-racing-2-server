@@ -1260,7 +1260,7 @@ class Game extends Room
 
     private function loseAllHats($player)
     {
-        foreach ($player->worn_hat_array as $hat) {
+        for ($i = 0; $i < count($player->worn_hat_array); $i++) {
             $y = $player->pos_y - 50;
             $this->looseHat($player, "$player->pos_x`$y`$player->rot");
         }

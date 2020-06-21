@@ -1051,11 +1051,12 @@ class ChatMessage
     }
 
 
-    private function isTrialMod($player = null)
+    // returns true if the user is a trial mod
+    /*private function isTrialMod($player = null)
     {
         $player = isset($player) ? $player : $this->player;
         return $player->group === 2 && $player->trial_mod === true;
-    }
+    }*/
 
 
     // returns true if the user is a mod or higher (including server owner)

@@ -179,9 +179,9 @@ function check_ip($ip, $user = null, $handle_cc = true)
     $power_cond = (isset($user) && $user->power == 1) || !isset($user);
     if ($power_cond && !$verified && !apcu_exists($key)) { // if a member, not verified, and ip isn't cached
         $data = @file_get_contents($IP_API_LINK_PRE . $ip . $IP_API_LINK_SUF); // get ip info
-        if ($data !== false) { // if url query succeeded
+        if ($data !== false && $data->success) { // if url query succeeded
             $data = json_decode($data); // decode return data
-            $validity = ip_is_valid($ip, $data, $handle_cc) ? 'VALID' : 'INVALID'; // determine validity
+            $validity = ip_is_valid($data, $handle_cc) ? 'VALID' : 'INVALID'; // determine validity
             apcu_store($key, $validity, 2678400); // log validity
         }
     } elseif (apcu_exists($key)) {
@@ -192,26 +192,24 @@ function check_ip($ip, $user = null, $handle_cc = true)
 }
 
 
-function ip_is_valid($ip, $data, $handle_cc)
+function ip_is_valid($data, $handle_cc)
 {
     global $IP_API_SCORE_MIN;
 
     $valid = true;
-    if ($data->success) {
-        if ($data->fraud_score > $IP_API_SCORE_MIN
-            || $data->proxy
-            || $data->vpn
-            || $data->tor
-            || $data->recent_abuse
-        ) {
-            $valid = false;
-        }
+    if ($data->fraud_score > $IP_API_SCORE_MIN
+        || $data->proxy
+        || $data->vpn
+        || $data->tor
+        || $data->recent_abuse
+    ) {
+        $valid = false;
+    }
 
-        // update use country code
-        if ($handle_cc) {
-            global $country_code;
-            $country_code = $data->country_code;
-        }
+    // update use country code
+    if ($handle_cc) {
+        global $country_code;
+        $country_code = $data->country_code;
     }
 
     return $valid;

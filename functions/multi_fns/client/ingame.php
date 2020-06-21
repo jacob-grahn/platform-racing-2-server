@@ -185,7 +185,7 @@ function client_objective_reached($socket, $data)
 }
 
 
-function client_check_hat_countdown($socket, $data)
+function client_check_hat_countdown($socket)
 {
     $player = $socket->getPlayer();
     if (isset($player->game_room)) {
