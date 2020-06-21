@@ -216,12 +216,12 @@ function format_level_list($levels)
     foreach ($levels as $level) {
         $level->level_id = (int) $level->level_id;
         $level->version = (int) $level->version;
-        $level->title = utf8_encode($level->title);
+        $level->title = $level->title;
         $level->rating = round($level->rating, 2);
         $level->play_count = (int) $level->play_count;
         $level->min_level = (int) $level->min_level;
-        $level->note = utf8_encode($level->note);
-        $level->user_name = utf8_encode($level->name);
+        $level->note = $level->note;
+        $level->user_name = $level->name;
         $level->user_group = $level->power . ($level->trial_mod == 1 ? ',1' : '');
         $level->live = (int) $level->live;
         $level->pass = isset($level->pass);
@@ -234,7 +234,7 @@ function format_level_list($levels)
         $ret->levels[] = $level;
     }
 
-    $levels_str = json_encode($ret->levels);
+    $levels_str = json_encode($ret->levels, JSON_UNESCAPED_UNICODE);
     if (!is_empty($levels_str)) {
         $hash = md5($levels_str . $LEVEL_LIST_SALT);
         $ret->hash = $hash;
