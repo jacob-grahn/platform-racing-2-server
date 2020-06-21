@@ -3,7 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
-require_once QUERIES_DIR . '/levels.php';
+require_once QUERIES_DIR . '/level_backups.php';
 require_once QUERIES_DIR . '/levels_reported.php';
 
 $level_id = (int) default_post('level_id', 0);

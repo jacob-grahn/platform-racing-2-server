@@ -27,6 +27,13 @@ try {
     $rl_msg = 'Please wait at least 10 seconds before trying to create another account.';
     rate_limit('register-account-attempt-'.$ip, 10, 2, $rl_msg);
 
+    // 160 message
+    $link_160 = urlify('https://jiggmin2.com/forums/showthread.php?tid=2613', 'this thread');
+    $msg_160 = 'PR2 is currently temporarily shut down to allow for testing '
+        ."of a new build being released on or around Monday, June 22 (v160).\n\n"
+        ."For more information, please see $link_160. Thanks for your patience!";
+    throw new Exception($msg_160);
+
     // error check
     if (is_empty($name) || !is_string($password) || is_empty($password)) {
         throw new Exception('You must enter a name and a password to register an account.');
