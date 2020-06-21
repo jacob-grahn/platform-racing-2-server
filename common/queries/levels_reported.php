@@ -43,6 +43,7 @@ function levels_reported_check_existing($pdo, $level_id, $version)
 
 function levels_reported_insert($pdo, $level_id, $version, $cid, $cip, $title, $note, $rid, $rip, $reason)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         INSERT INTO levels_reported
            SET level_id = :level_id,
@@ -78,6 +79,7 @@ function levels_reported_insert($pdo, $level_id, $version, $cid, $cip, $title, $
 
 function levels_reported_select($pdo, $start, $count)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT levels_reported.*, u1.name as creator, u2.name as reporter
           FROM levels_reported, users u1, users u2
@@ -100,6 +102,7 @@ function levels_reported_select($pdo, $start, $count)
 
 function levels_reported_select_unarchived_recent($pdo)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT
           lr.level_id,
@@ -132,6 +135,7 @@ function levels_reported_select_unarchived_recent($pdo)
 
 function level_report_select_load_info($pdo, $level_id, $version)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT lr.version as reported_version, l.*
           FROM levels_reported lr

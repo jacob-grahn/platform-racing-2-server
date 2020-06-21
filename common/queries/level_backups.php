@@ -3,6 +3,7 @@
 
 function level_backup_select($pdo, $backup_id)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT *
         FROM level_backups
@@ -40,6 +41,7 @@ function level_backups_delete_old($pdo)
 
 function level_backups_insert($pdo, $uid, $lid, $title, $ver, $live, $rating, $votes, $note, $min_rank, $song, $plays)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         INSERT INTO level_backups
         SET user_id = :user_id,
@@ -78,6 +80,7 @@ function level_backups_insert($pdo, $uid, $lid, $title, $ver, $live, $rating, $v
 
 function level_backups_select($pdo, $user_id)
 {
+    db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT *
         FROM level_backups
