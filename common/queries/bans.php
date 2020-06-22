@@ -324,5 +324,5 @@ function throttle_bans($pdo, $mod_user_id)
         throw new Exception("Could not query ban throttle.");
     }
 
-    return $stmt->fetchAll(PDO::FETCH_OBJ);
+    return $stmt->fetch(PDO::FETCH_OBJ);
 }
