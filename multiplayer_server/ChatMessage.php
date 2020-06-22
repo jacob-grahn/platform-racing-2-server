@@ -231,15 +231,8 @@ class ChatMessage
             $this->write('systemChat`Sorries, guests can\'t send chat messages.'); // guest check
         } elseif ($player->active_rank < 3 && $player->group < 2) {
             $this->write('systemChat`Sorries, you must be rank 3 or above to chat.'); // rank 3 check
-        } elseif ($this->player->sban_exp_time > 0 && $this->player->sban_exp_time - time() > 0) {
-            $ban_id = (int) $this->player->sban_id;
-            $exp_time = \format_duration($this->player->sban_exp_time - time());
-            $ban_url = \urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'here');
-            $dispute_url = \urlify("https://jiggmin2.com/forums/showthread.php?tid=110", 'dispute it');
-            $msg = "This account or IP address has been socially banned. It will expire in approximately $exp_time.";
-            if ($this->room_type === 'c') {
-                $msg .= " You can view more details $ban_url. If you feel this ban is unjust, you can $dispute_url.";
-            }
+        } elseif ($this->isSociallyBanned()) {
+            $msg = $this->outputSocialBan();
             $this->write("systemChat`$msg");
         } elseif ($muted && ((!$this->isMod() && !$this->isTempMod()) || (!$this->isServerOwner() && $guild_id > 0))) {
             $cb_secs = (int) Mutes::remainingTime($player->name, $player->ip);
@@ -258,6 +251,21 @@ class ChatMessage
             $player->chat_time = time();
             $this->room->sendChat($message, $this->from_id); // send message
         }
+    }
+
+
+    // outputs a social ban message to a player
+    private function outputSocialBan()
+    {
+        $exp_time = \format_duration($this->player->sban_exp_time - time());
+        $msg = "This account or IP address has been socially banned. It will expire in approximately $exp_time.";
+        if ($this->room_type === 'c') {
+            $ban_id = (int) $this->player->sban_id;
+            $ban_url = \urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'here');
+            $dispute_url = \urlify("https://jiggmin2.com/forums/showthread.php?tid=110", 'dispute it');
+            $msg .= " You can view more details $ban_url. If you feel this ban is unjust, you can $dispute_url.";
+        }
+        return $msg;
     }
 
 
@@ -768,7 +776,7 @@ class ChatMessage
     // contests command (links to contests hub)
     private function commandContests()
     {
-        $msg = 'systemChat`'
+        $msg = $this->isSociallyBanned() ? $this->outputSocialBan() : 'systemChat`'
             .'PR2 has a variety of contests in which you can participate to earn in-game prizes! '
             .'For more information, visit ' . urlify('https://pr2hub.com/contests', 'pr2hub.com/contests') . '.';
         $this->write($msg);
@@ -1044,6 +1052,14 @@ class ChatMessage
         } else {
             $this->write('systemChat`This command cannot be used in levels.');
         }
+    }
+    
+    
+    // returns true if a user has an active social ban
+    private function isSociallyBanned($player = null)
+    {
+        $player = isset($player) ? $player : $this->player;
+        return $this->player->sban_exp_time > 0 && $this->player->sban_exp_time - time() > 0;
     }
 
 
