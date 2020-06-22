@@ -179,10 +179,12 @@ function check_ip($ip, $user = null, $handle_cc = true)
     $power_cond = (isset($user) && $user->power == 1) || !isset($user);
     if ($power_cond && !$verified && !apcu_exists($key)) { // if a member, not verified, and ip isn't cached
         $data = @file_get_contents($IP_API_LINK_PRE . $ip . $IP_API_LINK_SUF); // get ip info
-        if ($data !== false && $data->success) { // if url query succeeded
+        if ($data !== false) {
             $data = json_decode($data); // decode return data
-            $validity = ip_is_valid($data, $handle_cc) ? 'VALID' : 'INVALID'; // determine validity
-            apcu_store($key, $validity, 2678400); // log validity
+            if ($data->success) { // if url query succeeded
+                $validity = ip_is_valid($data, $handle_cc) ? 'VALID' : 'INVALID'; // determine validity
+                apcu_store($key, $validity, 2678400); // log validity
+            }
         }
     } elseif (apcu_exists($key)) {
         $validity = apcu_fetch($key);
