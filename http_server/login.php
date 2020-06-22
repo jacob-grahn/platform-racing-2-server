@@ -307,7 +307,7 @@ try {
     $result = talk_to_server($server_address, $server_port, $server->salt, $str, true, false);
 
     // update user information if the login was successful
-    $debug = $result = json_decode($result);
+    $result = json_decode(preg_replace('/[[:cntrl:]]/', '', $result));
     if ($result->success) {
         user_update_status($pdo, $user_id, $send->status, $server_id); // status
         user_update_ip($pdo, $user_id, $ip); // last IP address
@@ -329,7 +329,6 @@ try {
     $ret->guildName = $guild_name;
     $ret->emblem = $emblem;
     $ret->favoriteLevels = $favorite_levels;
-    $ret->debug = $debug;
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {

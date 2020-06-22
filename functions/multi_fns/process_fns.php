@@ -258,7 +258,6 @@ function process_register_login($server_socket, $data)
             // disconnect if an error occurred
             $ret = new stdClass();
             $ret->success = !empty($player);
-            $socket->write('message`' . json_encode($ret)); // debug
             if (!$ret->success) {
                 $socket->close();
                 $socket->onDisconnect();
