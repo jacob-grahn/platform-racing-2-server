@@ -2,7 +2,7 @@
 
 
 // check newest for more than 3 recent levels from this account or ip
-function check_newest($pdo, $name, $ip)
+function check_newest($pdo, $name, $ip, $debug = false)
 {
     // make our end array
     $matches = array();
@@ -10,6 +10,9 @@ function check_newest($pdo, $name, $ip)
     // account check
     $newest = file_get_contents(WWW_ROOT . '/files/lists/newest/1');
     $levels = json_decode($newest);
+    if ($debug) {
+        var_dump($newest, $levels);
+    }
 
     foreach ($levels as $level) {
         $level_id = (int) $level->level_id;
