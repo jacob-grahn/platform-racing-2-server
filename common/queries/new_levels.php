@@ -11,7 +11,7 @@ function check_newest($pdo, $name, $ip, $debug = false)
     $newest = file_get_contents(WWW_ROOT . '/files/lists/newest/1');
     $levels = json_decode($newest);
 
-    foreach ($levels as $level) {
+    foreach ($levels->levels as $level) {
         if ($debug) {
             var_dump($level);
         }
