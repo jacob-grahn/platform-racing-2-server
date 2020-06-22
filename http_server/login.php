@@ -304,7 +304,7 @@ try {
     $send->epic_upgrades = $epic_upgrades;
 
     $str = "register_login`" . json_encode($send);
-    $result = talk_to_server($server_address, $server_port, $server->salt, $str, false, false);
+    $result = talk_to_server($server_address, $server_port, $server->salt, $str, true, false);
 
     // update user information if the login was successful
     $result = json_decode($result);
