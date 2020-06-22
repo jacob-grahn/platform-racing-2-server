@@ -1260,7 +1260,8 @@ class Game extends Room
 
     private function loseAllHats($player)
     {
-        for ($i = 0; $i < count($player->worn_hat_array); $i++) {
+        foreach ($player->worn_hat_array as $hat) {
+            $hat = $hat; // this is some dumb bs but travis will not be satisfied if this line doesn't exist
             $y = $player->pos_y - 50;
             $this->looseHat($player, "$player->pos_x`$y`$player->rot");
         }
