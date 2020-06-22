@@ -236,8 +236,10 @@ class ChatMessage
             $exp_time = \format_duration($this->player->sban_exp_time - time());
             $ban_url = \urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'here');
             $dispute_url = \urlify("https://jiggmin2.com/forums/showthread.php?tid=110", 'dispute it');
-            $msg = "This account or IP address has been socially banned. It will expire in approximately $exp_time. "
-                ."You can view more details $ban_url. If you feel this ban is unjust, you can $dispute_url.";
+            $msg = "This account or IP address has been socially banned. It will expire in approximately $exp_time.";
+            if ($this->room_type === 'c') {
+                $msg .= " You can view more details $ban_url. If you feel this ban is unjust, you can $dispute_url.";
+            }
             $this->write("systemChat`$msg");
         } elseif ($muted && ((!$this->isMod() && !$this->isTempMod()) || (!$this->isServerOwner() && $guild_id > 0))) {
             $cb_secs = (int) Mutes::remainingTime($player->name, $player->ip);
