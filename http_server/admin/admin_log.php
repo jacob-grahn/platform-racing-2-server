@@ -4,6 +4,7 @@ require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/admin_actions.php';
 
+$ip = get_ip();
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
 
