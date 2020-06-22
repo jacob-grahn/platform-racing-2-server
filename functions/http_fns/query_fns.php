@@ -502,12 +502,16 @@ function backup_level(
     $success = true;
 
     try {
+        var_dump('got here 1');
         $result = $s3->copyObject('pr2levels1', $filename, 'pr2backups', $backup_filename);
+        var_dump($result);
         if (!$result) {
             throw new Exception('Could not save a backup of your level.');
         }
 
+        var_dump('got here 2');
         level_backups_insert($pdo, $uid, $lid, $title, $ver, $live, $rate, $vote, $note, $rank, $song, $plays);
+        var_dump('got here 3');
     } catch (Exception $e) {
         $success = false;
     }
