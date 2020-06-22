@@ -42,13 +42,20 @@ function client_kick($socket, $data)
             }
         }
 
+        // demote if a temp mod
+        if ($kicked->temp_mod) {
+            $kicked->group = 1;
+            $kicked->temp_mod = false;
+            $kicked->write('demoteMod`');
+        }
+
         // remove existing kicks, then kick
         if (\pr2\multi\ServerBans::isBanned($name) === true) {
             \pr2\multi\ServerBans::remove($name);
         }
 
         // kick the user
-        if (($kicked->group < 2 || $mod->server_owner === true) && $kicked->server_owner === false) {
+        if (($kicked->group < 2 || $mod->server_owner) && !$kicked->server_owner) {
             // add server ban
             \pr2\multi\ServerBans::add($name, $kicked->ip);
 
@@ -162,7 +169,7 @@ function client_warn($socket, $data)
         }
 
         // warn the user if they're not a mod
-        if (($warned->group < 2 || $mod->server_owner === true) && $warned->server_owner === false) {
+        if (($warned->group < 2 || $mod->server_owner) && !$warned->server_owner) {
             \pr2\multi\Mutes::add($name, $warned->ip, $time);
             if ($warned_online === false) {
                 $mod->write("message`$safe_wname is not currently on this server, but the mute was applied anyway.");
@@ -240,8 +247,14 @@ function client_ban($socket, $data)
             $mod->chat_room->sendChat("systemChat`$msg");
         }
 
+        // demote if a temp mod
+        if ($banned->temp_mod) {
+            $banned->group = 1;
+            $banned->temp_mod = false;
+            $banned->write('demoteMod`');
+        }
+
         // increment social ban expire time or remove them from the server
-        $banned->temp_mod = false;
         $banned->sban_exp_time = time() + $seconds;
         if ($scope === 'game') {
             $banned->remove();
