@@ -127,6 +127,7 @@ class ChatMessage
                 $handled = true;
             } elseif (strpos($msg, '/mute ') === 0 || strpos($msg, '/warn ') === 0) {
                 $this->commandModMute(); // mute for mods
+                $handled = true;
             } elseif ($msg === '/muted' || $msg === '/warned') {
                 $this->commandModWhoIsMuted();
                 $handled = true;
@@ -659,9 +660,10 @@ class ChatMessage
     // mutes/warns a user
     private function commandModMute()
     {
-        $data = trim(substr($this->message, 6));
-        $warn_num = (int) substr($data, 0, strpos($data, ' '));
-        $target_name = trim(substr($data, strpos($data, ' ')));
+        $data = explode(' ', $this->message);
+        $offset = (int) $data[1] > 0 || ((int) $data[1] == $data[1] && strlen($data[1]) === 1) ? 8 : 6;
+        $warn_num = $offset === 8 && $warn_num <= 3 ? $warn_num : 1;
+        $target_name = trim(substr($this->message, $offset));
         client_warn($this->player->socket, "$target_name`$warn_num");
     }
 
