@@ -5,6 +5,7 @@ require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/admin_actions.php';
 require_once QUERIES_DIR . '/guild_transfers.php';
 
+$ip = get_ip();
 $guild_id = (int) default_get('guild_id', 0);
 $action = default_post('action', 'lookup');
 $header = false;
