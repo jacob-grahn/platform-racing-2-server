@@ -103,22 +103,22 @@ try {
         $type = 'r';
     }
 
-    // hash the password
-    $hash2 = null;
-    if ($has_pass == 1) {
-        if ($live != 0) {
-            $live = 0;
-            $on_success = 'pass set with live';
-        }
-        $hash2 = is_empty($pass_hash) ? $org_pass_hash2 : sha1($pass_hash . $LEVEL_PASS_SALT);
-    }
-
     // load the existing level
     $org_rating = 0;
     $org_votes = 0;
     $org_play_count = 0;
     $level = level_select_by_title($pdo, $user_id, $title);
     if ($level) {
+        // preserve pass
+        $hash2 = null;
+        if ($has_pass == 1) {
+            if ($live != 0) {
+                $live = 0;
+                $on_success = 'pass set with live';
+            }
+            $hash2 = is_empty($pass_hash) ? $level->pass : sha1($pass_hash . $LEVEL_PASS_SALT);
+        }
+        
         // allow saving as unpublished if banned
         if (!empty($ban) && $live === 1) {
             if (!$override_banned) {
