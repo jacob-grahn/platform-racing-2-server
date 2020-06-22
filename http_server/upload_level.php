@@ -199,16 +199,20 @@ try {
     $hash = md5($str_to_hash);
     $str .= $hash;
 
-
     // save this file to the new level system
     if (!$s3->putObjectString($str, 'pr2levels1', "$level_id.txt")) {
         throw new Exception('A server error was encountered. Your level could not be saved.');
     }
 
-    $file = fopen(WWW_ROOT . "/levels/$level_id.txt", "w");
-    fwrite($file, $str);
-    fclose($file);
-
+    // write to the file system
+    $file_path = WWW_ROOT . "/levels/$level_id.txt";
+    if (is_writable($file_path)) {
+        $file = fopen($file_path, "w");
+        if ($file !== false) {
+            fwrite($file, $str);
+            fclose($file);
+        }
+    }
 
     // save the new file to the backup system
     backup_level(
@@ -226,7 +230,6 @@ try {
         $song,
         (int) $level->play_count
     );
-
 
     // tell every one it's time to party
     if ($on_success === 'pass set with live') {
