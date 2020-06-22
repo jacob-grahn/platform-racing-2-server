@@ -78,6 +78,7 @@ try {
     $s3 = s3_connect();
     $file = $s3->getObject('pr2backups', "$level_id-v$level->version.txt");
     if (!$file) {
+        $ret->debug = 'got here';
         backup_level(
             $pdo,
             $s3,
