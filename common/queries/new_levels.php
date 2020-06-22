@@ -10,11 +10,11 @@ function check_newest($pdo, $name, $ip, $debug = false)
     // account check
     $newest = file_get_contents(WWW_ROOT . '/files/lists/newest/1');
     $levels = json_decode($newest);
-    if ($debug) {
-        var_dump($newest, $levels);
-    }
 
     foreach ($levels as $level) {
+        if ($debug) {
+            var_dump($level);
+        }
         $level_id = (int) $level->level_id;
         $level_creator = $level->user_name;
 
