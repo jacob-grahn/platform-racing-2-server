@@ -86,6 +86,7 @@ try {
         $formatted_time = date('M j, Y g:i A', $item->$time);
         $rname = str_replace(' ', '&nbsp;', htmlspecialchars($item->$reporter_name, ENT_QUOTES));
         $rid = (int) $item->$reporter_uid;
+        $rip = $item->reporter_ip;
         $oname = str_replace(' ', '&nbsp;', htmlspecialchars($item->$offender_name, ENT_QUOTES));
         $oid = (int) $item->$offender_uid;
         $oip = $item->$offender_ip;
@@ -98,7 +99,7 @@ try {
             $title = htmlspecialchars(filter_swears($item->title), ENT_QUOTES);
             $version = (int) $item->version;
             $reason4rep = str_replace("\r", '<br>', htmlspecialchars(filter_swears($item->report_reason), ENT_QUOTES));
-            $record = "Level Title: $title\nLevel Note: $note\n\nLevel Version: $version\n";
+            $record = "Level Title: $title\nLevel Note: $body\n\nLevel Version: $version\n";
 
             $text = "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$rname</a> reported a level by ".
                 "<a href='player_info.php?user_id=$oid&force_ip=$oip'>$oname</a> on $formatted_time".
