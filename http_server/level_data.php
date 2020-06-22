@@ -42,11 +42,11 @@ try {
     $ret->note = urldecode($ldata['note']);
 
     // handle keys that may not exist
-    $ret->gameMode = default_val($ldata['gameMode'], 'race');
-    $ret->cowboyChance = (int) default_val($ldata['cowboyChance'], 5);
-    $ret->has_pass = (bool) (int) default_val($ldata['has_pass'], 0);
-    $ret->version = (int) default_val($ldata['version'], 1);
-    $ret->items = default_val($ldata['items'], '1`2`3`4`5`6`7`8`9');
+    $ret->gameMode = isset($ldata['gameMode']) ? $ldata['gameMode'] : 'race';
+    $ret->cowboyChance = isset($ldata['cowboyChance']) ? (int) $ldata['cowboyChance'] : 5;
+    $ret->has_pass = isset($ldata['has_pass']) ? (bool) (int) $ldata['has_pass'] : false;
+    $ret->version = isset($ldata['version']) ? (int) $ldata['version'] : 1;
+    $ret->items = isset($ldata['items']) ? $ldata['items'] : '1`2`3`4`5`6`7`8`9';
 
     // connect
     $pdo = pdo_connect();
