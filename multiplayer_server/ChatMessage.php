@@ -258,7 +258,7 @@ class ChatMessage
     private function outputSocialBan()
     {
         $exp_time = \format_duration($this->player->sban_exp_time - time());
-        $msg = "This account or IP address has been socially banned. It will expire in approximately $exp_time.";
+        $msg = "This account or IP address has been socially banned. It will expire in about $exp_time.";
         if ($this->room_type === 'c') {
             $ban_id = (int) $this->player->sban_id;
             $ban_url = \urlify("https://pr2hub.com/bans/show_record.php?ban_id=$ban_id", 'here');
