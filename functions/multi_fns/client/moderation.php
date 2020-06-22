@@ -254,10 +254,17 @@ function client_ban($socket, $data)
             $banned->write('demoteMod`');
         }
 
-        // increment social ban expire time or remove them from the server
-        $banned->sban_exp_time = time() + $seconds;
-        if ($scope === 'game') {
-            $banned->remove();
+        // increment social ban expire time for all users on this IP or remove them from the server
+        global $player_array;
+        foreach ($player_array as $player) {
+            if ($banned->ip === $player->ip && $player->group < 2) {
+                if ($scope === 'social') {
+                    // if this isn't the most severe, it will update at the top of the minute
+                    $player->sban_exp_time = time() + $seconds;
+                } else {
+                    $player->remove();
+                }
+            }
         }
     }
 }
