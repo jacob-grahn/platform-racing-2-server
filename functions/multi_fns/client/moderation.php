@@ -257,7 +257,7 @@ function client_ban($socket, $data)
         // increment social ban expire time for all users on this IP or remove them from the server
         global $player_array;
         foreach ($player_array as $player) {
-            if ($banned->ip === $player->ip && $player->group < 2) {
+            if ($banned->ip === $player->ip && ($player->group < 2 || $player->temp_mod)) {
                 if ($scope === 'social') {
                     // if this isn't the most severe, it will update at the top of the minute
                     $player->sban_exp_time = time() + $seconds;
