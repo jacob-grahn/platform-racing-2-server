@@ -6,6 +6,7 @@ require_once QUERIES_DIR . '/admin_actions.php';
 require_once QUERIES_DIR . '/changing_emails.php';
 
 // variables
+$ip = get_ip();
 $user_id = (int) default_get('id', 0);
 $action = default_post('action', 'lookup');
 $header = false;
