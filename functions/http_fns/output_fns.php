@@ -66,7 +66,7 @@ function output_footer()
                 ."<li><a href='/backups'>Backups</a></li>"
                 ."<li><a href='https://jiggmin2.com/forums/showthread.php?tid=19'>Folding@Home</a></li>"
                 ."<li><a href='/terms_of_use.php'>Terms of Use</a></li>"
-                ."<li><a href='https://jiggmin2.com/forums/showthread.php?tid=385'>Rules</a></li>"
+                ."<li><a href='/rules'>Rules</a></li>"
             ."</ul>"
         ."</div></div>";
 }
