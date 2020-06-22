@@ -75,11 +75,8 @@ try {
     levels_reported_insert($pdo, $level_id, $version, $cid, $cip, $title, $note, $rid, $rip, $reason);
 
     // back up the current version of the level if one doesn't already exist
-    var_dump('connecting...');
     $s3 = s3_connect();
-    var_dump('CONNECTED');
     $file = $s3->getObject('pr2backups', "$level_id-v$level->version.txt");
-    var_dump($file);
     if (!$file) {
         backup_level(
             $pdo,
