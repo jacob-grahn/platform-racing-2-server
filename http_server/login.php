@@ -329,6 +329,7 @@ try {
     $ret->guildName = $guild_name;
     $ret->emblem = $emblem;
     $ret->favoriteLevels = $favorite_levels;
+    $ret->debug = json_encode($result);
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {
