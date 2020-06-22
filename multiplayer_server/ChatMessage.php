@@ -662,7 +662,7 @@ class ChatMessage
     {
         $data = explode(' ', $this->message);
         $offset = (int) $data[1] > 0 || ((int) $data[1] == $data[1] && strlen($data[1]) === 1) ? 8 : 6;
-        $warn_num = $offset === 8 && $warn_num <= 3 ? $warn_num : 1;
+        $warn_num = $offset === 8 && $warn_num <= 3 ? (int) $data[1] : 1;
         $target_name = trim(substr($this->message, $offset));
         client_warn($this->player->socket, "$target_name`$warn_num");
     }
