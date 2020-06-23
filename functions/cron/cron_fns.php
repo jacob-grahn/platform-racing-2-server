@@ -424,9 +424,7 @@ function fah_update($pdo)
 
     // award prizes
     foreach ($stats->users as $user) {
-        if ($user->name === 'bls1999') {
-            fah_award_prizes($pdo, $user->name, $user->points, $prize_array);
-        }
+        fah_award_prizes($pdo, $user->name, $user->points, $prize_array);
     }
 }
 
@@ -496,9 +494,6 @@ function fah_fetch_stats()
 // validate, determine, and award fah prizes
 function fah_award_prizes($pdo, $name, $score, $prize_array)
 {
-    if ($name != 'bls1999') {
-        return;
-    }
     $safe_name = htmlspecialchars($name, ENT_QUOTES);
     $lower_name = strtolower($name);
 
