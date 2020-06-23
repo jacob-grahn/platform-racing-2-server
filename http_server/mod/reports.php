@@ -84,10 +84,10 @@ try {
     // output the items according to mode
     foreach (${$mode} as $item) {
         $formatted_time = date('M j, Y g:i A', $item->$time);
-        $rname = str_replace(' ', '&nbsp;', htmlspecialchars($item->$reporter_name, ENT_QUOTES));
+        $rname = str_replace(' ', '&nbsp;', htmlspecialchars(utf8_decode($item->$reporter_name), ENT_QUOTES));
         $rid = (int) $item->$reporter_uid;
         $rip = $item->reporter_ip;
-        $oname = str_replace(' ', '&nbsp;', htmlspecialchars($item->$offender_name, ENT_QUOTES));
+        $oname = str_replace(' ', '&nbsp;', htmlspecialchars(utf8_decode($item->$offender_name), ENT_QUOTES));
         $oid = (int) $item->$offender_uid;
         $oip = $item->$offender_ip;
         $archived = (bool) (int) $item->archived;
