@@ -42,12 +42,17 @@ try {
             throw new Exception('Could not validate token.');
         }
 
-        // whitelist IP
+        // validate IP address
         $wip = default_post('ip_address', '');
         if (!filter_var($wip, FILTER_VALIDATE_IP)) {
             throw new Exception('Invalid IP address specified.');
         }
-        whitelist_ip($ip);
+
+        // whitelist IP
+        $result = whitelist_ip($wip);
+        if (!$result) {
+            throw new Exception('Could not whitelist IP address.');
+        }
 
         // redirect
         $url = "/mod/ip_info.php?ip=$wip";
