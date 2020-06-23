@@ -239,7 +239,7 @@ function client_ban($socket, $data)
         // check for valid ban
         $ban = db_op('ban_select', array((int) $ban_id));
         if ($ban->banned_ip != $banned->ip || $ban->banned_user_id != $banned->user_id) {
-            $socket->write('message`Error: Invalid ban ID sent to server.');
+            $mod->write('message`Error: Invalid ban ID sent to server.');
             return;
         }
         
