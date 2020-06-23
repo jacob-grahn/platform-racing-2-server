@@ -215,7 +215,7 @@ function ban_update($pdo, $ban_id, $acc, $ip, $scope, $exp_time, $lifted, $lifte
 // alias for ban_insert
 function ban_user($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc, $scope)
 {
-    ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc, $scope);
+    return ban_insert($pdo, $ip, $uid, $mod_uid, $expire_time, $reason, $record, $name, $mod_name, $is_ip, $is_acc, $scope);
 }
 
 
