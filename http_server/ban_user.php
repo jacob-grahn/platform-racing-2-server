@@ -4,9 +4,11 @@ header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/bans.php';
+require_once QUERIES_DIR . '/campaigns.php';
 require_once QUERIES_DIR . '/mod_actions.php';
+require_once QUERIES_DIR . '/new_levels.php';
 
-$ban_name = utf8_decode(default_post('banned_name'));
+$ban_name = default_post('banned_name');
 $duration = (int) default_post('duration', 60);
 $reason = default_post('reason', '');
 $log = default_post('record', '');
@@ -50,15 +52,16 @@ try {
     $duration = $duration > $max_length ? $max_length : $duration;
     $ends = time() + $duration;
 
-    // throttle bans using PDO
+    // throttle bans
     $max_bans = $mod->trial_mod ? 30 : 101;
     $throttle = throttle_bans($pdo, $mod_uid);
     if ($throttle->recent_ban_count > $max_bans) {
         throw new Exception("You have reached the cap of $max_bans bans per hour.");
     }
 
-    // get the banned user's info using PDO
+    // get the banned user's info
     $target = user_select_by_name($pdo, $ban_name, true);
+    var_dump($ban_name, $target);
     if ($target === false) {
         throw new Exception("The user you're trying to ban doesn't exist.");
     }
@@ -99,7 +102,7 @@ try {
         $ban_name = '';
     }
 
-    // add the ban using pdo
+    // ban the user
     // phpcs:disable
     $ban_id = (int) ban_user($pdo, $ban_ip, $ban_uid, $mod_uid, $ends, $reason, $log, $ban_name, $mod_name, $is_ip, $is_acc, $scope);
     // phpcs:enable
