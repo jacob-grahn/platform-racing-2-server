@@ -101,12 +101,12 @@ try {
 
     // add the ban using pdo
     // phpcs:disable
-    $result = ban_user($pdo, $ban_ip, $ban_uid, $mod_uid, $ends, $reason, $log, $ban_name, $mod_name, $is_ip, $is_acc, $scope);
+    $ban_id = ban_user($pdo, $ban_ip, $ban_uid, $mod_uid, $ends, $reason, $log, $ban_name, $mod_name, $is_ip, $is_acc, $scope);
     // phpcs:enable
-    if ($result === false) {
+    if (!$ban_id) {
         throw new Exception('Could not record ban.');
     }
-    
+
     // remove level if a level ID is specified
     if (!empty($level_id)) {
         remove_level($pdo, $mod, $level_id);
@@ -126,7 +126,8 @@ try {
 
     // record the ban in the action log
     $msg = "$mod_name banned $ban_name from $ip "
-        ."{duration: $disp_duration, "
+        ."{ban_id: $ban_id, "
+        ."duration: $disp_duration, "
         ."account_ban: $is_account_ban, "
         ."ip_ban: $is_ip_ban, "
         ."scope: $ban_scope, "
@@ -144,6 +145,7 @@ try {
         $guest_msg = "Guest [$ban_ip] has been$ban_scope banned for $duration seconds.";
         $user_msg = "$disp_name has been$ban_scope banned for $duration seconds.";
         $ret->success = true;
+        $ret->ban_id = $ban_id;
         $ret->message = $ban_uid === 0 ? $guest_msg : $user_msg;
     }
 } catch (Exception $e) {
