@@ -37,7 +37,7 @@ function ban_insert($pdo, $ip, $uid, $mod_uid, $exp_time, $reason, $record, $nam
         throw new Exception('Could not ban user.');
     }
 
-    return $result;
+    return $pdo->lastInsertId();
 }
 
 
