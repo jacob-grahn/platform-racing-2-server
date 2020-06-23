@@ -36,30 +36,8 @@ try {
     // more rate limiting
     rate_limit('remove-level-'.$mod->user_id, 3, 1);
 
-    // make sure the user is a permanent moderator
-    if ($mod->trial_mod) {
-        throw new Exception('You can not unpublish levels.');
-    }
-
-    // check to see if this is a campaign level
-    if (!empty(campaign_level_select_by_id($pdo, $level_id))) {
-        throw new Exception('This level could not be unpublished because it is featured in a campaign.');
-    }
-
-    // check for the level's information
-    $level = level_select($pdo, $level_id);
-    $l_title = $level->title;
-    $l_creator = id_to_name($pdo, $level->user_id);
-    $l_note = $level->note;
-
-    // unpublish the level
-    delete_from_newest($pdo, $level_id);
-    level_unpublish($pdo, $level_id);
-
-    // record the change
-    $mod_msg = "$mod->name unpublished level $level_id from $ip "
-        ."{level_title: $l_title, creator: $l_creator, level_note: $l_note}";
-    mod_action_insert($pdo, $mod->user_id, $mod_msg, 'remove-level', $ip);
+    // unpublish level
+    remove_level($pdo, $mod, $level_id);
 
     // tell it to the world
     $ret->success = true;
