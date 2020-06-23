@@ -83,6 +83,9 @@ try {
 
     // output the items according to mode
     foreach (${$mode} as $item) {
+        echo '<pre>';
+        var_dump($item);
+        echo '</pre>';
         $formatted_time = date('M j, Y g:i A', $item->$time);
         $rname = utf8_decode(str_replace(' ', '&nbsp;', htmlspecialchars($item->$reporter_name, ENT_QUOTES)));
         $rid = (int) $item->$reporter_uid;
