@@ -6,7 +6,6 @@ require_once QUERIES_DIR . '/mod_actions.php';
 
 $ip = get_ip();
 $action = default_post('action', 'form');
-$user_id = (int) default_get('user_id', 0);
 $token = default_post('token');
 $header = false;
 
@@ -25,10 +24,6 @@ try {
     if ($mod->trial_mod) {
         throw new Exception("You lack the power to access this resource.");
     }
-
-    // get user info
-    $user = user_select($pdo, $user_id);
-    $name = htmlspecialchars($user->name, ENT_QUOTES);
 
     if ($action === 'form') {
         $header = true;
