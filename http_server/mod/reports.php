@@ -101,7 +101,7 @@ try {
         if (!empty($levels)) {
             $title = htmlspecialchars(filter_swears($item->title), ENT_QUOTES);
             $version = (int) $item->version;
-            $reason4rep = nl2br(htmlspecialchars(filter_swears($item->report_reason, ENT_QUOTES));
+            $reason4rep = nl2br(htmlspecialchars(filter_swears($item->report_reason, ENT_QUOTES)));
             $record = "Level Title: $title\nLevel Note: $body\n\nLevel Version: $version\n";
 
             $text = "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$disp_rname</a> reported a level by ".
