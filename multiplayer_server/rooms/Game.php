@@ -83,7 +83,6 @@ class Game extends Room
         $this->finishDrawing($player);
         $player->race_stats->still_here = false;
 
-        // ATTN: rework to do quitRace instead? so the hat attack mode detection stuff actually works??
         if (!isset($player->race_stats->finish_time)) {
             $this->setFinishTime($player, 'forfeit');
         } else {
@@ -475,7 +474,7 @@ class Game extends Room
 
             // change the hat to something random during hat attack if they aren't wearing a valid hat
             // this is foolproof. no chance at all that this is a horrible idea. none whatsoever
-            $valid_hats = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 16];
+            $valid_hats = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16];
             if ($this->mode === self::MODE_HAT && !in_array($hat_id, $valid_hats)) {
                 $hat_id = $valid_hats[rand(0, count($valid_hats) - 1)];
                 $msg = 'Howdy! Here\'s a random hat to use just for this level. Thank me later!!';
