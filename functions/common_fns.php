@@ -246,7 +246,7 @@ function ensure_ip_country_from_valid_existing($pdo, $ip)
 // manually overrides a VPN/proxy match
 function whitelist_ip($ip)
 {
-    apcu_store("ip-validity-$ip", 'VALID', 2678400);
+    return apcu_store("ip-validity-$ip", 'VALID', 2678400);
 }
 
 
