@@ -102,26 +102,27 @@ try {
     } else {
         $type = 'r';
     }
-    
-    // unpublish if the level has a pass
-    if ($has_pass === 1 && !$override_banned) {
-        if ($live != 0) {
-            $live = 0;
-            $on_success = 'pass set with live';
-        }
-    }
 
     // allow saving as unpublished if banned
     if (!empty($ban)) {
         if (!$override_banned) {
             die("status=banned&scope=$ban->scope&ban_id=$ban->ban_id");
         }
-        $live = 0;
+        $live = $has_pass = 0;
+        $pass_hash = '';
     }
 
     // make sure the user really wants to overwrite
     if (!$overwrite_existing) {
         die("status=exists");
+    }
+
+    // unpublish if the level has a pass
+    if ($has_pass === 1) {
+        if ($live != 0) {
+            $live = 0;
+            $on_success = 'pass set with live';
+        }
     }
 
     // load the existing level
@@ -132,7 +133,7 @@ try {
     $level = level_select_by_title($pdo, $user_id, $title);
     if ($level) {
         // preserve pass
-        if ($has_pass === 1 && !$override_banned) {
+        if ($has_pass === 1) {
             $hash2 = empty($pass_hash) ? $level->pass : sha1($pass_hash . $LEVEL_PASS_SALT);
         }
 
@@ -174,7 +175,9 @@ try {
             delete_from_newest($pdo, $level_id);
         }
     } else {
-        $hash2 = empty($pass_hash) || $override_banned ? null : sha1($pass_hash . $LEVEL_PASS_SALT);
+        if ($has_pass === 1) {
+            $hash2 = empty($pass_hash) ? null : sha1($pass_hash . $LEVEL_PASS_SALT);
+        }
         level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $hash2, $type);
         $level = level_select_by_title($pdo, $user_id, $title);
         $level_id = (int) $level->level_id;
