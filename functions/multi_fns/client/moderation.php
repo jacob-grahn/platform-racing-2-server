@@ -221,7 +221,7 @@ function client_unmute($socket, $data)
 // ban a player
 function client_ban($socket, $data)
 {
-    list($banned_name, $seconds, $scope, $reason) = explode("`", $data);
+    list($banned_name, $seconds, $scope, $ban_id, $reason) = explode("`", $data);
 
     // get player info
     $mod = $socket->getPlayer();
@@ -236,6 +236,13 @@ function client_ban($socket, $data)
 
     // tell the world
     if ($mod->group >= 2 && isset($banned) && ($banned->group < 2 || $banned->temp_mod)) {
+        // check for valid ban
+        $ban = db_op('ban_select', array((int) $ban_id));
+        if ($ban->banned_ip != $banned->ip || $ban->banned_user_id != $banned->user_id) {
+            $socket->write('message`Error: Invalid ban ID sent to server.');
+            return;
+        }
+        
         $mod_url = userify($mod, $mod->name);
         $name_url = userify($banned, $banned_name);
         $scope_lang = $scope === 'game' ? 'banned' : 'socially banned';
@@ -260,6 +267,7 @@ function client_ban($socket, $data)
             if ($banned->ip === $player->ip) {
                 if ($scope === 'social') {
                     // if this isn't the most severe, it will update at the top of the minute
+                    $player->sban_id = (int) $ban_id;
                     $player->sban_exp_time = time() + $seconds;
                 } else {
                     $player->remove();
