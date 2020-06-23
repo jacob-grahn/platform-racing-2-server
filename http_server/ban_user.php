@@ -61,7 +61,6 @@ try {
 
     // get the banned user's info
     $target = user_select_by_name($pdo, $ban_name, true);
-    var_dump($ban_name, $target);
     if ($target === false) {
         throw new Exception("The user you're trying to ban doesn't exist.");
     }
