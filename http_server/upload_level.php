@@ -112,11 +112,6 @@ try {
         $pass_hash = '';
     }
 
-    // make sure the user really wants to overwrite
-    if (!$overwrite_existing) {
-        die("status=exists");
-    }
-
     // unpublish if the level has a pass
     if ($has_pass === 1) {
         if ($live != 0) {
@@ -132,6 +127,11 @@ try {
     $org_play_count = 0;
     $level = level_select_by_title($pdo, $user_id, $title);
     if ($level) {
+        // make sure the user really wants to overwrite
+        if (!$overwrite_existing) {
+            die("status=exists");
+        }
+
         // preserve pass
         if ($has_pass === 1) {
             $hash2 = empty($pass_hash) ? $level->pass : sha1($pass_hash . $LEVEL_PASS_SALT);
