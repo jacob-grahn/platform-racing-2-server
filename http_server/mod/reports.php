@@ -129,7 +129,8 @@ try {
                     ."<input type='hidden' value='$oname' name='banned_name'>"
                     ."<input type='hidden' value='$oip' name='force_ip'>"
                     ."<input type='hidden' value='social' name='scope'>";
-            echo !empty($levels) ? "<input type='hidden' value='$record' name='record'>" : '';
+            echo !empty($levels) ? "<input type='hidden' value='$record' name='record'>"
+                ."<input type='hidden' value='$this_id' name='level_id'>" : '';
             foreach (${"${mode}_reasons"} as $reason) {
                 $full_reason = !empty($levels) ? "Inappropriate Level -- $reason" : "$reason in PMs";
                 echo "<button type='submit' name='reason' value='$full_reason'>$reason</button> ";
