@@ -89,26 +89,39 @@ try {
     }
 
     // check game mode
-    if ($game_mode == 'race') {
+    if ($game_mode === 'race') {
         $type = 'r';
-    } elseif ($game_mode == 'deathmatch') {
+    } elseif ($game_mode === 'deathmatch') {
         $type = 'd';
-    } elseif ($game_mode == 'eggs' || $game_mode == 'egg') {
+    } elseif ($game_mode === 'eggs' || $game_mode === 'egg') {
         $type = 'e';
-    } elseif ($game_mode == 'objective') {
+    } elseif ($game_mode === 'objective') {
         $type = 'o';
-    } elseif ($game_mode == 'hat') {
+    } elseif ($game_mode === 'hat') {
         $type = 'h';
     } else {
         $type = 'r';
     }
     
     // unpublish if the level has a pass
-    if ($has_pass == 1 && !$override_banned) {
+    if ($has_pass === 1 && !$override_banned) {
         if ($live != 0) {
             $live = 0;
             $on_success = 'pass set with live';
         }
+    }
+
+    // allow saving as unpublished if banned
+    if (!empty($ban)) {
+        if (!$override_banned) {
+            die("status=banned&scope=$ban->scope&ban_id=$ban->ban_id");
+        }
+        $live = 0;
+    }
+
+    // make sure the user really wants to overwrite
+    if (!$overwrite_existing) {
+        die("status=exists");
     }
 
     // load the existing level
@@ -119,21 +132,8 @@ try {
     $level = level_select_by_title($pdo, $user_id, $title);
     if ($level) {
         // preserve pass
-        if ($has_pass == 1 && !$override_banned) {
+        if ($has_pass === 1 && !$override_banned) {
             $hash2 = empty($pass_hash) ? $level->pass : sha1($pass_hash . $LEVEL_PASS_SALT);
-        }
-
-        // allow saving as unpublished if banned
-        if (!empty($ban) && $live === 1) {
-            if (!$override_banned) {
-                die("status=banned&scope=$ban->scope&ban_id=$ban->ban_id");
-            }
-            $live = 0;
-        }
-
-        // make sure the user really wants to overwrite
-        if (!$overwrite_existing) {
-            die("status=exists");
         }
 
         // check if the artifact is currently here
