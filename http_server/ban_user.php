@@ -6,7 +6,7 @@ require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/bans.php';
 require_once QUERIES_DIR . '/mod_actions.php';
 
-$ban_name = default_post('banned_name');
+$ban_name = utf8_decode(default_post('banned_name'));
 $duration = (int) default_post('duration', 60);
 $reason = default_post('reason', '');
 $log = default_post('record', '');
