@@ -14,6 +14,7 @@ $using_mod_site = default_post('using_mod_site', 'no');
 $redirect = default_post('redirect', 'no');
 $type = default_post('type', 'both');
 $scope = default_post('scope', 'g');
+$level_id = (int) default_post('level_id', 0);
 $force_ip = default_post('force_ip', '');
 $ip = get_ip();
 
@@ -104,6 +105,11 @@ try {
     // phpcs:enable
     if ($result === false) {
         throw new Exception('Could not record ban.');
+    }
+    
+    // remove level if a level ID is specified
+    if (!empty($level_id)) {
+        remove_level($pdo, $mod, $level_id);
     }
 
     // make things pretty
