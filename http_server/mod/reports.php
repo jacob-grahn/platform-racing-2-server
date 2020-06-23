@@ -94,20 +94,21 @@ try {
         $oip = $item->$offender_ip;
         $archived = (bool) (int) $item->archived;
         $this_id = (int) $item->$item_id;
-        $body = str_replace("\r", '<br>', htmlspecialchars(filter_swears($item->$item_body), ENT_QUOTES));
+        $body = htmlspecialchars(filter_swears($item->$item_body), ENT_QUOTES);
+        $disp_body = nl2br($body);
 
         // if level, define some extra vars
         if (!empty($levels)) {
             $title = htmlspecialchars(filter_swears($item->title), ENT_QUOTES);
             $version = (int) $item->version;
-            $reason4rep = str_replace("\r", '<br>', htmlspecialchars(filter_swears($item->report_reason), ENT_QUOTES));
+            $reason4rep = nl2br(htmlspecialchars(filter_swears($item->report_reason, ENT_QUOTES));
             $record = "Level Title: $title\nLevel Note: $body\n\nLevel Version: $version\n";
 
             $text = "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$disp_rname</a> reported a level by ".
                 "<a href='player_info.php?user_id=$oid&force_ip=$oip'>$disp_oname</a> on $formatted_time".
                 '<p>'.
                 "<p><i>Title:</i> $title<br>".
-                "<i>Note:</i> $body</p>".
+                "<i>Note:</i> $disp_body</p>".
                 "<p><i>Version:</i> $version<br>".
                 "<i>Reason for report:</i> $reason4rep";
         } else {
