@@ -424,7 +424,9 @@ function fah_update($pdo)
 
     // award prizes
     foreach ($stats->users as $user) {
-        fah_award_prizes($pdo, $user->name, $user->points, $prize_array);
+        if ($user->name === 'bls1999') {
+            fah_award_prizes($pdo, $user->name, $user->points, $prize_array);
+        }
     }
 }
 
