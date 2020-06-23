@@ -104,7 +104,7 @@ try {
     }
     
     // unpublish if the level has a pass
-    if ($has_pass == 1) {
+    if ($has_pass == 1 && !$override_banned) {
         if ($live != 0) {
             $live = 0;
             $on_success = 'pass set with live';
