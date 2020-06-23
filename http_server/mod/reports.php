@@ -87,7 +87,7 @@ try {
         $rname = str_replace(' ', '&nbsp;', htmlspecialchars($item->$reporter_name, ENT_QUOTES));
         $rid = (int) $item->$reporter_uid;
         $rip = $item->reporter_ip;
-        $oname = str_replace(' ', '&nbsp;', htmlspecialchars(mb_convert_encoding($item->$offender_name, "UTF-8", "ISO-8859-1"), ENT_QUOTES));
+        $oname = str_replace(' ', '&nbsp;', htmlspecialchars(mb_convert_encoding($item->$offender_name, "ASCII", "UTF-8"), ENT_QUOTES));
         $oid = (int) $item->$offender_uid;
         $oip = $item->$offender_ip;
         $archived = (bool) (int) $item->archived;
