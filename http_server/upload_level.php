@@ -119,7 +119,9 @@ try {
     $level = level_select_by_title($pdo, $user_id, $title);
     if ($level) {
         // preserve pass
-        $hash2 = empty($pass_hash) ? $level->pass : sha1($pass_hash . $LEVEL_PASS_SALT);
+        if ($has_pass == 1 && !$override_banned) {
+            $hash2 = empty($pass_hash) ? $level->pass : sha1($pass_hash . $LEVEL_PASS_SALT);
+        }
 
         // allow saving as unpublished if banned
         if (!empty($ban) && $live === 1) {
@@ -172,7 +174,7 @@ try {
             delete_from_newest($pdo, $level_id);
         }
     } else {
-        $hash2 = empty($pass_hash) ? null : sha1($pass_hash . $LEVEL_PASS_SALT);
+        $hash2 = empty($pass_hash) || $override_banned ? null : sha1($pass_hash . $LEVEL_PASS_SALT);
         level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $hash2, $type);
         $level = level_select_by_title($pdo, $user_id, $title);
         $level_id = (int) $level->level_id;
