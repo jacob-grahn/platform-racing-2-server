@@ -84,19 +84,17 @@ try {
     // output the items according to mode
     foreach (${$mode} as $item) {
         $formatted_time = date('M j, Y g:i A', $item->$time);
-        $rname = str_replace(' ', '&nbsp;', htmlspecialchars($item->$reporter_name, ENT_QUOTES));
+        $rname = htmlspecialchars($item->$reporter_name, ENT_QUOTES);
+        $disp_rname = str_replace(' ', '&nbsp;', $rname);
         $rid = (int) $item->$reporter_uid;
         $rip = $item->reporter_ip;
-        $oname = str_replace(' ', '&nbsp;', htmlspecialchars(mb_convert_encoding($item->$offender_name, "ASCII", "UTF-8"), ENT_QUOTES));
+        $oname = htmlspecialchars($item->$offender_name, ENT_QUOTES);
+        $disp_oname = str_replace(' ', '&nbsp;', $oname);
         $oid = (int) $item->$offender_uid;
         $oip = $item->$offender_ip;
         $archived = (bool) (int) $item->archived;
         $this_id = (int) $item->$item_id;
         $body = str_replace("\r", '<br>', htmlspecialchars(filter_swears($item->$item_body), ENT_QUOTES));
-        
-        echo '<pre>';
-        var_dump($item->$offender_name, $oname);
-        echo '</pre>';
 
         // if level, define some extra vars
         if (!empty($levels)) {
@@ -105,16 +103,16 @@ try {
             $reason4rep = str_replace("\r", '<br>', htmlspecialchars(filter_swears($item->report_reason), ENT_QUOTES));
             $record = "Level Title: $title\nLevel Note: $body\n\nLevel Version: $version\n";
 
-            $text = "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$rname</a> reported a level by ".
-                "<a href='player_info.php?user_id=$oid&force_ip=$oip'>$oname</a> on $formatted_time".
+            $text = "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$disp_rname</a> reported a level by ".
+                "<a href='player_info.php?user_id=$oid&force_ip=$oip'>$disp_oname</a> on $formatted_time".
                 '<p>'.
                 "<p><i>Title:</i> $title<br>".
                 "<i>Note:</i> $body</p>".
                 "<p><i>Version:</i> $version<br>".
                 "<i>Reason for report:</i> $reason4rep";
         } else {
-            $text = "<a href='player_info.php?user_id=$oid&force_ip=$oip'>$oname</a> sent this message to ".
-                "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$rname</a> on $formatted_time".
+            $text = "<a href='player_info.php?user_id=$oid&force_ip=$oip'>$disp_oname</a> sent this message to ".
+                "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$disp_rname</a> on $formatted_time".
                 "<p><p>$body";
         }
 
