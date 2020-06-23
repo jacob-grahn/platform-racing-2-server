@@ -18,7 +18,7 @@ try {
     $pdo = pdo_connect();
 
     // check permission
-    $mod = check_moderator($pdo);
+    $mod = check_moderator($pdo, null, false);
 
     // exclude trial mods
     if ($mod->trial_mod) {
@@ -36,6 +36,9 @@ try {
             .'<input type="submit" value="Yes, I\'m sure.">&nbsp;(no confirmation!)'
             .'</form>';
     } elseif ($action === 'do') {
+        // referrer check
+        require_trusted_ref('', true);
+
         // make sure the token exists and is valid for this mod
         $auth = token_select($pdo, $token);
         if ((int) $auth->user_id !== (int) $mod->user_id) {
