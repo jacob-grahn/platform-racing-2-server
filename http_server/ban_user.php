@@ -39,7 +39,7 @@ try {
     $pdo = pdo_connect();
 
     // check for permission
-    $mod = check_moderator($pdo);
+    $mod = check_moderator($pdo, null, false); // debugging
 
     // get variables from the mod variable
     $mod_uid = (int) $mod->user_id;
