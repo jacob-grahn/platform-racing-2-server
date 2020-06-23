@@ -150,6 +150,7 @@ try {
     }
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
+    $ret->name = $ban_name; // debug
 } finally {
     die(json_encode($ret));
 }
