@@ -1,6 +1,7 @@
 <?php
 
 require_once GEN_HTTP_FNS;
+require_once HTTP_FNS . '/ip_api_fns.php';
 require_once HTTP_FNS . '/rand_crypt/to_hash.php';
 require_once QUERIES_DIR . '/bans.php';
 require_once QUERIES_DIR . '/messages.php';

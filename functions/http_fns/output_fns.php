@@ -37,8 +37,9 @@ function output_header($title = '', $staff_nav = false, $show_admin = false)
 
     // mod header
     if ($staff_nav === true) {
-        echo "<script src='https://code.jquery.com/jquery-latest.min.js'></script>"
-            ."<script src='https://malsup.github.io/jquery.form.js'></script>";
+        echo '<script src="https://code.jquery.com/jquery-latest.min.js"></script>'
+            .'<script src="https://malsup.github.io/jquery.form.js"></script>'
+            .'<script src="/scripts/mod.js"></script>';
         if ($show_admin === true) {
             echo '<script src="/scripts/admin.js"></script>';
         }
@@ -87,6 +88,7 @@ function output_staff_nav($formatting_for_admins = true)
     echo "<p><b>"
         ."$reports_link - "
         ."<a href='/mod/player_info.php'>Player Search</a> - "
+        ."<a href='/mod/ip_info.php'>IP Search</a> - "
         ."<a href='/bans/bans.php'>Ban Log</a> - "
         ."<a href='/mod/mod_log.php'>Mod Action Log</a>";
 

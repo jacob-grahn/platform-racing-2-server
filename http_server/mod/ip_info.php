@@ -1,6 +1,7 @@
 <?php
 
 require_once GEN_HTTP_FNS;
+require_once HTTP_FNS . '/ip_api_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/player_search_fns.php';
 require_once QUERIES_DIR . '/bans.php';
@@ -24,13 +25,26 @@ try {
     $header = true;
     output_header('IP Info', $staff->mod, $staff->admin);
 
-    // sanity check: is a value entered for IP?
+    // we can dance if we want to, we can leave your friends behind
+    $html_ip = htmlspecialchars($ip, ENT_QUOTES);
+
+    // show textbox
+    echo '<form>'
+        ."IP: <input type='text' name='ip' value='$html_ip'> "
+        .'<input type="submit"></form>';
+
+    // possibly stop here (no IP passed)
     if (empty($ip)) {
+        throw new Exception();
+    }
+
+    // sanity check: is a value entered for IP?
+    if (!filter_var($ip, FILTER_VALIDATE_IP)) {
         throw new Exception("Invalid IP address entered.");
     }
 
     // get IP info
-    $ip_info = @file_get_contents($IP_API_LINK_2 . $ip);
+    $ip_info = false; //@file_get_contents($IP_API_LINK_2 . $ip);
     if ($ip_info !== false) {
         $ip_info = json_decode($ip_info);
     }
@@ -65,11 +79,12 @@ try {
         }
     }
 
-    // we can dance if we want to, we can leave your friends behind
-    $html_ip = htmlspecialchars($ip, ENT_QUOTES);
-
-    // start
-    echo "<p>IP: $html_ip</p>";
+    // display IP validity
+    $validity = apcu_exists("ip-validity-$ip") ? apcu_fetch("ip-validity-$ip") : null;
+    $text = isset($validity) ? ucfirst(strtolower($validity)) : 'No record for this IP address.';
+    $color = isset($validity) ? ($text === 'Valid' ? 'green' : 'red') : '#c2b613';
+    $manage_link = "<a href='manage_ip_validity.php?ip=$html_ip'>manage</a>";
+    echo "<p>Validity: <b><span style='color: $color'>$text</span></b> <i>($manage_link)</i></p>";
 
     // if the data retrieval was successful, display our fancy variables
     if ($skip_fanciness === false) {
@@ -127,7 +142,7 @@ try {
         output_header('Error');
     }
     $error = $e->getMessage();
-    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+    echo !empty($error) ? "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>" : '';
 } finally {
     output_footer();
 }

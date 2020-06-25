@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
+require_once HTTP_FNS . '/ip_api_fns.php';
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
 require_once HTTP_FNS . '/pages/contests/part_vars.php';
 require_once QUERIES_DIR . '/exp_today.php';
