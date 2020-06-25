@@ -29,6 +29,8 @@ $PR2_HUB_API_ALLOWED_IPS = [
 ];
 
 $IP_API_ENABLED = true;
+$IP_API_KEY_1 = 'my secret key';
+$IP_API_KEY_2 = 'my super secret key';
 $IP_API_LINK_PRE = 'a link pre';
 $IP_API_LINK_SUF = 'a link suf';
 $IP_API_SCORE_MIN = /* over */ 9000;
