@@ -103,7 +103,7 @@ try {
 
     // ban the user
     // phpcs:disable
-    $ban_id = (int) ban_user($pdo, $ban_ip, $ban_uid, $mod_uid, $ends, $reason, $log, $ban_name, $mod_name, $is_ip, $is_acc, $scope);
+    $ban_id = (int) ban_insert($pdo, $ban_ip, $ban_uid, $mod_uid, $ends, $reason, $log, $ban_name, $mod_name, $is_ip, $is_acc, $scope);
     // phpcs:enable
     if ($ban_id === 0) {
         throw new Exception('Could not record ban.');
