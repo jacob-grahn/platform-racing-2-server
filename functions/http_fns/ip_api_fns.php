@@ -13,19 +13,15 @@ function query_ip_api($ip)
 {
     global $IP_API_KEY_1, $IP_API_KEY_2;
 
-    // define api key to use
-    $to_use = (int) date('j') % 2 === 0 ? 1 : 2;
-    $key = ${"IP_API_KEY_$to_use"};
-
-    // try to use it
+    // define api key and try to use it
+    $key = (int) date('j') % 2 === 0 ? $IP_API_KEY_1 : $IP_API_KEY_2;
     $data = @file_get_contents(make_ip_api_link($ip, $key));
-    if ($data !== false) {
+    if ($data !== false && !empty($data->success)) {
         return $data;
     }
 
-    // use the other one
-    $other = $to_use === 1 ? 2 : 1;
-    $other_key = ${"IP_API_KEY_$to_use"};
+    // try to use the other one
+    $other_key = (int) date('j') % 2 === 0 ? $IP_API_KEY_2 : $IP_API_KEY_1;
     $data = @file_get_contents(make_ip_api_link($ip, $other_key));
 
     // return whatever we got regardless of an error

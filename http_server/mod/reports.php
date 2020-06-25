@@ -51,7 +51,8 @@ try {
     echo '<p>---</p>';
 
     // get the reports of this mode
-    ${$mode} = ("${mode}_reported_select")($pdo, $start, $count);
+    $fn = "${mode}_reported_select";
+    ${$mode} = $fn($pdo, $start, $count);
 
     // sanity: no reports?
     if (empty(${$mode})) {
