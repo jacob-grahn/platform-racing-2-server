@@ -14,7 +14,7 @@ $header = false;
 
 try {
     // rate limiting
-    //rate_limit('manage-ip-validity-'.$ip, 3, 1);
+    rate_limit('manage-ip-validity-'.$ip, 3, 1);
 
     // connect
     $pdo = pdo_connect();
@@ -37,7 +37,7 @@ try {
             .'<br><label><input type="radio" name="action" value="clear" /> Clear IP (delete entry)</label>';
 
         // specific IP form
-        echo '<form method="post" id="main">'
+        echo '<form action="manage_ip_validity.php" method="post" id="main">'
             .'IP: <input type="text" name="ip_address" /><br>'
             .'<br>Choose an action:'
             .'<br><label><input type="radio" name="action" value="check" /> Check Validity (no change)</label>'
@@ -51,7 +51,7 @@ try {
         // 007: for bls' eyes only
         if ($mod->user_id == 3483035) {
             echo '<br><hr><br><b>Management</b><br><br>';
-            echo '<form method="post" id="management">'
+            echo '<form action="manage_ip_validity.php" method="post" id="management">'
                 .'Choose an action:'
                 .'<br><label><input type="radio" name="action" value="view" /> View status of all stored IPs</label>'
                 .'<br><label><input type="radio" name="action" value="clear" /> Clear all invalid stored IPs</label>'
