@@ -86,6 +86,7 @@ class ChatMessage
         $this->message = str_ireplace([':plead:', ':plz:'], '🥺', $this->message);
         $this->message = str_ireplace([':sob:', ':cry:'], '😭', $this->message);
         $this->message = str_ireplace(':money:', '💸', $this->message);
+        $this->message = str_ireplace(':clap:', '👏', $this->message);
     }
 
 
@@ -930,6 +931,7 @@ class ChatMessage
                 .'👍 = :+1:<br>'
                 .'👎 = :-1:<br>'
                 .'🌵 = :cactus:<br>'
+                .'👏 = :clap:<br>'
                 .'🤡 = :clown:<br>'
                 .'😎 = :cool:<br>'
                 .'😭 = :cry:<br>'
