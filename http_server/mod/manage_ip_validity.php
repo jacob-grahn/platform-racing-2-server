@@ -114,7 +114,7 @@ try {
         }
 
         // friendly nav
-        echo "<br><br><a href='ip_info?ip=$safe_ip'><- See More Info</a><br>"
+        echo "<br><br><a href='ip_info.php?ip=$safe_ip'><- See More Info</a><br>"
             .'<a href="manage_ip_validity.php"><- Process Another IP</a>';
     } elseif ($mode === 'all_ips') {
         // referrer check
