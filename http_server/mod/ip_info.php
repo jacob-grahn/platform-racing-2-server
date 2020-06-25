@@ -31,7 +31,7 @@ try {
     // show textbox
     echo '<form>'
         ."IP: <input type='text' name='ip' value='$html_ip'> "
-        .'<input type="submit"></form>';
+        .'<input type="submit" value="Search"></form>';
 
     // possibly stop here (no IP passed)
     if (empty($ip)) {
