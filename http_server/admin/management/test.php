@@ -14,7 +14,12 @@ try {
     } elseif ($testing !== true) {
         echo 'Error: Testing mode is disabled.';
     } else {
-        var_dump(file_get_contents($TEST_LINK));
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $TEST_LINK);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        $ret = curl_exec($curl);
+        curl_close($curl); var_dump($ret);
     }
     die();
 } catch (Exception $e) {
