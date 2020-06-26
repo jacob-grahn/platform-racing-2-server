@@ -5,7 +5,7 @@ header('Content-type: text/plain');
 require_once GEN_HTTP_FNS;
 
 $ip = get_ip();
-$testing = true;
+$testing = false;
 
 try {
     $pdo = pdo_connect();
@@ -14,7 +14,7 @@ try {
     } elseif ($testing !== true) {
         echo 'Error: Testing mode is disabled.';
     } else {
-        file_get_contents($TEST_LINK);
+       echo 'nothing to test...';
     }
     die();
 } catch (Exception $e) {
