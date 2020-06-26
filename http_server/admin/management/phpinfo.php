@@ -7,12 +7,12 @@ $ip = get_ip();
 
 try {
     // verify origin
-    //require_trusted_ref('', true);
+    require_trusted_ref('', true);
 
     // connect
     $pdo = pdo_connect();
 
-    if (/*token_login($pdo) !== 3483035 || */strpos($ip, $BLS_IP_PREFIX) === false) {
+    if (token_login($pdo) !== 3483035 || strpos($ip, $BLS_IP_PREFIX) === false) {
         throw new Exception('You lack the power to access this resource.');
     } else {
         phpinfo();
