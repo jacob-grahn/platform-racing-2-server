@@ -9,12 +9,12 @@ $testing = false;
 
 try {
     $pdo = pdo_connect();
-    if (/*token_login($pdo) !== 3483035 || */strpos($ip, $BLS_IP_PREFIX) === false) {
+    if (token_login($pdo) !== 3483035 || strpos($ip, $BLS_IP_PREFIX) === false) {
         http_response_code(404);
     } elseif ($testing !== true) {
         echo 'Error: Testing mode is disabled.';
     } else {
-       echo 'nothing to test...';
+        echo 'nothing to test...';
     }
     die();
 } catch (Exception $e) {
