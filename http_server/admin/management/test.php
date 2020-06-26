@@ -14,7 +14,7 @@ try {
     } elseif ($testing !== true) {
         echo 'Error: Testing mode is disabled.';
     } else {
-        file_get_contents($TEST_LINK);
+        var_dump(file_get_contents($TEST_LINK));
     }
     die();
 } catch (Exception $e) {
