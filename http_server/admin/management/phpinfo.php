@@ -7,7 +7,7 @@ $ip = get_ip();
 
 try {
     // verify origin
-    require_trusted_ref('', true);
+    //require_trusted_ref('', true);
 
     // connect
     $pdo = pdo_connect();
