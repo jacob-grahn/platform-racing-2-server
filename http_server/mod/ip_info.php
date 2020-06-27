@@ -45,7 +45,7 @@ try {
     }
 
     // get IP info
-    $ip_geo = false; //@file_get_contents($IP_API_LINK_2 . $ip);
+    $ip_geo = http_get_contents($IP_API_LINK_2 . $ip);
     if ($ip_geo !== false) {
         $ip_geo = json_decode($ip_geo);
     }

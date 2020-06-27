@@ -126,6 +126,30 @@ function send_email($from, $to, $subject, $body)
 }
 
 
+/**
+ * Quick function to use cURL instead of file_get_contents.
+ *
+ * @param string url The URL to query.
+ *
+ * @return object
+ * @return string
+ */
+function http_get_contents($url)
+{
+    // init and set options
+    $ch = curl_init();
+    $opts = array(
+        CURLOPT_TIMEOUT => 1,
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true
+    );
+
+    // apply options and process request
+    curl_setopt_array($ch, $opts);
+    return curl_exec($ch);
+}
+
+
 // -- DATA HANDLERS -- \\
 
 // sorts by $obj->time
