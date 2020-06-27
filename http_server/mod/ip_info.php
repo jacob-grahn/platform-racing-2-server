@@ -49,6 +49,9 @@ try {
     if ($ip_geo !== false) {
         $ip_geo = json_decode($ip_geo);
     }
+    if ($staff->admin) {
+        var_dump($ip_geo);
+    }
 
     // check if it's valid
     $skip_fanciness = $ip_geo !== false ? $ip_geo->status !== 'success' : true;
