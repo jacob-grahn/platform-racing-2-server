@@ -5,6 +5,7 @@ require_once HTTP_FNS . '/ip_api_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/player_search_fns.php';
 require_once QUERIES_DIR . '/bans.php';
+require_once QUERIES_DIR . '/ip_validity.php';
 require_once QUERIES_DIR . '/recent_logins.php';
 
 $ip = default_get('ip', '');
@@ -44,27 +45,27 @@ try {
     }
 
     // get IP info
-    $ip_info = false; //@file_get_contents($IP_API_LINK_2 . $ip);
-    if ($ip_info !== false) {
-        $ip_info = json_decode($ip_info);
+    $ip_geo = false; //@file_get_contents($IP_API_LINK_2 . $ip);
+    if ($ip_geo !== false) {
+        $ip_geo = json_decode($ip_geo);
     }
 
     // check if it's valid
-    $skip_fanciness = $ip_info !== false ? $ip_info->status !== 'success' : true;
+    $skip_fanciness = $ip_geo !== false ? $ip_geo->status !== 'success' : true;
 
     // if the data retrieval was successful, define our fancy variables
     if ($skip_fanciness === false) {
-        $ip_info = $ip_info->data->geo;
+        $ip_geo = $ip_geo->data->geo;
 
         // make some variables
-        $html_host = htmlspecialchars($ip_info->host, ENT_QUOTES);
-        $html_dns = htmlspecialchars($ip_info->rdns, ENT_QUOTES);
-        $html_isp = htmlspecialchars($ip_info->isp, ENT_QUOTES);
-        $url_isp = 'https://www.google.com/search?q=' . htmlspecialchars(urlencode($ip_info->isp), ENT_QUOTES);
-        $html_city = htmlspecialchars($ip_info->city, ENT_QUOTES);
-        $html_region = htmlspecialchars($ip_info->region_name, ENT_QUOTES);
-        $html_country = htmlspecialchars($ip_info->country_name, ENT_QUOTES);
-        $html_country_code = htmlspecialchars($ip_info->country_code, ENT_QUOTES);
+        $html_host = htmlspecialchars($ip_geo->host, ENT_QUOTES);
+        $html_dns = htmlspecialchars($ip_geo->rdns, ENT_QUOTES);
+        $html_isp = htmlspecialchars($ip_geo->isp, ENT_QUOTES);
+        $url_isp = 'https://www.google.com/search?q=' . htmlspecialchars(urlencode($ip_geo->isp), ENT_QUOTES);
+        $html_city = htmlspecialchars($ip_geo->city, ENT_QUOTES);
+        $html_region = htmlspecialchars($ip_geo->region_name, ENT_QUOTES);
+        $html_country = htmlspecialchars($ip_geo->country_name, ENT_QUOTES);
+        $html_country_code = htmlspecialchars($ip_geo->country_code, ENT_QUOTES);
 
         // make a location string out of the location data
         $loc = '';
@@ -74,24 +75,36 @@ try {
 
         // update missing country code if needed
         $valid_ip = filter_var($ip, FILTER_VALIDATE_IP);
-        if ($valid_ip && !is_empty($ip_info->country_code) && strlen($ip_info->country_code) === 2) {
-            recent_logins_update_missing_country($pdo, $ip, $ip_info->country_code);
+        if ($valid_ip && !is_empty($ip_geo->country_code) && strlen($ip_geo->country_code) === 2) {
+            recent_logins_update_missing_country($pdo, $ip, $ip_geo->country_code);
         }
     }
 
-    // display IP validity
-    $validity = apcu_exists("ip-validity-$ip") ? apcu_fetch("ip-validity-$ip") : null;
-    $text = isset($validity) ? ucfirst(strtolower($validity)) : 'No record for this IP address.';
-    $color = isset($validity) ? ($text === 'Valid' ? 'green' : 'red') : '#c2b613';
-    $manage_link = "<a href='manage_ip_validity.php?ip=$html_ip'>manage</a>";
-    echo "<p>Validity: <b><span style='color: $color'>$text</span></b> <i>($manage_link)</i></p>";
+    // determine IP validity
+    $ip_validity = ip_validity_select($pdo, $ip, true);
+    $valid = !empty($ip_validity) ? (bool) (int) $ip_validity->valid : null;
+    $text = isset($valid) ? ($valid ? 'Valid' : 'Invalid') : 'No record for this IP address.';
+    $color = isset($valid) ? ($text === 'Valid' ? 'green' : 'red') : '#c2b613';
 
-    // if the data retrieval was successful, display our fancy variables
-    if ($skip_fanciness === false) {
-        echo is_empty($html_host) ? '' : "<p>Host: $html_host</p>";
-        echo is_empty($html_dns) ? '' : "<p>DNS: $html_dns</p>";
-        echo is_empty($html_isp) ? '' : "<p>ISP: <a href='$url_isp' target='_blank'>$html_isp</a></p>";
-        echo is_empty($loc) ? '' : "<p>Location: $loc</p>";
+    // determine if expired (if entry greater than 2 months old)
+    $exp_time = $ip_validity->time + 5270400;
+    $exp_date = date('Y-m-d H:i:s', $exp_time);
+    $rel_exp_time = (time() > $exp_time ? 'd ' : 's in ') . format_duration($exp_time - time());
+
+    // output IP validity
+    $manage_link = "<a href='manage_ip_validity.php?ip=$html_ip'>manage</a>";
+    $expire_text = "<br><span style='font-style: italic' title='Expire Date: $exp_date'>(expire$rel_exp_time)</span>";
+    echo "<p>Validity: <b><span style='color: $color'>$text</span></b> <i>($manage_link)</i>";
+    echo (isset($valid) ? $expire_text : '') . '</p>';
+
+    // if the geo data retrieval was successful, display our fancy variables
+    if (!$skip_fanciness) {
+        echo '<p>';
+        echo empty($html_host) ? '' : "Host: $html_host";
+        echo empty($html_dns) ? '' : "<br>DNS: $html_dns";
+        echo empty($html_isp) ? '' : "<br>ISP: <a href='$url_isp' target='_blank'>$html_isp</a>";
+        echo empty($loc) ? '' : "<br>Location: $loc";
+        echo '</p>';
     }
 
     // check if they are currently banned

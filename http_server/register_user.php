@@ -60,7 +60,7 @@ try {
     check_if_banned($pdo, 0, $ip);
 
     // check IP validity
-    $valid_ip = check_ip($ip, null, false);
+    $valid_ip = check_ip_validity($pdo, $ip, null, false);
     if (!$valid_ip) {
         $aam_link = urlify('https://jiggmin2.com/aam', 'Ask a Mod');
         $msg = 'Please disable your proxy/VPN to connect to PR2. '.
