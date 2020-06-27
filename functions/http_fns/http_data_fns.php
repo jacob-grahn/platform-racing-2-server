@@ -139,7 +139,7 @@ function http_get_contents($url)
     // init and set options
     $ch = curl_init();
     $opts = array(
-        CURLOPT_TIMEOUT => 1,
+        CURLOPT_TIMEOUT => 5,
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true
     );
