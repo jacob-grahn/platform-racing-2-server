@@ -40,6 +40,11 @@ function check_if_banned($pdo, $user_id, $ip, $scope = 'b', $throw_exception = t
 // formats a length of time
 function format_duration($seconds)
 {
+    $neg = false;
+    if ($seconds < 0) {
+        $neg = true;
+        $seconds = abs($seconds);
+    }
     if ($seconds < 60) {
         $time_left = "$seconds second";
         if ($seconds != 1) {
@@ -76,7 +81,7 @@ function format_duration($seconds)
             $time_left .= 's';
         }
     }
-    return $time_left;
+    return $time_left . ($neg ? ' ago' : '');
 }
 
 

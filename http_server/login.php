@@ -10,6 +10,7 @@ require_once QUERIES_DIR . '/exp_today.php';
 require_once QUERIES_DIR . '/favorite_levels.php';
 require_once QUERIES_DIR . '/friends.php';
 require_once QUERIES_DIR . '/ignored.php';
+require_once QUERIES_DIR . '/ip_validity.php';
 require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/mod_actions.php';
 require_once QUERIES_DIR . '/part_awards.php';
@@ -141,8 +142,7 @@ try {
 
     // check IP validity
     $country_code = '?';
-    $valid = check_ip($ip, $user);
-    if (!$valid) {
+    if (!check_ip_validity($pdo, $ip, $user)) {
         $aam_link = urlify('https://jiggmin2.com/aam', 'Ask a Mod');
         $msg = 'Please disable your proxy/VPN to connect to PR2. '.
             "If you feel this is a mistake, please use $aam_link to contact a member of the PR2 staff team.";

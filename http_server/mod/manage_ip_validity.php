@@ -4,6 +4,7 @@ require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/ip_api_fns.php';
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/admin_actions.php';
+require_once QUERIES_DIR . '/ip_validity.php';
 require_once QUERIES_DIR . '/mod_actions.php';
 
 $ip = get_ip();
@@ -86,9 +87,9 @@ try {
         if ($action !== 'check') {
             $result = false;
             if ($action === 'allow' || $action === 'block') {
-                $result = override_ip_api($target_ip, $action);
+                $result = ip_validity_upsert($pdo, $target_ip, $action === 'allow');
             } elseif ($action === 'clear') {
-                $result = apcu_delete("ip-validity-$target_ip");
+                $result = ip_validity_delete($pdo, $target_ip);
             }
 
             // did it succeed?
@@ -104,13 +105,24 @@ try {
             echo "Successfully {$action}ed the IP address \"$safe_ip\".";
         } else {
             // get entry
-            $entry = apcu_exists("ip-validity-$target_ip") ? apcu_fetch("ip-validity-$target_ip") : null;
-            $text = isset($entry) ? ucfirst(strtolower($entry)) : 'No record for this IP address.';
-            $color = isset($entry) ? ($text === 'Valid' ? 'green' : 'red') : '#c2b613';
+            $entry = ip_validity_select($pdo, $target_ip, true);
+            $valid = !empty($entry) ? (bool) (int) $entry->valid : null;
+            $text = isset($valid) ? ($valid ? 'Valid' : 'Invalid') : 'No record for this IP address.';
+            $color = isset($valid) ? ($text === 'Valid' ? 'green' : 'red') : '#c2b613';
+
+            // determine if expired (if entry greater than 2 months old)
+            $exp_text = '';
+            if (isset($valid)) {
+                $exp_time = $entry->time + 5270400;
+                $exp_date = date('Y-m-d H:i:s', $exp_time);
+                $rel_exp_time = (time() > $exp_time ? 'd ' : 's in ') . format_duration($exp_time - time());
+                $exp_text = "<br><br><span title='Expire Date: $exp_date'>This entry expire$rel_exp_time.</span>";
+            }
 
             // send back info
             echo "Information for <b>$safe_ip</b><br>"
-                ."<br>Status: <span style='color: $color; font-weight: bold'>$text</span>";
+                ."<br>Status: <span style='color: $color; font-weight: bold'>$text</span>"
+                .$exp_text;
         }
 
         // friendly nav
@@ -135,20 +147,18 @@ try {
         if ($action === 'view') {
             echo '<b>Validity of All Cached IPs</b><br><br>';
 
-            // populate IPs from cache
-            $full_cache = apcu_cache_info()['cache_list'];
+            // populate IPs from the db
+            $list = ip_validity_select_list($pdo);
             $valid_ips = $invalid_ips = array();
-            foreach ($full_cache as $item) {
-                if (strpos($item['info'], 'ip-validity-') !== 0 || $item['creation_time'] + $item['ttl'] <= time()) {
-                    continue;
-                }
-
+            foreach ($list as $item) {
                 // make an object from the data
                 $r = new stdClass();
-                $r->key = $item['info'];
-                $r->ip = explode('-', $item['info'])[2];
-                $r->expires = format_duration(time() - $item['creation_time'] + $item['ttl']);
-                ${strtolower(apcu_fetch($item['info'])) . '_ips'}[] = $r;
+                $r->ip = $item->ip;
+                $r->valid = (bool) (int) $item->valid;
+                $r->created = (int) $item->time;
+                $r->expires = format_duration(time() - $item->time + 5270400); // creation time + 2 months
+                $r->expired = substr($r->expires, -3) === 'ago';
+                ${($r->valid ? 'valid' : 'invalid') . '_ips'}[] = $r;
             }
 
             // handle valid IPs
@@ -156,7 +166,8 @@ try {
             $count = count($valid_ips);
             if ($count > 0) {
                 foreach ($valid_ips as $entry) {
-                    echo "<span title='Expires in $entry->expires'>$entry->ip</span><br>";
+                    $title = !$entry->expired ? "title='Expires in $entry->expires'" : '';
+                    echo "<span $title><a href='ip_info.php?ip=$entry->ip'>$entry->ip</a></span><br>";
                 }
                 echo "<i><b>Total: $count</b></i><br>";
             } else {
@@ -168,7 +179,8 @@ try {
             $count = count($invalid_ips);
             if ($count > 0) {
                 foreach ($invalid_ips as $entry) {
-                    echo "<span title='Expires in $entry->expires'>$entry->ip</span><br>";
+                    $title = !$entry->expired ? "title='Expires in $entry->expires'" : '';
+                    echo "<span $title><a href='ip_info.php?ip=$entry->ip'>$entry->ip</a></span><br>";
                 }
                 echo "<i><b>Total: $count</b></i><br>";
             } else {
@@ -176,31 +188,14 @@ try {
             }
             echo "<br><a href='javascript:history.back()'><- Go Back</a>";
         } elseif ($action === 'clear') {
-            // populate IPs from cache
-            $full_cache = apcu_cache_info()['cache_list'];
-            $cleared = 0;
-            foreach ($full_cache as $item) {
-                if (strpos($item['info'], 'ip-validity-') !== 0 || $item['creation_time'] + $item['ttl'] <= time()) {
-                    continue;
-                }
-
-                // get validity
-                $entry_ip = explode('-', $item['info'])[2];
-                $valid = apcu_fetch("ip-validity-$entry_ip") === 'VALID';
-
-                // if invalid, clear from cache
-                if (!$valid) {
-                    apcu_delete($item['info']);
-                    $cleared++;
-                }
-            }
-
-            // if data was cleared
-            if (count($cleared) > 0) {
-                $msg = "$mod->name cleared ALL INVALID IP ENTRIES in the server cache from $ip.";
+            $cleared = ip_validity_delete_invalid($pdo); // clear data and return number of entries deleted
+            if ($cleared > 0) { // if data was cleared, log action
+                $yies = $cleared === 1 ? 'Y' : 'IES';
+                $msg = "$mod->name cleared $cleared INVALID IP ENTR$yies (all) from $ip.";
                 admin_action_insert($pdo, $mod->user_id, $msg, 'manage-ip-validity', $ip);
-    
-                echo "Successfully cleared all $cleared invalid IP address entries."
+
+                $yies = strtolower($yies);
+                echo "Successfully cleared $cleared invalid IP address entr$yies (all) from the database."
                     .'<br><br><a href="javascript:history.back()"><- Go Back</a>';
             } else {
                 throw new Exception('No invalid IP addresses logged to clear.');

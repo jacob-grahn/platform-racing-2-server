@@ -1,6 +1,14 @@
 <?php
 
-// crafts an IP API link to query
+
+/**
+ * Makes a string containing a link to the IP API suitable to query.
+ *
+ * @param string ip The IP address to be sent to the IP API.
+ * @param string key The API key to be used.
+ *
+ * @return string
+ */
 function make_ip_api_link($ip, $key)
 {
     global $IP_API_LINK_PRE, $IP_API_LINK_SUF;
@@ -8,7 +16,14 @@ function make_ip_api_link($ip, $key)
 }
 
 
-// queries the IP API
+/**
+ * Queries the IP API to get information on an IP address.
+ *
+ * @param string ip The IP address to be sent to the IP API.
+ *
+ * @return boolean
+ * @return object
+ */
 function query_ip_api($ip)
 {
     global $IP_API_KEY_1, $IP_API_KEY_2;
@@ -30,35 +45,58 @@ function query_ip_api($ip)
 
 
 // checks the validity of an IP address
-function check_ip($ip, $user = null, $handle_cc = true)
+/**
+ * Checks if an IP address's validity status is stored in the database; if not, queries the IP API to check validity.
+ *
+ * @param resource pdo The current database instance.
+ * @param string ip The IP address to be checked.
+ * @param object||null user A user object, or null.
+ * @param boolean handle_cc Indicates if checking/changing the value of $country_code in the calling script.
+ *
+ * @throws Exception if the ip_validity_select query fails.
+ * @throws Exception if the ip_validity_upsert query fails.
+ * @return boolean
+ */
+function check_ip_validity($pdo, $ip, $user = null, $handle_cc = true)
 {
-    // disabled globally?
     global $IP_API_ENABLED, $BLS_IP_PREFIX;
-    if (!$IP_API_ENABLED || strpos($ip, $BLS_IP_PREFIX) === 0) {
-        return true;
+    $valid = true;
+
+    // special exceptions
+    if (!$IP_API_ENABLED // IP API disabled globally?
+        || strpos($ip, $BLS_IP_PREFIX) === 0 // bls?
+        || (isset($user) && ($user->power != 1 || $user->verified == 1)) // staff/verified?
+    ) {
+        return $valid;
     }
 
-    $validity = 'VALID';
-    $key = "ip-validity-$ip";
-    $verified = (bool) (int) @$user->verified;
-    $power_cond = (isset($user) && $user->power == 1) || !isset($user);
-    if ($power_cond && !$verified && !apcu_exists($key)) { // if a member, not verified, and ip isn't cached
-        $data = query_ip_api($ip); // get ip info
+    // query IP API if not logged in the db
+    $ip_data = ip_validity_select($pdo, $ip);
+    if (empty($ip_data)) {
+        $data = query_ip_api($ip);
         if ($data !== false) {
-            $data = json_decode($data); // decode return data
-            if ($data->success) { // if url query succeeded
-                $validity = ip_is_valid($data, $handle_cc) ? 'VALID' : 'INVALID'; // determine validity
-                apcu_store($key, $validity, 2678400); // log validity
+            $data = json_decode($data);
+            if ($data->success) {
+                $valid = ip_is_valid($data, $handle_cc);
+                ip_validity_upsert($pdo, $ip, $valid);
             }
         }
-    } elseif (apcu_exists($key)) {
-        $validity = apcu_fetch($key);
+    } else {
+        $valid = (bool) (int) $ip_data->valid;
     }
 
-    return $validity === 'VALID';
+    return $valid;
 }
 
 
+/**
+ * Checks if an IP is valid based on proxy/VPN/tor/recent abuse status.
+ *
+ * @param object data The data returned from the IP API.
+ * @param boolean handle_cc Indicates if checking/changing the value of $country_code in the calling script.
+ *
+ * @return boolean
+ */
 function ip_is_valid($data, $handle_cc)
 {
     global $IP_API_SCORE_MIN;
@@ -84,32 +122,34 @@ function ip_is_valid($data, $handle_cc)
 
 
 // ensure correct country from existing data
+/**
+ * Ensures the correct value is used for $country_code and updates existing entries in the db as necessary.
+ *
+ * @param resource pdo The current database instance.
+ * @param string ip The IP address being checked for a stored country.
+ *
+ * @throws Exception if the recent_login_select_country_from_ip query fails.
+ * @throws Exception if the recent_logins_select_missing_country_from_ip query fails.
+ * @throws Exception if the recent_logins_update_missing_country query fails.
+ * @return void
+ */
 function ensure_ip_country_from_valid_existing($pdo, $ip)
 {
     global $country_code;
-    $key = "ip-country-$ip";
 
     // don't continue if no country code variable
     if (!isset($country_code)) {
         return;
     }
 
-    // if key exists in apcu, use that. otherwise, retrieve from db (returns ? on no matches)
+    // if key exists in db, use it (returns ? on no matches)
     if ($country_code === '?') {
-        // if there are entries with a ? for this IP or the country_code is ?, continue
-        $country_code = apcu_exists($key) ? apcu_fetch($key) : recent_login_select_country_from_ip($pdo, $ip);
+        $country_code = recent_login_select_country_from_ip($pdo, $ip);
     }
 
     // store valid data
-    if (!apcu_exists($key) && $country_code !== '?' && strlen($country_code) === 2) {
-        apcu_store($key, $country_code, 2678400); // store in apcu
+    $missing_count = recent_logins_select_count_missing_country_by_ip($pdo, $ip);
+    if ($missing_count > 0 && $country_code !== '?' && strlen($country_code) === 2) {
         recent_logins_update_missing_country($pdo, $ip, $country_code); // store in db (where ? for this IP)
     }
-}
-
-
-// manually sets an IP's validity
-function override_ip_api($ip, $action = 'allow')
-{
-    return apcu_store("ip-validity-$ip", $action === 'allow' ? 'VALID' : 'INVALID', 2678400);
 }
