@@ -70,7 +70,7 @@ try {
             $ban_type = 'account is';
         }
         $scope = $ban->scope === 's' ? 'socially banned' : 'banned';
-        $banned = "<a href='show_record.php?ban_id=$ban_id'>Yes</a>. This $ban_type $scope until $ban_end_date. "
+        $banned = "<a href='/bans/show_record.php?ban_id=$ban_id'>Yes</a>. This $ban_type $scope until $ban_end_date. "
             ."Reason: $reason";
     }
 
