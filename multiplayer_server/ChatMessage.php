@@ -73,7 +73,7 @@ class ChatMessage
         $this->message = str_ireplace([':hooray:', ':tada:', ':party:'], '🎉', $this->message);
         $this->message = str_ireplace([':fred:', ':cactus:'], '🌵', $this->message);
         $this->message = str_ireplace([':clown:', ':jmack:'], '🤡', $this->message);
-        $this->message = str_ireplace([':waving:', ':waving-hand:'], '👋', $this->message);
+        $this->message = str_ireplace([':waving:', ':waving-hand:', ':wave:'], '👋', $this->message);
         $this->message = str_ireplace(':dragon:', '🐉', $this->message);
         $this->message = str_ireplace(':hammer:', '🔨', $this->message);
         $this->message = str_ireplace([':sunglasses:', ':cool:'], '😎', $this->message);
