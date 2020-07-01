@@ -36,6 +36,11 @@ $IP_API_LINK_SUF = 'a link suf';
 $IP_API_SCORE_MIN = /* over */ 9000;
 $IP_API_LINK_2 = 'another link';
 
+$BANNED_IP_PREFIXES = [
+    '127.0.0.',
+    '192.168.0.'
+];
+
 $KONG_API_PASS = 'ghi';
 
 $CHANGE_EMAIL_KEY = 'why did I do this';
