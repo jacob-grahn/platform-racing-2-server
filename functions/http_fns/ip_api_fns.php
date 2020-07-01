@@ -44,7 +44,6 @@ function query_ip_api($ip)
 }
 
 
-// checks the validity of an IP address
 /**
  * Checks if an IP address's validity status is stored in the database; if not, queries the IP API to check validity.
  *
@@ -59,7 +58,7 @@ function query_ip_api($ip)
  */
 function check_ip_validity($pdo, $ip, $user = null, $handle_cc = true)
 {
-    global $IP_API_ENABLED, $BLS_IP_PREFIX;
+    global $IP_API_ENABLED, $BLS_IP_PREFIX, $BANNED_IP_PREFIXES;
     $valid = true;
 
     // special exceptions
@@ -68,6 +67,14 @@ function check_ip_validity($pdo, $ip, $user = null, $handle_cc = true)
         || (isset($user) && ($user->power != 1 || $user->verified == 1)) // staff/verified?
     ) {
         return $valid;
+    }
+
+    // banned IP prefix
+    foreach ($BANNED_IP_PREFIXES as $pre) {
+        if (strpos($ip, $pre) === 0) {
+            $aam = urlify('https://jiggmin2.com/aam', 'Ask a Mod');
+            throw new Exception("This IP range has been permanently banned. Please contact a staff member via $aam for more details.");
+        }
     }
 
     // query IP API if not logged in the db
@@ -121,7 +128,6 @@ function ip_is_valid($data, $handle_cc)
 }
 
 
-// ensure correct country from existing data
 /**
  * Ensures the correct value is used for $country_code and updates existing entries in the db as necessary.
  *
