@@ -208,6 +208,7 @@ function process_register_login($server_socket, $data)
         $group = (int) $login_obj->user->power;
         $user_id = (int) $login_obj->user->user_id;
         $is_fred = $user_id === FRED;
+        $privileged_cond = $group !== 1 || $login->user->verified == 1;
         $ps_staff_cond = $group === 3 || ($group === 2 && ($guild_id === 205 || $guild_id === 183));
         $is_guild_owner = $user_id === $guild_owner;
 
@@ -219,8 +220,7 @@ function process_register_login($server_socket, $data)
         if (isset($socket)) {
             if (!$server_socket->process) {
                 $socket->write('message`Error: Login verification failed.');
-            } elseif ($login_obj->login->ip !== $socket->ip) {
-                var_dump("Socket: $socket->ip", "Login: " . $login_obj->login->ip);
+            } elseif ($login_obj->login->ip !== $socket->ip && !$privileged_cond) {
                 $socket->write('message`Error: There\'s an IP mismatch. Check your network settings.');
             } elseif ($guild_id !== 0 && $guild_id !== (int) $login_obj->user->guild && !$ps_staff_cond && !$is_fred) {
                 $socket->write('message`Error: You are not a member of this guild.');
