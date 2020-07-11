@@ -108,7 +108,7 @@ try {
             $text = "<a href='player_info.php?user_id=$rid&force_ip=$rip'>$disp_rname</a> reported a level by ".
                 "<a href='player_info.php?user_id=$oid&force_ip=$oip'>$disp_oname</a> on $formatted_time".
                 '<p>'.
-                "<p><i>Level ID:</i> $item_id<br>".
+                "<p><i>Level ID:</i> $this_id<br>".
                 "<i>Title:</i> $title<br>".
                 "<i>Note:</i> $disp_body</p>".
                 "<p><i>Version:</i> $version<br>".
