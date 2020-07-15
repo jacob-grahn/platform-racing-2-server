@@ -193,7 +193,7 @@ function update_artifact($pdo)
 
     // form the base string we'll be creating
     $str = "$title by $user_name";
-    $len = strlen($str);
+    $len = mb_strlen($str, 'UTF-8');
 
     // figure out how much of the string to reveal
     $elapsed = time() - $updated_time;
@@ -205,8 +205,13 @@ function update_artifact($pdo)
     // generate random
     \pr2\http\PseudoRandom::seed(112);
 
+    // populate characters array
+    $arr = [];
+    for ($i = 0; $i < $len; $i++) {
+        $arr[] = mb_substr($str, $i, 1, 'UTF-8');
+    }
+
     // replace a percentage of characters with underscores
-    $arr = str_split($str);
     $loops = 0;
     while ($hide_characters > 0) {
         $index = \pr2\http\PseudoRandom::num(0, $len - 1);
