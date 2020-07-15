@@ -233,7 +233,7 @@ function update_artifact($pdo)
         $r->creator_name = $user_name;
         $r->creator_group = $user->power . ((bool) (int) $user->trial_mod ? ',1' : '');
     }
-    $r->hint = join('', $arr);
+    $r->hint = join('', array_map('utf8_encode', $arr));
     $r->finder_name = $finder_name;
     $r->bubbles_name = $bubbles_name;
     $r->updated_time = $updated_time;
