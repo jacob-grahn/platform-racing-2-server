@@ -297,30 +297,30 @@ function award_exp($pdo, int $user_id, int $exp_points, bool $from_cron = false,
         throw new Exception('The user is online. We\'ll try this again later.');
     } else {
         $data = pr2_select_rank_progress($pdo, $user_id);
-        $exp_needed = exp_required_for_ranking($data->rank + 1);
+        $exp_to_rank = exp_required_for_ranking($data->rank + 1);
 
         // handle ranking
-        $award_exp = $exp_points;
-        while ($data->exp + $exp_points > $exp_needed) {
-            $exp_needed = exp_required_for_ranking($data->rank + 1);
-            $exp_remaining = $exp_needed - $data->exp;
-
+        $original_exp = $exp_points;
+        while ($data->exp + $exp_points > $exp_to_rank) {
             // if this will make the user's exp negative, break
-            if ($exp_points - $exp_remaining < 0) {
+            if ($exp_points - $exp_remaining_to_rank < 0) {
                 break;
             }
 
             // rank up
-            $exp_points -= $exp_remaining;
+            $exp_points -= $exp_remaining_to_rank;
             $data->rank++;
             $data->exp = 0;
+
+            // calculate for next iteration (to test in while condition)
+            $exp_remaining_to_rank = $exp_to_rank = exp_required_for_ranking($data->rank + 1);
         }
 
         $data->exp += $exp_points; // add remaining exp to the new value
         $data->rank -= $data->tokens; // remove tokens from base rank update
 
         pr2_update_rank($pdo, $user_id, $data->rank, $data->exp);
-        part_awards_delete($pdo, $user_id, 'exp', $award_exp);
+        part_awards_delete($pdo, $user_id, 'exp', $original_exp);
 
         if ($from_spec_parts) {
             return $data;
