@@ -147,7 +147,7 @@ try {
         }
 
         // backup the file that is about to be overwritten
-        if ($time - $level->time > 1209600) { // 2 weeks
+        if ($time - $level->time > 86400) { // previously: 1209600 (2 weeks)
             backup_level(
                 $pdo,
                 $s3,
