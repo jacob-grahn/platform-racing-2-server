@@ -196,6 +196,9 @@ class ChatMessage
         } elseif (strpos($msg, '/t ') === 0 || strpos($msg, '/tournament ') === 0 || in_array($msg_trim, $t_arr)) {
             $this->commandTournament(); // tournament-related commands (start/stop, status)
             $handled = true;
+        } elseif ($msg === '/updates' || $msg === '/changes' || $msg === '/changelogs' || $msg === 'changelog') {
+            $this->commandUpdates(); // updates link
+            $handled = true;
         } elseif (in_array($msg_trim, $emotes_arr)) {
             $this->commandViewEmotes(); // view emotes
             $handled = true;
@@ -901,6 +904,14 @@ class ChatMessage
     }
 
 
+    // contests command (links to contests hub)
+    private function commandUpdates()
+    {
+        $msg = 'For a list of recent PR2 updates, visit ' . urlify('https://pr2hub.com/updates', 'pr2hub.com/updates') . '.';
+        $this->write("systemChat`$msg");
+    }
+
+
     // view rules
     private function commandViewRules()
     {
@@ -1041,7 +1052,8 @@ class ChatMessage
                 '- /emotes<br>'.
                 '- /guides<br>'.
                 '- /community<br>'.
-                '- /contests'.$mod.$effects.$admin.$server_owner);
+                '- /contests<br>'.
+                '- /updates'.$mod.$effects.$admin.$server_owner);
         }
     }
 
