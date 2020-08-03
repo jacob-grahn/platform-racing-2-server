@@ -907,8 +907,8 @@ class ChatMessage
     // contests command (links to contests hub)
     private function commandUpdates()
     {
-        $msg = 'For a list of recent PR2 updates, visit ' . urlify('https://pr2hub.com/updates', 'pr2hub.com/updates') . '.';
-        $this->write("systemChat`$msg");
+        $url = urlify('https://pr2hub.com/updates', 'pr2hub.com/updates');
+        $this->write("systemChat`For a list of recent PR2 updates, visit $url.");
     }
 
 
