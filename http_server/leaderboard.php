@@ -39,6 +39,7 @@ try {
         .'<th>#</th>'
         .'<th>Username</th>'
         .'<th>Rank</th>'
+        .'<th>Rank Tokens Used</th>'
         .'<th>Hats</th>'
         .'</tr>';
 
@@ -59,6 +60,11 @@ try {
         // rank
         $active_rank = (int) $user->active_rank;
 
+        // tokens
+        $tok_avail = (int) ($user->tokens_used > $user->tokens_avail ? $user->tokens_used : $user->tokens_avail);
+        $tok_used = $user->tokens_used > $user->tokens_avail ? $user->tokens_used : $user->tokens_avail; // guild tokens
+        $tokens_str = $tok_avail > 0 ? "$tok_used of $tok_avail": 'none available';
+
         // hats
         $hat_array = $user->hats;
         $hats = count(explode(',', $hat_array))-1;
@@ -78,6 +84,7 @@ try {
             ."<td>$i</td>"
             ."<td><a href='$info_link' style='color: #$group_color; text-decoration: underline;'>$safe_name</a></td>"
             ."<td>$active_rank</td>"
+            ."<td>$tokens_used of $tokens_avail</td>"
             ."<td>$hats</td>"
             .'</tr>';
     }
