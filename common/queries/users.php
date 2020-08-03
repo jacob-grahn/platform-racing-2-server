@@ -931,8 +931,7 @@ function users_select_top($pdo, $start, $count)
                u.trial_mod AS trial_mod,
                SUM(IFNULL(rt.used_tokens, 0) + pr2.rank) AS active_rank,
                pr2.hat_array AS hats,
-               rt.used_tokens as tokens_used,
-               rt.available_tokens as tokens_avail
+               rt.used_tokens as tokens_used
           FROM users u
           LEFT JOIN pr2 ON pr2.user_id = u.user_id
           LEFT JOIN rank_tokens rt ON rt.user_id = pr2.user_id
