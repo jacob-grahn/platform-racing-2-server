@@ -277,9 +277,9 @@ class ChatMessage
     private function commandAdminDebug()
     {
         global $server_id, $server_name, $uptime, $port,
-            $guild_id, $guild_owner, $server_expire_time, $campaign_array;
+            $guild_id, $guild_owner, $server_expire_time, $is_ps, $campaign_array;
 
-        $is_ps = ($guild_id !== 0 && $guild_id !== 183) ? 'yes' : 'no';
+        $ps_lang = $is_ps ? 'yes' : 'no';
         $args = explode(' ', $this->message);
         array_shift($args);
         $debug_arg = strtolower($args[0]);
@@ -317,16 +317,18 @@ class ChatMessage
                     $this->write('systemChat`This command cannot be used in levels.');
                 }
             } else {
-                $server_expires = $is_ps === 'no' ? 'never' : $server_expire_time;
+                $server_expire_date = date('F j, Y \a\t g:ia T', $server_expire_time);
+                $server_expires = !$is_ps ? 'never' : "$server_expire_date ($server_expire_time)";
+                $server_up = date('F j, Y \a\t g:ia T', $uptime);
                 $prizer = PR2SocketServer::$prizer_id;
                 $this->write(
                     "message`chat_message: $this->message<br>".
                     "id: $server_id<br>".
                     "name: $server_name<br>".
                     "port: $port<br>".
-                    "uptime: $uptime<br>".
+                    "uptime: $server_up ($uptime)<br>".
                     "expire_time: $server_expires<br>".
-                    "private_server: $is_ps<br>".
+                    "private_server: $ps_lang<br>".
                     "guild_id: $guild_id<br>".
                     "guild_owner: $guild_owner<br>".
                     'happy_hour: ' . HappyHour::$random_hour . '<br>'.
@@ -545,10 +547,10 @@ class ChatMessage
     // gets time left for server owners
     private function commandSOTimeLeft()
     {
-        global $guild_id, $server_expire_time;
+        global $is_ps, $server_expire_time;
 
-        if ($guild_id !== 0 && $guild_id !== 183) {
-            $readable_expire_time = date('F j, Y \a\t g:ia', $server_expire_time) . ' GMT';
+        if ($is_ps) {
+            $readable_expire_time = date('F j, Y \a\t g:ia T', $server_expire_time);
             $relative_expire_time = format_duration($server_expire_time - time());
             $this->write(
                 "systemChat`Your server will expire on $readable_expire_time ($relative_expire_time). ".
@@ -917,11 +919,11 @@ class ChatMessage
     // view rules
     private function commandViewRules()
     {
-        global $guild_id;
+        global $is_ps;
 
         $rules_link = urlify('https://pr2hub.com/rules', 'pr2hub.com/rules');
         $message = "The PR2 rules can be found at $rules_link.";
-        if ($guild_id !== 0) {
+        if ($is_ps) {
             $message .= ' Since this is a private server, your guild owner may have different rules'.
                 ' for the chatrooms and the server. Check with them if you\'re unsure.';
         }
