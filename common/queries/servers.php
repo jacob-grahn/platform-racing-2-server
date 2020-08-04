@@ -22,7 +22,7 @@ function server_insert($pdo, $expire_time, $server_name, $address, $port, $guild
         throw new Exception('Could not create server.');
     }
 
-    return $result;
+    return $pdo->lastInsertId();
 }
 
 

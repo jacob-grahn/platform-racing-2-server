@@ -1,6 +1,19 @@
 <?php
 
 
+// extend server life
+function process_extend_server_life($socket, $data)
+{
+    global $server_expire_time, $guild_id;
+
+    list($sent_guild_id, $new_time) = explode('`', $data);
+    if ($socket->process === true && $guild_id === (int) $sent_guild_id) {
+        $server_expire_time = (int) $new_time;
+        $socket->write('{"status":"ok"}');
+    }
+}
+
+
 // unlock the super booster
 function process_unlock_super_booster($socket, $data)
 {
