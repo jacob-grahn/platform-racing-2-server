@@ -549,8 +549,9 @@ class ChatMessage
 
         if ($guild_id !== 0 && $guild_id !== 183) {
             $readable_expire_time = date('F j, Y \a\t g:ia', $server_expire_time) . ' GMT';
+            $relative_expire_time = format_duration($server_expire_time - time());
             $this->write(
-                "systemChat`Your server will expire on $readable_expire_time. ".
+                "systemChat`Your server will expire on $readable_expire_time ($relative_expire_time). ".
                 "To extend your time, buy either Private Server 1 or Private Server 30 from the Vault of Magics."
             );
         } else {
