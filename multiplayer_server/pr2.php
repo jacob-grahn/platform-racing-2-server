@@ -83,7 +83,7 @@ $port = 0;
 $server_name = '';
 $guild_id = 0;
 $guild_owner = 0;
-$server_expire_time = '';
+$server_expire_time = 0;
 $max_players = 200;
 
 // prizes/random hh hour

@@ -33,7 +33,7 @@ function configure_server($server)
     // server information
     $port = (int) $server->port;
     $server_name = $server->server_name;
-    $server_expire_time = $server->expire_date;
+    $server_expire_time = strtotime($server->expire_date);
     $guild_id = (int) $server->guild_id;
 
     // no prizes on tournament
