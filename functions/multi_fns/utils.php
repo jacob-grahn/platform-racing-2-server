@@ -393,6 +393,18 @@ function get_priors($mod, $name)
 }
 
 
+// checks the status of a private server
+function privateServerCheckStatus()
+{
+    global $is_ps, $server_expire_time;
+
+    if ($is_ps && $server_expire_time <= time()) {
+        db_op('servers_deactivate_expired');
+        shutdown_server(null, true, 'This private server has expired. Thanks for playing!');
+    }
+}
+
+
 // perform an operation on the db via a query fn (try reconnecting and retrying on failure)
 function db_op($fn, $data = array())
 {

@@ -113,7 +113,8 @@ function server_update_expire_date($pdo, $expire_time, $server_id)
 {
     $stmt = $pdo->prepare('
         UPDATE servers
-           SET expire_date = FROM_UNIXTIME(:expire_time)
+           SET expire_date = FROM_UNIXTIME(:expire_time),
+               active = 1
          WHERE server_id = :server_id
     ');
     $stmt->bindValue(':expire_time', $expire_time, PDO::PARAM_INT);
@@ -157,10 +158,10 @@ function servers_deactivate_expired($pdo)
     $result = $pdo->exec('
         UPDATE servers
            SET active = 0,
-               status = "offline"
+               status = "down"
          WHERE expire_date < NOW()
     ');
-    
+
     if ($result === false) {
         throw new Exception('Could not deactivate expired servers');
     }

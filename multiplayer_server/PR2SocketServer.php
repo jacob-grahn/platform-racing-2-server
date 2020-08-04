@@ -21,5 +21,6 @@ class PR2SocketServer extends \chabot\SocketServer
         Mutes::removeExpired();
         LoiterDetector::check();
         \socialBansRemoveExpired();
+        \privateServerCheckStatus();
     }
 }

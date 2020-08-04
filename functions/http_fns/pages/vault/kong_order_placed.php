@@ -89,15 +89,15 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         if ($result->status_code === 0) {
             throw new Exception('An error occurred. Please notify a member of the PR2 staff team for assistance.');
         } elseif ($result->status_code === 1) {
-            $reply = "The best server ever is starting up! ETA 2 minutes."
+            $reply = 'The best server ever is starting up! ETA 2 minutes.'
                 ."\n\n(Expiration time: ";
         } elseif ($result->status_code === 2) {
             $reply = 'The life of your private server has been extended! Long live your guild!'
                 ."\n\n(New expiration time: ";
-            $command = "extend_server_life`$guild_id`$result->new_time";
         }
 
-        $reply .= date('F j, Y \a\t g:ia', $result->new_time) . ' GMT)';
+        $command = "extend_server_life`$guild_id`$result->new_time";
+        $reply .= date('F j, Y \a\t g:ia T', $result->new_time);
     } elseif ($slug === 'rank-rental') {
         rank_token_rental_insert($pdo, $user_id, $guild_id);
 
@@ -155,19 +155,34 @@ function create_server($pdo, $guild_id, $days_of_life)
         $life_secs = 86400 * $days_of_life;
         $life_from_now = time() + $life_secs;
 
-        if (!$existing_server) {
+        if (!$existing_server) { // server doesn't exist in the db
             global $SERVER_IP;
+
+            // insert and start server
             $server_id = server_insert($pdo, $life_from_now, $server_name, $SERVER_IP, $port, $guild_id);
             start_server(PR2_ROOT . '/pr2.php', $port, $server_id);
+
+            // return data
             $ret->new_time = $life_from_now;
             $ret->status_code = 1;
-        } else {
-            $server_id = $existing_server->server_id;
+        } else { // server exists and is either active or inactive
+            // get server info
+            $server_id = (int) $existing_server->server_id;
+            $active = (bool) (int) $existing_server->active;
+
+            // do expiration time calculations
             $life_from_expiry = strtotime($existing_server->expire_date) + $life_secs;
             $life_from_expiry = $life_from_expiry < $life_from_now ? $life_from_now : $life_from_expiry;
+
+            // update info (and activate server if applicable)
             server_update_expire_date($pdo, $life_from_expiry, $server_id);
+            if (!$active) { // if it wasn't active, start the server
+                start_server(PR2_ROOT . '/pr2.php', $port, $server_id);
+            }
+
+            // return data
             $ret->new_time = $life_from_expiry;
-            $ret->status_code = 2;
+            $ret->status_code = $active ? 2 : 1; // if server was inactive, return the new server message to user
         }
     } catch (Exception $e) {
         unset($e);
