@@ -79,6 +79,7 @@ function apply_bans($bans)
 }
 
 
+// remove expired social bans
 function socialBansRemoveExpired()
 {
     global $player_array;
@@ -389,6 +390,18 @@ function get_priors($mod, $name)
     // tell the mod
     $mod->write("message`$str");
     return true;
+}
+
+
+// checks the status of a private server
+function privateServerCheckStatus()
+{
+    global $is_ps, $server_expire_time;
+
+    if ($is_ps && $server_expire_time <= time()) {
+        db_op('servers_deactivate_expired');
+        shutdown_server(null, true, 'This private server has expired. Thanks for playing!');
+    }
 }
 
 

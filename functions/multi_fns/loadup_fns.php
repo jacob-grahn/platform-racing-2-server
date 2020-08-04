@@ -28,13 +28,14 @@ function begin_loadup($server_id)
 
 function configure_server($server)
 {
-    global $port, $server_name, $server_expire_time, $guild_id, $guild_owner;
+    global $port, $server_name, $server_expire_time, $guild_id, $guild_owner, $is_ps;
 
     // server information
     $port = (int) $server->port;
     $server_name = $server->server_name;
-    $server_expire_time = $server->expire_date;
+    $server_expire_time = strtotime($server->expire_date);
     $guild_id = (int) $server->guild_id;
+    $is_ps = $guild_id !== 0 && $guild_id !== 183;
 
     // no prizes on tournament
     \pr2\multi\PR2SocketServer::$tournament = (bool) (int) $server->tournament;

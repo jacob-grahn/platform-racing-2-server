@@ -86,13 +86,18 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         $days = (int) explode('-', $slug)[1];
         $result = create_server($pdo, $guild_id, $days);
 
-        if ($result === 0) {
-            throw new Exception('Could not start the server.');
-        } elseif ($result === 1) {
-            $reply = 'The best server ever is starting up! ETA 2 minutes.';
-        } elseif ($result === 2) {
-            $reply = 'The life of your private server has been extended! Long live your guild!';
+        if ($result->status_code === 0) {
+            throw new Exception('An error occurred. Please notify a member of the PR2 staff team for assistance.');
+        } elseif ($result->status_code === 1) {
+            $reply = 'The best server ever is starting up! ETA 2 minutes.'
+                ."\n\n(Expiration time: ";
+        } elseif ($result->status_code === 2) {
+            $reply = 'The life of your private server has been extended! Long live your guild!'
+                ."\n\n(New expiration time: ";
         }
+
+        $command = "extend_server_life`$guild_id`$result->new_time";
+        $reply .= date('F j, Y \a\t g:ia T', $result->new_time);
     } elseif ($slug === 'rank-rental') {
         rank_token_rental_insert($pdo, $user_id, $guild_id);
 
@@ -134,31 +139,54 @@ function send_confirmation_pm($pdo, $user_id, $title, $order_id)
 
 function create_server($pdo, $guild_id, $days_of_life)
 {
-    global $SERVER_IP;
-
+    // existing server info
     $existing_server = server_select_by_guild_id($pdo, $guild_id);
-    $guild = guild_select($pdo, $guild_id);
-    $expire_time = time() + (86400 * $days_of_life);
-    $server_name = $guild->guild_name;
-    $address = $SERVER_IP;
-    $port = 1 + servers_select_highest_port($pdo);
-    $guild_id = $guild->guild_id;
+    $port = servers_select_highest_port($pdo) + 1;
 
+    // guild info
+    $guild = guild_select($pdo, $guild_id);
+    $guild_id = (int) $guild->guild_id;
+    $server_name = $guild->guild_name;
+
+    $ret = new stdClass();
+    $ret->status_code = 0;
     try {
-        if (!$existing_server) {
-            server_insert($pdo, $expire_time, $server_name, $address, $port, $guild_id);
-            return 1;
-        } else {
-            $server_id = $existing_server->server_id;
-            $expire_time_2 = strtotime($existing_server->expire_date) + (86400 * $days_of_life);
-            if ($expire_time_2 > $expire_time) {
-                $expire_time = $expire_time_2;
+        // ...time after time
+        $life_secs = 86400 * $days_of_life;
+        $life_from_now = time() + $life_secs;
+
+        if (!$existing_server) { // server doesn't exist in the db
+            global $SERVER_IP;
+
+            // insert and start server
+            $server_id = server_insert($pdo, $life_from_now, $server_name, $SERVER_IP, $port, $guild_id);
+            start_server(PR2_ROOT . '/pr2.php', $port, $server_id);
+
+            // return data
+            $ret->new_time = $life_from_now;
+            $ret->status_code = 1;
+        } else { // server exists and is either active or inactive
+            // get server info
+            $server_id = (int) $existing_server->server_id;
+            $active = (bool) (int) $existing_server->active;
+
+            // do expiration time calculations
+            $life_from_expiry = strtotime($existing_server->expire_date) + $life_secs;
+            $life_from_expiry = $life_from_expiry < $life_from_now ? $life_from_now : $life_from_expiry;
+
+            // update info (and activate server if applicable)
+            server_update_expire_date($pdo, $life_from_expiry, $server_id);
+            if (!$active) { // if it wasn't active, start the server
+                start_server(PR2_ROOT . '/pr2.php', $port, $server_id);
             }
-            server_update_expire_date($pdo, $expire_time, $server_id);
-            return 2;
+
+            // return data
+            $ret->new_time = $life_from_expiry;
+            $ret->status_code = $active ? 2 : 1; // if server was inactive, return the new server message to user
         }
     } catch (Exception $e) {
         unset($e);
-        return 0;
+    } finally {
+        return $ret;
     }
 }

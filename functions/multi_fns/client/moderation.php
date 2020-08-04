@@ -12,7 +12,7 @@ function client_view_priors($socket, $data)
 // kick a player
 function client_kick($socket, $data)
 {
-    global $guild_id, $guild_owner, $server_name;
+    global $is_ps, $guild_owner, $server_name;
     $name = $data;
 
     // get players
@@ -77,7 +77,7 @@ function client_kick($socket, $data)
             }
 
             // log the action if it's on a public server
-            if ($guild_id == 0) {
+            if (!$is_ps) {
                 $message = "$mod->name kicked $name from $server_name from $mod->ip.";
                 db_op('mod_action_insert', array($mod->user_id, $message, 'kick', $mod->ip));
             }
@@ -95,7 +95,7 @@ function client_kick($socket, $data)
 // unkick a player
 function client_unkick($socket, $data)
 {
-    global $guild_id, $server_name;
+    global $is_ps, $server_name;
     $name = $data;
 
     // get some info
@@ -111,7 +111,7 @@ function client_unkick($socket, $data)
             $mod->write("message`$unkicked_name has been unkicked! Hooray for second chances!");
 
             // log the action if it's on a public server
-            if ($guild_id == 0) {
+            if (!$is_ps) {
                 $message = "$mod->name unkicked $name from $server_name from $mod->ip.";
                 db_op('mod_action_insert', array($mod->user_id, $message, 'unkick', $mod->ip));
             }

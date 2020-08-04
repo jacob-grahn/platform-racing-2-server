@@ -57,6 +57,7 @@ $LOGIN_KEY = 'hello';
 $LOGIN_IV = 'there';
 
 $ALLOWED_CLIENT_VERSIONS = array('weeeee version', 'weeeee new version');
+$FALLBACK_ADDRESSES = array($SERVER_IP);
 $TRUSTED_REFS = [ // trusted referrers for the pr2 client
     'http://pr2hub.com/', // pr2hub
     'https://pr2hub.com/', // pr2hub
