@@ -79,6 +79,7 @@ function apply_bans($bans)
 }
 
 
+// remove expired social bans
 function socialBansRemoveExpired()
 {
     global $player_array;
