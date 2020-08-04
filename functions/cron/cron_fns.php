@@ -250,14 +250,15 @@ function update_artifact($pdo)
 
 function failover_servers($pdo)
 {
+    global $FALLBACK_ADDRESSES;
+
     // list servers
     $servers = servers_select($pdo);
-    $addresses = array('45.76.24.255'); // todo: this should be in the db
 
     // restart if down
     foreach ($servers as $server) {
         if ($server->status == 'down') {
-            $fallback_address = $addresses[array_rand($addresses)];
+            $fallback_address = $FALLBACK_ADDRESSES[array_rand($FALLBACK_ADDRESSES)];
             server_update_address($pdo, $server->server_id, $fallback_address);
         }
     }
