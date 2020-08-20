@@ -411,6 +411,11 @@ function db_op($fn, $data = array())
     global $pdo, $reconnect_attempted;
 
     try {
+        // sanity: does the fn exist?
+        if (!function_exists($fn)) {
+            throw new Exception("Function \"$fn\" does not exist.");
+        }
+        
         // build params and call fn
         $params = array($pdo);
         foreach ($data as $var) {
