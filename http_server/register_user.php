@@ -63,9 +63,9 @@ try {
     // check IP validity
     $valid_ip = check_ip_validity($pdo, $ip, null, false);
     if (!$valid_ip) {
-        $aam_link = urlify('https://jiggmin2.com/aam', 'Ask a Mod');
+        $cam_link = urlify('https://jiggmin2.com/cam', 'Contact a Mod');
         $msg = 'Please disable your proxy/VPN to connect to PR2. '.
-            "If you feel this is a mistake, please use $aam_link to contact a member of the PR2 staff team.";
+            "If you feel this is a mistake, please use $cam_link to contact a member of the PR2 staff team.";
         throw new Exception($msg);
     }
 
