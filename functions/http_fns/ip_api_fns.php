@@ -72,8 +72,8 @@ function check_ip_validity($pdo, $ip, $user = null, $handle_cc = true)
     // banned IP prefix
     foreach ($BANNED_IP_PREFIXES as $pre) {
         if (strpos($ip, $pre) === 0) {
-            $am = urlify('https://jiggmin2.com/aam', 'Ask a Mod');
-            $msg = "This IP range has been permanently banned. Please contact a staff member via $am for more details.";
+            $cm = urlify('https://jiggmin2.com/cam', 'Contact a Mod');
+            $msg = "This IP range has been permanently banned. Please contact a staff member via $cm for more details.";
             throw new Exception($msg);
         }
     }

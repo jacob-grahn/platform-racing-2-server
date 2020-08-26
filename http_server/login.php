@@ -143,9 +143,9 @@ try {
     // check IP validity
     $country_code = '?';
     if (!check_ip_validity($pdo, $ip, $user)) {
-        $aam_link = urlify('https://jiggmin2.com/aam', 'Ask a Mod');
+        $cam_link = urlify('https://jiggmin2.com/cam', 'Contact a Mod');
         $msg = 'Please disable your proxy/VPN to connect to PR2. '.
-            "If you feel this is a mistake, please use $aam_link to contact a member of the PR2 staff team.";
+            "If you feel this is a mistake, please use $cam_link to contact a member of the PR2 staff team.";
         throw new Exception($msg);
     }
     ensure_ip_country_from_valid_existing($pdo, $ip); // if possible, ensure country code isn't ?
