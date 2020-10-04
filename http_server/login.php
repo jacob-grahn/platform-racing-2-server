@@ -22,7 +22,7 @@ require_once QUERIES_DIR . '/servers.php';
 $ip = get_ip();
 
 $encrypted_login = default_post('i', '');
-$version = isset($_POST['build']) ? default_post('build', '') : default_post('version', '');
+$build = default_post('build', '');
 $in_token = find('token');
 $guest_login = false;
 $token_login = false;
@@ -41,20 +41,19 @@ $ret = new stdClass();
 $ret->success = false;
 
 try {
-    // sanity check: POST?
+    // sanity: POST?
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Invalid request method.");
-    } // sanity check: was data received?
-    if (!isset($encrypted_login)) {
-        throw new Exception('Login data not recieved.');
-    } // sanity check: is it an allowed version?
-    if (array_search($version, $ALLOWED_CLIENT_VERSIONS) === false) {
-        throw new Exception('PR2 has recently been updated. Please refresh the page to download the latest version.');
     }
 
-    // correct referrer?
+    // sanity: correct referrer?
     if (strpos($ip, $BLS_IP_PREFIX) !== 0) {
         require_trusted_ref('log in');
+    }
+
+    // sanity: proper data received?
+    if (!isset($encrypted_login)) {
+        throw new Exception('Login data not recieved.');
     }
 
     // rate limiting
@@ -66,22 +65,23 @@ try {
     $encryptor->setKey($LOGIN_KEY);
     $str_login = $encryptor->decrypt($encrypted_login, $LOGIN_IV);
     $login = json_decode($str_login);
-    $login->version = isset($login->build) ? $login->build : $login->version; // remove after 156's release
     $login->ip = $ip;
     $user_name = $login->user_name;
     $user_pass = $login->user_pass;
-    $version2 = $login->version;
+    $build2 = $login->build;
     $server_id = $login->server->server_id;
     $server_port = $login->server->port;
     $server_address = $login->server->address;
     $remember = $login->remember;
 
-    // more sanity checks
-    if (array_search($version2, $ALLOWED_CLIENT_VERSIONS) === false) {
-        $e = "PR2 has recently been updated. Please refresh the page to download the latest version. $version2";
+    // sanity: correct version?
+    if (array_search($build, $ALLOWED_CLIENT_VERSIONS) === false || array_search($build2, $ALLOWED_CLIENT_VERSIONS) === false) {
+        $e = "PR2 has recently been updated. Please refresh the page to download the latest version.";
         throw new Exception($e);
     }
-    if ((is_empty($in_token) === true && is_empty($user_name) === true) || strpos($user_name, '`') !== false) {
+    
+    // sanity: valid name?
+    if ((is_empty($in_token) && is_empty($user_name)) || strpos($user_name, '`') !== false) {
         throw new Exception('Invalid user name entered.');
     }
 
@@ -108,7 +108,7 @@ try {
         unset($user_pass, $login->user_pass); // don't keep raw pass in memory or send to server
 
         // see if they're trying to log into a guest
-        if ((int) $user->power === 0 && $guest_login === false && $token_login === false) {
+        if ((int) $user->power === 0 && !$guest_login && !$token_login) {
             $e = 'Direct guest account logins are not allowed. Instead, please click "Play as Guest" on the main menu.';
             throw new Exception($e);
         }
@@ -130,7 +130,7 @@ try {
     // generate a login token for future requests
     $token = get_login_token($user->user_id);
     token_insert($pdo, $user->user_id, $token);
-    if ($remember === true && $guest_login === false) {
+    if ($remember && !$guest_login) {
         $token_expire = time() + 2592000; // one month
         setcookie('token', $token, $token_expire, '/', $_SERVER['SERVER_NAME'], false, true);
     } else {
@@ -152,21 +152,18 @@ try {
     $user_name = $user->name;
     $group = (int) $user->power;
 
-    // sanity check: is the entered name and the one retrieved from the database identical?
+    // sanity: login name identical to the one in the db?
     // this won't be triggered unless some real funny business is going on
-    if (($token_login === false || !is_empty($login->user_name)) &&
-        strtolower($login->user_name) !== strtolower($user_name) &&
-        $guest_login === false
-    ) {
+    $names_match = strtolower($login->user_name) === strtolower($user_name);
+    if ((!$token_login || !is_empty($login->user_name)) && !$guest_login && !$names_match) {
         throw new Exception('The names don\'t match. If this error persists, contact a member of the PR2 Staff Team.');
     }
 
-    // sanity check: is it a valid name?
-    if ($token_login === false) {
-        if (strlen(trim($login->user_name)) < 2) {
+    // sanity: valid name?
+    if (!$token_login) {
+        if (strlen(trim($login->user_name)) < 2) { // too short?
             throw new Exception('Your name must be at least 2 characters long.');
-        }
-        if (strlen(trim($login->user_name)) > 20) {
+        } elseif (strlen(trim($login->user_name)) > 20) { // too long?
             throw new Exception('Your name cannot be more than 20 characters long.');
         }
     }
@@ -256,8 +253,8 @@ try {
     $exp_today = max($exp_today_id, $exp_today_ip);
 
     // check if they have an email set
-    $has_email = !is_empty($user->email) && strlen($user->email) > 0 ? true : false; // email set?
-    $has_ant = array_search(20, $head_array) !== false ? true : false; // kong account login perk
+    $has_email = !is_empty($user->email) && strlen($user->email) > 0; // email set?
+    $has_ant = array_search(20, $head_array) !== false; // kong account login perk
 
     // determine if in a guild and if the guild owner
     if ((int) $user->guild !== 0) {
