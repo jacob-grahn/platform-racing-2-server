@@ -92,19 +92,16 @@ try {
     $server = server_select($pdo, $server_id);
 
     // guest login
-    if (strtolower(trim($login->user_name)) === 'guest') {
+    if (strtolower(trim($login->user_name)) === 'guest' && $user_pass === '') {
         $guest_login = true;
         $user = user_select_guest($pdo);
         check_if_banned($pdo, $user->user_id, $ip); // don't let anyone banned under any scope log into guest accounts
-    } // account login
-    else {
-        // token login
-        if (isset($in_token) && $login->user_name === '' && $login->user_pass === '') {
+    } else { // account login
+        if (isset($in_token) && $user_name === '' && $user_pass === '') {  // token login
             $token_login = true;
             $token = $in_token;
             $user = user_select($pdo, token_login($pdo, true, false, 'n'));
-        } // or password login
-        else {
+        } else { // or password login
             $user = pass_login($pdo, $user_name, $user_pass, 'n');
         }
         $user_id = (int) $user->user_id;
