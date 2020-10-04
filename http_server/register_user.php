@@ -29,29 +29,20 @@ try {
     $rl_msg = 'Please wait at least 10 seconds before trying to create another account.';
     rate_limit('register-account-attempt-'.$ip, 10, 2, $rl_msg);
 
-    // error check
-    if (is_empty($name) || !is_string($password) || is_empty($password)) {
+    // input validation
+    if (is_empty($name) || !is_string($password) || is_empty($password)) { // missing info?
         throw new Exception('You must enter a name and a password to register an account.');
-    }
-    if (trim(strlen($name)) < 2) {
+    } elseif (trim(strlen($name)) < 2) { // too short?
         throw new Exception('Your name must be at least 2 characters long.');
-    }
-    if (trim(strlen($name)) > 20) {
+    } elseif (trim(strlen($name)) > 20) { // too long?
         throw new Exception('Your name can not be more than 20 characters long.');
-    }
-    if (strpos($name, '`') !== false) {
-        throw new Exception('The ` character is not allowed.');
-    }
-    if (!is_empty($email) && !valid_email($email)) {
+    } elseif (preg_replace("/[^a-zA-Z0-9-.:;=?~! ]/", "", $name) !== $name) { // invalid characters?
+        throw new Exception('Your name is invalid. You may only use alphanumeric characters, spaces and !-.:;=?~.');
+    } elseif (is_obscene($name)) { // obscene?
+        throw new Exception('Keep your username clean, pretty please!');
+    } elseif (!is_empty($email) && !valid_email($email)) { // invalid email?
         $email = htmlspecialchars($email, ENT_QUOTES);
         throw new Exception("'$email' is not a valid email address.");
-    }
-    if (is_obscene($name)) {
-        throw new Exception('Keep your username clean, pretty please!');
-    }
-    $test_name = preg_replace("/[^a-zA-Z0-9-.:;=?~! ]/", "", $name);
-    if ($test_name != $name) {
-        throw new Exception('Your name is invalid. You may only use alphanumeric characters, spaces and !-.:;=?~.');
     }
 
     // connect
