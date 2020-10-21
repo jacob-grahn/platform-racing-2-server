@@ -35,6 +35,14 @@ class Prize
     }
 
 
+    public function getFullName() // not prize popup display name
+    {
+        $is_epic = substr($this->type, 0, 1) === 'e';
+        $part_type = $is_epic ? substr(strtolower($this->type), 1) : $this->type;
+        return ($is_epic ? 'Epic ' : '') . \to_part_name($part_type, $this->id) . ' ' . ucfirst($part_type);
+    }
+
+
     public function isUniversal()
     {
         return (bool) $this->universal;

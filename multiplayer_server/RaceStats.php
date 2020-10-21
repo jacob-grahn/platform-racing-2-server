@@ -6,6 +6,7 @@ class RaceStats
 {
 
     public $temp_id;
+    public $user_id;
     public $name;
     public $group;
     public $mod_power;
@@ -31,6 +32,7 @@ class RaceStats
     public function __construct($player)
     {
         $this->temp_id = $player->temp_id;
+        $this->user_id = $player->user_id;
         $this->name = $player->name;
         $this->group = $player->group;
         $this->mod_power = mod_power($player);

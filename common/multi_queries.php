@@ -12,6 +12,7 @@ require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/mod_actions.php';
 require_once QUERIES_DIR . '/mod_power.php';
 require_once QUERIES_DIR . '/pr2.php';
+require_once QUERIES_DIR . '/prize_actions.php';
 require_once QUERIES_DIR . '/purchases.php';
 require_once QUERIES_DIR . '/promotion_log.php';
 require_once QUERIES_DIR . '/rank_tokens.php';

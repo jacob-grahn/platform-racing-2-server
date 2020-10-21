@@ -31,6 +31,7 @@ class Game extends Room
     private $next_hat_id = 0;
     private $prize;
     private $prize_cancelled = false;
+    private $prizer_prize = false;
     private $campaign;
 
     private $mode = self::MODE_RACE;
@@ -149,7 +150,7 @@ class Game extends Room
     private function isPlayerHere($player_id)
     {
         $ret = false;
-        foreach ($this->player_array as $player) {
+        foreach ($this->finish_array as $player) {
             if ($player->user_id == $player_id) {
                 $ret = true;
             }
@@ -284,6 +285,7 @@ class Game extends Room
 
     public function prizerSetPrize($user_id, $type, $id)
     {
+        $this->prizer_prize = true;
         if (PR2SocketServer::$prizer_id !== 0 && $user_id === PR2SocketServer::$prizer_id) {
             $prize = Prizes::find($type, $id);
             if (isset($prize)) {
@@ -307,10 +309,11 @@ class Game extends Room
             $this->prize == Prizes::$EPIC_SIR_BODY ||
             $this->prize == Prizes::$EPIC_SIR_FEET
         );
-        $prizer_cond = PR2SocketServer::$prizer_id === $player->user_id;
-        if ($sir_cond || $clint_cond || $player->group === 3 || $prizer_cond) {
+        $prizer_cond = PR2SocketServer::$prizer_id === $player->user_id && $this->prizer_prize;
+        if ($player->group === 3 || $sir_cond || $clint_cond || $prizer_cond) {
             $this->prize = null;
             $this->prize_cancelled = true;
+            $this->prizer_prize = false;
             $this->sendToAll("cancelPrize`$player->name");
         }
     }
@@ -613,7 +616,45 @@ class Game extends Room
                 $autoset = $prize->getType() == 'hat';
                 $result = $player->gainPart($prize->getType(), $prize->getId(), $autoset);
                 if ($result == true) {
+                    // prize popup
                     $player->write('winPrize`' . $prize->toStr());
+
+                    // determine if a special account
+                    $spec_acc = null;
+                    $spec_ids = [PR2SocketServer::$prizer_id, self::PLAYER_CLINT, self::PLAYER_SIR];
+                    $player_names = '';
+                    for ($i = 0; $i < count($this->finish_array); $i++) {
+                        $p = $this->finish_array[$i];
+                        $player_names .= ($i > 0 ? ' / ' : '') . "$p->name";
+                        if (in_array($p->user_id, $spec_ids)) {
+                            // assign the spec_acc var if we've hit one of the following conditions
+                            $prizer_cond = $p->user_id === PR2SocketServer::$prizer_id && $this->prizer_prize === true;
+                            $clint_cond = $p->user_id == self::PLAYER_CLINT && $this->prize == Prizes::$EPIC_COWBOY_HAT;
+                            $sir_cond = $p->user_id === self::PLAYER_SIR && (
+                                $this->prize == Prizes::$EPIC_TOP_HAT ||
+                                $this->prize == Prizes::$EPIC_SIR_HEAD ||
+                                $this->prize == Prizes::$EPIC_SIR_BODY ||
+                                $this->prize == Prizes::$EPIC_SIR_FEET
+                            );
+                            if ($prizer_cond || $clint_cond || $sir_cond) {
+                                $spec_acc = $p;
+                            }
+                        }
+                    }
+
+                    // record the prize in the prize log
+                    if (!empty($spec_acc)) {
+                        $msg = "$spec_acc->name awarded a prize to $player->name from $spec_acc->ip "
+                            ."{user_id: $spec_acc->user_id, "
+                            ."winner_id: $player->user_id, "
+                            ."winner_name: $player->name, "
+                            .'part_type: ' . $prize->getType() . ', '
+                            .'part_id: ' . $prize->getId() . ', '
+                            .'prize_name: ' . $prize->getFullName() . ', '
+                            .'is_prizer: ' . ($prizer_cond ? 'yes' : 'no') . ', '
+                            ."who_was_there: $player_names}";
+                        db_op('prize_action_insert', [$spec_acc->user_id, $msg, 'award', $prizer_cond, $spec_acc->ip]);
+                    }
                 }
             }
 
