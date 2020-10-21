@@ -150,7 +150,7 @@ class Game extends Room
     private function isPlayerHere($player_id)
     {
         $ret = false;
-        foreach ($this->finish_array as $player) {
+        foreach ($this->player_array as $player) {
             if ($player->user_id == $player_id) {
                 $ret = true;
             }
@@ -647,6 +647,7 @@ class Game extends Room
                         $msg = "$spec_acc->name awarded a prize to $player->name from $spec_acc->ip "
                             ."{user_id: $spec_acc->user_id, "
                             ."winner_id: $player->user_id, "
+                            ."level_id: $this->course_id, "
                             .'part_type: ' . $prize->getType() . ', '
                             .'part_id: ' . $prize->getId() . ', '
                             .'prize_name: ' . $prize->getFullName() . ', '
