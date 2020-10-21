@@ -647,7 +647,6 @@ class Game extends Room
                         $msg = "$spec_acc->name awarded a prize to $player->name from $spec_acc->ip "
                             ."{user_id: $spec_acc->user_id, "
                             ."winner_id: $player->user_id, "
-                            ."winner_name: $player->name, "
                             .'part_type: ' . $prize->getType() . ', '
                             .'part_id: ' . $prize->getId() . ', '
                             .'prize_name: ' . $prize->getFullName() . ', '
