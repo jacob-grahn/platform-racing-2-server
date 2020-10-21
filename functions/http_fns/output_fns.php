@@ -77,12 +77,19 @@ function output_footer()
 function output_staff_nav($formatting_for_admins = true)
 {
     $reports_link = "<a href='/mod/reports.php?mode=messages'>Reports</a>";
+    $log_link = "<a href='/mod/action_log.php?mode=mod'>Action Logs</a>";
     if (strpos($_SERVER['REQUEST_URI'], '/mod/reports.php') === 0) {
         $mode = default_get('mode', 'messages');
         $mode = $mode !== 'messages' && $mode !== 'levels' ? 'messages' : $mode;
         $other = $mode === 'messages' ? 'Levels' : 'Messages';
         $reports_url = '/mod/reports.php?mode=' . strtolower($other);
         $reports_link = str_replace($other, "<a href='$reports_url'>$other</a>", 'Reported: (Messages | Levels)');
+    } elseif (strpos($_SERVER['REQUEST_URI'], '/mod/action_log.php') === 0) {
+        $mode = default_get('mode', 'mod');
+        $mode = $mode !== 'mod' && $mode !== 'prize' ? 'mod' : $mode;
+        $other = $mode === 'mod' ? 'Prize' : 'Mod';
+        $log_url = '/mod/action_log.php?mode=' . strtolower($other);
+        $log_link = str_replace($other, "<a href='$log_url'>$other</a>", 'Logs: (Mod | Prize)');
     }
 
     echo "<p><b>"
@@ -90,14 +97,14 @@ function output_staff_nav($formatting_for_admins = true)
         ."<a href='/mod/player_info.php'>Player Search</a> - "
         ."<a href='/mod/ip_info.php'>IP Search</a> - "
         ."<a href='/bans/bans.php'>Ban Log</a> - "
-        ."<a href='/mod/mod_log.php'>Mod Action Log</a>";
+        .$log_link;
 
     if ($formatting_for_admins === true) {
         echo "<br>"
             ."<a href='/admin/player_deep_info.php'>Update Account</a> - "
             ."<a href='/admin/guild_deep_info.php'>Update Guild</a> - "
             ."<a href='/admin/set_campaign.php'>Set Custom Campaign</a> - "
-            ."<a href='/admin/admin_log.php'>Admin Action Log</a>";
+            ."<a href='/admin/admin_log.php'>Admin Action Logs</a>";
     }
 
     echo '</b></p>'

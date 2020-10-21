@@ -3,7 +3,6 @@
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/contests/add_prize_fns.php';
-require_once HTTP_FNS . '/pages/contests/part_vars.php';
 require_once QUERIES_DIR . '/admin_actions.php';
 require_once QUERIES_DIR . '/contests.php';
 require_once QUERIES_DIR . '/contest_prizes.php';
