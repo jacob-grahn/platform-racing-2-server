@@ -12,6 +12,7 @@ class Game extends Room
     const LEVEL_DEEPER = 6493337; // for jellyfish hat
     const LEVEL_HAUNTED = 1782114; // for epic jack-o'-lantern head
     const LEVEL_CHEESE = 6207945; // for cheese hat
+    const LEVEL_BLOBFISH = 5985129; // for blobfish head
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -176,9 +177,9 @@ class Game extends Room
             }
         }
 
-        // Haunted House 2 by DareDevil1510; Awards: Epic Jack-o'-Lantern Head
-        if ($this->course_id == self::LEVEL_HAUNTED) {
-            $this->prize = Prizes::$EPIC_JACKOLANTERN_HEAD;
+        // The Golden Compass by -Shadowfax-; Awards: Top Hat
+        if ($this->course_id == self::LEVEL_COMPASS) {
+            $this->prize = Prizes::$TOP_HAT;
         }
 
         // -Deliverance- by changelings; Awards: Slender Set
@@ -193,16 +194,20 @@ class Game extends Room
             $this->prize = $sea_prizes[array_rand($sea_prizes)];
         }
 
-        // The Golden Compass by -Shadowfax-; Awards: Top Hat
-        if ($this->course_id == self::LEVEL_COMPASS) {
-            $this->prize = Prizes::$TOP_HAT;
-        }
-
         // Deeper by Sothal; Awards: Jellyfish Hat
         if ($this->course_id == self::LEVEL_DEEPER) {
             $this->prize = Prizes::$JELLYFISH_HAT;
         }
-        
+
+        // Haunted House 2 by DareDevil1510; Awards: Epic Jack-o'-Lantern Head
+        if ($this->course_id == self::LEVEL_HAUNTED) {
+            $this->prize = Prizes::$EPIC_JACKOLANTERN_HEAD;
+        }
+
+        // Underwater World by Odin0030; Awards: Blobfish Head
+        if ($this->course_id == self::LEVEL_BLOBFISH) {
+            $this->prize = Prizes::$BLOBFISH_HEAD;
+        }
         
         // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
         if ($this->isPlayerHere(self::PLAYER_SIR)) {

@@ -33,7 +33,7 @@ function prize_check($type, $id, $err_prefix)
 
     // check for a valid head id
     if ($type === 'head' || $type === 'eHead') {
-        if ($id < 1 || $id > 46) {
+        if ($id < 1 || $id > 47) {
             throw new Exception("$err_prefix (invalid head ID ($id) specified).");
         } else {
             return true;
