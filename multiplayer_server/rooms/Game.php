@@ -1265,7 +1265,7 @@ class Game extends Room
 
     private function startHatCountdown($player)
     {
-        $secs = 30;
+        $secs = 15;
         if ($this->hatCountdownEnd === -1
             && $this->hasHats === -1
             && count($player->worn_hat_array) === count($this->finish_array)
@@ -1291,9 +1291,7 @@ class Game extends Room
             && count($prospect->worn_hat_array) === count($this->finish_array)
         ) {
             $secs_remaining = ceil(($this->hatCountdownEnd - $this->currentMS()) / 1000);
-            if ($secs_remaining <= 10 || $secs_remaining === 20) {
-                $player->socket->write("systemChat`$secs_remaining");
-            }
+            $player->socket->write("systemChat`$secs_remaining");
             return;
         }
         $this->maybeEndHatCountdown();
