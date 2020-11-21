@@ -74,6 +74,7 @@ function favorite_levels_select($pdo, $user_id, $page)
             l.live,
             l.pass,
             l.type,
+            l.bad_hats,
             l.time,
             u.name,
             u.power,
