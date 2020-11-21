@@ -82,7 +82,10 @@ try {
         $level->note,
         $level->min_level,
         $level->song,
-        $level->play_count
+        $level->play_count,
+        $level->pass,
+        $level->type,
+        $level->bad_hats
     );
 
     // delete the level in the db

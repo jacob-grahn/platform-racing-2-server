@@ -47,6 +47,7 @@ try {
     $ret->has_pass = isset($ldata['has_pass']) ? (bool) (int) $ldata['has_pass'] : false;
     $ret->version = isset($ldata['version']) ? (int) $ldata['version'] : 1;
     $ret->items = isset($ldata['items']) ? $ldata['items'] : '1`2`3`4`5`6`7`8`9';
+    $ret->badHats = isset($ldata['badHats']) ? $ldata['badHats'] : '';
 
     // connect
     $pdo = pdo_connect();

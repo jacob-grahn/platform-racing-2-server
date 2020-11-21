@@ -44,6 +44,7 @@ class Game extends Room
     private $cowboy_chance = '';
     private $cowboy_mode = false;
     private $tournament = false;
+    private $valid_hats = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
     protected $room_name = 'game_room';
     protected $temp_id = 0;
@@ -336,6 +337,7 @@ class Game extends Room
                 $rs->finish_positions = $arr[2];
                 $rs->finish_count = $arr[3];
                 $rs->cowboy_chance = $arr[4];
+                $rs->bad_hats = $arr[5];
             }
             $this->sendToAll('finishDrawing`'.$player->temp_id);
         }
@@ -374,15 +376,34 @@ class Game extends Room
                 $this->finish_positions = json_decode($this->finish_positions);
             }
 
-            // don't start a hat attack level if there's only one player in the game
-            if ($this->mode === self::MODE_HAT && count($this->player_array) <= 1) {
-                foreach ($this->player_array as $player) {
-                    $this->quitRace($player);
-                    $player->socket->write("forceQuit`");
-                    $hat_msg = 'Error: You can\'t play a hat attack level by yourself. :(';
-                    $player->socket->write("message`$hat_msg");
+            // remove arti on hat attack and arti level
+            $arti_cond = $this->mode === self::MODE_HAT || $this->course_id == Artifact::$level_id;
+            $this->valid_hats = $arti_cond ? array_splice($this->valid_hats, 12, 1) : $this->valid_hats;
+
+            // remove other invalid hats from valid hats array
+            $this->valid_hats = array_diff($this->valid_hats, explode($this->democratize('bad_hats'), ','));
+
+            // handle hat attack mode
+            if ($this->mode === self::MODE_HAT) {
+                // don't start a hat attack level if there's only one player in the game
+                if (count($this->player_array) <= 1 && empty($hat_err)) {
+                    $hat_err = 'Error: You can\'t play a hat attack level by yourself. :(';
                 }
-                return;
+
+                // sanity: are there any valid hats? (this should never trigger)
+                if (count($this->valid_hats) === 0) {
+                    $hat_err = 'Error: No valid hats.';
+                }
+
+                // throw error if triggered
+                if (!empty($hat_err)) {
+                    foreach ($this->player_array as $player) {
+                        $this->quitRace($player);
+                        $player->socket->write("forceQuit`");
+                        $player->socket->write("message`$hat_err");
+                    }
+                    return;
+                }
             }
 
             // boot people with the wrong level hash
@@ -475,16 +496,19 @@ class Game extends Room
                 $hat_id = 1;
             }
 
+            // remove the hat if player is wearing one that's invalid (this should never trigger)
+            if ($hat_id > 1 && !in_array($hat_id, $this->valid_hats)) {
+                $hat_id = 1;
+            }
+
             // cowboy mode
             if ($this->cowboy_mode) {
                 $hat_id = 5;
             }
 
             // change the hat to something random during hat attack if they aren't wearing a valid hat
-            // this is foolproof. no chance at all that this is a horrible idea. none whatsoever
-            $valid_hats = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16];
-            if ($this->mode === self::MODE_HAT && !in_array($hat_id, $valid_hats)) {
-                $hat_id = $valid_hats[rand(0, count($valid_hats) - 1)];
+            if ($this->mode === self::MODE_HAT && !in_array($hat_id, $this->valid_hats)) {
+                $hat_id = $this->valid_hats[rand(0, count($this->valid_hats) - 1)];
                 $msg = 'Howdy! Here\'s a random hat to use just for this level. Thank me later!!';
                 $player->socket->write("chat`Fred the G. Cactus`3`$msg");
             }

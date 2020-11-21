@@ -250,6 +250,7 @@ function format_level_list($levels)
         $level->live = (int) $level->live;
         $level->pass = isset($level->pass);
         $level->type = $level->type;
+        $level->bad_hats = $level->bad_hats;
         $level->time = (int) $level->time;
 
         // remove unwanted vars from output

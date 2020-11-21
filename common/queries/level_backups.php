@@ -39,8 +39,23 @@ function level_backups_delete_old($pdo)
 }
 
 
-function level_backups_insert($pdo, $uid, $lid, $title, $ver, $live, $rating, $votes, $note, $min_rank, $song, $plays)
-{
+function level_backups_insert(
+    $pdo,
+    $uid,
+    $lid,
+    $title,
+    $ver,
+    $live,
+    $rating,
+    $votes,
+    $note,
+    $rank,
+    $song,
+    $plays,
+    $pass,
+    $type,
+    $hats
+) {
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         INSERT INTO level_backups
@@ -55,6 +70,9 @@ function level_backups_insert($pdo, $uid, $lid, $title, $ver, $live, $rating, $v
             min_level = :min_level,
             song = :song,
             play_count = :play_count,
+            pass = :pass,
+            type = :type,
+            bad_hats = :bad_hats,
             date = NOW()
     ');
     $stmt->bindValue(':user_id', $uid, PDO::PARAM_INT);
@@ -65,9 +83,12 @@ function level_backups_insert($pdo, $uid, $lid, $title, $ver, $live, $rating, $v
     $stmt->bindValue(':rating', $rating, PDO::PARAM_STR);
     $stmt->bindValue(':votes', $votes, PDO::PARAM_INT);
     $stmt->bindValue(':note', $note, PDO::PARAM_STR);
-    $stmt->bindValue(':min_level', $min_rank, PDO::PARAM_INT);
+    $stmt->bindValue(':min_level', $rank, PDO::PARAM_INT);
     $stmt->bindValue(':song', $song, PDO::PARAM_INT);
     $stmt->bindValue(':play_count', $plays, PDO::PARAM_INT);
+    $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
+    $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+    $stmt->bindValue(':bad_hats', $hat, PDO::PARAM_STR);
     $result = $stmt->execute();
 
     if ($result === false) {

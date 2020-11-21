@@ -24,6 +24,7 @@ class RaceStats
     public $finish_positions = '';
     public $finish_count = '';
     public $cowboy_chance = '';
+    public $bad_hats = '';
 
     public $eggs = 0;
     public $objectives_reached = array();

@@ -61,7 +61,7 @@ function level_increment_play_count($pdo, $level_id, $play_count)
 }
 
 
-function level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $pass, $type)
+function level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $pass, $type, $hats)
 {
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
@@ -75,7 +75,8 @@ function level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song,
                song = :song,
                user_id = :user_id,
                pass = :pass,
-               type = :type
+               type = :type,
+               bad_hats = :bad_hats
     ');
     $stmt->bindValue(':title', $title, PDO::PARAM_STR);
     $stmt->bindValue(':note', $note, PDO::PARAM_STR);
@@ -87,6 +88,7 @@ function level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song,
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+    $stmt->bindValue(':bad_hats', $hats, PDO::PARAM_STR);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -163,6 +165,7 @@ function level_select_from_search($pdo, $level_id)
                l.live,
                l.pass,
                l.type,
+               l.bad_hats,
                l.time,
                u.name,
                u.power,
@@ -260,7 +263,7 @@ function level_update_rating($pdo, $level_id, $rating, $votes)
 }
 
 
-function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, $song, $version, $pass, $type)
+function level_update($pdo, $lid, $title, $note, $live, $time, $ip, $rank, $song, $version, $pass, $type, $hats)
 {
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
@@ -274,21 +277,23 @@ function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_le
                song = :song,
                version = :version,
                pass = :pass,
-               type = :type
+               type = :type,
+               bad_hats = :bad_hats
          WHERE level_id = :level_id
          LIMIT 1
     ');
-    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_STR);
+    $stmt->bindValue(':level_id', $lid, PDO::PARAM_STR);
     $stmt->bindValue(':title', $title, PDO::PARAM_STR);
     $stmt->bindValue(':note', $note, PDO::PARAM_STR);
     $stmt->bindValue(':live', $live, PDO::PARAM_INT);
     $stmt->bindValue(':time', $time, PDO::PARAM_INT);
     $stmt->bindValue(':ip', $ip, PDO::PARAM_STR);
-    $stmt->bindValue(':min_level', $min_level, PDO::PARAM_INT);
+    $stmt->bindValue(':min_level', $rank, PDO::PARAM_INT);
     $stmt->bindValue(':song', (int) $song, PDO::PARAM_INT);
     $stmt->bindValue(':version', $version, PDO::PARAM_INT);
     $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+    $stmt->bindValue(':bad_hats', $hats, PDO::PARAM_STR);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -299,8 +304,24 @@ function level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_le
 }
 
 
-function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $song, $lid, $plays, $votes, $rating, $ver)
-{
+function levels_restore_backup(
+    $pdo,
+    $uid,
+    $name,
+    $note,
+    $live,
+    $ip,
+    $rank,
+    $song,
+    $lid,
+    $plays,
+    $pass,
+    $type,
+    $hats,
+    $votes,
+    $rating,
+    $ver
+) {
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         INSERT INTO levels
@@ -315,6 +336,9 @@ function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $son
             song = :song,
             user_id = :user_id,
             play_count = :play_count,
+            pass = :pass,
+            type = :type,
+            bad_hats = :bad_hats,
             votes = :votes,
             rating = :rating
         ON DUPLICATE KEY UPDATE
@@ -322,7 +346,10 @@ function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $son
             note = :note,
             live = :live,
             min_level = :min_level,
-            song = :song
+            song = :song,
+            pass = :pass,
+            type = :type,
+            bad_hats = :bad_hats
     ');
     $stmt->bindValue(':user_id', $uid, PDO::PARAM_INT);
     $stmt->bindValue(':title', $name, PDO::PARAM_STR);
@@ -337,6 +364,9 @@ function levels_restore_backup($pdo, $uid, $name, $note, $live, $ip, $rank, $son
     $stmt->bindValue(':votes', $votes, PDO::PARAM_INT);
     $stmt->bindValue(':rating', $rating, PDO::PARAM_STR);
     $stmt->bindValue(':version', $ver, PDO::PARAM_INT);
+    $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
+    $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+    $stmt->bindValue(':bad_hats', $hats, PDO::PARAM_STR);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -403,6 +433,7 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
                l.live,
                l.pass,
                l.type,
+               l.bad_hats,
                l.time,
                u.name,
                u.power,
@@ -438,6 +469,7 @@ function levels_select_best_today($pdo)
                l.note,
                l.live,
                l.type,
+               l.bad_hats,
                l.time,
                u.name,
                u.power,
@@ -476,6 +508,7 @@ function levels_select_best($pdo)
                  l.note,
                  l.live,
                  l.type,
+                 l.bad_hats,
                  l.time,
                  u.name,
                  u.power,
@@ -512,6 +545,7 @@ function levels_select_by_owner($pdo, $user_id)
                l.note,
                l.live,
                l.type,
+               l.bad_hats,
                l.time,
                u.name,
                u.power,
@@ -575,6 +609,7 @@ function levels_select_campaign($pdo)
                  l.note,
                  l.live,
                  l.type,
+                 l.bad_hats,
                  l.time,
                  u.name,
                  u.power,
@@ -611,6 +646,7 @@ function levels_select_newest($pdo)
                  l.note,
                  l.live,
                  l.type,
+                 l.bad_hats,
                  l.time,
                  u.name,
                  u.power,

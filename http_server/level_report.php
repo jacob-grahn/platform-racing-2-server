@@ -91,7 +91,10 @@ try {
             $note,
             (int) $level->min_level,
             $level->song,
-            (int) $level->play_count
+            (int) $level->play_count,
+            $level->pass,
+            $level->type,
+            $level->bad_hats
         );
     }
 

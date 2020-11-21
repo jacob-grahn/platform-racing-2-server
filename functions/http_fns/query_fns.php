@@ -495,7 +495,10 @@ function backup_level(
     $note = '',
     $rank = 0,
     $song = 0,
-    $plays = 0
+    $plays = 0,
+    $pass = null,
+    $type = 'r',
+    $hats = ''
 ) {
     $filename = "$lid.txt";
     $backup_filename = "$lid-v$ver.txt";
@@ -507,7 +510,9 @@ function backup_level(
             throw new Exception('Could not save a backup of your level.');
         }
 
-        level_backups_insert($pdo, $uid, $lid, $title, $ver, $live, $rate, $vote, $note, $rank, $song, $plays);
+        // phpcs:disable
+        level_backups_insert($pdo, $uid, $lid, $title, $ver, $live, $rate, $vote, $note, $rank, $song, $plays, $pass, $type, $hats);
+        // phpcs:enable
     } catch (Exception $e) {
         $success = false;
     }
