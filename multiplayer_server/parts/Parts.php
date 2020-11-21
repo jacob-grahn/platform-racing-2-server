@@ -158,6 +158,7 @@ class Heads
     const JACKOLANTERN = 44;
     const XMAS = 45;
     const SNOWMAN = 46;
+    const BLOBFISH = 47;
 }
 
 

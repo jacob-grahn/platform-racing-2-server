@@ -185,6 +185,7 @@ class Prizes
     public static $JACKOLANTERN_HEAD;
     public static $XMAS_HEAD;
     public static $SNOWMAN_HEAD;
+    public static $BLOBFISH_HEAD;
 
     // epic heads
     public static $EPIC_CLASSIC_HEAD;
@@ -233,6 +234,7 @@ class Prizes
     public static $EPIC_JACKOLANTERN_HEAD;
     public static $EPIC_XMAS_HEAD;
     public static $EPIC_SNOWMAN_HEAD;
+    public static $EPIC_BLOBFISH_HEAD;
 
 
     // bodies
@@ -505,6 +507,7 @@ class Prizes
         self::$JACKOLANTERN_HEAD = new Prize(self::TYPE_HEAD, Heads::JACKOLANTERN, 'Jack-o\'-Lantern Head');
         self::$XMAS_HEAD = new Prize(self::TYPE_HEAD, Heads::XMAS, 'Star Head');
         self::$SNOWMAN_HEAD = new Prize(self::TYPE_HEAD, Heads::SNOWMAN, 'Snowman Head');
+        self::$BLOBFISH_HEAD = new Prize(self::TYPE_HEAD, Heads::BLOBFISH, 'Blobfish Head');
 
         // epic heads
         self::$EPIC_CLASSIC_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade');
@@ -553,6 +556,7 @@ class Prizes
         self::$EPIC_JACKOLANTERN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::JACKOLANTERN, 'Epic Upgrade');
         self::$EPIC_XMAS_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::XMAS, 'Epic Upgrade');
         self::$EPIC_SNOWMAN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SNOWMAN, 'Epic Upgrade');
+        self::$EPIC_BLOBFISH_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BLOBFISH, 'Epic Upgrade');
 
 
         // bodies

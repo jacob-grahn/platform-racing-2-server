@@ -69,6 +69,9 @@ try {
             $row->song,
             $level_id,
             $row->play_count,
+            $row->pass,
+            $row->type,
+            $row->bad_hats,
             $row->votes,
             $row->rating,
             $version

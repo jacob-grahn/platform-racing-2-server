@@ -21,6 +21,8 @@ $pass_hash = default_post('passHash', '');
 $has_pass = (int) default_post('hasPass', 0);
 $game_mode = default_post('gameMode', 'race');
 $cowboy_chance = (int) default_post('cowboyChance', 5);
+$bad_hats = trim(default_post('badHats', ''));
+$num_hats = 15; // find a better way to do this
 
 $override_banned = (bool) (int) default_post('override_banned', 0);
 $overwrite_existing = (bool) (int) default_post('overwrite_existing', 0);
@@ -103,6 +105,43 @@ try {
         $type = 'r';
     }
 
+    // "bad" hats validation
+    try {
+        // skip if blank
+        if ($bad_hats === '') {
+            throw new Exception('skip');
+        }
+
+        // preg_match raw "bad" hats input string
+        if (empty(preg_match('/^\d+(,\d+)*$/', $bad_hats))) {
+            throw new Exception('The level did not upload correctly. Maybe try again?');
+        }
+
+        // verify that all of the "bad" hats passed are valid
+        $arti_in_bad_hats = false;
+        $num_bad_hats = 0;
+        foreach (explode(',', $bad_hats) as $hat_id) {
+            validate_prize('hat', $hat_id);
+            $arti_in_bad_hats = !$arti_in_bad_hats ? $hat_id == 14 : true;
+            $num_bad_hats++;
+        }
+
+        // hat attack checks
+        if ($type === 'h') {
+            if (strpos($bad_hats, '14') === false) { // make sure artifact is disabled
+                $bad_hats = "$bad_hats,14";
+                $num_bad_hats++;
+            }
+            if ($num_bad_hats >= $num_hats) { // check to make sure at least one hat is enabled
+                throw new Exception('You must allow at least one hat in hat attack mode.');
+            }
+        }
+    } catch (Exception $e) {
+        if ($e->getMessage() !== 'skip') {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     // allow saving as unpublished if banned
     if (!empty($ban)) {
         if (!$override_banned) {
@@ -161,14 +200,19 @@ try {
                 $level->note,
                 (int) $level->min_level,
                 $level->song,
-                (int) $level->play_count
+                (int) $level->play_count,
+                $level->pass,
+                $level->type,
+                $level->bad_hats
             );
         }
 
         // update existing level
         $version = $level->version + 1;
         $level_id = (int) $level->level_id;
-        level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, $song, $version, $hash2, $type);
+        // phpcs:disable
+        level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, $song, $version, $hash2, $type, $bad_hats);
+        // phpcs:enable
 
         // delete from newest if there and not published
         if (!$live) {
@@ -178,7 +222,7 @@ try {
         if ($has_pass === 1) {
             $hash2 = empty($pass_hash) ? null : sha1($pass_hash . $LEVEL_PASS_SALT);
         }
-        level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $hash2, $type);
+        level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song, $user_id, $hash2, $type, $bad_hats);
         $level = level_select_by_title($pdo, $user_id, $title);
         $level_id = (int) $level->level_id;
         $version = (int) $level->version;
@@ -198,7 +242,7 @@ try {
     $str = "level_id=$level_id&version=$version&user_id=$user_id&credits="
         ."&cowboyChance=$cowboy_chance&title=$url_title&time=$time"
         ."&note=$url_note&min_level=$min_level&song=$song&gravity=$gravity&max_time=$max_time"
-        ."&has_pass=$has_pass&live=$live&items=$items&gameMode=$game_mode"
+        ."&has_pass=$has_pass&live=$live&items=$items&gameMode=$game_mode&badHats=$bad_hats"
         ."&data=$data";
     $str_to_hash = $version . $level_id . $str . $LEVEL_SALT_2;
     $hash = md5($str_to_hash);
@@ -233,7 +277,10 @@ try {
         $note,
         $min_level,
         $song,
-        (int) $level->play_count
+        (int) $level->play_count,
+        $level->pass,
+        $level->type,
+        $bad_hats
     );
 
     // tell every one it's time to party

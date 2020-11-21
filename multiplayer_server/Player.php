@@ -156,7 +156,7 @@ class Player
         $this->ignored_array = $login->ignored;
 
         $this->domain = $login->login->domain;
-        $this->version = $login->login->version;
+        $this->version = $login->login->build;
 
         // check for an active social ban
         if (!empty($login->user->sban_id)) {
@@ -855,6 +855,7 @@ class Player
             $this->chat_room->removePlayer($this);
         }
         if (isset($this->game_room)) {
+            $this->game_room->quitRace($this);
             $this->game_room->removePlayer($this);
         }
         if (isset($this->course_box)) {

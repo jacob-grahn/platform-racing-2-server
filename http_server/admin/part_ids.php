@@ -83,7 +83,8 @@ try {
 44 - Jack-o\'-Lantern
 45 - Star
 46 - Snowman
-47+ - *BLANK*
+47 - Blobfish
+48+ - *BLANK*
 
 -- Bodies --
 1 - Classic
@@ -220,7 +221,7 @@ Snowman: 46
 
 -- Blank IDs --
 Hats: 17+
-Heads: 47+
+Heads: 48+
 Bodies: 33, 44, 47+
 Feet: 31-33, 44, 47+</pre>';
 } catch (Exception $e) {
