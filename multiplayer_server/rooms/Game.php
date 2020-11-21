@@ -377,8 +377,9 @@ class Game extends Room
             }
 
             // remove arti on hat attack and arti level
-            $arti_cond = $this->mode === self::MODE_HAT || $this->course_id == Artifact::$level_id;
-            $this->valid_hats = $arti_cond ? array_splice($this->valid_hats, 12, 1) : $this->valid_hats;
+            if ($this->mode === self::MODE_HAT || $this->course_id == Artifact::$level_id) {
+                array_splice($this->valid_hats, 12, 1);
+            }
 
             // remove other invalid hats from valid hats array
             $this->valid_hats = array_diff($this->valid_hats, explode(',', $this->democratize('bad_hats')));
