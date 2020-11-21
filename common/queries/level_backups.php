@@ -88,7 +88,7 @@ function level_backups_insert(
     $stmt->bindValue(':play_count', $plays, PDO::PARAM_INT);
     $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
-    $stmt->bindValue(':bad_hats', $hat, PDO::PARAM_STR);
+    $stmt->bindValue(':bad_hats', $hats, PDO::PARAM_STR);
     $result = $stmt->execute();
 
     if ($result === false) {
