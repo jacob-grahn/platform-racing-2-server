@@ -386,7 +386,7 @@ class Game extends Room
             // handle hat attack mode
             if ($this->mode === self::MODE_HAT) {
                 // don't start a hat attack level if there's only one player in the game
-                if (count($this->player_array) <= 1 && empty($hat_err)) {
+                if (count($this->player_array) <= 1) {
                     $hat_err = 'Error: You can\'t play a hat attack level by yourself. :(';
                 }
 
