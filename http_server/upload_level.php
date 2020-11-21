@@ -22,7 +22,7 @@ $has_pass = (int) default_post('hasPass', 0);
 $game_mode = default_post('gameMode', 'race');
 $cowboy_chance = (int) default_post('cowboyChance', 5);
 $bad_hats = trim(default_post('badHats', ''));
-$num_hats = 15;
+$num_hats = 15; // find a better way to do this
 
 $override_banned = (bool) (int) default_post('override_banned', 0);
 $overwrite_existing = (bool) (int) default_post('overwrite_existing', 0);
