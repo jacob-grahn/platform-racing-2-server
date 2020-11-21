@@ -281,7 +281,7 @@ try {
         $level->pass,
         $level->type,
         $bad_hats
-    );*
+    );
 
     // tell every one it's time to party
     if ($on_success === 'pass set with live') {
