@@ -381,7 +381,7 @@ class Game extends Room
             $this->valid_hats = $arti_cond ? array_splice($this->valid_hats, 12, 1) : $this->valid_hats;
 
             // remove other invalid hats from valid hats array
-            $this->valid_hats = array_diff($this->valid_hats, explode($this->democratize('bad_hats'), ','));
+            $this->valid_hats = array_diff($this->valid_hats, explode(',', $this->democratize('bad_hats')));
 
             // handle hat attack mode
             if ($this->mode === self::MODE_HAT) {
