@@ -855,6 +855,7 @@ class Player
             $this->chat_room->removePlayer($this);
         }
         if (isset($this->game_room)) {
+            $this->game_room->quitRace($this);
             $this->game_room->removePlayer($this);
         }
         if (isset($this->course_box)) {
