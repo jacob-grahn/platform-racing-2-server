@@ -252,6 +252,7 @@ function process_register_login($server_socket, $data)
 
                 $socket->write("loginSuccessful`$group`$player->name");
                 $socket->write("setRank`$player->active_rank");
+                $socket->write("setServerOwner`$guild_owner");
                 $socket->write('ping`' . time());
             }
 
