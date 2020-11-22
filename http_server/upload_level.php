@@ -108,12 +108,12 @@ try {
     // "bad" hats validation
     try {
         // skip if blank
-        if ($bad_hats === '') {
+        if ($bad_hats === '' && $type !== 'h') {
             throw new Exception('skip');
         }
 
         // preg_match raw "bad" hats input string
-        if (empty(preg_match('/^\d+(,\d+)*$/', $bad_hats))) {
+        if (empty(preg_match('/^\d+(,\d+)*$/', $bad_hats)) && $bad_hats !== '') {
             throw new Exception('The level did not upload correctly. Maybe try again?');
         }
 
@@ -121,6 +121,9 @@ try {
         $arti_in_bad_hats = false;
         $num_bad_hats = 0;
         foreach (explode(',', $bad_hats) as $hat_id) {
+            if ($hat_id < 2 || $hat_id > $num_hats + 1) {
+                continue;
+            }
             validate_prize('hat', $hat_id);
             $arti_in_bad_hats = !$arti_in_bad_hats ? $hat_id == 14 : true;
             $num_bad_hats++;
@@ -136,6 +139,9 @@ try {
                 throw new Exception('You must allow at least one hat in hat attack mode.');
             }
         }
+
+        // just in case
+        $bad_hats = trim($bad_hats, ',');
     } catch (Exception $e) {
         if ($e->getMessage() !== 'skip') {
             throw new Exception($e->getMessage());
