@@ -509,7 +509,6 @@ class Game extends Room
 
             // change the hat to something random during hat attack if they aren't wearing a valid hat
             if ($this->mode === self::MODE_HAT && !in_array($hat_id, $this->valid_hats)) {
-                var_dump("course_id: $this->course_id", "time: $this->start_time", $this->valid_hats); // DEBUG
                 $hat_id = $this->valid_hats[rand(0, count($this->valid_hats) - 1)];
                 $msg = 'Howdy! Here\'s a random hat to use just for this level. Thank me later!!';
                 $player->socket->write("chat`Fred the G. Cactus`3`$msg");
