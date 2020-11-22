@@ -1272,6 +1272,22 @@ class Game extends Room
             && count($player->worn_hat_array) === count($this->finish_array)
             && $this->isStillPlaying($player->temp_id)
         ) {
+            // skip countdown for the last one to finish
+            $last_to_finish = true;
+            foreach ($this->finish_array as $pl) {
+                if (!$pl->race_stats->finished_race) {
+                    $last_to_finish = false;
+                    break;
+                }
+            }
+            if ($last_to_finish) {
+                $winner = userify($player, $player->name, $player->group, mod_power($player));
+                $this->sendToAll("systemChat`$winner finished!<br>");
+                $this->finishRace($player);
+                return;
+            }
+
+            // start countdown
             $this->hatCountdownEnd = $this->currentMS() + ($secs * 1000);
             $this->hasHats = $player->temp_id;
 
@@ -1422,6 +1438,8 @@ class Game extends Room
                 $this->assignHat($player, $hat);
             }
         }
+
+        // hat attack
         if ($this->mode === self::MODE_HAT
             && count($player->worn_hat_array) === count($this->finish_array)
             && $this->hatCountdownEnd === -1
