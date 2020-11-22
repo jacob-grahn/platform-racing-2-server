@@ -132,13 +132,16 @@ try {
         // hat attack checks
         if ($type === 'h') {
             if (strpos($bad_hats, '14') === false) { // make sure artifact is disabled
-                $bad_hats = trim("$bad_hats,14", ',');
+                $bad_hats = "$bad_hats,14";
                 $num_bad_hats++;
             }
             if ($num_bad_hats >= $num_hats) { // check to make sure at least one hat is enabled
                 throw new Exception('You must allow at least one hat in hat attack mode.');
             }
         }
+
+        // just in case
+        $bad_hats = trim($bad_hats, ',');
     } catch (Exception $e) {
         if ($e->getMessage() !== 'skip') {
             throw new Exception($e->getMessage());
