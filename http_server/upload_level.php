@@ -132,7 +132,7 @@ try {
         // hat attack checks
         if ($type === 'h') {
             if (strpos($bad_hats, '14') === false) { // make sure artifact is disabled
-                $bad_hats = "$bad_hats,14";
+                $bad_hats = trim("$bad_hats,14", ',');
                 $num_bad_hats++;
             }
             if ($num_bad_hats >= $num_hats) { // check to make sure at least one hat is enabled
