@@ -383,6 +383,7 @@ class Game extends Room
 
             // remove other invalid hats from valid hats array
             $this->valid_hats = array_diff($this->valid_hats, explode(',', $this->democratize('bad_hats')));
+            var_dump("course_id: $this->course_id", "time: $this->start_time", $this->valid_hats); // DEBUG
 
             // handle hat attack mode
             if ($this->mode === self::MODE_HAT) {
