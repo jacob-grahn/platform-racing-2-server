@@ -1273,14 +1273,7 @@ class Game extends Room
             && $this->isStillPlaying($player->temp_id)
         ) {
             // skip countdown for the last one to finish
-            $last_to_finish = true;
-            foreach ($this->finish_array as $rs) {
-                if (!$rs->finished_race && $rs->user_id != $player->user_id) {
-                    $last_to_finish = false;
-                    break;
-                }
-            }
-            if ($last_to_finish) {
+            if ($this->isLastPlayer($player)) {
                 $winner = userify($player, $player->name, $player->group, mod_power($player));
                 $this->sendToAll("systemChat`$winner finished!<br>");
                 $this->finishRace($player);
@@ -1330,20 +1323,35 @@ class Game extends Room
     }
 
 
+    private function isLastPlayer($player)
+    {
+        foreach ($this->finish_array as $rs) {
+            if (!$rs->finished_race && $rs->user_id != $player->user_id) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     public function maybeEndHatCountdown()
     {
-        if ($this->currentMS() >= $this->hatCountdownEnd && $this->hasHats > -1) {
-            $player = $this->idToPlayer($this->hasHats);
-            if (isset($player) && $this->isStillPlaying($player->temp_id)) {
-                $this->finishRace($player);
-                $this->cancelHatCountdown(false);
-                $winner = userify($player, $player->name, $player->group, mod_power($player));
-                $this->sendToAll("systemChat`$winner finished!<br>");
-            } else {
-                $this->cancelHatCountdown();
+        if ($this->hasHats > -1) {
+            $last_player = $this->isLastPlayer($this->idToPlayer($this->hasHats));
+            if ($this->currentMS() >= $this->hatCountdownEnd || $last_player) {
+                $player = $this->idToPlayer($this->hasHats);
+                if (isset($player) && $this->isStillPlaying($player->temp_id)) {
+                    $this->finishRace($player);
+                    $this->cancelHatCountdown(false);
+                    $winner = userify($player, $player->name, $player->group, mod_power($player));
+                    $this->sendToAll("systemChat`$winner finished!<br>");
+                } else {
+                    $this->cancelHatCountdown();
+                }
             }
         }
     }
+
 
     private function loseAllHats($player)
     {
