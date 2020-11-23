@@ -1341,7 +1341,7 @@ class Game extends Room
             $last_player = $this->isLastPlayer($this->idToPlayer($this->hasHats));
             if ($this->currentMS() >= $this->hatCountdownEnd || $last_player) {
                 $player = $this->idToPlayer($this->hasHats);
-                if (isset($player) && $this->isStillPlaying($player->temp_id)) {
+                if (isset($player) && ($this->isStillPlaying($player->temp_id) || $last_player)) {
                     $this->finishRace($player);
                     $this->cancelHatCountdown(false);
                     $winner = userify($player, $player->name, $player->group, mod_power($player));
