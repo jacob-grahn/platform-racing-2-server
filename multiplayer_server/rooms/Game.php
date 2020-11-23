@@ -377,7 +377,6 @@ class Game extends Room
             }
 
             // remove arti on hat attack and arti level
-            var_dump('before: ' + join(',', $this->valid_hats));
             if ($this->mode === self::MODE_HAT || $this->course_id == Artifact::$level_id) {
                 array_splice($this->valid_hats, 12, 1);
             }
@@ -511,7 +510,9 @@ class Game extends Room
             // change the hat to something random during hat attack if they aren't wearing a valid hat
             if ($this->mode === self::MODE_HAT && !in_array($hat_id, $this->valid_hats)) {
                 $hat_id = $this->valid_hats[rand(0, count($this->valid_hats) - 1)];
-                var_dump('after: ' . join(',', $this->valid_hats), 'hat_id: ' . $hat_id);
+                if (empty($hat_id)) {
+                    var_dump($this->valid_hats);
+                }
                 $msg = 'Howdy! Here\'s a random hat to use just for this level. Thank me later!!';
                 $player->socket->write("chat`Fred the G. Cactus`3`$msg");
             }
