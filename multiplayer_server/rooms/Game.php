@@ -1299,6 +1299,7 @@ class Game extends Room
             && $this->hatCountdownEnd > $this->currentMS()
             && $this->isStillPlaying($prospect->temp_id)
             && count($prospect->worn_hat_array) === count($this->finish_array)
+            && !$this->isLastPlayer($player)
         ) {
             $secs_remaining = ceil(($this->hatCountdownEnd - $this->currentMS()) / 1000);
             $player->socket->write("systemChat`$secs_remaining");
