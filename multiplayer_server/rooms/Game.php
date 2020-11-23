@@ -370,6 +370,7 @@ class Game extends Room
             $this->finish_positions = $this->democratize('finish_positions');
             $this->finish_count = $this->democratize('finish_count');
             $this->cowboy_chance = $this->democratize('cowboy_chance');
+            $bad_hats = $this->democratize('bad_hats');
 
             // turn finish positions into an array
             if ($this->finish_positions != 'all') {
@@ -382,7 +383,7 @@ class Game extends Room
             }
 
             // remove other invalid hats from valid hats array
-            $this->valid_hats = array_diff($this->valid_hats, explode(',', $this->democratize('bad_hats')));
+            $this->valid_hats = array_values(array_diff($this->valid_hats, explode(',', $bad_hats)));
 
             // handle hat attack mode
             if ($this->mode === self::MODE_HAT) {
@@ -510,6 +511,9 @@ class Game extends Room
             // change the hat to something random during hat attack if they aren't wearing a valid hat
             if ($this->mode === self::MODE_HAT && !in_array($hat_id, $this->valid_hats)) {
                 $hat_id = $this->valid_hats[rand(0, count($this->valid_hats) - 1)];
+                if (empty($hat_id)) {
+                    var_dump($this->valid_hats);
+                }
                 $msg = 'Howdy! Here\'s a random hat to use just for this level. Thank me later!!';
                 $player->socket->write("chat`Fred the G. Cactus`3`$msg");
             }
