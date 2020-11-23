@@ -511,9 +511,6 @@ class Game extends Room
             // change the hat to something random during hat attack if they aren't wearing a valid hat
             if ($this->mode === self::MODE_HAT && !in_array($hat_id, $this->valid_hats)) {
                 $hat_id = $this->valid_hats[rand(0, count($this->valid_hats) - 1)];
-                if (empty($hat_id)) {
-                    var_dump($this->valid_hats);
-                }
                 $msg = 'Howdy! Here\'s a random hat to use just for this level. Thank me later!!';
                 $player->socket->write("chat`Fred the G. Cactus`3`$msg");
             }
@@ -1277,8 +1274,8 @@ class Game extends Room
         ) {
             // skip countdown for the last one to finish
             $last_to_finish = true;
-            foreach ($this->finish_array as $pl) {
-                if (!$pl->race_stats->finished_race) {
+            foreach ($this->finish_array as $rs) {
+                if (!$rs->finished_race) {
                     $last_to_finish = false;
                     break;
                 }
