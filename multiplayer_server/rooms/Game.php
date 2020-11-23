@@ -1275,7 +1275,7 @@ class Game extends Room
             // skip countdown for the last one to finish
             $last_to_finish = true;
             foreach ($this->finish_array as $rs) {
-                if (!$rs->finished_race) {
+                if (!$rs->finished_race && $rs->user_id != $player->user_id) {
                     $last_to_finish = false;
                     break;
                 }
