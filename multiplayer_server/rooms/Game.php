@@ -1388,6 +1388,7 @@ class Game extends Room
             if ($this->mode === self::MODE_HAT
                 && $this->hasHats == $player->temp_id
                 && $this->currentMS() < $this->hatCountdownEnd
+                && !$this->isLastPlayer($player)
             ) {
                 $this->cancelHatCountdown();
             }
