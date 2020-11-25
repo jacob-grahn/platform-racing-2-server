@@ -69,39 +69,55 @@ class Hats
     {
         $str = strtolower($str);
         $id = 1;
-        $jump_start = ['start', 'jump', 'jumpstart', 'jump_start', 'js', 10];
+		
+		$none = ['none', 'n', '', 1];
+		$exp = ['exp', 'experience', 'e', 2];
+		$kong = ['kong', 'kongregate', 'k', 3];
+		$propeller = ['propeller', 'prop', 'pr', 4];
+		$cowboy = ['cowboy', 'gallon', 'co', 5];
+		$crown = ['crown', 'cr', 6];
+		$santa = ['santa', 's', 7];
+		$party = ['party', 'p', 8];
+		$top = ['top', 'top_hat', 'tophat', 9];
+        $jump = ['start', 'jump', 'jumpstart', 'jump_start', 'js', 10];
+		$moon = ['moon', 'm', 'luna', 11];
+		$thief = ['thief', 't', 12];
+		$jigg = ['jigg', 'j', 'jiggmin', 13];
+		$artifact = ['artifact', 'arti', 'a', 14];
+		$jellyfish = ['jellyfish', 'jelly', 'fish', 'jf', 15];
+		$cheese = ['cheese', 'cheez', 'chz', 'ch', 16];
 
-        if ($str === 'none' || $str === 'n' || $str === '' || $str === 1) {
+        if (in_array($str, $none)) {
             $id = Hats::NONE;
-        } elseif ($str === 'exp' || $str === 'experience' || $str === 'e' || $str == 2) {
+        } elseif (in_array($str, $exp)) {
             $id = Hats::EXP;
-        } elseif ($str === 'kong' || $str === 'kongregate' || $str === 'k' || $str == 3) {
+        } elseif (in_array($str, $kong)) {
             $id = Hats::KONG;
-        } elseif ($str === 'propeller' || $str === 'prop' || $str === 'pr' || $str == 4) {
+        } elseif (in_array($str, $propeller)) {
             $id = Hats::PROPELLER;
-        } elseif ($str === 'cowboy' || $str === 'gallon' || $str === 'co' || $str == 5) {
+        } elseif (in_array($str, $cowboy)) {
             $id = Hats::COWBOY;
-        } elseif ($str === 'crown' || $str === 'cr' || $str == 6) {
+        } elseif (in_array($str, $crown)) {
             $id = Hats::CROWN;
-        } elseif ($str === 'santa' || $str === 's' || $str == 7) {
+        } elseif (in_array($str, $santa)) {
             $id = Hats::SANTA;
-        } elseif ($str === 'party' || $str === 'p' || $str == 8) {
+        } elseif (in_array($str, $party)) {
             $id = Hats::PARTY;
-        } elseif ($str === 'top' || $str === 'top_hat' || $str === 'tophat' || $str == 9) {
+        } elseif (in_array($str, $top)) {
             $id = Hats::TOP_HAT;
-        } elseif (in_array($str, $jump_start)) {
+        } elseif (in_array($str, $jump)) {
             $id = Hats::JUMP_START;
-        } elseif ($str === 'moon' || $str === 'm' || $str === 'luna' || $str == 11) {
+        } elseif (in_array($str, $moon)) {
             $id = Hats::MOON;
-        } elseif ($str === 'thief' || $str === 't' || $str == 12) {
+        } elseif (in_array($str, $thief)) {
             $id = Hats::THIEF;
-        } elseif ($str === 'jigg' || $str === 'j' || $str === 'jiggmin' || $str == 13) {
+        } elseif (in_array($str, $jigg)) {
             $id = Hats::JIGG;
-        } elseif ($str === 'artifact' || $str === 'a' || $str == 14) {
+        } elseif (in_array($str, $artifact)) {
             $id = Hats::ARTIFACT;
-        } elseif ($str === 'jellyfish' || $str === 'jelly' || $str === 'fish' || $str === 'jf' || $str == 15) {
+        } elseif (in_array($str, $jellyfish)) {
             $id = Hats::JELLYFISH;
-        } elseif ($str === 'cheese' || $str === 'cheez' || $str === 'chz' || $str === 'ch' || $str == 16) {
+        } elseif (in_array($str, $cheese)) {
             $id = Hats::CHEESE;
         }
 
