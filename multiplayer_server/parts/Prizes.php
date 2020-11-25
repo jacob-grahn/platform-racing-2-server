@@ -186,6 +186,7 @@ class Prizes
     public static $XMAS_HEAD;
     public static $SNOWMAN_HEAD;
     public static $BLOBFISH_HEAD;
+    public static $TURKEY_HEAD;
 
     // epic heads
     public static $EPIC_CLASSIC_HEAD;
@@ -235,6 +236,7 @@ class Prizes
     public static $EPIC_XMAS_HEAD;
     public static $EPIC_SNOWMAN_HEAD;
     public static $EPIC_BLOBFISH_HEAD;
+    public static $EPIC_TURKEY_HEAD;
 
 
     // bodies
@@ -282,6 +284,7 @@ class Prizes
     public static $BREW_BODY;
     public static $XMAS_BODY;
     public static $SNOWMAN_BODY;
+    public static $TURKEY_BODY;
 
     // epic bodies
     public static $EPIC_CLASSIC_BODY;
@@ -328,6 +331,7 @@ class Prizes
     public static $EPIC_BREW_BODY;
     public static $EPIC_XMAS_BODY;
     public static $EPIC_SNOWMAN_BODY;
+    public static $EPIC_TURKEY_BODY;
 
 
     // feet
@@ -373,6 +377,7 @@ class Prizes
     public static $BREW_FEET;
     public static $XMAS_FEET;
     public static $SNOWMAN_FEET;
+    public static $TURKEY_FEET;
 
     // epic feet
     public static $EPIC_CLASSIC_FEET;
@@ -417,6 +422,7 @@ class Prizes
     public static $EPIC_BREW_FEET;
     public static $EPIC_XMAS_FEET;
     public static $EPIC_SNOWMAN_FEET;
+    public static $EPIC_TURKEY_FEET;
 
 
     public static function init()
@@ -508,6 +514,7 @@ class Prizes
         self::$XMAS_HEAD = new Prize(self::TYPE_HEAD, Heads::XMAS, 'Star Head');
         self::$SNOWMAN_HEAD = new Prize(self::TYPE_HEAD, Heads::SNOWMAN, 'Snowman Head');
         self::$BLOBFISH_HEAD = new Prize(self::TYPE_HEAD, Heads::BLOBFISH, 'Blobfish Head');
+        self::$TURKEY_HEAD = new Prize(self::TYPE_HEAD, Heads::TURKEY, 'Turkey Head');
 
         // epic heads
         self::$EPIC_CLASSIC_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade');
@@ -557,6 +564,7 @@ class Prizes
         self::$EPIC_XMAS_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::XMAS, 'Epic Upgrade');
         self::$EPIC_SNOWMAN_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::SNOWMAN, 'Epic Upgrade');
         self::$EPIC_BLOBFISH_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BLOBFISH, 'Epic Upgrade');
+        self::$EPIC_TURKEY_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::TURKEY, 'Epic Upgrade');
 
 
         // bodies
@@ -604,6 +612,7 @@ class Prizes
         self::$BREW_BODY = new Prize(self::TYPE_BODY, Bodies::BREW, 'Brew Body');
         self::$XMAS_BODY = new Prize(self::TYPE_BODY, Bodies::XMAS, 'Christmas Tree Body');
         self::$SNOWMAN_BODY = new Prize(self::TYPE_BODY, Bodies::SNOWMAN, 'Snowman Body');
+        self::$TURKEY_BODY = new Prize(self::TYPE_BODY, Heads::TURKEY, 'Turkey Body');
 
         // epic bodies
         self::$EPIC_CLASSIC_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::CLASSIC, 'Epic Upgrade');
@@ -650,6 +659,7 @@ class Prizes
         self::$EPIC_BREW_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::BREW, 'Epic Upgrade');
         self::$EPIC_XMAS_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::XMAS, 'Epic Upgrade');
         self::$EPIC_SNOWMAN_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::SNOWMAN, 'Epic Upgrade');
+        self::$EPIC_TURKEY_BODY = new Prize(self::TYPE_EPIC_BODY, Heads::TURKEY, 'Epic Upgrade');
 
 
         // feet
@@ -695,6 +705,7 @@ class Prizes
         self::$BREW_FEET = new Prize(self::TYPE_FEET, Feet::BREW, 'Brew Feet');
         self::$XMAS_FEET = new Prize(self::TYPE_FEET, Feet::XMAS, 'Present Feet');
         self::$SNOWMAN_FEET = new Prize(self::TYPE_FEET, Feet::SNOWMAN, 'Snowman Feet');
+        self::$TURKEY_FEET = new Prize(self::TYPE_FEET, Heads::TURKEY, 'Turkey Feet');
 
         // epic feet
         self::$EPIC_CLASSIC_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::CLASSIC, 'Epic Upgrade');
@@ -739,6 +750,7 @@ class Prizes
         self::$EPIC_BREW_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::BREW, 'Epic Upgrade');
         self::$EPIC_XMAS_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::XMAS, 'Epic Upgrade');
         self::$EPIC_SNOWMAN_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SNOWMAN, 'Epic Upgrade');
+        self::$EPIC_TURKEY_FEET = new Prize(self::TYPE_EPIC_FEET, Heads::TURKEY, 'Epic Upgrade');
     }
 
 

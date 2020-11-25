@@ -366,6 +366,17 @@ function award_special_parts($stats, $group, $prizes)
         $stats->head = add_item($head_array, 44) ? 44 : $stats->head;
     }
 
+    // turkey set (thanksgiving)
+    if ((date('F') === 'November' && date('j') >= 22) || date('F') === 'December' && date('j') == 1) {
+        $turkey_min = (int) date('j', strtotime('fourth thursday of november' . date('Y'))) - 1;
+        $turkey_max = $turkey_min + 4; // will still include December 1
+        if (date('j') >= $turkey_min && (date('j') <= $turkey_max)) {
+            $stats->head = add_item($head_array, 48) ? 48 : $stats->head;
+            $stats->body = add_item($body_array, 48) ? 48 : $stats->body;
+            $stats->feet = add_item($feet_array, 48) ? 48 : $stats->feet;
+        }
+    }
+
     // santa set (christmas)
     if ($date === 'December 24' || $date === 'December 25') {
         $stats->hat = add_item($hat_array, 7) ? 7 : $stats->hat;
