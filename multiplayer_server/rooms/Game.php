@@ -13,6 +13,7 @@ class Game extends Room
     const LEVEL_HAUNTED = 1782114; // for epic jack-o'-lantern head
     const LEVEL_CHEESE = 6207945; // for cheese hat
     const LEVEL_BLOBFISH = 5985129; // for blobfish head
+    const LEVEL_TURKEY = 2585329; // for epic turkey set
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -208,6 +209,16 @@ class Game extends Room
         // Underwater World by Odin0030; Awards: Blobfish Head
         if ($this->course_id == self::LEVEL_BLOBFISH) {
             $this->prize = Prizes::$BLOBFISH_HEAD;
+        }
+
+        // Happy Thanksgiving!!! by Rage Runner; Awards: Epic Turkey Set
+        if ($this->course_id == self::LEVEL_TURKEY) {
+            $turkey_prizes = [
+                Prizes::$EPIC_TURKEY_HEAD,
+                Prizes::$EPIC_TURKEY_BODY,
+                Prizes::$EPIC_TURKEY_FEET
+            ];
+            $this->prize = $turkey_prizes[array_rand($turkey_prizes)];
         }
         
         // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
