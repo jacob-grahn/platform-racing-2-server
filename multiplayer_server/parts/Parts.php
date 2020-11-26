@@ -69,40 +69,13 @@ class Hats
     {
         $str = strtolower($str);
         $id = 1;
-        $jump_start = ['start', 'jump', 'jumpstart', 'jump_start', 'js', 10];
+        
+        $hats = [['none', 'n', '', 1], ['exp', 'experience', 'e', 2], ['kong', 'kongregate', 'k', 3], ['propeller', 'prop', 'pr', 4], ['cowboy', 'gallon', 'co', 5], ['crown', 'cr', 6], ['santa', 's', 7], ['party', 'p', 8], ['top_hat', 'top', 'tophat', 9], ['jump_start', 'start', 'jump', 'jumpstart', 'js', 10], ['moon', 'm', 'luna', 11], ['thief', 't', 12], ['jigg', 'j', 'jiggmin', 13], ['artifact', 'arti', 'a', 14], ['jellyfish', 'jelly', 'fish', 'jf', 15], ['cheese', 'cheez', 'chz', 'ch', 16]];
 
-        if ($str === 'none' || $str === 'n' || $str === '' || $str === 1) {
-            $id = Hats::NONE;
-        } elseif ($str === 'exp' || $str === 'experience' || $str === 'e' || $str == 2) {
-            $id = Hats::EXP;
-        } elseif ($str === 'kong' || $str === 'kongregate' || $str === 'k' || $str == 3) {
-            $id = Hats::KONG;
-        } elseif ($str === 'propeller' || $str === 'prop' || $str === 'pr' || $str == 4) {
-            $id = Hats::PROPELLER;
-        } elseif ($str === 'cowboy' || $str === 'gallon' || $str === 'co' || $str == 5) {
-            $id = Hats::COWBOY;
-        } elseif ($str === 'crown' || $str === 'cr' || $str == 6) {
-            $id = Hats::CROWN;
-        } elseif ($str === 'santa' || $str === 's' || $str == 7) {
-            $id = Hats::SANTA;
-        } elseif ($str === 'party' || $str === 'p' || $str == 8) {
-            $id = Hats::PARTY;
-        } elseif ($str === 'top' || $str === 'top_hat' || $str === 'tophat' || $str == 9) {
-            $id = Hats::TOP_HAT;
-        } elseif (in_array($str, $jump_start)) {
-            $id = Hats::JUMP_START;
-        } elseif ($str === 'moon' || $str === 'm' || $str === 'luna' || $str == 11) {
-            $id = Hats::MOON;
-        } elseif ($str === 'thief' || $str === 't' || $str == 12) {
-            $id = Hats::THIEF;
-        } elseif ($str === 'jigg' || $str === 'j' || $str === 'jiggmin' || $str == 13) {
-            $id = Hats::JIGG;
-        } elseif ($str === 'artifact' || $str === 'a' || $str == 14) {
-            $id = Hats::ARTIFACT;
-        } elseif ($str === 'jellyfish' || $str === 'jelly' || $str === 'fish' || $str === 'jf' || $str == 15) {
-            $id = Hats::JELLYFISH;
-        } elseif ($str === 'cheese' || $str === 'cheez' || $str === 'chz' || $str === 'ch' || $str == 16) {
-            $id = Hats::CHEESE;
+        foreach ($hats as $hat) {
+            if (in_array($str, $hat)) {
+                $id = end($hat);
+            }
         }
 
         return $id;
