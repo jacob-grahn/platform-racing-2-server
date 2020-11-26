@@ -5,6 +5,7 @@ namespace pr2\multi;
 
 class Hats
 {
+    //do we need these anymore if the below code works
     const NONE = 1;
     const EXP = 2;
     const KONG = 3;
@@ -26,39 +27,11 @@ class Hats
     public static function idToStr($id)
     {
         $str = 'Unknown';
-
-        if ($id == Hats::NONE) {
-            $str = 'None';
-        } elseif ($id == Hats::EXP) {
-            $str = 'EXP';
-        } elseif ($id == Hats::KONG) {
-            $str = 'Kong';
-        } elseif ($id == Hats::PROPELLER) {
-            $str = 'Propeller';
-        } elseif ($id == Hats::COWBOY) {
-            $str = 'Cowboy';
-        } elseif ($id == Hats::CROWN) {
-            $str = 'Crown';
-        } elseif ($id == Hats::SANTA) {
-            $str = 'Santa';
-        } elseif ($id == Hats::PARTY) {
-            $str = 'Party';
-        } elseif ($id == Hats::TOP_HAT) {
-            $str = 'Top Hat';
-        } elseif ($id == Hats::JUMP_START) {
-            $str = 'Jump Start';
-        } elseif ($id == Hats::MOON) {
-            $str = 'Moon';
-        } elseif ($id == Hats::THIEF) {
-            $str = 'Thief';
-        } elseif ($id == Hats::JIGG) {
-            $str = 'Jigg';
-        } elseif ($id == Hats::ARTIFACT) {
-            $str = 'Artifact';
-        } elseif ($id == Hats::JELLYFISH) {
-            $str = 'Jellyfish';
-        } elseif ($id == Hats::CHEESE) {
-            $str = 'Cheese';
+        
+        $strarray = ['None', 'EXP', 'Kong', 'Propeller', 'Cowboy', 'Crown', 'Santa', 'Party', 'Top Hat', 'Jump Start', 'Moon', 'Thief', 'Jigg', 'Artifact', 'Jellyfish', 'Cheese'];
+        
+        if (is_int($id) && $id >= 1 && $id <= 16) {
+            $str = $strarray[$id - 1];
         }
 
         return $str;
