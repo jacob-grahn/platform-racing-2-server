@@ -22,7 +22,7 @@ class Hats
     const JELLYFISH = 15;
     const CHEESE = 16;
 
-    private const HAT_NAMES = [
+    const HAT_NAMES = [
         1  => 'None',
         2  => 'EXP',
         3  => 'Kong',
@@ -60,7 +60,7 @@ class Hats
         16 => 'Turn crumble blocks into feta cheese --break through with record speed!'
     ];
 
-    private const HAT_CODES = [
+    const HAT_CODES = [
         1  => ['', 'n', 'none'],
         2  => ['e', 'exp', 'experience'],
         3  => ['k', 'kong', 'kongregate'],
