@@ -22,90 +22,92 @@ class Hats
     const JELLYFISH = 15;
     const CHEESE = 16;
 
+    private const HAT_NAMES = [
+        1  => 'None',
+        2  => 'EXP',
+        3  => 'Kong',
+        4  => 'Propeller',
+        5  => 'Cowboy',
+        6  => 'Crown',
+        7  => 'Santa',
+        8  => 'Party',
+        9  => 'Top',
+        10 => 'Jump Start',
+        11 => 'Moon',
+        12 => 'Thief',
+        13 => 'Jigg',
+        14 => 'Artifact',
+        15 => 'Jellyfish',
+        16 => 'Cheese'
+    ];
+
+    const HAT_DESCS = [
+        1  => 'Literally nothing.',
+        2  => 'If you finish a race with this hat, it will increase your EXP gain by 100%!',
+        3  => 'If you finish a race with this hat, it will increase your GP gain by 100%!',
+        4  => 'Hold up while wearing this hat to float!',
+        5  => 'Fly, cowboy, fly!',
+        6  => 'Wear this hat to become immune to mines, laser guns, and swords!',
+        7  => 'Briefly freezes the blocks you stand on!',
+        8  => 'Wear this hat to become immune to lightning!',
+        9  => 'Stroll through vanish blocks with class!',
+        10 => 'Waiting is slow! Start racing right away.',
+        11 => 'Soar to new heights by defying the laws of gravity!',
+        12 => 'Steal other player\'s hats --even crowns!',
+        13 => 'Bounce on the heads of your opponents!',
+        14 => 'Leave your opponents in the dust for a glorious 30 seconds.',
+        15 => 'Give nearby opponents a nasty sting!',
+        16 => 'Turn crumble blocks into feta cheese --break through with record speed!'
+    ];
+
+    private const HAT_CODES = [
+        1  => ['', 'n', 'none'],
+        2  => ['e', 'exp', 'experience'],
+        3  => ['k', 'kong', 'kongregate'],
+        4  => ['pr', 'prop', 'propeller'],
+        5  => ['cb', 'co', 'cowboy', 'gallon'],
+        6  => ['cr', 'crown'],
+        7  => ['s', 'santa'],
+        8  => ['p', 'party'],
+        9  => ['top', 'top_hat', 'tophat'],
+        10 => ['js', 'jumpstart', 'jump_start', 'jump', 'start'],
+        11 => ['m', 'moon', 'luna'],
+        12 => ['t', 'th', 'thief'],
+        13 => ['j', 'jigg', 'jiggmin'],
+        14 => ['a', 'arti', 'artifact'],
+        15 => ['jf', 'jellyfish', 'jelly', 'fish'],
+        16 => ['ch', 'cheez', 'chz', 'cheese']
+    ];
+
 
     public static function idToStr($id)
     {
-        $str = 'Unknown';
-
-        if ($id == Hats::NONE) {
-            $str = 'None';
-        } elseif ($id == Hats::EXP) {
-            $str = 'EXP';
-        } elseif ($id == Hats::KONG) {
-            $str = 'Kong';
-        } elseif ($id == Hats::PROPELLER) {
-            $str = 'Propeller';
-        } elseif ($id == Hats::COWBOY) {
-            $str = 'Cowboy';
-        } elseif ($id == Hats::CROWN) {
-            $str = 'Crown';
-        } elseif ($id == Hats::SANTA) {
-            $str = 'Santa';
-        } elseif ($id == Hats::PARTY) {
-            $str = 'Party';
-        } elseif ($id == Hats::TOP_HAT) {
-            $str = 'Top Hat';
-        } elseif ($id == Hats::JUMP_START) {
-            $str = 'Jump Start';
-        } elseif ($id == Hats::MOON) {
-            $str = 'Moon';
-        } elseif ($id == Hats::THIEF) {
-            $str = 'Thief';
-        } elseif ($id == Hats::JIGG) {
-            $str = 'Jigg';
-        } elseif ($id == Hats::ARTIFACT) {
-            $str = 'Artifact';
-        } elseif ($id == Hats::JELLYFISH) {
-            $str = 'Jellyfish';
-        } elseif ($id == Hats::CHEESE) {
-            $str = 'Cheese';
+        $id = (int) $id;
+        if ($id >= 1 && $id <= 16) {
+            return self::HAT_NAMES[$id];
         }
-
-        return $str;
+        return 'Unknown';
     }
 
 
     public static function strToId($str)
     {
         $str = strtolower($str);
-        $id = 1;
-        $jump_start = ['start', 'jump', 'jumpstart', 'jump_start', 'js', 10];
-
-        if ($str === 'none' || $str === 'n' || $str === '' || $str === 1) {
-            $id = Hats::NONE;
-        } elseif ($str === 'exp' || $str === 'experience' || $str === 'e' || $str == 2) {
-            $id = Hats::EXP;
-        } elseif ($str === 'kong' || $str === 'kongregate' || $str === 'k' || $str == 3) {
-            $id = Hats::KONG;
-        } elseif ($str === 'propeller' || $str === 'prop' || $str === 'pr' || $str == 4) {
-            $id = Hats::PROPELLER;
-        } elseif ($str === 'cowboy' || $str === 'gallon' || $str === 'co' || $str == 5) {
-            $id = Hats::COWBOY;
-        } elseif ($str === 'crown' || $str === 'cr' || $str == 6) {
-            $id = Hats::CROWN;
-        } elseif ($str === 'santa' || $str === 's' || $str == 7) {
-            $id = Hats::SANTA;
-        } elseif ($str === 'party' || $str === 'p' || $str == 8) {
-            $id = Hats::PARTY;
-        } elseif ($str === 'top' || $str === 'top_hat' || $str === 'tophat' || $str == 9) {
-            $id = Hats::TOP_HAT;
-        } elseif (in_array($str, $jump_start)) {
-            $id = Hats::JUMP_START;
-        } elseif ($str === 'moon' || $str === 'm' || $str === 'luna' || $str == 11) {
-            $id = Hats::MOON;
-        } elseif ($str === 'thief' || $str === 't' || $str == 12) {
-            $id = Hats::THIEF;
-        } elseif ($str === 'jigg' || $str === 'j' || $str === 'jiggmin' || $str == 13) {
-            $id = Hats::JIGG;
-        } elseif ($str === 'artifact' || $str === 'a' || $str == 14) {
-            $id = Hats::ARTIFACT;
-        } elseif ($str === 'jellyfish' || $str === 'jelly' || $str === 'fish' || $str === 'jf' || $str == 15) {
-            $id = Hats::JELLYFISH;
-        } elseif ($str === 'cheese' || $str === 'cheez' || $str === 'chz' || $str === 'ch' || $str == 16) {
-            $id = Hats::CHEESE;
+        foreach (self::HAT_CODES as $id => $hat) {
+            if (in_array($str, $hat)) {
+                return $id;
+            }
         }
+        return 1;
+    }
 
-        return $id;
+    public static function getDesc($id)
+    {
+        $id = (int) $id;
+        if ($id >= 1 && $id <= 16) {
+            return self::HAT_DESCS[$id];
+        }
+        return '';
     }
 }
 

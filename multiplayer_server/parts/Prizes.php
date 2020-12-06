@@ -84,28 +84,10 @@ class Prizes
     const TYPE_EPIC_FEET = 'eFeet';
 
 
-    // hat descriptions
-    const DESC_EXP_HAT = 'If you finish a race with this hat, it will increase your EXP gain by 100%!';
-    const DESC_KONG_HAT = 'If you finish a race with this hat, it will increase your GP gain by 100%!';
-    const DESC_PROP_HAT = 'Hold up while wearing this hat to float!';
-    const DESC_COWBOY_HAT = 'Fly, cowboy, fly!';
-    const DESC_CROWN_HAT = 'Wear this hat to become immune to mines, laser guns, and swords!';
-    const DESC_SANTA_HAT = 'Briefly freezes the blocks you stand on!';
-    const DESC_PARTY_HAT = 'Wear this hat to become immune to lightning!';
-    const DESC_TOP_HAT = 'Stroll through vanish blocks with class!';
-    const DESC_JS_HAT = 'Waiting is slow! Start racing right away.';
-    const DESC_MOON_HAT = 'Soar to new heights by defying the laws of gravity!';
-    const DESC_THIEF_HAT = 'Steal other player\'s hats --even crowns!';
-    const DESC_JIGG_HAT = 'Bounce on the heads of your opponents!';
-    const DESC_ARTI_HAT = 'Leave your opponents in the dust for a glorious 30 seconds.';
-    const DESC_JF_HAT = 'Give nearby opponents a nasty sting!';
-    const DESC_CHEESE_HAT = 'Turn crumble blocks into feta cheese --break through with record speed!';
-
-
     // hats
     public static $NO_HAT;
-    public static $KONG_HAT;
     public static $EXP_HAT;
+    public static $KONG_HAT;
     public static $PROPELLER_HAT;
     public static $COWBOY_HAT;
     public static $CROWN_HAT;
@@ -121,8 +103,9 @@ class Prizes
     public static $CHEESE_HAT;
 
     // epic hats
-    public static $EPIC_KONG_HAT;
+    public static $EPIC_NO_HAT;
     public static $EPIC_EXP_HAT;
+    public static $EPIC_KONG_HAT;
     public static $EPIC_PROPELLER_HAT;
     public static $EPIC_COWBOY_HAT;
     public static $EPIC_CROWN_HAT;
@@ -432,25 +415,26 @@ class Prizes
 
         // hats
         self::$NO_HAT = new Prize(self::TYPE_HAT, Hats::NONE, 'No Hat');
-        self::$KONG_HAT = new Prize(self::TYPE_HAT, Hats::KONG, 'Kongregate Hat', self::DESC_KONG_HAT);
-        self::$EXP_HAT = new Prize(self::TYPE_HAT, Hats::EXP, 'EXP Hat', self::DESC_EXP_HAT);
-        self::$PROPELLER_HAT = new Prize(self::TYPE_HAT, Hats::PROPELLER, 'Propeller Hat', self::DESC_PROP_HAT, true);
-        self::$COWBOY_HAT = new Prize(self::TYPE_HAT, Hats::COWBOY, 'Cowboy Hat', self::DESC_COWBOY_HAT);
-        self::$CROWN_HAT = new Prize(self::TYPE_HAT, Hats::CROWN, 'Crown', self::DESC_CROWN_HAT);
-        self::$SANTA_HAT = new Prize(self::TYPE_HAT, Hats::SANTA, 'Santa Hat', self::DESC_SANTA_HAT);
-        self::$PARTY_HAT = new Prize(self::TYPE_HAT, Hats::PARTY, 'Party Hat', self::DESC_PARTY_HAT);
-        self::$TOP_HAT = new Prize(self::TYPE_HAT, Hats::TOP_HAT, 'Top Hat', self::DESC_TOP_HAT, true);
-        self::$JUMP_START_HAT = new Prize(self::TYPE_HAT, Hats::JUMP_START, 'Jump Start Hat', self::DESC_JS_HAT);
-        self::$MOON_HAT = new Prize(self::TYPE_HAT, Hats::MOON, 'Moon Hat', self::DESC_MOON_HAT, true);
-        self::$THIEF_HAT = new Prize(self::TYPE_HAT, Hats::THIEF, 'Thief Hat', self::DESC_THIEF_HAT, true);
-        self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat', self::DESC_JIGG_HAT, true);
-        self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'The Artifact', self::DESC_ARTI_HAT);
-        self::$JELLYFISH_HAT = new Prize(self::TYPE_HAT, Hats::JELLYFISH, 'Jellyfish Hat', self::DESC_JF_HAT, true);
-        self::$CHEESE_HAT = new Prize(self::TYPE_HAT, Hats::CHEESE, 'Cheese Hat', self::DESC_CHEESE_HAT, true);
+        self::$EXP_HAT = new Prize(self::TYPE_HAT, Hats::EXP, 'EXP Hat', Hats::getDesc(Hats::EXP));
+        self::$KONG_HAT = new Prize(self::TYPE_HAT, Hats::KONG, 'Kongregate Hat', Hats::getDesc(Hats::KONG));
+        self::$PROPELLER_HAT = new Prize(self::TYPE_HAT, Hats::PROPELLER, 'Propeller Hat', Hats::getDesc(Hats::PROPELLER), true);
+        self::$COWBOY_HAT = new Prize(self::TYPE_HAT, Hats::COWBOY, 'Cowboy Hat', Hats::getDesc(Hats::COWBOY));
+        self::$CROWN_HAT = new Prize(self::TYPE_HAT, Hats::CROWN, 'Crown', Hats::getDesc(Hats::CROWN));
+        self::$SANTA_HAT = new Prize(self::TYPE_HAT, Hats::SANTA, 'Santa Hat', Hats::getDesc(Hats::SANTA));
+        self::$PARTY_HAT = new Prize(self::TYPE_HAT, Hats::PARTY, 'Party Hat', Hats::getDesc(Hats::PARTY));
+        self::$TOP_HAT = new Prize(self::TYPE_HAT, Hats::TOP_HAT, 'Top Hat', Hats::getDesc(Hats::TOP_HAT), true);
+        self::$JUMP_START_HAT = new Prize(self::TYPE_HAT, Hats::JUMP_START, 'Jump Start Hat', Hats::getDesc(Hats::JUMP_START));
+        self::$MOON_HAT = new Prize(self::TYPE_HAT, Hats::MOON, 'Moon Hat', Hats::getDesc(Hats::MOON), true);
+        self::$THIEF_HAT = new Prize(self::TYPE_HAT, Hats::THIEF, 'Thief Hat', Hats::getDesc(Hats::THIEF), true);
+        self::$JIGG_HAT = new Prize(self::TYPE_HAT, Hats::JIGG, 'Jigg Hat', Hats::getDesc(Hats::JIGG), true);
+        self::$ARTIFACT_HAT = new Prize(self::TYPE_HAT, Hats::ARTIFACT, 'The Artifact', Hats::getDesc(Hats::ARTIFACT));
+        self::$JELLYFISH_HAT = new Prize(self::TYPE_HAT, Hats::JELLYFISH, 'Jellyfish Hat', Hats::getDesc(Hats::JELLYFISH), true);
+        self::$CHEESE_HAT = new Prize(self::TYPE_HAT, Hats::CHEESE, 'Cheese Hat', Hats::getDesc(Hats::CHEESE), true);
 
         // epic hats
-        self::$EPIC_KONG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::KONG, 'Epic Upgrade');
+        self::$EPIC_NO_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::NONE, 'Epic Upgrade');
         self::$EPIC_EXP_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::EXP, 'Epic Upgrade', '', true);
+        self::$EPIC_KONG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::KONG, 'Epic Upgrade');
         self::$EPIC_PROPELLER_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::PROPELLER, 'Epic Upgrade');
         self::$EPIC_COWBOY_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::COWBOY, 'Epic Upgrade');
         self::$EPIC_CROWN_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::CROWN, 'Epic Upgrade');
