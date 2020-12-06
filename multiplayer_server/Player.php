@@ -212,6 +212,7 @@ class Player
             $this->applyTempItems();
             $this->verifyStats();
             $this->verifyParts();
+            $this->write("wearingHat`$this->hat");
         }
     }
 
