@@ -7,6 +7,7 @@ require_once QUERIES_DIR . '/contest_prizes.php';
 require_once QUERIES_DIR . '/contest_winners.php';
 require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/part_awards.php';
+require_once QUERIES_DIR . '/prize_actions.php';
 
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
@@ -324,6 +325,15 @@ try {
         // send the congratulatory PM
         message_insert($pdo, $winner_id, $contest->user_id, $winner_message, $ip);
         echo "<span style='color: green;'>Sent $html_winner_name a congratulatory PM.</span><br>";
+
+        // record the prize in the prize log
+        $msg = "$host_name awarded contest prize(s) to $winner_name from $ip "
+            ."{host_id: $user_id, "
+            ."winner_id: $winner_id, "
+            ."contest_id: $contest_id, "
+            .'prizes_awarded: ["' . join('","', $prizes_awarded_arr) . '"], '
+            ."comment: $comment}";
+        prize_action_insert($pdo, $user_id, $msg, 'contest', false, $ip);
 
         // output the page
         echo "<br>All operations completed! The results can be seen above.";
