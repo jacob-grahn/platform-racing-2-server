@@ -5,7 +5,6 @@ namespace pr2\multi;
 
 class Hats
 {
-    //do we need these anymore if the below code works
     const NONE = 1;
     const EXP = 2;
     const KONG = 3;
@@ -23,88 +22,92 @@ class Hats
     const JELLYFISH = 15;
     const CHEESE = 16;
 
+    private const HAT_NAMES = [
+        1  => 'None',
+        2  => 'EXP',
+        3  => 'Kong',
+        4  => 'Propeller',
+        5  => 'Cowboy',
+        6  => 'Crown',
+        7  => 'Santa',
+        8  => 'Party',
+        9  => 'Top',
+        10 => 'Jump Start',
+        11 => 'Moon',
+        12 => 'Thief',
+        13 => 'Jigg',
+        14 => 'Artifact',
+        15 => 'Jellyfish',
+        16 => 'Cheese'
+    ];
+
+    const HAT_DESCS = [
+        1  => 'Literally nothing.',
+        2  => 'If you finish a race with this hat, it will increase your EXP gain by 100%!',
+        3  => 'If you finish a race with this hat, it will increase your GP gain by 100%!',
+        4  => 'Hold up while wearing this hat to float!',
+        5  => 'Fly, cowboy, fly!',
+        6  => 'Wear this hat to become immune to mines, laser guns, and swords!',
+        7  => 'Briefly freezes the blocks you stand on!',
+        8  => 'Wear this hat to become immune to lightning!',
+        9  => 'Stroll through vanish blocks with class!',
+        10 => 'Waiting is slow! Start racing right away.',
+        11 => 'Soar to new heights by defying the laws of gravity!',
+        12 => 'Steal other player\'s hats --even crowns!',
+        13 => 'Bounce on the heads of your opponents!',
+        14 => 'Leave your opponents in the dust for a glorious 30 seconds.',
+        15 => 'Give nearby opponents a nasty sting!',
+        16 => 'Turn crumble blocks into feta cheese --break through with record speed!'
+    ];
+
+    private const HAT_CODES = [
+        1  => ['', 'n', 'none'],
+        2  => ['e', 'exp', 'experience'],
+        3  => ['k', 'kong', 'kongregate'],
+        4  => ['pr', 'prop', 'propeller'],
+        5  => ['cb', 'co', 'cowboy', 'gallon'],
+        6  => ['cr', 'crown'],
+        7  => ['s', 'santa'],
+        8  => ['p', 'party'],
+        9  => ['top', 'top_hat', 'tophat'],
+        10 => ['js', 'jumpstart', 'jump_start', 'jump', 'start'],
+        11 => ['m', 'moon', 'luna'],
+        12 => ['t', 'th', 'thief'],
+        13 => ['j', 'jigg', 'jiggmin'],
+        14 => ['a', 'arti', 'artifact'],
+        15 => ['jf', 'jellyfish', 'jelly', 'fish'],
+        16 => ['ch', 'cheez', 'chz', 'cheese']
+    ];
+
 
     public static function idToStr($id)
     {
-        $str = 'Unknown';
-        
-        $strarray = ['None', 'EXP', 'Kong', 'Propeller', 'Cowboy', 'Crown', 'Santa', 'Party', 'Top Hat', 'Jump Start', 'Moon', 'Thief', 'Jigg', 'Artifact', 'Jellyfish', 'Cheese'];
-        
-        if (is_int($id) && $id >= 1 && $id <= 16) {
-            $str = $strarray[$id - 1];
+        $id = (int) $id;
+        if ($id >= 1 && $id <= 16) {
+            return self::HAT_NAMES[$id];
         }
-
-        return $str;
+        return 'Unknown';
     }
 
 
     public static function strToId($str)
     {
         $str = strtolower($str);
-        $id = 1;
-        
-        // CAMER
-        $hats = [['none', 'n', '', 1], ['exp', 'experience', 'e', 2], ['kong', 'kongregate', 'k', 3], ['propeller', 'prop', 'pr', 4], ['cowboy', 'gallon', 'co', 5], ['crown', 'cr', 6], ['santa', 's', 7], ['party', 'p', 8], ['top_hat', 'top', 'tophat', 9], ['jump_start', 'start', 'jump', 'jumpstart', 'js', 10], ['moon', 'm', 'luna', 11], ['thief', 't', 12], ['jigg', 'j', 'jiggmin', 13], ['artifact', 'arti', 'a', 14], ['jellyfish', 'jelly', 'fish', 'jf', 15], ['cheese', 'cheez', 'chz', 'ch', 16]];
-
-        foreach ($hats as $hat) {
+        foreach (self::HAT_CODES as $id => $hat) {
             if (in_array($str, $hat)) {
-                $id = end($hat);
+                return $id;
             }
         }
+        return 1;
+    }
 
-        // NORTHADOX
-        $none =      [1, '', 'n', 'none'];
-        $exp =       [2, 'e', 'exp', 'experience'];
-        $kong =      [3, 'k', 'kong', 'kongregate'];
-        $propeller = [4, 'pr', 'prop', 'propeller'];
-        $cowboy =    [5, 'cb', 'co', 'cowboy', 'gallon'];
-        $crown =     [6, 'cr', 'crown'];
-        $santa =     [7, 's', 'santa'];
-        $party =     [8, 'p', 'party'];
-        $top =       [9, 'top', 'top_hat', 'tophat'];
-        $jump =      [10, 'js', 'jumpstart', 'jump_start', 'jump', 'start'];
-        $moon =      [11, 'm', 'moon', 'luna'];
-        $thief =     [12, 't', 'th', 'thief'];
-        $jigg =      [13, 'j', 'jigg', 'jiggmin'];
-        $artifact =  [14, 'a', 'arti', 'artifact'];
-        $jellyfish = [15, 'jf', 'jellyfish', 'jelly', 'fish'];
-        $cheese =    [16, 'ch', 'cheez', 'chz', 'cheese'];
-
-        if (in_array($str, $none)) {
-            $id = Hats::NONE;
-        } elseif (in_array($str, $exp)) {
-            $id = Hats::EXP;
-        } elseif (in_array($str, $kong)) {
-            $id = Hats::KONG;
-        } elseif (in_array($str, $propeller)) {
-            $id = Hats::PROPELLER;
-        } elseif (in_array($str, $cowboy)) {
-            $id = Hats::COWBOY;
-        } elseif (in_array($str, $crown)) {
-            $id = Hats::CROWN;
-        } elseif (in_array($str, $santa)) {
-            $id = Hats::SANTA;
-        } elseif (in_array($str, $party)) {
-            $id = Hats::PARTY;
-        } elseif (in_array($str, $top)) {
-            $id = Hats::TOP_HAT;
-        } elseif (in_array($str, $jump)) {
-            $id = Hats::JUMP_START;
-        } elseif (in_array($str, $moon)) {
-            $id = Hats::MOON;
-        } elseif (in_array($str, $thief)) {
-            $id = Hats::THIEF;
-        } elseif (in_array($str, $jigg)) {
-            $id = Hats::JIGG;
-        } elseif (in_array($str, $artifact)) {
-            $id = Hats::ARTIFACT;
-        } elseif (in_array($str, $jellyfish)) {
-            $id = Hats::JELLYFISH;
-        } elseif (in_array($str, $cheese)) {
-            $id = Hats::CHEESE;
+    public static function getDesc($id)
+    {
+        $id = (int) $id;
+        if ($id >= 1 && $id <= 16) {
+            return self::HAT_DESCS[$id];
         }
-
-        return $id;
+        return '';
     }
 }
 
