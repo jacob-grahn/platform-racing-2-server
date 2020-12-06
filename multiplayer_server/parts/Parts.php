@@ -69,23 +69,22 @@ class Hats
     {
         $str = strtolower($str);
         $id = 1;
-		
-		$none = ['none', 'n', '', 1];
-		$exp = ['exp', 'experience', 'e', 2];
-		$kong = ['kong', 'kongregate', 'k', 3];
-		$propeller = ['propeller', 'prop', 'pr', 4];
-		$cowboy = ['cowboy', 'gallon', 'co', 5];
-		$crown = ['crown', 'cr', 6];
-		$santa = ['santa', 's', 7];
-		$party = ['party', 'p', 8];
-		$top = ['top', 'top_hat', 'tophat', 9];
-        $jump = ['start', 'jump', 'jumpstart', 'jump_start', 'js', 10];
-		$moon = ['moon', 'm', 'luna', 11];
-		$thief = ['thief', 't', 12];
-		$jigg = ['jigg', 'j', 'jiggmin', 13];
-		$artifact = ['artifact', 'arti', 'a', 14];
-		$jellyfish = ['jellyfish', 'jelly', 'fish', 'jf', 15];
-		$cheese = ['cheese', 'cheez', 'chz', 'ch', 16];
+        $none =      [1, '', 'n', 'none'];
+        $exp =       [2, 'e', 'exp', 'experience'];
+        $kong =      [3, 'k', 'kong', 'kongregate'];
+        $propeller = [4, 'pr', 'prop', 'propeller'];
+        $cowboy =    [5, 'cb', 'co', 'cowboy', 'gallon'];
+        $crown =     [6, 'cr', 'crown'];
+        $santa =     [7, 's', 'santa'];
+        $party =     [8, 'p', 'party'];
+        $top =       [9, 'top', 'top_hat', 'tophat'];
+        $jump =      [10, 'js', 'jumpstart', 'jump_start', 'jump', 'start'];
+        $moon =      [11, 'm', 'moon', 'luna'];
+        $thief =     [12, 't', 'th', 'thief'];
+        $jigg =      [13, 'j', 'jigg', 'jiggmin'];
+        $artifact =  [14, 'a', 'arti', 'artifact'];
+        $jellyfish = [15, 'jf', 'jellyfish', 'jelly', 'fish'];
+        $cheese =    [16, 'ch', 'cheez', 'chz', 'cheese'];
 
         if (in_array($str, $none)) {
             $id = Hats::NONE;
