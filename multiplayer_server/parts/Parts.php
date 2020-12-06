@@ -5,6 +5,7 @@ namespace pr2\multi;
 
 class Hats
 {
+    //do we need these anymore if the below code works
     const NONE = 1;
     const EXP = 2;
     const KONG = 3;
@@ -26,39 +27,11 @@ class Hats
     public static function idToStr($id)
     {
         $str = 'Unknown';
-
-        if ($id == Hats::NONE) {
-            $str = 'None';
-        } elseif ($id == Hats::EXP) {
-            $str = 'EXP';
-        } elseif ($id == Hats::KONG) {
-            $str = 'Kong';
-        } elseif ($id == Hats::PROPELLER) {
-            $str = 'Propeller';
-        } elseif ($id == Hats::COWBOY) {
-            $str = 'Cowboy';
-        } elseif ($id == Hats::CROWN) {
-            $str = 'Crown';
-        } elseif ($id == Hats::SANTA) {
-            $str = 'Santa';
-        } elseif ($id == Hats::PARTY) {
-            $str = 'Party';
-        } elseif ($id == Hats::TOP_HAT) {
-            $str = 'Top Hat';
-        } elseif ($id == Hats::JUMP_START) {
-            $str = 'Jump Start';
-        } elseif ($id == Hats::MOON) {
-            $str = 'Moon';
-        } elseif ($id == Hats::THIEF) {
-            $str = 'Thief';
-        } elseif ($id == Hats::JIGG) {
-            $str = 'Jigg';
-        } elseif ($id == Hats::ARTIFACT) {
-            $str = 'Artifact';
-        } elseif ($id == Hats::JELLYFISH) {
-            $str = 'Jellyfish';
-        } elseif ($id == Hats::CHEESE) {
-            $str = 'Cheese';
+        
+        $strarray = ['None', 'EXP', 'Kong', 'Propeller', 'Cowboy', 'Crown', 'Santa', 'Party', 'Top Hat', 'Jump Start', 'Moon', 'Thief', 'Jigg', 'Artifact', 'Jellyfish', 'Cheese'];
+        
+        if (is_int($id) && $id >= 1 && $id <= 16) {
+            $str = $strarray[$id - 1];
         }
 
         return $str;
@@ -69,6 +42,17 @@ class Hats
     {
         $str = strtolower($str);
         $id = 1;
+        
+        // CAMER
+        $hats = [['none', 'n', '', 1], ['exp', 'experience', 'e', 2], ['kong', 'kongregate', 'k', 3], ['propeller', 'prop', 'pr', 4], ['cowboy', 'gallon', 'co', 5], ['crown', 'cr', 6], ['santa', 's', 7], ['party', 'p', 8], ['top_hat', 'top', 'tophat', 9], ['jump_start', 'start', 'jump', 'jumpstart', 'js', 10], ['moon', 'm', 'luna', 11], ['thief', 't', 12], ['jigg', 'j', 'jiggmin', 13], ['artifact', 'arti', 'a', 14], ['jellyfish', 'jelly', 'fish', 'jf', 15], ['cheese', 'cheez', 'chz', 'ch', 16]];
+
+        foreach ($hats as $hat) {
+            if (in_array($str, $hat)) {
+                $id = end($hat);
+            }
+        }
+
+        // NORTHADOX
         $none =      [1, '', 'n', 'none'];
         $exp =       [2, 'e', 'exp', 'experience'];
         $kong =      [3, 'k', 'kong', 'kongregate'];
