@@ -212,6 +212,7 @@ class Player
             $this->applyTempItems();
             $this->verifyStats();
             $this->verifyParts();
+            $this->write("wearingHat`$this->hat");
         }
     }
 
@@ -468,6 +469,7 @@ class Player
                 array_push($arr, $id);
                 if ($autoset) {
                     $this->setPart($type, $id);
+                    $this->write("wearingHat`$this->hat");
                 }
                 return true;
             }

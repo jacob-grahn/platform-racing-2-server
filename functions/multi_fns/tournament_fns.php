@@ -5,9 +5,11 @@
 function tournament_status($requester)
 {
     if (\pr2\multi\PR2SocketServer::$tournament) {
+        $hat_name = \pr2\multi\Hats::idToStr(\pr2\multi\PR2SocketServer::$tournament_hat);
+        $hat_name .= $hat_name != 'None' ? ' Hat' : '';
         $requester->write(
             'systemChat`Tournament mode is on!<br/>'
-            .'Hat: ' . \pr2\multi\Hats::idToStr(\pr2\multi\PR2SocketServer::$tournament_hat) . '<br/>'
+            ."Hat: $hat_name<br/>"
             .'Speed: ' . \pr2\multi\PR2SocketServer::$tournament_speed . '<br/>'
             .'Accel: ' . \pr2\multi\PR2SocketServer::$tournament_acceleration . '<br/>'
             .'Jump: ' . \pr2\multi\PR2SocketServer::$tournament_jumping
@@ -22,9 +24,11 @@ function tournament_status($requester)
 function announce_tournament($chat)
 {
     if (\pr2\multi\PR2SocketServer::$tournament) {
+        $hat_name = \pr2\multi\Hats::idToStr(\pr2\multi\PR2SocketServer::$tournament_hat);
+        $hat_name .= $hat_name != 'None' ? ' Hat' : '';
         $chat->sendToAll(
             'systemChat`Tournament mode is on!<br/>'
-            .'Hat: ' . \pr2\multi\Hats::idToStr(\pr2\multi\PR2SocketServer::$tournament_hat) . '<br/>'
+            ."Hat: $hat_name<br/>"
             .'Speed: ' . \pr2\multi\PR2SocketServer::$tournament_speed . '<br/>'
             .'Accel: ' . \pr2\multi\PR2SocketServer::$tournament_acceleration . '<br/>'
             .'Jump: ' . \pr2\multi\PR2SocketServer::$tournament_jumping
