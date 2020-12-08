@@ -83,7 +83,7 @@ class Hats
     public static function idToStr($id)
     {
         $id = (int) $id;
-        if ($id >= 1 && $id <= 16) {
+        if ($id >= 1 && $id <= count(self::HAT_NAMES)) {
             return self::HAT_NAMES[$id];
         }
         return 'Unknown';
@@ -104,7 +104,7 @@ class Hats
     public static function getDesc($id)
     {
         $id = (int) $id;
-        if ($id >= 1 && $id <= 16) {
+        if ($id >= 1 && $id <= count(self::HAT_NAMES)) {
             return self::HAT_DESCS[$id];
         }
         return '';
