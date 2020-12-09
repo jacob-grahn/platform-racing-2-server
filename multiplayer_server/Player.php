@@ -46,7 +46,7 @@ class Player
     public $speed;
     public $acceleration;
     public $jumping;
-    
+
     public $hh_speed;
     public $hh_acceleration;
     public $hh_jumping;
@@ -244,7 +244,7 @@ class Player
         $ret->bodyColor2 = $this->getSecondColor('body', $this->body);
         $ret->feetColor2 = $this->getSecondColor('feet', $this->feet);
         $ret->exp_points = $this->exp_points;
-        $ret->exp_to_rank = exp_required_for_ranking($this->active_rank + 1);
+        $ret->exp_to_rank = exp_required_for_ranking($this->rank + 1);
 
         return $ret;
     }
@@ -264,7 +264,7 @@ class Player
 
     public function incExp($exp)
     {
-        $max_rank = exp_required_for_ranking($this->active_rank + 1);
+        $max_rank = exp_required_for_ranking($this->rank + 1);
         $new_exp_total = $this->exp_points + $exp;
         $this->write("setExpGain`$this->exp_points`$new_exp_total`$max_rank");
         $this->exp_points += $exp;
@@ -620,7 +620,7 @@ class Player
         if (!isset($this->user_id)) {
             return false;
         }
-        
+
         $eType = 'e'.ucfirst($type);
         $part = $this->{$type};
 
@@ -631,7 +631,7 @@ class Player
             $parts_available = $this->getFullParts($type);
             $epic_parts_available = $this->getFullParts($eType);
         }
-        
+
         if (array_search($part, $parts_available) === false) {
             $part = $parts_available[0];
             $this->{$type} = $part;
