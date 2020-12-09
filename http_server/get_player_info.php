@@ -119,7 +119,7 @@ try {
     }
 
     $ret->exp_points = $target->exp_points;
-    $ret->exp_to_rank = exp_required_for_ranking($active_rank + 1);
+    $ret->exp_to_rank = exp_required_for_ranking($target->rank + 1);
     $ret->friend = $friend;
     $ret->ignored = $ignored;
 } catch (Exception $e) {
