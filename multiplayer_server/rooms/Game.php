@@ -818,7 +818,7 @@ class Game extends Room
                 $result = save_finder($player);
                 if ($result) {
                     $max_artifact_bonus = 50000;
-                    $artifact_bonus = round($max_artifact_bonus * $player->active_rank / 60);
+                    $artifact_bonus = round($max_artifact_bonus * ($player->rank + $player->rt_available) / 60);
                     if ($artifact_bonus > $max_artifact_bonus) {
                         $artifact_bonus = $max_artifact_bonus;
                     }
