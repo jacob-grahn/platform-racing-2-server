@@ -307,9 +307,9 @@ function ensure_awards($pdo)
         $user_id = (int) $row->user_id;
         try {
             if ($type !== 'exp') {
-                award_part($pdo, $user_id, $type, $part, true);
+                award_part($pdo, $user_id, $type, $part);
             } else {
-                award_exp($pdo, $user_id, $part);
+                award_exp($pdo, $user_id, $part, true);
             }
             echo "user_id: $user_id, type: $type, part: $part \n";
         } catch (Exception $e) {
