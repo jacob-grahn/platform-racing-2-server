@@ -150,10 +150,6 @@ function curl_get($url, array $get = null, array $options = array())
 // populate descriptions for vault items
 function describeVault($pdo, $user_id, $arr)
 {
-    // sale?
-    $sale = time() < 1598918400;
-    $discount = 0.25;
-
     // gather user info
     $user = user_select_expanded($pdo, $user_id);
     $server = server_select($pdo, $user->server_id);
@@ -190,10 +186,11 @@ function describeVault($pdo, $user_id, $arr)
             throw new Exception('Unknown item type.');
         }
 
-        // activate sale
-        if ($sale === true) {
-            $item->price = round($item->price * (1 - $discount));
-            $item->discount = (string) ($discount * 100) . '% off!';
+        // sale?
+        global $VAULT_SALE, $VAULT_SALE_PERC;
+        if ($VAULT_SALE === true) {
+            $item->price = round($item->price * (1 - $VAULT_SALE_PERC));
+            $item->discount = (string) ($VAULT_SALE_PERC * 100) . '% off!';
         }
 
         $descriptions[] = $item;

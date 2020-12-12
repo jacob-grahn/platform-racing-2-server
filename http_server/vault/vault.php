@@ -53,8 +53,8 @@ try {
     // reply
     $ret->success = true;
     $ret->listings = $listings;
-    $ret->title = time() < 1598918400 ? 'Back To School Sale!' : 'Vault of Magics';
-    $ret->sale = time() < 1598918400;
+    $ret->title = $VAULT_SALE ? $VAULT_SALE_TITLE : 'Vault of Magics';
+    $ret->sale = $VAULT_SALE;
 } catch (Exception $e) {
     $ret->state = 'canceled';
     $ret->error = $e->getMessage();
