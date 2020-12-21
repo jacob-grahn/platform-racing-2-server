@@ -148,10 +148,12 @@ function curl_get($url, array $get = null, array $options = array())
 
 
 // populate descriptions for vault items
-function describeVault($pdo, $user_id, $arr)
+function describeVault($pdo, $user, $arr)
 {
     // gather user info
-    $user = user_select_expanded($pdo, $user_id);
+    if (is_int($user)) {
+        $user = user_select_expanded($pdo, $user);
+    }
     $server = server_select($pdo, $user->server_id);
     $guild = $user->guild != 0 ? guild_select($pdo, $user->guild) : false;
 
@@ -183,13 +185,13 @@ function describeVault($pdo, $user_id, $arr)
         } elseif ($slug == 'epic-everything') {
             $item = describeEpicEverything($user);
         } else {
-            throw new Exception('Unknown item type.');
+            throw new Exception('Invalid item specified.');
         }
 
         // sale?
         global $VAULT_SALE, $VAULT_SALE_PERC;
         if ($VAULT_SALE === true) {
-            $item->price = round($item->price * (1 - $VAULT_SALE_PERC));
+            $item->price = number_format(round($item->price * (1 - $VAULT_SALE_PERC), 2), 2);
             $item->discount = (string) ($VAULT_SALE_PERC * 100) . '% off!';
         }
 
@@ -212,7 +214,7 @@ function describeSuperBooster($user, $server)
     $d->price = 0;
     $d->description = 'Boost all of your stats by 10 for one race. One use per day.';
     $d->available = false;
-    $d->faq = "<b>Can I use more than one Super Booster per day if I pay for it?</b>\nNope!\n\n";
+    $d->faq = "<b>Can I use more than one Super Booster per day if I pay for it?</b>\nNope!";
 
     if ($server->tournament == 0) {
         $d->available = !apcu_fetch("sb-$user->user_id");
@@ -230,16 +232,16 @@ function describeFred()
     $d->title = 'Guild de Fred';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Guild-de-Fred-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Guild-de-Fred-40x40.png';
-    $d->price = 20;
+    $d->price = 1.99; //20;
     $d->description = 'You and your guild get to party as Fred for an hour.';
     $d->available = true;
     $d->faq = "<b>Is the Guild de Fred power-up useful?</b>\n".
-        "- Not at all!\n\n".
+        "Not at all!\n\n".
         "<b>Do I get to run around as a giant cactus?</b>\n".
-        "- Yes. Yes you do.\n\n".
+        "Yes. Yes you do.\n\n".
         "<b>How does Guild de Fred work?</b>\n".
-        "- A Giant Cactus body is temporarily added to your account. ".
-        "You can switch between the Giant Cactus body and your other bodies normally.\n\n";
+        "A Giant Cactus body is temporarily added to your account. ".
+        "You can switch between the Giant Cactus body and your other bodies normally.";
 
     return $d;
 }
@@ -253,16 +255,16 @@ function describeGhost()
     $d->title = 'Guild de Ghost';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Guild-de-Ghost-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Guild-de-Ghost-40x40.png';
-    $d->price = 10;
+    $d->price = 0.99; //10;
     $d->description = 'You and your guild gain (very) invisible parts for an hour.';
     $d->available = true;
     $d->faq = "<b>Will this make me feel like a ninja?</b>\n".
-        "- You'll be so ninja.\n\n".
+        "You'll be so ninja.\n\n".
         "<b>Is the Guild de Ghost power-up useful?</b>\n".
-        "- It may actually be a massive disadvantage!\n\n".
+        "It may actually be a massive disadvantage!\n\n".
         "<b>How does Guild de Ghost work?</b>\n".
-        "- A very invisible head, body, and feet are temporarily added to your ".
-        "account. You can switch between these parts and your other parts normally.\n\n";
+        "A very invisible head, body, and feet are temporarily added to your ".
+        "account. You can switch between these parts and your other parts normally.";
 
     return $d;
 }
@@ -276,17 +278,17 @@ function describeArtifact()
     $d->title = 'Guild de Artifact';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Avatar-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Avatar-40x40.png';
-    $d->price = 30;
-    $d->description = 'You and your guild gain the artifact as a hat for an hour.';
+    $d->price = 2.99; //30;
+    $d->description = 'Everyone in your guild gains the artifact as a hat for an hour.';
     $d->available = true;
     $d->faq = "<b>Will the artifact give me tons of EXP every race?</b>\n".
-        "- Nope!\n\n".
+        "Nope!\n\n".
         "<b>Is the Guild de Artifact power-up useful?</b>\n".
-        "- It may actually be a massive disadvantage!\n\n".
+        "It may actually be a massive disadvantage!\n\n".
         "<b>How does Guild de Artifact work?</b>\n".
-        "- Fred has harnessed the power of the artifact for your control! ".
-        "The artifact will temporarily be added to your account, ".
-        "and you'll still be able switch between it and your other hats normally.\n\n";
+        "Fred has harnessed the power of the artifact for your control! ".
+        "The artifact will temporarily be added to your account as a wearable hat, ".
+        "and you'll still be able switch between it and your other hats normally.";
 
     return $d;
 }
@@ -300,14 +302,14 @@ function describeHappyHour($server)
     $d->title = 'Happy Hour';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Happy-Hour-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Happy-Hour-40x40.png';
-    $d->price = 50;
+    $d->price = 4.99; //50;
     $d->description = 'Is there a happy hour right now? Well there should be.';
     $d->available = false;
     $d->faq = "<b>What's a Happy Hour?</b>\n".
-        "- During a Happy Hour everyone on this server will receive double experience points, ".
+        "During a Happy Hour everyone on this server will receive double experience points, ".
         "and everyone's speed, acceleration, and jumping are increased to 100.\n\n".
         "<b>Can a Happy Hour be used on a private server?</b>\n".
-        "- Yup!\n\n";
+        "Yup!";
 
     if ($server->tournament == 0) {
         $d->available = true;
@@ -321,25 +323,28 @@ function describeHappyHour($server)
 function describeRankRental($pdo, $user)
 {
     $rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
+    $rt_lang = $rented_tokens > 0 ? 'another' : 'a';
+
     $d = new stdClass();
     $d->slug = 'rank-rental';
     $d->title = 'Rank Token++';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Rank-Token-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Rank-Token-40x40.png';
-    $d->price = 50 + (20 * $rented_tokens);
-    $d->description = 'You and your guild all gain a rank token for a week.';
-    $d->available = true;
+    $d->price = 4.99 + (2 * $rented_tokens); //50 + (20 * $rented_tokens);
+    $d->description = "Everyone in your guild gains $rt_lang rank token for a week.";
+    $d->available = $user->guild > 0 && $rented_tokens < 21;
     $d->faq = "<b>What's a Rank Token?</b>\n".
-        "- You can use rank tokens to increase or decrease your rank at will. ".
+        "You can use rank tokens to increase or decrease your rank at will. ".
         "A rank 40 account with 3 rank tokens could become a rank 43 account, for example.\n\n".
         "<b>Why does the price change?</b>\n".
-        "- The price of a new Rank Token++ depends on how many you currently have.\n".
-        "  1st: 50 kreds\n".
-        "  2nd: 70 kreds\n".
-        "  3rd: 90 kreds\n".
-        "  etc\n\n".
+        "The price of a new Rank Token++ depends on how many you currently have. ".
+        "The base price is \$4.99 and extra tokens are \$2.00 each. For example: \n".
+        " - 1st: \$4.99\n". // 50 kreds
+        " - 2nd: \$6.99\n". // 70 kreds
+        " - 3rd: \$8.99\n". // 90 kreds
+        "...etc.\n\n".
         "<b>How many tokens can be used at once?</b>\n".
-        "- Up to 21 rank tokens can be rented at a time.\n\n";
+        "Up to 21 rank tokens can be rented at a time.";
 
     return $d;
 }
@@ -353,13 +358,13 @@ function describeKing($user)
     $d->title = 'Wise King';
     $d->imgUrl = 'https://pr2hub.com/img/vault/King-Set-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/King-Set-40x40.png';
-    $d->price = 30;
+    $d->price = 2.99; //30;
     $d->description = 'Permanently add the Wise King Set to your account.';
     $d->available = false;
     $d->faq = "<b>Does the Wise King set give me any stat boosts?</b>\n".
-        "- Nope!\n\n".
+        "Nope!\n\n".
         "<b>Does the Wise King set make me look totally rad?</b>\n".
-        "- Totally.\n\n";
+        "Totally.";
 
     if (array_search(28, explode(',', $user->head_array)) === false) {
         $d->available = true;
@@ -377,13 +382,13 @@ function describeQueen($user)
     $d->title = 'Wise Queen';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Queen-Set-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Queen-Set-40x40.png';
-    $d->price = 30;
+    $d->price = 2.99; //30;
     $d->description = 'Permanently add the Wise Queen Set to your account.';
     $d->available = false;
     $d->faq = "<b>Does the Wise Queen set give me any stat boosts?</b>\n".
-        "- Nope!\n\n".
+        "Nope!\n\n".
         "<b>Does the Wise Queen set make me look totally rad?</b>\n".
-        "- Totally.\n\n";
+        "Totally.";
 
     if (array_search(29, explode(',', $user->head_array)) === false) {
         $d->available = true;
@@ -401,13 +406,13 @@ function describeDjinn($user)
     $d->title = 'Frost Djinn';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Djinn-Set-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Djinn-Set-40x40.png';
-    $d->price = 30;
+    $d->price = 2.99; //30;
     $d->description = 'Permanently add the Frost Djinn Set to your account.';
     $d->available = false;
     $d->faq = "<b>Does the Frost Djinn set give me any stat boosts?</b>\n".
-        "- Nope!\n\n".
+        "Nope!\n\n".
         "<b>Does the Frost Djinn set make me look totally rad?</b>\n".
-        "- Totally.\n\n";
+        "Totally.";
 
     if (array_search(35, explode(',', $user->head_array)) === false) {
         $d->available = true;
@@ -425,21 +430,21 @@ function describePrivateServer1($user, $guild)
     $d->title = 'Private Server 1';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Private-Server-1-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Private-Server-40x40.png';
-    $d->price = 20;
+    $d->price = 1.99; //20;
     $d->description = 'Create an exclusive server for your guild. Runs for 1 day.';
     $d->available = false;
     $d->faq = "<b>Who can use a private server?</b>\n".
-        "- You and members of your guild can use your private server.\n\n".
+        "You and members of your guild can use your private server.\n\n".
         "<b>Can moderators enter our private server?</b>\n".
-        "- Nope. You are the law. You'll even have a few admin powers.\n\n".
+        "Nope. You are the law. You'll even have a few admin powers.\n\n".
         "<b>Can I make my own campaign?</b>\n".
-        "- Not currently.\n\n";
+        "Not currently.";
 
     if ($guild && $guild->owner_id == $user->user_id) {
         $d->available = true;
     } else {
-        $d->faq .= "<b>Why can't I create a private server?</b>\n".
-            "- This option is for guild owners only!\n\n";
+        $d->faq .= "\n\n<b>Why can't I create a private server?</b>\n".
+            "This option is for guild owners only!";
     }
 
     return $d;
@@ -454,21 +459,21 @@ function describePrivateServer30($user, $guild)
     $d->title = 'Private Server 30';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Private-Server-30-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Private-Server-40x40.png';
-    $d->price = 300;
+    $d->price = 29.99;
     $d->description = 'Create an exclusive server for your guild. Runs for 30 days.';
     $d->available = false;
     $d->faq = "<b>Who can use a private server?</b>\n".
-        "- You and members of your guild can use your private server.\n\n".
+        "You and members of your guild can use your private server.\n\n".
         "<b>Can moderators enter our private server?</b>\n".
-        "- Nope. You are the law. You'll even have a few admin powers.\n\n".
+        "Nope. You are the law. You'll even have a few admin powers.\n\n".
         "<b>Can I make my own campaign?</b>\n".
-        "- Not currently.\n\n";
+        "Not currently.";
 
     if ($guild && $guild->owner_id == $user->user_id) {
         $d->available = true;
     } else {
-        $d->faq .= "<b>Why can't I create a private server?</b>\n".
-            "- This option is for guild owners only!\n\n";
+        $d->faq .= "\n\n<b>Why can't I create a private server?</b>\n".
+            "This option is for guild owners only!";
     }
 
     return $d;
@@ -483,17 +488,17 @@ function describeEpicEverything($user)
     $d->title = 'Epic Everything';
     $d->imgUrl = 'https://pr2hub.com/img/vault/Guild-de-Ghost-112x63.png';
     $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Guild-de-Ghost-40x40.png';
-    $d->price = 110;
+    $d->price = 10.99; //110;
     $d->description = 'Unlock all Epic Upgrades.';
     $d->available = false;
     $d->faq = "<b>What is an Epic Upgrade?</b>\n".
-        "- It gives you a second editable color on a part you already own!\n\n".
+        "It gives you a second editable color on a part you already own!\n\n".
         "<b>Does this include every Epic Upgrade that exists or ever will exist?</b>\n".
-        "- Sure does!\n\n".
+        "Sure does!\n\n".
         "<b>Does this unlock all the parts too?</b>\n".
-        "- No, but all parts you win in the future will automatically come with an Epic Upgrade.\n\n".
+        "No, but all parts you win in the future will automatically come with an Epic Upgrade.\n\n".
         "<b>Do Epic Upgrades provide a stat boost?</b>\n".
-        "- Nope!\n\n";
+        "Nope!";
 
     if (array_search('*', explode(',', $user->epic_heads)) === false) {
         $d->available = true;
