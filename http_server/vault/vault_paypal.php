@@ -8,6 +8,7 @@ require_once QUERIES_DIR . '/rank_token_rentals.php';
 
 $PAYPAL_JS_SDK_URL = "https://www.paypal.com/sdk/js?client-id=$PAYPAL_CLIENT_ID&currency=USD&commit=false";
 
+$token = default_get('token', '');
 $slug = find('slug', 'none', false); //, 'none');
 
 $header = false;
@@ -20,16 +21,16 @@ try {
     $pdo = pdo_connect();
 
     // check user
-    $user_id = token_login($pdo);//, false);
+    $user_id = token_login($pdo, false); // is it a valid token?
     $user = user_select($pdo, $user_id);
-
-    // sanity: is this user online?
-    if ($user->server_id <= 0) {
+    if ($user->power <= 0) { // are they a guest?
+        throw new Exception('Guests can\'t buy things. How about creating your own account?');
+    } elseif ($user->server_id <= 0) { // are they online?
         throw new Exception('You are not online. Please log in to purchase items from the vault.');
     }
 
-    // item
-    $item = describeVault($pdo, $user, [$slug])[0]; // checks item validity
+    // check item
+    $item = describeVault($pdo, $user, [$slug])[0]; // is it valid?
     if (!$item->available) { // is it available?
         throw new Exception('You cannot purchase this item at this time. Please try again later.');
     } elseif ($item->price === 0) { // is it free?
@@ -39,7 +40,6 @@ try {
     // format info
     $vom_faqs = '<a href="https://pr2hub.com/vault_faq.php" target="_blank">Vault of Magics FAQs</a>';
     $item_price = '$' . number_format($item->price, 2);
-    $next_token_exp = $slug === 'rank-rental' ? rank_token_rentals_select_next_expiry($pdo, $user_id, $user->guild) : 0;
 
     // start page
     $header = true;
@@ -47,6 +47,34 @@ try {
 
     // phpcs:disable
     ?>
+
+        <!-- Custom functions -->
+        <script type='text/javascript'>
+            function toggleFAQs()
+            {
+                var toggleBtn = document.getElementById('toggle_btn');
+                var faqsDiv = document.getElementById('item_faqs');
+                var curDisp = faqsDiv.style.display;
+                toggleBtn.innerHTML = '<u>' + (curDisp == 'none' ? 'Hide' : 'Show') + ' Item FAQs</u>';
+                faqsDiv.style.display = curDisp == 'none' ? 'block' : 'none';
+            }
+
+            function redirectPost(url, data)
+            {
+                var form = document.createElement('form');
+                document.body.appendChild(form);
+                form.method = 'post';
+                form.action = url;
+                for (var name in data) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = name;
+                    input.value = data[name];
+                    form.appendChild(input);
+                }
+                form.submit();
+            }
+        </script>
 
         <!-- Heading -->
         <div style="font-family: Gwibble; font-size: 30px; text-align: center;">-- Vault Purchase --</div>
@@ -60,20 +88,9 @@ try {
 
         <hr />
 
-        <script type='text/javascript'>
-            function toggleFAQs()
-            {
-                var toggleBtn = document.getElementById('toggle_btn');
-                var faqsDiv = document.getElementById('item_faqs');
-                var curDisp = faqsDiv.style.display;
-                toggleBtn.innerHTML = '<u>' + (curDisp == 'none' ? 'Hide' : 'Show') + ' Item FAQs</u>';
-                faqsDiv.style.display = curDisp == 'none' ? 'block' : 'none';
-            }
-        </script>
-
         <p>Welcome, <b><?= htmlspecialchars($user->name, ENT_QUOTES) ?></b>. You are about to purchase:</p>
 
-        <!-- item info -->
+        <!-- Item info -->
         <p>
             <div id="item_name" style="font-size: 20px"><b><u><?= $item->title ?></u></b></div>
             <div style='font-size: 11px; color: slategray;'><?= $item->description ?></div>
@@ -95,6 +112,7 @@ try {
 
         <br />
 
+        <!-- START PAYPAL -->
         <!-- Set up a container element for the button -->
         <div id="smart-button-container">
             <div id="paypal-button-container" style="margin: 0 auto; max-width: 75%;"></div>
@@ -110,22 +128,20 @@ try {
                     shape: 'pill',
                     color: 'blue',
                     layout: 'vertical',
-                    label: 'paypal'
+                    label: 'pay'
                 },
 
                 createOrder: function(data, actions) {
-                    /*if ('<?= $slug ?>' == 'rank-rental' && <?= $next_token_exp ?> > 0 && <?= $next_token_exp ?> > Math.floor(Date.now() / 1000)) {
-                        alert('Error: One of your existing rank tokens expired since you loaded the page. Refreshing to save you money! :)');
-                        window.location.reload();
-                        return;
-                    }*/
                     return actions.order.create({
                         application_context: {
+                            brand_name: 'Platform Racing 2',
+                            user_action: "CONTINUE",
                             shipping_preference: "NO_SHIPPING"
                         },
                         purchase_units: [
                             {
-                                soft_descriptor: "PR2VAULT_<?= $user_id ?>",
+                                /* custom_id: "purchaseId", */
+                                /* soft_descriptor: "PR2VOM_purchaseId_userId", */
                                 description: 'Vault of Magics purchase for PR2 user #<?= $user_id ?>.',
                                 amount: {
                                     currency_code: "USD",
@@ -143,10 +159,10 @@ try {
                                         description: "<?= $item->description ?>",
                                         unit_amount: {
                                             currency_code: "USD",
-                                            value: <?= $item->price ?>                                            
+                                            value: <?= $item->price ?>
                                         },
                                         quantity: 1,
-                                        category: 'DIGITAL_GOODS'
+                                        category: "DIGITAL_GOODS"
                                     }
                                 ]
                             }
@@ -155,10 +171,12 @@ try {
                 },
 
                 onApprove: function(data, actions) {
-                    //alert('Transaction approved, but not complete. This is where something else is done before completing the transaction w/ commented code.');
-                    return actions.order.capture().then(function(details) {
-                        alert('Transaction completed by ' + details.payer.name.given_name + '!');
-                    });
+                    var obj = {
+                        order_id: data.orderID,
+                        token: "<?= $token ?>"
+                    }
+                    console.log('orderID: ' + obj.order_id);
+                    return redirectPost('/vault/confirm_order.php', obj);
                 },
 
                 onError: function(err) {
@@ -166,6 +184,7 @@ try {
                 }
             }).render('#paypal-button-container');
         </script>
+        <!-- END PAYPAL -->
 
     <?php
     // phpcs:enable
