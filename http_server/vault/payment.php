@@ -172,8 +172,9 @@ try {
 
                 onApprove: function(data, actions) {
                     var obj = {
-                        order_id: data.orderID,
-                        token: "<?= $token ?>"
+                        token: "<?= $token ?>",
+                        slug: "<?= $slug ?>",
+                        order_id: data.orderID
                     }
                     console.log('orderID: ' + obj.order_id);
                     return redirectPost('/vault/confirm_order.php', obj);
