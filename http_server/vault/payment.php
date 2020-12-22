@@ -8,8 +8,8 @@ require_once QUERIES_DIR . '/rank_token_rentals.php';
 
 $PAYPAL_JS_SDK_URL = "https://www.paypal.com/sdk/js?client-id=$PAYPAL_CLIENT_ID&currency=USD&commit=false";
 
-$token = default_get('token', '');
-$slug = find('slug', 'none', false); //, 'none');
+$token = find('token', '', false);
+$slug = find('slug', 'none', false);
 
 $header = false;
 try {
