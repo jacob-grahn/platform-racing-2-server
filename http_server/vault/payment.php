@@ -38,7 +38,7 @@ try {
     }
 
     // format info
-    $vom_faqs = '<a href="https://pr2hub.com/vault_faq.php" target="_blank">Vault of Magics FAQs</a>';
+    $vom_faqs = '<a href="https://pr2hub.com/vault/faq.php" target="_blank">Vault of Magics FAQs</a>';
     $item_price = '$' . number_format($item->price, 2);
 
     // start page
