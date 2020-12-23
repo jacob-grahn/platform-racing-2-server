@@ -37,6 +37,10 @@ try {
         $vault->info->title->flashing = true;
     }
 
+    // user
+    $vault->info->user = new stdClass();
+    $vault->info->user->coins = user_select_coins($pdo, $user_id);
+
     // reply
     $ret->success = true;
     $ret->info = $vault->info;

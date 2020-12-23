@@ -36,9 +36,7 @@ $IP_API_LINK_SUF = 'a link suf';
 $IP_API_SCORE_MIN = /* over */ 9000;
 $IP_API_LINK_2 = 'another link';
 
-$VAULT_SALE = false;
-$VAULT_SALE_TITLE = '';
-$VAULT_SALE_PERC = 0; // decimal between 0 and 1
+$VAULT_TITLE = '';
 
 $BANNED_IP_PREFIXES = [
     '127.0.0.',

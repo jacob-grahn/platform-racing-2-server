@@ -168,7 +168,11 @@ function describeVault($pdo, $user, $items_to_get = 'all')
     $items = $items_to_get === 'all' ? $vault_info->listings : new stdClass();
     if ($items_to_get !== 'all') {
         foreach ($items_to_get as $slug) {
-            $items->$slug = $vault_info->listings->$slug;
+            if (isset($vault_info->listings->$slug)) {
+                $items->$slug = $vault_info->listings->$slug;
+                continue;
+            }
+            throw new Exception('Invalid item specified.');
         }
     }
 
@@ -177,7 +181,7 @@ function describeVault($pdo, $user, $items_to_get = 'all')
     foreach ($items as $slug => $item) {
         $item->available = false;
         if ($slug === 'stats_boost') {
-            $item->available = $server->tournament == 0 && !apcu_fetch("sb-$user->user_id");
+            $item->available = $server->tournament == 0 && !apcu_exists("sb-$user->user_id-" . round(time() / 86400));
         } elseif ($slug === 'happy_hour') {
             $item->available = $server->tournament == 0;
         } elseif ($slug === 'rank_rental') {
@@ -202,13 +206,6 @@ function describeVault($pdo, $user, $items_to_get = 'all')
         } else {
             $item->available = true;
         }
-
-        // sale?
-        /*global $VAULT_SALE, $VAULT_SALE_PERC;
-        if ($VAULT_SALE === true) {
-            $item->price = number_format(round($item->price * (1 - $VAULT_SALE_PERC), 2), 2);
-            $item->discount = (string) ($VAULT_SALE_PERC * 100) . '% off!';
-        }*/
 
         $listings[] = $item;
     }

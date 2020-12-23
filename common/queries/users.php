@@ -168,6 +168,19 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
 }
 
 
+function user_select_coins($pdo, $user_id)
+{
+    $stmt = $pdo->prepare('SELECT coins FROM users WHERE user_id = :user_id LIMIT 1');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not retrieve number of coins.');
+    }
+
+    return (int) $stmt->fetchColumn();
+}
+
+
 function user_select_expanded($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
