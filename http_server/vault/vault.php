@@ -27,34 +27,20 @@ try {
     rate_limit('vault-listing-'.$user_id, 5, 2);
     rate_limit('vault-listing-'.$user_id, 30, 10);
 
-    // create listing
-    $slug_array = [
-        'stats-boost',
-        'epic-everything',
-        'guild-fred',
-        'guild-ghost',
-        'guild-artifact',
-        'happy-hour',
-        'rank-rental',
-        'djinn-set',
-        'king-set',
-        'queen-set',
-        'server-1-day',
-        'server-30-days'
-    ];
-    $raw_listings = describeVault($pdo, $user_id, $slug_array);
+    // populate items
+    $vault = describeVault($pdo, $user_id, 'all');
 
-    // weed out only the info we want to return
-    $listings = array();
-    foreach ($raw_listings as $raw) {
-        $listings[] = make_listing($raw);
+    // title
+    if ($VAULT_TITLE !== 'Vault of Magics') {
+        $vault->info->title = new stdClass();
+        $vault->info->title->title = $VAULT_TITLE;
+        $vault->info->title->flashing = true;
     }
 
     // reply
     $ret->success = true;
-    $ret->listings = $listings;
-    $ret->title = $VAULT_SALE ? $VAULT_SALE_TITLE : 'Vault of Magics';
-    $ret->sale = $VAULT_SALE;
+    $ret->info = $vault->info;
+    $ret->listings = $vault->listings;
 } catch (Exception $e) {
     $ret->state = 'canceled';
     $ret->error = $e->getMessage();

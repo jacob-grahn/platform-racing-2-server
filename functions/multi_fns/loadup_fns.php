@@ -72,12 +72,12 @@ function activate_perks($perks)
 {
     foreach ($perks as $perk) {
         $slug = $perk->product;
-        $a = ['guild-fred', 'guild-ghost', 'guild-artifact'];
+        $a = ['guild_fred', 'guild_ghost', 'guild_artifact'];
         if (array_search($slug, $a) !== false) {
             output("Activating perk $slug for user $perk->user_id and guild $perk->guild_id...");
             start_perk($slug, $perk->user_id, $perk->guild_id);
         }
-        if ($slug === 'happy-hour') {
+        if ($slug === 'happy_hour') {
             \pr2\multi\HappyHour::activate();
         }
     }

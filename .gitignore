@@ -6,7 +6,7 @@ http_server/emblems/*
 http_server/files/*
 http_server/levels/*
 http_server/music/*
-last-pm.txt
-/search.php
+cache
 vendor
+/search.php
 .vscode/*

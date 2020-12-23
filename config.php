@@ -3,6 +3,7 @@
 $directory = __DIR__; // this directory
 
 define('ROOT_DIR', $directory); // root
+define('CACHE_DIR', $directory . '/cache'); // cached files
 define('COMMON_DIR', $directory . '/common'); // common
 define('QUERIES_DIR', $directory . '/common/queries'); // queries
 

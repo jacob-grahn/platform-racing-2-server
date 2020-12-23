@@ -30,7 +30,7 @@ try {
     }
 
     // check item
-    $item = describeVault($pdo, $user, [$slug])[0]; // is it valid?
+    $item = describeVault($pdo, $user, [$slug])->listings[0]; // is it valid?
     if (!$item->available) { // is it available?
         throw new Exception('You cannot purchase this item at this time. Please try again later.');
     } elseif ($item->price === 0) { // is it free?

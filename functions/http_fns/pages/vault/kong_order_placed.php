@@ -38,13 +38,13 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
     $reply = '';
     $target_servers = array();
 
-    if ($slug === 'guild-fred') {
+    if ($slug === 'guild_fred') {
         $reply = 'Fred smiles on you!';
-    } elseif ($slug === 'guild-ghost') {
+    } elseif ($slug === 'guild_ghost') {
         $reply = 'Ninja mode: engage!';
-    } elseif ($slug === 'guild-artifact') {
+    } elseif ($slug === 'guild_artifact') {
         $reply = 'Ultimate power, courtesy of Fred!';
-    } elseif ($slug === 'king-set') {
+    } elseif ($slug === 'king_set') {
         award_part($pdo, $user_id, 'head', 28);
         award_part($pdo, $user_id, 'body', 26);
         award_part($pdo, $user_id, 'feet', 24);
@@ -53,7 +53,7 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         award_part($pdo, $user_id, 'eFeet', 24);
         $command = "unlock_set_king`$user_id";
         $reply = 'The Wise King set has been added your account!';
-    } elseif ($slug === 'queen-set') {
+    } elseif ($slug === 'queen_set') {
         award_part($pdo, $user_id, 'head', 29);
         award_part($pdo, $user_id, 'body', 27);
         award_part($pdo, $user_id, 'feet', 25);
@@ -62,7 +62,7 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         award_part($pdo, $user_id, 'eFeet', 25);
         $command = "unlock_set_queen`$user_id";
         $reply = 'The Wise Queen set has been added your account!';
-    } elseif ($slug === 'djinn-set') {
+    } elseif ($slug === 'djinn_set') {
         award_part($pdo, $user_id, 'head', 35);
         award_part($pdo, $user_id, 'body', 35);
         award_part($pdo, $user_id, 'feet', 35);
@@ -71,17 +71,17 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         award_part($pdo, $user_id, 'eFeet', 35);
         $command = "unlock_set_djinn`$user_id";
         $reply = 'The Frost Djinn set has been added your account!';
-    } elseif ($slug === 'epic-everything') {
+    } elseif ($slug === 'epic_everything') {
         award_part($pdo, $user_id, 'eHat', '*');
         award_part($pdo, $user_id, 'eHead', '*');
         award_part($pdo, $user_id, 'eBody', '*');
         award_part($pdo, $user_id, 'eFeet', '*');
         $command = "unlock_epic_everything`$user_id";
         $reply = 'All Epic Upgrades are yours!';
-    } elseif ($slug === 'happy-hour') {
+    } elseif ($slug === 'happy_hour') {
         $target_servers = array($server_id);
         $reply = 'This is the happiest hour ever!';
-    } elseif ($slug === 'server-1-day' || $slug === 'server-30-days') {
+    } elseif ($slug === 'server_1_day' || $slug === 'server_30_days') {
         $command = '';
         $days = (int) explode('-', $slug)[1];
         $result = create_server($pdo, $guild_id, $days);
@@ -98,7 +98,7 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
 
         $command = "extend_server_life`$guild_id`$result->new_time";
         $reply .= date('F j, Y \a\t g:ia T', $result->new_time);
-    } elseif ($slug === 'rank-rental') {
+    } elseif ($slug === 'rank_rental') {
         rank_token_rental_insert($pdo, $user_id, $guild_id);
 
         $obj = new stdClass();
@@ -145,8 +145,8 @@ function create_server($pdo, $guild_id, $days_of_life)
 
     // guild info
     $guild = guild_select($pdo, $guild_id);
-    $guild_id = (int) $guild->guild_id;
-    $server_name = $guild->guild_name;
+    $guild_id = (int) $guild_>guild_id;
+    $server_name = $guild_>guild_name;
 
     $ret = new stdClass();
     $ret->status_code = 0;

@@ -182,16 +182,16 @@ function send_to_guild($guild_id, $str)
 function start_perk($slug, $user_id, $guild_id)
 {
     $seconds_duration = 3700;
-    if ($slug === 'guild-fred') {
+    if ($slug === 'guild_fred') {
         assign_guild_part('body', 29, $user_id, $guild_id, $seconds_duration);
-    } elseif ($slug === 'guild-ghost') {
+    } elseif ($slug === 'guild_ghost') {
         assign_guild_part('head', 31, $user_id, $guild_id, $seconds_duration);
         assign_guild_part('body', 30, $user_id, $guild_id, $seconds_duration);
         assign_guild_part('feet', 27, $user_id, $guild_id, $seconds_duration);
-    } elseif ($slug === 'guild-artifact') {
+    } elseif ($slug === 'guild_artifact') {
         assign_guild_part('hat', 14, $user_id, $guild_id, $seconds_duration);
         assign_guild_part('eHat', 14, $user_id, $guild_id, $seconds_duration);
-    } elseif ($slug === 'happy-hour') {
+    } elseif ($slug === 'happy_hour') {
         \pr2\multi\HappyHour::activate();
     }
 }

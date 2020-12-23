@@ -44,16 +44,16 @@ function process_unlock_perk($socket, $data)
         $display_name = userify($player, $user_name);
 
         if ($guild_id !== 0) {
-            if ($slug === 'guild-fred') {
+            if ($slug === 'guild_fred') {
                 send_to_guild($guild_id, "systemChat`$display_name unlocked Fred mode for your guild!");
             }
-            if ($slug === 'guild-ghost') {
+            if ($slug === 'guild_ghost') {
                 send_to_guild($guild_id, "systemChat`$display_name unlocked Ghost mode for your guild!");
             }
-            if ($slug === 'guild-artifact') {
+            if ($slug === 'guild_artifact') {
                 send_to_guild($guild_id, "systemChat`$display_name unlocked Artifact mode for your guild!");
             }
-            if ($slug === 'happy-hour') {
+            if ($slug === 'happy_hour') {
                 global $chat_room_array;
 
                 if (isset($chat_room_array['main'])) {
