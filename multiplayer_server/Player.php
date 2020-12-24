@@ -326,7 +326,7 @@ class Player
 
     public function isIgnoredId($id)
     {
-        return array_search($id, $this->ignored_array) === false ? false : true;
+        return !(array_search($id, $this->ignored_array) === false);
     }
 
 
@@ -641,7 +641,7 @@ class Player
 
     private function getOwnedParts($type)
     {
-        $is_e = substr($type, 0, 1) === 'e' ? true : false;
+        $is_e = substr($type, 0, 1) === 'e';
         return $is_e === true ? $this->{'epic_'.strtolower(substr($type, 1)).'_array'} : $this->{$type.'_array'};
     }
 

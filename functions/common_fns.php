@@ -530,7 +530,7 @@ function validate_prize($type, $id)
     }
 
     // preserve epicness
-    $is_epic = ($type === 'ehat' || $type === 'ehead' || $type === 'ebody' || $type === 'efeet') ? true : false;
+    $is_epic = $type === 'ehat' || $type === 'ehead' || $type === 'ebody' || $type === 'efeet';
 
     // check for a valid hat id
     if ($type === 'hat' || $type === 'ehat') {

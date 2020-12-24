@@ -64,7 +64,7 @@ try {
         // get some info
         $host = user_select_name_and_power($pdo, $host_id);
         $host_color = $host->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $host->power];
-        $is_host = $user_id === $host_id ? true : false;
+        $is_host = $user_id === $host_id;
 
         // safety first
         $html_contest_name = htmlspecialchars($contest_name, ENT_QUOTES);

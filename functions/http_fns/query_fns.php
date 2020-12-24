@@ -217,7 +217,7 @@ function award_part($pdo, $user_id, $type, $part_id)
     }
 
     // determine where in the array our value was found
-    $is_epic = array_search($type, $part_types) >= 4 ? true : false;
+    $is_epic = array_search($type, $part_types) >= 4;
 
     // get existing parts
     if ($is_epic === true) {
@@ -411,7 +411,7 @@ function award_special_parts($stats, $group, $prizes)
         }
 
         $db_field = type_to_db_field($award->type);
-        $epic = strpos($award->type, 'e') === 0 ? true : false;
+        $epic = strpos($award->type, 'e') === 0;
         $base_type = $epic === true ? strtolower(substr($award->type, 1)) : $award->type;
         $part = (int) $award->part;
 
@@ -460,7 +460,7 @@ function has_part($pdo, $user_id, $type, $part_id)
     }
 
     // determine where in the array our value was found
-    $is_epic = array_search($type, $part_types) >= 4 ? true : false;
+    $is_epic = array_search($type, $part_types) >= 4;
 
     // perform query
     $field = type_to_db_field($type);
@@ -483,7 +483,7 @@ function has_part($pdo, $user_id, $type, $part_id)
     $parts_arr = explode(",", $parts_str);
 
     // search for part ID in array
-    return in_array($part_id, $parts_arr) ? true : false;
+    return in_array($part_id, $parts_arr);
 }
 
 

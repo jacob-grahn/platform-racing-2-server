@@ -44,7 +44,7 @@ try {
             $end = $start + count($users);
             echo "$user_count $user_s associated with the IP address \"$ip\".";
             echo "<br>Showing results $start - $end.<br>";
-            $is_end = $end === $user_count ? true : false;
+            $is_end = $end === $user_count;
         } else {
             echo "No results found for the search parameters.";
         }
