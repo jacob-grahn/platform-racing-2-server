@@ -424,6 +424,7 @@ class Player
     // call with & to write directly to the array
     private function determinePartArray($type)
     {
+        $type = strtolower($type);
         if ($type === 'hat') {
             return 'hat_array';
         } elseif ($type === 'head') {
@@ -432,13 +433,13 @@ class Player
             return 'body_array';
         } elseif ($type === 'feet') {
             return 'feet_array';
-        } elseif ($type === 'eHat') {
+        } elseif ($type === 'ehat') {
             return 'epic_hat_array';
-        } elseif ($type === 'eHead') {
+        } elseif ($type === 'ehead') {
             return 'epic_head_array';
-        } elseif ($type === 'eBody') {
+        } elseif ($type === 'ebody') {
             return 'epic_body_array';
-        } elseif ($type === 'eFeet') {
+        } elseif ($type === 'efeet') {
             return 'epic_feet_array';
         } else {
             output("Player->determinePartArray - unknown part type: $type");

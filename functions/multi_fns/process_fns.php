@@ -56,20 +56,18 @@ function process_gain_part($socket, $data)
     if ($socket->process === true) {
         $obj = json_decode($data);
         $user_id = (int) $obj->user_id;
-        $type = $obj->type;
-        $id = (int) $obj->part_id;
+        $part = $obj->part;
 
         $player = id_to_player($user_id, false);
         if (isset($player)) {
-            $ret = $player->gainPart($type, $id, true);
-            if ($ret === true) {
-                if ($player->hasPart(substr($type, 1), $id)) {
+            if ($player->gainPart(($part->epic ? "e$part->type" : $part->type), $part->id, true)) {
+                if ($player->hasPart($part->type, $part->id)) {
                     $player->sendCustomizeInfo(); // only notify if they own the base part
                     $player->write('message`You won something! Check your account!!!');
                 }
                 $socket->write('They were nice! The part was awarded.');
                 return;
-            } elseif ($ret === false) {
+            } else {
                 $socket->write('Error: The player already has this part.');
             }
         } else {

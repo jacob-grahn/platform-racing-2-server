@@ -220,11 +220,7 @@ function award_part($pdo, $user_id, $type, $part_id)
     $is_epic = array_search($type, $part_types) >= 4;
 
     // get existing parts
-    if ($is_epic === true) {
-        $data = epic_upgrades_select($pdo, $user_id, true);
-    } else {
-        $data = pr2_select($pdo, $user_id, true);
-    }
+    $data = $is_epic ? epic_upgrades_select($pdo, $user_id, true) : pr2_select($pdo, $user_id, true);
     $field = type_to_db_field($type);
     $str_array = $data !== false ? $data->{$field} : '';
 
@@ -252,7 +248,7 @@ function award_part($pdo, $user_id, $type, $part_id)
     $new_field_str = join(",", $part_array);
 
     // award part
-    if ($is_epic === true) {
+    if ($is_epic) {
         epic_upgrades_update_field($pdo, $user_id, $type, $new_field_str); // inserts if not present
     } else {
         pr2_update_part_array($pdo, $user_id, $type, $new_field_str);
