@@ -14,8 +14,8 @@ function save_finder($player)
         db_op('artifacts_found_insert', array($player->user_id));
 
         // check if you were the very first
-        $meets_rank_req = $player->active_rank > 30 ? true : false;
-        $meets_age_req = time() - $player->register_time > 7776000 ? true : false;
+        $meets_rank_req = $player->active_rank > 30;
+        $meets_age_req = time() - $player->register_time > 7776000;
         if ($meets_rank_req && $meets_age_req) {
             artifact_special_check($player);
         }

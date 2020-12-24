@@ -226,7 +226,7 @@ function check_value($value, $check_for, $yes = 'yes', $no = 'no')
 // checks if an email address is valid
 function valid_email($email)
 {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) ? true : false;
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
 
