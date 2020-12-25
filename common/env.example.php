@@ -22,7 +22,7 @@ $EMAIL_PORT = 'port';
 $EMAIL_USER = '2@2.com';
 $EMAIL_PASS = 'pass';
 
-$PR2_HUB_API_PASS = 'test';
+$PR2_HUB_API_KEY = 'test';
 $PR2_HUB_API_ALLOWED_IPS = [
     'an ip',
     'another ip'
