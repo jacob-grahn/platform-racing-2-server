@@ -146,6 +146,7 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
                status,
                read_message_id,
                guild,
+               coins,
                server_id
           FROM users
           WHERE name = :name
@@ -534,6 +535,7 @@ function user_select($pdo, $user_id, $suppress_error = false)
                status,
                read_message_id,
                guild,
+               coins,
                server_id
           FROM users
          WHERE user_id = :user_id
