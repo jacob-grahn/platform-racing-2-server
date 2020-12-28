@@ -4,7 +4,6 @@ header('Content-type: text/plain');
 
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
-require_once HTTP_FNS . '/pages/vault/kong_order_placed.php';
 require_once HTTP_FNS . '/pages/vault/vault_fns.php';
 require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/part_awards.php';

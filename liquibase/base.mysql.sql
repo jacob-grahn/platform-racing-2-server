@@ -102,9 +102,6 @@ CREATE TABLE prize_actions (action_id INT AUTO_INCREMENT NOT NULL, user_id INT N
 --changeset root:1574908323264-30
 CREATE TABLE promotion_log (power TINYINT(3) NULL, message VARCHAR(100) NULL, time INT NULL);
 
---changeset root:1574908323264-31
-CREATE TABLE purchases (purchase_id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, guild_id INT NOT NULL, product VARCHAR(15) NOT NULL, date datetime NOT NULL, kong_id VARCHAR(100) NOT NULL, order_id INT DEFAULT 0 NOT NULL, CONSTRAINT PK_PURCHASES PRIMARY KEY (purchase_id));
-
 --changeset root:1574908323264-32
 CREATE TABLE rank_token_rentals (guild_id INT NOT NULL, time BIGINT NOT NULL, user_id INT NOT NULL);
 
