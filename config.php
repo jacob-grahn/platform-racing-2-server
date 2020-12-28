@@ -31,3 +31,8 @@ require_once COMMON_DIR . '/env.php';
 require_once COMMON_DIR . '/pdo_connect.php';
 require_once COMMON_DIR . '/s3_connect.php';
 require_once ROOT_DIR . '/vend/S3.php';
+
+// activate better error reporting in debug mode
+if ($DEBUG_MODE) {
+    error_reporting(E_ALL | E_STRICT);
+}

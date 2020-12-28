@@ -3,6 +3,8 @@
 $BLS_IP_PREFIX = 'test';
 $SERVER_IP = '127.0.0.1';
 
+$DEBUG_MODE = false; // always set to false in production environments
+
 $DB_ADDRESS = 'mysql';
 $DB_PASS = 'pr2';
 $DB_USER = 'pr2';
