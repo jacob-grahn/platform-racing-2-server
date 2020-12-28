@@ -88,17 +88,21 @@ function test_server($script, $address, $port, $salt, $server_id)
 
 
 // starts a server
-function start_server($script, $port, $server_id, $verbose = false)
+function start_server($script, $port, $server_id, $verbose = false, $silent = false)
 {
-    output("STARTING SERVER | Script: $script | Port: $port");
+    if (!$silent) {
+        output("STARTING SERVER | Script: $script | Port: $port");
+    }
 
     $log = ROOT_DIR . '/../pr2/log/' . $port . '-' . date("Fj-Y-g:ia") . '.log';
     $verbose = $verbose === true ? 'true' : '';
     $command = "nohup php $script $server_id $verbose > $log & echo $!";
-    output("Executing command: $command");
+    if (!$silent) {
+        output("Executing command: $command");
+    }
     $pid = exec($command);
 
-    write_pid($pid, $port);
+    write_pid($pid, $port, $silent);
     return $pid;
 }
 
@@ -140,16 +144,20 @@ function get_pid_file($port)
 
 
 // write pid to a file
-function write_pid($pid, $port)
+function write_pid($pid, $port, $silent = false)
 {
     $pid_file = get_pid_file($port);
-    output("Writing PID for port $port to $pid_file: $pid...");
+    if (!$silent) {
+        output("Writing PID for port $port to $pid_file: $pid...");
+    }
     $handle = fopen($pid_file, 'w');
     if ($handle) {
         fwrite($handle, $pid);
         fclose($handle);
     }
-    output("Write operation concluded.");
+    if (!$silent) {
+        output("Write operation concluded.");
+    }
 }
 
 
