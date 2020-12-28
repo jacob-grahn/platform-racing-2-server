@@ -1,7 +1,7 @@
 <?php
 
 
-function rank_token_rental_insert($pdo, $user_id, $guild_id)
+function rank_token_rental_insert($pdo, $user_id, $guild_id, $quantity = 1)
 {
     $stmt = $pdo->prepare('
         INSERT INTO rank_token_rentals
@@ -11,7 +11,9 @@ function rank_token_rental_insert($pdo, $user_id, $guild_id)
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
-    $result = $stmt->execute();
+    foreach (range(1, $quantity) as $num) {
+        $result = $stmt->execute();
+    }
 
     if ($result === false) {
         throw new Exception('Could not start your rank token rental.');

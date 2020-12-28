@@ -4,18 +4,30 @@ header('Content-type: text/plain');
 
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
+require_once HTTP_FNS . '/pages/vault/kong_order_placed.php';
 require_once HTTP_FNS . '/pages/vault/vault_fns.php';
-require_once QUERIES_DIR . '/servers.php';
+require_once QUERIES_DIR . '/messages.php';
+require_once QUERIES_DIR . '/part_awards.php';
 require_once QUERIES_DIR . '/rank_token_rentals.php';
+require_once QUERIES_DIR . '/servers.php';
+require_once QUERIES_DIR . '/vault_purchases.php';
 
-$slug = default_post('slug', 'none');
+$slug = trim(default_post('slug', ''));
 $quantity = (int) default_post('quantity', 0);
+
+$ip = get_ip();
+$coins_deducted = false;
 
 $ret = new stdClass();
 $ret->success = false;
 try {
     // rate limiting
     rate_limit('vault-purchase-item-'.$ip, 5, 1);
+
+    // POST check
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception('Invalid request method.');
+    }
 
     // sanity: missing data?
     if (is_empty($slug) || empty($quantity)) {
@@ -27,7 +39,7 @@ try {
 
     // get user
     $user_id = token_login($pdo, false); // is it a valid token?
-    $user = user_select($pdo, $user_id);
+    $user = user_select_expanded($pdo, $user_id);
 
     // more rate limiting
     rate_limit('vault-purchase-item-'.$user_id, 5, 1);
@@ -37,6 +49,8 @@ try {
         throw new Exception('Guests can\'t buy things. How about creating your own account?');
     } elseif ($user->server_id == 0) { // are they online?
         throw new Exception('You are not online. Please log in to purchase items from the vault.');
+    } elseif ($user->ip !== $ip) { // from the same IP?
+        throw new Exception('Access denied. Please contact a member of the PR2 staff team for help.');
     }
 
     // get/check item
@@ -50,7 +64,7 @@ try {
     // handle quantities
     if ($slug === 'rank_rental') {
         $rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
-        if ($rented_tokens + $quantity > $item->max_quantity) {
+        if ($rented_tokens + $quantity >= $item->max_quantity) {
             throw new Exception("You may not rent more than $item->max_quantity rank tokens at once.");
         }
     } elseif ($quantity > $item->max_quantity) {
@@ -69,7 +83,7 @@ try {
 
     // activate sale pricing
     if ($item->sale->active && ($item->sale->expires === 0 || $item->sale->expires > time())) {
-        $price = round($price * (100 - $item->sale->value) / 100);
+        $price = (int) round($price * (100 - $item->sale->value) / 100);
     }
 
     // check coins
@@ -79,11 +93,16 @@ try {
     }
 
     // place the order
-    // make this logic tomorrow
+    $result = vault_purchase_item($pdo, $user, $item, $price, $quantity);
 
+    // success!
     $ret->success = true;
+    $ret->message = $result;
 } catch (Exception $e) {
     $ret->error = 'Error: ' . $e->getMessage();
+    if ($coins_deducted !== false) {
+        user_update_coins($pdo, $user_id, $coins_deducted);
+    }
 } finally {
     die(json_encode($ret));
 }

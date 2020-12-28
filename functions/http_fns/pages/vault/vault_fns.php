@@ -176,9 +176,10 @@ function describeVault($pdo, $user, $items_to_get = 'all')
         }
     }
 
-    // item available?
+    // check item availablity
     $listings = [];
     foreach ($items as $slug => $item) {
+        $item->max_quantity = (int) $item->max_quantity; // quick typecast
         $item->available = false;
         if ($slug === 'stats_boost') {
             $item->available = $server->tournament == 0 && !apcu_exists("sb-$user->user_id-" . round(time() / 86400));
@@ -186,6 +187,7 @@ function describeVault($pdo, $user, $items_to_get = 'all')
             $item->available = $server->tournament == 0;
         } elseif ($slug === 'rank_rental') {
             $rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
+            $rt_lang = $rented_tokens > 0 ? 'another' : 'a';
             $item->available = $user->guild > 0 && $rented_tokens < 21;
             $item->price = 50 + (20 * $rented_tokens);
             $item->description = "You and your guild gain $rt_lang rank token for a week.";

@@ -1,95 +1,64 @@
 <?php
 
 
-function order_placed_handler($pdo, $request)
+function vault_purchase_item($pdo, $user, $item, $price, $quantity = 1)
 {
-    $recipient_id = $request->recipient_id; // the id of the user to receive the items.
-    $order_id = $request->order_id; // a unique order id for this order in our database.
-    $order_info = $request->order_info; // the order info string you passed into purchaseItemsRemote
-    list($pr2_user_id, $slug) = explode(',', $order_info);
-    $pr2_user_id = (int) $pr2_user_id;
+    global $coins_deducted;
 
-    // check that the item is available
-    $descs = describeVault($pdo, $pr2_user_id, array($slug));
-    $desc = $descs[0];
-    if ($desc->available == false) {
-        throw new Exception('This item is no longer available.');
+    $slug = $item->slug;
+    $user_id = (int) $user->user_id;
+    $guild_id = (int) $user->guild;
+
+    // do the purchase
+    $order_id = (int) vault_purchase_insert($pdo, $user_id, $guild_id, $slug, $price, $quantity);
+    if ($order_id <= 0) {
+        throw new Exception('Unable to complete vault purchase.');
     }
 
-    // apply item to player's account
-    $user = user_select_expanded($pdo, $pr2_user_id);
-    $guild = (int) $user->guild;
-    $server = (int) $user->server_id;
-    $pr2_name = $user->name;
-    unlock_item($pdo, $pr2_user_id, $guild, $server, $slug, $pr2_name, $recipient_id, $order_id, $desc->title);
+    // deduct the coins from the buyer's account
+    user_update_coins($pdo, $user_id, 0 - $price);
+    $coins_deducted = $price;
 
-    // tell it
-    $reply = new stdClass();
-    $reply->state = 'completed'; // $reply->state = 'canceled';
-    return $reply;
-}
-
-
-function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id, $title)
-{
-    error_log("unlock_item: $user_id, $guild_id, $server_id, $slug, $user_name, $kong_user_id, $order_id");
-    purchase_insert($pdo, $user_id, $guild_id, $slug, $kong_user_id, $order_id);
-    $command = "unlock_perk`$slug`$user_id`$guild_id`$user_name";
+    // communication w/ server
+    $command = "unlock_perk`$slug`$user_id`$guild_id`$user->name`$quantity";
     $reply = '';
-    $target_servers = array();
+    $target_servers = [];
 
+    // handle items
     if ($slug === 'guild_fred') {
         $reply = 'Fred smiles on you!';
     } elseif ($slug === 'guild_ghost') {
         $reply = 'Ninja mode: engage!';
     } elseif ($slug === 'guild_artifact') {
         $reply = 'Ultimate power, courtesy of Fred!';
+    } elseif ($slug === 'happy_hour') {
+        $target_servers = [$user->server_id];
+        $reply = 'These will be the happiest ' . ($quantity > 1 ? $quantity . ' hours' : 'hour') . ' ever!';
     } elseif ($slug === 'king_set') {
-        award_part($pdo, $user_id, 'head', 28);
-        award_part($pdo, $user_id, 'body', 26);
-        award_part($pdo, $user_id, 'feet', 24);
-        award_part($pdo, $user_id, 'eHead', 28);
-        award_part($pdo, $user_id, 'eBody', 26);
-        award_part($pdo, $user_id, 'eFeet', 24);
+        unlock_set($pdo, $user_id, [28, 26, 24]);
         $command = "unlock_set_king`$user_id";
         $reply = 'The Wise King set has been added your account!';
     } elseif ($slug === 'queen_set') {
-        award_part($pdo, $user_id, 'head', 29);
-        award_part($pdo, $user_id, 'body', 27);
-        award_part($pdo, $user_id, 'feet', 25);
-        award_part($pdo, $user_id, 'eHead', 29);
-        award_part($pdo, $user_id, 'eBody', 27);
-        award_part($pdo, $user_id, 'eFeet', 25);
+        unlock_set($pdo, $user_id, [29, 27, 25]);
         $command = "unlock_set_queen`$user_id";
         $reply = 'The Wise Queen set has been added your account!';
     } elseif ($slug === 'djinn_set') {
-        award_part($pdo, $user_id, 'head', 35);
-        award_part($pdo, $user_id, 'body', 35);
-        award_part($pdo, $user_id, 'feet', 35);
-        award_part($pdo, $user_id, 'eHead', 35);
-        award_part($pdo, $user_id, 'eBody', 35);
-        award_part($pdo, $user_id, 'eFeet', 35);
+        unlock_set($pdo, $user_id, [35, 35, 35]);
         $command = "unlock_set_djinn`$user_id";
         $reply = 'The Frost Djinn set has been added your account!';
     } elseif ($slug === 'epic_everything') {
-        award_part($pdo, $user_id, 'eHat', '*');
-        award_part($pdo, $user_id, 'eHead', '*');
-        award_part($pdo, $user_id, 'eBody', '*');
-        award_part($pdo, $user_id, 'eFeet', '*');
+        unlock_set($pdo, $user_id, 'epic_everything');
         $command = "unlock_epic_everything`$user_id";
         $reply = 'All Epic Upgrades are yours!';
-    } elseif ($slug === 'happy_hour') {
-        $target_servers = array($server_id);
-        $reply = 'This is the happiest hour ever!';
     } elseif ($slug === 'server_1_day' || $slug === 'server_30_days') {
         $command = '';
-        $days = (int) explode('-', $slug)[1];
+        $days = $quantity * ((int) explode('_', $slug)[1]);
         $result = create_server($pdo, $guild_id, $days);
 
         if ($result->status_code === 0) {
             throw new Exception('An error occurred. Please notify a member of the PR2 staff team for assistance.');
         } elseif ($result->status_code === 1) {
-            $reply = 'The best server ever is starting up! ETA 2 minutes.'
+            $reply = 'The best server ever is starting up! It\'ll be ready in about 2 minutes.'
                 ."\n\n(Expiration time: ";
         } elseif ($result->status_code === 2) {
             $reply = 'The life of your private server has been extended! Long live your guild!'
@@ -99,41 +68,47 @@ function unlock_item($pdo, $user_id, $guild_id, $server_id, $slug, $user_name, $
         $command = "extend_server_life`$guild_id`$result->new_time";
         $reply .= date('F j, Y \a\t g:ia T', $result->new_time);
     } elseif ($slug === 'rank_rental') {
-        rank_token_rental_insert($pdo, $user_id, $guild_id);
+        rank_token_rental_insert($pdo, $user_id, $guild_id, $quantity);
 
         $obj = new stdClass();
         $obj->user_id = $user_id;
         $obj->guild_id = $guild_id;
+        $obj->quantity = $quantity;
         $data = json_encode($obj);
 
         $command = "unlock_rank_token_rental`$data";
-        $reply = 'You just got a rank token!';
+        $reply = 'You just got ' . ($quantity === 1 ? 'a rank token' : "$quantity rank tokens") . '!';
     } else {
         throw new Exception("Item not found: " . strip_tags($slug, '<br>'));
     }
 
-    $servers = servers_select($pdo);
-
+    // send item command to the server
     if (!empty($command)) {
-        poll_servers($servers, $command, false, $target_servers);
-    }
-    if (!empty($reply)) {
-        $obj = new stdClass();
-        $obj->user_id = $user_id;
-        $obj->message = $reply;
-        $data = json_encode($obj);
-        poll_servers($servers, "message_player`$data", false, array($server_id));
+        poll_servers(servers_select($pdo), $command, false, isset($target_servers) ? $target_servers : []);
     }
 
-    send_confirmation_pm($pdo, $user_id, $title, $order_id);
+    // complete
+    vault_purchase_complete($pdo, $order_id);
+    send_confirmation_pm($pdo, $user_id, $item->title, $order_id, $price, $quantity);
     return $reply;
 }
 
 
-function send_confirmation_pm($pdo, $user_id, $title, $order_id)
+function unlock_set($pdo, $user_id, $part_ids)
 {
-    $pm = "Thank you for your support! This PM is to confirm your order.\nItem: $title\nOrder ID: $order_id";
-    message_insert($pdo, $user_id, 1, $pm, '0');
+    if ($part_ids === 'epic_everything') { // epic_everything
+        award_part($pdo, $user_id, 'eHat', '*');
+        award_part($pdo, $user_id, 'eHead', '*');
+        award_part($pdo, $user_id, 'eBody', '*');
+        award_part($pdo, $user_id, 'eFeet', '*');
+    } else {
+        award_part($pdo, $user_id, 'head', $part_ids[0]);
+        award_part($pdo, $user_id, 'body', $part_ids[1]);
+        award_part($pdo, $user_id, 'feet', $part_ids[2]);
+        award_part($pdo, $user_id, 'eHead', $part_ids[0]);
+        award_part($pdo, $user_id, 'eBody', $part_ids[1]);
+        award_part($pdo, $user_id, 'eFeet', $part_ids[2]);
+    }
 }
 
 
@@ -145,8 +120,8 @@ function create_server($pdo, $guild_id, $days_of_life)
 
     // guild info
     $guild = guild_select($pdo, $guild_id);
-    $guild_id = (int) $guild_>guild_id;
-    $server_name = $guild_>guild_name;
+    $guild_id = (int) $guild->guild_id;
+    $server_name = $guild->guild_name;
 
     $ret = new stdClass();
     $ret->status_code = 0;
@@ -160,7 +135,7 @@ function create_server($pdo, $guild_id, $days_of_life)
 
             // insert and start server
             $server_id = server_insert($pdo, $life_from_now, $server_name, $SERVER_IP, $port, $guild_id);
-            start_server(PR2_ROOT . '/pr2.php', $port, $server_id);
+            start_server(PR2_ROOT . '/pr2.php', $port, $server_id, false, true);
 
             // return data
             $ret->new_time = $life_from_now;
@@ -171,13 +146,13 @@ function create_server($pdo, $guild_id, $days_of_life)
             $active = (bool) (int) $existing_server->active;
 
             // do expiration time calculations
-            $life_from_expiry = strtotime($existing_server->expire_date) + $life_secs;
+            $life_from_expiry = $existing_server->expire_time + $life_secs;
             $life_from_expiry = $life_from_expiry < $life_from_now ? $life_from_now : $life_from_expiry;
 
             // update info (and activate server if applicable)
-            server_update_expire_date($pdo, $life_from_expiry, $server_id);
+            server_update_expire_time($pdo, $life_from_expiry, $server_id);
             if (!$active) { // if it wasn't active, start the server
-                start_server(PR2_ROOT . '/pr2.php', $port, $server_id);
+                start_server(PR2_ROOT . '/pr2.php', $port, $server_id, false, true);
             }
 
             // return data
@@ -189,4 +164,20 @@ function create_server($pdo, $guild_id, $days_of_life)
     } finally {
         return $ret;
     }
+}
+
+
+function send_confirmation_pm($pdo, $user_id, $order_id, $title, $price, $quantity)
+{
+    $cam_link = urlify('https://jiggmin2.com/cam', 'Contact a Mod forum');
+    $jv_link = urlify('https://jiggmin2.com/forums', 'Jiggmin\'s Village');
+    $pm = 'Howdy! This PM is to confirm your recent Vault of Magics order.'
+        ."\n\nOrder ID: $order_id"
+        ."\nItem: $title"
+        ."\nQuantity: $quantity"
+        ."\nCoins Spent: $price"
+        ."\n\nThis is an automatically generated PM, so please don't reply. "
+        ."If you encounter any problems with your order, please contact us using the $cam_link on $jv_link."
+        ."\n\nThanks for your support!\n\n- Jiggmin";
+    message_insert($pdo, $user_id, 1, $pm, '0');
 }

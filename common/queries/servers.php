@@ -5,7 +5,7 @@ function server_insert($pdo, $expire_time, $server_name, $address, $port, $guild
 {
     $stmt = $pdo->prepare('
         INSERT INTO servers
-           SET expire_date = FROM_UNIXTIME(:expire_time),
+           SET expire_time = :expire_time,
                server_name = :server_name,
                address = :address,
                port = :port,
@@ -109,11 +109,11 @@ function server_update_address($pdo, $server_id, $address)
 }
 
 
-function server_update_expire_date($pdo, $expire_time, $server_id)
+function server_update_expire_time($pdo, $expire_time, $server_id)
 {
     $stmt = $pdo->prepare('
         UPDATE servers
-           SET expire_date = FROM_UNIXTIME(:expire_time),
+           SET expire_time = :expire_time,
                active = 1
          WHERE server_id = :server_id
     ');
@@ -159,7 +159,7 @@ function servers_deactivate_expired($pdo)
         UPDATE servers
            SET active = 0,
                status = "down"
-         WHERE expire_date < NOW()
+         WHERE expire_time < UNIX_TIMESTAMP()
     ');
 
     if ($result === false) {
@@ -174,7 +174,7 @@ function servers_delete_old($pdo)
 {
     $result = $pdo->exec('
         DELETE FROM servers
-        WHERE expire_date < DATE_SUB(NOW(), INTERVAL 1 MONTH)
+        WHERE expire_time < UNIX_TIMESTAMP() - 2678400
     ');
 
     if ($result === false) {

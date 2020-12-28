@@ -315,6 +315,15 @@ class Player
     }
 
 
+    // activates a rank token rental
+    public function activateRankToken($quantity = 1)
+    {
+        $this->rt_available += $quantity;
+        $this->rt_available = $this->rt_available > 21 ? 21 : $this->rt_available;
+        $this->sendCustomizeInfo();
+    }
+
+
     public function getChatCount()
     {
         $seconds = time() - $this->chat_time;

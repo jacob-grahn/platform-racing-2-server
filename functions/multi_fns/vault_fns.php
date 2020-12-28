@@ -36,36 +36,33 @@ function process_unlock_perk($socket, $data)
     global $player_array;
 
     if ($socket->process === true) {
-        list($slug, $user_id, $guild_id, $user_name) = explode('`', $data);
+        list($slug, $user_id, $guild_id, $user_name, $quantity) = explode('`', $data);
         $user_id = (int) $user_id;
         $guild_id = (int) $guild_id;
-        start_perk($slug, (int) $user_id, (int) $guild_id);
+        start_perk($slug, $user_id, $guild_id, $quantity, time() + ($quantity * 3600));
         $player = id_to_player($user_id, false);
         $display_name = userify($player, $user_name);
 
         if ($guild_id !== 0) {
-            if ($slug === 'guild_fred') {
-                send_to_guild($guild_id, "systemChat`$display_name unlocked Fred mode for your guild!");
-            }
-            if ($slug === 'guild_ghost') {
-                send_to_guild($guild_id, "systemChat`$display_name unlocked Ghost mode for your guild!");
-            }
-            if ($slug === 'guild_artifact') {
-                send_to_guild($guild_id, "systemChat`$display_name unlocked Artifact mode for your guild!");
-            }
-            if ($slug === 'happy_hour') {
+            if (strpos($slug, 'guild_') === 0) {
+                $type = ucfirst(explode('_', $slug)[1]);
+                $duration = format_duration($quantity * 3600);
+                $msg = "$display_name unlocked $type mode for your guild for $duration!";
+                send_to_guild($guild_id, "systemChat`$msg");
+            } elseif ($slug === 'happy_hour') {
                 global $chat_room_array;
 
+                $hh_lang = $quantity > 1 ? "$quantity Happy Hours" : 'a Happy Hour';
                 if (isset($chat_room_array['main'])) {
                     $main = $chat_room_array['main'];
-                    $main->sendChat("systemChat`$display_name just triggered a Happy Hour!");
+                    $main->sendChat("systemChat`$display_name just triggered $hh_lang!");
                     foreach ($player_array as $player) {
                         if (isset($player->chat_room) && $player->chat_room !== $main) {
-                            $player->write("systemChat`$display_name just triggered a Happy Hour!");
+                            $player->write("systemChat`$display_name just triggered $hh_lang!");
                         }
                     }
                 } else {
-                    sendToAll_players("systemChat`$display_name just triggered a Happy Hour!");
+                    sendToAll_players("systemChat`$display_name just triggered $hh_lang!");
                 }
             }
         }
@@ -148,6 +145,24 @@ function process_unlock_epic_everything($socket, $data)
             $player->gainPart('eFeet', '*');
             $player->sendCustomizeInfo();
         }
+        $socket->write('{"status":"ok"}');
+    }
+}
+
+
+// unlock a rank token rental
+function process_unlock_rank_token_rental($socket, $data)
+{
+    if ($socket->process === true) {
+        $data = json_decode($data);
+
+        global $player_array;
+        foreach ($player_array as $player) {
+            if ($player->user_id === $data->user_id || $player->guild_id === $data->guild_id) {
+                $player->activateRankToken($data->quantity);
+            }
+        }
+
         $socket->write('{"status":"ok"}');
     }
 }
