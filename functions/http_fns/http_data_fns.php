@@ -81,19 +81,20 @@ function is_trusted_ref()
         }
     }
 
-    return false;
+    return check_local();
 }
 
 
 // checks for trusted ref, throws an exception if not
 function require_trusted_ref($action = 'perform this action', $mod = false)
 {
-    if (!is_trusted_ref() && $mod === false) {
-        $err = 'It looks like you\'re using PR2 from a third-party website. '.
-            "For security reasons, you may only $action from an approved site such as pr2hub.com.";
-        throw new Exception($err);
-    } elseif (!is_trusted_ref() && $mod === true) {
-        $err = "Incorrect Referrer. $action";
+    if (!is_trusted_ref()) {
+        if ($mod === true) {
+            $err = "Incorrect Referrer. $action";
+        } elseif ($mod === false) {
+            $err = 'It looks like you\'re using PR2 from a third-party website. '.
+                "For security reasons, you may only $action from an approved site such as pr2hub.com.";
+        }
         throw new Exception(trim($err));
     }
 }
@@ -226,7 +227,7 @@ function check_value($value, $check_for, $yes = 'yes', $no = 'no')
 // checks if an email address is valid
 function valid_email($email)
 {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) ? true : false;
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
 

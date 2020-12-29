@@ -78,7 +78,7 @@ try {
 
 // server info
 $server_id = (int) $argv[1];
-$verbose = $argc > 2 ? (strtolower($argv[2]) === 'true' ? true : false) : false;
+$verbose = $argc > 2 && strtolower($argv[2]) === 'true';
 $port = 0;
 $server_name = '';
 $is_ps = false;

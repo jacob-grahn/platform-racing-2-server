@@ -57,7 +57,7 @@ try {
             $end = $start + count($logins);
             echo "$login_count $logs recorded for the user \"$safe_name\".";
             echo "<br>Showing results $start - $end.<br><br>";
-            $is_end = $end === $login_count ? true : false;
+            $is_end = $end === $login_count;
         } else {
             echo "No results found for the search parameters.";
         }
