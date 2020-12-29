@@ -2,6 +2,7 @@
 *.icloud
 composer.phar
 env.php
+functions/http_fns/check_local_fn.php
 http_server/emblems/*
 http_server/files/*
 http_server/levels/*
