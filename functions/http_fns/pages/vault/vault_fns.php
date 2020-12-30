@@ -163,7 +163,7 @@ function vault_purchase_item($pdo, $user, $item, $price, $quantity = 1)
 
     // complete
     vault_purchase_complete($pdo, $order_id);
-    send_confirmation_pm($pdo, $user_id, $item->title, $order_id, $price, $quantity);
+    send_confirmation_pm($pdo, $user_id, $order_id, $item->title, $price, $quantity);
     return $reply;
 }
 
