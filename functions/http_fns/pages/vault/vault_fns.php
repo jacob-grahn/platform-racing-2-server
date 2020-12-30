@@ -40,10 +40,10 @@ function describeVault($pdo, $user, $items_to_get = 'all')
         } elseif ($slug === 'happy_hour') {
             $item->available = $server->tournament == 0;
         } elseif ($slug === 'rank_rental') {
-            $rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
-            $rt_lang = $rented_tokens > 0 ? 'another' : 'a';
-            $item->available = $user->guild > 0 && $rented_tokens < 21;
-            $item->price = 50 + (20 * $rented_tokens);
+            $item->rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
+            $rt_lang = $item->rented_tokens > 0 ? 'another' : 'a';
+            $item->available = $item->rented_tokens < 21;
+            $item->price = 50 + (20 * $item->rented_tokens);
             $item->description = "You and your guild gain $rt_lang rank token for a week.";
         } elseif ($slug === 'king_set') {
             $item->available = array_search(28, explode(',', $user->head_array)) === false;
@@ -140,7 +140,7 @@ function vault_purchase_item($pdo, $user, $item, $price, $quantity = 1)
         }
 
         $command = "extend_server_life`$guild_id`$result->new_time";
-        $reply .= date('F j, Y \a\t g:ia T', $result->new_time);
+        $reply .= date('F j, Y \a\t g:ia T', $result->new_time) . ')';
     } elseif ($slug === 'rank_rental') {
         rank_token_rental_insert($pdo, $user_id, $guild_id, $quantity);
 
@@ -158,7 +158,7 @@ function vault_purchase_item($pdo, $user, $item, $price, $quantity = 1)
 
     // send item command to the server
     if (!empty($command)) {
-        poll_servers(servers_select($pdo), $command, false, isset($target_servers) ? $target_servers : []);
+        @poll_servers(servers_select($pdo), $command, false, isset($target_servers) ? $target_servers : []);
     }
 
     // complete
