@@ -5,7 +5,7 @@ header("Content-type: text/plain");
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/levels_reported.php';
 
-$count = default_get('count', 100);
+$count = (int) default_post('count', 100);
 $ip = get_ip();
 
 $ret = new stdClass();

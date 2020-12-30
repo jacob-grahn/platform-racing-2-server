@@ -4,7 +4,7 @@ header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
 
-$count = default_get('count', 100);
+$count = find('count', 100);
 $ip = get_ip();
 
 $ret = new stdClass();

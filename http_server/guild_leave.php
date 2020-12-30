@@ -5,7 +5,7 @@ header("Content-type: text/plain");
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/servers.php';
 
-$token = default_get('token');
+$token = find('token', '');
 $ip = get_ip();
 
 $ret = new stdClass();
