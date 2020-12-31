@@ -13,9 +13,7 @@ echo '<div class="game_holder">'
 
 // AFP EOL message
 $info_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=3182', 'response to Flash Player\'s EOL');
-echo '<p style="text-align: center;">Adobe Flash Player\'s End-Of-Life date is December 31. '
-    .'After this date, PR2 will no longer be accessible in your web browser. '
-    .'For information on what this means and how to continue playing PR2 past that date, '
-    ."you can read our $info_link on JV.</p>";
+$eol_msg = '<b>IMPORTANT: PR2 won\'t be shutting down on January 1.</b>'
+    ."<br />Read our $info_link for information on how to play after December 31.";
 
 output_footer();
