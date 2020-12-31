@@ -7,7 +7,7 @@ output_header('Platform Racing 2');
 
 // AFP EOL message
 $info_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=3182', 'response to Flash Player\'s EOL');
-$eol_msg = '<p>Adobe Flash Player\'s End-Of-Life date is December 31. '
+echo '<p>Adobe Flash Player\'s End-Of-Life date is December 31. '
     .'After this date, PR2 will no longer be accessible in your web browser. '
     .'For information on what this means and how to continue playing PR2 past that date, '
     ."you can read our $info_link on JV.</p>";
