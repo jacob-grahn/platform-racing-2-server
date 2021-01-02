@@ -47,9 +47,13 @@ function pass_login($pdo, $name, $password, $ban_check_scope = 'b')
 // log in with a token
 function token_login($pdo, $use_cookie = true, $suppress_error = false, $ban_check_scope = 'b')
 {
+    global $user_token;
+
     $rec_token = find_no_cookie('token');
     if (isset($rec_token) && !empty($rec_token)) {
         $token = $rec_token;
+    } elseif (isset($user_token) && !empty($user_token)) {
+        $token = $user_token;
     } elseif ($use_cookie && isset($_COOKIE['token']) && !empty($_COOKIE['token'])) {
         $token = $_COOKIE['token'];
     }

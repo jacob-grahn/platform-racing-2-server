@@ -25,7 +25,7 @@ function output_pagination($start, $count, $extra = '', $is_end = false)
 
 
 // standard header
-function output_header($title = '', $staff_nav = false, $show_admin = false)
+function output_header($title = '', $staff_nav = false, $show_admin = false, $call_jquery = false)
 {
     echo "<!DOCTYPE html>"
         ."<html xmlns='http://www.w3.org/1999/xhtml'>"
@@ -37,11 +37,14 @@ function output_header($title = '', $staff_nav = false, $show_admin = false)
             ."<link href='/style/gwibble.css' rel='stylesheet' type='text/css' />"
             ."<link href='/style/pr2hub.css' rel='stylesheet' type='text/css'/>";
 
+    if ($call_jquery || $staff_nav) {
+        echo '<script src="https://code.jquery.com/jquery-latest.min.js"></script>'
+            .'<script src="https://malsup.github.io/jquery.form.js"></script>';
+    }
+
     // mod header
     if ($staff_nav === true) {
-        echo '<script src="https://code.jquery.com/jquery-latest.min.js"></script>'
-            .'<script src="https://malsup.github.io/jquery.form.js"></script>'
-            .'<script src="/scripts/mod.js"></script>';
+        echo '<script src="/scripts/mod.js"></script>';
         if ($show_admin === true) {
             echo '<script src="/scripts/admin.js"></script>';
         }
