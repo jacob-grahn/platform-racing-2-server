@@ -208,7 +208,9 @@ class Player
         }
 
         if (isset($player_array[$this->user_id])) {
-            $this->awardKongHat();
+            if ($login->login->award_kong) {
+                $this->awardKongParts();
+            }
             $this->applyTempItems();
             $this->verifyStats();
             $this->verifyParts();
@@ -409,24 +411,20 @@ class Player
     }
 
 
-    public function awardKongHat()
+    public function awardKongParts()
     {
-        if (strpos($this->domain, 'kongregate.com') !== false) {
-            $added = $this->gainPart('hat', 3, true);
-            $this->hat_color = $added === true ? 10027008 : $this->hat_color;
-            if ($this->guest === false && $added === true) {
-                $this->write("message`Thanks for playing PR2 on Kongregate! "
-                    ."As a token of our thanks, the Kong Hat has been added to your account.\n\nxoxo -Kong & Jiggmin");
-            }
+        $hat_added = $this->gainPart('hat', 3, true);
+        $head_added = $this->gainPart('head', 20, true);
+        $body_added = $this->gainPart('body', 17, true);
+        $feet_added = $this->gainPart('feet', 16, true);
+        $this->hat_color = $hat_added ? 0x990000 : $this->hat_color;
+        $this->head_color = $head_added ? 0x990000 : $this->head_color;
+        $this->body_color = $body_added ? 0x990000 : $this->body_color;
+        $this->feet_color = $feet_added ? 0x990000 : $this->feet_color;
+        if ($hat_added || $head_added || $body_added || $feet_added) {
+            $this->write("message`Thanks for honoring Kongregate's contributions to PR2's success! "
+                ."The Kong Hat and the Ant Set have been added to your account.\n\nxoxo -Kong & Jiggmin");
         }
-    }
-
-
-    public function awardKongOutfit()
-    {
-        $this->gainPart('head', 20, true);
-        $this->gainPart('body', 17, true);
-        $this->gainPart('feet', 16, true);
     }
 
 
