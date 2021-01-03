@@ -14,6 +14,7 @@ class Game extends Room
     const LEVEL_CHEESE = 6207945; // for cheese hat
     const LEVEL_BLOBFISH = 5985129; // for blobfish head
     const LEVEL_TURKEY = 2585329; // for epic turkey set
+    const LEVEL_EPIC_BEE = 6502430; // for epic bee body
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -219,6 +220,11 @@ class Game extends Room
                 Prizes::$EPIC_TURKEY_FEET
             ];
             $this->prize = $turkey_prizes[array_rand($turkey_prizes)];
+        }
+
+        // Zerostar (SuperJump) by Overbeing; Awards: Epic Bee Body
+        if ($this->course_id == self::LEVEL_EPIC_BEE) {
+            $this->prize = Prizes::$EPIC_BEE_BODY;
         }
         
         // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
