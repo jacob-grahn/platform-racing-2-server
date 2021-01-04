@@ -47,7 +47,7 @@ try {
     $ret->guild_name = $guild->guild_name;
     $ret->owner_id = $new_owner_id;
     $ret->changer_id = (int) $row->old_owner_id;
-    @poll_servers(servers_select($pdo), 'guild_change`' . json_encode($ret));
+    @poll_servers(servers_select($pdo), 'guild_change`' . json_encode($ret), false);
 } catch (Exception $e) {
     $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "Error: $error";
