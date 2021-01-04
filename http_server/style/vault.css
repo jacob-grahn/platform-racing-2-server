@@ -1,0 +1,52 @@
+/* buy_coins.php */
+
+table#coins_select {
+    border: none;
+}
+
+table#coins_select tr {
+    cursor: default;
+    line-height: 1;
+}
+
+table#coins_select td, table#coins_select th {
+    border: none;
+    border-bottom: gray 1px dotted;
+    font-size: 18px;
+    height: 40px;
+    width: 85px;
+}
+
+table#coins_select .smalltext {
+    font-size: 10px;
+}
+
+table#coins_select td:last-child {
+    color: darkgreen;
+}
+
+table#coins_select tr:last-child td, table#coins_select tr:last-child th {
+    border: none;
+}
+
+
+/* confirm_order.php */
+
+table#order_breakdown, table#order_breakdown td, table#order_breakdown th, table#order_breakdown td {
+    border: none;
+    padding: 0;
+}
+
+table#order_breakdown .left {
+    text-align: left;
+    width: 150px;
+}
+
+table#order_breakdown .right {
+    text-align: right;
+}
+
+table#order_breakdown .sep {
+    height: 8px;
+    border-bottom: 1px dotted gray;
+}

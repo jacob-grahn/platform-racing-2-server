@@ -1,5 +1,7 @@
 <?php
 
+die('Page currently disabled.');
+
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/vault/vault_fns.php';
@@ -64,13 +66,16 @@ try {
 
     // start page
     $header = true;
-    output_header('Buy Coins', $user->power >= 2, $user->power == 3, true);
+    $head_extras = [
+        '<link href="/style/vault.css" rel="stylesheet" type="text/css" />'
+    ];
+    output_header('Buy Coins', $user->power >= 2, $user->power == 3, true, $head_extras);
 
     // phpcs:disable
     ?>
 
-        <!-- Custom functions -->
-        <script type='text/javascript'>
+        <!-- jQuery -->
+        <script type="text/javascript">
             $(function () {
                 var prices = <?= $prices ?>;
                 var bonuses = <?= $bonuses ?>;
@@ -91,22 +96,6 @@ try {
                     });
                 });
             });
-
-            function redirectPost(url, data)
-            {
-                var form = document.createElement('form');
-                document.body.appendChild(form);
-                form.method = 'post';
-                form.action = url;
-                for (var name in data) {
-                    var input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = name;
-                    input.value = data[name];
-                    form.appendChild(input);
-                }
-                form.submit();
-            }
         </script>
 
         <!-- Heading -->
@@ -122,37 +111,7 @@ try {
 
         <p>Welcome, <b><?= htmlspecialchars($user->name, ENT_QUOTES) ?></b>. Please select your coins package:</p>
 
-        <!-- Table styling -->
-        <style type="text/css">
-            table#coins_select {
-                border: none;
-            }
-
-            table#coins_select tr {
-                cursor: default;
-                line-height: 1;
-            }
-
-            table#coins_select td, table#coins_select th {
-                border: none;
-                border-bottom: gray 1px dotted;
-                font-size: 18px;
-                height: 40px;
-                width: 85px;
-            }
-
-            table#coins_select .smalltext {
-                font-size: 10px;
-            }
-
-            table#coins_select td:last-child {
-                color: darkgreen;
-            }
-
-            table#coins_select tr:last-child td, table#coins_select tr:last-child th {
-                border: none;
-            }
-        </style>
+        <link></link>
 
         <!-- Coins options -->
         <p>
@@ -265,7 +224,20 @@ try {
                         order_id: data.orderID
                     }
                     console.log('obj: ' + JSON.stringify(obj));
-                    return redirectPost('/vault/confirm_order.php', obj);
+
+                    // redirect to confirm order page
+                    var form = document.createElement('form');
+                    document.body.appendChild(form);
+                    form.method = 'post';
+                    form.action = '/vault/confirm_order.php';
+                    for (var name in obj) {
+                        var input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = name;
+                        input.value = obj[name];
+                        form.appendChild(input);
+                    }
+                    return form.submit();
                 },
 
                 onError: function(err) {

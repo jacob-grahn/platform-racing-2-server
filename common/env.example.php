@@ -47,6 +47,11 @@ $BANNED_IP_PREFIXES = [
 
 $KONG_API_PASS = 'ghi';
 
+$PAYPAL_SANDBOX = false; // always set to false in production environments
+$PAYPAL_API_ENDPOINT = $PAYPAL_SANDBOX ? 'https://api.sandbox.paypal.com' : 'https://api.paypal.com';
+$PAYPAL_CLIENT_ID = $PAYPAL_SANDBOX ? 'sandbox client id' : 'production client id';
+$PAYPAL_SECRET = $PAYPAL_SANDBOX ? 'sandbox secret' : 'production secret';
+
 $LEVEL_LIST_SALT = 'why does this exist?';
 $LEVEL_SALT = 'fa';
 $LEVEL_SALT_2 = 'ti';
