@@ -47,9 +47,6 @@ $BANNED_IP_PREFIXES = [
 
 $KONG_API_PASS = 'ghi';
 
-$CHANGE_EMAIL_KEY = 'why did I do this';
-$CHANGE_EMAIL_IV = 'why oh why';
-
 $LEVEL_LIST_SALT = 'why does this exist?';
 $LEVEL_SALT = 'fa';
 $LEVEL_SALT_2 = 'ti';
@@ -59,6 +56,13 @@ $LEVEL_PASS_IV = 'la';
 
 $LOGIN_KEY = 'hello';
 $LOGIN_IV = 'there';
+
+$ACCOUNT_CHANGE_KEY = 'why did I do this';
+$ACCOUNT_CHANGE_IV = 'why oh why';
+
+$URL_SALT = 'haha';
+$URL_KEY = 'encryption';
+$URL_IV = 'go brrr';
 
 $ALLOWED_CLIENT_VERSIONS = array('weeeee version', 'weeeee new version');
 $FALLBACK_ADDRESSES = array($SERVER_IP);
