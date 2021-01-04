@@ -25,7 +25,7 @@ function output_pagination($start, $count, $extra = '', $is_end = false)
 
 
 // standard header
-function output_header($title = '', $staff_nav = false, $show_admin = false, $call_jquery = false)
+function output_header($title = '', $staff_nav = false, $show_admin = false, $call_jquery = false, $head_extras = [])
 {
     echo "<!DOCTYPE html>"
         ."<html xmlns='http://www.w3.org/1999/xhtml'>"
@@ -36,6 +36,10 @@ function output_header($title = '', $staff_nav = false, $show_admin = false, $ca
             ."<title>PR2 Hub - $title</title>"
             ."<link href='/style/gwibble.css' rel='stylesheet' type='text/css' />"
             ."<link href='/style/pr2hub.css' rel='stylesheet' type='text/css'/>";
+    
+    foreach ($head_extras as $extra) {
+        echo $extra;
+    }
 
     if ($call_jquery || $staff_nav) {
         echo '<script src="https://code.jquery.com/jquery-latest.min.js"></script>'
