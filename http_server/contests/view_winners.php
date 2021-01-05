@@ -91,23 +91,21 @@ try {
         if ($is_mod === true) {
             $awarder_id = (int) $winner->awarded_by;
             $awarder = user_select_name_and_power($pdo, $awarder_id);
-            $awarder_html_name = htmlspecialchars($awarder->name, ENT_QUOTES);
-            $awarder_url = $base_url . htmlspecialchars(urlencode($awarder->name), ENT_QUOTES);
+            $awarder_url = $base_url . urlencode($awarder->name);
             $awarder_color = $awarder->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $awarder->power];
         }
 
         // winner name and color
         $winner = user_select_name_and_power($pdo, $winner->winner_id);
         $winner_color = $winner->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $winner->power];
-        $winner_html_name = htmlspecialchars($winner->name, ENT_QUOTES);
         $winner_url = $base_url . htmlspecialchars(urlencode($winner->name), ENT_QUOTES);
 
         // start row
         echo "<tr>"
             ."<td class='noborder' title='Awarded at $full_win_time'>$short_win_time</td>" // date row
-            ."<td class='noborder'><a href='$winner_url' style='color: #$winner_color; text-decoration: underline;'>$winner_html_name</td>"; // name row
+            .'<td class="noborder">' . urlify($winner_url, $winner->name, $winner_color) . '</td>'; // name row
         if ($is_mod === true) {
-            echo "<td class='noborder'><a href='$awarder_url' style='color: #$awarder_color; text-decoration: underline;'>$awarder_html_name</a></td>" // who awarded
+            echo '<td class="noborder">' . urlify($awarder_url, $awarder->name, $awarder_color) . '</td>' // who awarded
                 ."<td class='noborder'>$awarder_ip</td>"; // awarder ip
 
             // output readable prizes

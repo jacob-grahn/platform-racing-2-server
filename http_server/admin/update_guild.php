@@ -21,7 +21,7 @@ try {
     // make sure you're an admin
     $admin = check_moderator($pdo, null, true, 3);
 
-    // lookup
+    // build page
     if ($action === 'lookup') {
         $header = true;
         output_header('Update Guild', true, true);
@@ -59,8 +59,7 @@ try {
             .'<br>'
             ."NOTE: You MUST make sure that the person you're making the owner is already in the guild.</pre>";
         output_footer();
-    } // update
-    elseif ($action === 'update') {
+    } elseif ($action === 'update') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
@@ -158,8 +157,7 @@ try {
         // redirect
         header("Location: guild_deep_info.php?guild_id=" . urlencode($guild->guild_id));
         die();
-    } // this shouldn't happen under normal circumstances
-    else {
+    } else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {

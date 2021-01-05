@@ -39,7 +39,7 @@ function process_unlock_perk($socket, $data)
         list($slug, $user_id, $guild_id, $user_name, $quantity) = explode('`', $data);
         $user_id = (int) $user_id;
         $guild_id = (int) $guild_id;
-        start_perk($slug, $user_id, $guild_id, $quantity, time() + ($quantity * 3600));
+        start_perk($slug, $user_id, $guild_id, time() + ($quantity * 3600));
         $player = id_to_player($user_id, false);
         $display_name = userify($player, $user_name);
 

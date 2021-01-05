@@ -76,6 +76,6 @@ function activate_perks($perks)
             continue;
         }
         output("Activating: $perk->slug | User: $perk->user_id | Guild: $perk->guild_id | Quantity: $perk->quantity");
-        start_perk($perk->slug, $perk->user_id, $perk->guild_id, $perk->quantity, $expire_time);
+        start_perk($perk->slug, $perk->user_id, $perk->guild_id, $expire_time);
     }
 }

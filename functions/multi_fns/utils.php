@@ -179,7 +179,7 @@ function send_to_guild($guild_id, $str)
 
 
 // vault: start a perk
-function start_perk($slug, $user_id, $guild_id, $quantity = 1, $expire_time = 0)
+function start_perk($slug, $user_id, $guild_id, $expire_time = 0)
 {
     $seconds_duration = $expire_time - time();
     if ($seconds_duration <= 0) {
@@ -291,7 +291,6 @@ function get_priors($mod, $name)
             $ban_id = (int) $ban->ban_id;
             $date = date("M j, Y g:i A", $ban->time);
             $mod_name = htmlspecialchars($ban->mod_name, ENT_QUOTES);
-            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name), ENT_QUOTES);
             $banned_name = htmlspecialchars($ban->banned_name, ENT_QUOTES);
             $banned_ip = htmlspecialchars(urlencode($ban->banned_ip), ENT_QUOTES);
             $duration = format_duration($ban->expire_time - $ban->time);
@@ -348,7 +347,6 @@ function get_priors($mod, $name)
             $ban_id = (int) $ban->ban_id;
             $date = date("M j, Y g:i A", $ban->time);
             $mod_name = htmlspecialchars($ban->mod_name, ENT_QUOTES);
-            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name), ENT_QUOTES);
             $banned_name = htmlspecialchars($ban->banned_name, ENT_QUOTES);
             $banned_ip = htmlspecialchars(urlencode($ban->banned_ip), ENT_QUOTES);
             $duration = format_duration($ban->expire_time - $ban->time);

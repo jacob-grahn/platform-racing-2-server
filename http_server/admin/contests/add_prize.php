@@ -33,19 +33,17 @@ try {
         throw new Exception('Could not find a contest with that ID.');
     }
 
-    // form
+    // build page
     if ($action === 'form') {
         output_header('Add Contest Prize', true, true);
         output_form($contest);
         output_footer();
-    } // add
-    elseif ($action === 'add') {
+    } elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
         add_contest_prize($pdo, $admin, $contest);
-    } // unknown handler
-    else {
+    } else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {

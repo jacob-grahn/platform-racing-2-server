@@ -23,8 +23,8 @@ try {
     $header = true;
     output_header('Debug PR2 Servers', true, true);
 
-    // no file specified
-    if (is_empty($file)) {
+    // build page
+    if (is_empty($file)) { // no file specified; get list
         // make sure this completes
         ini_set('memory_limit', '-1');
         set_time_limit(0);
@@ -82,8 +82,7 @@ try {
             // end formatting
             echo '</ul>';
         }
-    } // get specific log
-    else {
+    } else { // get specific log
         // get file
         $file = @file_get_contents(ROOT_DIR . '/../pr2/log/' . $file);
         if ($file === false) {

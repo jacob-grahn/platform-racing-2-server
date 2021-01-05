@@ -12,6 +12,7 @@ function rank_token_rental_insert($pdo, $user_id, $guild_id, $quantity = 1)
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':guild_id', $guild_id, PDO::PARAM_INT);
     foreach (range(1, $quantity) as $num) {
+        $num = $num; // travis
         $result = $stmt->execute();
     }
 

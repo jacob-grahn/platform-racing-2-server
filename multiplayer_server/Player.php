@@ -175,19 +175,17 @@ class Player
         $socket->player = $this;
         $this->active_rank = $this->rank + $this->rt_used;
 
-        // check if the server is full
-        $pCount = count($player_array);
+        // final checks
+        $pCount = count($player_array); // server full?
         if (($pCount > $max_players && $this->group < 2) || ($pCount > ($max_players - 10) && $this->group === 0)) {
             $this->write('loginFailure`');
             $this->write('message`Sorry, this server is full. Try back later.');
             $this->remove();
-        } // check for a valid rank
-        elseif ($this->active_rank > 100 && $this->user_id != FRED) {
+        } elseif ($this->active_rank > 100 && $this->user_id != FRED) { // check for a valid rank
             $this->write('loginFailure`');
             $this->write('message`Your rank is too high. Please choose a different account.');
             $this->remove();
-        } // add to the player array
-        else {
+        } else { // add to the player array
             $player_array[$this->user_id] = $this;
         }
 
@@ -629,20 +627,9 @@ class Player
             return false;
         }
 
-        $eType = 'e'.ucfirst($type);
-        $part = $this->{$type};
-
-        if ($strict) {
-            $parts_available = $this->getOwnedParts($type);
-            $epic_parts_available = $this->getOwnedParts($eType);
-        } else {
-            $parts_available = $this->getFullParts($type);
-            $epic_parts_available = $this->getFullParts($eType);
-        }
-
-        if (array_search($part, $parts_available) === false) {
-            $part = $parts_available[0];
-            $this->{$type} = $part;
+        $parts_available = $strict ? $this->getOwnedParts($type) : $this->getFullParts($type);
+        if (array_search($this->{$type}, $parts_available) === false) {
+            $this->{$type} = $parts_available[0];
         }
     }
 

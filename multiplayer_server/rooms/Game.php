@@ -713,8 +713,7 @@ class Game extends Room
             $welcome_back_bonus = 0;
             if ($player->exp_today == 0 && $player->rank >= 5) {
                 $welcome_back_bonus = 1000;
-            } // level bonus
-            else {
+            } else { // level bonus
                 $level_bonus = $this->applyExpCurve($player, 25 * $time_mod);
                 
                 // sanity check, think it works fine here
@@ -1105,8 +1104,7 @@ class Game extends Room
                 $forfeit = $rs->quit_race ? ($this->mode === self::MODE_EGG ? '0' : 'forfeit') : '';
                 $str .= '`' . $rs->name . '`' . $forfeit . '`' . $rs->drawing . '`' . $rs->still_here;
             }
-        } // if not, broadcast as normal
-        else {
+        } else { // if not, broadcast as normal
             foreach ($this->finish_array as $rs) {
                 $obj_reached = $finish_time = null;
                 if ($this->mode === self::MODE_EGG) {
