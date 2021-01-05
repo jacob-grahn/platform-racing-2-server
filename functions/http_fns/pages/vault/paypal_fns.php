@@ -1,7 +1,7 @@
 <?php
 
 
-function retrieve_order($order_id)
+function paypal_retrieve_order($order_id)
 {
     global $PAYPAL_CLIENT_ID, $PAYPAL_SECRET, $PAYPAL_API_ENDPOINT;
 

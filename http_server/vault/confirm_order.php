@@ -59,7 +59,7 @@ try {
     }
 
     // get order info
-    $paypal_data = retrieve_order($order_id);
+    $paypal_data = paypal_retrieve_order($order_id);
 
     // check order validity
     if ($paypal_data->status !== 'APPROVED') { // incorrect status?
