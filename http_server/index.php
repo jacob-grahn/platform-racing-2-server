@@ -16,4 +16,6 @@ $info_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=3182', 'resp
 $eol_msg = '<b>IMPORTANT: PR2 won\'t be shutting down on January 1.</b>'
     ."<br />Read our $info_link for information on how to play after December 31.";
 
+echo "<p>$eol_msg</p>";
+
 output_footer();
