@@ -1,7 +1,5 @@
 <?php
 
-die('Page currently disabled.');
-
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/vault/vault_fns.php';

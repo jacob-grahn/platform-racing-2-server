@@ -52,6 +52,13 @@ $PAYPAL_API_ENDPOINT = $PAYPAL_SANDBOX ? 'https://api.sandbox.paypal.com' : 'htt
 $PAYPAL_CLIENT_ID = $PAYPAL_SANDBOX ? 'sandbox client id' : 'production client id';
 $PAYPAL_SECRET = $PAYPAL_SANDBOX ? 'sandbox secret' : 'production secret';
 
+$PAYPAL_DATA_KEY = 'elon';
+$PAYPAL_DATA_IV = 'musk';
+
+$URL_SALT = 'haha';
+$URL_KEY = 'encryption';
+$URL_IV = 'go brrr';
+
 $LEVEL_LIST_SALT = 'why does this exist?';
 $LEVEL_SALT = 'fa';
 $LEVEL_SALT_2 = 'ti';
@@ -64,10 +71,6 @@ $LOGIN_IV = 'there';
 
 $ACCOUNT_CHANGE_KEY = 'why did I do this';
 $ACCOUNT_CHANGE_IV = 'why oh why';
-
-$URL_SALT = 'haha';
-$URL_KEY = 'encryption';
-$URL_IV = 'go brrr';
 
 $ALLOWED_CLIENT_VERSIONS = array('weeeee version', 'weeeee new version');
 $FALLBACK_ADDRESSES = array($SERVER_IP);

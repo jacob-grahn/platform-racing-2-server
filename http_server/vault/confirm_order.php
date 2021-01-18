@@ -1,12 +1,11 @@
 <?php
 
-die('Page currently disabled.');
-
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/vault/paypal_fns.php';
 require_once HTTP_FNS . '/pages/vault/vault_fns.php';
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
+require_once QUERIES_DIR . '/vault_coins_orders.php';
 
 $encrypted_token = default_post('encrypted_token', '');
 $num_option = (int) default_post('coin_option', '');
@@ -56,18 +55,23 @@ try {
     $option = $coins_options->options[$num_option];
     if (count($coins_options->options) < $num_option || empty($option)) {
         throw new Exception('Invalid Coins package selected.');
+    } elseif ($user->coins + $option->coins + $option->bonus > 16777215) { // this is ridiculous. I realize that.
+        unset($coins_options); // no suppl
+        throw new Exception('You\'re rich!');
     }
 
     // get order info
     $paypal_data = paypal_retrieve_order($order_id);
 
     // check order validity
-    if ($paypal_data->status !== 'APPROVED') { // incorrect status?
+    if (!empty($paypal_data->name) && $paypal_data->name === 'RESOURCE_NOT_FOUND') {
+        throw new Exception('Order not found.');
+    } elseif (strtotime($paypal_data->create_time) + 3600 < time()) { // too far in the past?
+        throw new Exception('Order timed out.');
+    } elseif ($paypal_data->status !== 'APPROVED') { // incorrect status?
         throw new Exception('Order not eligible for completion.');
     } elseif ($paypal_data->id !== $order_id) { // order ID mismatch?
         throw new Exception('Order ID mismatch.');
-    } elseif (strtotime($paypal_data->create_time) + 3600 < time()) { // too far in the past?
-        throw new Exception('Order timed out.');
     }
 
     // check order information
@@ -77,14 +81,31 @@ try {
         throw new Exception('Your order has been cancelled due to an information mismatch.');
     }
 
+    // check for pending order, insert if none found
+    $pending_order = vault_coins_order_select($pdo, $order_id);
+    if (!empty($pending_order)) { // error handling for odd scenarios ordered by likelihood of occurring
+        if ($pending_order->coins_before != $user->coins) {
+            throw new Exception('Your coin total doesn\'t match.'); // user ordered more coins or from vault since start
+        } elseif ($pending_order->coins + $pending_order->bonus != $option->coins + $option->bonus) {
+            throw new Exception('Coins purchasing options have been updated since you started your order.');
+        } elseif ($pending_order->pr2_user_id != $user_id) {
+            throw new Exception('This account didn\'t initiate this order.'); // won't happen if no funny business
+        } elseif ($pending_order->status === 'expired' || $pending_order->created_time + 3600 < time()) {
+            throw new Exception('This order is expired.'); // should be caught above
+        } elseif ($pending_order->status === 'complete') {
+            throw new Exception('This order is already complete.'); // should be caught above
+        }
+    } else {
+        vault_coins_order_insert($pdo, $user, $option, $order_id);
+    }
+
     // make data to send to the next page
     $send_data = new stdClass();
     $send_data->token = $user_token;
-    $send_data->pr2_order_id = '';
+    $send_data->coins_option = $num_option;
     $send_data->paypal_order_id = $paypal_data->id;
-
-    // format info
-    $vom_faqs = '<a href="https://pr2hub.com/vault/faq.php" target="_blank">Vault of Magics FAQs</a>';
+    $encryptor->setKey($PAYPAL_DATA_KEY);
+    $encrypted_send_data = $encryptor->encrypt(json_encode($send_data), $PAYPAL_DATA_IV);
 
     // start page
     $header = true;
@@ -111,7 +132,7 @@ try {
         <p>
             <div style="font-style: italic; text-align:center;">
                 This is an order form for Coins. Coins can be used to purchase items for sale in the Vault of Magics.<br />
-                <b>All sales are final</b>. For more information, please read the <?= $vom_faqs ?>.
+                <b>All sales are final</b>. For more information, please read the <a href="/terms_of_use.php" target="_blank">PR2 User Agreement</a>.
             </div>
         </p>
 
@@ -170,7 +191,7 @@ try {
         $is_admin = isset($user->power) && $user->power == 3;
         output_header('Confirm Order', $is_mod, $is_admin);
     }
-    $suppl = ' Please return to PR2 to restart the order process. If this persists, please contact a PR2 staff member.';
+    $suppl = ' Please return to PR2 to restart the order process.';
     echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . (isset($coins_options) ? $suppl : '');
 } finally {
     output_footer();
