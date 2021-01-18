@@ -19,7 +19,7 @@ try {
     rate_limit('vault-listing-'.$ip, 15, 4);
 
     // close the vault for people not on the beta client
-    if ($is_beta !== 1) {
+    if ($beta !== 1) {
         throw new Exception('The vault is currently disabled. Check back later!');
     }
 
