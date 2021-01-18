@@ -140,8 +140,8 @@ try {
     }
 
     // send confirmation PM
-    $disp_coins = number_format($coins);
-    $disp_bonus = number_format($bonus);
+    $disp_coins = number_format($option->coins);
+    $disp_bonus = number_format($option->bonus);
     $disp_price = '$' . number_format($option->price, 2);
     $disp_new_coins = number_format($new_coins);
     coins_send_confirmation_pm($pdo, $user_id, $order_id, $disp_coins, $disp_bonus, $disp_price, $disp_new_coins);
