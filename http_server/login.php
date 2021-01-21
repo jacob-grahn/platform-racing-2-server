@@ -75,10 +75,10 @@ try {
 
     // sanity: correct version?
     if (!in_array($build, $ALLOWED_CLIENT_VERSIONS) || !in_array($build2, $ALLOWED_CLIENT_VERSIONS)) {
-        $e = "PR2 has recently been updated. Please refresh the page to download the latest version.";
+        $e = "PR2 has recently been updated. Please reload the game to download the latest version.";
         throw new Exception($e);
     }
-    
+
     // sanity: valid name?
     if ((is_empty($in_token) && is_empty($user_name)) || strpos($user_name, '`') !== false) {
         throw new Exception('Invalid user name entered.');
