@@ -24,11 +24,17 @@ try {
     // decrypt data
     $encryptor = new \pr2\http\Encryptor();
     $encryptor->setKey($URL_KEY);
-    $data = @json_decode($encryptor->decrypt($encrypted_data, $URL_IV));
-    if (!$data) {
+    $passed = @json_decode($encryptor->decrypt($encrypted_data, $URL_IV));
+    if (!$passed) {
         throw new Exception('Invalid data received.');
     } else {
-        $user_token = $data->token;
+        $user_token = $passed->token;
+        $time_started = $passed->time;
+    }
+
+    // sanity: older than 5 mins?
+    if ($time_started + 300 < time() || $time_started > time()) {
+        throw new Exception('Your request timed out. Please return to PR2 to restart the order process.');
     }
 
     // connect
@@ -57,10 +63,17 @@ try {
         $bonuses[$num] = $option_data->bonus;
     }
 
+    // make data to send to the next page
+    $send_data = new stdClass();
+    $send_data->token = $user_token;
+    $send_data->start_time = $time_started;
+    $send_data->rand = mt_rand() / mt_getrandmax();
+    $encryptor->setKey($PAYPAL_DATA_KEY);
+    $encrypted_send_data = $encryptor->encrypt(json_encode($send_data), $PAYPAL_DATA_IV);
+
     // format info
     $prices = '[' . join(', ', $prices) . ']';
     $bonuses = '[' . join(', ', $bonuses) . ']';
-    $vom_faqs = '<a href="https://pr2hub.com/vault/faq.php" target="_blank">Vault of Magics FAQs</a>';
 
     // start page
     $header = true;
@@ -101,15 +114,13 @@ try {
         <p>
             <div style="font-style: italic; text-align:center;">
                 This is an order form for Coins. Coins can be used to purchase items for sale in the Vault of Magics.<br />
-                <b>All sales are final</b>. For more information, please read the <?= $vom_faqs ?>.
+                <b>All sales are final</b>. For more information, please read the <a href="https://pr2hub.com/terms_of_use.php" target="_blank">PR2 Terms of Use</a>.
             </div>
         </p>
 
         <hr />
 
         <p>Welcome, <b><?= htmlspecialchars($user->name, ENT_QUOTES) ?></b>. Please select your coins package:</p>
-
-        <link></link>
 
         <!-- Coins options -->
         <p>
@@ -165,6 +176,10 @@ try {
                 },
 
                 createOrder: function(data, actions) {
+                    if (<?= $time_started ?> + 300 < Math.round(Date.now() / 1000)) {
+                        return location.reload();
+                    }
+
                     var prices = <?= $prices ?>;
                     var bonuses = <?= $bonuses ?>;
                     var optionSelected = parseInt($('input[name="opt_sel"]:checked').val());
@@ -217,7 +232,7 @@ try {
                 onApprove: function(data, actions) {
                     console.log('data: ' + JSON.stringify(data));
                     var obj = {
-                        encrypted_token: "<?= $encrypted_data ?>",
+                        encrypted_data: "<?= $encrypted_send_data ?>",
                         coin_option: parseInt($('input[name="opt_sel"]:checked').val()),
                         order_id: data.orderID
                     }

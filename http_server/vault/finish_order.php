@@ -33,6 +33,12 @@ try {
         $user_token = $passed->token;
         $coins_package_num = $passed->coins_option;
         $order_id = $passed->paypal_order_id;
+        $time_started = $passed->start_time;
+    }
+
+    // sanity: older than 15 mins?
+    if ($time_started + 900 < time() || $time_started > time()) {
+        throw new Exception("Your request timed out.$suppl");
     }
 
     // connect
@@ -160,7 +166,7 @@ try {
         <p>
             <div style="font-style: italic; text-align:center;">
                 This is an order form for Coins. Coins can be used to purchase items for sale in the Vault of Magics.<br />
-                <b>All sales are final</b>. For more information, please read the <a href="/terms_of_use.php" target="_blank">PR2 User Agreement</a>.
+                <b>All sales are final</b>. For more information, please read the <a href="/terms_of_use.php" target="_blank">PR2 Terms of Use</a>.
             </div>
         </p>
 

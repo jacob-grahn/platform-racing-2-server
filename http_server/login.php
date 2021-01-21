@@ -127,7 +127,7 @@ try {
     }
 
     // generate a login token for future requests
-    $token = get_login_token($user->user_id);
+    $token = random_str(32);
     token_insert($pdo, $user->user_id, $token);
     if ($remember && !$guest_login) {
         $token_expire = time() + 2592000; // one month

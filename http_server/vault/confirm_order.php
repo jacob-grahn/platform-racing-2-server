@@ -7,30 +7,37 @@ require_once HTTP_FNS . '/pages/vault/vault_fns.php';
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
 require_once QUERIES_DIR . '/vault_coins_orders.php';
 
-$encrypted_token = default_post('encrypted_token', '');
+$encrypted_data = default_post('encrypted_data', '');
 $num_option = (int) default_post('coin_option', '');
 $order_id = default_post('order_id', '');
 
 $ip = get_ip();
 $header = false;
+$suppl = ' Please return to PR2 to restart the order process.';
 try {
     // rate limiting
     rate_limit('vault-confirm-order-'.$ip, 3, 1);
     rate_limit('vault-confirm-order-'.$ip, 15, 4);
 
     // check for data
-    if (empty($encrypted_token) || $num_option <= 0 || empty($order_id)) {
+    if (empty($encrypted_data) || $num_option <= 0 || empty($order_id)) {
         throw new Exception('Some data is missing.');
     }
 
     // decrypt data
     $encryptor = new \pr2\http\Encryptor();
-    $encryptor->setKey($URL_KEY);
-    $decrypted_token = @json_decode($encryptor->decrypt($encrypted_token, $URL_IV));
-    if (empty($decrypted_token)) {
+    $encryptor->setKey($PAYPAL_DATA_KEY);
+    $passed = @json_decode($encryptor->decrypt($encrypted_data, $PAYPAL_DATA_IV));
+    if (empty($passed)) {
         throw new Exception('Could not find a valid login token. Please log in again.');
     } else {
-        $user_token = $decrypted_token->token;
+        $user_token = $passed->token;
+        $time_started = $passed->start_time;
+    }
+
+    // sanity: older than 15 mins?
+    if ($time_started + 900 < time() || $time_started > time()) {
+        throw new Exception("Your request timed out.$suppl");
     }
 
     // connect
@@ -104,6 +111,8 @@ try {
     $send_data->token = $user_token;
     $send_data->coins_option = $num_option;
     $send_data->paypal_order_id = $paypal_data->id;
+    $send_data->start_time = $time_started;
+    $send_data->rand = mt_rand() / mt_getrandmax();
     $encryptor->setKey($PAYPAL_DATA_KEY);
     $encrypted_send_data = $encryptor->encrypt(json_encode($send_data), $PAYPAL_DATA_IV);
 
@@ -132,7 +141,7 @@ try {
         <p>
             <div style="font-style: italic; text-align:center;">
                 This is an order form for Coins. Coins can be used to purchase items for sale in the Vault of Magics.<br />
-                <b>All sales are final</b>. For more information, please read the <a href="/terms_of_use.php" target="_blank">PR2 User Agreement</a>.
+                <b>All sales are final</b>. For more information, please read the <a href="/terms_of_use.php" target="_blank">PR2 Terms of Use</a>.
             </div>
         </p>
 
@@ -191,7 +200,6 @@ try {
         $is_admin = isset($user->power) && $user->power == 3;
         output_header('Confirm Order', $is_mod, $is_admin);
     }
-    $suppl = ' Please return to PR2 to restart the order process.';
     echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . (isset($coins_options) ? $suppl : '');
 } finally {
     output_footer();

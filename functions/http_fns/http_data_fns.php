@@ -1,15 +1,6 @@
 <?php
 
 
-// -- AUTH -- \\
-
-// generates a login token
-function get_login_token($user_id)
-{
-    return $user_id . '-' . random_str(30);
-}
-
-
 // -- SERVER -- \\
 
 // gets a variable from $_GET array, or default if it doesn't exist
