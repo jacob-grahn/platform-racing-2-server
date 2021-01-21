@@ -55,8 +55,8 @@ try {
         if ($account->power < 2) {
             throw new Exception('You are not the owner of this guild.');
         } else {
-            $mod = user_select_mod($pdo, $user_id, true);
-            if ($mod->trial_mod) {
+            $mod = is_staff($pdo, $user_id);
+            if ($mod->trial) {
                 throw new Exception('You lack the power to edit this guild.');
             }
             $log_action = true;

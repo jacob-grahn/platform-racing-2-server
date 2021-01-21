@@ -23,9 +23,9 @@ try {
 
     // determine the user's group
     $user_id = (int) token_login($pdo, true, true);
-    $is_staff = is_staff($pdo, $user_id);
-    $is_mod = $is_staff->mod;
-    $is_admin = $is_staff->admin;
+    $staff = is_staff($pdo, $user_id);
+    $is_mod = $staff->mod && !$staff->trial;
+    $is_admin = $staff->admin;
 
     // get the contest info
     $contest = contest_select($pdo, $contest_id, !$is_mod);
@@ -44,16 +44,16 @@ try {
     }
 
     // url prefix for contest host links based on group
-    if ($is_admin === true) {
+    if ($is_admin) {
         $base_url = "/admin/player_deep_info.php?name1=";
-    } elseif ($is_admin === false && $is_mod === true) {
+    } elseif (!$is_admin && $is_mod) {
         $base_url = "/mod/player_info.php?name=";
     } else {
         $base_url = "/player_search.php?name=";
     }
 
     // output
-    output_header("View Winners", $is_mod, $is_admin);
+    output_header("View Winners", $staff->mod, $is_admin);
 
     // contest name
     echo "<p>Viewing Winners for <a href='$contest_url' target='_blank'>$contest_name</a></p>";

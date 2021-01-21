@@ -18,6 +18,7 @@ try {
     // determine the user's group
     $user_id = (int) token_login($pdo, true, true);
     $staff = is_staff($pdo, $user_id, false);
+    $full_mod = $staff->mod && !$staff->trial;
 
     // output the correct header
     output_header("Contests", $staff->mod, $staff->admin);
@@ -44,9 +45,9 @@ try {
     }
 
     // url prefix for contest host links based on group
-    if ($staff->admin === true) {
+    if ($staff->admin) {
         $base_url = "/admin/player_deep_info.php?name1=";
-    } elseif ($staff->admin === false && $staff->mod === true) {
+    } elseif (!$staff->admin && $staff->mod) {
         $base_url = "/mod/player_info.php?name=";
     } else {
         $base_url = "/player_search.php?name=";
@@ -81,7 +82,7 @@ try {
         echo "<b><a href='$html_contest_url' target='_blank'>$html_contest_name</a></b><br>";
 
         // admin: is it active?
-        if ($staff->admin === true) {
+        if ($staff->admin) {
             echo "Active: $is_active<br>";
         }
 
@@ -97,7 +98,7 @@ try {
         echo "Awarding: $html_awarding<br>";
 
         // mod
-        if (($staff->mod === true || $is_host === true) && $host->power < 2) {
+        if (($full_mod || $is_host) && $host->power < 2) {
             $max_awards = (int) $contest->max_awards;
             $used_awards = (int) throttle_awards($pdo, $contest_id, $host_id);
             echo "Used Awards (this week): $used_awards<br>"
@@ -105,7 +106,7 @@ try {
         }
 
         // admin
-        if ($staff->admin === true) {
+        if ($staff->admin) {
             echo 'Admin: '
                 ."<a href='/admin/contests/edit_contest.php?contest_id=$contest_id'>edit</a> | "
                 ."<a href='/admin/contests/add_prize.php?contest_id=$contest_id'>add prize</a> | "
@@ -116,7 +117,7 @@ try {
         echo "<a href='view_winners.php?contest_id=$contest_id'>-&gt; View Winners</a>";
 
         // award prize
-        if ((($is_host === true || $staff->mod === true) && (int) $contest->active === 1) || $staff->admin === true) {
+        if ((($is_host || $full_mod) && (int) $contest->active === 1) || $staff->admin) {
             echo "<br><a href='award_prize.php?contest_id=$contest_id'>-&gt; Award Prize</a>";
         }
 

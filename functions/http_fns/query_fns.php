@@ -639,9 +639,10 @@ function is_staff($pdo, $user_id, $check_ref = true, $exception = false, $group 
 
     if ($user_id !== false && $user_id !== 0) {
         // determine power and if staff
-        $power = (int) user_select_power($pdo, $user_id, true);
-        $is_mod = ($power >= 2);
-        $is_admin = ($power === 3);
+        $power = explode(',', user_select_power($pdo, $user_id, true));
+        $is_trial = (bool) (int) $power[1];
+        $is_mod = $power[0] >= 2;
+        $is_admin = $power[0] == 3;
 
         // exception handler
         if ($exception === true && ($is_mod === false || ($group > 2 && $is_admin === false))) {
@@ -650,8 +651,9 @@ function is_staff($pdo, $user_id, $check_ref = true, $exception = false, $group 
     }
 
     // tell the world
-    $return = new stdClass();
-    $return->mod = $is_mod;
-    $return->admin = $is_admin;
-    return $return;
+    $ret = new stdClass();
+    $ret->trial = $is_trial;
+    $ret->mod = $is_mod;
+    $ret->admin = $is_admin;
+    return $ret;
 }

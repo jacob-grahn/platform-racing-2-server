@@ -306,13 +306,13 @@ function get_priors($mod, $name)
             $reason = is_empty($reason) ? 'No reason was given.' : $reason;
 
             // make name/ip str
-            $nameip_str = $acc_ban === true ? $nameip_str . $banned_name : $nameip_str;
-            $nameip_str = $ip_ban === true ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
+            $nameip_str = $acc_ban ? $nameip_str . $banned_name : $nameip_str;
+            $nameip_str = $ip_ban && !$user->trial_mod ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
             $nameip_str = trim($nameip_str);
 
             // check if lifted
-            if ($lifted === true) {
-                $lifted_datetime = date('M j, Y \a\t g:i A', strtotime($ban->lifted_time));
+            if ($lifted) {
+                $lifted_datetime = date('M j, Y \a\t g:i A', $ban->lifted_time);
                 $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
                 $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
                 $lifted_str = "<b>^ LIFTED</b> on $lifted_datetime by $lifted_by. Reason: $lifted_reason";
@@ -323,7 +323,7 @@ function get_priors($mod, $name)
             $ban_str = "$date_url: $mod_name$scope banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
-            $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
+            $str = $lifted ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
 
             // move to the next ban
             $str .= '</li>';
@@ -337,7 +337,8 @@ function get_priors($mod, $name)
     $ip_bans = db_op('bans_select_by_ip', array($ip));
     $ip_ban_count = (int) count($ip_bans);
     $ip_link = urlify("https://pr2hub.com/mod/ip_info.php?ip=$ip", $ip);
-    $str .= "This IP ($ip_link) has been banned $ip_ban_count times.<br><br>";
+    $ip_lang = 'IP' . (!$user->trial_mod ? " ($ip_link)" : '');
+    $str .= "This $ip_lang has been banned $ip_ban_count times.<br><br>";
 
     // make account bans list
     if ($ip_ban_count !== 0) {
@@ -362,13 +363,13 @@ function get_priors($mod, $name)
             $reason = is_empty($reason) ? 'No reason was given.' : $reason;
 
             // make name/ip str
-            $nameip_str = $acc_ban === true ? $nameip_str . $banned_name : $nameip_str;
-            $nameip_str = $ip_ban === true ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
-            $nameip_str = trim($nameip_str);
+            $nameip_str = $acc_ban ? $nameip_str . $banned_name : $nameip_str;
+            $nameip_str = $ip_ban && !$user->trial_mod ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
+            $nameip_str = is_empty($nameip_str) && $user->trial_mod ? '<i>an IP</i>' : trim($nameip_str);
 
             // check if lifted
-            if ($lifted === true) {
-                $lifted_datetime = date('M j, Y \a\t g:i A', strtotime($ban->lifted_time));
+            if ($lifted) {
+                $lifted_datetime = date('M j, Y \a\t g:i A', $ban->lifted_time);
                 $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
                 $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
                 $lifted_str = "<b>^ LIFTED</b> on $lifted_datetime by $lifted_by. Reason: $lifted_reason";
@@ -379,7 +380,7 @@ function get_priors($mod, $name)
             $ban_str = "$date_url: $mod_name$scope banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
-            $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
+            $str = $lifted ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
 
             // move to the next ban
             $str .= '</li>';
@@ -417,7 +418,7 @@ function db_op($fn, $data = array())
         if (!function_exists($fn)) {
             throw new Exception("Function \"$fn\" does not exist.");
         }
-        
+
         // build params and call fn
         $params = array($pdo);
         foreach ($data as $var) {

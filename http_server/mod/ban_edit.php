@@ -20,8 +20,11 @@ try {
     // connect
     $pdo = pdo_connect();
 
-    // make sure you're a moderator
+    // make sure you're a full moderator
     $mod = check_moderator($pdo);
+    if ($mod->trial_mod) {
+        throw new Exception('You lack the power to access this resource. Please ask a moderator to edit this ban.');
+    }
 
     // sanity check: what ban id?
     if (is_empty($ban_id, false)) {

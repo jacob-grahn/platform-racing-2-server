@@ -19,10 +19,11 @@ try {
 
     // header, also check if mod and output the mod links if so
     $staff = is_staff($pdo, token_login($pdo, true, true, 'n'), false);
+    $full_mod = $staff->mod && !$staff->trial;
     $header = true;
     output_header('Ban Log', $staff->mod, $staff->admin);
 
-    if ($staff->mod === false) {
+    if (!$staff->mod) {
         rate_limit('list-bans-'.$ip, 60, 10);
         $count = $count > 100 ? 100 : $count;
     }
@@ -59,14 +60,14 @@ try {
         // build display name
         $disp_name = $account_ban === 1 ? $banned_name : '';
         $sep = is_empty($disp_name) ? '' : ' ';
-        $disp_name = $ip_ban === 1 && $staff->mod ? $disp_name . $sep . "[$banned_ip]" : $disp_name;
+        $disp_name = $ip_ban === 1 && $full_mod ? $disp_name . $sep . "[$banned_ip]" : $disp_name;
 
         // prepare data for output
         $disp_name = htmlspecialchars($disp_name, ENT_QUOTES);
         $f_dur = format_duration($duration);
 
-        // display "an IP" if ip ban and you're not a mod
-        if ($ip_ban === 1 && $account_ban === 0 && !$staff->mod) {
+        // display "an IP" if ip ban and you're not a full mod
+        if ($ip_ban === 1 && $account_ban === 0 && !$full_mod) {
             $disp_name .= "<i>an IP</i>";
         }
 

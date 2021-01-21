@@ -46,6 +46,11 @@ try {
     $header = true;
     output_header('Reported ' . ucfirst($mode), $staff->mod, $staff->admin);
 
+    // deny access to trial mods
+    if ($staff->trial) {
+        throw new Exception('You lack the power to access this resource.');
+    }
+
     // navigation
     output_pagination($start, $count, "&mode=$mode");
     echo '<p>---</p>';

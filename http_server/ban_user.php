@@ -66,9 +66,14 @@ try {
     }
 
     // make some variables
-    $ban_ip = !is_empty($force_ip) && filter_var($force_ip, FILTER_VALIDATE_IP) ? $force_ip : $target->ip;
     $banned_power = $target->power;
     $ban_uid = (int) $target->user_id;
+    if (!empty($force_ip) && filter_var($force_ip, FILTER_VALIDATE_IP) && !$mod->trial_mod) {
+        $ban_ip = $force_ip;
+    } else {
+        $ban_ip = $target->ip;
+        $force_ip = '';
+    }
 
     // throw out non-banned info, set ban types
     $is_ip = $is_acc = 0;
