@@ -6,25 +6,32 @@ require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/favorite_levels.php';
 
 $page = (int) default_post('page', 1);
-$token = default_post('token', '');
 $ip = get_ip();
 
 $page = max(1, min($page, 9));
 $cache_expire = 30; // keep results cached for 30 seconds
 
 try {
+    // rate limiting
+    rate_limit("favorite-levels-view-$ip", 5, 3);
+
     // check request method
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception('Invalid request method.');
     }
 
-    // sanity: valid user ID via unauthenticated token?
-    if (strpos($token, '-') === false) {
-        throw new Exception('Could not find a valid login token. Please log in again.');
+    // connect
+    $pdo = pdo_connect();
+
+    // login
+    $user_id = (int) token_login($pdo, false, false, 'g');
+    $power = (int) user_select_power($pdo, $user_id);
+    if ($power <= 0) {
+        $e = "Guests can't save favorite levels. To access this feature, please create your own account.";
+        throw new Exception($e);
     }
 
     // formats an apcu key by both IP and ID so that people can't maliciously trigger the rate limit via request forging
-    $user_id = (int) explode('-', $token)[0];
     $key = "favorite-levels-$ip-$user_id-$page";
 
     $page_str = apcu_fetch($key);
@@ -34,19 +41,8 @@ try {
     }
 
     if ($page_str === false) {
-        rate_limit("favorite-levels-$ip", 10, 5);
+        rate_limit("favorite-levels-$user_id", 5, 3);
         apcu_add($key, 'WAIT', 5); // will not overwrite existing
-
-        // connect
-        $pdo = pdo_connect();
-
-        // login
-        $user_id = (int) token_login($pdo, true, false, 'g');
-        $power = (int) user_select_power($pdo, $user_id);
-        if ($power <= 0) {
-            $e = "Guests can't save favorite levels. To access this feature, please create your own account.";
-            throw new Exception($e);
-        }
 
         // search
         $levels = favorite_levels_select($pdo, $user_id, $page);
