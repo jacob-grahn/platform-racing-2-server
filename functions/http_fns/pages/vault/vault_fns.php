@@ -255,3 +255,28 @@ function send_confirmation_pm($pdo, $user_id, $order_id, $title, $price, $quanti
         ."\n\nThanks for your support!\n\n- Jiggmin";
     message_insert($pdo, $user_id, 1, $pm, '0');
 }
+
+
+// regenerates vault items (intended to be run from CLI when there are new changes to vault items)
+function regenerate_vault_items($pdo)
+{
+    require_once QUERIES_DIR . '/vault_items.php';
+    output('Regenerating vault items...');
+
+    // select items
+    $items = vault_items_select($pdo);
+
+    // populate
+    $items_out = new stdClass();
+    $items_out->info = new stdClass();
+    $items_out->listings = new stdClass();
+    foreach ($items as $item) {
+        $items_out->listings->{$item->slug} = format_vault_item($item);
+    }
+    $items_out->info->updated = time();
+
+    // save to file
+    $file_link = CACHE_DIR . '/vault.json';
+    file_put_contents($file_link, json_encode($items_out, JSON_PRETTY_PRINT));
+    output("Vault items regenerated and saved to $file_link.\n");
+}
