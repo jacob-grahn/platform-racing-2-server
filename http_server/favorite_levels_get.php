@@ -13,7 +13,7 @@ $cache_expire = 30; // keep results cached for 30 seconds
 
 try {
     // rate limiting
-    rate_limit("favorite-levels-view-$ip", 5, 3);
+    rate_limit("favorite-levels-view-$ip", 5, 5);
 
     // check request method
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
