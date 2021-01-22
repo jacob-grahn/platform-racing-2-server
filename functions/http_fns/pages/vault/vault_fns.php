@@ -1,503 +1,282 @@
 <?php
 
 
-// make data to send to the client
-function make_listing($desc)
-{
-    $obj = new stdClass();
-    $obj->slug = $desc->slug;
-    $obj->title = $desc->title;
-    $obj->imgUrl = $desc->imgUrl;
-    $obj->price = $desc->price;
-    $obj->description = $desc->description;
-    $obj->longDescription = $desc->faq;
-    $obj->available = $desc->available;
-    if (isset($desc->discount)) {
-        $obj->discount = $desc->discount;
-    }
-    return $obj;
-}
-
-
-// decrypt response from Kongregate
-function parse_signed_request($signed_request, $secret)
-{
-    list($encoded_sig, $payload) = explode('.', $signed_request, 2);
-
-    // decode the data
-    $sig = base64_url_decode($encoded_sig);
-    $data = json_decode(base64_url_decode($payload));
-
-    if (strtoupper($data->algorithm) !== 'HMAC-SHA256') {
-        throw new Exception('Unknown algorithm. Expected HMAC-SHA256');
-    }
-
-    // check sig
-    $expected_sig = hash_hmac('sha256', $payload, $secret, true);
-    if ($sig !== $expected_sig) {
-        throw new Exception('Bad Signed JSON signature!');
-    }
-
-    return $data;
-}
-
-// base64 url decode
-function base64_url_decode($input)
-{
-    return base64_decode(strtr($input, '-_', '+/'));
-}
-
-
-// get already purchased items
-function get_owned_items($api_key, $kong_user_id)
-{
-    $url = 'http://www.kongregate.com/api/user_items.json';
-    $get = array(
-        'api_key' => $api_key,
-        'user_id' => $kong_user_id
-    );
-    $item_str = curl_get($url, $get);
-    $item_result = json_decode($item_str);
-
-    if (!$item_result->success) {
-        throw new Exception('Could not retrieve a list of your purchased items.');
-    }
-
-    return $item_result->items;
-}
-
-
-// buy item from vault
-function use_item($api_key, $game_auth_token, $kong_user_id, $item_id)
-{
-    $url = 'http://www.kongregate.com/api/use_item.json';
-    $post = array(
-        'api_key' => $api_key,
-        'game_auth_token' => $game_auth_token,
-        'user_id' => $kong_user_id,
-        'id' => $item_id
-    );
-    $use_result_str = curl_post($url, $post);
-    $use_result = json_decode($use_result_str);
-
-    if (!$use_result->success) {
-        throw new Exception('Could not use the item.');
-    }
-
-    return $use_result;
-}
-
-
-
-/**
- * Send a POST requst using cURL
- *
- * @param  string $url     to request
- * @param  array  $post    values to send
- * @param  array  $options for cURL
- * @return string
- */
-function curl_post($url, array $post = null, array $options = array())
-{
-    $defaults = array(
-        CURLOPT_POST => 1,
-        CURLOPT_HEADER => 0,
-        CURLOPT_URL => $url,
-        CURLOPT_FRESH_CONNECT => 1,
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_FORBID_REUSE => 1,
-        CURLOPT_TIMEOUT => 4,
-        CURLOPT_POSTFIELDS => http_build_query($post)
-    );
-
-    $ch = curl_init();
-    curl_setopt_array($ch, ($options + $defaults));
-    if (! $result = curl_exec($ch)) {
-        trigger_error(curl_error($ch));
-    }
-    curl_close($ch);
-    return $result;
-}
-
-
-/**
- * Send a GET requst using cURL
- *
- * @param  string $url     to request
- * @param  array  $get     values to send
- * @param  array  $options for cURL
- * @return string
- */
-function curl_get($url, array $get = null, array $options = array())
-{
-    $defaults = array(
-        CURLOPT_URL => $url. (strpos($url, '?') === false ? '?' : ''). http_build_query($get),
-        CURLOPT_HEADER => 0,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 4
-    );
-
-    $ch = curl_init();
-    curl_setopt_array($ch, ($options + $defaults));
-    if (! $result = curl_exec($ch)) {
-        trigger_error(curl_error($ch));
-    }
-    curl_close($ch);
-    return $result;
-}
-
-
 // populate descriptions for vault items
-function describeVault($pdo, $user_id, $arr)
+function describeVault($pdo, $user, $items_to_get = 'all')
 {
     // gather user info
-    $user = user_select_expanded($pdo, $user_id);
+    if (is_int($user)) {
+        $user = user_select_expanded($pdo, $user);
+    }
     $server = server_select($pdo, $user->server_id);
     $guild = $user->guild != 0 ? guild_select($pdo, $user->guild) : false;
 
-    // build requested descriptions
-    $descriptions = array();
-    foreach ($arr as $slug) {
-        if ($slug == 'stats-boost') {
-            $item = describeSuperBooster($user, $server);
-        } elseif ($slug == 'guild-fred') {
-            $item = describeFred();
-        } elseif ($slug == 'guild-ghost') {
-            $item = describeGhost();
-        } elseif ($slug == 'guild-artifact') {
-            $item = describeArtifact();
-        } elseif ($slug == 'happy-hour') {
-            $item = describeHappyHour($server);
-        } elseif ($slug == 'rank-rental') {
-            $item = describeRankRental($pdo, $user);
-        } elseif ($slug == 'king-set') {
-            $item = describeKing($user);
-        } elseif ($slug == 'queen-set') {
-            $item = describeQueen($user);
-        } elseif ($slug == 'djinn-set') {
-            $item = describeDjinn($user);
-        } elseif ($slug == 'server-1-day') {
-            $item = describePrivateServer1($user, $guild);
-        } elseif ($slug == 'server-30-days') {
-            $item = describePrivateServer30($user, $guild);
-        } elseif ($slug == 'epic-everything') {
-            $item = describeEpicEverything($user);
+    // get requested items
+    $vault_info = file_get_contents(CACHE_DIR . '/vault.json');
+    if (!$vault_info) {
+        throw new Exception('Could not retrieve vault info.');
+    }
+
+    // populate array
+    $vault_info = json_decode($vault_info);
+    $items = $items_to_get === 'all' ? $vault_info->listings : new stdClass();
+    if ($items_to_get !== 'all') {
+        foreach ($items_to_get as $slug) {
+            if (isset($vault_info->listings->$slug)) {
+                $items->$slug = $vault_info->listings->$slug;
+                continue;
+            }
+            throw new Exception('Invalid item specified.');
+        }
+    }
+
+    // check item availablity
+    $listings = [];
+    foreach ($items as $slug => $item) {
+        $item->max_quantity = (int) $item->max_quantity; // quick typecast
+        $item->available = false;
+        if ($slug === 'stats_boost') {
+            $item->available = $server->tournament == 0 && !apcu_exists("sb-$user->user_id-" . round(time() / 86400));
+        } elseif ($slug === 'happy_hour') {
+            $item->available = $server->tournament == 0;
+        } elseif ($slug === 'rank_rental') {
+            $item->rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
+            $rt_lang = $item->rented_tokens > 0 ? 'another' : 'a';
+            $item->available = $item->rented_tokens < 21;
+            $item->price = 50 + (20 * $item->rented_tokens);
+            $item->description = "You and your guild gain $rt_lang rank token for a week.";
+        } elseif ($slug === 'king_set') {
+            $item->available = array_search(28, explode(',', $user->head_array)) === false;
+        } elseif ($slug === 'queen_set') {
+            $item->available = array_search(29, explode(',', $user->head_array)) === false;
+        } elseif ($slug === 'djinn_set') {
+            $item->available = array_search(35, explode(',', $user->head_array)) === false;
+        } elseif ($slug === 'server_1_day' || $slug === 'server_30_days') {
+            if ($guild && $guild->owner_id == $user->user_id) {
+                $item->available = true;
+            } else {
+                $item->faq .= "\n\n<b>Why can't I create a private server?</b>\nThis option is for guild owners only!";
+            }
+        } elseif ($slug == 'epic_everything') {
+            $item->available = array_search('*', explode(',', $user->epic_heads)) === false;
         } else {
-            throw new Exception('Unknown item type.');
+            $item->available = true;
         }
 
-        // sale?
-        global $VAULT_SALE, $VAULT_SALE_PERC;
-        if ($VAULT_SALE === true) {
-            $item->price = round($item->price * (1 - $VAULT_SALE_PERC));
-            $item->discount = (string) ($VAULT_SALE_PERC * 100) . '% off!';
-        }
-
-        $descriptions[] = $item;
+        $listings[] = $item;
     }
 
     // tell the world
-    return $descriptions;
+    $ret = new stdClass();
+    $ret->info = $vault_info->info;
+    $ret->info->retrieved = time();
+    $ret->listings = $listings;
+    return $ret;
 }
 
 
-// super booster
-function describeSuperBooster($user, $server)
+function vault_purchase_item($pdo, $user, $item, $price, $quantity = 1)
 {
-    $d = new stdClass();
-    $d->slug = 'stats-boost';
-    $d->title = 'Super Booster';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Super-Booster-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Super-Booster-112x63.png';
-    $d->price = 0;
-    $d->description = 'Boost all of your stats by 10 for one race. One use per day.';
-    $d->available = false;
-    $d->faq = "<b>Can I use more than one Super Booster per day if I pay for it?</b>\nNope!\n\n";
+    global $coins_deducted;
 
-    if ($server->tournament == 0) {
-        $d->available = !apcu_fetch("sb-$user->user_id");
+    $slug = $item->slug;
+    $user_id = (int) $user->user_id;
+    $guild_id = (int) $user->guild;
+
+    // do the purchase
+    $order_id = (int) vault_purchase_insert($pdo, $user_id, $guild_id, $slug, $price, $quantity);
+    if ($order_id <= 0) {
+        throw new Exception('Unable to complete vault purchase.');
     }
 
-    return $d;
-}
+    // deduct the coins from the buyer's account
+    user_update_coins($pdo, $user_id, 0 - $price);
+    $coins_deducted = $price;
 
+    // communication w/ server
+    $command = "unlock_perk`$slug`$user_id`$guild_id`$user->name`$quantity";
+    $reply = '';
+    $target_servers = [];
 
-// guild de fred
-function describeFred()
-{
-    $d = new stdClass();
-    $d->slug = 'guild-fred';
-    $d->title = 'Guild de Fred';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Guild-de-Fred-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Guild-de-Fred-40x40.png';
-    $d->price = 20;
-    $d->description = 'You and your guild get to party as Fred for an hour.';
-    $d->available = true;
-    $d->faq = "<b>Is the Guild de Fred power-up useful?</b>\n".
-        "- Not at all!\n\n".
-        "<b>Do I get to run around as a giant cactus?</b>\n".
-        "- Yes. Yes you do.\n\n".
-        "<b>How does Guild de Fred work?</b>\n".
-        "- A Giant Cactus body is temporarily added to your account. ".
-        "You can switch between the Giant Cactus body and your other bodies normally.\n\n";
+    // handle items
+    if ($slug === 'guild_fred') {
+        $reply = 'Fred smiles on you!';
+    } elseif ($slug === 'guild_ghost') {
+        $reply = 'Ninja mode: engage!';
+    } elseif ($slug === 'guild_artifact') {
+        $reply = 'Ultimate power, courtesy of Fred!';
+    } elseif ($slug === 'happy_hour') {
+        $target_servers = [$user->server_id];
+        $reply = 'These will be the happiest ' . ($quantity > 1 ? $quantity . ' hours' : 'hour') . ' ever!';
+    } elseif ($slug === 'king_set') {
+        unlock_set($pdo, $user_id, [28, 26, 24]);
+        $command = "unlock_set_king`$user_id";
+        $reply = 'The Wise King set has been added your account!';
+    } elseif ($slug === 'queen_set') {
+        unlock_set($pdo, $user_id, [29, 27, 25]);
+        $command = "unlock_set_queen`$user_id";
+        $reply = 'The Wise Queen set has been added your account!';
+    } elseif ($slug === 'djinn_set') {
+        unlock_set($pdo, $user_id, [35, 35, 35]);
+        $command = "unlock_set_djinn`$user_id";
+        $reply = 'The Frost Djinn set has been added your account!';
+    } elseif ($slug === 'epic_everything') {
+        unlock_set($pdo, $user_id, 'epic_everything');
+        $command = "unlock_epic_everything`$user_id";
+        $reply = 'All Epic Upgrades are yours!';
+    } elseif ($slug === 'server_1_day' || $slug === 'server_30_days') {
+        $command = '';
+        $days = $quantity * ((int) explode('_', $slug)[1]);
+        $result = create_server($pdo, $guild_id, $days);
 
-    return $d;
-}
+        if ($result->status_code === 0) {
+            throw new Exception('An error occurred. Please notify a member of the PR2 staff team for assistance.');
+        } elseif ($result->status_code === 1) {
+            $reply = 'The best server ever is starting up! It\'ll be ready in about 2 minutes.'
+                ."\n\n(Expiration time: ";
+        } elseif ($result->status_code === 2) {
+            $reply = 'The life of your private server has been extended! Long live your guild!'
+                ."\n\n(New expiration time: ";
+        }
 
+        $command = "extend_server_life`$guild_id`$result->new_time";
+        $reply .= date('F j, Y \a\t g:ia T', $result->new_time) . ')';
+    } elseif ($slug === 'rank_rental') {
+        rank_token_rental_insert($pdo, $user_id, $guild_id, $quantity);
 
-// guild de ghost
-function describeGhost()
-{
-    $d = new stdClass();
-    $d->slug = 'guild-ghost';
-    $d->title = 'Guild de Ghost';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Guild-de-Ghost-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Guild-de-Ghost-40x40.png';
-    $d->price = 10;
-    $d->description = 'You and your guild gain (very) invisible parts for an hour.';
-    $d->available = true;
-    $d->faq = "<b>Will this make me feel like a ninja?</b>\n".
-        "- You'll be so ninja.\n\n".
-        "<b>Is the Guild de Ghost power-up useful?</b>\n".
-        "- It may actually be a massive disadvantage!\n\n".
-        "<b>How does Guild de Ghost work?</b>\n".
-        "- A very invisible head, body, and feet are temporarily added to your ".
-        "account. You can switch between these parts and your other parts normally.\n\n";
+        $obj = new stdClass();
+        $obj->user_id = $user_id;
+        $obj->guild_id = $guild_id;
+        $obj->quantity = $quantity;
+        $data = json_encode($obj);
 
-    return $d;
-}
-
-
-// guild de artifact
-function describeArtifact()
-{
-    $d = new stdClass();
-    $d->slug = 'guild-artifact';
-    $d->title = 'Guild de Artifact';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Avatar-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Avatar-40x40.png';
-    $d->price = 30;
-    $d->description = 'You and your guild gain the artifact as a hat for an hour.';
-    $d->available = true;
-    $d->faq = "<b>Will the artifact give me tons of EXP every race?</b>\n".
-        "- Nope!\n\n".
-        "<b>Is the Guild de Artifact power-up useful?</b>\n".
-        "- It may actually be a massive disadvantage!\n\n".
-        "<b>How does Guild de Artifact work?</b>\n".
-        "- Fred has harnessed the power of the artifact for your control! ".
-        "The artifact will temporarily be added to your account, ".
-        "and you'll still be able switch between it and your other hats normally.\n\n";
-
-    return $d;
-}
-
-
-// happy hour
-function describeHappyHour($server)
-{
-    $d = new stdClass();
-    $d->slug = 'happy-hour';
-    $d->title = 'Happy Hour';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Happy-Hour-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Happy-Hour-40x40.png';
-    $d->price = 50;
-    $d->description = 'Is there a happy hour right now? Well there should be.';
-    $d->available = false;
-    $d->faq = "<b>What's a Happy Hour?</b>\n".
-        "- During a Happy Hour everyone on this server will receive double experience points, ".
-        "and everyone's speed, acceleration, and jumping are increased to 100.\n\n".
-        "<b>Can a Happy Hour be used on a private server?</b>\n".
-        "- Yup!\n\n";
-
-    if ($server->tournament == 0) {
-        $d->available = true;
-    }
-
-    return $d;
-}
-
-
-// rank token++
-function describeRankRental($pdo, $user)
-{
-    $rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
-    $d = new stdClass();
-    $d->slug = 'rank-rental';
-    $d->title = 'Rank Token++';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Rank-Token-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Rank-Token-40x40.png';
-    $d->price = 50 + (20 * $rented_tokens);
-    $d->description = 'You and your guild all gain a rank token for a week.';
-    $d->available = true;
-    $d->faq = "<b>What's a Rank Token?</b>\n".
-        "- You can use rank tokens to increase or decrease your rank at will. ".
-        "A rank 40 account with 3 rank tokens could become a rank 43 account, for example.\n\n".
-        "<b>Why does the price change?</b>\n".
-        "- The price of a new Rank Token++ depends on how many you currently have.\n".
-        "  1st: 50 kreds\n".
-        "  2nd: 70 kreds\n".
-        "  3rd: 90 kreds\n".
-        "  etc\n\n".
-        "<b>How many tokens can be used at once?</b>\n".
-        "- Up to 21 rank tokens can be rented at a time.\n\n";
-
-    return $d;
-}
-
-
-// wise king set
-function describeKing($user)
-{
-    $d = new stdClass();
-    $d->slug = 'king-set';
-    $d->title = 'Wise King';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/King-Set-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/King-Set-40x40.png';
-    $d->price = 30;
-    $d->description = 'Permanently add the Wise King Set to your account.';
-    $d->available = false;
-    $d->faq = "<b>Does the Wise King set give me any stat boosts?</b>\n".
-        "- Nope!\n\n".
-        "<b>Does the Wise King set make me look totally rad?</b>\n".
-        "- Totally.\n\n";
-
-    if (array_search(28, explode(',', $user->head_array)) === false) {
-        $d->available = true;
-    }
-
-    return $d;
-}
-
-
-// wise queen set
-function describeQueen($user)
-{
-    $d = new stdClass();
-    $d->slug = 'queen-set';
-    $d->title = 'Wise Queen';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Queen-Set-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Queen-Set-40x40.png';
-    $d->price = 30;
-    $d->description = 'Permanently add the Wise Queen Set to your account.';
-    $d->available = false;
-    $d->faq = "<b>Does the Wise Queen set give me any stat boosts?</b>\n".
-        "- Nope!\n\n".
-        "<b>Does the Wise Queen set make me look totally rad?</b>\n".
-        "- Totally.\n\n";
-
-    if (array_search(29, explode(',', $user->head_array)) === false) {
-        $d->available = true;
-    }
-
-    return $d;
-}
-
-
-// frost djinn set
-function describeDjinn($user)
-{
-    $d = new stdClass();
-    $d->slug = 'djinn-set';
-    $d->title = 'Frost Djinn';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Djinn-Set-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Djinn-Set-40x40.png';
-    $d->price = 30;
-    $d->description = 'Permanently add the Frost Djinn Set to your account.';
-    $d->available = false;
-    $d->faq = "<b>Does the Frost Djinn set give me any stat boosts?</b>\n".
-        "- Nope!\n\n".
-        "<b>Does the Frost Djinn set make me look totally rad?</b>\n".
-        "- Totally.\n\n";
-
-    if (array_search(35, explode(',', $user->head_array)) === false) {
-        $d->available = true;
-    }
-
-    return $d;
-}
-
-
-// private server 1
-function describePrivateServer1($user, $guild)
-{
-    $d = new stdClass();
-    $d->slug = 'server-1-day';
-    $d->title = 'Private Server 1';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Private-Server-1-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Private-Server-40x40.png';
-    $d->price = 20;
-    $d->description = 'Create an exclusive server for your guild. Runs for 1 day.';
-    $d->available = false;
-    $d->faq = "<b>Who can use a private server?</b>\n".
-        "- You and members of your guild can use your private server.\n\n".
-        "<b>Can moderators enter our private server?</b>\n".
-        "- Nope. You are the law. You'll even have a few admin powers.\n\n".
-        "<b>Can I make my own campaign?</b>\n".
-        "- Not currently.\n\n";
-
-    if ($guild && $guild->owner_id == $user->user_id) {
-        $d->available = true;
+        $command = "unlock_rank_token_rental`$data";
+        $reply = 'You just got ' . ($quantity === 1 ? 'a rank token' : "$quantity rank tokens") . '!';
     } else {
-        $d->faq .= "<b>Why can't I create a private server?</b>\n".
-            "- This option is for guild owners only!\n\n";
+        throw new Exception("Item not found: " . strip_tags($slug, '<br>'));
     }
 
-    return $d;
+    // send item command to the server
+    if (!empty($command)) {
+        @poll_servers(servers_select($pdo), $command, false, isset($target_servers) ? $target_servers : []);
+    }
+
+    // complete
+    vault_purchase_complete($pdo, $order_id);
+    send_confirmation_pm($pdo, $user_id, $order_id, $item->title, $price, $quantity);
+    return $reply;
 }
 
 
-// private server 30
-function describePrivateServer30($user, $guild)
+function unlock_set($pdo, $user_id, $part_ids)
 {
-    $d = new stdClass();
-    $d->slug = 'server-30-days';
-    $d->title = 'Private Server 30';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Private-Server-30-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Private-Server-40x40.png';
-    $d->price = 300;
-    $d->description = 'Create an exclusive server for your guild. Runs for 30 days.';
-    $d->available = false;
-    $d->faq = "<b>Who can use a private server?</b>\n".
-        "- You and members of your guild can use your private server.\n\n".
-        "<b>Can moderators enter our private server?</b>\n".
-        "- Nope. You are the law. You'll even have a few admin powers.\n\n".
-        "<b>Can I make my own campaign?</b>\n".
-        "- Not currently.\n\n";
-
-    if ($guild && $guild->owner_id == $user->user_id) {
-        $d->available = true;
+    if ($part_ids === 'epic_everything') { // epic_everything
+        award_part($pdo, $user_id, 'eHat', '*');
+        award_part($pdo, $user_id, 'eHead', '*');
+        award_part($pdo, $user_id, 'eBody', '*');
+        award_part($pdo, $user_id, 'eFeet', '*');
     } else {
-        $d->faq .= "<b>Why can't I create a private server?</b>\n".
-            "- This option is for guild owners only!\n\n";
+        award_part($pdo, $user_id, 'head', $part_ids[0]);
+        award_part($pdo, $user_id, 'body', $part_ids[1]);
+        award_part($pdo, $user_id, 'feet', $part_ids[2]);
+        award_part($pdo, $user_id, 'eHead', $part_ids[0]);
+        award_part($pdo, $user_id, 'eBody', $part_ids[1]);
+        award_part($pdo, $user_id, 'eFeet', $part_ids[2]);
     }
-
-    return $d;
 }
 
 
-// epic everything
-function describeEpicEverything($user)
+function create_server($pdo, $guild_id, $days_of_life)
 {
-    $d = new stdClass();
-    $d->slug = 'epic-everything';
-    $d->title = 'Epic Everything';
-    $d->imgUrl = 'https://pr2hub.com/img/vault/Guild-de-Ghost-112x63.png';
-    $d->imgUrlSmall = 'https://pr2hub.com/img/vault/Guild-de-Ghost-40x40.png';
-    $d->price = 110;
-    $d->description = 'Unlock all Epic Upgrades.';
-    $d->available = false;
-    $d->faq = "<b>What is an Epic Upgrade?</b>\n".
-        "- It gives you a second editable color on a part you already own!\n\n".
-        "<b>Does this include every Epic Upgrade that exists or ever will exist?</b>\n".
-        "- Sure does!\n\n".
-        "<b>Does this unlock all the parts too?</b>\n".
-        "- No, but all parts you win in the future will automatically come with an Epic Upgrade.\n\n".
-        "<b>Do Epic Upgrades provide a stat boost?</b>\n".
-        "- Nope!\n\n";
+    // existing server info
+    $existing_server = server_select_by_guild_id($pdo, $guild_id);
+    $port = servers_select_highest_port($pdo) + 1;
 
-    if (array_search('*', explode(',', $user->epic_heads)) === false) {
-        $d->available = true;
+    // guild info
+    $guild = guild_select($pdo, $guild_id);
+    $guild_id = (int) $guild->guild_id;
+    $server_name = $guild->guild_name;
+
+    $ret = new stdClass();
+    $ret->status_code = 0;
+    try {
+        // ...time after time
+        $life_secs = 86400 * $days_of_life;
+        $life_from_now = time() + $life_secs;
+
+        if (!$existing_server) { // server doesn't exist in the db
+            global $SERVER_IP;
+
+            // insert and start server
+            $server_id = server_insert($pdo, $life_from_now, $server_name, $SERVER_IP, $port, $guild_id);
+            start_server(PR2_ROOT . '/pr2.php', $port, $server_id, false, true);
+
+            // return data
+            $ret->new_time = $life_from_now;
+            $ret->status_code = 1;
+        } else { // server exists and is either active or inactive
+            // get server info
+            $server_id = (int) $existing_server->server_id;
+            $active = (bool) (int) $existing_server->active;
+
+            // do expiration time calculations
+            $life_from_expiry = $existing_server->expire_time + $life_secs;
+            $life_from_expiry = $life_from_expiry < $life_from_now ? $life_from_now : $life_from_expiry;
+
+            // update info (and activate server if applicable)
+            server_update_expire_time($pdo, $life_from_expiry, $server_id);
+            if (!$active) { // if it wasn't active, start the server
+                start_server(PR2_ROOT . '/pr2.php', $port, $server_id, false, true);
+            }
+
+            // return data
+            $ret->new_time = $life_from_expiry;
+            $ret->status_code = $active ? 2 : 1; // if server was inactive, return the new server message to user
+        }
+    } catch (Exception $e) {
+        unset($e);
+    } finally {
+        return $ret;
     }
+}
 
-    return $d;
+
+function send_confirmation_pm($pdo, $user_id, $order_id, $title, $price, $quantity)
+{
+    $cam_link = urlify('https://jiggmin2.com/cam', 'Contact a Mod forum');
+    $jv_link = urlify('https://jiggmin2.com/forums', 'Jiggmin\'s Village');
+    $pm = 'Howdy! This PM is to confirm your recent Vault of Magics order.'
+        ."\n\nOrder ID: $order_id"
+        ."\nItem: $title"
+        ."\nQuantity: $quantity"
+        ."\nCoins Spent: $price"
+        ."\n\nThis is an automatically generated PM, so please don't reply. "
+        ."If you encounter any problems with your order, please contact us using the $cam_link on $jv_link."
+        ."\n\nThanks for your support!\n\n- Jiggmin";
+    message_insert($pdo, $user_id, 1, $pm, '0');
+}
+
+
+// regenerates vault items (intended to be run from CLI when there are new changes to vault items)
+function regenerate_vault_items($pdo)
+{
+    require_once QUERIES_DIR . '/vault_items.php';
+    output('Regenerating vault items...');
+
+    // select items
+    $items = vault_items_select($pdo);
+
+    // populate
+    $items_out = new stdClass();
+    $items_out->info = new stdClass();
+    $items_out->listings = new stdClass();
+    foreach ($items as $item) {
+        $items_out->listings->{$item->slug} = format_vault_item($item);
+    }
+    $items_out->info->updated = time();
+
+    // save to file
+    $file_link = CACHE_DIR . '/vault.json';
+    file_put_contents($file_link, json_encode($items_out, JSON_PRETTY_PRINT));
+    output("Vault items regenerated and saved to $file_link.\n");
 }

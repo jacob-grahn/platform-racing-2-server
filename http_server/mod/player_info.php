@@ -94,7 +94,7 @@ try {
 
     // override ip
     $overridden_ip = '';
-    if (isset($force_ip) && $force_ip != '') {
+    if (isset($force_ip) && $force_ip != '' && !$staff->trial) {
         $overridden_ip = $ip;
         $ip = $force_ip;
     }
@@ -112,8 +112,9 @@ try {
 
     // output the results
     $html_user_name = htmlspecialchars($user_name, ENT_QUOTES);
+    $html_ip_info = "<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>";
     echo "<p>User ID: $user_id</p>"
-        ."<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>"
+        .(!$staff->trial ? $html_ip_info : '') // don't show IP to trial mods
         ."<p>Status: $status</p>";
 
     // display pr2 info
@@ -128,11 +129,13 @@ try {
         ."<p>IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list";
 
     // display options
-    echo '<p>---</p>'
-        .'<p>'
-        ."<a href='ban.php?user_id=$user_id&force_ip=$force_ip'>Ban User</a><br>"
-        ."<a href='purge_tokens.php?user_id=$user_id'>Purge Tokens</a>"
-        .'</p>';
+    if (!$staff->trial) {
+        echo '<p>---</p>'
+            .'<p>'
+            ."<a href='ban.php?user_id=$user_id&force_ip=$force_ip'>Ban User</a><br>"
+            ."<a href='purge_tokens.php?user_id=$user_id'>Purge Tokens</a>"
+            .'</p>';
+    }
 } catch (Exception $e) {
     if ($e->getMessage() !== '') {
         $error = $e->getMessage();

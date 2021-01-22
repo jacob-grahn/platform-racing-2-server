@@ -25,8 +25,6 @@ $build = default_post('build', '');
 $in_token = find('token');
 $guest_login = false;
 $token_login = false;
-$has_email = false;
-$has_ant = false;
 $rt_available = 0;
 $rt_used = 0;
 $guild_owner = 0;
@@ -75,10 +73,10 @@ try {
 
     // sanity: correct version?
     if (!in_array($build, $ALLOWED_CLIENT_VERSIONS) || !in_array($build2, $ALLOWED_CLIENT_VERSIONS)) {
-        $e = "PR2 has recently been updated. Please refresh the page to download the latest version.";
+        $e = "PR2 has recently been updated. Please reload the game to download the latest version.";
         throw new Exception($e);
     }
-    
+
     // sanity: valid name?
     if ((is_empty($in_token) && is_empty($user_name)) || strpos($user_name, '`') !== false) {
         throw new Exception('Invalid user name entered.');
@@ -126,16 +124,6 @@ try {
         }
     }
 
-    // generate a login token for future requests
-    $token = get_login_token($user->user_id);
-    token_insert($pdo, $user->user_id, $token);
-    if ($remember && !$guest_login) {
-        $token_expire = time() + 2592000; // one month
-        setcookie('token', $token, $token_expire, '/', $_SERVER['SERVER_NAME'], false, true);
-    } else {
-        setcookie('token', '', time() - 3600, '/', $_SERVER['SERVER_NAME'], false, true);
-    }
-
     // check IP validity
     $country_code = '?';
     if (!check_ip_validity($pdo, $ip, $user)) {
@@ -165,6 +153,16 @@ try {
         } elseif (strlen(trim($login->user_name)) > 20) { // too long?
             throw new Exception('Your name cannot be more than 20 characters long.');
         }
+    }
+
+    // generate a login token for future requests
+    $token = random_str(32);
+    token_insert($pdo, $user->user_id, $token);
+    if ($remember && !$guest_login) {
+        $token_expire = time() + 2592000; // one month
+        setcookie('token', $token, $token_expire, '/', $_SERVER['SERVER_NAME'], false, true);
+    } else {
+        setcookie('token', '', time() - 3600, '/', $_SERVER['SERVER_NAME'], false, true);
     }
 
     // sanity check: if a guild server, is the user in the guild?
@@ -251,10 +249,6 @@ try {
     $exp_today_ip = exp_today_select($pdo, 'ip-'.$ip);
     $exp_today = max($exp_today_id, $exp_today_ip);
 
-    // check if they have an email set
-    $has_email = !is_empty($user->email) && strlen($user->email) > 0; // email set?
-    $has_ant = array_search(20, $head_array) !== false; // kong account login perk
-
     // determine if in a guild and if the guild owner
     if ((int) $user->guild !== 0) {
         $guild = guild_select($pdo, $user->guild);
@@ -309,8 +303,7 @@ try {
     $ret->message = isset($ban_msg) ? $ban_msg : $eol_msg;
     $ret->userId = $user_id;
     $ret->token = $token;
-    $ret->email = $has_email;
-    $ret->ant = $has_ant;
+    $ret->email = !is_empty($user->email) && strlen($user->email) > 0; // email set?
     $ret->time = time();
     $ret->lastRead = $user->read_message_id;
     $ret->lastRecv = $last_recv_id;

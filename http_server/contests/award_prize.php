@@ -76,7 +76,7 @@ try {
         throw new Exception("This contest doesn't currently have any prizes.");
     }
 
-    // form
+    // build page
     if ($action === 'form') {
         $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
         $max_awards = (int) $contest->max_awards;
@@ -143,8 +143,7 @@ try {
                 .'ask a member of the PR2 Staff Team for help.</b>';
         }
         echo '</pre>';
-    } // award
-    elseif ($action === 'award') {
+    } elseif ($action === 'award') {
         // validate request method
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
@@ -341,8 +340,7 @@ try {
         echo "<a href='award_prize.php?contest_id=$contest_id'>&lt;- Award Another Prize</a><br>";
         echo "<a href='view_winners.php?contest_id=$contest_id'>&lt;- View Winners</a><br>";
         echo "<a href='contests.php'>&lt;- All Contests</a>";
-    } // unknown handler
-    else {
+    } else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {

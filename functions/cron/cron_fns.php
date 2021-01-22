@@ -109,7 +109,7 @@ function write_server_status($pdo)
 
 function get_recent_pms($pdo)
 {
-    $file = COMMON_DIR . '/cron/last-pm.txt';
+    $file = CACHE_DIR . '/last-pm.txt';
 
     // get the last message id that a notifacation was sent for
     $last_message_id = file_get_contents($file);

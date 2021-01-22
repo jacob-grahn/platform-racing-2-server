@@ -63,11 +63,10 @@ function issue_tournament($str)
             }
         }
 
-        // did the user say /t off? if so, let's turn off the tournament
-        if (is_empty($arr[0]) || strtolower($arr[0]) === 'off') {
+        // apply the requested change
+        if (is_empty($arr[0]) || strtolower($arr[0]) === 'off') { // /t off?
             \pr2\multi\PR2SocketServer::$tournament = false;
-        } // if not /t off
-        else {
+        } else { // not /t off
             if (isset($arr[0]) && isset($arr[1]) && isset($arr[2]) && isset($arr[3]) && !isset($arr[4])) {
                 \pr2\multi\PR2SocketServer::$tournament = true;
 

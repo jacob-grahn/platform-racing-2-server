@@ -9,7 +9,7 @@ function demote_mod($user_name, $admin, $demoted_player)
 
     // make sure the admin is valid and online
     if (!isset($admin)) {
-        output("CRITICAL FAILURE: An invalid user tried to demote $html_name.");
+        output("Error: An invalid user tried to demote $html_name.");
         return false;
     }
 
@@ -72,8 +72,7 @@ function demote_mod($user_name, $admin, $demoted_player)
                 $demoted_player->write('demoteMod`');
             }
             $admin->write("message`$html_name has been demoted.");
-        } // demote temp mod
-        elseif (isset($demoted_player) && $demoted_player->temp_mod === true && $demoted_player->group == 2) {
+        } elseif (isset($demoted_player) && $demoted_player->temp_mod === true && $demoted_player->group == 2) { // temp
             $demoted_player->group = 1;
             $demoted_player->temp_mod = false;
             $demoted_player->trial_mod = false;

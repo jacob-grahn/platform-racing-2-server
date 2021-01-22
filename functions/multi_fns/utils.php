@@ -179,20 +179,24 @@ function send_to_guild($guild_id, $str)
 
 
 // vault: start a perk
-function start_perk($slug, $user_id, $guild_id)
+function start_perk($slug, $user_id, $guild_id, $expire_time = 0)
 {
-    $seconds_duration = 3700;
-    if ($slug === 'guild-fred') {
+    $seconds_duration = $expire_time - time();
+    if ($seconds_duration <= 0) {
+        return;
+    }
+
+    if ($slug === 'guild_fred') {
         assign_guild_part('body', 29, $user_id, $guild_id, $seconds_duration);
-    } elseif ($slug === 'guild-ghost') {
+    } elseif ($slug === 'guild_ghost') {
         assign_guild_part('head', 31, $user_id, $guild_id, $seconds_duration);
         assign_guild_part('body', 30, $user_id, $guild_id, $seconds_duration);
         assign_guild_part('feet', 27, $user_id, $guild_id, $seconds_duration);
-    } elseif ($slug === 'guild-artifact') {
+    } elseif ($slug === 'guild_artifact') {
         assign_guild_part('hat', 14, $user_id, $guild_id, $seconds_duration);
         assign_guild_part('eHat', 14, $user_id, $guild_id, $seconds_duration);
-    } elseif ($slug === 'happy-hour') {
-        \pr2\multi\HappyHour::activate();
+    } elseif ($slug === 'happy_hour') {
+        \pr2\multi\HappyHour::activate($seconds_duration);
     }
 }
 
@@ -287,7 +291,6 @@ function get_priors($mod, $name)
             $ban_id = (int) $ban->ban_id;
             $date = date("M j, Y g:i A", $ban->time);
             $mod_name = htmlspecialchars($ban->mod_name, ENT_QUOTES);
-            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name), ENT_QUOTES);
             $banned_name = htmlspecialchars($ban->banned_name, ENT_QUOTES);
             $banned_ip = htmlspecialchars(urlencode($ban->banned_ip), ENT_QUOTES);
             $duration = format_duration($ban->expire_time - $ban->time);
@@ -303,13 +306,13 @@ function get_priors($mod, $name)
             $reason = is_empty($reason) ? 'No reason was given.' : $reason;
 
             // make name/ip str
-            $nameip_str = $acc_ban === true ? $nameip_str . $banned_name : $nameip_str;
-            $nameip_str = $ip_ban === true ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
+            $nameip_str = $acc_ban ? $nameip_str . $banned_name : $nameip_str;
+            $nameip_str = $ip_ban && !$user->trial_mod ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
             $nameip_str = trim($nameip_str);
 
             // check if lifted
-            if ($lifted === true) {
-                $lifted_datetime = date('M j, Y \a\t g:i A', strtotime($ban->lifted_time));
+            if ($lifted) {
+                $lifted_datetime = date('M j, Y \a\t g:i A', $ban->lifted_time);
                 $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
                 $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
                 $lifted_str = "<b>^ LIFTED</b> on $lifted_datetime by $lifted_by. Reason: $lifted_reason";
@@ -320,7 +323,7 @@ function get_priors($mod, $name)
             $ban_str = "$date_url: $mod_name$scope banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
-            $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
+            $str = $lifted ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
 
             // move to the next ban
             $str .= '</li>';
@@ -334,7 +337,8 @@ function get_priors($mod, $name)
     $ip_bans = db_op('bans_select_by_ip', array($ip));
     $ip_ban_count = (int) count($ip_bans);
     $ip_link = urlify("https://pr2hub.com/mod/ip_info.php?ip=$ip", $ip);
-    $str .= "This IP ($ip_link) has been banned $ip_ban_count times.<br><br>";
+    $ip_lang = 'IP' . (!$user->trial_mod ? " ($ip_link)" : '');
+    $str .= "This $ip_lang has been banned $ip_ban_count times.<br><br>";
 
     // make account bans list
     if ($ip_ban_count !== 0) {
@@ -344,7 +348,6 @@ function get_priors($mod, $name)
             $ban_id = (int) $ban->ban_id;
             $date = date("M j, Y g:i A", $ban->time);
             $mod_name = htmlspecialchars($ban->mod_name, ENT_QUOTES);
-            $url_mod_name = htmlspecialchars(urlencode($ban->mod_name), ENT_QUOTES);
             $banned_name = htmlspecialchars($ban->banned_name, ENT_QUOTES);
             $banned_ip = htmlspecialchars(urlencode($ban->banned_ip), ENT_QUOTES);
             $duration = format_duration($ban->expire_time - $ban->time);
@@ -360,13 +363,13 @@ function get_priors($mod, $name)
             $reason = is_empty($reason) ? 'No reason was given.' : $reason;
 
             // make name/ip str
-            $nameip_str = $acc_ban === true ? $nameip_str . $banned_name : $nameip_str;
-            $nameip_str = $ip_ban === true ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
-            $nameip_str = trim($nameip_str);
+            $nameip_str = $acc_ban ? $nameip_str . $banned_name : $nameip_str;
+            $nameip_str = $ip_ban && !$user->trial_mod ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
+            $nameip_str = is_empty($nameip_str) && $user->trial_mod ? '<i>an IP</i>' : trim($nameip_str);
 
             // check if lifted
-            if ($lifted === true) {
-                $lifted_datetime = date('M j, Y \a\t g:i A', strtotime($ban->lifted_time));
+            if ($lifted) {
+                $lifted_datetime = date('M j, Y \a\t g:i A', $ban->lifted_time);
                 $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
                 $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
                 $lifted_str = "<b>^ LIFTED</b> on $lifted_datetime by $lifted_by. Reason: $lifted_reason";
@@ -377,7 +380,7 @@ function get_priors($mod, $name)
             $ban_str = "$date_url: $mod_name$scope banned $nameip_str for $duration. Reason: $reason";
 
             // add to the output string
-            $str = $lifted === true ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
+            $str = $lifted ? $str . $ban_str . '<br>' . $lifted_str : $str . $ban_str;
 
             // move to the next ban
             $str .= '</li>';
@@ -415,7 +418,7 @@ function db_op($fn, $data = array())
         if (!function_exists($fn)) {
             throw new Exception("Function \"$fn\" does not exist.");
         }
-        
+
         // build params and call fn
         $params = array($pdo);
         foreach ($data as $var) {

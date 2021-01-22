@@ -146,6 +146,7 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
                status,
                read_message_id,
                guild,
+               coins,
                server_id
           FROM users
           WHERE name = :name
@@ -168,6 +169,19 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
 }
 
 
+function user_select_coins($pdo, $user_id)
+{
+    $stmt = $pdo->prepare('SELECT coins FROM users WHERE user_id = :user_id LIMIT 1');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not retrieve number of coins.');
+    }
+
+    return (int) $stmt->fetchColumn();
+}
+
+
 function user_select_expanded($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
@@ -181,9 +195,11 @@ function user_select_expanded($pdo, $user_id, $suppress_error = false)
                u.trial_mod,
                u.verified,
                u.status,
+               u.ip,
                u.time,
                u.register_time,
                u.guild,
+               u.coins,
                u.server_id,
                rt.used_tokens
           FROM users u
@@ -521,6 +537,7 @@ function user_select($pdo, $user_id, $suppress_error = false)
                status,
                read_message_id,
                guild,
+               coins,
                server_id
           FROM users
          WHERE user_id = :user_id
@@ -540,6 +557,26 @@ function user_select($pdo, $user_id, $suppress_error = false)
     }
 
     return $user;
+}
+
+
+function user_update_coins($pdo, $user_id, $coins)
+{
+    $op = $coins < 0 ? '-' : '+';
+    $stmt = $pdo->prepare("
+        UPDATE users
+           SET coins = coins $op :coins
+         WHERE user_id = :user_id
+    ");
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':coins', abs($coins), PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Unable to complete the transaction. Make sure you have enough coins!');
+    }
+
+    return $result;
 }
 
 

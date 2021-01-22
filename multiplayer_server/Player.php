@@ -175,19 +175,17 @@ class Player
         $socket->player = $this;
         $this->active_rank = $this->rank + $this->rt_used;
 
-        // check if the server is full
-        $pCount = count($player_array);
+        // final checks
+        $pCount = count($player_array); // server full?
         if (($pCount > $max_players && $this->group < 2) || ($pCount > ($max_players - 10) && $this->group === 0)) {
             $this->write('loginFailure`');
             $this->write('message`Sorry, this server is full. Try back later.');
             $this->remove();
-        } // check for a valid rank
-        elseif ($this->active_rank > 100 && $this->user_id != FRED) {
+        } elseif ($this->active_rank > 100 && $this->user_id != FRED) { // check for a valid rank
             $this->write('loginFailure`');
             $this->write('message`Your rank is too high. Please choose a different account.');
             $this->remove();
-        } // add to the player array
-        else {
+        } else { // add to the player array
             $player_array[$this->user_id] = $this;
         }
 
@@ -208,7 +206,9 @@ class Player
         }
 
         if (isset($player_array[$this->user_id])) {
-            $this->awardKongHat();
+            if ($login->login->award_kong) {
+                $this->awardKongParts();
+            }
             $this->applyTempItems();
             $this->verifyStats();
             $this->verifyParts();
@@ -315,6 +315,15 @@ class Player
     }
 
 
+    // activates a rank token rental
+    public function activateRankToken($quantity = 1)
+    {
+        $this->rt_available += $quantity;
+        $this->rt_available = $this->rt_available > 21 ? 21 : $this->rt_available;
+        $this->sendCustomizeInfo();
+    }
+
+
     public function getChatCount()
     {
         $seconds = time() - $this->chat_time;
@@ -400,24 +409,20 @@ class Player
     }
 
 
-    public function awardKongHat()
+    public function awardKongParts()
     {
-        if (strpos($this->domain, 'kongregate.com') !== false) {
-            $added = $this->gainPart('hat', 3, true);
-            $this->hat_color = $added === true ? 10027008 : $this->hat_color;
-            if ($this->guest === false && $added === true) {
-                $this->write("message`Thanks for playing PR2 on Kongregate! "
-                    ."As a token of our thanks, the Kong Hat has been added to your account.\n\nxoxo -Kong & Jiggmin");
-            }
+        $hat_added = $this->gainPart('hat', 3, true);
+        $head_added = $this->gainPart('head', 20, true);
+        $body_added = $this->gainPart('body', 17, true);
+        $feet_added = $this->gainPart('feet', 16, true);
+        $this->hat_color = $hat_added ? 0x990000 : $this->hat_color;
+        $this->head_color = $head_added ? 0x990000 : $this->head_color;
+        $this->body_color = $body_added ? 0x990000 : $this->body_color;
+        $this->feet_color = $feet_added ? 0x990000 : $this->feet_color;
+        if ($hat_added || $head_added || $body_added || $feet_added) {
+            $this->write("message`Thanks for honoring Kongregate's contributions to PR2's success! "
+                ."The Kong Hat and the Ant Set have been added to your account.\n\nxoxo -Kong & Jiggmin");
         }
-    }
-
-
-    public function awardKongOutfit()
-    {
-        $this->gainPart('head', 20, true);
-        $this->gainPart('body', 17, true);
-        $this->gainPart('feet', 16, true);
     }
 
 
@@ -622,20 +627,9 @@ class Player
             return false;
         }
 
-        $eType = 'e'.ucfirst($type);
-        $part = $this->{$type};
-
-        if ($strict) {
-            $parts_available = $this->getOwnedParts($type);
-            $epic_parts_available = $this->getOwnedParts($eType);
-        } else {
-            $parts_available = $this->getFullParts($type);
-            $epic_parts_available = $this->getFullParts($eType);
-        }
-
-        if (array_search($part, $parts_available) === false) {
-            $part = $parts_available[0];
-            $this->{$type} = $part;
+        $parts_available = $strict ? $this->getOwnedParts($type) : $this->getFullParts($type);
+        if (array_search($this->{$type}, $parts_available) === false) {
+            $this->{$type} = $parts_available[0];
         }
     }
 

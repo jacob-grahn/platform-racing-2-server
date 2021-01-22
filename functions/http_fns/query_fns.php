@@ -47,9 +47,13 @@ function pass_login($pdo, $name, $password, $ban_check_scope = 'b')
 // log in with a token
 function token_login($pdo, $use_cookie = true, $suppress_error = false, $ban_check_scope = 'b')
 {
+    global $user_token;
+
     $rec_token = find_no_cookie('token');
     if (isset($rec_token) && !empty($rec_token)) {
         $token = $rec_token;
+    } elseif (isset($user_token) && !empty($user_token)) {
+        $token = $user_token;
     } elseif ($use_cookie && isset($_COOKIE['token']) && !empty($_COOKIE['token'])) {
         $token = $_COOKIE['token'];
     }
@@ -635,9 +639,10 @@ function is_staff($pdo, $user_id, $check_ref = true, $exception = false, $group 
 
     if ($user_id !== false && $user_id !== 0) {
         // determine power and if staff
-        $power = (int) user_select_power($pdo, $user_id, true);
-        $is_mod = ($power >= 2);
-        $is_admin = ($power === 3);
+        $power = explode(',', user_select_power($pdo, $user_id, true));
+        $is_trial = (bool) (int) $power[1];
+        $is_mod = $power[0] >= 2;
+        $is_admin = $power[0] == 3;
 
         // exception handler
         if ($exception === true && ($is_mod === false || ($group > 2 && $is_admin === false))) {
@@ -646,8 +651,9 @@ function is_staff($pdo, $user_id, $check_ref = true, $exception = false, $group 
     }
 
     // tell the world
-    $return = new stdClass();
-    $return->mod = $is_mod;
-    $return->admin = $is_admin;
-    return $return;
+    $ret = new stdClass();
+    $ret->trial = $is_trial;
+    $ret->mod = $is_mod;
+    $ret->admin = $is_admin;
+    return $ret;
 }

@@ -23,9 +23,9 @@ try {
 
     // determine the user's group
     $user_id = (int) token_login($pdo, true, true);
-    $is_staff = is_staff($pdo, $user_id);
-    $is_mod = $is_staff->mod;
-    $is_admin = $is_staff->admin;
+    $staff = is_staff($pdo, $user_id);
+    $is_mod = $staff->mod && !$staff->trial;
+    $is_admin = $staff->admin;
 
     // get the contest info
     $contest = contest_select($pdo, $contest_id, !$is_mod);
@@ -44,16 +44,16 @@ try {
     }
 
     // url prefix for contest host links based on group
-    if ($is_admin === true) {
+    if ($is_admin) {
         $base_url = "/admin/player_deep_info.php?name1=";
-    } elseif ($is_admin === false && $is_mod === true) {
+    } elseif (!$is_admin && $is_mod) {
         $base_url = "/mod/player_info.php?name=";
     } else {
         $base_url = "/player_search.php?name=";
     }
 
     // output
-    output_header("View Winners", $is_mod, $is_admin);
+    output_header("View Winners", $staff->mod, $is_admin);
 
     // contest name
     echo "<p>Viewing Winners for <a href='$contest_url' target='_blank'>$contest_name</a></p>";
@@ -91,23 +91,21 @@ try {
         if ($is_mod === true) {
             $awarder_id = (int) $winner->awarded_by;
             $awarder = user_select_name_and_power($pdo, $awarder_id);
-            $awarder_html_name = htmlspecialchars($awarder->name, ENT_QUOTES);
-            $awarder_url = $base_url . htmlspecialchars(urlencode($awarder->name), ENT_QUOTES);
+            $awarder_url = $base_url . urlencode($awarder->name);
             $awarder_color = $awarder->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $awarder->power];
         }
 
         // winner name and color
         $winner = user_select_name_and_power($pdo, $winner->winner_id);
         $winner_color = $winner->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $winner->power];
-        $winner_html_name = htmlspecialchars($winner->name, ENT_QUOTES);
         $winner_url = $base_url . htmlspecialchars(urlencode($winner->name), ENT_QUOTES);
 
         // start row
         echo "<tr>"
             ."<td class='noborder' title='Awarded at $full_win_time'>$short_win_time</td>" // date row
-            ."<td class='noborder'><a href='$winner_url' style='color: #$winner_color; text-decoration: underline;'>$winner_html_name</td>"; // name row
+            .'<td class="noborder">' . urlify($winner_url, $winner->name, $winner_color) . '</td>'; // name row
         if ($is_mod === true) {
-            echo "<td class='noborder'><a href='$awarder_url' style='color: #$awarder_color; text-decoration: underline;'>$awarder_html_name</a></td>" // who awarded
+            echo '<td class="noborder">' . urlify($awarder_url, $awarder->name, $awarder_color) . '</td>' // who awarded
                 ."<td class='noborder'>$awarder_ip</td>"; // awarder ip
 
             // output readable prizes

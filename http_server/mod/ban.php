@@ -26,6 +26,11 @@ try {
     // output header
     output_header('Ban User', $mod->power >= 2, (int) $mod->power === 3);
 
+    // check for trial
+    if ($mod->trial_mod) {
+        throw new Exception('You lack the power to access this resource. Please ban this user from PR2.');
+    }
+
     // get the user's info
     $row = user_select($pdo, $user_id);
     $name = htmlspecialchars($row->name, ENT_QUOTES);
@@ -42,8 +47,11 @@ try {
             .'<select name="duration">'
                 .'<option value="3600">1 Hour</option>'
                 .'<option value="86400">1 Day</option>'
+                .'<option value="259200">3 Days</option>'
                 .'<option value="604800">1 Week</option>'
+                .'<option value="1209600">2 Weeks</option>'
                 .'<option value="2592000">1 Month</option>'
+                .'<option value="15768000">6 Months</option>'
                 .'<option value="31536000">1 Year</option>'
             .'</select> '
             .'<select name="type">'

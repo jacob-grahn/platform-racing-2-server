@@ -318,8 +318,7 @@ function client_promote_to_moderator($socket, $data)
                 ."May they reign in $reign_time of peace and prosperity! Make sure you read the $mod_guide.";
             $admin->chat_room->sendChat("systemChat`$msg", $admin->user_id);
         }
-    } // if they're not an admin, tell them
-    else {
+    } else { // if they're not an admin, tell them
         $admin->write("message`Error: You lack the power to promote $safe_pname to a $type moderator.");
     }
 }

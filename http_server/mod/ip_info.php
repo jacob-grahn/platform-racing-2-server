@@ -26,6 +26,11 @@ try {
     $header = true;
     output_header('IP Info', $staff->mod, $staff->admin);
 
+    // check for trial mod
+    if ($staff->trial) {
+        throw new Exception('You lack the power to access this resource.');
+    }
+
     // we can dance if we want to, we can leave your friends behind
     $html_ip = htmlspecialchars($ip, ENT_QUOTES);
 

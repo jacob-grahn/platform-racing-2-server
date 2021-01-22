@@ -39,8 +39,11 @@ try {
     // connect
     $pdo = pdo_connect();
 
-    // make sure you're a moderator
+    // make sure you're at least a full moderator
     $mod = check_moderator($pdo);
+    if ($mod->trial_mod) {
+        throw new Exception('You lack the power to access this resource.');
+    }
 
     // handle archive operation
     if ($message_id > 0) {

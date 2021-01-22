@@ -897,8 +897,7 @@ class ChatMessage
                     $this->write("systemChat`Error: $err $err_supl");
                 }
             }
-        } // if not the server owner, limit their ability to checking the status of a tournament only
-        else {
+        } else { // if not the server owner, limit their ability to checking the status of a tournament only
             if ($msg_lower === '/t status' || $msg_lower === '/t' || $msg_lower === '/tournament') {
                 tournament_status($this->player);
             } else {

@@ -22,7 +22,8 @@ try {
 
     // sanity check: are they a moderator?
     $staff = is_staff($pdo, token_login($pdo, true, true, 'n'), false);
-    if ($staff->mod === false) {
+    $full_mod = $staff->mod && !$staff->trial;
+    if (!$staff->mod) {
         rate_limit('list-bans-'.$ip, 60, 10, "Please wait at least one minute before trying to view another ban.");
     }
 
@@ -56,7 +57,7 @@ try {
 
     $display_name = $account_ban === 1 ? $banned_name : '';
     $sep = is_empty($display_name) ? '' : ' ';
-    $display_name = $ip_ban === 1 && $staff->mod ? $display_name . $sep . "[$banned_ip]" : $display_name;
+    $display_name = $ip_ban === 1 && $full_mod ? $display_name . $sep . "[$banned_ip]" : $display_name;
 
     if ($lifted === 1) {
         echo '<b><p>-----------------------------------------------------------------------------------------------</p>'
@@ -67,14 +68,16 @@ try {
     }
 
     // make the names clickable for moderators
-    if ($staff->mod === true) {
+    if ($staff->mod) {
         $mod_name = "<a href='/mod/player_info.php?user_id=$mod_user_id'>$mod_name</a>";
         if ($banned_user_id !== 0 && $account_ban === 1) {
             $display_name = "<a href='/mod/player_info.php?user_id=$banned_user_id'>$display_name</a>";
-        } else {
+        } elseif (!$staff->trial) {
             $display_name = "<a href='/mod/ip_info.php?ip=$banned_ip'>$display_name</a>";
+        } else {
+            $display_name = "<i>an IP</i>";
         }
-    } elseif ($staff->mod === false && is_empty(trim($display_name)) && $ip_ban === 1) {
+    } elseif (is_empty(trim($display_name)) && $ip_ban === 1) {
         $display_name = "<i>an IP</i>";
     }
 
@@ -88,7 +91,7 @@ try {
             ."<p> --- </p>";
     }
 
-    if ($staff->mod === true) {
+    if ($full_mod) {
         if (!is_empty($notes)) {
             echo "<p> --- notes</p>";
             echo "<p>$notes</p>";

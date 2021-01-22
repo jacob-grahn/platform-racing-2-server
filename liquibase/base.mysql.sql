@@ -102,11 +102,8 @@ CREATE TABLE prize_actions (action_id INT AUTO_INCREMENT NOT NULL, user_id INT N
 --changeset root:1574908323264-30
 CREATE TABLE promotion_log (power TINYINT(3) NULL, message VARCHAR(100) NULL, time INT NULL);
 
---changeset root:1574908323264-31
-CREATE TABLE purchases (purchase_id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, guild_id INT NOT NULL, product VARCHAR(15) NOT NULL, date datetime NOT NULL, kong_id VARCHAR(100) NOT NULL, order_id INT DEFAULT 0 NOT NULL, CONSTRAINT PK_PURCHASES PRIMARY KEY (purchase_id));
-
 --changeset root:1574908323264-32
-CREATE TABLE rank_token_rentals (guild_id INT NOT NULL, date datetime NOT NULL, user_id INT NOT NULL);
+CREATE TABLE rank_token_rentals (guild_id INT NOT NULL, time BIGINT NOT NULL, user_id INT NOT NULL);
 
 --changeset root:1574908323264-33
 CREATE TABLE rank_tokens (user_id INT NOT NULL, used_tokens TINYINT(3) DEFAULT 0 NOT NULL, available_tokens TINYINT(3) DEFAULT 0 NOT NULL, CONSTRAINT PK_RANK_TOKENS PRIMARY KEY (user_id));
@@ -118,13 +115,22 @@ CREATE TABLE ratings (level_id MEDIUMINT DEFAULT 0 NOT NULL, user_id MEDIUMINT D
 CREATE TABLE recent_logins (user_id INT NOT NULL, ip VARCHAR(100) NOT NULL, country VARCHAR(2) NOT NULL, date datetime NOT NULL);
 
 --changeset root:1574908323264-36
-CREATE TABLE servers (server_id INT AUTO_INCREMENT NOT NULL, server_name VARCHAR(20) NOT NULL, address VARCHAR(20) NOT NULL, port INT NOT NULL, expire_date datetime NOT NULL, population INT DEFAULT 0 NOT NULL, status VARCHAR(10) DEFAULT 'down' NOT NULL, active TINYINT(3) DEFAULT 1 NOT NULL, salt VARCHAR(40) DEFAULT 'QHE0NSNwKWZZQVEhU19xMA==' NOT NULL, guild_id INT DEFAULT 0 NOT NULL, tournament BIT DEFAULT 0 NOT NULL, happy_hour INT DEFAULT 0 NOT NULL, CONSTRAINT PK_SERVERS PRIMARY KEY (server_id));
+CREATE TABLE servers (server_id INT AUTO_INCREMENT NOT NULL, server_name VARCHAR(20) NOT NULL, address VARCHAR(20) NOT NULL, port INT NOT NULL, expire_time BIGINT NOT NULL, population INT DEFAULT 0 NOT NULL, status VARCHAR(10) DEFAULT 'down' NOT NULL, active TINYINT(3) DEFAULT 1 NOT NULL, salt VARCHAR(40) DEFAULT 'QHE0NSNwKWZZQVEhU19xMA==' NOT NULL, guild_id INT DEFAULT 0 NOT NULL, tournament BIT DEFAULT 0 NOT NULL, happy_hour INT DEFAULT 0 NOT NULL, CONSTRAINT PK_SERVERS PRIMARY KEY (server_id));
 
 --changeset root:1574908323264-37
 CREATE TABLE tokens (user_id INT NOT NULL, token VARCHAR(55) NOT NULL, time datetime NOT NULL);
 
 --changeset root:1574908323264-38
-CREATE TABLE users (user_id MEDIUMINT AUTO_INCREMENT NOT NULL, name VARCHAR(20) DEFAULT '' NOT NULL, email VARCHAR(100) DEFAULT '' NOT NULL, register_ip VARCHAR(100) NOT NULL, ip VARCHAR(100) NOT NULL, time INT DEFAULT 0 NOT NULL COMMENT 'the last time this user logged in', register_time INT NOT NULL, power TINYINT(3) DEFAULT 1 NOT NULL, trial_mod TINYINT(1) DEFAULT 0 NOT NULL, verified TINYINT(1) DEFAULT 0 NOT NULL, status VARCHAR(100) DEFAULT 'offline' NOT NULL, server_id INT DEFAULT 0 NOT NULL, read_message_id INT DEFAULT 0 NOT NULL, guild INT DEFAULT 0 NOT NULL, pass_hash TINYTEXT NULL, temp_pass_hash TINYTEXT NULL, CONSTRAINT PK_USERS PRIMARY KEY (user_id), UNIQUE (name));
+CREATE TABLE users (user_id MEDIUMINT AUTO_INCREMENT NOT NULL, name VARCHAR(20) DEFAULT '' NOT NULL, email VARCHAR(100) DEFAULT '' NOT NULL, register_ip VARCHAR(100) NOT NULL, ip VARCHAR(100) NOT NULL, time INT DEFAULT 0 NOT NULL COMMENT 'the last time this user logged in', register_time INT NOT NULL, power TINYINT(3) DEFAULT 1 NOT NULL, trial_mod TINYINT(1) DEFAULT 0 NOT NULL, verified TINYINT(1) DEFAULT 0 NOT NULL, status VARCHAR(100) DEFAULT 'offline' NOT NULL, server_id INT DEFAULT 0 NOT NULL, read_message_id INT DEFAULT 0 NOT NULL, guild INT DEFAULT 0 NOT NULL, coins MEDIUMINT UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Number of coins the user has for vault purchases.', pass_hash TINYTEXT NULL, temp_pass_hash TINYTEXT NULL, CONSTRAINT PK_USERS PRIMARY KEY (user_id), UNIQUE (name));
+
+--changeset root:1574908323264-71
+CREATE TABLE vault_coins_orders (pr2_purchase_id INT AUTO_INCREMENT NOT NULL, order_id VARCHAR(30) NOT NULL COMMENT 'PayPal order ID.', capture_id VARCHAR(30) DEFAULT NULL COMMENT 'PayPal payment capture ID. Used to process refunds.', pr2_user_id INT DEFAULT 0 NOT NULL, coins_before MEDIUMINT UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Number of Coins the user had before purchasing.', coins SMALLINT UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Quantity of Coins purchased (bonus Coins excluded).', bonus SMALLINT UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Number of bonus Coins added to the purchase.', price DECIMAL(6,2) DEFAULT 0.00 NOT NULL, received DECIMAL(6,2) DEFAULT NULL COMMENT 'Money received from PayPal after fees.', created_time BIGINT DEFAULT 0 NOT NULL, completed_time BIGINT DEFAULT NULL, refunded_time BIGINT DEFAULT NULL, status VARCHAR(20) DEFAULT 'pending' NOT NULL, comment VARCHAR(100) DEFAULT '' NOT NULL, CONSTRAINT PK_VAULT_COINS_ORDERS PRIMARY KEY (pr2_purchase_id), UNIQUE (paypal_order_id))
+
+--changeset root:1574908323264-70
+CREATE TABLE vault_items (slug VARCHAR(30) NOT NULL, active BIT DEFAULT 0 NOT NULL, placement TINYINT(3) DEFAULT 0 NOT NULL COMMENT 'In what order this item should show in the store.', title VARCHAR(30) DEFAULT '' NOT NULL, description VARCHAR(100) DEFAULT '' NOT NULL, faq VARCHAR(1000) DEFAULT '' NOT NULL, price SMALLINT DEFAULT 0 NOT NULL COMMENT 'Number of coins needed to purchase this item.', max_quantity TINYINT(3) UNSIGNED DEFAULT 0 NOT NULL COMMENT 'The maximum quantity of this item available for purchase per order.', sale BIT DEFAULT 0 NOT NULL COMMENT 'Setting this to 1 will enable a sale on this item.', sale_value TINYINT(3) DEFAULT 0 NOT NULL COMMENT 'Value of sale percentage. Intended: int between 0 and 100.', sale_expires BIGINT DEFAULT 0 NOT NULL COMMENT 'Timestamp of sale expiry. 0 for infinite.', img_url VARCHAR(100) DEFAULT '' NOT NULL, img_url_small VARCHAR(100) DEFAULT '' NOT NULL, CONSTRAINT PK_VAULT_ITEMS PRIMARY KEY (slug), UNIQUE (placement))
+
+--changeset root:1574908323264-70
+CREATE TABLE vault_purchases (purchase_id INT NOT NULL AUTO_INCREMENT, user_id INT DEFAULT 0 NOT NULL, guild_id INT DEFAULT 0 NOT NULL, slug VARCHAR(30) DEFAULT '' NOT NULL COMMENT 'Slug of the item purchased.', quantity TINYINT(3) UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Quantity of the item purchased.', coins SMALLINT(5) UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Coins used to purchase this quantity of the item.', time BIGINT DEFAULT 0 NOT NULL, status VARCHAR(20) DEFAULT 'incomplete' NOT NULL, PRIMARY KEY (purchase_id))
 
 --changeset root:1574908323264-39
 ALTER TABLE campaigns ADD CONSTRAINT `level_id-campaign` UNIQUE (level_id, campaign);

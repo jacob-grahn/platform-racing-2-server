@@ -21,15 +21,13 @@ try {
     // make sure you're an admin
     $admin = check_moderator($pdo, null, true, 3);
 
-    // lookup
+    // build page
     if ($action === 'lookup') {
         output_form($pdo, $message, $campaign_id);
-    } // update
-    elseif ($action === 'update') {
+    } elseif ($action === 'update') {
         update($pdo, $admin, $campaign_id);
-    } // this should never happen
-    else {
-        throw new Exception("Invalid action specified.");
+    } else {
+        throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
     output_header('Error');

@@ -25,21 +25,30 @@ function output_pagination($start, $count, $extra = '', $is_end = false)
 
 
 // standard header
-function output_header($title = '', $staff_nav = false, $show_admin = false)
+function output_header($title = '', $staff_nav = false, $show_admin = false, $call_jquery = false, $head_extras = [])
 {
     echo "<!DOCTYPE html>"
         ."<html xmlns='http://www.w3.org/1999/xhtml'>"
         ."<head>"
             ."<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />"
+            ."<meta name='viewport' content='width=device-width, initial-scale=1'>"
+            ."<meta http-equiv='X-UA-Compatible' content='IE=edge' />"
             ."<title>PR2 Hub - $title</title>"
             ."<link href='/style/gwibble.css' rel='stylesheet' type='text/css' />"
             ."<link href='/style/pr2hub.css' rel='stylesheet' type='text/css'/>";
+    
+    foreach ($head_extras as $extra) {
+        echo $extra;
+    }
+
+    if ($call_jquery || $staff_nav) {
+        echo '<script src="https://code.jquery.com/jquery-latest.min.js"></script>'
+            .'<script src="https://malsup.github.io/jquery.form.js"></script>';
+    }
 
     // mod header
     if ($staff_nav === true) {
-        echo '<script src="https://code.jquery.com/jquery-latest.min.js"></script>'
-            .'<script src="https://malsup.github.io/jquery.form.js"></script>'
-            .'<script src="/scripts/mod.js"></script>';
+        echo '<script src="/scripts/mod.js"></script>';
         if ($show_admin === true) {
             echo '<script src="/scripts/admin.js"></script>';
         }

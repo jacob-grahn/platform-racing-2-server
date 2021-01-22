@@ -5,7 +5,7 @@ header("Content-type: text/plain");
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/servers.php';
 
-$server_id = (int) default_get('server_id', 0);
+$server_id = (int) default_post('server_id', 0);
 $ip = get_ip();
 
 $ret = new stdClass();

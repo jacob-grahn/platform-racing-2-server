@@ -32,8 +32,8 @@ try {
 
     // decrypt data from client
     $encryptor = new \pr2\http\Encryptor();
-    $encryptor->setKey($CHANGE_EMAIL_KEY);
-    $str_data = $encryptor->decrypt($encrypted_data, $CHANGE_EMAIL_IV);
+    $encryptor->setKey($ACCOUNT_CHANGE_KEY);
+    $str_data = $encryptor->decrypt($encrypted_data, $ACCOUNT_CHANGE_IV);
     $data = json_decode($str_data);
     $new_email = $data->email;
     $pass = $data->pass;

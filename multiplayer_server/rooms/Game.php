@@ -14,6 +14,7 @@ class Game extends Room
     const LEVEL_CHEESE = 6207945; // for cheese hat
     const LEVEL_BLOBFISH = 5985129; // for blobfish head
     const LEVEL_TURKEY = 2585329; // for epic turkey set
+    const LEVEL_EPIC_BEE = 6502430; // for epic bee body
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -219,6 +220,11 @@ class Game extends Room
                 Prizes::$EPIC_TURKEY_FEET
             ];
             $this->prize = $turkey_prizes[array_rand($turkey_prizes)];
+        }
+
+        // Zerostar (SuperJump) by Overbeing; Awards: Epic Bee Body
+        if ($this->course_id == self::LEVEL_EPIC_BEE) {
+            $this->prize = Prizes::$EPIC_BEE_BODY;
         }
         
         // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
@@ -707,8 +713,7 @@ class Game extends Room
             $welcome_back_bonus = 0;
             if ($player->exp_today == 0 && $player->rank >= 5) {
                 $welcome_back_bonus = 1000;
-            } // level bonus
-            else {
+            } else { // level bonus
                 $level_bonus = $this->applyExpCurve($player, 25 * $time_mod);
                 
                 // sanity check, think it works fine here
@@ -1099,8 +1104,7 @@ class Game extends Room
                 $forfeit = $rs->quit_race ? ($this->mode === self::MODE_EGG ? '0' : 'forfeit') : '';
                 $str .= '`' . $rs->name . '`' . $forfeit . '`' . $rs->drawing . '`' . $rs->still_here;
             }
-        } // if not, broadcast as normal
-        else {
+        } else { // if not, broadcast as normal
             foreach ($this->finish_array as $rs) {
                 $obj_reached = $finish_time = null;
                 if ($this->mode === self::MODE_EGG) {

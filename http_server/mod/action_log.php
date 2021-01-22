@@ -8,8 +8,9 @@ require_once QUERIES_DIR . '/prize_actions.php';
 $mode = strtolower(default_get('mode', 'mod'));
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
-$ip = get_ip();
 
+$ip = get_ip();
+$header = false;
 try {
     // rate limiting
     rate_limit('mod-action-log-'.$ip, 5, 3);
@@ -23,14 +24,20 @@ try {
     // check mode
     $mode = !in_array($mode, ['mod', 'prize']) ? 'mod' : $mode;
 
-    // get actions for this page
-    $fn = "{$mode}_actions_select";
-    $actions = $fn($pdo, $start, $count);
-
     // output header
     $disp_mode = ucfirst($mode);
     output_header("$disp_mode Action Log", $staff->mod, $staff->admin);
+    $header = true;
 
+    // don't let trial mods use this
+    if ($staff->trial) {
+        throw new Exception('You lack the power to access this resource.');
+    }
+
+    // get actions for this page
+    $fn = "{$mode}_actions_select";
+    $actions = $fn($pdo, $start, $count);
+    
     // navigation
     output_pagination($start, $count, "&mode=$mode");
     echo '<p>---</p>';
@@ -46,8 +53,10 @@ try {
     output_pagination($start, $count, "&mode=$mode");
 } catch (Exception $e) {
     $error = $e->getMessage();
-    output_header("Error", $staff->mod, $staff->admin);
-    echo "Error: $error";
+    if (!$header) {
+        output_header("Error", $staff->mod, $staff->admin);
+    }
+    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
 } finally {
     output_footer();
 }

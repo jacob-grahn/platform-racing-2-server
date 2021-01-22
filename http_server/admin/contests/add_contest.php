@@ -20,19 +20,17 @@ try {
     // make sure you're an admin
     $admin = check_moderator($pdo, null, true, 3);
 
-    // add
-    if ($action === 'add') {
+    // build page
+    if ($action === 'form') {
+        output_header('Add Contest', true, true);
+        output_form();
+        output_footer();
+    } elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
         add_contest($pdo, $admin);
-    } // form
-    elseif ($action === 'form') {
-        output_header('Add Contest', true, true);
-        output_form();
-        output_footer();
-    } // no matching action
-    else {
+    } else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {

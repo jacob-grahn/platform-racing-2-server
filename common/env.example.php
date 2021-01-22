@@ -3,6 +3,8 @@
 $BLS_IP_PREFIX = 'test';
 $SERVER_IP = '127.0.0.1';
 
+$DEBUG_MODE = false; // always set to false in production environments
+
 $DB_ADDRESS = 'mysql';
 $DB_PASS = 'pr2';
 $DB_USER = 'pr2';
@@ -36,9 +38,7 @@ $IP_API_LINK_SUF = 'a link suf';
 $IP_API_SCORE_MIN = /* over */ 9000;
 $IP_API_LINK_2 = 'another link';
 
-$VAULT_SALE = false;
-$VAULT_SALE_TITLE = '';
-$VAULT_SALE_PERC = 0; // decimal between 0 and 1
+$VAULT_TITLE = '';
 
 $BANNED_IP_PREFIXES = [
     '127.0.0.',
@@ -47,8 +47,17 @@ $BANNED_IP_PREFIXES = [
 
 $KONG_API_PASS = 'ghi';
 
-$CHANGE_EMAIL_KEY = 'why did I do this';
-$CHANGE_EMAIL_IV = 'why oh why';
+$PAYPAL_SANDBOX = false; // always set to false in production environments
+$PAYPAL_API_ENDPOINT = $PAYPAL_SANDBOX ? 'https://api.sandbox.paypal.com' : 'https://api.paypal.com';
+$PAYPAL_CLIENT_ID = $PAYPAL_SANDBOX ? 'sandbox client id' : 'production client id';
+$PAYPAL_SECRET = $PAYPAL_SANDBOX ? 'sandbox secret' : 'production secret';
+
+$PAYPAL_DATA_KEY = 'elon';
+$PAYPAL_DATA_IV = 'musk';
+
+$URL_SALT = 'haha';
+$URL_KEY = 'encryption';
+$URL_IV = 'go brrr';
 
 $LEVEL_LIST_SALT = 'why does this exist?';
 $LEVEL_SALT = 'fa';
@@ -59,6 +68,9 @@ $LEVEL_PASS_IV = 'la';
 
 $LOGIN_KEY = 'hello';
 $LOGIN_IV = 'there';
+
+$ACCOUNT_CHANGE_KEY = 'why did I do this';
+$ACCOUNT_CHANGE_IV = 'why oh why';
 
 $ALLOWED_CLIENT_VERSIONS = array('weeeee version', 'weeeee new version');
 $FALLBACK_ADDRESSES = array($SERVER_IP);

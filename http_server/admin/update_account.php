@@ -22,7 +22,7 @@ try {
     // make sure you're an admin
     $admin = check_moderator($pdo, null, true, 3);
 
-    // form
+    // build page
     if ($action === 'lookup') {
         $header = true;
         output_header('Update PR2 Account', true, true);
@@ -73,8 +73,7 @@ try {
             .'<br>'
             .'Find what each part ID is <a href="part_ids.php" target="blank">here</a>.<br><br>'
             .'NOTE: Make sure the user is logged out of PR2 before trying to change parts.</pre>';
-    } // update
-    elseif ($action === 'update') {
+    } elseif ($action === 'update') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
@@ -228,8 +227,7 @@ try {
 
         header("Location: player_deep_info.php?name1=" . urlencode($user_name));
         die();
-    } // this won't happen under normal circumstances
-    else {
+    } else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {

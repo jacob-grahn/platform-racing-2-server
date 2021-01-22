@@ -43,7 +43,7 @@ try {
     output_header('Remove Contest Prize', true, true);
     $header = true;
 
-    // form
+    // build page
     if ($action === 'form') {
         $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
         echo "Remove Prizes from <b>$html_contest_name</b>"
@@ -85,8 +85,7 @@ try {
         echo '<br>';
         echo '<pre>Check the boxes of the prizes you wish to remove.<br>'
             .'When you\'re done, click "Remove Contest Prize(s)".</pre>';
-    } // remove
-    elseif ($action === 'remove') {
+    } elseif ($action === 'remove') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
         }
@@ -137,8 +136,7 @@ try {
         echo "<br><br>";
         echo "<a href='add_prize.php?contest_id=$contest_id'>&lt;- Add Prize</a><br>";
         echo "<a href='/contests/contests.php'>&lt;- All Contests</a>";
-    } // unknown handler
-    else {
+    } else {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {

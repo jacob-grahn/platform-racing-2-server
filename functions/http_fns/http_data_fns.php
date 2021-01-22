@@ -1,15 +1,6 @@
 <?php
 
 
-// -- AUTH -- \\
-
-// generates a login token
-function get_login_token($user_id)
-{
-    return $user_id . '-' . random_str(30);
-}
-
-
 // -- SERVER -- \\
 
 // gets a variable from $_GET array, or default if it doesn't exist
@@ -267,6 +258,33 @@ function format_level_list($levels)
     }
 
     return json_encode($ret);
+}
+
+
+/**
+ * Format a vault item for easy handling.
+ *
+ * @param string url The URL to query.
+ *
+ * @return object
+ * @return string
+ */
+function format_vault_item($item)
+{
+    unset($item->active, $item->placement);
+    $item->price = (int) $item->price;
+
+    // sale
+    $sale = new stdClass();
+    $sale->active = (bool) (int) $item->sale;
+    if ($sale->active) {
+        $sale->value = (int) $item->sale_value;
+        $sale->expires = (int) $item->sale_expires;
+    }
+    $item->sale = $sale;
+    unset($item->sale_value, $item->sale_expires);
+
+    return $item;
 }
 
 
