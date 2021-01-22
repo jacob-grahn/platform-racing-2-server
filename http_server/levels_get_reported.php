@@ -20,7 +20,9 @@ try {
 
     // check if logged in and a moderator
     $user_id = (int) token_login($pdo, true, false, 'g');
-    check_moderator($pdo, $user_id);
+    if (check_moderator($pdo, $user_id)->trial_mod) {
+        throw new Exception('You lack the power to access this resource.');
+    }
 
     // more rate limiting
     rate_limit('levels-get-reported-'.$user_id, 5, 2);
