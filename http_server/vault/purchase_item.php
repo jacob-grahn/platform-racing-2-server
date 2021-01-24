@@ -98,7 +98,7 @@ try {
     $ret->success = true;
     $ret->message = $result;
 } catch (Exception $e) {
-    $ret->error = 'Error: ' . $e->getMessage();
+    $ret->error = $e->getMessage();
     if ($coins_deducted !== false) {
         user_update_coins($pdo, $user_id, $coins_deducted);
     }
