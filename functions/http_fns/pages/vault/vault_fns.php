@@ -161,8 +161,12 @@ function vault_purchase_item($pdo, $user, $item, $price, $quantity = 1)
         @poll_servers(servers_select($pdo), $command, false, isset($target_servers) ? $target_servers : []);
     }
 
+    // get active purchase (to calculate start time)
+    $active_purchase = vault_purchase_select_active($pdo, $slug, $user_id, $guild_id);
+    $start_time = !empty($active_purchase) ? $active_purchase->start_time + ($quantity * 3600) : time();
+
     // complete
-    vault_purchase_complete($pdo, $order_id);
+    vault_purchase_complete($pdo, $order_id, $start_time);
     send_confirmation_pm($pdo, $user_id, $order_id, $item->title, $price, $quantity);
     return $reply;
 }

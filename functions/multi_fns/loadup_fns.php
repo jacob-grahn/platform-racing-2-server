@@ -12,7 +12,7 @@ function begin_loadup($server_id)
     set_campaign($campaign);
 
     // activate vault items
-    $perks = db_op('vault_purchases_select_recent');
+    $perks = db_op('vault_purchases_select_active');
     activate_perks($perks);
 
     // place the artifact
@@ -71,11 +71,11 @@ function set_campaign($campaign_levels)
 function activate_perks($perks)
 {
     foreach ($perks as $perk) {
-        $expire_time = ($perk->quantity * 3600) + $perk->time;
+        $expire_time = $perk->start_time + ($perk->quantity * 3600);
         if ($expire_time <= time()) {
             continue;
         }
         output("Activating: $perk->slug | User: $perk->user_id | Guild: $perk->guild_id | Quantity: $perk->quantity");
-        start_perk($perk->slug, $perk->user_id, $perk->guild_id, $expire_time);
+        start_perk($perk->slug, $perk->user_id, $perk->guild_id, $expire_time, $perk->start_time);
     }
 }
