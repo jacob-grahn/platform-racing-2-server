@@ -63,7 +63,7 @@ try {
     // handle quantities
     if ($slug === 'rank_rental') {
         $rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
-        if ($rented_tokens + $quantity >= $item->max_quantity) {
+        if ($rented_tokens + $quantity > $item->max_quantity) {
             throw new Exception("You may not rent more than $item->max_quantity rank tokens at once.");
         }
     } elseif ($quantity > $item->max_quantity) {
@@ -87,8 +87,7 @@ try {
 
     // check coins
     if ($user->coins < $price) {
-        $coins_link = urlify('https://pr2hub.com/vault/buy_coins.php', 'Click here to purchase more!');
-        throw new Exception("You don't have enough coins to purchase this item. $coins_link");
+        throw new Exception('You don\'t have enough coins to purchase this item.');
     }
 
     // place the order
@@ -98,7 +97,7 @@ try {
     $ret->success = true;
     $ret->message = $result;
 } catch (Exception $e) {
-    $ret->error = 'Error: ' . $e->getMessage();
+    $ret->error = $e->getMessage();
     if ($coins_deducted !== false) {
         user_update_coins($pdo, $user_id, $coins_deducted);
     }
