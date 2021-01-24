@@ -179,9 +179,10 @@ function send_to_guild($guild_id, $str)
 
 
 // vault: start a perk
-function start_perk($slug, $user_id, $guild_id, $expire_time = 0)
+function start_perk($slug, $user_id, $guild_id, $expire_time = 0, $start_time = 0)
 {
-    $seconds_duration = $expire_time - time();
+    $seconds_elapsed = !empty($start_time) && time() > $start_time ? time() - $start_time : 0;
+    $seconds_duration = $expire_time - ($seconds_elapsed > 0 ? $start_time + $seconds_elapsed : time());
     if ($seconds_duration <= 0) {
         return;
     }

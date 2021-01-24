@@ -13,8 +13,8 @@ class TemporaryItems
         $match = false;
         foreach (self::$items as $item) {
             if ($item->type === $type
-                && $item->part_id === $part_id
-                && ($item->guild_id === $guild_id || $item->user_id === $part_id)
+                && $item->part_id == $part_id
+                && ($item->guild_id == $guild_id || $item->user_id == $user_id)
             ) {
                 $item->expire_time += $duration;
                 $match = true;
@@ -59,6 +59,20 @@ class TemporaryItems
             }
         }
         return $parts;
+    }
+
+
+    public static function getStatus($user_id, $guild_id)
+    {
+        $status = [];
+        $items = self::getItems($user_id, $guild_id);
+        foreach ($items as $item) {
+            if ($item->user_id === $user_id || $item->guild_id === $guild_id && $item->expire_time > time()) {
+                $item->remaining = $item->expire_time - time();
+                $status[] = $item;
+            }
+        }
+        return $status;
     }
 
 
