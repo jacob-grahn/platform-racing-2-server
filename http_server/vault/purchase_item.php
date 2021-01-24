@@ -63,7 +63,7 @@ try {
     // handle quantities
     if ($slug === 'rank_rental') {
         $rented_tokens = rank_token_rentals_count($pdo, $user->user_id, $user->guild);
-        if ($rented_tokens + $quantity >= $item->max_quantity) {
+        if ($rented_tokens + $quantity > $item->max_quantity) {
             throw new Exception("You may not rent more than $item->max_quantity rank tokens at once.");
         }
     } elseif ($quantity > $item->max_quantity) {
