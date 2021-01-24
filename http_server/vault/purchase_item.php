@@ -87,8 +87,7 @@ try {
 
     // check coins
     if ($user->coins < $price) {
-        $coins_link = urlify('https://pr2hub.com/vault/buy_coins.php', 'Click here to purchase more!');
-        throw new Exception("You don't have enough coins to purchase this item. $coins_link");
+        throw new Exception('You don\'t have enough coins to purchase this item.');
     }
 
     // place the order
