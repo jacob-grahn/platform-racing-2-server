@@ -62,6 +62,20 @@ class TemporaryItems
     }
 
 
+    public static function getStatus($user_id, $guild_id)
+    {
+        $status = [];
+        $items = self::getItems($user_id, $guild_id);
+        foreach ($items as $item) {
+            if ($item->user_id === $user_id || $item->guild_id === $guild_id && $item->expire_time > time()) {
+                $item->remaining = $item->expire_time - time();
+                $status[] = $item;
+            }
+        }
+        return $status;
+    }
+
+
     public static function removeExpired()
     {
         $time = time();
