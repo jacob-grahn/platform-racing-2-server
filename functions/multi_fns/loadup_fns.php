@@ -35,7 +35,7 @@ function configure_server($server)
     $server_name = $server->server_name;
     $server_expire_time = (int) $server->expire_time;
     $guild_id = (int) $server->guild_id;
-    $is_ps = $guild_id !== 0 && $guild_id !== 183;
+    $is_ps = $guild_id !== 0 && $guild_id !== 183 && $guild_id !== 205;
 
     // no prizes on tournament
     \pr2\multi\PR2SocketServer::$tournament = (bool) (int) $server->tournament;
