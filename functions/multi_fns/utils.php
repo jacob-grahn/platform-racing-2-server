@@ -308,7 +308,7 @@ function get_priors($mod, $name)
 
             // make name/ip str
             $nameip_str = $acc_ban ? $nameip_str . $banned_name : $nameip_str;
-            $nameip_str = $ip_ban && !$user->trial_mod ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
+            $nameip_str = $ip_ban && !$mod->trial_mod ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
             $nameip_str = trim($nameip_str);
 
             // check if lifted
@@ -338,7 +338,7 @@ function get_priors($mod, $name)
     $ip_bans = db_op('bans_select_by_ip', array($ip));
     $ip_ban_count = (int) count($ip_bans);
     $ip_link = urlify("https://pr2hub.com/mod/ip_info.php?ip=$ip", $ip);
-    $ip_lang = 'IP' . (!$user->trial_mod ? " ($ip_link)" : '');
+    $ip_lang = 'IP' . (!$mod->trial_mod ? " ($ip_link)" : '');
     $str .= "This $ip_lang has been banned $ip_ban_count times.<br><br>";
 
     // make account bans list
@@ -365,8 +365,8 @@ function get_priors($mod, $name)
 
             // make name/ip str
             $nameip_str = $acc_ban ? $nameip_str . $banned_name : $nameip_str;
-            $nameip_str = $ip_ban && !$user->trial_mod ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
-            $nameip_str = is_empty($nameip_str) && $user->trial_mod ? '<i>an IP</i>' : trim($nameip_str);
+            $nameip_str = $ip_ban && !$mod->trial_mod ? $nameip_str . ' [' . $banned_ip . ']' : $nameip_str;
+            $nameip_str = is_empty($nameip_str) && $mod->trial_mod ? '<i>an IP</i>' : trim($nameip_str);
 
             // check if lifted
             if ($lifted) {
