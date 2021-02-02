@@ -123,7 +123,7 @@ try {
         $capture = $captured_data->purchase_units[0]->payments->captures[0];
         if (!$capture->final_capture) {
             throw new Exception('Your payment could not be captured.');
-        } elseif ($capture->status !== 'COMPLETED') {
+        } elseif ($capture->status !== 'COMPLETED' && $capture->status !== 'PENDING') {
             throw new Exception('This order is incomplete.');
         }
 
