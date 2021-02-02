@@ -7,7 +7,6 @@ require_once HTTP_FNS . '/pages/vault/vault_fns.php';
 require_once QUERIES_DIR . '/servers.php';
 require_once QUERIES_DIR . '/rank_token_rentals.php';
 
-$beta = (int) default_get('beta', 0);
 $ip = get_ip();
 
 $ret = new stdClass();
@@ -17,11 +16,6 @@ try {
     // rate limiting
     rate_limit('vault-listing-'.$ip, 3, 1);
     rate_limit('vault-listing-'.$ip, 15, 4);
-
-    // close the vault for people not on the beta client
-    if ($beta !== 1) {
-        throw new Exception('The vault is currently disabled. Check back later!');
-    }
 
     // connect
     $pdo = pdo_connect();
