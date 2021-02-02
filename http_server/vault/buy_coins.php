@@ -33,7 +33,7 @@ try {
     }
 
     // sanity: older than 5 mins?
-    if ($time_started + 300 < time() || $time_started > time()) {
+    if ($time_started + 300 < time() || $time_started > time() + 15) {
         throw new Exception('Your request timed out. Please return to PR2 to restart the order process.');
     }
 
