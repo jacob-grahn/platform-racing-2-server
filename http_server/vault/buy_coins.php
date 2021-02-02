@@ -236,7 +236,6 @@ try {
                         coin_option: parseInt($('input[name="opt_sel"]:checked').val()),
                         order_id: data.orderID
                     }
-                    console.log('obj: ' + JSON.stringify(obj));
 
                     // redirect to confirm order page
                     var form = document.createElement('form');
@@ -254,7 +253,7 @@ try {
                 },
 
                 onError: function(err) {
-                    console.log(err);
+                    console.error(err);
                 }
             }).render('#paypal-button-container');
         </script>
