@@ -50,7 +50,7 @@ try {
     }
 
     // get IP info
-    $ip_geo = http_get_contents($IP_API_LINK_2 . $ip);
+    $ip_geo = http_get_contents($IP_API_LINK_2 . $ip, ['User-Agent: keycdn-tools:https://pr2hub.com']);
     if ($ip_geo !== false) {
         $ip_geo = json_decode($ip_geo);
     }

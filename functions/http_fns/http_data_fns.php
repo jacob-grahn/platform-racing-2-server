@@ -126,14 +126,15 @@ function send_email($from, $to, $subject, $body)
  * @return object
  * @return string
  */
-function http_get_contents($url)
+function http_get_contents($url, $headers = [])
 {
     // init and set options
     $ch = curl_init();
     $opts = array(
         CURLOPT_TIMEOUT => 5,
         CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => $headers
     );
 
     // apply options and process request
