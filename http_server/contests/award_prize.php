@@ -137,7 +137,7 @@ try {
         echo '<pre>Check the boxes of the prizes you wish to award.'
             .'<br>When you\'re done, click "Award Prize(s)".';
         if ($is_staff->mod === false && $is_staff->admin === false) {
-            echo '<br><br><b>WARNING: Awarding prizes to players who have not won your contest'
+            echo '<br><br><b>WARNING: Awarding prizes to players who have not won your contest '
                 .'will result in disciplinary action.<br>'
                 .'If you have a special case and are unsure of what to do, '
                 .'ask a member of the PR2 Staff Team for help.</b>';
