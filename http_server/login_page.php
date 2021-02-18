@@ -17,7 +17,7 @@ $ip = get_ip();
 $header = false;
 try {
     // rate limit
-    rate_limit('login-browser-'.$ip, 10, 3);
+    rate_limit('login-page-'.$ip, 10, 3);
 
     // connect
     $pdo = pdo_connect();
@@ -25,7 +25,7 @@ try {
     // check if already logged in
     $user_id = token_login($pdo, true, true);
     if ($user_id !== false) {
-        rate_limit('login-browser-'.$user_id, 15, 1);
+        rate_limit('login-page-'.$user_id, 15, 1);
         throw new Exception('You are already logged in.');
     }
 
@@ -109,7 +109,7 @@ try {
 
         // record moderator login
         if ($user->power > 1 || in_array($user_id, $special_ids)) {
-            mod_action_insert($pdo, $user_id, "$name logged in via login_browser.php from $ip", 'login_browser', $ip);
+            mod_action_insert($pdo, $user_id, "$name logged in via login_page.php from $ip", 'login_page', $ip);
         }
 
         // update/record data
