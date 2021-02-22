@@ -10,8 +10,6 @@ $action = default_post('action', 'edit');
 $ban_id = (int) default_get('ban_id', 0);
 $ip = get_ip();
 
-$header = false;
-
 // non-validated try/catch
 try {
     // rate limiting
@@ -91,7 +89,6 @@ try {
         header("Location: /bans/show_record.php?ban_id=$b_id");
         die();
     } elseif ($action === 'edit') {
-        $header = true;
         output_header('Edit Ban', $mod->power >= 2, (int) $mod->power === 3);
 
         // establish if ip/account ban
@@ -122,11 +119,8 @@ try {
         throw new Exception('Unknown action specified.');
     }
 } catch (Exception $e) {
-    if ($header === false) {
-        output_header('Error');
-    }
-    $error = $e->getMessage();
-    echo "Error: $error";
+    output_header('Error');
+    echo 'Error: ' . $e->getMessage();
 } finally {
     output_footer();
 }

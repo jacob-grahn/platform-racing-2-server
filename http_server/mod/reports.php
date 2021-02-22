@@ -43,7 +43,6 @@ try {
     $staff = is_staff($pdo, token_login($pdo), false, true);
 
     // output header
-    $header = true;
     output_header('Reported ' . ucfirst($mode), $staff->mod, $staff->admin);
 
     // deny access to trial mods
@@ -179,9 +178,7 @@ try {
     echo '<p>---</p>';
     output_pagination($start, $count, "&mode=$mode");
 } catch (Exception $e) {
-    if (!isset($header)) {
-        output_header("Error");
-    }
+    output_header("Error");
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
 } finally {

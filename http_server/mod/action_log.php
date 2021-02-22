@@ -10,7 +10,7 @@ $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
 
 $ip = get_ip();
-$header = false;
+
 try {
     // rate limiting
     rate_limit('mod-action-log-'.$ip, 5, 3);
@@ -27,7 +27,6 @@ try {
     // output header
     $disp_mode = ucfirst($mode);
     output_header("$disp_mode Action Log", $staff->mod, $staff->admin);
-    $header = true;
 
     // don't let trial mods use this
     if ($staff->trial) {
@@ -52,10 +51,8 @@ try {
     echo '<p>---</p>';
     output_pagination($start, $count, "&mode=$mode");
 } catch (Exception $e) {
+    output_header("Error", $staff->mod, $staff->admin);
     $error = $e->getMessage();
-    if (!$header) {
-        output_header("Error", $staff->mod, $staff->admin);
-    }
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
 } finally {
     output_footer();

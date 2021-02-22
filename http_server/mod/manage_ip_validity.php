@@ -11,7 +11,6 @@ $ip = get_ip();
 $mode = default_post('mode', 'form');
 $action = default_post('action', '');
 $token = default_post('token');
-$header = false;
 
 try {
     // rate limiting
@@ -30,7 +29,6 @@ try {
     }
 
     // output header
-    $header = true;
     output_header('IP Validity Management', true, $mod->admin);
 
     if ($mode === 'form') {
@@ -204,9 +202,7 @@ try {
     }
 } catch (Exception $e) {
     $power = isset($mod) ? $mod->power : 0;
-    if ($header === false) {
-        output_header('Error', $power >= 2, (int) $power === 3);
-    }
+    output_header('Error', $power >= 2, (int) $power === 3);
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
 } finally {

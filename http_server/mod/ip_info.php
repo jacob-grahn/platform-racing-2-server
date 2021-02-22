@@ -9,7 +9,6 @@ require_once QUERIES_DIR . '/ip_validity.php';
 require_once QUERIES_DIR . '/recent_logins.php';
 
 $ip = default_get('ip', '');
-$header = false;
 
 try {
     // rate limiting
@@ -23,7 +22,6 @@ try {
     $staff = is_staff($pdo, token_login($pdo), false, true);
 
     // header
-    $header = true;
     output_header('IP Info', $staff->mod, $staff->admin);
 
     // check for trial mod
@@ -156,9 +154,7 @@ try {
             | Last Active: $active<br>";
     }
 } catch (Exception $e) {
-    if ($header === false) {
-        output_header('Error');
-    }
+    output_header('Error');
     $error = $e->getMessage();
     echo !empty($error) ? "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>" : '';
 } finally {

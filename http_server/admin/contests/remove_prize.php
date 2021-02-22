@@ -9,7 +9,6 @@ require_once QUERIES_DIR . '/contest_prizes.php';
 $ip = get_ip();
 $contest_id = (int) find_no_cookie('contest_id', 0);
 $action = default_post('action', 'form');
-$header = false;
 
 try {
     // rate limiting
@@ -41,7 +40,6 @@ try {
 
     // header
     output_header('Remove Contest Prize', true, true);
-    $header = true;
 
     // build page
     if ($action === 'form') {
@@ -140,9 +138,7 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    if ($header === false) {
-        output_header('Error');
-    }
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
 } finally {

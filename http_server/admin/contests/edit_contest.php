@@ -9,7 +9,6 @@ require_once QUERIES_DIR . '/contests.php';
 $ip = get_ip();
 $action = default_post('action', 'form');
 $contest_id = (int) find_no_cookie('contest_id', 0);
-$header = false;
 
 try {
     // rate limiting
@@ -30,7 +29,6 @@ try {
 
     // build page
     if ($action === 'form') {
-        $header = true;
         output_header('Edit Contest', true, true);
         output_form($contest);
         output_footer();
@@ -43,9 +41,7 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    if ($header === false) {
-        output_header('Error');
-    }
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
     output_footer();

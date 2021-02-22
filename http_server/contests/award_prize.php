@@ -12,7 +12,6 @@ require_once QUERIES_DIR . '/prize_actions.php';
 $ip = get_ip();
 $contest_id = (int) find('contest_id', 0);
 $action = find('action', 'form');
-$header = false;
 
 try {
     // rate limiting
@@ -65,7 +64,6 @@ try {
     }
 
     // header
-    $header = true;
     output_header('Award Prize', $is_mod, $is_admin);
 
     // get prizes info for this contest
@@ -344,9 +342,7 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    if ($header === false) {
-        output_header("Error", $is_mod, $is_admin);
-    }
+    output_header("Error", $is_mod, $is_admin);
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
 } finally {
