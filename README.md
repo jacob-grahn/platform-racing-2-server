@@ -14,7 +14,7 @@ All contributions are welcome; however, please keep these things in mind when co
 - Do not post an issue on the repo for things that are not issues with the code.
 - Do not submit malicious pull requests.
 
-To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com/forums/forumdisplay.php?fid=45) section on [the JV2 forums](https://jiggmin2.com/forums). To appeal PR2 bans, post a thread in the [Ask a Mod](https://jiggmin2.com/aam) section.
+To submit new ideas, post a thread in the [PR2 Suggestions](https://jiggmin2.com/forums/forumdisplay.php?fid=45) section on [Jiggmin's Village](https://jiggmin2.com/forums). You can use [this process](https://jiggmin2.com/forums/showthread.php?tid=110) to appeal PR2 bans.
 
 ## Collaborators
 - [bls1999](https://github.com/bls1999)
