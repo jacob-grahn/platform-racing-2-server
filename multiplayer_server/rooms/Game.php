@@ -1185,10 +1185,6 @@ class Game extends Room
             && $target->pos_x > $player->pos_x - 50
             && $target->pos_x < $player->pos_x + 50
         ) {
-            $tempID = $player->temp_id;
-            $posX = $target->pos_x;
-            $posY = $target->pos_y - 90; // maybe fixes this: https://jiggmin2.com/forums/showthread.php?tid=1782
-            $this->sendToRoom("exactPos$tempID`$posX`$posY", $player->user_id); // is this needed?
             $this->sendToRoom("squash$target->temp_id`", $player->user_id);
         }
     }
