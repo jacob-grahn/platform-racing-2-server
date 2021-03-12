@@ -27,6 +27,15 @@ function output_pagination($start, $count, $extra = '', $is_end = false)
 // standard header
 function output_header($title = '', $staff_nav = false, $show_admin = false, $call_jquery = false, $head_extras = [])
 {
+    global $header;
+
+    // don't echo twice
+    if (@$header) {
+        return;
+    } elseif (empty($header)) {
+        $header = true;
+    }
+
     echo "<!DOCTYPE html>"
         ."<html xmlns='http://www.w3.org/1999/xhtml'>"
         ."<head>"

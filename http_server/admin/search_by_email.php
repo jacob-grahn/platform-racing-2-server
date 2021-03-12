@@ -6,7 +6,6 @@ require_once HTTP_FNS . '/pages/admin/search_by_email_fns.php';
 
 $ip = get_ip();
 $email = find_no_cookie('email', '');
-$header = false;
 
 try {
     // rate limiting
@@ -19,7 +18,7 @@ try {
     // make sure you're an admin
     is_staff($pdo, token_login($pdo), false, true, 3);
 
-    $header = true;
+    // header
     output_header('Deep Email Search', true, true);
 
     // sanity check: no email in search box
@@ -57,9 +56,7 @@ try {
         }
     }
 } catch (Exception $e) {
-    if ($header === false) {
-        output_header('Error');
-    }
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error";
 } finally {

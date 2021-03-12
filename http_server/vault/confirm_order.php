@@ -12,7 +12,6 @@ $num_option = (int) default_post('coin_option', '');
 $order_id = default_post('order_id', '');
 
 $ip = get_ip();
-$header = false;
 $suppl = ' Please return to PR2 to restart the order process.';
 try {
     // rate limiting
@@ -117,7 +116,6 @@ try {
     $encrypted_send_data = $encryptor->encrypt(json_encode($send_data), $PAYPAL_DATA_IV);
 
     // start page
-    $header = true;
     $head_extras = [
         '<link href="/style/vault.css" rel="stylesheet" type="text/css" />'
     ];
@@ -195,11 +193,7 @@ try {
     <?php
     // phpcs:enable
 } catch (Exception $e) {
-    if ($header === false) {
-        $is_mod = isset($user->power) && $user->power >= 2;
-        $is_admin = isset($user->power) && $user->power == 3;
-        output_header('Confirm Order', $is_mod, $is_admin);
-    }
+    output_header('Confirm Order', isset($user->power) && $user->power >= 2, isset($user->power) && $user->power == 3);
     echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . (isset($coins_options) ? $suppl : '');
 } finally {
     output_footer();

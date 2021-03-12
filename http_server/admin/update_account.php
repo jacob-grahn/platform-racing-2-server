@@ -9,7 +9,6 @@ require_once QUERIES_DIR . '/changing_emails.php';
 $ip = get_ip();
 $user_id = (int) default_get('id', 0);
 $action = default_post('action', 'lookup');
-$header = false;
 
 try {
     // rate limiting
@@ -24,7 +23,6 @@ try {
 
     // build page
     if ($action === 'lookup') {
-        $header = true;
         output_header('Update PR2 Account', true, true);
     
         echo '<form name="input" action="update_account.php" method="post">';
@@ -231,9 +229,7 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    if ($header === false) {
-        output_header("Error");
-    }
+    output_header("Error");
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
 } finally {

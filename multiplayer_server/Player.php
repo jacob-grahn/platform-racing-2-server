@@ -230,7 +230,7 @@ class Player
         $ret->rank = $this->active_rank;
         $ret->hats = count($this->hat_array) - 1;
         $ret->registerDate = date('j/M/Y', $this->register_time);
-        $ret->loginDate = date('j/M/Y', $this->login_time);
+        $ret->loginDate = date('j/M/Y');
         $ret->hat = $this->hat;
         $ret->head = $this->head;
         $ret->body = $this->body;

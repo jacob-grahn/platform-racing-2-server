@@ -10,7 +10,7 @@ $PAYPAL_JS_SDK_URL = "https://www.paypal.com/sdk/js?client-id=$PAYPAL_CLIENT_ID&
 $encrypted_data = find('data', '', false);
 
 $ip = get_ip();
-$header = false;
+
 try {
     // rate limiting
     rate_limit('vault-buy-coins-'.$ip, 3, 1);
@@ -76,7 +76,6 @@ try {
     $bonuses = '[' . join(', ', $bonuses) . ']';
 
     // start page
-    $header = true;
     $head_extras = [
         '<link href="/style/vault.css" rel="stylesheet" type="text/css" />'
     ];
@@ -262,11 +261,7 @@ try {
     <?php
     // phpcs:enable
 } catch (Exception $e) {
-    if ($header === false) {
-        $is_mod = isset($user->power) && $user->power >= 2;
-        $is_admin = isset($user->power) && $user->power == 3;
-        output_header('Buy Coins', $is_mod, $is_admin);
-    }
+    output_header('Buy Coins', isset($user->power) && $user->power >= 2, isset($user->power) && $user->power == 3);
     echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES);
 } finally {
     output_footer();

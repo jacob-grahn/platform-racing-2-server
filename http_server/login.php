@@ -309,6 +309,9 @@ try {
     $ret->favoriteLevels = $favorite_levels;
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
+    if (strpos($ret->error, 'login token') !== false) {
+        $ret->resetToken = true;
+    }
 } finally {
     die(json_encode($ret));
 }

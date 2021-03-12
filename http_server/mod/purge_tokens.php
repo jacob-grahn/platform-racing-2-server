@@ -9,7 +9,6 @@ $ip = get_ip();
 $action = default_post('action', 'warning');
 $user_id = (int) default_get('user_id', 0);
 $token = default_post('token');
-$header = false;
 
 try {
     // rate limiting
@@ -32,7 +31,6 @@ try {
     $name = htmlspecialchars($user->name, ENT_QUOTES);
 
     if ($action === 'warning') {
-        $header = true;
         output_header('Purge Active Tokens', $mod->power >= 2, (int) $mod->power === 3);
         echo "Are you sure you want to purge all active login tokens for $name?<br><br>";
         echo '<form method="post">'
@@ -85,17 +83,13 @@ try {
         mod_action_insert($pdo, $mod_id, "$mod->name purged $name ($user_id)'s tokens from $ip.", 'purge-tokens', $ip);
 
         // tell the world
-        $header = true;
         output_header('Purge Active Tokens', $mod->power >= 2, (int) $mod->power === 3);
         echo 'The operation was successful. Redirecting...'
             ."<br><br><a href='$url'>(click here if you're not automatically redirected)</a>";
     }
 } catch (Exception $e) {
-    if ($header === false) {
-        output_header('Error', $mod->power >= 2, (int) $mod->power === 3);
-    }
-    $error = $e->getMessage();
-    echo "Error: $error";
+    output_header('Error', $mod->power >= 2, (int) $mod->power === 3);
+    echo 'Error: ' . $e->getMessage();
 } finally {
     output_footer();
 }

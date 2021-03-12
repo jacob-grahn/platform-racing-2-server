@@ -14,7 +14,7 @@ $pass = default_post('pass', '');
 $remember = default_post('remember');
 
 $ip = get_ip();
-$header = false;
+
 try {
     // rate limit
     rate_limit('login-page-'.$ip, 10, 3);
@@ -37,7 +37,6 @@ try {
 
     if ($action === 'form') {
         output_header('Log In');
-        $header = true;
         ?>
 
         <div>Please log into your PR2 account to continue.</div>
@@ -118,15 +117,11 @@ try {
 
         // show page
         output_header('Log In', $user->power >= 2, $user->power == 3);
-        $header = true;
-
         $html_name = htmlspecialchars($user->name, ENT_QUOTES);
         echo "Welcome, $html_name!";
     }
 } catch (Exception $e) {
-    if (!$header) {
-        output_header('Log In');
-    }
+    output_header('Log In');
     echo 'Error: ' . $e->getMessage() . '<br><br><a href="javascript:history.back()"><- Go Back</a>';
 } finally {
     output_footer();

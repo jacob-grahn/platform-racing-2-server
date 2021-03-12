@@ -6,7 +6,6 @@ require_once QUERIES_DIR . '/servers.php';
 
 $ip = get_ip();
 $file = default_get('file', '');
-$header = false;
 
 try {
     // verify origin
@@ -20,7 +19,6 @@ try {
     }
 
     // header
-    $header = true;
     output_header('Debug PR2 Servers', true, true);
 
     // build page
@@ -96,9 +94,7 @@ try {
         echo '<br><br><a href="javascript:history.back()"><- Go Back</a>';
     }
 } catch (Exception $e) {
-    if ($header === false) {
-        output_header('Error');
-    }
+    output_header('Error');
     $error = $e->getMessage();
     echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
 } finally {

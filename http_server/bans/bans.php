@@ -8,8 +8,6 @@ $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 100);
 $ip = get_ip();
 
-$header = false;
-
 try {
     // rate limiting
     rate_limit('list-bans-'.$ip, 5, 3);
@@ -20,7 +18,6 @@ try {
     // header, also check if mod and output the mod links if so
     $staff = is_staff($pdo, token_login($pdo, true, true, 'n'), false);
     $full_mod = $staff->mod && !$staff->trial;
-    $header = true;
     output_header('Ban Log', $staff->mod, $staff->admin);
 
     if (!$staff->mod) {
@@ -81,9 +78,8 @@ try {
     echo '<p>---</p>';
     output_pagination($start, $count);
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     output_header('Error');
-    echo "Error: $error";
+    echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES);
 } finally {
     output_footer();
 }

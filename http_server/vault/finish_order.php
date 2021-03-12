@@ -11,7 +11,6 @@ require_once QUERIES_DIR . '/vault_coins_orders.php';
 $encrypted_data = default_post('data', '');
 
 $ip = get_ip();
-$header = false;
 $suppl = ' Please return to PR2 to restart the order process.';
 try {
     // rate limiting
@@ -153,7 +152,6 @@ try {
     coins_send_confirmation_pm($pdo, $user_id, $order_id, $disp_coins, $disp_bonus, $disp_price, $disp_new_coins);
 
     // start page
-    $header = true;
     $head_extras = [
         '<link href="/style/vault.css" rel="stylesheet" type="text/css" />'
     ];
@@ -184,11 +182,7 @@ try {
     <?php
     // phpcs:enable
 } catch (Exception $e) {
-    if ($header === false) {
-        $is_mod = isset($user->power) && $user->power >= 2;
-        $is_admin = isset($user->power) && $user->power == 3;
-        output_header('Finish Order', $is_mod, $is_admin);
-    }
+    output_header('Finish Order', isset($user->power) && $user->power >= 2, isset($user->power) && $user->power == 3);
     echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . (isset($coins_options) ? $suppl : '');
 } finally {
     output_footer();
