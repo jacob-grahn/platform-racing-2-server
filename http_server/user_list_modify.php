@@ -8,7 +8,7 @@ require_once QUERIES_DIR . '/ignored.php';
 
 $ip = get_ip();
 
-$target_id = (int) default_post('target_id', 0);
+$target_name = default_post('target_name', '');
 $list = default_post('list', '');
 $mode = default_post('mode', '');
 
@@ -20,7 +20,7 @@ $ret->success = false;
 
 try {
     // rate limiting
-    rate_limit('user-list-'.$ip, 3, 2);
+    rate_limit('user-list-'.$ip, 3, 3);
 
     // post check
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -28,8 +28,8 @@ try {
     }
 
     // sanity check: was a name sent?
-    if (is_empty($target_id)) {
-        throw new Exception('A user ID wasn\'t received.');
+    if (is_empty($target_name)) {
+        throw new Exception('A name wasn\'t received.');
     }
 
     // sanity check: modifying a valid list?
@@ -54,15 +54,10 @@ try {
     }
 
     // more rate limiting
-    rate_limit('user-list-'.$user_id, 3, 2);
+    rate_limit('user-list-'.$user_id, 3, 3);
 
-    // make sure the target exists
-    $target = user_select($pdo, $target_id);
-
-    // don't let guests be added
-    if ($target->power <= 0 && $mode === 'add') {
-        throw new Exception('You can\'t add guests to user lists.');
-    }
+    // get the target's ID
+    $target_id = (int) name_to_id($pdo, $target_name);
 
     // don't let user ignore themselves
     if ($mode === 'add' && $list === 'ignored' && $user_id === $target_id) {
@@ -78,7 +73,7 @@ try {
     $func($pdo, $user_id, $target_id);
 
     // craft return message
-    $msg = htmlspecialchars($target->name, ENT_QUOTES);
+    $msg = htmlspecialchars($target_name, ENT_QUOTES);
     switch ($list) {
         case 'friends':
             $l = [0 => ['added to', '!'], 1 => ['removed from', '.']];
