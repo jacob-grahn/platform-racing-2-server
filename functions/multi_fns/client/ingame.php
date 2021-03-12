@@ -34,6 +34,16 @@ function client_get_hat($socket, $data)
 }
 
 
+// send hat back to the start (hat attack)
+function client_hat_to_start($socket, $data)
+{
+    $player = $socket->getPlayer();
+    if (isset($player->game_room)) {
+        $player->game_room->sendHatToStart($data);
+    }
+}
+
+
 // set pos
 function client_p($socket, $data)
 {

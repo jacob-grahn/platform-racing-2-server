@@ -565,7 +565,7 @@ class Game extends Room
                 if (!isset($candidates[$candidate])) {
                     $candidates[$candidate] = 0;
                 }
-                $candidates[ $candidate ]++;
+                $candidates[$candidate]++;
             }
         }
         arsort($candidates);
@@ -1272,6 +1272,15 @@ class Game extends Room
                 }
             }
         }
+    }
+
+
+    public function sendHatToStart($hat_id)
+    {
+        if ($this->mode != self::MODE_HAT || $this->loose_hat_array[$hat_id] == null || $hat_id >= $this->next_hat_id) {
+            return;
+        }
+        $this->sendToAll("maybeReturnHatToStart`$hat_id");
     }
 
 
