@@ -11,6 +11,10 @@ function begin_loadup($server_id)
     $campaign = db_op('campaign_select');
     set_campaign($campaign);
 
+    // set prizes on other levels
+    $level_prizes = db_op('level_prizes_select');
+    set_level_prizes($level_prizes);
+
     // activate vault items
     $perks = db_op('vault_purchases_select_active');
     activate_perks($perks);
@@ -64,6 +68,17 @@ function set_campaign($campaign_levels)
     $campaign_array = array();
     foreach ($campaign_levels as $level) {
         $campaign_array[$level->level_id] = $level;
+    }
+}
+
+
+function set_level_prizes($level_prizes)
+{
+    global $level_prize_array;
+
+    $level_prize_array = array();
+    foreach ($level_prizes as $level) {
+        $level_prize_array[$level->level_id] = $level;
     }
 }
 

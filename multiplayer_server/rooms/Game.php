@@ -5,16 +5,8 @@ namespace pr2\multi;
 class Game extends Room
 {
 
-    const LEVEL_COMPASS = 3236908; // for top hat
     const LEVEL_BUTO = 1738847; // for jigg hat
-    const LEVEL_DELIVERANCE = 1896157; // for slender set
-    const LEVEL_SEA = 2255404; // for sea set
-    const LEVEL_DEEPER = 6493337; // for jellyfish hat
-    const LEVEL_HAUNTED = 1782114; // for epic jack-o'-lantern head
     const LEVEL_CHEESE = 6207945; // for cheese hat
-    const LEVEL_BLOBFISH = 5985129; // for blobfish head
-    const LEVEL_TURKEY = 2585329; // for epic turkey set
-    const LEVEL_EPIC_BEE = 6502430; // for epic bee body
 
     const MODE_RACE = 'race';
     const MODE_DEATHMATCH = 'deathmatch';
@@ -180,53 +172,26 @@ class Game extends Room
             }
         }
 
-        // The Golden Compass by -Shadowfax-; Awards: Top Hat
-        if ($this->course_id == self::LEVEL_COMPASS) {
-            $this->prize = Prizes::$TOP_HAT;
+        // level prize
+        global $level_prize_array;
+        if (isset($level_prize_array[$this->course_id])) {
+            $lp = $level_prize_array[$this->course_id];
+            if ($lp->type === 'set' || $lp->type === 'eSet') {
+                $part_types = $lp->type === 'eSet' ? ['eHead', 'eBody', 'eFeet'] : ['head', 'body', 'feet'];
+                $set_ids = explode(',', $lp->id);
+                $set_prizes = [];
+                foreach ($set_ids as $it => $id) {
+                    $set_prize = Prizes::find($part_types[$it], $id);
+                    if (!is_null($set_prize)) {
+                        array_push($set_prizes, $set_prize);
+                    }
+                }
+                $this->prize = $set_prizes[array_rand($set_prizes)];
+            } else {
+                $this->prize = Prizes::find($lp->type, $lp->id);
+            }
         }
 
-        // -Deliverance- by changelings; Awards: Slender Set
-        if ($this->course_id == self::LEVEL_DELIVERANCE) {
-            $slender_prizes = array(Prizes::$SLENDER_HEAD, Prizes::$SLENDER_BODY, Prizes::$SLENDER_FEET);
-            $this->prize = $slender_prizes[array_rand($slender_prizes)];
-        }
-
-        // ~Under the sea~ by Rammjet; Awards: Sea Set
-        if ($this->course_id == self::LEVEL_SEA) {
-            $sea_prizes = array(Prizes::$SEA_HEAD, Prizes::$SEA_BODY, Prizes::$SEA_FEET);
-            $this->prize = $sea_prizes[array_rand($sea_prizes)];
-        }
-
-        // Deeper by Sothal; Awards: Jellyfish Hat
-        if ($this->course_id == self::LEVEL_DEEPER) {
-            $this->prize = Prizes::$JELLYFISH_HAT;
-        }
-
-        // Haunted House 2 by DareDevil1510; Awards: Epic Jack-o'-Lantern Head
-        if ($this->course_id == self::LEVEL_HAUNTED) {
-            $this->prize = Prizes::$EPIC_JACKOLANTERN_HEAD;
-        }
-
-        // Underwater World by Odin0030; Awards: Blobfish Head
-        if ($this->course_id == self::LEVEL_BLOBFISH) {
-            $this->prize = Prizes::$BLOBFISH_HEAD;
-        }
-
-        // Happy Thanksgiving!!! by Rage Runner; Awards: Epic Turkey Set
-        if ($this->course_id == self::LEVEL_TURKEY) {
-            $turkey_prizes = [
-                Prizes::$EPIC_TURKEY_HEAD,
-                Prizes::$EPIC_TURKEY_BODY,
-                Prizes::$EPIC_TURKEY_FEET
-            ];
-            $this->prize = $turkey_prizes[array_rand($turkey_prizes)];
-        }
-
-        // Zerostar (SuperJump) by Overbeing; Awards: Epic Bee Body
-        if ($this->course_id == self::LEVEL_EPIC_BEE) {
-            $this->prize = Prizes::$EPIC_BEE_BODY;
-        }
-        
         // Sir Sirlington; Awards: Epic Sir Set + Epic Top Hat
         if ($this->isPlayerHere(self::PLAYER_SIR)) {
             $sir_prizes = [
@@ -244,38 +209,57 @@ class Game extends Room
         }
 
         // random part/upgrade prizes
-        if (!isset($this->prize) && $player_count >= 1) {
-            if (rand($player_count*2, 20) >= 19) {
-                $prize_array = array(
-                Prizes::$TACO_HEAD,
-                Prizes::$TACO_BODY,
-                Prizes::$TACO_FEET,
-                Prizes::$INVISIBLE_HEAD,
+        if (!isset($this->prize) && $player_count >= 1 && rand($player_count * 2, 20) >= 19) {
+            $prize_array = [
+                Prizes::$INVISIBLE_HEAD, // invisible set
                 Prizes::$INVISIBLE_BODY,
                 Prizes::$INVISIBLE_FEET,
-                Prizes::$GINGERBREAD_HEAD,
-                Prizes::$GINGERBREAD_BODY,
-                Prizes::$GINGERBREAD_FEET,
-                Prizes::$STICK_HEAD,
+                Prizes::$STICK_HEAD, // stick set
                 Prizes::$STICK_BODY,
                 Prizes::$STICK_FEET,
-                Prizes::$SIR_HEAD,
+                Prizes::$SIR_HEAD, // sir set
                 Prizes::$SIR_BODY,
                 Prizes::$SIR_FEET,
-                Prizes::$BASKETBALL_HEAD,
-                Prizes::$ARMOR_HEAD,
-                Prizes::$EPIC_CLASSIC_HEAD,
+                Prizes::$TACO_HEAD, // taco set
+                Prizes::$TACO_BODY,
+                Prizes::$TACO_FEET,
+                Prizes::$GINGERBREAD_HEAD, // gingerbread set
+                Prizes::$GINGERBREAD_BODY,
+                Prizes::$GINGERBREAD_FEET,
+                Prizes::$BASKETBALL_HEAD, // basketball head
+                Prizes::$ARMOR_HEAD, // armor head
+                Prizes::$EPIC_CLASSIC_HEAD, // epic classic set
                 Prizes::$EPIC_CLASSIC_BODY,
                 Prizes::$EPIC_CLASSIC_FEET,
-                Prizes::$EPIC_TIRED_HEAD,
-                Prizes::$EPIC_DRESS_BODY,
-                Prizes::$EPIC_SANDAL_FEET,
+                Prizes::$EPIC_INVISIBLE_HEAD, // epic invisible set
+                Prizes::$EPIC_INVISIBLE_BODY,
+                Prizes::$EPIC_INVISIBLE_FEET,
+                Prizes::$EPIC_TIRED_HEAD, // epic heads (starters)
+                Prizes::$EPIC_SMILER_HEAD,
                 Prizes::$EPIC_FLOWER_HEAD,
-                Prizes::$EPIC_STRAP_BODY,
-                Prizes::$EPIC_HEEL_FEET
-                );
-                $this->prize = $prize_array[rand(0, count($prize_array)-1)];
-            }
+                Prizes::$EPIC_CLASSIC_GIRL_HEAD,
+                Prizes::$EPIC_GOOF_HEAD,
+                Prizes::$EPIC_DOWNER_HEAD,
+                Prizes::$EPIC_BALLOON_HEAD,
+                Prizes::$EPIC_WORM_HEAD,
+                Prizes::$EPIC_STRAP_BODY, // epic bodies (starters)
+                Prizes::$EPIC_DRESS_BODY,
+                Prizes::$EPIC_PEC_BODY,
+                Prizes::$EPIC_GUT_BODY,
+                Prizes::$EPIC_COLLAR_BODY,
+                Prizes::$EPIC_MISS_PR2_BODY,
+                Prizes::$EPIC_BELT_BODY,
+                Prizes::$EPIC_SNAKE_BODY,
+                Prizes::$EPIC_HEEL_FEET, // epic feet (starters)
+                Prizes::$EPIC_LOAFER_FEET,
+                Prizes::$EPIC_SOCCER_FEET,
+                Prizes::$EPIC_MAGNET_FEET,
+                Prizes::$EPIC_TINY_FEET,
+                Prizes::$EPIC_SANDAL_FEET,
+                Prizes::$EPIC_BARE_FEET,
+                Prizes::$EPIC_NICE_FEET
+            ];
+            $this->prize = $prize_array[array_rand($prize_array)];
         }
 
         // random hat prizes
