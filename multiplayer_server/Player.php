@@ -411,10 +411,10 @@ class Player
 
     public function awardKongParts()
     {
-        $hat_added = $this->gainPart('hat', 3, true);
-        $head_added = $this->gainPart('head', 20, true);
-        $body_added = $this->gainPart('body', 17, true);
-        $feet_added = $this->gainPart('feet', 16, true);
+        $hat_added = $this->gainPart('hat', 3, true) || $this->gainPart('eHat', 3, true);
+        $head_added = $this->gainPart('head', 20, true) || $this->gainPart('eHead', 20, true);
+        $body_added = $this->gainPart('body', 17, true) || $this->gainPart('eBody', 17, true);
+        $feet_added = $this->gainPart('feet', 16, true) || $this->gainPart('eFeet', 16, true);
         $this->hat_color = $hat_added ? 0x990000 : $this->hat_color;
         $this->head_color = $head_added ? 0x990000 : $this->head_color;
         $this->body_color = $body_added ? 0x990000 : $this->body_color;
