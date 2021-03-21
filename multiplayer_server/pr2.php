@@ -98,6 +98,7 @@ $player_array = array();
 $socket_array = array();
 $chat_room_array = array();
 $campaign_array = array();
+$level_prize_array = array();
 $play_count_array = array();
 
 // rooms

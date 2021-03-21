@@ -8,6 +8,7 @@ require_once QUERIES_DIR . '/campaigns.php';
 require_once QUERIES_DIR . '/epic_upgrades.php';
 require_once QUERIES_DIR . '/exp_today.php';
 require_once QUERIES_DIR . '/guilds.php';
+require_once QUERIES_DIR . '/level_prizes.php';
 require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/mod_actions.php';
 require_once QUERIES_DIR . '/mod_power.php';

@@ -62,10 +62,9 @@ try {
         throw new Exception($msg);
     }
 
-    // check to see if this is a campaign level
-    $campaign_loc = campaign_level_select_by_id($pdo, $level_id);
-    if (!empty($campaign_loc)) {
-        throw new Exception('Your level could not be deleted because it is featured in a campaign.');
+    // check to see if this level has a prize
+    if (!empty(campaign_level_select_by_id($pdo, $level_id)) || !empty(level_prize_select($pdo, $level_id))) {
+        throw new Exception('Your level could not be deleted because it is has a prize.');
     }
 
     // save this file to the backup system

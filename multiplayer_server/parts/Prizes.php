@@ -442,7 +442,7 @@ class Prizes
         self::$EPIC_PARTY_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::PARTY, 'Epic Upgrade');
         self::$EPIC_TOP_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::TOP_HAT, 'Epic Upgrade');
         self::$EPIC_JUMP_START_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::JUMP_START, 'Epic Upgrade', '', true);
-        self::$EPIC_MOON_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::MOON, 'Epic Upgrade');
+        self::$EPIC_MOON_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::MOON, 'Epic Upgrade', '', true);
         self::$EPIC_THIEF_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::THIEF, 'Epic Upgrade');
         self::$EPIC_JIGG_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::JIGG, 'Epic Upgrade');
         self::$EPIC_ARTIFACT_HAT = new Prize(self::TYPE_EPIC_HAT, Hats::ARTIFACT, 'Epic Upgrade');

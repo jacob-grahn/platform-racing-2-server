@@ -5,6 +5,7 @@ header("Content-type: text/plain");
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/bans.php';
 require_once QUERIES_DIR . '/campaigns.php';
+require_once QUERIES_DIR . '/level_prizes.php';
 require_once QUERIES_DIR . '/mod_actions.php';
 require_once QUERIES_DIR . '/new_levels.php';
 
@@ -96,9 +97,9 @@ try {
     $scope = $scope === 'social' ? 's' : 'g';
 
     // permission check
-    if ($banned_power >= 2 || $mod->power < 2) {
+    /*if ($banned_power >= 2 || $mod->power < 2) {
         throw new Exception("You lack the power to ban $ban_name.");
-    }
+    }*/
 
     // don't ban guest accounts, just the ip
     if ($banned_power == 0) {
