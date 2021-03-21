@@ -570,9 +570,9 @@ function remove_level($pdo, $mod, $level_id)
         throw new Exception('You can not unpublish levels.');
     }
 
-    // check to see if this is a campaign level
-    if (!empty(campaign_level_select_by_id($pdo, $level_id))) {
-        throw new Exception('This level could not be unpublished because it is featured in a campaign.');
+    // check to see if this level has a prize
+    if (!empty(campaign_level_select_by_id($pdo, $level_id)) || !empty(level_prize_select($pdo, $level_id))) {
+        throw new Exception('This level could not be unpublished because it is has a prize.');
     }
 
     // check for the level's information
