@@ -735,28 +735,22 @@ class Player
             }
         }
 
-        // make sure none of the part values are blank to avoid server crashes
-        if (empty($this->hat)) {
+        // make sure none of the part values are blank to avoid server crashes, remove temp parts
+        if (empty($this->hat) || !in_array($this->hat, $this->hat_array)) {
             $this->gainPart('hat', 1, true);
             $this->setPart('hat', 1);
         }
-        if (empty($this->head)) {
+        if (empty($this->head) || !in_array($this->head, $this->head_array)) {
             $this->gainPart('head', 1, true);
             $this->setPart('head', 1);
         }
-        if (empty($this->body)) {
+        if (empty($this->body) || !in_array($this->body, $this->body_array)) {
             $this->gainPart('body', 1, true);
             $this->setPart('body', 1);
         }
-        if (empty($this->feet)) {
+        if (empty($this->feet) || !in_array($this->feet, $this->feet_array)) {
             $this->gainPart('feet', 1, true);
             $this->setPart('feet', 1);
-        }
-
-        // auto removing some hat?
-        $index = array_search(27, $this->hat_array);
-        if ($index !== false) {
-            array_splice($this->hat_array, $index, 1);
         }
 
         $rank = $this->rank;
