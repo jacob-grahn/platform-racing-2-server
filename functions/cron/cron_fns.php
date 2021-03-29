@@ -322,6 +322,39 @@ function ensure_awards($pdo)
 }
 
 
+function check_expired_rank_token_rentals($pdo)
+{
+    $expired = rank_token_rentals_select_expired($pdo);
+    if (empty($expired)) {
+        return;
+    }
+    rank_token_rentals_delete_old($pdo);
+
+    $processed_guilds = [];
+    foreach ($expired as $rental) {
+        if (in_array($rental->guild_id, $processed_guilds)) {
+            continue;
+        }
+        array_push($processed_guilds, $rental->guild_id);
+
+        $processed_buyer = false;
+        $guild_members = users_select_rank_tokens_and_rentals_by_guild($pdo, $rental->guild_id);
+        foreach ($guild_members as $user) {
+            if (!isset($user->available_tokens)) {
+                continue;
+            }
+            $max_tokens = $user->available_tokens + $user->active_rentals;
+            rank_token_update($pdo, $user->user_id, min($user->used_tokens, $max_tokens));
+            $processed_buyer = !$processed_buyer ? $user->user_id == $rental->user_id : true;
+        }
+        if (!$processed_buyer) {
+            $buyer = rank_token_select($pdo, $rental->user_id);
+            rank_token_update($pdo, $buyer->user_id, min($buyer->used_tokens, $buyer->available_tokens));
+        }
+    }
+}
+
+
 function servers_restart_all($pdo)
 {
     // tell the command line

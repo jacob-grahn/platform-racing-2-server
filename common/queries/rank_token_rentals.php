@@ -80,6 +80,22 @@ function rank_token_rentals_select_next_expiry($pdo, $user_id, $guild_id)
 }
 
 
+function rank_token_rentals_select_expired($pdo)
+{
+    $query = $pdo->query('
+        SELECT *
+          FROM rank_token_rentals
+         WHERE time < UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)
+    ');
+
+    if ($query === false) {
+        throw new Exception('Could not select expired rank token rentals.');
+    }
+
+    return $query->fetchAll(PDO::FETCH_OBJ);
+}
+
+
 function rank_token_rentals_delete_old($pdo)
 {
     $result = $pdo->exec('

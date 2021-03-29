@@ -1,10 +1,12 @@
 <?php
 
 require_once GEN_HTTP_FNS;
+require_once FNS_DIR . '/cron/cron_fns.php';
 require_once QUERIES_DIR . '/changing_emails.php';
 require_once QUERIES_DIR . '/exp_today.php';
 require_once QUERIES_DIR . '/gp.php';
 require_once QUERIES_DIR . '/guild_transfers.php';
+require_once QUERIES_DIR . '/rank_tokens.php';
 require_once QUERIES_DIR . '/rank_token_rentals.php';
 require_once QUERIES_DIR . '/ratings.php';
 require_once QUERIES_DIR . '/servers.php';
@@ -19,7 +21,7 @@ $pdo = pdo_connect();
 ratings_delete_old($pdo);
 guilds_reset_gp_today($pdo);
 gp_reset($pdo);
-rank_token_rentals_delete_old($pdo);
+check_expired_rank_token_rentals($pdo);
 tokens_delete_old($pdo);
 guild_transfers_expire_old($pdo);
 changing_emails_expire_old($pdo);

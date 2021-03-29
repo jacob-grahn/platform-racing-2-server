@@ -941,6 +941,39 @@ function users_select_old($pdo)
 }
 
 
+function users_select_rank_tokens_and_rentals_by_guild($pdo, $guild_id)
+{
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+    $stmt = $pdo->prepare('
+        SELECT
+          u.user_id,
+          rt.used_tokens,
+          rt.available_tokens,
+          COUNT(rtr.time) as active_rentals
+        FROM
+          users u
+        LEFT JOIN
+          rank_tokens rt ON u.user_id = rt.user_id
+        LEFT JOIN
+          rank_token_rentals rtr ON u.guild = rtr.guild_id
+        WHERE
+          guild = :guild AND guild > 0
+        GROUP BY
+          u.user_id
+    ');
+    $stmt->bindValue(':guild', $guild_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        var_dump($stmt->errorInfo());
+        die();
+        throw new Exception('Could not perform query users_select_rank_tokens_and_rentals_by_guild.');
+    }
+
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+
 function users_select_staff($pdo)
 {
     $stmt = $pdo->prepare('
