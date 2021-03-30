@@ -394,8 +394,8 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
     // search mode
     if ($mode === 'title') {
         $where = 'MATCH (title) AGAINST (:search) > 0';
-        $relevance = ', ' . substr($where, 0, strlen($where) - 4) . ' AS relevance';
-        $relevance_order_by = 'relevance DESC,';
+        $relevance = substr($where, 0, strlen($where) - 4) . ' AS relevance,';
+        $relevance_order_by = ', relevance DESC';
         // if title, don't show pw levels
         $live_cond = '(l.live = 1 AND l.pass IS NULL)';
     } else {
@@ -442,7 +442,7 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
          WHERE $where
            AND l.user_id = u.user_id
            AND $live_cond
-         ORDER BY $relevance_order_by $order_by $dir
+         ORDER BY $order_by $dir $relevance_order_by
          LIMIT $start, $count
     ");
     $stmt->bindValue(':search', $search, PDO::PARAM_STR);
