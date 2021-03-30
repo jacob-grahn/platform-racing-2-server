@@ -393,7 +393,7 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
 
     // search mode
     if ($mode === 'title') {
-        $where = 'MATCH (title) AGAINST (:search IN BOOLEAN MODE) > 0';
+        $where = 'MATCH (title) AGAINST (:search) > 0';
         $relevance = ', ' . substr($where, 0, strlen($where) - 4) . ' AS relevance';
         $relevance_order_by = 'relevance DESC,';
         // if title, don't show pw levels
