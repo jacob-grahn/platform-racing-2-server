@@ -37,11 +37,16 @@ try {
         throw new Exception("Invalid request method.");
     }
 
+    // sanity check: level data okay?
+    if (empty($data) || strpos($data, 'm4') !== 0) {
+        throw new Exception("Could not publish level. There was a problem with the data.");
+    }
+
     // sanity check: obscenities?
     if ($live == 1 && (is_obscene($title) || is_obscene($note))) {
         throw new Exception('Could not publish level. Check the title and note for obscenities.');
     }
-    
+
     // sanity check: title too long?
     if (strlen($title) > 50) {
         throw new Exception('The title is too long. Please limit it to 50 characters.');
@@ -82,7 +87,7 @@ try {
         $msg = 'Guests can\'t load or save levels. To access this feature, please create your own account.';
         throw new Exception($msg);
     }
-    
+
     // sanity check: rank requirement
     $rank = pr2_select_true_rank($pdo, $user_id);
     if ($live == 1 && $rank < 3) {
@@ -158,11 +163,9 @@ try {
     }
 
     // unpublish if the level has a pass
-    if ($has_pass === 1) {
-        if ($live != 0) {
-            $live = 0;
-            $on_success = 'pass set with live';
-        }
+    if ($has_pass === 1 && $live != 0) {
+        $live = 0;
+        $on_success = 'pass set with live';
     }
 
     // load the existing level
