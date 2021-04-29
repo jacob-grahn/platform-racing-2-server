@@ -1,8 +1,8 @@
 <?php
 
 
-// check newest for more than 3 recent levels from this account or ip
-function check_newest($pdo, $name, $ip)
+// check newest for more than 3 recent levels from this account or ip, returns true if limit met
+function check_newest_max($pdo, $name, $ip)
 {
     // make our end array
     $matches = array();
@@ -42,11 +42,7 @@ function check_newest($pdo, $name, $ip)
         }
     }
 
-    if (count($matches) >= 3) {
-        return false;
-    } else {
-        return true;
-    }
+    return count($matches) >= 3;
 }
 
 
