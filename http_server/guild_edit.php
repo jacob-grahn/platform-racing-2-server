@@ -71,7 +71,7 @@ try {
     if (!isset($emblem)) {
         throw new Exception('Your guild needs an emblem.');
     }
-    if (preg_match('/^[0-9]+\-[0-9]+\.jpg$/i', $emblem) and (preg_match('/^default\-emblem\.jpg$/i', $emblem) !== 1 {
+    if (preg_match('/^[0-9]+\-[0-9]+\.jpg$/i', $emblem) || (preg_match('/^default\-emblem\.jpg$/i', $emblem)) !== 1 {
         throw new Exception('Your emblem is invalid.');
     }
     if (preg_match("/^[a-zA-Z0-9\s-]+$/", $guild_name) !== 1) {
