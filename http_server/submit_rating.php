@@ -69,7 +69,7 @@ try {
     $new_average_rating = $votes <= 0 ? 0 : $total_rating / $votes;
 
     // if out of bounds, reset everything
-    if ($new_average_rating > 5) {
+    if ($new_average_rating > 5 or $new_average_rating < 1) {
         $new_average_rating = 0;
         $votes = 0;
     }
