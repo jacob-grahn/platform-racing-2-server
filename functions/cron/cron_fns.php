@@ -163,7 +163,7 @@ function save_gp($pdo, $server_id, $gp_array)
 
 function update_artifact($pdo)
 {
-    $txt_link = WWW_ROOT . '/files/artifact_hint.txt';
+    $txt_link = CACHE_DIR . '/artifact_hint.txt'; // for beta testing
 
     // collect data
     $artifacts = artifact_locations_select($pdo, true);
