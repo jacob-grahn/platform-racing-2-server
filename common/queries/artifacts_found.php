@@ -8,15 +8,13 @@ function artifacts_found_insert($pdo, $user_id)
         INSERT INTO artifacts_found
         SET user_id = :user_id,
     		artifacts = 1,
-    		time = NOW(),
-    		new_time = :new_time
+    		time = :time
         ON DUPLICATE KEY UPDATE
         	artifacts = artifacts + 1,
-        	time = NOW(),
-        	new_time = :new_time
+        	time = :time
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->bindValue(':new_time', time(), PDO::PARAM_INT);
+    $stmt->bindValue(':time', time(), PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -30,7 +28,7 @@ function artifacts_found_insert($pdo, $user_id)
 function artifacts_found_select_time($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT UNIX_TIMESTAMP(time) as timestamp
+        SELECT time
         FROM artifacts_found
         WHERE user_id = :user_id
         LIMIT 1

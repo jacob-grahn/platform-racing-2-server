@@ -803,7 +803,11 @@ class Game extends Room
             }
 
             // apply artifact bonus after all multipliers
-            if ($this->course_id == Artifact::$level_id && $player->wearingHat(Hats::ARTIFACT) && $true_fin) {
+            if ($this->course_id == Artifact::$level_id
+                && $this->start_time >= Artifact::$set_time
+                && $player->wearingHat(Hats::ARTIFACT)
+                && $true_fin
+            ) {
                 $result = save_finder($player);
                 if ($result) {
                     $max_artifact_bonus = 50000;

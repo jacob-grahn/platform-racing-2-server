@@ -11,6 +11,7 @@ $title = default_post('title');
 $note = default_post('note');
 $data = default_post('data');
 $live = (int) default_post('live');
+$to_newest = min((int) default_post('to_newest', 1), $live);
 $min_level = (int) default_post('min_level');
 $song = default_post('song');
 $gravity = default_post('gravity');
@@ -224,7 +225,7 @@ try {
         // phpcs:enable
 
         // delete from newest if there and not published
-        if (!$live) {
+        if (!$live || !$to_newest) {
             delete_from_newest($pdo, $level_id);
         }
     } else {
@@ -238,11 +239,13 @@ try {
     }
 
     // add to 'newest' level list
-    $to_newest = (bool) check_newest($pdo, $user_name, $ip);
-    if ($live && $to_newest === true) {
-        new_level_insert($pdo, $level_id, $time, $ip);
-    } elseif ($live && $to_newest === false) {
-        $on_success = 'no newest';
+    $max_on_newest = (bool) check_newest_max($pdo, $user_name, $ip);
+    if ($live && $to_newest) {
+        if (!$max_on_newest) {
+            new_level_insert($pdo, $level_id, $time, $ip);
+        } else {
+            $on_success = 'no newest';
+        }
     }
 
     // create the save string

@@ -6,6 +6,8 @@ require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/ignored.php';
 require_once QUERIES_DIR . '/friends.php';
 
+$BETA = (bool) (int) default_get('beta', 0);
+
 $target_id = (int) default_get('user_id', 0);
 $target_name = default_get('name', '');
 $friend = 0;
@@ -59,8 +61,8 @@ try {
 
     // get other data
     $target->used_tokens = is_empty($target->used_tokens) ? 0 : (int) $target->used_tokens;
-    $login_date = date('j/M/Y', $target->time);
-    $register_date = date('j/M/Y', $target->register_time);
+    $login_date = $BETA ? (int) $target->time : date('j/M/Y', $target->time);
+    $register_date = $BETA ? (int) $target->register_time : date('j/M/Y', $target->register_time);
     $active_rank = $target->rank + $target->used_tokens;
     $hats = count(explode(',', $target->hat_array)) - 1;
     if (isset($user_id)) {

@@ -97,8 +97,8 @@ try {
 
         // add to newest if the save time was within the last day
         $live = (bool) (int) $row->live;
-        $to_newest = check_newest($pdo, $user_name, $ip);
-        if ($live && $to_newest === true && $row->time > time() - 86400) {
+        $max_on_newest = check_newest_max($pdo, $user_name, $ip);
+        if ($live && !$max_on_newest && $row->time > time() - 86400) {
             new_level_insert($pdo, $level_id, $row->time, $ip);
         }
 

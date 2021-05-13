@@ -8,7 +8,7 @@ class Artifact
     public static $x = 0;
     public static $y = 0;
     public static $rot = 0;
-    public static $updated_time = 0;
+    public static $set_time = 0;
     public static $first_finder;
     public static $bubbles_winner;
 }

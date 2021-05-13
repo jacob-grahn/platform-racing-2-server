@@ -163,88 +163,87 @@ function save_gp($pdo, $server_id, $gp_array)
 
 function update_artifact($pdo)
 {
+    $txt_link = CACHE_DIR . '/artifact_hint.txt'; // for beta testing
+
     // collect data
-    $artifact = artifact_location_select($pdo);
-    $level_id = (int) $artifact->level_id;
-    $updated_time = strtotime($artifact->updated_time);
-    $first_finder = (int) $artifact->first_finder;
-    $bubbles_winner = (int) $artifact->bubbles_winner;
+    $artifacts = artifact_locations_select($pdo, true);
+    $arti_txt = file_get_contents($txt_link);
+    if (!isset($artifacts[0]) || !$arti_txt) {
+        return;
+    }
+    $arti_txt = json_decode($arti_txt);
+    $cur_txt = @$arti_txt->current;
+    $sched_txt = @$arti_txt->scheduled;
 
-    $level = level_select($pdo, $level_id);
-    $title = $level->title;
-    $user_id = (int) $level->user_id;
-
-    $user = user_select($pdo, $user_id);
-    $user_name = $user->name;
-
-    // get the first finder's info
-    $finder_name = '';
-    if ($first_finder !== 0) {
-        $finder = user_select($pdo, $first_finder);
-        $finder_name = $finder->name;
+    // only continue if one of these conditions are met
+    // note: this won't update in the case of a usergroup change, but that can be done manually since it's rare
+    if (isset($artifacts[1]) && $artifacts[1]->set_time <= time()) { // sched arti set_time met/exceeded
+        output('Placing new artifact via scheduled update.');
+        artifact_location_delete_old($pdo);
+        $artifacts = [$artifacts[1]];
+    } elseif (isset($artifacts[1]) && @$sched_txt->updated_time != $artifacts[1]->updated_time) { // update to sched
+        output('Updating scheduled artifact placement.');
+    } elseif ($artifacts[0]->updated_time > $cur_txt->updated_time) { // instant update to current arti
+        output('Placing new artifact (or updating current one) via instant update.');
+    } elseif ($artifacts[0]->first_finder > 0 && empty($cur_txt->first_finder->group)) { // finder updates
+        output('Updating the first finder.');
+    } elseif ($artifacts[0]->bubbles_winner > 0 && empty($cur_txt->bubbles_winner->group)) { // update bubbles winner
+        output('Updating the bubbles winner.');
+    } else {
+        return;
     }
 
-    // get the bubbles winner's info
-    $bubbles_name = '';
-    if ($bubbles_winner !== 0) {
-        $bubbles = user_select($pdo, $bubbles_winner);
-        $bubbles_name = $bubbles->name;
-    }
+    // display data
+    $arti_type = 'current';
+    $r = new stdClass();
+    foreach ($artifacts as $artifact) {
+        $level_id = (int) $artifact->level_id;
+        $level = level_select($pdo, $level_id);
+        $author = user_select($pdo, (int) $level->user_id);
 
-    // form the base string we'll be creating
-    $str = "$title by $user_name";
-    $len = mb_strlen($str, 'UTF-8');
+        $arti = new stdClass();
+        $arti->level = new stdClass();
+        $arti->level->id = $level_id;
+        $arti->level->title = $level->title;
+        $arti->level->author = new stdClass();
+        $arti->level->author->name = $author->name;
+        $arti->level->author->group = $author->power . ((bool) (int) $author->trial_mod ? ',1' : '');
+        $arti->set_time = (int) $artifact->set_time;
+        $arti->updated_time = (int) $artifact->updated_time;
 
-    // figure out how much of the string to reveal
-    $elapsed = time() - $updated_time;
-    $perc = $elapsed / 259200; // 3 days
-    $perc = $perc > 1 ? 1 : $perc; // full
-    $hide_perc = 1 - $perc;
-    $hide_characters = round($len * $hide_perc);
+        // show first finder and bubbles winner
+        if ($arti_type === 'current') {
+            // get the first finder's info
+            $finder = new stdClass();
+            $finder->name = '';
+            $finder->group = 0;
+            if ($artifact->first_finder > 0) {
+                $found = user_select($pdo, (int) $artifact->first_finder);
+                $finder->name = $found->name;
+                $finder->group = $found->power . ((bool) (int) $found->trial_mod ? ',1' : '');
+                $arti->first_finder = $finder;
 
-    // generate random
-    \pr2\http\PseudoRandom::seed(112);
-
-    // populate characters array
-    $arr = [];
-    for ($i = 0; $i < $len; $i++) {
-        $arr[] = mb_substr($str, $i, 1, 'UTF-8');
-    }
-
-    // replace a percentage of characters with underscores
-    $loops = 0;
-    while ($hide_characters > 0) {
-        $index = \pr2\http\PseudoRandom::num(0, $len - 1);
-        while ($arr[$index] === '_') {
-            $index++;
-            $index = $index >= $len ? 0 : $index;
-
-            $loops++;
-            if ($loops > 100) {
-                output('Infinite loop triggered, breaking...');
-                break;
+                // get the bubbles winner's info
+                $bubbles = new stdClass();
+                $bubbles->name = '';
+                $bubbles->group = 0;
+                if ($artifact->first_finder == $artifact->bubbles_winner) {
+                    $bubbles = $finder;
+                } elseif ($artifact->bubbles_winner > 0) {
+                    $bub = user_select($pdo, (int) $artifact->bubbles_winner);
+                    $bubbles->name = $bub->name;
+                    $bubbles->group = $bub->power . ((bool) (int) $bub->trial_mod ? ',1' : '');
+                }
+                $arti->bubbles_winner = $bubbles;
             }
         }
-        $arr[$index] = '_';
-        $hide_characters--;
-    }
 
-
-    // tell it to the world
-    $r = new stdClass();
-    if ($hide_perc === 0) {
-        $r->level_id = $level_id;
-        $r->level_title = $title;
-        $r->creator_name = $user_name;
-        $r->creator_group = $user->power . ((bool) (int) $user->trial_mod ? ',1' : '');
+        $r->$arti_type = $arti;
+        $arti_type = 'scheduled'; // for next loop
     }
-    $r->hint = join('', $arr);
-    $r->finder_name = $finder_name;
-    $r->bubbles_name = $bubbles_name;
-    $r->updated_time = $updated_time;
 
     // write to the file system
-    file_put_contents(WWW_ROOT . '/files/artifact_hint.txt', json_encode($r, JSON_UNESCAPED_UNICODE));
+    file_put_contents($txt_link, json_encode($r, JSON_UNESCAPED_UNICODE));
 }
 
 
