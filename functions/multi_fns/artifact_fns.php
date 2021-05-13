@@ -108,9 +108,9 @@ function save_bubbles_winner($player, $first_finder)
     \pr2\multi\Artifact::$bubbles_winner = $user_id;
 
     // award the bubble set
-    $player->gainPart("head", 27, true);
+    /*$player->gainPart("head", 27, true);
     $player->gainPart("body", 21, true);
-    $player->gainPart("feet", 28, true);
+    $player->gainPart("feet", 28, true);*/ // beta
 
     // determine message, depending on if finding first
     if ($first_finder === $user_id) {
