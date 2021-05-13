@@ -33,7 +33,7 @@ function has_found_artifact($player)
     try {
         // make sure they haven't found this artifact before
         $last_found_at = db_op('artifacts_found_select_time', array($player->user_id));
-        return $last_found_at > \pr2\multi\Artifact::$updated_time || $player->group <= 0;
+        return $last_found_at > \pr2\multi\Artifact::$set_time || $player->group <= 0;
     } catch (Exception $e) {
         $error = $e->getMessage();
         echo "Error: $error";
