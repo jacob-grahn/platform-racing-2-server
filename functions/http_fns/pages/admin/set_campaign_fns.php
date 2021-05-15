@@ -33,7 +33,7 @@ function prize_check($type, $id, $err_prefix)
 
     // check for a valid head id
     if ($type === 'head' || $type === 'eHead') {
-        if ($id < 1 || $id > 48) {
+        if ($id < 1 || $id > 49) {
             throw new Exception("$err_prefix (invalid head ID ($id) specified).");
         } else {
             return true;
@@ -42,7 +42,7 @@ function prize_check($type, $id, $err_prefix)
 
     // check for a valid body id
     if ($type === 'body' || $type === 'eBody') {
-        if ($id < 1 || $id > 48 || $id === 33 || $id === 44 || $id === 47) {
+        if ($id < 1 || $id > 49 || $id === 33 || $id === 44 || $id === 47) {
             throw new Exception("$err_prefix (invalid body ID ($id) specified).");
         } else {
             return true;
@@ -51,7 +51,7 @@ function prize_check($type, $id, $err_prefix)
 
     // check for a valid feet id
     if ($type === 'feet' || $type === 'eFeet') {
-        if ($id < 1 || $id > 46 || ($id >= 31 && $id <= 33) || $id === 44 || $id === 47) {
+        if ($id < 1 || $id > 49 || ($id >= 31 && $id <= 33) || $id === 44 || $id === 47) {
             throw new Exception("$err_prefix (invalid feet ID ($id) specified).");
         } else {
             return true;
