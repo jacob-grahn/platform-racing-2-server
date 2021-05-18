@@ -85,7 +85,8 @@ try {
 46 - Snowman
 47 - Blobfish
 48 - Turkey
-49+ - *BLANK*
+49 - Dog
+50+ - *BLANK*
 
 -- Bodies --
 1 - Classic
@@ -136,7 +137,8 @@ try {
 46 - Snowman
 47 - *BLANK*
 48 - Turkey
-49+ - *BLANK*
+49 - Dog
+50+ - *BLANK*
 
 -- Feet --
 1 - Classic
@@ -187,7 +189,8 @@ try {
 46 - Snowman
 47 - *BLANK*
 48 - Turkey
-49+ - *BLANK*
+49 - Dog
+50+ - *BLANK*
 
 -- Full Sets --
 (Key: Head ID, Body ID, Feet ID)
@@ -226,12 +229,13 @@ Brew: 43
 Christmas: 45
 Snowman: 46
 Turkey: 48
+Dog: 49
 
 -- Blank IDs --
 Hats: 17+
-Heads: 49+
-Bodies: 33, 44, 47, 49+
-Feet: 31-33, 44, 47, 49+</pre>';
+Heads: 50+
+Bodies: 33, 44, 47, 50+
+Feet: 31-33, 44, 47, 50+</pre>';
 } catch (Exception $e) {
     output_header('Error');
     $error = $e->getMessage();
