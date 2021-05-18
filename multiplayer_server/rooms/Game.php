@@ -820,7 +820,7 @@ class Game extends Room
                         $artifact_bonus += 10000;
                     }
                     if ($artifact_bonus > 0) {
-                        //$tot_exp_gain += $artifact_bonus; // beta
+                        $tot_exp_gain += $artifact_bonus;
                         $player->write('award`Artifact Found!`+ ' . number_format($artifact_bonus));
                     }
                 }

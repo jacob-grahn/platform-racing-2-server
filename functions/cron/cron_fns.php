@@ -163,11 +163,11 @@ function save_gp($pdo, $server_id, $gp_array)
 
 function update_artifact($pdo)
 {
-    $txt_link = CACHE_DIR . '/artifact_hint.txt'; // for beta testing
+    $lotw_file = WWW_ROOT . '/files/level_of_the_week.json';
 
     // collect data
     $artifacts = artifact_locations_select($pdo, true);
-    $arti_txt = file_get_contents($txt_link);
+    $arti_txt = file_get_contents($lotw_file);
     if (!isset($artifacts[0]) || !$arti_txt) {
         return;
     }
@@ -243,7 +243,7 @@ function update_artifact($pdo)
     }
 
     // write to the file system
-    file_put_contents($txt_link, json_encode($r, JSON_UNESCAPED_UNICODE));
+    file_put_contents($lotw_file, json_encode($r, JSON_UNESCAPED_UNICODE));
 }
 
 
