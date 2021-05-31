@@ -29,6 +29,7 @@ try {
 
     // get the contest info
     $contest = contest_select($pdo, $contest_id, !$is_mod);
+    $is_host = (int) $contest->user_id === $user_id;
 
     // make some variables
     $contest_id = (int) $contest->contest_id;
@@ -36,7 +37,7 @@ try {
     $contest_url = htmlspecialchars($contest->url, ENT_QUOTES);
 
     // get the winners
-    $winners = contest_winners_select_by_contest($pdo, $contest_id, !$is_mod);
+    $winners = contest_winners_select_by_contest($pdo, $contest_id, !($is_mod || $is_host));
 
     // sanity check: are there any winners?
     if (empty($winners)) {
@@ -64,11 +65,12 @@ try {
         ."<tr>" // start header row
         ."<th class='noborder'><b>Date</b></th>" // date column
         ."<th class='noborder'><b>Name</b></th>"; // name column
-    if ($is_mod == true) {
-        echo "<th class='noborder'><b>Awarded By</b></th>" // awarder column (for staff)
-            ."<th class='noborder'><b>From IP</b></th>" // from IP column (for staff)
-            ."<th class='noborder'><b>Prizes Awarded</b></th>" // prizes awarded to this winner (for staff)
-            ."<th class='noborder'><b>Comments</b></th>"; // award comments (for staff)
+    if ($is_mod || $is_host) {
+        $ip_col = $is_mod ? "<th class='noborder'><b>From IP</b></th>" : '';
+        echo "<th class='noborder'><b>Awarded By</b></th>" // awarder column
+            .$ip_col // from IP column (for staff)
+            ."<th class='noborder'><b>Prizes Awarded</b></th>" // prizes awarded to this winner
+            ."<th class='noborder'><b>Comments</b></th>"; // award comments
     }
     echo "</tr>"; // end title row
 
@@ -87,8 +89,8 @@ try {
         $awarder_ip = htmlspecialchars($winner->awarder_ip, ENT_QUOTES);
         $comment = htmlspecialchars($winner->comment, ENT_QUOTES);
 
-        // awarder name and color (staff)
-        if ($is_mod === true) {
+        // awarder name and color
+        if ($is_mod || $is_host) {
             $awarder_id = (int) $winner->awarded_by;
             $awarder = user_select_name_and_power($pdo, $awarder_id);
             $awarder_url = $base_url . urlencode($awarder->name);
@@ -104,9 +106,10 @@ try {
         echo "<tr>"
             ."<td class='noborder' title='Awarded at $full_win_time'>$short_win_time</td>" // date row
             .'<td class="noborder">' . urlify($winner_url, $winner->name, $winner_color) . '</td>'; // name row
-        if ($is_mod === true) {
+        if ($is_mod || $is_host) {
+            $ip_col = $is_mod ? "<td class='noborder'>$awarder_ip</td>" : '';
             echo '<td class="noborder">' . urlify($awarder_url, $awarder->name, $awarder_color) . '</td>' // who awarded
-                ."<td class='noborder'>$awarder_ip</td>"; // awarder ip
+                .$ip_col; // awarder ip (for staff)
 
             // output readable prizes
             echo "<td class='noborder'>";
