@@ -380,6 +380,9 @@ class ChatMessage
                 $pname = $player->name;
                 $puid = $player->user_id;
                 $pstatus = $player->status;
+                $prroom = isset($player->right_room) ? $player->right_room->getType() : '<i>none</i>';
+                $pcroom = isset($player->chat_room) ? $player->chat_room->chat_room_name : '<i>none</i>';
+                $pgroom = isset($player->game_room) ? $player->game_room->getCourseId() : '<i>in lobby</i>';
                 $pgroup = $player->group;
                 $pguild = $player->guild_id;
                 $parank = $player->active_rank;
@@ -420,6 +423,7 @@ class ChatMessage
                     ."name: $pname | user_id: $puid<br>"
                     ."status: $pstatus<br>"
                     ."last_user_action: $plaction<br>"
+                    ."right_room: $prroom | chat_room: $pcroom | level_id: $pgroom<br>"
                     ."group: $pgroup | temp_mod: $ptemp | server_owner: $pso<br>"
                     ."guild_id: $pguild<br>"
                     ."active_rank: $parank | rank (no rt): $prank | rt_used: $prtused | rt_avail: $prtavail<br>"

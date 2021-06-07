@@ -1543,6 +1543,12 @@ class Game extends Room
     }
 
 
+    public function getCourseId()
+    {
+        return (int) $this->course_id;
+    }
+
+
     public function remove()
     {
         foreach ($this as $key => $var) {
