@@ -534,7 +534,7 @@ function backup_level(
 }
 
 
-// -- LEVELS (CAMPAIGNS, BEST_LEVELS, LEVELS, NEW_LEVELS) -- \\
+// -- LEVELS -- \\
 
 // write a level list to the filesystem
 function generate_level_list($pdo, $mode)
@@ -590,6 +590,17 @@ function remove_level($pdo, $mod, $level_id)
     $mod_msg = "$mod->name unpublished level $level_id from $ip "
         ."{level_title: $l_title, creator: $l_creator, level_note: $l_note}";
     mod_action_insert($pdo, $mod->user_id, $mod_msg, 'remove-level', $ip);
+}
+
+
+function is_arti_level($pdo, $levels, $level_id)
+{
+    foreach ($levels as $level) {
+        if ($level->level_id == $level_id) {
+            return true;
+        }
+    }
+    return false;
 }
 
 

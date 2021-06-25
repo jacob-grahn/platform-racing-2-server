@@ -55,10 +55,9 @@ try {
         throw new Exception('This is not your level.');
     }
 
-    // check if the artifact is currently here
-    $arti = artifact_location_select($pdo);
-    if ($arti->level_id == $level->level_id) {
-        $msg = 'Your level could not be deleted because it is currently where the artifact is hidden. '
+    // check if this is currently (or will be) the level of the week
+    if (is_arti_level($pdo, artifact_locations_select($pdo), $level_id)) {
+        $msg = 'Your level could not be deleted because it is or will be the Level of the Week. '
             .'Please contact a member of the PR2 Staff Team for more information.';
         throw new Exception($msg);
     }
