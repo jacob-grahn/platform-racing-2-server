@@ -111,10 +111,10 @@ function ip_is_valid($data, $handle_cc)
 
     $valid = true;
     if ($data->fraud_score > $IP_API_SCORE_MIN
-        || $data->proxy
+        /*|| $data->proxy
         || $data->vpn
         || $data->tor
-        || $data->recent_abuse
+        || $data->recent_abuse*/
     ) {
         $valid = false;
     }
