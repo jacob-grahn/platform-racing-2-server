@@ -6,9 +6,11 @@ require_once HTTP_FNS . '/output_fns.php';
 output_header('Platform Racing 2');
 
 // AFP EOL message
-$info_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=3182', 'response to Flash Player\'s EOL');
-$eol_msg = '<b>IMPORTANT: PR2 won\'t be shutting down on January 1.</b>'
-    ."<br />Read our $info_link for information on how to play after December 31.";
+$dl_link = urlify('https://pr2hub.com/download', 'Download PR2');
+$disc_link = urlify('https://jiggmin2.com/discord', 'Jiggmin\'s Village Discord server');
+$eol_msg = '<b>PR2 Lives On!</b><br />'
+    ."<br />$dl_link to keep the party going."
+    ."<br />Join the $disc_link to stay updated on the latest community developments.";
 
 echo '<div class="game_holder">'
         .'<embed width="550" height="400" '
