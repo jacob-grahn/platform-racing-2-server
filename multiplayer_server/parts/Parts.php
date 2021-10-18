@@ -163,6 +163,7 @@ class Heads
     const BLOBFISH = 47;
     const TURKEY = 48;
     const DOG = 49;
+    const GLADIATOR = 50;
 }
 
 
@@ -214,6 +215,7 @@ class Bodies
     const SNOWMAN = 46;
     const TURKEY = 48;
     const DOG = 49;
+    const GLADIATOR = 50;
 }
 
 
@@ -263,4 +265,5 @@ class Feet
     const SNOWMAN = 46;
     const TURKEY = 48;
     const DOG = 49;
+    const GLADIATOR = 50;
 }

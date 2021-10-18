@@ -171,6 +171,7 @@ class Prizes
     public static $BLOBFISH_HEAD;
     public static $TURKEY_HEAD;
     public static $DOG_HEAD;
+    public static $GLADIATOR_HEAD;
 
     // epic heads
     public static $EPIC_CLASSIC_HEAD;
@@ -222,6 +223,7 @@ class Prizes
     public static $EPIC_BLOBFISH_HEAD;
     public static $EPIC_TURKEY_HEAD;
     public static $EPIC_DOG_HEAD;
+    public static $EPIC_GLADIATOR_HEAD;
 
 
     // bodies
@@ -271,6 +273,7 @@ class Prizes
     public static $SNOWMAN_BODY;
     public static $TURKEY_BODY;
     public static $DOG_BODY;
+    public static $GLADIATOR_BODY;
 
     // epic bodies
     public static $EPIC_CLASSIC_BODY;
@@ -319,6 +322,7 @@ class Prizes
     public static $EPIC_SNOWMAN_BODY;
     public static $EPIC_TURKEY_BODY;
     public static $EPIC_DOG_BODY;
+    public static $EPIC_GLADIATOR_BODY;
 
 
     // feet
@@ -366,6 +370,7 @@ class Prizes
     public static $SNOWMAN_FEET;
     public static $TURKEY_FEET;
     public static $DOG_FEET;
+    public static $GLADIATOR_FEET;
 
     // epic feet
     public static $EPIC_CLASSIC_FEET;
@@ -412,6 +417,7 @@ class Prizes
     public static $EPIC_SNOWMAN_FEET;
     public static $EPIC_TURKEY_FEET;
     public static $EPIC_DOG_FEET;
+    public static $EPIC_GLADIATOR_FEET;
 
 
     public static function init()
@@ -506,6 +512,7 @@ class Prizes
         self::$BLOBFISH_HEAD = new Prize(self::TYPE_HEAD, Heads::BLOBFISH, 'Blobfish Head');
         self::$TURKEY_HEAD = new Prize(self::TYPE_HEAD, Heads::TURKEY, 'Turkey Head');
         self::$DOG_HEAD = new Prize(self::TYPE_HEAD, Heads::DOG, 'Dog Head');
+        self::$GLADIATOR_HEAD = new Prize(self::TYPE_HEAD, Heads::GLADIATOR, 'Gladiator Head');
 
         // epic heads
         self::$EPIC_CLASSIC_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::CLASSIC, 'Epic Upgrade');
@@ -557,6 +564,7 @@ class Prizes
         self::$EPIC_BLOBFISH_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::BLOBFISH, 'Epic Upgrade');
         self::$EPIC_TURKEY_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::TURKEY, 'Epic Upgrade');
         self::$EPIC_DOG_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::DOG, 'Epic Upgrade');
+        self::$EPIC_GLADIATOR_HEAD = new Prize(self::TYPE_EPIC_HEAD, Heads::GLADIATOR, 'Epic Upgrade');
 
 
         // bodies
@@ -606,6 +614,7 @@ class Prizes
         self::$SNOWMAN_BODY = new Prize(self::TYPE_BODY, Bodies::SNOWMAN, 'Snowman Body');
         self::$TURKEY_BODY = new Prize(self::TYPE_BODY, Bodies::TURKEY, 'Turkey Body');
         self::$DOG_BODY = new Prize(self::TYPE_BODY, Bodies::DOG, 'Dog Body');
+        self::$GLADIATOR_BODY = new Prize(self::TYPE_BODY, Bodies::GLADIATOR, 'Gladiator Body');
 
         // epic bodies
         self::$EPIC_CLASSIC_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::CLASSIC, 'Epic Upgrade');
@@ -654,6 +663,7 @@ class Prizes
         self::$EPIC_SNOWMAN_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::SNOWMAN, 'Epic Upgrade');
         self::$EPIC_TURKEY_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::TURKEY, 'Epic Upgrade');
         self::$EPIC_DOG_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::DOG, 'Epic Upgrade');
+        self::$EPIC_GLADIATOR_BODY = new Prize(self::TYPE_EPIC_BODY, Bodies::GLADIATOR, 'Epic Upgrade');
 
 
         // feet
@@ -701,6 +711,7 @@ class Prizes
         self::$SNOWMAN_FEET = new Prize(self::TYPE_FEET, Feet::SNOWMAN, 'Snowman Feet');
         self::$TURKEY_FEET = new Prize(self::TYPE_FEET, Feet::TURKEY, 'Turkey Feet');
         self::$DOG_FEET = new Prize(self::TYPE_FEET, Feet::DOG, 'Dog Feet');
+        self::$GLADIATOR_FEET = new Prize(self::TYPE_FEET, Feet::GLADIATOR, 'Gladiator Feet');
 
         // epic feet
         self::$EPIC_CLASSIC_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::CLASSIC, 'Epic Upgrade');
@@ -747,6 +758,7 @@ class Prizes
         self::$EPIC_SNOWMAN_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::SNOWMAN, 'Epic Upgrade');
         self::$EPIC_TURKEY_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::TURKEY, 'Epic Upgrade');
         self::$EPIC_DOG_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::DOG, 'Epic Upgrade');
+        self::$EPIC_GLADIATOR_FEET = new Prize(self::TYPE_EPIC_FEET, Feet::GLADIATOR, 'Epic Upgrade');
     }
 
 
