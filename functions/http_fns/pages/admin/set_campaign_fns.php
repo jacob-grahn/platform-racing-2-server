@@ -9,57 +9,14 @@ function is_selected($prize_type, $option_value)
 }
 
 
-function prize_check($type, $id, $err_prefix)
+function prize_check($prize_type, $prize_id, $level_num)
 {
-    $type_array = ['hat', 'head', 'body', 'feet', 'eHat', 'eHead', 'eBody', 'eFeet'];
-
-    // safety first
-    $safe_type = htmlspecialchars($type, ENT_QUOTES);
-    $id = (int) $id;
-
-    // check for a valid prize type
-    if (!in_array($type, $type_array)) {
-        throw new Exception("$err_prefix ($safe_type is an invalid prize type).");
+    try {
+        validate_prize($prize_type, $prize_id, false);
+    } catch (Exception $e) {
+        throw new Exception("The prize is invalid for level #$level_num. There was an " . lcfirst($e->getMessage()));
     }
-
-    // check for a valid hat id
-    if ($type === 'hat' || $type === 'eHat') {
-        if ($id < 2 || $id > 16) {
-            throw new Exception("$err_prefix (invalid hat ID ($id) specified).");
-        } else {
-            return true;
-        }
-    }
-
-    // check for a valid head id
-    if ($type === 'head' || $type === 'eHead') {
-        if ($id < 1 || $id > 49) {
-            throw new Exception("$err_prefix (invalid head ID ($id) specified).");
-        } else {
-            return true;
-        }
-    }
-
-    // check for a valid body id
-    if ($type === 'body' || $type === 'eBody') {
-        if ($id < 1 || $id > 49 || $id === 33 || $id === 44 || $id === 47) {
-            throw new Exception("$err_prefix (invalid body ID ($id) specified).");
-        } else {
-            return true;
-        }
-    }
-
-    // check for a valid feet id
-    if ($type === 'feet' || $type === 'eFeet') {
-        if ($id < 1 || $id > 49 || ($id >= 31 && $id <= 33) || $id === 44 || $id === 47) {
-            throw new Exception("$err_prefix (invalid feet ID ($id) specified).");
-        } else {
-            return true;
-        }
-    }
-
-    // this should never happen
-    throw new Exception("$err_prefix (an unknown error occurred).");
+    return true;
 }
 
 
@@ -122,26 +79,34 @@ function output_form($pdo, $message, $campaign_id)
 
 function update($pdo, $admin, $campaign_id)
 {
-    foreach (range(1, 9) as $id) {
-        // get individual level/prize details
-        $level_id = (int) find("level_id_$id");
-        $prize_type = find("prize_type_$id");
-        $prize_id = (int) find("prize_id_$id");
+    $levels = [];
 
-        try {
+    try {
+        foreach (range(1, 9) as $num) {
+            // get individual level/prize details
+            $level_id = (int) find("level_id_$num");
+            $prize_type = find("prize_type_$num");
+            $prize_id = (int) find("prize_id_$num");
+
             level_select($pdo, $level_id); // will throw error if level does not exist
-            prize_check($prize_type, $prize_id, "The prize for level #$id is invalid");
-            campaign_update($pdo, $campaign_id, $id, $level_id, $prize_type, $prize_id);
-        } catch (Exception $e) {
-            $error = "Error: " . $e->getMessage();
-            output_form($pdo, $error, $campaign_id);
+            prize_check($prize_type, $prize_id, $num);
+
+            $level = new stdClass();
+            $level->level_id = $level_id;
+            $level->prize_type = $prize_type;
+            $level->prize_id = $prize_id;
+            $levels[] = $level;
         }
+    } catch (Exception $e) {
+        $error = "Error: " . $e->getMessage();
+        return output_form($pdo, $error, $campaign_id);
     }
 
-    // push the changes to the servers
+    // update the campaign and push the changes to the servers
+    campaign_update($pdo, $campaign_id, $levels);
     generate_level_list($pdo, 'campaign');
 
-    //admin log
+    // admin log
     $admin_name = $admin->name;
     $admin_id = $admin->user_id;
     $ip = get_ip();

@@ -520,19 +520,21 @@ function to_part_name($type, $id)
  *
  * @param string type Part type.
  * @param int id Part ID.
+ * @param bool incl_exp Determines if EXP is a valid "part" type.
  *
- * @throws Exception if an invalid part is specified.
+ * @throws Exception if an invalid part type or ID is specified.
  * @return string
  */
-function validate_prize($type, $id)
+function validate_prize($type, $id, $incl_exp = true)
 {
     $type = htmlspecialchars(strtolower($type));
     $id = (int) $id;
-    $type_array = ['hat', 'head', 'body', 'feet', 'ehat', 'ehead', 'ebody', 'efeet', 'exp'];
+    $type_array = ['hat', 'head', 'body', 'feet', 'ehat', 'ehead', 'ebody', 'efeet'];
+    $incl_exp = (bool) $incl_exp;
 
     // check for a valid prize type
-    if (!in_array($type, $type_array)) {
-        throw new Exception("$type is an invalid prize type.");
+    if (!in_array($type, $type_array) && ($incl_exp ? $type !== 'exp' : true)) {
+        throw new Exception("Invalid prize type ($type) specified.");
     }
 
     // preserve epicness
