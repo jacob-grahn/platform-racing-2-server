@@ -56,25 +56,39 @@ function campaign_select($pdo)
 }
 
 
-function campaign_update($pdo, $campaign_id, $level_num, $level_id, $prize_type, $prize_id)
+function campaign_update($pdo, $campaign_id, $levels)
 {
-    $stmt = $pdo->prepare('
-        UPDATE campaigns
-        SET level_id = :level_id,
-            prize_type = :prize_type,
-            prize_id = :prize_id
-        WHERE campaign = :campaign_id
-        AND level_num = :level_num
-    ');
-    $stmt->bindValue(':campaign_id', $campaign_id, PDO::PARAM_INT);
-    $stmt->bindValue(':level_num', $level_num, PDO::PARAM_INT);
-    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
-    $stmt->bindValue(':prize_type', $prize_type, PDO::PARAM_STR);
-    $stmt->bindValue(':prize_id', $prize_id, PDO::PARAM_INT);
-    $result = $stmt->execute();
+    if (count($levels) !== 9) {
+        throw new Exception('Nine levels must be specified.');
+    }
 
-    if ($result === false) {
-        throw new Exception("Could not update campaign on level $level_num.");
+    foreach ($levels as $key => $data) {
+        $level_num = $key + 1;
+        $level = $levels[$key];
+
+        // sanity: all info present?
+        if (empty($level->level_id) || empty($level->prize_type) || empty($level->prize_id)) {
+            throw new Exception("Some data is missing for level #$level_num.");
+        }
+
+        $stmt = $pdo->prepare('
+            UPDATE campaigns
+            SET level_id = :level_id,
+                prize_type = :prize_type,
+                prize_id = :prize_id
+            WHERE campaign = :campaign_id
+            AND level_num = :level_num
+        ');
+        $stmt->bindValue(':campaign_id', $campaign_id, PDO::PARAM_INT);
+        $stmt->bindValue(':level_num', $key + 1, PDO::PARAM_INT);
+        $stmt->bindValue(':level_id', $level->level_id, PDO::PARAM_INT);
+        $stmt->bindValue(':prize_type', $level->prize_type, PDO::PARAM_STR);
+        $stmt->bindValue(':prize_id', $level->prize_id, PDO::PARAM_INT);
+        $result = $stmt->execute();
+
+        if ($result === false) {
+            throw new Exception("Could not update campaign on level #$level_num.");
+        }
     }
 
     return $result;

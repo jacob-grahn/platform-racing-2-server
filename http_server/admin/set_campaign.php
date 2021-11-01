@@ -31,7 +31,7 @@ try {
     }
 } catch (Exception $e) {
     output_header('Error');
-    $error = $e->getMessage();
+    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
     echo "Error: $error";
 } finally {
     output_footer();

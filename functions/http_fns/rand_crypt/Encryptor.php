@@ -5,8 +5,8 @@ namespace pr2\http;
 class Encryptor
 {
 
-    private static $algorithm = MCRYPT_RIJNDAEL_128;
-    private static $mode = MCRYPT_MODE_CBC;
+    private static $algorithm = 'AES-128-CBC';
+    private static $full_opts = OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING;
     private static $binary_key;
     private static $base64_key;
     private static $binary_iv;
@@ -27,9 +27,9 @@ class Encryptor
 
     public static function generateIV()
     {
-        $binary_iv = mcrypt_create_iv(mcrypt_get_iv_size(self::$algorithm, self::$mode), MCRYPT_RAND);
+        $binary_iv = openssl_random_pseudo_bytes(16);
         $base64_iv = base64_encode($binary_iv);
-        return($base64_iv);
+        return $base64_iv;
     }
 
     public static function setIV($base64_iv)
@@ -39,10 +39,17 @@ class Encryptor
         self::$binary_iv = $binary_iv;
     }
 
+    private static function padPKCS5($str)
+    {
+        $pad = 16 - (strlen($str) % 16);
+        return $str . str_repeat(chr($pad), $pad);
+    }
+
     public static function encrypt($string, $base64_iv)
     {
         $binary_iv = base64_decode($base64_iv);
-        $binary_encrypted = mcrypt_encrypt(self::$algorithm, self::$binary_key, $string, self::$mode, $binary_iv);
+        $padstr = self::padPKCS5($string);
+        $binary_encrypted = openssl_encrypt($padstr, self::$algorithm, self::$binary_key, OPENSSL_RAW_DATA, $binary_iv);
         $base64_encrypted = base64_encode($binary_encrypted);
         return $base64_encrypted;
     }
@@ -51,8 +58,7 @@ class Encryptor
     {
         $binary_iv = base64_decode($base64_iv);
         $binary_encrypted = base64_decode($base64_encrypted);
-        $string = mcrypt_decrypt(self::$algorithm, self::$binary_key, $binary_encrypted, self::$mode, $binary_iv);
-        $string = rtrim($string, "\0");
-        return $string;
+        $string = openssl_decrypt($binary_encrypted, self::$algorithm, self::$binary_key, self::$full_opts, $binary_iv);
+        return rtrim($string, "\0");
     }
 }
