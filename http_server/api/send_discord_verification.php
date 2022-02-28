@@ -29,7 +29,7 @@ try {
     }
 
     // data missing?
-    if (is_empty($user_id) || is_empty($ver_code) || empty($d_id) || is_empty($d_name) || empty($d_discrim)) {
+    if (empty($user_id) || is_empty($ver_code) || empty($d_id) || is_empty($d_name) || empty($d_discrim)) {
         throw new Exception('Some data is missing.');
     }
 
