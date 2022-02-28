@@ -59,6 +59,6 @@ class Encryptor
         $binary_iv = base64_decode($base64_iv);
         $binary_encrypted = base64_decode($base64_encrypted);
         $string = openssl_decrypt($binary_encrypted, self::$algorithm, self::$binary_key, self::$full_opts, $binary_iv);
-        return rtrim($string, "\0");
+        return preg_replace('/[[:cntrl:]]/', '', rtrim($string, "\0"));
     }
 }
