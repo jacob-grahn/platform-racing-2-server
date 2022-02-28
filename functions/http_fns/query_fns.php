@@ -247,7 +247,7 @@ function award_part($pdo, $user_id, $type, $part_id)
             unset($part_array[$key]);
         }
     }
-    
+
     // join data to prepare for db update
     $new_field_str = join(",", $part_array);
 
