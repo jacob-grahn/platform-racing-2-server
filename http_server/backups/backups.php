@@ -21,8 +21,8 @@ try {
     $user_id = (int) token_login($pdo, true, false, 'g');
 
     // rate limiting
-    rate_limit('level-backups-'.$user_id, 5, 1);
-    rate_limit('level-backups-'.$user_id, 30, 5);
+    rate_limit('level-backups-'.$user_id, 5, 2);
+    rate_limit('level-backups-'.$user_id, 30, 10);
 
     // output mod nav if they're a mod
     $staff = is_staff($pdo, $user_id, false);
