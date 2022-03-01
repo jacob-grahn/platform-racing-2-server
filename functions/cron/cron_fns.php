@@ -90,6 +90,7 @@ function write_server_status($pdo)
         $display->guild_id = $server->guild_id;
         $display->tournament = $server->tournament;
         $display->happy_hour = (int) ($server->happy_hour > 0);
+        $display->hh_hour = $server->hh_hour !== null ? (int) $server->hh_hour : null;
         $displays[] = $display;
         output("Status written for $server->server_name (ID #$server->server_id).");
     }

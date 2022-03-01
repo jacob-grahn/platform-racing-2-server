@@ -51,6 +51,11 @@ function configure_server($server)
         \pr2\multi\HappyHour::activate($server->happy_hour);
     }
 
+    // update some happy hour information and tell the server
+    $hh_time_left = \pr2\multi\HappyHour::timeLeft();
+    $hh_hour = \pr2\multi\HappyHour::$random_hour = $hh_hour = rand(0, 23);
+    db_op('server_update_status', array($server->server_id, $server->status, 0, $hh_time_left, $hh_hour));
+
     // set server owner
     if ($guild_id !== 0) {
         $guild = db_op('guild_select', array($guild_id));

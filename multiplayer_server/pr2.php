@@ -89,7 +89,6 @@ $max_players = 200;
 
 // prizes/random hh hour
 Prizes::init();
-HappyHour::$random_hour = rand(0, 23);
 
 // important arrays
 $login_array = array();
