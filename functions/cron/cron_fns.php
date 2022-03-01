@@ -6,7 +6,7 @@
 
 function run_update_cycle($pdo)
 {
-    output('Running update cycle...');
+    output("Running update cycle...\n");
 
     // recent bans
     $bans_to_send = [];
@@ -47,8 +47,10 @@ function run_update_cycle($pdo)
     $send->recent_bans = $bans_to_send;
     $send_str = json_encode($send);
 
-    // send the data
-    $server_list = servers_select($pdo);
+    // check servers and send the data
+    $server_list = check_servers($pdo, false);
+    output("Waiting 1 second before proceeding...\n");
+    sleep(1);
     $servers = poll_servers($server_list, 'update_cycle`' . $send_str);
 
     // process replies
@@ -70,7 +72,7 @@ function run_update_cycle($pdo)
             server_update_status($pdo, $server->server_id, 'down', 0, 0);
         }
     }
-    output('Update cycle complete.');
+    output("Update cycle complete.\n");
 }
 
 
@@ -104,7 +106,7 @@ function write_server_status($pdo)
 
     file_put_contents(WWW_ROOT . '/files/server_status_2.txt', $display_str);
 
-    output('Server status output successful.');
+    output("Server status output successful.\n");
 }
 
 
@@ -130,7 +132,7 @@ function get_recent_pms($pdo)
     // save the message id for next time
     file_put_contents($file, $last_message_id);
 
-    output("Wrote last message ID to $file.");
+    output("Wrote last message ID to $file.\n");
 
     // done
     return $messages;
@@ -264,7 +266,7 @@ function failover_servers($pdo)
     }
 
     // tell the world
-    output('The correct address of all active servers has been ensured.');
+    output("The correct address of all active servers has been ensured.\n");
 }
 
 
