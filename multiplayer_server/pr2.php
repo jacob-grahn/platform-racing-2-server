@@ -109,13 +109,12 @@ $search_room = new LevelListRoom('search');
 
 // load in startup info
 output('Requesting loadup information...');
+$uptime = time();
 begin_loadup($server_id);
-$uptime = date('r');
 
 // start the socket server
 output("Starting PR2 server $server_name (ID: #$server_id) on port $port...");
 $daemon = new \chabot\SocketDaemon();
 $server = $daemon->createServer('\pr2\multi\PR2SocketServer', '\pr2\multi\PR2Client', 0, $port);
-output("Success! Server started" . ($verbose ? ' (in verbose mode)' : '') . " on $uptime.");
-$uptime = strtotime($uptime);
+output("Success! Server started" . ($verbose ? ' (in verbose mode)' : '') . ' on ' . date('r', $uptime));
 $daemon->process();

@@ -32,7 +32,7 @@ function begin_loadup($server_id)
 
 function configure_server($server)
 {
-    global $port, $server_name, $server_expire_time, $guild_id, $guild_owner, $is_ps;
+    global $port, $server_name, $uptime, $server_expire_time, $guild_id, $guild_owner, $is_ps;
 
     // server information
     $port = (int) $server->port;
@@ -54,7 +54,7 @@ function configure_server($server)
     // update some happy hour information and tell the server
     $hh_time_left = \pr2\multi\HappyHour::timeLeft();
     $hh_hour = \pr2\multi\HappyHour::$random_hour = $hh_hour = rand(0, 23);
-    db_op('server_update_status', array($server->server_id, $server->status, 0, $hh_time_left, $hh_hour, time()));
+    db_op('server_update_status', array($server->server_id, $server->status, 0, $hh_time_left, $hh_hour, $uptime));
 
     // set server owner
     if ($guild_id !== 0) {
