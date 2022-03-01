@@ -83,14 +83,15 @@ function write_server_status($pdo)
     foreach ($servers as $server) {
         $display = new stdClass();
         output("Writing status for $server->server_name (ID #$server->server_id)...");
-        $display->server_id = $server->server_id;
+        $display->server_id = (int) $server->server_id;
         $display->server_name = preg_replace("/[^A-Za-z0-9 ]/", '', $server->server_name);
         $display->address = $server->address;
-        $display->port = $server->port;
-        $display->population = $server->population;
+        $display->port = (int) $server->port;
+        $display->population = (int) $server->population;
         $display->status = $server->status;
-        $display->guild_id = $server->guild_id;
-        $display->tournament = $server->tournament;
+        $display->uptime = (int) $server->uptime;
+        $display->guild_id = (int) $server->guild_id;
+        $display->tournament = (int) $server->tournament;
         $display->happy_hour = (int) ($server->happy_hour > 0);
         $display->hh_hour = $server->hh_hour !== null ? (int) $server->hh_hour : null;
         $displays[] = $display;
