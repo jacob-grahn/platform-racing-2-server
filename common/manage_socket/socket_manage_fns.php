@@ -62,6 +62,7 @@ function check_servers($pdo)
 
     // tell it to the world
     output('All servers tested.');
+    return $servers;
 }
 
 
@@ -83,7 +84,7 @@ function test_server($script, $address, $port, $salt, $server_id)
     }
 
     // tell the world
-    output("Test of server #$server_id at $address:$port complete.");
+    output("Test of server #$server_id at $address:$port complete.\n");
 }
 
 
@@ -225,7 +226,7 @@ function talk_to_server($address, $port, $salt, $process_function, $receive = tr
         output("Attempting to talk to server at $address:$port...");
     }
     $reply = true;
-    $fsock = fsockopen($address, $port, $errno, $errstr, 5);
+    $fsock = $output ? @fsockopen($address, $port, $errno, $errstr, 5) : fsockopen($address, $port, $errno, $errstr, 5);
     if ($fsock !== false) {
         if ($output === true) {
             output("Successfully connected! Writing: $process_function");

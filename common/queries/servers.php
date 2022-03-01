@@ -129,20 +129,32 @@ function server_update_expire_time($pdo, $expire_time, $server_id)
 }
 
 
-function server_update_status($pdo, $server_id, $status, $population, $happy_hour)
+function server_update_status($pdo, $server_id, $status, $population, $hh_time_left, $hh_hour = -1, $uptime = 0)
 {
-    $stmt = $pdo->prepare('
+    $update_hh_hour = $hh_hour > -1 || $hh_hour === null || $status === 'down';
+    $update_uptime = $uptime > 0 || $status === 'down';
+    $hh_hour_sql = $update_hh_hour ? 'hh_hour = :hh_hour,' : '';
+    $uptime_sql = $update_uptime ? 'uptime = :uptime,' : '';
+    $stmt = $pdo->prepare("
         UPDATE servers
            SET status = :status,
                population = :population,
-               happy_hour = :happy_hour
+               $uptime_sql
+               $hh_hour_sql
+               happy_hour = :hh_time_left
          WHERE server_id = :server_id
          LIMIT 1
-    ');
+    ");
     $stmt->bindValue(':server_id', $server_id, PDO::PARAM_INT);
     $stmt->bindValue(':status', $status, PDO::PARAM_STR);
     $stmt->bindValue(':population', $population, PDO::PARAM_INT);
-    $stmt->bindValue(':happy_hour', $happy_hour, PDO::PARAM_INT);
+    $stmt->bindValue(':hh_time_left', $hh_time_left, PDO::PARAM_INT);
+    if ($update_uptime) {
+        $stmt->bindValue(':uptime', $uptime, PDO::PARAM_INT);
+    }
+    if ($update_hh_hour) {
+        $stmt->bindValue(':hh_hour', ($hh_hour > -1 ? $hh_hour : -1), PDO::PARAM_INT);
+    }
     $result = $stmt->execute();
 
     if ($result === false) {

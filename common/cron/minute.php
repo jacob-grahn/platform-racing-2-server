@@ -11,18 +11,17 @@ require_once QUERIES_DIR . '/servers.php';
 
 // tell the command line
 $time = date('r');
-output("Minute CRON starting at $time...");
+output("Minute CRON starting at $time...\n");
 
 // connect
 $pdo = pdo_connect();
 
 // perform minute tasks
 failover_servers($pdo);
-check_servers($pdo);
 generate_level_list($pdo, 'newest');
 update_artifact($pdo);
 run_update_cycle($pdo);
 write_server_status($pdo);
 
 // tell the command line
-output('Minute CRON successful.');
+output("Minute CRON successful.\n");
