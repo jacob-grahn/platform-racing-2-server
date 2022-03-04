@@ -30,7 +30,7 @@ try {
     fah_update($pdo);
     generate_level_list($pdo, 'newest');
     generate_level_list($pdo, 'best');
-    generate_level_list($pdo, 'best_today');
+    generate_level_list($pdo, 'best_week');
     generate_level_list($pdo, 'campaign');
     set_campaign($pdo);
 

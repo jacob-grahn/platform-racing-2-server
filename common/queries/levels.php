@@ -452,7 +452,7 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
 }
 
 
-function levels_select_best_today($pdo)
+function levels_select_best_week($pdo)
 {
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
@@ -484,7 +484,7 @@ function levels_select_best_today($pdo)
     $result = $stmt->execute();
 
     if ($result === false) {
-        throw new Exception('Could not perform query to select today\'s best levels.');
+        throw new Exception('Could not perform query to select this week\'s best levels.');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);

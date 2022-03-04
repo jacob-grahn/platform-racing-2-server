@@ -539,7 +539,7 @@ function backup_level(
 // write a level list to the filesystem
 function generate_level_list($pdo, $mode)
 {
-    $allowed = ['campaign', 'best', 'best_today', 'newest'];
+    $allowed = ['campaign', 'best', 'best_week', 'newest'];
     if (in_array($mode, $allowed)) {
         $levels = ("levels_select_" . $mode)($pdo);
     } else {
