@@ -101,7 +101,6 @@ try {
         } else { // or password login
             $user = pass_login($pdo, $user_name, $user_pass, 'n');
         }
-        $user_id = (int) $user->user_id;
         unset($user_pass, $login->user_pass); // don't keep raw pass in memory or send to server
 
         // see if they're trying to log into a guest
@@ -110,6 +109,7 @@ try {
             throw new Exception($e);
         }
     }
+    $user_id = (int) $user->user_id;
 
     // are they banned?
     $bans = query_if_banned($pdo, $user_id, $ip);
