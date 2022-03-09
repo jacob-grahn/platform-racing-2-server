@@ -304,19 +304,21 @@ function ensure_awards($pdo)
     $awards = part_awards_select_list($pdo);
 
     // give users their awards
-    foreach ($awards as $row) {
-        $part = (int) $row->part === 0 ? '*' : $row->part;
-        $type = $row->type;
-        $user_id = (int) $row->user_id;
-        try {
-            if ($type !== 'exp') {
-                award_part($pdo, $user_id, $type, $part);
-            } else {
-                award_exp($pdo, $user_id, $part, true);
+    if (!empty($awards)) {
+        foreach ($awards as $row) {
+            $part = (int) $row->part === 0 ? '*' : $row->part;
+            $type = $row->type;
+            $user_id = (int) $row->user_id;
+            try {
+                if ($type !== 'exp') {
+                    award_part($pdo, $user_id, $type, $part);
+                } else {
+                    award_exp($pdo, $user_id, $part, true);
+                }
+                echo "user_id: $user_id, type: $type, part: $part \n";
+            } catch (Exception $e) {
+                echo "Error: $e \n";
             }
-            echo "user_id: $user_id, type: $type, part: $part \n";
-        } catch (Exception $e) {
-            echo "Error: $e \n";
         }
     }
 
