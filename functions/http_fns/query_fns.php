@@ -562,17 +562,17 @@ function generate_level_list($pdo, $mode)
 }
 
 
-// unpublish a level
-function remove_level($pdo, $mod, $level_id)
+// unpublish or restrict a level
+function moderate_level($pdo, $mod, $level_id, $action = 'unpublish')
 {
     // make sure the user is a permanent moderator
     if ($mod->trial_mod) {
-        throw new Exception('You can not unpublish levels.');
+        throw new Exception("You can not $action levels.");
     }
 
     // check to see if this level has a prize
     if (!empty(campaign_level_select_by_id($pdo, $level_id)) || !empty(level_prize_select($pdo, $level_id))) {
-        throw new Exception('This level could not be unpublished because it is has a prize.');
+        throw new Exception("This level could not be ${action}ed because it is has a prize.");
     }
 
     // check for the level's information
@@ -582,14 +582,22 @@ function remove_level($pdo, $mod, $level_id)
     $l_note = $level->note;
 
     // unpublish the level
+    ('level_' . $action)($pdo, $level_id);
     delete_from_newest($pdo, $level_id);
-    level_unpublish($pdo, $level_id);
+    if ((bool) delete_from_best($pdo, $level_id)) {
+        best_levels_reset($pdo);
+    }
+
+    // repopulate level lists
+    generate_level_list($pdo, 'newest');
+    generate_level_list($pdo, 'best');
+    generate_level_list($pdo, 'best_week');
 
     // record the change
     $ip = get_ip();
-    $mod_msg = "$mod->name unpublished level $level_id from $ip "
+    $mod_msg = "$mod->name ${action}ed level $level_id from $ip "
         ."{level_title: $l_title, creator: $l_creator, level_note: $l_note}";
-    mod_action_insert($pdo, $mod->user_id, $mod_msg, 'remove-level', $ip);
+    mod_action_insert($pdo, $mod->user_id, $mod_msg, 'moderate-level', $ip);
 }
 
 

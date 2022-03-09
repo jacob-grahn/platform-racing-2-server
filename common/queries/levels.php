@@ -99,6 +99,28 @@ function level_insert($pdo, $title, $note, $live, $time, $ip, $min_level, $song,
 }
 
 
+function level_restrict($pdo, $level_id, $suppress_error = false)
+{
+    $stmt = $pdo->prepare('
+        UPDATE levels
+           SET restricted = 1
+         WHERE level_id = :level_id
+    ');
+    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        if ($suppress_error === false) {
+            throw new Exception('Could not restrict level.');
+        } else {
+            return false;
+        }
+    }
+    
+    return $result;
+}
+
+
 function level_select_by_title($pdo, $user_id, $title)
 {
     db_set_encoding($pdo, 'utf8mb4');
@@ -278,7 +300,8 @@ function level_update($pdo, $lid, $title, $note, $live, $time, $ip, $rank, $song
                version = :version,
                pass = :pass,
                type = :type,
-               bad_hats = :bad_hats
+               bad_hats = :bad_hats,
+               restricted = 0
          WHERE level_id = :level_id
          LIMIT 1
     ');
@@ -349,7 +372,8 @@ function levels_restore_backup(
             song = :song,
             pass = :pass,
             type = :type,
-            bad_hats = :bad_hats
+            bad_hats = :bad_hats,
+            restricted = 0
     ');
     $stmt->bindValue(':user_id', $uid, PDO::PARAM_INT);
     $stmt->bindValue(':title', $name, PDO::PARAM_STR);
@@ -478,6 +502,7 @@ function levels_select_best_week($pdo)
            AND nl.level_id = l.level_id
            AND live = 1
            AND votes > 25
+           AND restricted = 0
       ORDER BY rating DESC
          LIMIT 0, 81
     ');
@@ -515,6 +540,7 @@ function levels_select_best($pdo)
                  users u
            WHERE l.user_id = u.user_id
              AND bl.level_id = l.level_id
+             AND restricted = 0
         ORDER BY rating DESC
            LIMIT 0, 81
     ');
