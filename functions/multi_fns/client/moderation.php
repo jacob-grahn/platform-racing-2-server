@@ -25,9 +25,8 @@ function client_kick($socket, $data)
     // if they're a mod and not the person being kicked, proceed
     if ($mod->group >= 2 && $kicked != $mod) {
         // check if online and get user data if not
-        $kicked_online = true;
-        if (!isset($kicked)) {
-            $kicked_online = false;
+        $kicked_online = isset($kicked);
+        if (!$kicked_online) {
             $kicked = db_op('user_select_by_name', array($name, true));
             if ($kicked === false) {
                 $mod->write("message`Error: Could not find a user with the name \"$safe_kname\".");
@@ -40,10 +39,7 @@ function client_kick($socket, $data)
                     $kicked->group = 3;
                 }
             }
-        }
-
-        // demote if a temp mod
-        if ($kicked->temp_mod) {
+        } elseif ($kicked->temp_mod) { // demote if a temp mod
             $kicked->group = 1;
             $kicked->temp_mod = false;
             $kicked->write('demoteMod`');
@@ -146,9 +142,8 @@ function client_warn($socket, $data)
 
     // if they're a mod, and the user is on this server, warn the user
     if ($mod->group >= 2 && $warned != $mod) {
-        $warned_online = true;
-        if (!isset($warned)) {
-            $warned_online = false;
+        $warned_online = isset($warned);
+        if (!$warned_online) {
             $warned = db_op('user_select_by_name', array($name, true));
             if ($warned === false) {
                 $mod->write("message`Error: Could not find a user with the name \"$safe_wname\".");
