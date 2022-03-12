@@ -8,6 +8,7 @@ function user_delete($pdo, $user_id)
     user_delete_from_epic_upgrades($pdo, $user_id);
     user_delete_from_favorite_levels($pdo, $user_id);
     user_delete_from_folding_at_home($pdo, $user_id);
+    user_delete_from_follows($pdo, $user_id);
     user_delete_from_friends($pdo, $user_id);
     user_delete_from_gp($pdo, $user_id);
     user_delete_from_guild_invitations($pdo, $user_id);
@@ -121,6 +122,24 @@ function user_delete_from_folding_at_home($pdo, $user_id)
 
     if ($result === false) {
         throw new Exception('Could not delete user from folding_at_home.');
+    }
+    
+    return $result;
+}
+
+function user_delete_from_follows($pdo, $user_id)
+{
+    $stmt = $pdo->prepare('
+        DELETE FROM follows
+        WHERE user_id = :user_id
+        OR following_id = :following_id
+    ');
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':following_id', $user_id, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not delete user from follows.');
     }
     
     return $result;

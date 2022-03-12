@@ -3,6 +3,7 @@
 header('Content-type: text/plain');
 
 require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/follows.php';
 require_once QUERIES_DIR . '/friends.php';
 require_once QUERIES_DIR . '/ignored.php';
 
@@ -12,7 +13,7 @@ $target_id = (int) default_post('target_id', 0);
 $list = default_post('list', '');
 $mode = default_post('mode', '');
 
-$allowed_lists = ['friends', 'ignored'];
+$allowed_lists = ['following', 'friends', 'ignored'];
 $allowed_modes = ['add', 'remove'];
 
 $ret = new stdClass();
@@ -49,7 +50,7 @@ try {
     $user_id = (int) token_login($pdo, false, false, 'g');
     $power = (int) user_select_power($pdo, $user_id);
     if ($power <= 0) {
-        $e = 'Guests can\'t use user lists. To access this feature, please create your own account.';
+        $e = 'Guests can\'t make user lists. To access this feature, please create your own account.';
         throw new Exception($e);
     }
 
@@ -80,13 +81,18 @@ try {
     // craft return message
     $msg = htmlspecialchars($target->name, ENT_QUOTES);
     switch ($list) {
+        case 'following':
+            $l = [0 => ['', '!', 'now'], 1 => ['un', '.', 'no longer']];
+            $l2u = $l[(int) !($mode === 'add')];
+            $msg = "You {$l2u[0]}followed $msg{$l2u[1]} You will $l2u[2] receive a PM when they publish a level.";
+            break;
         case 'friends':
             $l = [0 => ['added to', '!'], 1 => ['removed from', '.']];
             $l2u = $l[(int) !($mode === 'add')];
             $msg .= " has been $l2u[0] your friends list$l2u[1]";
             break;
         case 'ignored':
-            $l = [0 => ['', 'won\'t', ' any', 'or', 'from them'], 1 => ['un-', 'will now', '', 'and', 'they send you']];
+            $l = [0 => ['', 'won\'t', ' any', 'or', 'from them'], 1 => ['un', 'will now', '', 'and', 'they send you']];
             $l2u = $l[(int) !($mode === 'add')];
             $msg .= " has been {$l2u[0]}ignored. You $l2u[1] receive$l2u[2] chat $l2u[3] private messages $l2u[4].";
             break;

@@ -129,7 +129,7 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
     // see if they've been ignored
     $ignored = ignored_select($pdo, $to_user_id, $from_user_id, true);
     if ($ignored) {
-        $e = 'You have been ignored by this player. They won\'t receive any chat or messages from you.';
+        $e = 'You have been ignored by this player. They won\'t receive any chat or private messages from you.';
         throw new Exception($e);
     }
 
@@ -204,6 +204,32 @@ function message_send_welcome($pdo, $name, $user_id)
 
     // welcome them
     message_insert($pdo, $user_id, 1, $welcome_message, '0');
+}
+
+
+// sends notifications to a user's followers when they publish a level
+function notify_followers($pdo, $user_id, $ip, $level_id, $title, $version, $note)
+{
+    $followers = followers_select($pdo, $user_id);
+    if (empty($followers)) {
+        return;
+    }
+
+    $title = "[level=$level_id]" . str_replace(['[', ']'], '', $title) . '[/level]';
+    $note = '[i]' . str_replace(['[', ']'], '', $note) . '[/i]';
+
+    $action = $version == 1 ? 'published' : 'updated';
+    $message = "I just $action a level!\n\n"
+        ."Title: $title\n"
+        ."Version: $version\n"
+        ."Description: $note\n\n"
+        .'[small][i]This message was sent automatically. '
+        .'If you no longer wish to receive these notifications, you can unfollow me.[/i][/small]';
+
+    // welcome them
+    foreach ($followers as $follower) {
+        message_insert($pdo, $follower->user_id, $user_id, $message, $ip);
+    }
 }
 
 

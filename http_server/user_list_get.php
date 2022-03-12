@@ -3,6 +3,7 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
+require_once QUERIES_DIR . '/follows.php';
 require_once QUERIES_DIR . '/friends.php';
 require_once QUERIES_DIR . '/ignored.php';
 
@@ -31,6 +32,9 @@ try {
     rate_limit('user-list-'.$user_id, 5, 2);
 
     switch ($mode) {
+        case 'following':
+            $users = following_select_list($pdo, $user_id);
+            break;
         case 'friends':
             $users = friends_select($pdo, $user_id);
             break;

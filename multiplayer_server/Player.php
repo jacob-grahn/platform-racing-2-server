@@ -51,6 +51,7 @@ class Player
     public $hh_acceleration;
     public $hh_jumping;
 
+    public $following_array;
     public $friends_array;
     public $ignored_array;
 
@@ -152,6 +153,7 @@ class Player
         $this->acceleration = $this->hh_acceleration = (int) $login->stats->acceleration;
         $this->jumping = $this->hh_jumping = (int) $login->stats->jumping;
 
+        $this->following_array = $login->following;
         $this->friends_array = $login->friends;
         $this->ignored_array = $login->ignored;
 

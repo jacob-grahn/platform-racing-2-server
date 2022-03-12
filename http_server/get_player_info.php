@@ -3,13 +3,13 @@
 header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
-require_once QUERIES_DIR . '/ignored.php';
+require_once QUERIES_DIR . '/follows.php';
 require_once QUERIES_DIR . '/friends.php';
+require_once QUERIES_DIR . '/ignored.php';
 
 $target_id = (int) default_get('user_id', 0);
 $target_name = default_get('name', '');
-$friend = 0;
-$ignored = 0;
+$following = $friend = $ignored =  0;
 $ip = get_ip();
 
 $ret = new stdClass();
@@ -25,10 +25,9 @@ try {
     // check their login
     try {
         $user_id = (int) token_login($pdo, true, false, 'n');
-        rate_limit('get-player-info-2-'.$user_id, 3, 2);
+        rate_limit('get-player-info-'.$user_id, 3, 2);
     } catch (Exception $e) {
-        $friend = 0;
-        $ignored = 0;
+        $following = $friend = $ignored = 0;
     }
 
     // determine mode
@@ -64,6 +63,7 @@ try {
     $active_rank = $target->rank + $target->used_tokens;
     $hats = count(explode(',', $target->hat_array)) - 1;
     if (isset($user_id)) {
+        $following = (int) (bool) following_select($pdo, $user_id, $target_id, true);
         $friend = (int) (bool) friend_select($pdo, $user_id, $target_id, true);
         $ignored = (int) (bool) ignored_select($pdo, $user_id, $target_id, true);
     }
@@ -120,6 +120,7 @@ try {
 
     $ret->exp_points = $target->exp_points;
     $ret->exp_to_rank = exp_required_for_ranking($target->rank + 1);
+    $ret->following = $following;
     $ret->friend = $friend;
     $ret->ignored = $ignored;
 } catch (Exception $e) {
