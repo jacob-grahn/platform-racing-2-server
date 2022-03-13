@@ -222,7 +222,7 @@ function notify_followers($pdo, $user_id, $ip, $level_id, $title, $version, $not
     $message = "I just $action a level!\n\n"
         ."Title: $title\n"
         ."Version: $version\n"
-        ."Description: $note\n\n"
+        .($note != '[i][/i]' ? "Description: $note\n\n" : "\n")
         .'[small][i]This message was sent automatically. '
         .'If you no longer wish to receive these notifications, you can unfollow me.[/i][/small]';
 
