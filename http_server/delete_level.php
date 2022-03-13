@@ -46,8 +46,6 @@ try {
 
     // more rate limiting
     rate_limit('delete-level-attempt-'.$user_id, 10, 1, $rl_msg);
-    rate_limit('delete-level-'.$ip, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
-    rate_limit('delete-level-'.$user_id, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 
     // fetch level data
     $level = level_select($pdo, $level_id);
@@ -66,6 +64,10 @@ try {
     if (!empty(campaign_level_select_by_id($pdo, $level_id)) || !empty(level_prize_select($pdo, $level_id))) {
         throw new Exception('Your level could not be deleted because it is has a prize.');
     }
+
+    // even more rate limiting
+    rate_limit('delete-level-'.$ip, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
+    rate_limit('delete-level-'.$user_id, 3600, 5, 'You may only delete 5 levels per hour. Try again later.');
 
     // save this file to the backup system
     backup_level(
@@ -95,8 +97,7 @@ try {
     unlink(__DIR__ . "/levels/$level_id.txt");
 
     // delete the file from s3
-    $result = $s3->deleteObject('pr2levels1', $level_id.'.txt');
-    if (!$result) {
+    if (!$s3->deleteObject('pr2levels1', "$level_id.txt")) {
         throw new Exception('A server error was encountered. Your level could not be deleted.');
     }
 
