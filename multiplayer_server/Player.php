@@ -311,7 +311,13 @@ class Player
         $this->active_rank = $this->rank + $this->rt_used;
 
         if ($this->speed + $this->acceleration + $this->jumping > 150 + $this->active_rank) {
-            $this->speed--;
+            if ($this->speed > 0) {
+                $this->speed--;
+            } elseif ($this->acceleration > 0) {
+                $this->acceleration--; // this will rarely trigger
+            } elseif ($this->jumping > 0) {
+                $this->jumping--; // this should never trigger
+            }
         }
         $this->verifyStats();
     }
