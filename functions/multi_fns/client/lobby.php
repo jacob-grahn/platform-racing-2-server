@@ -170,6 +170,31 @@ function client_get_chat_rooms($socket)
 }
 
 
+// add a user to your following array
+function client_follow_user($socket, $data)
+{
+    $player = $socket->getPlayer();
+    $new_follow = name_to_player($data);
+    if (isset($new_follow)) {
+        array_push($player->following_array, $new_follow->user_id);
+    }
+}
+
+
+// remove a user from your following array
+function client_unfollow_user($socket, $data)
+{
+    $player = $socket->getPlayer();
+    $follow = name_to_player($data);
+    if (isset($player)) {
+        $index = @array_search($follow->user_id, $player->following_array);
+        if ($index !== false) {
+            array_splice($player->following_array, $index, 1);
+        }
+    }
+}
+
+
 // add a user to your friends array
 function client_add_friend($socket, $data)
 {
@@ -189,8 +214,7 @@ function client_remove_friend($socket, $data)
     if (isset($player)) {
         $index = @array_search($friend->user_id, $player->friends_array);
         if ($index !== false) {
-            $player->friends_array[$index] = null;
-            unset($player->friends_array[$index]);
+            array_splice($player->friends_array, $index, 1);
         }
     }
 }
@@ -208,15 +232,14 @@ function client_ignore_user($socket, $data)
 
 
 // remove a user from your ignored array
-function client_un_ignore_user($socket, $data)
+function client_unignore_user($socket, $data)
 {
     $player = $socket->getPlayer();
     $ignored_player = name_to_player($data);
     if (isset($player)) {
         $index = @array_search($ignored_player->user_id, $player->ignored_array);
         if ($index !== false) {
-            $player->ignored_array[$index] = null;
-            unset($player->ignored_array[$index]);
+            array_splice($player->ignored_array, $index, 1);
         }
     }
 }

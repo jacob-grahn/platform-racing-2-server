@@ -52,6 +52,7 @@ function client_get_player_info($socket, $data)
     $target = name_to_player($data);
     if (isset($target)) {
         $obj = $target->getInfo();
+        $obj->following = in_array($obj->userId, $me->following_array);
         $obj->friend = in_array($obj->userId, $me->friends_array);
         $obj->ignored = in_array($obj->userId, $me->ignored_array);
         $ret = json_encode($obj);

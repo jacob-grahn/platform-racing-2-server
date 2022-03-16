@@ -129,7 +129,7 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
     // see if they've been ignored
     $ignored = ignored_select($pdo, $to_user_id, $from_user_id, true);
     if ($ignored) {
-        $e = 'You have been ignored by this player. They won\'t receive any chat or messages from you.';
+        $e = 'You have been ignored by this player. They won\'t receive any chat or private messages from you.';
         throw new Exception($e);
     }
 
@@ -204,6 +204,32 @@ function message_send_welcome($pdo, $name, $user_id)
 
     // welcome them
     message_insert($pdo, $user_id, 1, $welcome_message, '0');
+}
+
+
+// sends notifications to a user's followers when they publish a level
+function notify_followers($pdo, $user_id, $ip, $level_id, $title, $version, $note)
+{
+    $followers = followers_select($pdo, $user_id);
+    if (empty($followers)) {
+        return;
+    }
+
+    $title = "[level=$level_id]" . str_replace(['[', ']'], '', $title) . '[/level]';
+    $note = '[i]' . str_replace(['[', ']'], '', $note) . '[/i]';
+
+    $action = $version == 1 ? 'published' : 'updated';
+    $message = "I just $action a level!\n\n"
+        ."Title: $title\n"
+        ."Version: $version\n"
+        .($note != '[i][/i]' ? "Description: $note\n\n" : "\n")
+        .'[small][i]This message was sent automatically. '
+        .'If you no longer wish to receive these notifications, you can unfollow me.[/i][/small]';
+
+    // welcome them
+    foreach ($followers as $follower) {
+        message_insert($pdo, $follower->user_id, $user_id, $message, $ip);
+    }
 }
 
 
@@ -539,7 +565,7 @@ function backup_level(
 // write a level list to the filesystem
 function generate_level_list($pdo, $mode)
 {
-    $allowed = ['campaign', 'best', 'best_today', 'newest'];
+    $allowed = ['campaign', 'best', 'best_week', 'newest'];
     if (in_array($mode, $allowed)) {
         $levels = ("levels_select_" . $mode)($pdo);
     } else {
@@ -562,17 +588,17 @@ function generate_level_list($pdo, $mode)
 }
 
 
-// unpublish a level
-function remove_level($pdo, $mod, $level_id)
+// unpublish or restrict a level
+function moderate_level($pdo, $mod, $level_id, $action = 'unpublish')
 {
     // make sure the user is a permanent moderator
     if ($mod->trial_mod) {
-        throw new Exception('You can not unpublish levels.');
+        throw new Exception("You can not $action levels.");
     }
 
     // check to see if this level has a prize
     if (!empty(campaign_level_select_by_id($pdo, $level_id)) || !empty(level_prize_select($pdo, $level_id))) {
-        throw new Exception('This level could not be unpublished because it is has a prize.');
+        throw new Exception("This level could not be ${action}ed because it is has a prize.");
     }
 
     // check for the level's information
@@ -582,14 +608,22 @@ function remove_level($pdo, $mod, $level_id)
     $l_note = $level->note;
 
     // unpublish the level
+    ('level_' . $action)($pdo, $level_id);
     delete_from_newest($pdo, $level_id);
-    level_unpublish($pdo, $level_id);
+    if ((bool) delete_from_best($pdo, $level_id)) {
+        best_levels_reset($pdo);
+    }
+
+    // repopulate level lists
+    generate_level_list($pdo, 'newest');
+    generate_level_list($pdo, 'best');
+    generate_level_list($pdo, 'best_week');
 
     // record the change
     $ip = get_ip();
-    $mod_msg = "$mod->name unpublished level $level_id from $ip "
+    $mod_msg = "$mod->name ${action}ed level $level_id from $ip "
         ."{level_title: $l_title, creator: $l_creator, level_note: $l_note}";
-    mod_action_insert($pdo, $mod->user_id, $mod_msg, 'remove-level', $ip);
+    mod_action_insert($pdo, $mod->user_id, $mod_msg, 'moderate-level', $ip);
 }
 
 

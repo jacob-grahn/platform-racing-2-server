@@ -4,7 +4,9 @@ header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/artifact_location.php';
+require_once QUERIES_DIR . '/follows.php';
 require_once QUERIES_DIR . '/level_backups.php';
+require_once QUERIES_DIR . '/messages.php';
 require_once QUERIES_DIR . '/new_levels.php';
 
 $title = default_post('title');
@@ -293,6 +295,11 @@ try {
         $level->type,
         $bad_hats
     );
+
+    // notify followers
+    if ($live) {
+        notify_followers($pdo, $user_id, $ip, $level_id, $title, $version, $note);
+    }
 
     // tell every one it's time to party
     if ($on_success === 'pass set with live') {

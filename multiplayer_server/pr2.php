@@ -103,7 +103,7 @@ $play_count_array = array();
 // rooms
 $campaign_room = new LevelListRoom('campaign');
 $best_room = new LevelListRoom('best');
-$best_today_room = new LevelListRoom('best_today');
+$best_week_room = new LevelListRoom('best_week');
 $newest_room = new LevelListRoom('newest');
 $search_room = new LevelListRoom('search');
 

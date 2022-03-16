@@ -7,6 +7,7 @@ require_once HTTP_FNS . '/ip_api_fns.php';
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
 require_once QUERIES_DIR . '/exp_today.php';
 require_once QUERIES_DIR . '/favorite_levels.php';
+require_once QUERIES_DIR . '/follows.php';
 require_once QUERIES_DIR . '/friends.php';
 require_once QUERIES_DIR . '/ignored.php';
 require_once QUERIES_DIR . '/ip_validity.php';
@@ -30,6 +31,7 @@ $rt_used = 0;
 $guild_owner = 0;
 $emblem = '';
 $guild_name = '';
+$following = array();
 $friends = array();
 $ignored = array();
 $favorite_levels = array();
@@ -101,7 +103,6 @@ try {
         } else { // or password login
             $user = pass_login($pdo, $user_name, $user_pass, 'n');
         }
-        $user_id = (int) $user->user_id;
         unset($user_pass, $login->user_pass); // don't keep raw pass in memory or send to server
 
         // see if they're trying to log into a guest
@@ -110,6 +111,7 @@ try {
             throw new Exception($e);
         }
     }
+    $user_id = (int) $user->user_id;
 
     // are they banned?
     $bans = query_if_banned($pdo, $user_id, $ip);
@@ -226,6 +228,12 @@ try {
     $pending_awards = part_awards_select_by_user($pdo, $user_id);
     $stats = award_special_parts($stats, $group, $pending_awards);
 
+    // select their following list
+    $following_list = following_select_list($pdo, $user_id);
+    foreach ($following_list as $fl) {
+        $following[] = $fl->following_id;
+    }
+
     // select their friends list
     $friends_result = friends_select($pdo, $user_id);
     foreach ($friends_result as $fr) {
@@ -273,6 +281,7 @@ try {
     $send->login = $login;
     $send->user = $user;
     $send->stats = $stats;
+    $send->following = $following;
     $send->friends = $friends;
     $send->ignored = $ignored;
     $send->rt_used = $rt_used;

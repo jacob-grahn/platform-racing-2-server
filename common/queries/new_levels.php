@@ -83,11 +83,11 @@ function new_levels_delete_old($pdo)
 {
     $result = $pdo->exec('
         DELETE FROM new_levels
-         WHERE time < UNIX_TIMESTAMP(NOW() - INTERVAL 1 DAY)
+         WHERE time < UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)
     ');
 
     if ($result === false) {
-        throw new Exception('Could not delete levels older than a day from newest.');
+        throw new Exception('Could not delete levels older than a week from newest.');
     }
 
     return $result;

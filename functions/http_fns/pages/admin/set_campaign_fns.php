@@ -88,7 +88,9 @@ function update($pdo, $admin, $campaign_id)
             $prize_type = find("prize_type_$num");
             $prize_id = (int) find("prize_id_$num");
 
-            level_select($pdo, $level_id); // will throw error if level does not exist
+            if (level_select($pdo, $level_id)->restricted == 1) { // will throw error if level does not exist
+                throw new Exception("Level #$num is restricted (ID #$level_id).");
+            }
             prize_check($prize_type, $prize_id, $num);
 
             $level = new stdClass();

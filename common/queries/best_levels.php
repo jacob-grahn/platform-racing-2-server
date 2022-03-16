@@ -31,6 +31,7 @@ function best_levels_populate($pdo)
               WHERE live = 1
                 AND votes > 1000
                 AND rating > 4.3
+                AND restricted = 0
            ORDER BY rating DESC
               LIMIT 100
     ');
@@ -40,4 +41,17 @@ function best_levels_populate($pdo)
     }
 
     return $result;
+}
+
+
+// deletes a level from atb
+function delete_from_best($pdo, $level_id)
+{
+    $stmt = $pdo->prepare('
+        DELETE FROM best_levels
+         WHERE level_id = :level_id
+    ');
+    $stmt->bindValue(":level_id", $level_id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->rowCount();
 }
