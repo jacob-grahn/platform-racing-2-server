@@ -167,7 +167,7 @@ class Game extends Room
         // campaign prizes
         if (isset($this->campaign)) {
             $campaign_prize = Prizes::find($this->campaign->prize_type, $this->campaign->prize_id);
-            if ($player_count >= 4 || (isset($campaign_prize) && $campaign_prize->isUniversal())) {
+            if ($player_count >= 2 || (isset($campaign_prize) && $campaign_prize->isUniversal())) {
                 $this->prize = $campaign_prize;
             }
         }
