@@ -276,6 +276,13 @@ try {
     $stats->body_array = join(',', $body_array);
     $stats->feet_array = join(',', $feet_array);
 
+    // returning after a while?
+    $user->returning = false;
+    if ($user->time < time() - 5184000) {
+        $user->returning = true;
+        message_send_welcome_back($pdo, $user_name, $user_id);
+    }
+
     // send this info to the socket server
     $send = new stdClass();
     $send->login = $login;

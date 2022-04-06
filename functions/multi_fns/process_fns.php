@@ -246,6 +246,8 @@ function process_register_login($server_socket, $data)
                     $player->becomeServerOwner();
                 } elseif ($player->group <= 0) {
                     $player->becomeGuest();
+                } elseif ($login_obj->user->returning) {
+                    $player->welcomeBackMessage();
                 }
 
                 $socket->write("loginSuccessful`$group`$player->name");
