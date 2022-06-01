@@ -64,6 +64,10 @@ try {
         throw new Exception('This level version has already been reported.');
     }
 
+    // even more rate limiting
+    rate_limit('do-report-level-'.$ip, 3600, 10, 'You may only report 10 levels per hour. Try again later.');
+    rate_limit('do-report-level-'.$user_id, 3600, 10, 'You may only report 10 levels per hour. Try again later.');
+
     // record the report
     $version = (int) $level->version;
     $cid = (int) $level->user_id;
