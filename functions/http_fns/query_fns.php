@@ -133,10 +133,15 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
         throw new Exception($e);
     }
 
-    // prevent flooding
+    // prevent spamming
     $rl_msg = 'You\'ve sent 4 messages in the past 60 seconds. Please wait a bit before sending another message.';
-    rate_limit('pm-'.$from_user_id, 60, 4, $rl_msg);
-    rate_limit('pm-'.$ip, 60, 4, $rl_msg);
+    rate_limit('spam-pm-'.$from_user_id, 60, 4, $rl_msg);
+    rate_limit('spam-pm-'.$ip, 60, 4, $rl_msg);
+
+    // prevent flooding
+    $rl_msg = 'Woah there! Please wait a bit before sending another message.';
+    rate_limit('flood-pm-'.$from_user_id, 3600, 20, $rl_msg);
+    rate_limit('flood-pm-'.$ip, 3600, 20, $rl_msg);
 
     // parse tags that can be used in PMs
     $message = message_parse_tags($pdo, $message);
