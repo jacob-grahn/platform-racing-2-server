@@ -22,3 +22,7 @@ RUN docker-php-ext-install pdo_mysql
 # install pecl extensions
 RUN pecl install apcu \
     && docker-php-ext-enable apcu
+
+# Run the minute CRON script
+# This runs the existing servers in the database and outputs a server_status_2.txt file
+CMD ["php", "/pr2/common/cron/minute.php"]
