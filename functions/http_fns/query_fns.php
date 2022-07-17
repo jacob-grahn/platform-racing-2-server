@@ -649,7 +649,7 @@ function moderate_level($pdo, $mod, $level_id, $action = 'unpublish')
 
     // record the change
     $ip = get_ip();
-    $mod_msg = "$mod->name ${action}ed level $level_id from $ip "
+    $mod_msg = "$mod->name ${action}ed level #$level_id from $ip "
         ."{level_title: $l_title, creator: $l_creator, level_note: $l_note}";
     mod_action_insert($pdo, $mod->user_id, $mod_msg, 'moderate-level', $ip);
 }
