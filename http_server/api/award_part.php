@@ -11,6 +11,7 @@ require_once QUERIES_DIR . '/servers.php';
 $to_name = default_post('user_name', '');
 $type = default_post('type', '');
 $part_id = (int) default_post('part_id', 0);
+$source = default_post('source', '');
 $pass = default_post('pass', '');
 $ip = get_ip();
 
@@ -74,7 +75,8 @@ try {
         ."part_type: $part->type, "
         ."part_id: $part->id, "
         .'is_epic: ' . check_value($part->epic, true) . ', '
-        ."part_name: $full_part_name}";
+        ."part_name: $full_part_name"
+        .(strlen(trim($source)) > 0 ? ", source: $source}" : '}');
     prize_action_insert($pdo, $user->user_id, $msg, 'api', false, $ip);
 
     $r->success = true;
