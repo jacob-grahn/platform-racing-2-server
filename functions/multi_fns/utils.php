@@ -441,7 +441,7 @@ function db_op($fn, $data = array())
             output('DB_OP: New connection succeeded!');
             return db_op($fn, $data);
         } else {
-            throw new Exception($error);
+            throw new Exception($error . " Params: " . json_encode($params));
         }
     }
 }
