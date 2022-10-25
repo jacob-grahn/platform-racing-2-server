@@ -379,7 +379,8 @@ class Player
         .'`'.$this->getSecondColor('hat', $this->hat)
         .'`'.$this->getSecondColor('head', $this->head)
         .'`'.$this->getSecondColor('body', $this->body)
-        .'`'.$this->getSecondColor('feet', $this->feet);
+        .'`'.$this->getSecondColor('feet', $this->feet)
+        .'`'.group_str($this);
     }
 
 
@@ -393,7 +394,8 @@ class Player
         .'`'.$this->getSecondColor('hat', $this->hat)
         .'`'.$this->getSecondColor('head', $this->head)
         .'`'.$this->getSecondColor('body', $this->body)
-        .'`'.$this->getSecondColor('feet', $this->feet);
+        .'`'.$this->getSecondColor('feet', $this->feet)
+        .'`'.group_str($this);
     }
 
 
