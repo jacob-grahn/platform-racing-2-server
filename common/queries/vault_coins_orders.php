@@ -1,6 +1,42 @@
 <?php
 
 
+function vault_coins_comp_order_insert($pdo, $pr2_user_id, $coins_before, $coins, $comment)
+{
+    $time = time();
+    $stmt = $pdo->prepare('
+        INSERT INTO
+          vault_coins_orders
+        SET
+          order_id = :order_id,
+          capture_id = "manual",
+          pr2_user_id = :pr2_user_id,
+          coins_before = :coins_before,
+          coins = :coins,
+          net_money = "0.00",
+          created_time = :crtime,
+          completed_time = :cotime,
+          status = "complete",
+          comment = :comment
+    ');
+    $stmt->bindValue(':order_id', "comp-$time", PDO::PARAM_STR);
+    $stmt->bindValue(':pr2_user_id', $pr2_user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':coins_before', $coins_before, PDO::PARAM_INT);
+    $stmt->bindValue(':coins', $coins, PDO::PARAM_INT);
+    $stmt->bindValue(':crtime', $time, PDO::PARAM_INT);
+    $stmt->bindValue(':cotime', $time, PDO::PARAM_INT);
+    $stmt->bindValue(':comment', $comment, PDO::PARAM_STR);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not insert comp order.');
+    }
+
+    // return the inserted order ID
+    return $pdo->lastInsertId();
+}
+
+
 function vault_coins_order_complete($pdo, $order_id, $net_money, $capture_id)
 {
     $stmt = $pdo->prepare('

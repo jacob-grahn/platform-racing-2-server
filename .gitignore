@@ -9,6 +9,7 @@ http_server/files/*
 http_server/levels/*
 http_server/music/*
 cache
+ecv
 vendor
 /search.php
 .vscode/*
