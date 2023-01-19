@@ -64,7 +64,8 @@ try {
         }
     }
     echo '<input type="submit" value="Submit">';
-    echo '</form>';
+    echo '</form><br>';
+    echo 'If you don\'t have a player\'s name, try <a href="find_player.php">searching for them</a>.';
 } catch (Exception $e) {
     output_header('Error');
     $error = $e->getMessage();
