@@ -2,18 +2,20 @@
 
 
 // page
-function output_form()
+function output_form($name = '')
 {
+    $name = $name === false ? '' : $name;
+
     echo '<form action="award_coins.php" method="post">';
 
     echo "Award Coins<br><br>";
 
-    echo 'User Name: <input type="text" name="user_name" maxlength="50"> '
+    echo "User Name: <input type='text' name='user_name' maxlength='50' value='$name'> "
         .'(user name of recipient)<br>';
     echo 'Coins: <input type="text" name="num_coins" maxlength="10"> '
         .'(number of coins to award, max: 500 per award, 20 awards per day)<br>';
     echo 'Comment: <input type="text" name="comment" maxlength="255"> '
-        .'(short comment explaining the award <i>which the recipient can see</i>, max: 255 characters)<br>';
+        .'(short comment explaining the award, max: 255 characters)<br>';
 
     echo '<input type="hidden" name="action" value="award">';
 

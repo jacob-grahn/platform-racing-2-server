@@ -9,6 +9,7 @@ require_once QUERIES_DIR . '/vault_coins_orders.php';
 
 $ip = get_ip();
 $action = default_post('action', 'form');
+$user_id = (int) default_get('user_id', 0);
 
 try {
     // rate limiting
@@ -24,7 +25,7 @@ try {
     // build page
     if ($action === 'form') {
         output_header('Award Coins', true, true);
-        output_form();
+        output_form(id_to_name($pdo, $user_id, true));
     } elseif ($action === 'award') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
