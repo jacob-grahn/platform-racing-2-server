@@ -29,7 +29,8 @@ function level_backup_select($pdo, $backup_id)
 
 function level_backups_delete_old($pdo)
 {
-    $result = $pdo->exec('DELETE FROM level_backups WHERE date < DATE_SUB(NOW(), INTERVAL 1 YEAR)');
+    $yearago = time() - 31536000;
+    $result = $pdo->exec("DELETE FROM level_backups WHERE time < $yearago");
 
     if ($result === false) {
         throw new Exception('could not delete old level backups');
@@ -73,7 +74,7 @@ function level_backups_insert(
             pass = :pass,
             type = :type,
             bad_hats = :bad_hats,
-            date = NOW()
+            time = :time
     ');
     $stmt->bindValue(':user_id', $uid, PDO::PARAM_INT);
     $stmt->bindValue(':level_id', $lid, PDO::PARAM_INT);
@@ -89,6 +90,7 @@ function level_backups_insert(
     $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
     $stmt->bindValue(':bad_hats', $hats, PDO::PARAM_STR);
+    $stmt->bindValue(':time', time(), PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -99,14 +101,14 @@ function level_backups_insert(
 }
 
 
-function level_backups_select($pdo, $user_id)
+function level_backups_select_by_user($pdo, $user_id)
 {
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT *
         FROM level_backups
         WHERE user_id = :user_id
-        ORDER BY date DESC
+        ORDER BY time DESC
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
 
