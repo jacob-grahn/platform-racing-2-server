@@ -41,6 +41,7 @@ try {
                 $pr2 = pr2_select($pdo, $user->user_id, true);
                 $epic = epic_upgrades_select($pdo, $user->user_id, true);
                 $rank_tokens = rank_token_select($pdo, $user->user_id);
+                $user->level_count = count(levels_select_by_owner($pdo, $user->user_id));
                 $folding = folding_select_by_user_id($pdo, $user->user_id, true);
                 $changing_emails = changing_emails_select_by_user($pdo, $user->user_id, true);
                 $logins = recent_logins_select($pdo, $user->user_id, true);
