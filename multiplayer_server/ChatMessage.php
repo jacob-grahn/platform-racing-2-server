@@ -511,6 +511,7 @@ class ChatMessage
     {
         if ($this->room_type !== 'g') {
             $this->write('systemChat`To set a prize, enter a level and type /set *type* *id*.');
+            return;
         }
 
         // get and send args to game room
