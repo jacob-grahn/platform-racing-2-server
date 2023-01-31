@@ -206,7 +206,7 @@ try {
                 $s3,
                 $user_id,
                 $level_id,
-                $level->version - 1,
+                (int) $level->version,
                 $title,
                 (int) $level->live,
                 (float) $level->rating,
