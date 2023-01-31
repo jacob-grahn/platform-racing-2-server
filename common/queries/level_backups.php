@@ -29,10 +29,11 @@ function level_backup_select($pdo, $backup_id)
 
 function level_backups_delete_old($pdo)
 {
-    $result = $pdo->exec('DELETE FROM level_backups WHERE date < DATE_SUB(NOW(), INTERVAL 1 YEAR)');
+    $yearago = time() - 31536000;
+    $result = $pdo->exec("DELETE FROM level_backups WHERE time < $yearago");
 
     if ($result === false) {
-        throw new Exception('could not delete old level backups');
+        throw new Exception('Could not delete old level backups.');
     }
 
     return $result;
@@ -73,7 +74,7 @@ function level_backups_insert(
             pass = :pass,
             type = :type,
             bad_hats = :bad_hats,
-            date = NOW()
+            time = :time
     ');
     $stmt->bindValue(':user_id', $uid, PDO::PARAM_INT);
     $stmt->bindValue(':level_id', $lid, PDO::PARAM_INT);
@@ -89,6 +90,7 @@ function level_backups_insert(
     $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
     $stmt->bindValue(':bad_hats', $hats, PDO::PARAM_STR);
+    $stmt->bindValue(':time', time(), PDO::PARAM_INT);
     $result = $stmt->execute();
 
     if ($result === false) {
@@ -99,21 +101,86 @@ function level_backups_insert(
 }
 
 
-function level_backups_select($pdo, $user_id)
+function level_backups_select_by_level($pdo, $level_id)
+{
+    db_set_encoding($pdo, 'utf8mb4');
+    $stmt = $pdo->prepare('
+        SELECT lb.*, u.name as author
+        FROM level_backups lb
+        LEFT JOIN users u ON lb.user_id = u.user_id
+        WHERE level_id = :level_id
+        ORDER BY time DESC
+    ');
+    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not fetch backups information for this level.');
+    }
+
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+
+function level_backups_select_by_user($pdo, $user_id)
 {
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT *
         FROM level_backups
         WHERE user_id = :user_id
-        ORDER BY date DESC
+        ORDER BY time DESC
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
 
     $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could fetch level backups for user');
+        throw new Exception('Could not fetch level backups for user');
     }
 
     return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+
+
+function level_backups_select_latest_by_level($pdo, $level_id)
+{
+    db_set_encoding($pdo, 'utf8mb4');
+    $stmt = $pdo->prepare('
+        SELECT lb.*
+        FROM level_backups lb
+        WHERE level_id = :level_id
+        ORDER BY version DESC
+        LIMIT 1
+    ');
+    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not fetch latest backup information for this level.');
+    }
+
+    return $stmt->fetch(PDO::FETCH_OBJ);
+}
+
+
+function level_backups_switch_owner($pdo, $level_id, $new_owner)
+{
+    db_set_encoding($pdo, 'utf8mb4');
+    $stmt = $pdo->prepare('
+        UPDATE
+          level_backups
+        SET
+          user_id = :new_user_id
+        WHERE
+          level_id = :level_id
+    ');
+    $stmt->bindValue(':new_user_id', $new_owner, PDO::PARAM_INT);
+    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+
+    $result = $stmt->execute();
+    if ($result === false) {
+        throw new Exception('Could not switch the owner of this level\'s backups.');
+    }
+
+    return $result;
 }

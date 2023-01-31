@@ -5,6 +5,7 @@ require_once HTTP_FNS . '/output_fns.php';
 require_once HTTP_FNS . '/pages/admin/guild_deep_info_fns.php';
 require_once QUERIES_DIR . '/guild_transfers.php';
 
+$ip = get_ip();
 $guild_id = (int) default_get('guild_id', 0);
 
 try {
@@ -37,7 +38,7 @@ try {
             $guild_id = (int) $guild->guild_id;
             echo "<a href='update_guild.php?guild_id=$guild_id'>edit</a><br><br><br>";
         } catch (Exception $e) {
-            $error = $e->getMessage;
+            $error = $e->getMessage();
             echo "<i>Error: $error</i><br><br>";
         }
     }

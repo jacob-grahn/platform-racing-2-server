@@ -113,11 +113,12 @@ try {
 
     // display available backups
     echo '<br/>';
-    $backups = level_backups_select($pdo, $user_id);
+    $backups = level_backups_select_by_user($pdo, $user_id);
     if (!empty($backups)) {
         foreach ($backups as $row) {
             $title = htmlspecialchars($row->title, ENT_QUOTES);
-            echo "<p>$row->date: <b>$title</b> v$row->version "
+            $date = date('M j, Y g:i A', $row->time);
+            echo "<p>$date: <b>$title</b> v$row->version "
                 ."(<a href='?action=restore&backup_id=$row->backup_id'>restore</a>)</p>";
         }
     } else {

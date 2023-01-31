@@ -40,6 +40,9 @@ function output_object($obj, $sep = '<br/>')
                 $val = number_format((int) $val);
                 echo "$var: $val - <a href='award_coins.php?user_id=$obj->user_id'>award</a>$sep";
                 continue;
+            } elseif ($var === 'level_count') {
+                echo "$var: $val - <a href='javascript:alert(\"Coming soon!\")'>view all</a>$sep";
+                continue;
             } elseif ($var === 'time' || $var === 'register_time') {
                 $val = date('M j, Y g:i A', $val);
             }

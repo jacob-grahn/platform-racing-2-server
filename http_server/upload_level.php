@@ -178,6 +178,8 @@ try {
     $org_play_count = 0;
     $level = level_select_by_title($pdo, $user_id, $title);
     if ($level) {
+        $level_id = (int) $level->level_id;
+
         // make sure the user really wants to overwrite
         if (!$overwrite_existing) {
             die("status=exists");
@@ -196,13 +198,14 @@ try {
             throw new Exception($msg);
         }
 
-        // backup the file that is about to be overwritten
-        if ($time - $level->time > 86400) { // previously: 1209600 (2 weeks)
+        // backup the file that is about to be overwritten if not backed up within the last day
+        $latest_bu = level_backups_select_latest_by_level($pdo, $level_id);
+        if (empty($latest_bu) || ($latest_bu->version < $level->version && $level->time - $latest_bu->time > 86400)) {
             backup_level(
                 $pdo,
                 $s3,
                 $user_id,
-                (int) $level->level_id,
+                $level_id,
                 $level->version - 1,
                 $title,
                 (int) $level->live,
@@ -220,7 +223,6 @@ try {
 
         // update existing level
         $version = $level->version + 1;
-        $level_id = (int) $level->level_id;
         // phpcs:disable
         level_update($pdo, $level_id, $title, $note, $live, $time, $ip, $min_level, $song, $version, $hash2, $type, $bad_hats);
         // phpcs:enable
