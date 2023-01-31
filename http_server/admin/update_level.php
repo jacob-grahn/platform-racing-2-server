@@ -141,19 +141,23 @@ try {
         $obj->old = new stdClass();
         $obj->new = new stdClass();
         if ($update_owner) {
-            [$obj->old->owner, $obj->new->owner] = [(int) $level->user_id, $owner_id];
+            $obj->old->owner = (int) $level->user_id;
+            $obj->new->owner = $owner_id;
         }
         if ($level->title != $title) {
-            [$obj->old->title, $obj->new->title] = [$level->title, $title];
+            $obj->old->title = $level->title;
+            $obj->new->title = $title;
         }
         if ($level->note != $note) {
-            [$obj->old->note, $obj->new->note] = [$level->note, $note];
+            $obj->old->note = $level->note;
+            $obj->new->note = $note;
         }
         if ($update_visibility) {
             $obj->old->visibility = new stdClass();
             $obj->new->visibility = new stdClass();
             if ($level->live != $live) {
-                [$obj->old->visibility->live, $obj->new->visibility->live] = [(int) $level->live, $live];
+                $obj->old->visibility->live = (int) $level->live;
+                $obj->new->visibility->live = $live;
             }
             if ($level->restricted != $restricted) {
                 $obj->old->visibility->restricted = (int) $level->restricted;
