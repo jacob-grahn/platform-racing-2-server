@@ -121,6 +121,7 @@ function output_staff_nav($formatting_for_admins = true)
         echo "<br>"
             ."<a href='/admin/player_deep_info.php'>Update Account</a> - "
             ."<a href='/admin/guild_deep_info.php'>Update Guild</a> - "
+            ."<a href='/admin/level_deep_info.php'>Update Level</a> - "
             ."<a href='/admin/set_campaign.php'>Set Custom Campaign</a> - "
             ."<a href='/admin/admin_log.php'>Admin Action Logs</a>";
     }
