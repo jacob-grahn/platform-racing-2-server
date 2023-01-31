@@ -1,6 +1,39 @@
 <?php
 
 
+function admin_level_update($pdo, $level_id, $user_id, $title, $note, $live, $restricted)
+{
+    db_set_encoding($pdo, 'utf8mb4');
+    $stmt = $pdo->prepare('
+        UPDATE
+          levels
+        SET
+          user_id = :user_id,
+          title = :title,
+          note = :note,
+          live = :live,
+          restricted = :restricted
+        WHERE
+          level_id = :level_id
+        LIMIT
+          1
+    ');
+    $stmt->bindValue(':level_id', $level_id, PDO::PARAM_INT);
+    $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $stmt->bindValue(':title', $title, PDO::PARAM_STR);
+    $stmt->bindValue(':note', $note, PDO::PARAM_STR);
+    $stmt->bindValue(':live', $live, PDO::PARAM_INT);
+    $stmt->bindValue(':restricted', $restricted, PDO::PARAM_INT);
+    $result = $stmt->execute();
+
+    if ($result === false) {
+        throw new Exception('Could not update level.');
+    }
+
+    return $result;
+}
+
+
 function level_check_if_creator($pdo, $user_id, $level_id)
 {
     $stmt = $pdo->prepare('
@@ -305,7 +338,7 @@ function level_update($pdo, $lid, $title, $note, $live, $time, $ip, $rank, $song
          WHERE level_id = :level_id
          LIMIT 1
     ');
-    $stmt->bindValue(':level_id', $lid, PDO::PARAM_STR);
+    $stmt->bindValue(':level_id', $lid, PDO::PARAM_INT);
     $stmt->bindValue(':title', $title, PDO::PARAM_STR);
     $stmt->bindValue(':note', $note, PDO::PARAM_STR);
     $stmt->bindValue(':live', $live, PDO::PARAM_INT);
