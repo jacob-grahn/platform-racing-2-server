@@ -43,7 +43,7 @@ try {
             // make nice variables for our data
             $url_name = urlencode($user->name); // url encode the name
             $safe_name = str_replace(' ', '&nbsp;', htmlspecialchars($user->name, ENT_QUOTES)); // html name w/ spaces
-            $group_color = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $user->power]; // group color
+            $group_color = get_group_info($user)->color; // group info
             $active_date = date('j/M/Y', $user->time); // active date
 
             // display the name with the color and link to the player search page

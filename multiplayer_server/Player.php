@@ -89,6 +89,7 @@ class Player
     public $special_user = false;
     public $temp_mod = false;
     public $trial_mod = false;
+    public $ca = false; // community ambassador
     public $server_owner = false;
 
     public $hh_warned = false;
@@ -116,6 +117,7 @@ class Player
         $this->name = $login->user->name;
         $this->group = (int) $login->user->power;
         $this->trial_mod = (bool) (int) $login->user->trial_mod;
+        $this->ca = (bool) (int) $login->user->ca;
         $this->guild_name = !empty($login->user->guild_name) ? $login->user->guild_name : '';
         $this->guild_id = (int) $login->user->guild;
 
@@ -227,6 +229,7 @@ class Player
         $ret->group = $this->group;
         $ret->temp_mod = $this->temp_mod;
         $ret->trial_mod = $this->trial_mod;
+        $ret->ca = $this->ca;
         $ret->guildId = $this->guild_id;
         $ret->guildName = $this->guild_name;
         $ret->rank = $this->active_rank;
@@ -380,7 +383,7 @@ class Player
         .'`'.$this->getSecondColor('head', $this->head)
         .'`'.$this->getSecondColor('body', $this->body)
         .'`'.$this->getSecondColor('feet', $this->feet)
-        .'`'.group_str($this);
+        .'`'.get_group_info($this)->str;
     }
 
 
@@ -395,7 +398,7 @@ class Player
         .'`'.$this->getSecondColor('head', $this->head)
         .'`'.$this->getSecondColor('body', $this->body)
         .'`'.$this->getSecondColor('feet', $this->feet)
-        .'`'.group_str($this);
+        .'`'.get_group_info($this)->str;
     }
 
 

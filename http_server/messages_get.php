@@ -57,7 +57,7 @@ try {
         $message->time = (int) $row->time;
         $message->user_id = (int) $row->from_user_id;
         $message->name = $from_user->name;
-        $message->group = $from_user->power . ($from_user->trial_mod == 1 ? ',1' : '');
+        $message->group = get_group_info($from_user)->str;
         $message->guild_message = (bool) (int) $row->guild_message;
         $messages_array[] = $message;
     }

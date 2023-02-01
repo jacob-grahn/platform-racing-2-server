@@ -102,6 +102,84 @@ function urlify($link, $disp, $color = '#0000FF', $bt_replace = true)
 }
 
 
+/**
+ * Makes a client-friendly group string. (Does not check for special user!)
+ * 
+ * @param object user User data. (Must include group/power. Should include trial_mod, ca. Can include temp_mod.)
+ * 
+ * @return string Group string (not checked for special user).
+ */
+function make_group_str($user)
+{
+    $group = (int) (isset($user->group) ? $user->group : $user->power);
+    $group2 = get_second_group($user);
+    $group2 = $group2 < 0 ? '' : ",$group2";
+    return "$group$group2";
+}
+
+
+/**
+ * Gets a user's secondary group value. Does not check for special user!
+ * Makes a client-friendly group string. Does not check for special user!
+ * 
+ * @param object user User data (Must include group/power. Should include trial_mod, ca. Can include temp_mod.)
+ * 
+ * @return int Secondary group number (not checked for special user).
+ */
+function get_second_group($user)
+{
+    $group = (int) (isset($user->group) ? $user->group : $user->power);
+    if ($group === 1) {
+        return (int) $user->ca;
+    } elseif ($group === 2) {
+        if (isset($user->temp_mod) && $user->temp_mod) {
+            return 0;
+        } elseif ((bool) (int) $user->trial_mod) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+    return -1;
+}
+
+
+/**
+ * Builds group information from a user object.
+ * 
+ * @param object user User data (Must include group/power. Should include user_id, trial_mod, ca. Can include temp_mod.)
+ * 
+ * @return int Secondary group number (not checked for special user).
+ */
+function get_group_info($user)
+{
+    global $group_names, $group_colors, $special_ids;
+
+    // get data from group string
+    @list($group, $suppl) = @explode(',', make_group_str($user));
+
+    // data validation
+    $group_default = $group == 2 ? 2 : 0;
+    if (is_null($suppl)) {
+        $suppl = $group_default;
+    }
+    $group = $group > count($group_names) - 1 ? 0 : max(0, (int) $group);
+    $suppl = $suppl > count($group_names[$group]) - 1 ? $group_default : max(0, (int) $suppl);
+
+    // special
+    $special_user = in_array(@$user->user_id, $special_ids);
+
+    // return data
+    $ret = new stdClass();
+    $ret->num = $group;
+    $ret->num2 = !$special_user ? $suppl : '*';
+    $ret->name = $group_names[$group][$suppl];
+    $ret->color = !$special_user ? $group_colors[$group][$suppl] : '83C141';
+    $ret->str = "$group,$ret->num2";
+    return $ret;
+}
+
+
 // tests to see if a string contains obscene words
 function is_obscene($str)
 {

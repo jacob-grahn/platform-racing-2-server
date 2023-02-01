@@ -64,7 +64,7 @@ try {
 
         // get some info
         $host = user_select_name_and_power($pdo, $host_id);
-        $host_color = $host->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $host->power];
+        $host_group = get_group_info($host);
         $is_host = $user_id === $host_id;
 
         // safety first
@@ -91,7 +91,7 @@ try {
 
         // contest host
         $host_url = $base_url . $html_url_host_name;
-        echo "Run by: <a href='$host_url' style='color: #$host_color; text-decoration: underline;'>"
+        echo "Run by: <a href='$host_url' style='color: #$host_group->color; text-decoration: underline;'>"
             ."$html_host_name</a><br>";
 
         // awarding

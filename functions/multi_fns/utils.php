@@ -221,7 +221,7 @@ function assign_guild_part($type, $part_id, $user_id, $guild_id, $seconds_durati
 // get ban priors (for lazy mods)
 function get_priors($mod, $name)
 {
-    global $group_colors, $mod_colors, $guild_id;
+    global $guild_id;
 
     $safe_name = htmlspecialchars($name, ENT_QUOTES);
 
@@ -233,8 +233,8 @@ function get_priors($mod, $name)
     }
 
     // get player info for mod
-    $mod_power = db_op('user_select_power', array($mod->user_id, true));
-    if ($mod_power < 2) {
+    $power = db_op('user_select_power', array($mod->user_id, true));
+    if ($power < 2) {
         $mod->write("message`Error: You lack the power to view priors for $safe_name.");
         return false;
     }
@@ -253,8 +253,8 @@ function get_priors($mod, $name)
 
     // initialize return string var
     $url_name = htmlspecialchars(urlencode($user->name), ENT_QUOTES);
-    $group_color = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[$power];
-    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $user->name, "#$group_color");
+    $user_group = get_group_info($user);
+    $u_link = urlify("https://pr2hub.com/mod/player_info.php?name=$url_name", $user->name, "#$user_group->color");
     $str = "<b>Ban Data for $u_link</b><br><br>";
 
     // check if the user is currently banned

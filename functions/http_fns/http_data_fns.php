@@ -232,6 +232,7 @@ function format_level_list($levels)
     $ret->levels = [];
     foreach ($levels as $level) {
         $level->level_id = (int) $level->level_id;
+        $level->user_id = (int) $level->user_id;
         $level->version = (int) $level->version;
         $level->title = $level->title;
         $level->rating = round($level->rating, 2);
@@ -239,7 +240,7 @@ function format_level_list($levels)
         $level->min_level = (int) $level->min_level;
         $level->note = $level->note;
         $level->user_name = $level->name;
-        $level->user_group = $level->power . ($level->trial_mod == 1 ? ',1' : '');
+        $level->user_group = get_group_info($level)->str;
         $level->live = (int) $level->live;
         $level->pass = isset($level->pass);
         $level->type = $level->type;
@@ -247,7 +248,7 @@ function format_level_list($levels)
         $level->time = (int) $level->time;
 
         // remove unwanted vars from output
-        unset($level->name, $level->power, $level->trial_mod);
+        unset($level->name, $level->power, $level->trial_mod, $level->ca);
 
         $ret->levels[] = $level;
     }

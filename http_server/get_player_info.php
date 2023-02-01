@@ -90,6 +90,8 @@ try {
     $ret->status = $target->status;
     $ret->group = $target->power;
     $ret->trial_mod = (bool) (int) $target->trial_mod;
+    $ret->ca = (bool) (int) $target->ca;
+    $ret->hof = (bool) (int) $target->hof;
     $ret->guildId = $target->guild;
     $ret->guildName = $guild_name;
     $ret->rank = $active_rank;

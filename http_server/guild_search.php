@@ -46,7 +46,7 @@ try {
         $prose = htmlspecialchars($guild->note, ENT_QUOTES);
         $owner_name = htmlspecialchars($owner->name, ENT_QUOTES);
         $owner_url_name = htmlspecialchars(urlencode($owner->name), ENT_QUOTES);
-        $owner_color = $owner->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $owner->power];
+        $owner_color = get_group_info($owner)->color;
         $active_count = (int) guild_count_active($pdo, $guild_id);
         $members = guild_select_members($pdo, $guild_id);
         $member_count = count($members);
@@ -90,7 +90,7 @@ try {
                 $member_id = (int) $member->user_id;
                 $member_name = htmlspecialchars($member->name, ENT_QUOTES);
                 $member_url_name = htmlspecialchars(urlencode($member->name), ENT_QUOTES);
-                $member_color = $member->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $member->power];
+                $member_color = get_group_info($member)->color;
                 $member_gp_today = (int) $member->gp_today;
                 $member_gp_total = (int) $member->gp_total;
 
