@@ -46,7 +46,7 @@ try {
     // more rate limiting
     $rl_msg = 'The artifact can only be placed a maximum of 5 times per hour. Try again later.';
     rate_limit('place-artifact-'.$ip, 3600, 5, $rl_msg);
-    rate_limit('place-artifact-'.$user_id, 3600, 5, $rl_msg);
+    rate_limit('place-artifact-'.$mod->user_id, 3600, 5, $rl_msg);
 
     // sanity check: does the level exist? is it a hat attack level?
     $level = level_select($pdo, $level_id);
