@@ -211,6 +211,7 @@ function level_select_from_search($pdo, $level_id)
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT l.level_id,
+               l.user_id,
                l.version,
                l.title,
                l.rating,
@@ -224,7 +225,8 @@ function level_select_from_search($pdo, $level_id)
                l.time,
                u.name,
                u.power,
-               u.trial_mod
+               u.trial_mod,
+               u.ca
           FROM levels l, users u
          WHERE level_id = :level_id
            AND l.user_id = u.user_id
@@ -477,6 +479,7 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
     // get the levels
     $stmt = $pdo->prepare("
         SELECT l.level_id,
+               l.user_id,
                l.version,
                l.title,
                l.rating,
@@ -490,7 +493,8 @@ function levels_search($pdo, $search, $mode = 'user', $start = 0, $count = 9, $o
                l.time,
                u.name,
                u.power,
-               u.trial_mod
+               u.trial_mod,
+               u.ca
           FROM levels l, users u
          WHERE $where
            AND l.user_id = u.user_id
@@ -514,6 +518,7 @@ function levels_select_best_week($pdo)
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT l.level_id,
+               l.user_id,
                l.version,
                l.title,
                l.rating,
@@ -527,7 +532,7 @@ function levels_select_best_week($pdo)
                u.name,
                u.power,
                u.trial_mod,
-               u.user_id
+               u.ca
           FROM new_levels nl,
                levels l,
                users u
@@ -554,6 +559,7 @@ function levels_select_best($pdo)
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
           SELECT l.level_id,
+                 l.user_id,
                  l.version,
                  l.title,
                  l.rating,
@@ -567,7 +573,7 @@ function levels_select_best($pdo)
                  u.name,
                  u.power,
                  u.trial_mod,
-                 u.user_id
+                 u.ca
             FROM best_levels bl,
                  levels l,
                  users u
@@ -592,6 +598,7 @@ function levels_select_by_owner($pdo, $user_id)
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
         SELECT l.level_id,
+               l.user_id,
                l.version,
                l.title,
                l.rating,
@@ -605,7 +612,7 @@ function levels_select_by_owner($pdo, $user_id)
                u.name,
                u.power,
                u.trial_mod,
-               u.user_id
+               u.ca
           FROM levels l, users u
          WHERE l.user_id = u.user_id
            AND l.user_id = :user_id
@@ -656,6 +663,7 @@ function levels_select_campaign($pdo)
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
           SELECT l.level_id,
+                 l.user_id,
                  l.version,
                  l.title,
                  l.rating,
@@ -669,7 +677,7 @@ function levels_select_campaign($pdo)
                  u.name,
                  u.power,
                  u.trial_mod,
-                 u.user_id
+                 u.ca
             FROM campaigns c,
                  levels l,
                  users u
@@ -693,6 +701,7 @@ function levels_select_newest($pdo)
     db_set_encoding($pdo, 'utf8mb4');
     $stmt = $pdo->prepare('
           SELECT l.level_id,
+                 l.user_id,
                  l.version,
                  l.title,
                  l.rating,
@@ -706,7 +715,7 @@ function levels_select_newest($pdo)
                  u.name,
                  u.power,
                  u.trial_mod,
-                 u.user_id
+                 u.ca
             FROM new_levels nl,
                  levels l,
                  users u

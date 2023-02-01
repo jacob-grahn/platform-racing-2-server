@@ -251,7 +251,7 @@ function guild_select_by_name($pdo, $guild_name)
 function guild_select_members($pdo, $guild_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT u.user_id, u.name, u.power, u.trial_mod, p.rank, gp.gp_today, gp.gp_total
+        SELECT u.user_id, u.name, u.power, u.trial_mod, u.ca, p.rank, gp.gp_today, gp.gp_total
         FROM users u LEFT JOIN pr2 p ON u.user_id = p.user_id
         LEFT JOIN gp ON (u.user_id = gp.user_id AND gp.guild_id = :guild_id)
         WHERE u.guild = :guild_id
