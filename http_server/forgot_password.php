@@ -12,7 +12,7 @@ $ip = get_ip();
 
 // sanitize email
 $problematic_chars = array('&', '"', "'", "<", ">");
-$email = str_replace($problematic_chars, '', $_POST['email']);
+$email = str_replace($problematic_chars, '', default_post('email', ''));
 
 $ret = new stdClass();
 $ret->success = false;

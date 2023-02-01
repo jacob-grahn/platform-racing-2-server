@@ -22,7 +22,7 @@ $ret->success = false;
 
 try {
     // sanity check: is data missing?
-    if (is_empty($x, false) || is_empty($y, false) || is_empty($level_id, false) || is_null($_POST['rot'])) {
+    if (is_empty($x, false) || is_empty($y, false) || is_empty($level_id, false) || is_null(default_post('rot'))) {
         throw new Exception('Some data is missing.');
     }
 

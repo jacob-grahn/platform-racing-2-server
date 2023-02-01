@@ -75,8 +75,8 @@ try {
         $guild_name = default_post('guild_name');
         $owner_id = (int) default_post('owner_id');
         $note = default_post('note');
-        $delete_emblem = $_POST['delete_emblem'];
-        $recount_members = $_POST['recount_members'];
+        $delete_emblem = default_post('delete_emblem');
+        $recount_members = default_post('recount_members');
 
         // call guild information
         $guild = guild_select($pdo, $guild_id);
