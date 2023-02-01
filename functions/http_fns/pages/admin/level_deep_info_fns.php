@@ -68,6 +68,9 @@ function output_object($obj, $sep = '<br/>')
 {
     if ($obj !== false) {
         foreach ($obj as $var => $val) {
+            if ($var === 'pass') {
+                continue;
+            }
             if ($var === 'user_id' && $obj->author !== false) {
                 if ($obj->author !== false) {
                     $val = $obj->author;
