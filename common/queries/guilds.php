@@ -269,7 +269,14 @@ function guild_select_members($pdo, $guild_id, $suppress_error = false)
         }
     }
 
-    return $stmt->fetchAll(PDO::FETCH_OBJ);
+    // add group string to all members before returning
+    $members = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $members = array_map(function($user) {
+        $user->group = get_group_info($user)->str;
+        return $user;
+    }, $members);
+
+    return $members;
 }
 
 
