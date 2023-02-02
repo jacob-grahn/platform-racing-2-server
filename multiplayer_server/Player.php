@@ -90,6 +90,7 @@ class Player
     public $temp_mod = false;
     public $trial_mod = false;
     public $ca = false; // community ambassador
+    public $hof = false;
     public $server_owner = false;
 
     public $hh_warned = false;
@@ -118,6 +119,7 @@ class Player
         $this->group = (int) $login->user->power;
         $this->trial_mod = (bool) (int) $login->user->trial_mod;
         $this->ca = (bool) (int) $login->user->ca;
+        $this->hof = (bool) (int) $login->user->hof;
         $this->guild_name = !empty($login->user->guild_name) ? $login->user->guild_name : '';
         $this->guild_id = (int) $login->user->guild;
 
@@ -230,6 +232,7 @@ class Player
         $ret->temp_mod = $this->temp_mod;
         $ret->trial_mod = $this->trial_mod;
         $ret->ca = $this->ca;
+        $ret->hof = $this->hof;
         $ret->guildId = $this->guild_id;
         $ret->guildName = $this->guild_name;
         $ret->rank = $this->active_rank;
