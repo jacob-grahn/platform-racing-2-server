@@ -6,6 +6,8 @@ require_once HTTP_FNS . '/pages/admin/set_campaign_fns.php';
 require_once QUERIES_DIR . '/admin_actions.php';
 require_once QUERIES_DIR . '/campaigns.php';
 
+$ip = get_ip();
+
 $action = default_post('action', 'lookup');
 $message = htmlspecialchars(default_get('message', ''));
 $campaign_id = 6; // 1 = Original, 2 = Speed, 3 = Luna, 4 = Timeline, 5 = Legendary, 6 = Custom
