@@ -4,6 +4,7 @@ require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/admin_actions.php';
 require_once QUERIES_DIR . '/changing_emails.php';
+require_once QUERIES_DIR . '/servers.php';
 
 // variables
 $ip = get_ip();
@@ -63,6 +64,9 @@ try {
             echo "Epic Feet: <input type='text' size='100' name='eFeet' value='$epic->epic_feet'><br>";
         }
         echo 'Description of Changes: <input type="text" size="100" name="account_changes"><br>';
+        if ($user->server_id > 0) {
+            echo "<label>Disconnect? <input type='checkbox' name='disconnect' /></label><br>";
+        }
         echo '<input type="hidden" name="action" value="update">';
         echo "<input type='hidden' name='post_id' value='$user_id'>";
 
@@ -102,6 +106,7 @@ try {
         $ebodies = default_post('eBodies');
         $efeet = default_post('eFeet');
         $account_changes = default_post('account_changes');
+        $disconnect = (int) !empty(default_post('disconnect'));
 
         // check for description of changes
         if (is_empty($account_changes)) {
@@ -160,6 +165,16 @@ try {
                 $safe_name = htmlspecialchars($user_name, ENT_QUOTES);
                 throw new Exception("There is already a user with the name \"$safe_name\" (ID #$id_exists).");
             }
+        }
+
+        // disconnect player if online
+        if ($disconnect && $user->server_id != 0) {
+            $server = server_select($pdo, $user->server_id);
+            $data = new stdClass();
+            $data->user_id = (int) $user->user_id;
+            $data->message = 'An admin updated your user information. Please log in again.';
+            $data = json_encode($data);
+            talk_to_server($server->address, $server->port, $server->salt, "disconnect_player`$data", false, false);
         }
 
         // adjust guild member count
