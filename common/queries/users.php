@@ -960,6 +960,7 @@ function users_select_old($pdo)
          WHERE u.time < :year3
            AND u.user_id = pr2.user_id
            AND u.power = 1
+           AND u.verified = 0
            AND pr2.rank < 15
     ');
     $stmt->bindValue(':year3', time() - 94610000, PDO::PARAM_INT);
