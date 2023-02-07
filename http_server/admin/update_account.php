@@ -33,6 +33,7 @@ try {
 
         $user_id = (int) $user->user_id;
         $name = htmlspecialchars($user->name, ENT_QUOTES);
+        $whitelisted = check_value($user->whitelisted, 1, "checked='checked'", '');
         $verified = check_value($user->verified, 1, "checked='checked'", '');
         $ca = check_value($user->ca, 1, "checked='checked'", '');
         $hof = check_value($user->hof, 1, "checked='checked'", '');
@@ -42,6 +43,7 @@ try {
         echo "user_id: $user_id";
         echo "<br>---<br>";
         echo "Name: <input type='text' name='name' value='$name'>";
+        echo "<label><input type='checkbox' name='whitelisted' $whitelisted /> Whitelisted</label> | ";
         echo "<label><input type='checkbox' name='verified' $verified /> Verified</label> | ";
         echo "<label><input type='checkbox' name='ca' $ca /> Community Ambassador</label> | ";
         echo "<label><input type='checkbox' name='hof' $hof /> Hall of Fame</label><br>";
@@ -86,6 +88,7 @@ try {
         $user_name = default_post('name');
         $email = default_post('email');
         $reset_pass = default_post('reset_pass');
+        $whitelisted = (int) !empty(default_post('whitelisted'));
         $verified = (int) !empty(default_post('verified'));
         $ca = (int) !empty(default_post('ca'));
         $hof = (int) !empty(default_post('hof'));
@@ -123,6 +126,7 @@ try {
         if ($user->name != $user_name
             || $user->email != $email
             || $user->guild != $guild_id
+            || $user->whitelisted != $whitelisted
             || $user->verified != $verified
             || $user->ca != $ca
             || $user->hof != $hof
@@ -209,7 +213,7 @@ try {
         $updated_pr2 = 'no';
         $updated_epic = 'no';
         if ($update_user === true) {
-            admin_user_update($pdo, $user_id, $user_name, $email, $guild_id, $verified, $ca, $hof);
+            admin_user_update($pdo, $user_id, $user_name, $email, $guild_id, $whitelisted, $verified, $ca, $hof);
             $updated_user = 'yes';
         }
         if ($update_pr2 === true) {

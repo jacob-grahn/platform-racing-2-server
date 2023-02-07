@@ -1,7 +1,7 @@
 <?php
 
 
-function admin_user_update($pdo, $user_id, $name, $email, $guild, $verified, $ca, $hof)
+function admin_user_update($pdo, $user_id, $name, $email, $guild, $whitelisted, $verified, $ca, $hof)
 {
     $stmt = $pdo->prepare('
         UPDATE
@@ -10,6 +10,7 @@ function admin_user_update($pdo, $user_id, $name, $email, $guild, $verified, $ca
           name = :name,
           email = :email,
           guild = :guild,
+          whitelisted = :whitelisted,
           verified = :verified,
           ca = :ca,
           hof = :hof
@@ -19,6 +20,7 @@ function admin_user_update($pdo, $user_id, $name, $email, $guild, $verified, $ca
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
     $stmt->bindValue(':guild', $guild, PDO::PARAM_INT);
+    $stmt->bindValue(':whitelisted', $whitelisted, PDO::PARAM_INT);
     $stmt->bindValue(':verified', $verified, PDO::PARAM_INT);
     $stmt->bindValue(':ca', $ca, PDO::PARAM_INT);
     $stmt->bindValue(':hof', $hof, PDO::PARAM_INT);
@@ -150,6 +152,7 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
                power,
                trial_mod,
                ca,
+               whitelisted,
                verified,
                hof,
                status,
@@ -203,6 +206,7 @@ function user_select_expanded($pdo, $user_id, $suppress_error = false)
                u.power,
                u.trial_mod,
                u.ca,
+               u.whitelisted,
                u.verified,
                u.hof,
                u.status,
@@ -279,6 +283,7 @@ function user_select_guest($pdo)
                power,
                trial_mod,
                ca,
+               whitelisted,
                verified,
                hof,
                status,
@@ -342,6 +347,7 @@ function user_select_mod($pdo, $user_id, $suppress_error = false)
                 register_time,
                 power,
                 trial_mod,
+                whitelisted,
                 verified,
                 hof,
                 status,
@@ -552,6 +558,7 @@ function user_select($pdo, $user_id, $suppress_error = false)
                power,
                trial_mod,
                ca,
+               whitelisted,
                verified,
                hof,
                status,
