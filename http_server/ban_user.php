@@ -97,9 +97,9 @@ try {
     $scope = $scope === 'social' ? 's' : 'g';
 
     // permission check
-    /*if ($banned_power >= 2 || $mod->power < 2) {
+    if ($banned_power >= 2 || $mod->power < 2) {
         throw new Exception("You lack the power to ban $ban_name.");
-    }*/
+    }
 
     // don't ban guest accounts, just the ip
     if ($banned_power == 0) {
