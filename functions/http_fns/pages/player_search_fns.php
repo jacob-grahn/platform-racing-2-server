@@ -100,11 +100,18 @@ function output_page($pdo, $user)
         $safe_guild = "<a href='/guild_search.php?name=$url_guild_name'>$html_guild_name</a>";
     }
 
+    // icons
+    $st = 'https://jiggmin2.com/forums/showthread.php?tid';
+    $verified = $user->verified ? "<a href='$st=4227'><img src='/img/verified.svg' width='15'></a>" : '';
+    $hof = $user->hof ? "<a href='$st=4226'><img src='/img/hof.svg' width='15'></a>" : '';
+
+
     // --- Start the Page --- \\
 
     echo '<br><br>'
         ."-- <font style='color: #$group->color; text-decoration: underline; font-weight: bold'>$name</font> --<br>"
-        ."<i>$status</i><br><br>"
+        ."<i>$status</i><br>"
+        .(empty($verified) && empty($hof) ? '<br>' : "$verified $hof<br>")
         ."Group: $group_name<br>"
         ."Guild: $safe_guild<br>"
         ."Rank: $rank<br>"
