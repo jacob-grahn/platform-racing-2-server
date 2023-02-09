@@ -146,7 +146,7 @@ try {
     foreach ($users as $user) {
         $user_id = (int) $user->user_id;
         $name = htmlspecialchars($user->name, ENT_QUOTES);
-        $power_color = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $user->power];
+        $power_color = get_group_info($user)->color;
         $active = date('j/M/Y', (int) $user->time);
 
         // echo results

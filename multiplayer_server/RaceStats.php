@@ -8,10 +8,13 @@ class RaceStats
     public $temp_id;
     public $user_id;
     public $name;
-    public $group;
-    public $mod_power;
     public $rank;
     public $ip;
+
+    public $group;
+    public $ca = false;
+    public $temp_mod = false;
+    public $trial_mod = false;
 
     public $finish_time;
     public $drawing = true;
@@ -35,9 +38,19 @@ class RaceStats
         $this->temp_id = $player->temp_id;
         $this->user_id = $player->user_id;
         $this->name = $player->name;
-        $this->group = $player->group;
-        $this->mod_power = mod_power($player);
         $this->rank = $player->active_rank;
         $this->ip = $player->ip;
+
+        $this->group = $player->group;
+        $this->ca = $player->ca;
+        $this->temp_mod = $player->temp_mod;
+        $this->trial_mod = $player->trial_mod;
+    }
+
+    public function userify()
+    {
+        global $player_array;
+        $player = @$player_array[$this->user_id];
+        return userify(!empty($player) ? $player : $this, $this->name);
     }
 }

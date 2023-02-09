@@ -54,7 +54,7 @@ try {
         $safe_name = str_replace(' ', "&nbsp;", $safe_name);
 
         // group
-        $group_color = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $user->power];
+        $group_color = get_group_info($user)->color;
 
         // rank
         $active_rank = (int) $user->active_rank;

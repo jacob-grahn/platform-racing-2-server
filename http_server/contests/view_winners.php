@@ -94,12 +94,12 @@ try {
             $awarder_id = (int) $winner->awarded_by;
             $awarder = user_select_name_and_power($pdo, $awarder_id);
             $awarder_url = $base_url . urlencode($awarder->name);
-            $awarder_color = $awarder->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $awarder->power];
+            $awarder_color = get_group_info($awarder)->color;
         }
 
         // winner name and color
         $winner = user_select_name_and_power($pdo, $winner->winner_id);
-        $winner_color = $winner->trial_mod == 1 ? $mod_colors[1] : $group_colors[(int) $winner->power];
+        $winner_color = get_group_info($winner)->color;
         $winner_url = $base_url . htmlspecialchars(urlencode($winner->name), ENT_QUOTES);
 
         // start row

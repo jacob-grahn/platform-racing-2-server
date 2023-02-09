@@ -58,22 +58,17 @@ function output_search($name = '', $gwibble = true)
 // player_search.php
 function output_page($pdo, $user)
 {
-    global $group_colors, $group_names, $mod_colors, $mod_group_names;
-
     // sanity check: is the used tokens value set?
     if (!isset($user->used_tokens)) {
         $user->used_tokens = 0;
     }
 
     // make some variables
-    $user_name = $user->name; // name
-    $group = (int) $user->power;
-    $group_col = $user->trial_mod == 1 ? $mod_colors[1] : $group_colors[$group];
-    $group_name = $user->trial_mod == 1 ? $mod_group_names[1] : $group_names[$group];
-    $status = $user->status; // status
+    $group = get_group_info($user);
+    $name_color = $group->color;
     $guild_id = (int) $user->guild; // guild id
-    $rank = (int) ($user->rank + $user->used_tokens); // rank
-    $hats = (int) (count(explode(',', $user->hat_array)) - 1); // hats
+    $rank = $user->rank + $user->used_tokens; // rank
+    $hats = count(explode(',', $user->hat_array)) - 1; // hats
     $login_date = date('j/M/Y', $user->time); // active
     $register_date = date('j/M/Y', $user->register_time); // joined
 
@@ -89,13 +84,14 @@ function output_page($pdo, $user)
     }
 
     // group html change if staff
-    if ($group >= 2) {
+    $group_name = $group->name;
+    if ($group->num >= 2) {
         $group_name = "<a href='/staff.php' style='color: #000000; font-weight: bold'>$group_name</a>";
     }
 
     // safety first
-    $safe_name = htmlspecialchars($user_name, ENT_QUOTES);
-    $safe_status = htmlspecialchars($status, ENT_QUOTES);
+    $name = htmlspecialchars($user->name, ENT_QUOTES);
+    $status = htmlspecialchars($user->status, ENT_QUOTES);
     if ($guild_name == '<i>none</i>') {
         $safe_guild = $guild_name;
     } else {
@@ -104,11 +100,18 @@ function output_page($pdo, $user)
         $safe_guild = "<a href='/guild_search.php?name=$url_guild_name'>$html_guild_name</a>";
     }
 
+    // icons
+    $st = 'https://jiggmin2.com/forums/showthread.php?tid';
+    $verified = $user->verified ? "<a href='$st=4227'><img src='/img/verified.svg' width='15'></a>" : '';
+    $hof = $user->hof ? "<a href='$st=4226'><img src='/img/hof.svg' width='15'></a>" : '';
+
+
     // --- Start the Page --- \\
 
     echo '<br><br>'
-        ."-- <font style='color: #$group_col; text-decoration: underline; font-weight: bold'>$safe_name</font> --<br>"
-        ."<i>$safe_status</i><br><br>"
+        ."-- <font style='color: #$group->color; text-decoration: underline; font-weight: bold'>$name</font> --<br>"
+        ."<i>$status</i><br>"
+        .(empty($verified) && empty($hof) ? '<br>' : "$verified $hof<br>")
         ."Group: $group_name<br>"
         ."Guild: $safe_guild<br>"
         ."Rank: $rank<br>"

@@ -252,7 +252,7 @@ class ChatMessage
             $this->write('message`Error: Illegal character detected.'); // illegal character in username/message check
         } else {
             $name = $this->player->name;
-            $group = group_str($this->player);
+            $group = get_group_info($this->player)->str;
             $message = "chat`$name`$group`$this->message";
             $player->chat_count++;
             $player->chat_time = time();
@@ -496,7 +496,7 @@ class ChatMessage
 
         // set new prizer
         PR2SocketServer::$prizer_id = $prizer_id;
-        $new_prizer = userify(null, $new_prizer->name, $new_prizer->power);
+        $new_prizer = userify($new_prizer, $new_prizer->name);
         $this->write("systemChat`Great success! The prizer has been set to $new_prizer.");
 
         // if the new prizer is online, tell their client it's time
@@ -604,7 +604,8 @@ class ChatMessage
     
         foreach ($kicks as $kick) {
             $time_remaining = format_duration(\pr2\multi\ServerBans::remainingTime($kick->user_name, $kick->ip));
-            $str .= "<br> - " . userify(null, $kick->user_name) . ' (' . $time_remaining . ')';
+            $kicked = db_op('user_select_by_name', [$kick->user_name, true]);
+            $str .= "<br> - " . userify($kicked, $kick->user_name) . ' (' . $time_remaining . ')';
         }
 
         // this should never happen (the person in the room is calling the function)

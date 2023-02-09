@@ -211,7 +211,7 @@ function update_artifact($pdo)
         $arti->level->title = $level->title;
         $arti->level->author = new stdClass();
         $arti->level->author->name = $author->name;
-        $arti->level->author->group = $author->power . ((bool) (int) $author->trial_mod ? ',1' : '');
+        $arti->level->author->group = get_group_info($author)->str;
         $arti->set_time = (int) $artifact->set_time;
         $arti->updated_time = (int) $artifact->updated_time;
 
@@ -224,7 +224,7 @@ function update_artifact($pdo)
             if ($artifact->first_finder > 0) {
                 $found = user_select($pdo, (int) $artifact->first_finder);
                 $finder->name = $found->name;
-                $finder->group = $found->power . ((bool) (int) $found->trial_mod ? ',1' : '');
+                $finder->group = get_group_info($found)->str;
                 $arti->first_finder = $finder;
 
                 // get the bubbles winner's info
@@ -236,7 +236,7 @@ function update_artifact($pdo)
                 } elseif ($artifact->bubbles_winner > 0) {
                     $bub = user_select($pdo, (int) $artifact->bubbles_winner);
                     $bubbles->name = $bub->name;
-                    $bubbles->group = $bub->power . ((bool) (int) $bub->trial_mod ? ',1' : '');
+                    $bubbles->group = get_group_info($bub)->str;
                 }
                 $arti->bubbles_winner = $bubbles;
             }

@@ -51,7 +51,7 @@ try {
     foreach ($users as $row) {
         $user = new stdClass();
         $user->name = $row->name;
-        $user->group = $row->power . ($row->trial_mod == 1 ? ',1' : '');
+        $user->group = get_group_info($row)->str;
         $user->status = strpos($row->status, 'Playing on ') !== false ? substr($row->status, 11) : $row->status;
         $user->rank = $row->rank + (!is_empty($row->used_tokens, false) ? $row->used_tokens : 0);
         $user->hats = count(explode(',', $row->hat_array)) - 1;

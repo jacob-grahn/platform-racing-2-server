@@ -4,6 +4,7 @@ require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 require_once QUERIES_DIR . '/admin_actions.php';
 require_once QUERIES_DIR . '/changing_emails.php';
+require_once QUERIES_DIR . '/servers.php';
 
 // variables
 $ip = get_ip();
@@ -33,14 +34,20 @@ try {
 
         $user_id = (int) $user->user_id;
         $name = htmlspecialchars($user->name, ENT_QUOTES);
+        $whitelisted = check_value($user->whitelisted, 1, "checked='checked'", '');
         $verified = check_value($user->verified, 1, "checked='checked'", '');
+        $ca = check_value($user->ca, 1, "checked='checked'", '');
+        $hof = check_value($user->hof, 1, "checked='checked'", '');
         $email = htmlspecialchars($user->email, ENT_QUOTES);
         $guild = htmlspecialchars($user->guild, ENT_QUOTES);
 
         echo "user_id: $user_id";
         echo "<br>---<br>";
         echo "Name: <input type='text' name='name' value='$name'>";
-        echo "<label><input type='checkbox' name='verified' $verified /> Verified</label><br>";
+        echo "<label><input type='checkbox' name='whitelisted' $whitelisted /> Whitelisted</label> | ";
+        echo "<label><input type='checkbox' name='verified' $verified /> Verified</label> | ";
+        echo "<label><input type='checkbox' name='ca' $ca /> Community Ambassador</label> | ";
+        echo "<label><input type='checkbox' name='hof' $hof /> Hall of Fame</label><br>";
         echo "Email: <input type='text' name='email' value='$email'>";
         echo '<label id="pass"><input type="checkbox" name="reset_pass" /> Generate new pass (via email)?</label><br>';
         echo "Guild: <input type='text' name='guild' value='$guild'><br>";
@@ -57,6 +64,9 @@ try {
             echo "Epic Feet: <input type='text' size='100' name='eFeet' value='$epic->epic_feet'><br>";
         }
         echo 'Description of Changes: <input type="text" size="100" name="account_changes"><br>';
+        if ($user->server_id > 0) {
+            echo "<label>Disconnect? <input type='checkbox' name='disconnect' /></label><br>";
+        }
         echo '<input type="hidden" name="action" value="update">';
         echo "<input type='hidden' name='post_id' value='$user_id'>";
 
@@ -82,7 +92,10 @@ try {
         $user_name = default_post('name');
         $email = default_post('email');
         $reset_pass = default_post('reset_pass');
+        $whitelisted = (int) !empty(default_post('whitelisted'));
         $verified = (int) !empty(default_post('verified'));
+        $ca = (int) !empty(default_post('ca'));
+        $hof = (int) !empty(default_post('hof'));
         $guild_id = (int) default_post('guild');
         $hats = default_post('hats');
         $heads = default_post('heads');
@@ -93,6 +106,7 @@ try {
         $ebodies = default_post('eBodies');
         $efeet = default_post('eFeet');
         $account_changes = default_post('account_changes');
+        $disconnect = (int) !empty(default_post('disconnect'));
 
         // check for description of changes
         if (is_empty($account_changes)) {
@@ -117,7 +131,10 @@ try {
         if ($user->name != $user_name
             || $user->email != $email
             || $user->guild != $guild_id
+            || $user->whitelisted != $whitelisted
             || $user->verified != $verified
+            || $user->ca != $ca
+            || $user->hof != $hof
         ) {
             $update_user = true;
         }
@@ -148,6 +165,16 @@ try {
                 $safe_name = htmlspecialchars($user_name, ENT_QUOTES);
                 throw new Exception("There is already a user with the name \"$safe_name\" (ID #$id_exists).");
             }
+        }
+
+        // disconnect player if online
+        if ($disconnect && $user->server_id != 0) {
+            $server = server_select($pdo, $user->server_id);
+            $data = new stdClass();
+            $data->user_id = (int) $user->user_id;
+            $data->message = 'An admin updated your user information. Please log in again.';
+            $data = json_encode($data);
+            talk_to_server($server->address, $server->port, $server->salt, "disconnect_player`$data", false, false);
         }
 
         // adjust guild member count
@@ -201,7 +228,7 @@ try {
         $updated_pr2 = 'no';
         $updated_epic = 'no';
         if ($update_user === true) {
-            admin_user_update($pdo, $user_id, $user_name, $email, $guild_id, $verified);
+            admin_user_update($pdo, $user_id, $user_name, $email, $guild_id, $whitelisted, $verified, $ca, $hof);
             $updated_user = 'yes';
         }
         if ($update_pr2 === true) {

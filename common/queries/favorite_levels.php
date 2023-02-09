@@ -65,6 +65,7 @@ function favorite_levels_select($pdo, $user_id, $page)
     $start = ($page - 1) * 9;
     $stmt = $pdo->prepare('
         SELECT l.level_id,
+            l.user_id,
             l.version,
             l.title,
             l.rating,
@@ -78,7 +79,8 @@ function favorite_levels_select($pdo, $user_id, $page)
             l.time,
             u.name,
             u.power,
-            u.trial_mod
+            u.trial_mod,
+            u.ca
         FROM favorite_levels fl
         LEFT JOIN levels l ON fl.level_id = l.level_id
         LEFT JOIN users u ON l.user_id = u.user_id

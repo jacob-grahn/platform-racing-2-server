@@ -1,20 +1,29 @@
 <?php
 
 
-function admin_user_update($pdo, $user_id, $name, $email, $guild, $verified)
+function admin_user_update($pdo, $user_id, $name, $email, $guild, $whitelisted, $verified, $ca, $hof)
 {
     $stmt = $pdo->prepare('
-        UPDATE users
-           SET name = :name,
-               email = :email,
-               guild = :guild,
-               verified = :verified
-         WHERE user_id = :user_id
-        ');
+        UPDATE
+          users
+        SET
+          name = :name,
+          email = :email,
+          guild = :guild,
+          whitelisted = :whitelisted,
+          verified = :verified,
+          ca = :ca,
+          hof = :hof
+        WHERE
+          user_id = :user_id
+    ');
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
     $stmt->bindValue(':guild', $guild, PDO::PARAM_INT);
+    $stmt->bindValue(':whitelisted', $whitelisted, PDO::PARAM_INT);
     $stmt->bindValue(':verified', $verified, PDO::PARAM_INT);
+    $stmt->bindValue(':ca', $ca, PDO::PARAM_INT);
+    $stmt->bindValue(':hof', $hof, PDO::PARAM_INT);
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $result = $stmt->execute();
 
@@ -142,7 +151,10 @@ function user_select_by_name($pdo, $name, $suppress_error = false)
                register_time,
                power,
                trial_mod,
+               ca,
+               whitelisted,
                verified,
+               hof,
                status,
                read_message_id,
                guild,
@@ -193,7 +205,10 @@ function user_select_expanded($pdo, $user_id, $suppress_error = false)
                u.name,
                u.power,
                u.trial_mod,
+               u.ca,
+               u.whitelisted,
                u.verified,
+               u.hof,
                u.status,
                u.ip,
                u.time,
@@ -267,7 +282,10 @@ function user_select_guest($pdo)
                register_time,
                power,
                trial_mod,
+               ca,
+               whitelisted,
                verified,
+               hof,
                status,
                read_message_id,
                guild,
@@ -329,7 +347,9 @@ function user_select_mod($pdo, $user_id, $suppress_error = false)
                 register_time,
                 power,
                 trial_mod,
+                whitelisted,
                 verified,
+                hof,
                 status,
                 read_message_id,
                 guild
@@ -359,7 +379,7 @@ function user_select_name_active_power($pdo, $user_id, $suppress_error = false)
 {
     $count = (int) $count;
     $stmt = $pdo->prepare('
-          SELECT name, time, power, trial_mod
+          SELECT name, power, trial_mod, ca, time
             FROM users
            WHERE user_id = :user_id
            LIMIT 1
@@ -372,6 +392,7 @@ function user_select_name_active_power($pdo, $user_id, $suppress_error = false)
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
+    $user->user_id = $user_id;
 
     if (empty($user)) {
         if ($suppress_error == false) {
@@ -388,7 +409,7 @@ function user_select_name_active_power($pdo, $user_id, $suppress_error = false)
 function user_select_name_guild_power($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT name, guild, power, trial_mod
+        SELECT name, guild, power, trial_mod, ca
           FROM users
          WHERE user_id = :user_id
          LIMIT 1
@@ -401,6 +422,7 @@ function user_select_name_guild_power($pdo, $user_id)
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
+    $user->user_id = $user_id;
 
     if (empty($user)) {
         throw new Exception("Could not find a user with that ID.");
@@ -413,7 +435,7 @@ function user_select_name_guild_power($pdo, $user_id)
 function user_select_name_and_power($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT name, power, trial_mod
+        SELECT name, power, trial_mod, ca
           FROM users
          WHERE user_id = :user_id
          LIMIT 1
@@ -426,6 +448,7 @@ function user_select_name_and_power($pdo, $user_id, $suppress_error = false)
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
+    $user->user_id = $user_id;
 
     if (empty($user)) {
         if ($suppress_error === true) {
@@ -441,7 +464,7 @@ function user_select_name_and_power($pdo, $user_id, $suppress_error = false)
 function user_select_power($pdo, $user_id, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT power, trial_mod
+        SELECT power, trial_mod, ca
           FROM users
          WHERE user_id = :user_id
          LIMIT 1
@@ -454,6 +477,7 @@ function user_select_power($pdo, $user_id, $suppress_error = false)
     }
 
     $user = $stmt->fetch(PDO::FETCH_OBJ);
+    $user->user_id = $user_id;
 
     if (empty($user)) {
         if ($suppress_error === false) {
@@ -463,14 +487,14 @@ function user_select_power($pdo, $user_id, $suppress_error = false)
         }
     }
 
-    return $user->power . ',' . $user->trial_mod;
+    return get_group_info($user)->str;
 }
 
 
 function user_select_power_by_name($pdo, $name, $suppress_error = false)
 {
     $stmt = $pdo->prepare('
-        SELECT power, trial_mod
+        SELECT user_id, power, trial_mod, ca
           FROM users
          WHERE name = :name
          LIMIT 1
@@ -491,7 +515,7 @@ function user_select_power_by_name($pdo, $name, $suppress_error = false)
         return false;
     }
 
-    return $user->power . ($user->trial_mod == 1 ? ',' . $user->trial_mod : '');
+    return get_group_info($user)->str;
 }
 
 
@@ -533,7 +557,10 @@ function user_select($pdo, $user_id, $suppress_error = false)
                register_time,
                power,
                trial_mod,
+               ca,
+               whitelisted,
                verified,
+               hof,
                status,
                read_message_id,
                guild,
@@ -662,12 +689,15 @@ function user_update_pass($pdo, $user_id, $pass_hash)
 
 function user_update_power($pdo, $user_id, $power, $trial = false)
 {
-    $trial = $power === 1 ? 0 : (int) $trial;
+    $trial = $power === 2 ? (int) $trial : 0;
     $stmt = $pdo->prepare('
-        UPDATE users
-        SET power = :power,
-        trial_mod = :trial
-        WHERE user_id = :user_id
+        UPDATE
+          users
+        SET
+          power = :power,
+          trial_mod = :trial
+        WHERE
+          user_id = :user_id
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':power', $power, PDO::PARAM_INT);
@@ -675,7 +705,7 @@ function user_update_power($pdo, $user_id, $power, $trial = false)
 
     $result = $stmt->execute();
     if ($result === false) {
-        throw new Exception('Could not update user power');
+        throw new Exception('Could not update user power.');
     }
 
     return $result;
@@ -788,7 +818,7 @@ function users_search($pdo, $query)
 {
     $query = "%$query%";
     $stmt = $pdo->prepare('
-          SELECT power, trial_mod, name, time
+          SELECT user_id, name, power, trial_mod, ca, time
             FROM users
            WHERE name LIKE :query
         ORDER BY time DESC
@@ -813,7 +843,7 @@ function users_search($pdo, $query)
 function users_select_by_email($pdo, $email)
 {
     $stmt = $pdo->prepare('
-          SELECT power, trial_mod, name, time
+          SELECT user_id, name, power, trial_mod, ca, time
             FROM users
            WHERE email = :email
         ORDER BY time DESC
@@ -839,9 +869,11 @@ function users_select_by_ip_expanded($pdo, $search_ip, $start = 0, $count = 25)
 {
     $stmt = $pdo->prepare("
         SELECT DISTINCT
+          u.user_id AS 'user_id',
           u.name AS 'name',
           u.power AS 'power',
           u.trial_mod AS 'trial_mod',
+          u.ca AS 'ca',
           u.time AS 'time'
         FROM
           users u
@@ -877,7 +909,7 @@ function users_select_by_ip_expanded($pdo, $search_ip, $start = 0, $count = 25)
 function users_select_by_ip($pdo, $ip)
 {
     $stmt = $pdo->prepare('
-          SELECT user_id, name, time, power, trial_mod
+          SELECT user_id, name, power, trial_mod, ca, time
             FROM users
            WHERE ip = :ip
         GROUP BY user_id
@@ -928,6 +960,7 @@ function users_select_old($pdo)
          WHERE u.time < :year3
            AND u.user_id = pr2.user_id
            AND u.power = 1
+           AND u.verified = 0
            AND pr2.rank < 15
     ');
     $stmt->bindValue(':year3', time() - 94610000, PDO::PARAM_INT);
@@ -977,7 +1010,7 @@ function users_select_rank_tokens_and_rentals_by_guild($pdo, $guild_id)
 function users_select_staff($pdo)
 {
     $stmt = $pdo->prepare('
-        SELECT power, trial_mod, status, name, time, register_time
+        SELECT user_id, name, status, power, trial_mod, time, register_time
           FROM users
          WHERE power > 1
          ORDER BY power DESC, trial_mod ASC, time DESC
@@ -996,20 +1029,31 @@ function users_select_staff($pdo)
 function users_select_top($pdo, $start, $count)
 {
     $stmt = $pdo->prepare('
-        SELECT u.name AS name,
-               u.power AS power,
-               u.trial_mod AS trial_mod,
-               SUM(IFNULL(rt.used_tokens, 0) + pr2.rank) AS active_rank,
-               pr2.hat_array AS hats,
-               rt.used_tokens as tokens_used
-          FROM users u
+        SELECT
+          u.user_id AS user_id,
+          u.name AS name,
+          u.power AS power,
+          u.trial_mod AS trial_mod,
+          u.ca AS ca,
+          SUM(IFNULL(rt.used_tokens, 0) + pr2.rank) AS active_rank,
+          pr2.hat_array AS hats,
+          rt.used_tokens as tokens_used
+        FROM
+          users u
           LEFT JOIN pr2 ON pr2.user_id = u.user_id
           LEFT JOIN rank_tokens rt ON rt.user_id = pr2.user_id
-         WHERE pr2.rank > 44 AND u.user_id <> 4291976
-         GROUP BY name, power, pr2.rank, rt.used_tokens, hats
-        HAVING active_rank > 49
-         ORDER BY active_rank DESC, name ASC
-         LIMIT :start, :count
+        WHERE
+          pr2.rank > 44
+          AND u.user_id <> 4291976
+        GROUP BY
+          name, power, pr2.rank, rt.used_tokens, hats
+        HAVING
+          active_rank > 49
+        ORDER BY
+          active_rank DESC,
+          name ASC
+        LIMIT
+          :start, :count
     ');
     $stmt->bindValue(':start', $start, PDO::PARAM_INT);
     $stmt->bindValue(':count', $count, PDO::PARAM_INT);

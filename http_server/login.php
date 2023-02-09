@@ -174,6 +174,11 @@ try {
         throw new Exception('You must be a member of this guild to join this server.');
     }
 
+    // sanity check: already logged into another server?
+    if ($user->server_id > 0 && $user->server_id != $server->server_id) {
+        throw new Exception('This account is already logged in on a different server.');
+    }
+
     // get their pr2 and epic_upgrades info
     $stats = pr2_select($pdo, $user_id, true);
     if ($stats === false) {

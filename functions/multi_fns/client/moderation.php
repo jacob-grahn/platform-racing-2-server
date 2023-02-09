@@ -289,24 +289,21 @@ function client_promote_to_moderator($socket, $data)
     if ($admin->group >= 3 && $admin->server_owner === false) {
         $result = promote_to_moderator($name, $type, $admin, $promoted);
 
-        $mod_power = null;
         switch ($type) {
             case 'temporary':
-                $mod_power = 0;
                 $reign_time = 'hours';
                 break;
             case 'trial':
-                $mod_power = 1;
                 $reign_time = 'days';
                 break;
             case 'permanent':
-                $reign_time = '1000 years';
+                $reign_time = '1,000 years';
                 break;
         }
 
         if (isset($admin->chat_room) && (isset($promoted) || $type !== 'temporary') && $result === true) {
             $admin_url = userify($admin, $admin->name);
-            $promoted_url = userify($promoted, $name, 2, $mod_power);
+            $promoted_url = userify($promoted, $name);
             $mod_guide = urlify('https://jiggmin2.com/forums/showthread.php?tid=12', 'moderator guidelines');
 
             $msg = "$admin_url has promoted $promoted_url to a $type moderator! "

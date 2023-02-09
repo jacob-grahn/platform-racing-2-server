@@ -112,8 +112,10 @@ try {
 
     // output the results
     $html_user_name = htmlspecialchars($user_name, ENT_QUOTES);
+    $verified = $user->verified ? "<p><img src='/img/verified.svg' width='15'></p>" : '';
     $html_ip_info = "<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>";
-    echo "<p>User ID: $user_id</p>"
+    echo "$verified"
+        ."<p>User ID: $user_id</p>"
         .(!$staff->trial ? $html_ip_info : '') // don't show IP to trial mods
         ."<p>Status: $status</p>";
 

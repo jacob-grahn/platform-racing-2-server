@@ -64,7 +64,7 @@ function check_ip_validity($pdo, $ip, $user = null, $handle_cc = true)
     // special exceptions
     if (!$IP_API_ENABLED // IP API disabled globally?
         || strpos($ip, $BLS_IP_PREFIX) === 0 // bls?
-        || (isset($user) && ($user->power != 1 || $user->verified == 1)) // staff/verified?
+        || (isset($user) && ($user->power != 1 || $user->verified == 1 || $user->whitelisted)) // staff/whitelisted?
     ) {
         return $valid;
     }

@@ -43,7 +43,7 @@ function ignored_insert($pdo, $user_id, $ignore_id)
 function ignored_select_list($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT u.name, u.power, u.trial_mod, u.status, p.rank, p.hat_array,
+        SELECT u.user_id, u.name, u.power, u.trial_mod, u.ca, u.status, p.rank, p.hat_array,
                rt.used_tokens, i.ignore_id
           FROM ignored i
          INNER JOIN users u ON u.user_id = i.ignore_id

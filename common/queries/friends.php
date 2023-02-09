@@ -70,7 +70,7 @@ function friend_select($pdo, $user_id, $friend_id, $suppress_error = false)
 function friends_select($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT u.name, u.power, u.trial_mod, u.status, p.rank, p.hat_array,
+        SELECT u.user_id, u.name, u.power, u.trial_mod, u.ca, u.status, p.rank, p.hat_array,
                rt.used_tokens, f.friend_id
           FROM friends f
          INNER JOIN users u ON u.user_id = f.friend_id
