@@ -1,5 +1,5 @@
 $(function () {
-    if (window.location.pathname.substr(0, 25) === '/admin/update_account.php') {
+    if (window.location.pathname.substring(0, 25) === '/admin/update_account.php') {
         // hide pass reset checkbox
         $('label#pass').hide();
 
