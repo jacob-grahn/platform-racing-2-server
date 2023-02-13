@@ -30,7 +30,9 @@ function determine_song($num)
         "We Are Loud - Dynamedion", // should never be used; song can't be set to we are loud
         "Toodaloo - mustangman",
         "Night Shade - Goliathe",
-        "Blizzard! - Majicke"
+        "Blizzard! - Majicke",
+        "Pasture (Instrumental) - Damon Bass",
+        "Sunset Raiders - Adulock Van Liovick"
     ];
     return $numArr[$num];
 }
