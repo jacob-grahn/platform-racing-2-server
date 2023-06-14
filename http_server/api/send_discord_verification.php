@@ -14,7 +14,7 @@ $ver_code = default_post('ver_code', '');
 
 $d_id = (int) default_post('d_id', 0);
 $d_name = default_post('d_name', '');
-$d_discrim = (int) default_post('d_discrim', 0);
+$d_discrim = (int) min(abs(default_post('d_discrim', 0)), 9999);
 
 $r = new stdClass();
 $r->success = false;
@@ -40,7 +40,7 @@ try {
     $user = user_select($pdo, $user_id);
 
     // discord account details
-    $discrim = $d_discrim > 0 ? "#$d_discrim" : '';
+    $discrim = $d_discrim > 0 ? '#' . str_pad($d_discrim, 4, '0', STR_PAD_LEFT) : '';
     $discord_full = "[b]$d_name$discrim [/b]\n[i][small](ID: $d_id)[/small][/i]";
 
     // PM body
