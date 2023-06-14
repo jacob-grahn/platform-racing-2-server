@@ -14,7 +14,7 @@ $ver_code = default_post('ver_code', '');
 
 $d_id = (int) default_post('d_id', 0);
 $d_name = default_post('d_name', '');
-$d_discrim = default_post('d_discrim', '');
+$d_discrim = (int) min(abs(default_post('d_discrim', 0)), 9999);
 
 $r = new stdClass();
 $r->success = false;
@@ -29,7 +29,7 @@ try {
     }
 
     // data missing?
-    if (empty($user_id) || is_empty($ver_code) || empty($d_id) || is_empty($d_name) || empty($d_discrim)) {
+    if (empty($user_id) || is_empty($ver_code) || empty($d_id) || is_empty($d_name)) {
         throw new Exception('Some data is missing.');
     }
 
@@ -40,7 +40,8 @@ try {
     $user = user_select($pdo, $user_id);
 
     // discord account details
-    $discord_full = "[b]$d_name#$d_discrim [/b]\n[i][small](ID: $d_id)[/small][/i]";
+    $discrim = $d_discrim > 0 ? '#' . str_pad($d_discrim, 4, '0', STR_PAD_LEFT) : '';
+    $discord_full = "[b]$d_name$discrim [/b]\n[i][small](ID: $d_id)[/small][/i]";
 
     // PM body
     $message = "Howdy [user]$user->name[/user],\n\n"
