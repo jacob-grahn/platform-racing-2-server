@@ -89,6 +89,9 @@ try {
 
     // get the server they're connecting to
     $server = server_select($pdo, $server_id);
+    if ((int) $server->active === 0) { // sanity: trying to log into an inactive server?
+        throw new Exception('This server is currently unavailable. Please choose a different one.');
+    }
 
     // guest login
     if (strtolower(trim($login->user_name)) === 'guest' && $user_pass === '') {
