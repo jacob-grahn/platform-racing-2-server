@@ -9,7 +9,7 @@ $ip = get_ip();
 
 try {
     // rate limiting
-    rate_limit('show-ban-record-'.$ip, 5, 2);
+    rate_limit("show-ban-record-$ip", 5, 3);
 
     // sanity check: valid ban id?
     if ($ban_id === 0) {
@@ -24,7 +24,7 @@ try {
     $staff = is_staff($pdo, token_login($pdo, true, true, 'n'), false);
     $full_mod = $staff->mod && !$staff->trial;
     if (!$staff->mod) {
-        rate_limit('list-bans-'.$ip, 60, 10, "Please wait at least one minute before trying to view another ban.");
+        rate_limit("show-ban-record-$ip", 60, 10, "Please wait at least one minute before trying to view another ban.");
     }
 
     // get the ban details
@@ -38,9 +38,11 @@ try {
     $banned_ip = $ban->banned_ip;
     $mod_user_id = (int) $ban->mod_user_id;
     $banned_user_id = (int) $ban->banned_user_id;
-    $time = date('M j, Y g:i A', $ban->time);
-    $expire_time = date('M j, Y g:i A', $ban->expire_time);
+    $time = date('M j, Y \a\t g:i A', $ban->time);
+    $expire_time = date('M j, Y \a\t g:i A', $ban->expire_time);
     $duration = format_duration($ban->expire_time - $ban->time);
+    $rel_expiry = ($ban->expire_time > time() ? 'in ' : '') . format_duration($ban->expire_time - time());
+    $expiry_lang = $ban->expire_time > time() ? "will expire on" : "expired on";
     $reason = empty($ban->reason) ? '<i>No reason was given.</i>' : htmlspecialchars($ban->reason, ENT_QUOTES);
     $record = nl2br(htmlspecialchars($ban->record, ENT_QUOTES));
     $mod_name = htmlspecialchars($ban->mod_name, ENT_QUOTES);
@@ -48,8 +50,7 @@ try {
     $lifted = (int) $ban->lifted;
     $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
     $lifted_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
-    $lifted_time = $ban->lifted_time > 0 ? ' @' . date('M j, Y g:i A', $ban->lifted_time) : '';
-    $disp_lifted_info = $lifted_reason . $lifted_time;
+    $lifted_time = $ban->lifted_time > 0 ? date('M j, Y \a\t g:i A', $ban->lifted_time) : '';
     $ip_ban = (int) $ban->ip_ban;
     $account_ban = (int) $ban->account_ban;
     $scope = $ban->scope === 's' ? 'socially banned' : 'banned';
@@ -59,16 +60,9 @@ try {
     $sep = is_empty($display_name) ? '' : ' ';
     $display_name = $ip_ban === 1 && $full_mod ? $display_name . $sep . "[$banned_ip]" : $display_name;
 
-    if ($lifted === 1) {
-        echo '<b><p>-----------------------------------------------------------------------------------------------</p>'
-               ."<p>--- This ban has been lifted by $lifted_by ---</p>"
-               ."<p>--- Reason: $disp_lifted_info ---</p>"
-               .'<p>-----------------------------------------------------------------------------------------------</p>'
-               .'<p>&nbsp;</p></b>';
-    }
-
     // make the names clickable for moderators
     if ($staff->mod) {
+        $lifted_by = "<a href='/mod/player_info.php?name=$lifted_by'>$lifted_by</a>";
         $mod_name = "<a href='/mod/player_info.php?user_id=$mod_user_id'>$mod_name</a>";
         if ($banned_user_id !== 0 && $account_ban === 1) {
             $display_name = "<a href='/mod/player_info.php?user_id=$banned_user_id'>$display_name</a>";
@@ -81,9 +75,18 @@ try {
         $display_name = "<i>an IP</i>";
     }
 
+    // lifted
+    if ($lifted === 1) {
+        echo '<b><p>-----------------------------------------------------------------------------------------------</p>'
+               ."<p>--- This ban was lifted by $lifted_by on $lifted_time. ---</p>"
+               ."<p>--- Reason: $lifted_reason ---</p>"
+               .'<p>-----------------------------------------------------------------------------------------------</p>'
+               .'<p>&nbsp;</p></b>';
+    }
+
     echo "<p>$mod_name $scope $display_name for $duration on $time.</p>"
         ."<p>Reason: $reason</p>"
-        ."<p>This ban will expire on $expire_time.</p>"
+        ."<p>This ban $expiry_lang $expire_time ($rel_expiry).</p>"
         .'<p> --- </p>';
 
     if (!is_empty($record)) {
