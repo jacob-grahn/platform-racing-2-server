@@ -110,6 +110,7 @@ function levels_reported_select_unarchived_recent($pdo)
           lr.note,
           lr.version,
           u1.name as creator,
+          lr.creator_ip,
           u2.name as reporter,
           lr.reported_time as report_time,
           lr.report_reason as reason

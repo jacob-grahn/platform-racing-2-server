@@ -19,7 +19,7 @@ try {
     $pdo = pdo_connect();
 
     // check if logged in and a moderator
-    $user_id = (int) token_login($pdo, true, false, 'g');
+    $user_id = (int) token_login($pdo, false, false, 'g');
     if (check_moderator($pdo, $user_id)->trial_mod) {
         throw new Exception('You lack the power to access this resource.');
     }
@@ -29,6 +29,9 @@ try {
 
     // get levels
     $levels = levels_reported_select_unarchived_recent($pdo);
+    for ($i = 0; $i < count($levels); $i++) {
+        $levels[$i]->creator_group = user_select_power_by_name($pdo, $levels[$i]->creator, true);
+    }
 
     // tell the world
     $ret->success = true;
