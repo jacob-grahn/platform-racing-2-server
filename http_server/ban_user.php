@@ -4,6 +4,7 @@ header("Content-type: text/plain");
 
 require_once GEN_HTTP_FNS;
 require_once QUERIES_DIR . '/bans.php';
+require_once QUERIES_DIR . '/best_levels.php';
 require_once QUERIES_DIR . '/campaigns.php';
 require_once QUERIES_DIR . '/level_prizes.php';
 require_once QUERIES_DIR . '/mod_actions.php';
@@ -116,8 +117,14 @@ try {
     }
 
     // remove level if a level ID is specified
+    $level_txt = '';
     if (!empty($level_id)) {
-        remove_level($pdo, $mod, $level_id);
+        try {
+            moderate_level($pdo, $mod, $level_id);
+            $level_txt = " and level #$level_id has been unpublished";
+        } catch (Exception $e) {
+            $level_txt = ', but an error occurred when attempting to unpublish the level: ' . $e->getMessage();
+        }
     }
 
     // make things pretty
@@ -140,6 +147,7 @@ try {
         ."ip_ban: $is_ip_ban, "
         ."scope: $ban_scope, "
         ."expire_time: $disp_expire_time, "
+        ."level_id: $level_id, "
         ."$disp_reason}";
     mod_action_insert($pdo, $mod_uid, $msg, 'ban', $ip);
 
@@ -151,7 +159,7 @@ try {
         $ban_scope = $scope === 's' ? ' socially' : '';
         $disp_name = htmlspecialchars($ban_name, ENT_QUOTES);
         $guest_msg = "Guest [$ban_ip] has been$ban_scope banned for $duration seconds.";
-        $user_msg = "$disp_name has been$ban_scope banned for $duration seconds.";
+        $user_msg = "$disp_name has been$ban_scope banned for $duration seconds$level_txt.";
         $ret->success = true;
         $ret->ban_id = $ban_id;
         $ret->message = $ban_uid === 0 ? $guest_msg : $user_msg;
