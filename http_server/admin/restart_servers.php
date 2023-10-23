@@ -92,9 +92,7 @@ try {
         echo '<br><br><span style="color: green;">All operations completed.</span>';
     }
 } catch (Exception $e) {
-    output_header('Error');
-    $error = $e->getMessage();
-    echo "Error: $error";
+    output_error_page($e->getMessage(), @$admin);
 } finally {
     output_footer();
 }

@@ -66,9 +66,7 @@ try {
             .'<input type="submit" value="Submit" />'
         .'</form>';
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header('Error');
-    echo "Error: $error";
+    output_error_page($e->getMessage(), @$mod);
 } finally {
     output_footer();
 }

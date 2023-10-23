@@ -182,8 +182,7 @@ try {
     <?php
     // phpcs:enable
 } catch (Exception $e) {
-    output_header('Finish Order', isset($user->power) && $user->power >= 2, isset($user->power) && $user->power == 3);
-    echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES) . (isset($coins_options) ? $suppl : '');
+    output_error_page($e->getMessage() . (isset($coins_options) ? $suppl : ''), @$user, 'Finish Order');
 } finally {
     output_footer();
     die();

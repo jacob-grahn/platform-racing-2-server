@@ -18,7 +18,13 @@ $name7 = default_get('name7', '');
 $name8 = default_get('name8', '');
 $name9 = default_get('name9', '');
 
+$ip = get_ip();
+
 try {
+    // rate limiting
+    rate_limit("player-deep-info-$ip", 60, 10, 'Wait a bit before searching again.');
+    rate_limit("player-deep-info-$ip", 5, 2);
+
     // connect
     $pdo = pdo_connect();
 
@@ -68,9 +74,7 @@ try {
     echo '</form><br>';
     echo 'If you don\'t have a player\'s name, try <a href="find_player.php">searching for them</a>.';
 } catch (Exception $e) {
-    output_header('Error');
-    $error = $e->getMessage();
-    echo "Error: $error";
+    output_error_page($e->getMessage());
 } finally {
     output_footer();
 }

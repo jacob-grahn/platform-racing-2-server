@@ -51,9 +51,7 @@ try {
     echo '<p>---</p>';
     output_pagination($start, $count, "&mode=$mode");
 } catch (Exception $e) {
-    output_header("Error", $staff->mod, $staff->admin);
-    $error = $e->getMessage();
-    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+    output_error_page($e->getMessage(), @$staff);
 } finally {
     output_footer();
 }

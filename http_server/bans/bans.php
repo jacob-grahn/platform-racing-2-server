@@ -95,8 +95,7 @@ try {
     echo '<p>---</p>';
     output_pagination($start, $count);
 } catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    output_error_page($e->getMessage(), @$staff, 'Ban Log');
 } finally {
     output_footer();
 }

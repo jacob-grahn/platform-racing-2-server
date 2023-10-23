@@ -80,9 +80,7 @@ try {
         output_search('', false);
     }
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header('Error');
-    echo "Error: $error";
+    output_error_page($e->getMessage());
 } finally {
     output_footer();
 }

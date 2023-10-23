@@ -35,9 +35,7 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage() . '<br><br><a href="javascript:history.back()"><- Go Back</a>';
+    output_error_page($e->getMessage(), @$admin);
 } finally {
     output_footer();
-    die();
 }

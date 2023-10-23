@@ -135,9 +135,7 @@ try {
     // back link
     echo "<br><br><a href='contests.php'>&lt;- All Contests";
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    output_header("Error");
-    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+    output_error_page($e->getMessage(), @$staff);
 } finally {
     output_footer();
 }

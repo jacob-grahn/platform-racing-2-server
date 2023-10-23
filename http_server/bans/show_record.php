@@ -105,9 +105,7 @@ try {
 
     echo '<p><a href="bans.php">Go Back</a></p>';
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header('Error Fetching Ban', $staff->mod, $staff->admin);
-    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+    output_error_page($e->getMessage(), @$staff, 'View Ban');
 } finally {
     output_footer();
 }

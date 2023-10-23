@@ -154,9 +154,7 @@ try {
             | Last Active: $active<br>";
     }
 } catch (Exception $e) {
-    output_header('Error');
-    $error = $e->getMessage();
-    echo !empty($error) ? "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>" : '';
+    output_error_page($e->getMessage(), @$staff);
 } finally {
     output_footer();
 }

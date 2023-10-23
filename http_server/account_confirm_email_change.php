@@ -40,9 +40,7 @@ try {
     output_header('Confirm Email Change');
     echo "Great success! Your email address has been changed from $safe_old_email to $safe_new_email.";
 } catch (Exception $e) {
-    output_header('Confirm Email Change');
-    $error = $e->getMessage();
-    echo "Error: $error";
+    output_error_page($e->getMessage(), null, 'Confirm Email Change');
 } finally {
     output_footer();
 }

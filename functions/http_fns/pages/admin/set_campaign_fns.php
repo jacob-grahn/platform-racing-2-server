@@ -14,7 +14,8 @@ function prize_check($prize_type, $prize_id, $level_num)
     try {
         validate_prize($prize_type, $prize_id, false);
     } catch (Exception $e) {
-        throw new Exception("The prize is invalid for level #$level_num. There was an " . lcfirst($e->getMessage()));
+        $error = lcfirst($e->getMessage());
+        throw new Exception("The prize is invalid for level #$level_num. There was an $error");
     }
     return true;
 }

@@ -49,8 +49,7 @@ try {
     $ret->changer_id = (int) $row->old_owner_id;
     @poll_servers(servers_select($pdo), 'guild_change`' . json_encode($ret), false);
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    echo "Error: $error";
+    output_error_page($e->getMessage(), null, 'Confirm Guild Transfer');
 } finally {
     output_footer();
 }

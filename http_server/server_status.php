@@ -61,8 +61,7 @@ try {
     // end table
     echo "</table>";
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    echo "Error: $error";
+    output_error_page($e->getMessage());
 } finally {
     echo "</center>";
     output_footer();

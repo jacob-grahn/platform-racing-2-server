@@ -119,8 +119,7 @@ try {
         throw new Exception('Unknown action specified.');
     }
 } catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage();
+    output_error_page($e->getMessage(), @$mod);
 } finally {
     output_footer();
 }
