@@ -9,11 +9,13 @@ $html_ip = htmlspecialchars($ip, ENT_QUOTES);
 $start = (int) default_get('start', 0);
 $count = (int) default_get('count', 25);
 
+$mod_ip = get_ip();
+
 // admin check try block
 try {
     // rate limiting
-    rate_limit('ip-deep-search-'.$ip, 60, 5, 'Wait a minute at most before searching again.');
-    rate_limit('ip-deep-search-'.$ip, 30, 3);
+    rate_limit("ip-deep-search-$mod_ip", 60, 5, 'Wait a minute at most before searching again.');
+    rate_limit("ip-deep-search-$mod_ip", 30, 3);
 
     // connect
     $pdo = pdo_connect();
