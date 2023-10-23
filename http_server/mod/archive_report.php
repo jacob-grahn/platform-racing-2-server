@@ -21,18 +21,12 @@ try {
     // rate limiting
     rate_limit('mod-archive-report-'.$ip, 3, 2);
 
-    // sanity: valid input?
-    if ($message_id <= 0 && $level_id <= 0) {
+    // sanity checks
+    if ($message_id <= 0 && $level_id <= 0) { // valid input?
         throw new Exception('Invalid item.');
-    }
-
-    // sanity: only one input?
-    if ($message_id > 0 && $level_id > 0) {
+    } elseif ($message_id > 0 && $level_id > 0) { // only one input?
         throw new Exception('Please only specify one item.');
-    }
-
-    // sanity: invalid level version?
-    if ($level_id > 0 && $version <= 0) {
+    } elseif ($level_id > 0 && $version <= 0) { // invalid level version?
         throw new Exception('Invalid level version.');
     }
 
@@ -69,9 +63,11 @@ try {
 } catch (Exception $e) {
     $ret->error = $e->getMessage();
 } finally {
-    $ret->{"${mode}_id"} = $id;
-    if ($mode === 'level') {
-        $ret->version = $version;
+    if (!empty($mode)) {
+        $ret->{"${mode}_id"} = $id;
+        if ($mode === 'level') {
+            $ret->version = $version;
+        }
     }
     die(json_encode($ret));
 }
