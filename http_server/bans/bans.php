@@ -10,7 +10,7 @@ $ip = get_ip();
 
 try {
     // rate limiting
-    rate_limit('list-bans-'.$ip, 5, 3);
+    rate_limit("list-bans-$ip", 5, 3);
 
     // connect
     $pdo = pdo_connect();
@@ -50,8 +50,23 @@ try {
         $account_ban = (int) $ban->account_ban;
         $scope = $ban->scope === 's' ? 'socially banned' : 'banned';
 
+        $lifted_text = $ss = $se = '';
+        if ($ban->lifted == 1) { // ban lifted
+            $ss = '<s>';
+            $se = '</s>';
+            $lift_time = date('M j, Y \a\t g:i A', $ban->lifted_time);
+            $lifted_by = htmlspecialchars($ban->lifted_by, ENT_QUOTES);
+            $lift_reason = htmlspecialchars($ban->lifted_reason, ENT_QUOTES);
+            $lift_reason = empty($lift_reason) ? 'They bribed me with skittles!' : $lift_reason;
+            $lifted_text = "<b>-- This ban was lifted by $lifted_by on $lift_time. Reason: $lift_reason --</b><br/>";
+        }
+
+        // time remaining
+        $pre = $expire_time > time() ? 'Expires: in ' : 'Expired: ';
+        $expiry_text = $pre . format_duration($expire_time - time());
+
         // format expire time
-        $formatted_time = date('M j, Y g:i A', $time);
+        $formatted_time = date('M j, Y \a\t g:i A', $time);
         $duration = $expire_time - $time;
 
         // build display name
@@ -70,16 +85,17 @@ try {
 
         // show ban text
         echo "<p>"
-            ."$formatted_time <a href='show_record.php?ban_id=$ban_id'>$mod_name $scope $disp_name for $f_dur.</a>"
-            ."<br/>Reason: $reason"
+            ."$lifted_text$ss<span class='date'>$formatted_time</span> -- "
+            ."<a href='show_record.php?ban_id=$ban_id'>$mod_name $scope $disp_name for $f_dur.</a>"
+            ."<br/>-> Reason: $reason"
+            ."<br/>-> $expiry_text$se"
             ."</p>";
     }
 
     echo '<p>---</p>';
     output_pagination($start, $count);
 } catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    output_error_page($e->getMessage(), @$staff, 'Ban Log');
 } finally {
     output_footer();
 }

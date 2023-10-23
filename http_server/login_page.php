@@ -121,9 +121,7 @@ try {
         echo "Welcome, $html_name!";
     }
 } catch (Exception $e) {
-    output_header('Log In');
-    echo 'Error: ' . $e->getMessage() . '<br><br><a href="javascript:history.back()"><- Go Back</a>';
+    output_error_page($e->getMessage(), @$user, 'Log In');
 } finally {
     output_footer();
-    die();
 }

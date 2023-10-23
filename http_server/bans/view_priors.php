@@ -14,7 +14,7 @@ try {
 
     // connect
     $pdo = pdo_connect();
-    $user_id = (int) token_login($pdo, true, true, 'n');
+    $user_id = (int) token_login($pdo, true, false, 'n');
     $staff = is_staff($pdo, $user_id, false);
 
     output_header("View Priors", $staff->mod, $staff->admin);
@@ -59,11 +59,7 @@ try {
         ."<p>Your IP has been banned $ip_ban_count $ip_lang.</p> $ip_ban_list"
         .'<p>Priors expire one year after the ban\'s expiration date.</p>';
 } catch (Exception $e) {
-    if (!isset($staff)) {
-        output_header('Error');
-    }
-    $error = $e->getMessage();
-    echo "<br /><center><i>Error: $error</i></center>";
+    output_error_page($e->getMessage(), @$user, 'View Priors');
 } finally {
     output_footer();
 }

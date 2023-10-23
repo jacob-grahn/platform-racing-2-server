@@ -45,7 +45,7 @@ function output_header($title = '', $staff_nav = false, $show_admin = false, $ca
             ."<title>PR2 Hub - $title</title>"
             ."<link href='/style/gwibble.css' rel='stylesheet' type='text/css' />"
             ."<link href='/style/pr2hub.css' rel='stylesheet' type='text/css'/>";
-    
+
     foreach ($head_extras as $extra) {
         echo $extra;
     }
@@ -79,14 +79,18 @@ function output_header($title = '', $staff_nav = false, $show_admin = false, $ca
 // standard footer
 function output_footer()
 {
+    $tz = date('T');
+    $time = date("g:i a \o\\n M j, Y");
     echo "</div></div>"
         ."<div id='footer'>"
-            ."<ul class='footer_links'>"
-                ."<li><a href='/backups'>Backups</a></li>"
-                ."<li><a href='https://jiggmin2.com/forums/showthread.php?tid=19'>Folding@Home</a></li>"
-                ."<li><a href='/terms_of_use.php'>Terms of Use</a></li>"
-                ."<li><a href='/rules'>Rules</a></li>"
-            ."</ul>"
+            ."<div class='content'>"
+                ."<ul class='footer_links'>"
+                    ."<li><a href='/backups'>Backups</a></li>"
+                    ."<li><a href='https://jiggmin2.com/forums/showthread.php?tid=19'>Folding@Home</a></li>"
+                    ."<li><a href='/terms_of_use.php'>Terms of Use</a></li>"
+                    ."<li><a href='/rules'>Rules</a></li>"
+                ."</ul>"
+            ."<br />All times are $tz. The time is currently $time.</div>"
         ."</div></div>";
 }
 
@@ -128,4 +132,27 @@ function output_staff_nav($formatting_for_admins = true)
 
     echo '</b></p>'
         .'<p>---</p>';
+}
+
+
+function output_error_page($message, $staff = null, $page_title = 'Error')
+{
+    // determine power from staff variable
+    $mod = $admin = false;
+    if (!isset($staff)) {
+    } elseif (isset($staff->mod)) {
+        $mod = $staff->mod;
+        $admin = $staff->admin;
+    } elseif (isset($staff->power)) {
+        $mod = $staff->power >= 2;
+        $admin = $staff->power == 3;
+    }
+
+    // show error
+    output_header($page_title, $mod, $admin);
+    $error = htmlspecialchars($message, ENT_QUOTES);
+    echo !empty($error) ? "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>" : '';
+    if ($footer) {
+        output_footer();
+    }
 }

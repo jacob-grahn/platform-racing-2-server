@@ -88,8 +88,7 @@ try {
             ."<br><br><a href='$url'>(click here if you're not automatically redirected)</a>";
     }
 } catch (Exception $e) {
-    output_header('Error', $mod->power >= 2, (int) $mod->power === 3);
-    echo 'Error: ' . $e->getMessage();
+    output_error_page($e->getMessage(), @$mod);
 } finally {
     output_footer();
 }

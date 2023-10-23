@@ -88,8 +88,7 @@ try {
     output_pagination($start, $count);
     echo "</center>";
 } catch (Exception $e) {
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    echo "Error: $error";
+    output_error_page($e->getMessage(), @$staff);
 } finally {
     output_footer();
 }

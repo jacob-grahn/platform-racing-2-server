@@ -125,8 +125,7 @@ try {
         echo "</p>";
     }
 } catch (Exception $e) {
-    output_header("Error");
-    echo 'Error: ' . $e->getMessage();
+    output_error_page($e->getMessage(), @$staff);
 } finally {
     output_footer();
 }

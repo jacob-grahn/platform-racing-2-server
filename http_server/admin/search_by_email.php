@@ -56,9 +56,7 @@ try {
         }
     }
 } catch (Exception $e) {
-    output_header('Error');
-    $error = $e->getMessage();
-    echo "Error: $error";
+    output_error_page($e->getMessage());
 } finally {
     output_footer();
 }

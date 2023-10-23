@@ -56,7 +56,6 @@ try {
             .'Then, replace the previous one in the guild owner field.<br>'
             .'<br>'
             ."NOTE: You MUST make sure that the person you're making the owner is already in the guild.</pre>";
-        output_footer();
     } elseif ($action === 'update') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
@@ -159,8 +158,7 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    output_header("Error");
-    $error = $e->getMessage();
-    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+    output_error_page($e->getMessage(), @$admin);
+} finally {
     output_footer();
 }

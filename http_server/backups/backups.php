@@ -125,9 +125,7 @@ try {
         echo "<center>You haven't modified or deleted any levels in the past year.</center>";
     }
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    output_header("Level Backups");
-    echo "Error: $error";
+    output_error_page($e->getMessage(), @$staff);
 } finally {
     output_footer();
 }

@@ -24,7 +24,6 @@ try {
     if ($action === 'form') {
         output_header('Add Contest', true, true);
         output_form();
-        output_footer();
     } elseif ($action === 'add') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             throw new Exception('Invalid request type.');
@@ -34,7 +33,7 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    output_header('Error');
-    echo 'Error: ' . $e->getMessage() . '<br><br><a href="javascript:history.back()"><- Go Back</a>';
+    output_error_page($e->getMessage(), @$admin);
+} finally {
     output_footer();
 }

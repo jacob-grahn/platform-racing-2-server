@@ -261,8 +261,7 @@ try {
     <?php
     // phpcs:enable
 } catch (Exception $e) {
-    output_header('Buy Coins', isset($user->power) && $user->power >= 2, isset($user->power) && $user->power == 3);
-    echo 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES);
+    output_error_page($e->getMessage(), @$user, 'Buy Coins');
 } finally {
     output_footer();
     die();

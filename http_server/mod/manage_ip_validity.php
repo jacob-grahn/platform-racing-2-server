@@ -201,10 +201,7 @@ try {
         }
     }
 } catch (Exception $e) {
-    $power = isset($mod) ? $mod->power : 0;
-    output_header('Error', $power >= 2, (int) $power === 3);
-    $error = $e->getMessage();
-    echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
+    output_error_page($e->getMessage(), @$mod);
 } finally {
     output_footer();
 }

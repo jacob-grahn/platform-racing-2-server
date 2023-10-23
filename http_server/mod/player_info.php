@@ -112,7 +112,7 @@ try {
 
     // output the results
     $html_user_name = htmlspecialchars($user_name, ENT_QUOTES);
-    $verified = $user->verified ? "<p><img src='/img/verified.svg' width='15'></p>" : '';
+    $verified = $user->verified ? "<p><img src='/img/verified.svg' width='15' title='Verified'></p>" : '';
     $html_ip_info = "<p>IP: <del>$html_overridden_ip</del> <a href='ip_info.php?ip=$html_url_ip'>$html_ip</a></p>";
     echo "$verified"
         ."<p>User ID: $user_id</p>"
@@ -139,10 +139,7 @@ try {
             .'</p>';
     }
 } catch (Exception $e) {
-    if ($e->getMessage() !== '') {
-        $error = $e->getMessage();
-        echo "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>";
-    }
+    output_error_page($e->getMessage(), @$staff);
 } finally {
     output_footer();
 }

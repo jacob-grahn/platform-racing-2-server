@@ -77,8 +77,7 @@ try {
     // end the table
     echo '</table>';
 } catch (Exception $e) {
-    $error = $e->getMessage();
-    echo "<br><i>Error: $error</i>";
+    output_error_page($e->getMessage());
 } finally {
     echo '</center>';
     output_footer();

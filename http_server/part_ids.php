@@ -1,21 +1,10 @@
 <?php
 
-require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/output_fns.php';
 
-try {
-    // rate limiting
-    rate_limit('part-ids-'.$ip, 60, 5);
-    rate_limit('part-ids-'.$ip, 10, 1);
+output_header('Part IDs');
 
-    // connect
-    $pdo = pdo_connect();
-
-    // make sure you're an admin
-    is_staff($pdo, token_login($pdo), false, true, 3);
-
-    output_header('PR2 Part IDs', true, true);
-    echo '<pre>Platform Racing 2 Part Codes
+echo '<pre>Platform Racing 2 Part Codes
 
 -- Hats --
 1 - None
@@ -240,10 +229,5 @@ Hats: 17+
 Heads: 51+
 Bodies: 33, 44, 47, 51+
 Feet: 31-33, 44, 47, 51+</pre>';
-} catch (Exception $e) {
-    output_header('Error');
-    $error = $e->getMessage();
-    echo "Error: $error";
-} finally {
-    output_footer();
-}
+
+output_footer();

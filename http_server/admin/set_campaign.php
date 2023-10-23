@@ -32,9 +32,7 @@ try {
         throw new Exception('Invalid action specified.');
     }
 } catch (Exception $e) {
-    output_header('Error');
-    $error = htmlspecialchars($e->getMessage(), ENT_QUOTES);
-    echo "Error: $error";
+    output_error_page($e->getMessage(), @$admin);
 } finally {
     output_footer();
 }
