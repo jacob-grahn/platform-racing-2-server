@@ -73,7 +73,7 @@ function output_form($pdo, $message, $campaign_id)
         .'Finally, use the level IDs to update the campaign in the form above.<br>'
         .'<br>'
         .'You can find a list of prizes and their corresponding IDs '
-        .'<a href="part_ids.php" target="_blank">here</a>.</pre>';
+        .'<a href="/part_ids.php" target="_blank">here</a>.</pre>';
 }
 
 

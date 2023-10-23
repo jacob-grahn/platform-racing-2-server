@@ -79,7 +79,7 @@ try {
         echo '<br>';
         echo '<pre>When making changes, use the "Description of Changes" box to summarize what you did.<br>'
             .'<br>'
-            .'Find what each part ID is <a href="part_ids.php" target="blank">here</a>.<br><br>'
+            .'Find what each part ID is <a href="/part_ids.php" target="blank">here</a>.<br><br>'
             .'NOTE: Make sure the user is logged out of PR2 before trying to change parts.</pre>';
     } elseif ($action === 'update') {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

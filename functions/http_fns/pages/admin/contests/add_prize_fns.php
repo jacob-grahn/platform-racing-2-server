@@ -32,18 +32,18 @@ function output_form($contest)
     echo '<br>';
     echo '---';
     echo '<br>';
-    echo '<pre>Find what each part ID is <a href="/admin/part_ids.php" target="blank">here</a>.</pre>';
+    echo '<pre>Find what each part ID is <a href="/part_ids.php" target="blank">here</a>.</pre>';
 }
 
 // add contest prize function
 function add_contest_prize($pdo, $admin, $contest)
 {
     // make some nice variables
-    $contest_name = $contest->contest_name;
     $contest_id = (int) $contest->contest_id;
+    $contest_name = $contest->contest_name;
+    $html_contest_name = htmlspecialchars($contest_name, ENT_QUOTES);
     $part_type = default_post('part_type');
     $part_id = (int) default_post('part_id');
-    $html_contest_name = htmlspecialchars($contest->contest_name, ENT_QUOTES);
 
     // validate the prize and get a nice stdClass back
     $prize = validate_prize($part_type, $part_id);
