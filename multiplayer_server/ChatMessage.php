@@ -1009,7 +1009,7 @@ class ChatMessage
     {
         if ($this->room_type === 'c') {
             $hats_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=122', 'Hats');
-            $eups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=123', 'Epic Upgrades');
+            $eups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=3398', 'Epic Upgrades');
             $groups_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=146', 'Groups');
             $fah_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=19', 'Folding at Home (F@H)');
             $artifact_link = urlify('https://jiggmin2.com/forums/showthread.php?tid=1677', 'Artifact Guide');
