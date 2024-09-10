@@ -224,7 +224,7 @@ function pr2_update(
 ) {
     $stmt = $pdo->prepare('
         UPDATE pr2
-          SET "rank" = :rank,
+          SET pr2.rank = :rank,
               exp_points = :exp_points,
               hat_color = :hat_color,
               head_color = :head_color,
@@ -246,7 +246,7 @@ function pr2_update(
               acceleration = :acceleration,
               jumping = :jumping
         WHERE user_id = :user_id
-          AND "rank" <= :rank
+          AND pr2.rank <= :rank
     ');
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':rank', $rank, PDO::PARAM_INT);
