@@ -62,7 +62,7 @@ function bans_select_active($pdo, $user_id, $ip)
           AND lifted != 1
           AND expire_time > :time
         GROUP BY
-          scope ASC
+          scope
         ORDER BY
           expire_time DESC
         LIMIT 2
@@ -98,7 +98,7 @@ function bans_select_active_by_ip($pdo, $ip)
           AND lifted != 1
           AND expire_time > :time
         GROUP BY
-          scope ASC
+          scope
         ORDER BY
           expire_time DESC
         LIMIT 2
@@ -133,7 +133,7 @@ function bans_select_active_by_user_id($pdo, $user_id)
           AND lifted != 1
           AND expire_time > :time
         GROUP BY
-          scope ASC
+          scope
         ORDER BY
           expire_time DESC
         LIMIT 2
