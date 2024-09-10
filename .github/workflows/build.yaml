@@ -1,5 +1,5 @@
 name: Platform Racing 2
-
+on: [push]
 permissions:
   packages: write
 
