@@ -54,7 +54,7 @@ try {
     }
 
     // check if this is currently (or will be) the level of the week
-    if (is_arti_level($pdo, artifact_locations_select($pdo), $level_id)) {
+    if (is_arti_level(artifact_locations_select($pdo), $level_id)) {
         $msg = 'Your level could not be deleted because it is or will be the Level of the Week. '
             .'Please contact a member of the PR2 Staff Team for more information.';
         throw new Exception($msg);

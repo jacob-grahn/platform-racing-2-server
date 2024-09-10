@@ -655,7 +655,7 @@ function moderate_level($pdo, $mod, $level_id, $action = 'unpublish')
 }
 
 
-function is_arti_level($pdo, $levels, $level_id)
+function is_arti_level($levels, $level_id)
 {
     foreach ($levels as $level) {
         if ($level->level_id == $level_id) {
