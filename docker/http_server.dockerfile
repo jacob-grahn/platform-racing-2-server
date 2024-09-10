@@ -1,12 +1,10 @@
-# start from an official php image
-FROM php:7.3-apache
+FROM php:8.2-fpm
 
 # copy in php code
 COPY config.php /pr2/
 COPY common/ /pr2/common
 COPY functions/ /pr2/functions
 COPY http_server/ /pr2/http_server
-COPY http_server/ /var/www/html/
 COPY vend/ /pr2/vend
 COPY common/env.example.php /pr2/common/env.php
 
@@ -22,7 +20,3 @@ RUN docker-php-ext-install pdo_mysql
 # install pecl extensions
 RUN pecl install apcu \
     && docker-php-ext-enable apcu
-
-# Run the minute CRON script
-# This runs the existing servers in the database and outputs a server_status_2.txt file
-CMD ["php", "/pr2/common/cron/minute.php"]

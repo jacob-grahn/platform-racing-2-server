@@ -1,0 +1,33 @@
+name: Platform Racing 2
+
+permissions:
+  packages: write
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Lint
+        run: |
+          composer install
+          ./vendor/bin/phpmd common,functions,http_server,multiplayer_server,policy_server text unusedcode
+          ./vendor/bin/phpcs --standard=PSR2 common functions http_server multiplayer_server policy_server
+      - name: Build HTTP
+        run: |
+          docker build -t pr2-http --file docker/http_server.dockerfile .
+          if [ "$GITHUB_REF_NAME" == "main" ]; then
+            tag="$(date +%F-%H-%M)-$GITHUB_REF_NAME-$GITHUB_SHA"
+            docker tag pr2-http ghcr.io/jacob-grahn/platform-racing-2-http:latest
+            docker push ghcr.io/jacob-grahn/platform-racing-2-http:latest
+            docker tag pr2-http ghcr.io/jacob-grahn/platform-racing-2-http:$tag
+            docker push ghcr.io/jacob-grahn/platform-racing-2-http:$tag
+          fi
