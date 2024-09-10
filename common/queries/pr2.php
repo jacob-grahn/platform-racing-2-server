@@ -48,7 +48,7 @@ function pr2_select_rank_progress($pdo, $user_id)
     $stmt = $pdo->prepare('
         SELECT
           pr2.exp_points AS exp,
-          (pr2.rank + IFNULL(rt.used_tokens, 0)) AS rank,
+          (pr2.rank + IFNULL(rt.used_tokens, 0)) AS "rank",
           IFNULL(rt.used_tokens, 0) AS tokens
         FROM
           pr2
@@ -73,7 +73,7 @@ function pr2_select_rank_progress($pdo, $user_id)
 function pr2_select_true_rank($pdo, $user_id)
 {
     $stmt = $pdo->prepare('
-        SELECT pr2.rank AS rank,
+        SELECT pr2.rank AS "rank",
                rank_tokens.used_tokens AS tokens
           FROM pr2
           LEFT JOIN rank_tokens ON rank_tokens.user_id = pr2.user_id
