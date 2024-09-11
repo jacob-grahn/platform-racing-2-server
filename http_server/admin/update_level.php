@@ -101,7 +101,9 @@ try {
         // check if a level with this title exists on target account
         $level_conflict = level_select_by_title($pdo, $owner_id, $title);
         if (!empty($level_conflict) && $level_id != $level_conflict->level_id) {
-            throw new Exception('A level already exists with this title on the target account. Please choose a different title.');
+            throw new Exception(
+                'A level already exists with this title on the target account. Please choose a different title.'
+            );
         }
 
         // back up the level (if none exists)
