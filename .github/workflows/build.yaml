@@ -22,7 +22,7 @@ jobs:
           ./vendor/bin/phpmd common,functions,http_server,multiplayer_server,policy_server text unusedcode
           ./vendor/bin/phpcs --standard=PSR2 common functions http_server multiplayer_server policy_server
       - name: Build HTTP
-        if: github.ref == 'refs/heads/main'
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker build -t pr2-http --file docker/http_server.dockerfile .
           tag="$(date +%F-%H-%M)-$GITHUB_REF_NAME-$GITHUB_SHA"
