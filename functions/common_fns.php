@@ -104,9 +104,9 @@ function urlify($link, $disp, $color = '#0000FF', $bt_replace = true)
 
 /**
  * Makes a client-friendly group string. (Does not check for special user!)
- * 
+ *
  * @param object user User data. (Must include group/power. Should include trial_mod, ca. Can include temp_mod.)
- * 
+ *
  * @return string Group string (not checked for special user).
  */
 function make_group_str($user)
@@ -121,9 +121,9 @@ function make_group_str($user)
 /**
  * Gets a user's secondary group value. Does not check for special user!
  * Makes a client-friendly group string. Does not check for special user!
- * 
+ *
  * @param object user User data (Must include group/power. Should include trial_mod, ca. Can include temp_mod.)
- * 
+ *
  * @return int Secondary group number (not checked for special user).
  */
 function get_second_group($user)
@@ -146,9 +146,9 @@ function get_second_group($user)
 
 /**
  * Builds group information from a user object.
- * 
+ *
  * @param object user User data (Must include group/power. Should include user_id, trial_mod, ca. Can include temp_mod.)
- * 
+ *
  * @return int Secondary group number (not checked for special user).
  */
 function get_group_info($user)
