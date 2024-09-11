@@ -62,9 +62,8 @@ function campaign_update($pdo, $campaign_id, $levels)
         throw new Exception('Nine levels must be specified.');
     }
 
-    foreach ($levels as $key => $data) {
+    foreach ($levels as $key => $level) {
         $level_num = $key + 1;
-        $level = $levels[$key];
 
         // sanity: all info present?
         if (empty($level->level_id) || empty($level->prize_type) || empty($level->prize_id)) {

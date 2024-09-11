@@ -5,7 +5,7 @@ function determine_song($num)
 {
     if ($num == '' || $num == 'random') {
         return "Random";
-    } else if ($num == '0' || $num == 'none') {
+    } elseif ($num == '0' || $num == 'none') {
         return "None";
     }
 
@@ -42,11 +42,11 @@ function determine_mode($type)
 {
     if ($type == 'deathmatch' || $type == 'dm' || $type == 'd') {
         $type = 'Deathmatch';
-    } else if ($type == 'egg' || $type == 'eggs' || $type == 'e') {
+    } elseif ($type == 'egg' || $type == 'eggs' || $type == 'e') {
         $type = 'Alien Eggs';
-    } else if ($type == 'objective' || $type == 'obj' || $type == 'o') {
+    } elseif ($type == 'objective' || $type == 'obj' || $type == 'o') {
         $type = 'Objective';
-    } else if ($type == 'hat' || $type == 'h') {
+    } elseif ($type == 'hat' || $type == 'h') {
         $type = 'Hat Attack';
     } else {
         $type = 'Race';

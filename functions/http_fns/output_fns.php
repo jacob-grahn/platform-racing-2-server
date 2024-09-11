@@ -152,7 +152,4 @@ function output_error_page($message, $staff = null, $page_title = 'Error')
     output_header($page_title, $mod, $admin);
     $error = htmlspecialchars($message, ENT_QUOTES);
     echo !empty($error) ? "Error: $error<br><br><a href='javascript:history.back()'><- Go Back</a>" : '';
-    if ($footer) {
-        output_footer();
-    }
 }

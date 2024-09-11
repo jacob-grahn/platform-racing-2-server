@@ -65,7 +65,6 @@ function output_page($pdo, $user)
 
     // make some variables
     $group = get_group_info($user);
-    $name_color = $group->color;
     $guild_id = (int) $user->guild; // guild id
     $rank = $user->rank + $user->used_tokens; // rank
     $hats = count(explode(',', $user->hat_array)) - 1; // hats

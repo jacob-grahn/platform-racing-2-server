@@ -44,9 +44,7 @@ function award_coins($pdo, $admin)
         throw new Exception('Could not find a user with that name.');
     } elseif ((int) $user->power === 0) { // is the recipient a guest?
         throw new Exception('Guests can\'t have coins.');
-    } else/*if ($user->user_id === $admin->user_id) { // admin trying to award to themselves?
-        throw new Exception('You can\'t award coins to yourself!');
-    } else*/if ($user->coins + $num_coins > 16777215) { // crazy amount of coins? (this is ridiculous. I realize that.)
+    } elseif ($user->coins + $num_coins > 16777215) { // crazy amount of coins? (this is ridiculous. I realize that.)
         throw new Exception('Awarding this number of coins would exceed the maximum amount of coins per account.');
     }
 
