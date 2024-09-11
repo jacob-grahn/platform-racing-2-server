@@ -11,12 +11,13 @@ COPY common/env.example.php /pr2/common/env.php
 # copy in custom config
 COPY docker/prepend_file.ini $PHP_INI_DIR/conf.d/
 
-# use default production ini file
+# Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # install extensions
 RUN docker-php-ext-install pdo_mysql
 
 # install pecl extensions
-RUN pecl install apcu \
+RUN pear config-set php_ini "$PHP_INI_DIR/php.ini" \
+    && pecl install apcu-5.1.23 \
     && docker-php-ext-enable apcu
