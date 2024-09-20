@@ -1,6 +1,0 @@
-{
-    "version":"168.2.1",
-    "build": "29-oct-2023-v168_2_1",
-    "time":1698645600,
-    "url":"http:\/\/pr2hub.com\/files\/platform-racing-2-v168_2_1.swf"
-}
