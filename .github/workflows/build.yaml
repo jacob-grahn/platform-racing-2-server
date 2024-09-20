@@ -30,3 +30,12 @@ jobs:
           docker push ghcr.io/jacob-grahn/platform-racing-2-http:latest
           docker tag pr2-http ghcr.io/jacob-grahn/platform-racing-2-http:$tag
           docker push ghcr.io/jacob-grahn/platform-racing-2-http:$tag
+      - name: Build Multi
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker build -t pr2-multi --file docker/multi_server.dockerfile .
+          tag="$(date +%F-%H-%M)-$GITHUB_REF_NAME-$GITHUB_SHA"
+          docker tag pr2-multi ghcr.io/jacob-grahn/platform-racing-2-http:latest
+          docker push ghcr.io/jacob-grahn/platform-racing-2-multi:latest
+          docker tag pr2-multi ghcr.io/jacob-grahn/platform-racing-2-http:$tag
+          docker push ghcr.io/jacob-grahn/platform-racing-2-multi:$tag
