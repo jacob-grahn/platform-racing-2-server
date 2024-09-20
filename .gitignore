@@ -6,7 +6,6 @@ functions/http_fns/check_local_fn.php
 http_server/beta/*
 http_server/emblems/*
 http_server/levels/*
-http_server/music/*
 cache
 ecv
 vendor
