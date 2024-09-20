@@ -52,8 +52,8 @@ $PAYPAL_API_ENDPOINT = $PAYPAL_SANDBOX ? 'https://api.sandbox.paypal.com' : 'htt
 $PAYPAL_CLIENT_ID = $PAYPAL_SANDBOX ? 'sandbox client id' : 'production client id';
 $PAYPAL_SECRET = $PAYPAL_SANDBOX ? 'sandbox secret' : 'production secret';
 
-$PAYPAL_DATA_KEY = 'elon';
-$PAYPAL_DATA_IV = 'musk';
+$PAYPAL_DATA_KEY = 'cookie';
+$PAYPAL_DATA_IV = 'monster';
 
 $URL_SALT = 'haha';
 $URL_KEY = 'encryption';
