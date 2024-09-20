@@ -56,6 +56,9 @@ function find_no_cookie($str, $default = null)
 // get a user's IP address
 function get_ip()
 {
+    if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+        return $_SERVER['HTTP_CF_CONNECTING_IP'];
+    }
     return $_SERVER["REMOTE_ADDR"];
 }
 

@@ -409,13 +409,14 @@ function award_special_parts($stats, $group, $prizes)
         $stats->feet = add_item($feet_array, 38) ? 38 : $stats->feet;
     }
 
+// todo: something here is broken in new version of php
     // bunny set (easter)
-    $easter = date('F j', easter_date(date('Y')));
-    if ($date === $easter || date('F j', time() + 86400) === $easter) {
-        $stats->head = add_item($head_array, 39) ? 39 : $stats->head;
-        $stats->body = add_item($body_array, 39) ? 39 : $stats->body;
-        $stats->feet = add_item($feet_array, 39) ? 39 : $stats->feet;
-    }
+//    $easter = date('F j', easter_date(date('Y')));
+//    if ($date === $easter || date('F j', time() + 86400) === $easter) {
+//        $stats->head = add_item($head_array, 39) ? 39 : $stats->head;
+//        $stats->body = add_item($body_array, 39) ? 39 : $stats->body;
+//        $stats->feet = add_item($feet_array, 39) ? 39 : $stats->feet;
+//    }
 
     // jack-o-lantern head (halloween)
     if (date('F') === 'October' || $date === 'November 1') {
