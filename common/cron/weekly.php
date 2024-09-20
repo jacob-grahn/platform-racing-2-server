@@ -22,7 +22,7 @@ messages_delete_old($pdo);
 bans_delete_old($pdo);
 users_reset_status($pdo);
 best_levels_reset($pdo);
-restart_servers($pdo);
+# restart_servers($pdo);
 all_optimize($pdo, $DB_NAME);
 
 // deletes old accounts every four weeks

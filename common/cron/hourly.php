@@ -24,7 +24,7 @@ output("Hourly CRON starting at $time...");
 $pdo = pdo_connect();
 
 try {
-    servers_deactivate_expired($pdo);
+    // servers_deactivate_expired($pdo);
     servers_delete_old($pdo);
     ensure_awards($pdo);
     generate_level_list($pdo, 'newest');

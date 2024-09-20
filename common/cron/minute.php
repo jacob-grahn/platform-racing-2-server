@@ -17,7 +17,7 @@ output("Minute CRON starting at $time...\n");
 $pdo = pdo_connect();
 
 // perform minute tasks
-failover_servers($pdo);
+// failover_servers($pdo);
 generate_level_list($pdo, 'newest');
 update_artifact($pdo);
 run_update_cycle($pdo);
