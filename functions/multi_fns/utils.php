@@ -519,8 +519,6 @@ function __crashHandler($force = false)
         return;
     }
 
-    global $server_id;
-
     // handle crash
     output("--- SERVER IS CRASHING ---");
     output("Saving data...");
