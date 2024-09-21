@@ -147,9 +147,7 @@ abstract class Socket
 
     public function setNonBlock()
     {
-        if (!is_resource($this->socket)) {
-            throw new \Exception("Invalid socket or resource");
-        } elseif (!@socket_set_nonblock($this->socket)) {
+        if (!@socket_set_nonblock($this->socket)) {
             throw new \Exception("Could not set socket non_block: ".$this->getError());
         }
     }
