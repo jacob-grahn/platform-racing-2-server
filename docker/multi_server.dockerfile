@@ -16,6 +16,4 @@ COPY docker/prepend_file.ini $PHP_INI_DIR/conf.d/
 RUN docker-php-ext-install pdo_mysql sockets
 
 # Run the gameserver
-ENV SERVER_ID 0
-ENV DEBUG_MODE 0
-CMD ["exec php pr2/multiplayer_server/pr2.php $SERVER_ID $DEBUG_MODE"]
+ENTRYPOINT ["php", "pr2/multiplayer_server/pr2.php"]
