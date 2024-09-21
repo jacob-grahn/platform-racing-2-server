@@ -526,10 +526,4 @@ function __crashHandler($force = false)
     output("Saving data...");
     shutdown_server(null, false, 'The server is restarting (due to an error), hold on a sec...');
     output("Data successfully saved.");
-
-    // start a new server
-    sleep(3);
-    $server_id = (int) $server_id;
-    echo shell_exec('php ' . COMMON_DIR . "/manage_socket/restart_server.php $server_id");
-    die(output("Server started."));
 }
