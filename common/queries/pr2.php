@@ -171,16 +171,13 @@ function pr2_update_rank($pdo, $user_id, $new_rank, $exp_points = null)
 {
     $exp_str = $exp_points !== null ? 'exp_points = :exp_points,' : '';
     $stmt = $pdo->prepare("
-        UPDATE
-          pr2
+        UPDATE pr2
         SET
           $exp_str
-          rank = :rank
-        WHERE
-          user_id = :user_id
-          AND rank <= :rank
-        LIMIT
-          1
+          pr2.rank = :rank
+        WHERE pr2.user_id = :user_id
+        AND pr2.rank <= :rank
+        LIMIT 1
     ");
     $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindValue(':rank', $new_rank, PDO::PARAM_INT);
