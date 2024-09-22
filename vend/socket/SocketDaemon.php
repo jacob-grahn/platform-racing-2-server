@@ -43,7 +43,6 @@ class SocketDaemon
         }
         $client->setNonBlock(true);
         $client->connect($remote_address, $remote_port);
-        output("Adding client " . spl_object_id($client->socket));
         $this->clients[spl_object_id($client->socket)] = $client;
         return $client;
     }
@@ -92,7 +91,7 @@ class SocketDaemon
     {
         # maybe could do this instead: $this->clients = array_filter($this->clients, fn($s) => !$s->disconnected && $this->socket instanceof \Socket)
         foreach ($this->clients as $socket) {
-            if ($socket->disconnected || !$this->socket instanceof \Socket) {
+            if ($socket->disconnected || !$socket instanceof \Socket) {
                 if (isset($this->clients[spl_object_id($socket->socket)])) {
                     unset($this->clients[spl_object_id($socket->socket)]);
                 }

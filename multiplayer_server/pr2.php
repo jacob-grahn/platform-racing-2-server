@@ -79,8 +79,8 @@ try {
 // server info
 $server_id = (int) $argv[1];
 $verbose = $argc > 2 && strtolower($argv[2]) === 'true';
-$port = 0;
-$server_name = '';
+$port = 9159;
+$server_name = 'bob';
 $is_ps = false;
 $guild_id = 0;
 $guild_owner = 0;
@@ -110,6 +110,7 @@ $search_room = new LevelListRoom('search');
 // load in startup info
 output('Requesting loadup information...');
 $uptime = time();
+
 begin_loadup($server_id);
 
 // start the socket server

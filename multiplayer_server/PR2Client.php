@@ -22,6 +22,7 @@ class PR2Client extends \chabot\SocketServerClient
         $time = time();
         $this->last_action = $time;
         $this->last_user_action = $time;
+        output(" --- Creating PR2Client --- ");
     }
 
     private function handleRequest($string)
