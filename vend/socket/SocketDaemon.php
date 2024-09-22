@@ -91,9 +91,9 @@ class SocketDaemon
     {
         # maybe could do this instead: $this->clients = array_filter($this->clients, fn($s) => !$s->disconnected && $this->socket instanceof \Socket)
         foreach ($this->clients as $socket) {
-            if ($socket->disconnected || !$socket instanceof \Socket) {
-                if (isset($this->clients[spl_object_id($socket->socket)])) {
-                    unset($this->clients[spl_object_id($socket->socket)]);
+            if ($socket->disconnected || !$socket->socket instanceof \Socket) {
+                if (isset($this->clients[$socket->id])) {
+                    unset($this->clients[$socket->id]);
                 }
             }
         }
