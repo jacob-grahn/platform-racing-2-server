@@ -385,7 +385,7 @@ class Game extends Room
             }
 
             // remove other invalid hats from valid hats array
-            if (!emtpy($bad_hats)) {
+            if ($bad_hats) {
                 $this->valid_hats = array_values(array_diff($this->valid_hats, explode(',', $bad_hats)));
             }
 
