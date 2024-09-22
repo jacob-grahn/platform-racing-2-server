@@ -90,7 +90,7 @@ class SocketDaemon
     private function cleanSockets()
     {
         foreach ($this->clients as $socket) {
-            if ($socket->disconnected || !is_resource($socket->socket)) {
+            if ($socket->disconnected || !$this->socket instanceof \Socket) {
                 if (isset($this->clients[(int)$socket->socket])) {
                     unset($this->clients[(int)$socket->socket]);
                 }
