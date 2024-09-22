@@ -58,7 +58,7 @@ abstract class SocketClient extends Socket
             $this->onWrite();
             return true;
         } catch (\Exception $e) {
-            $old_socket         = (int)$this->socket;
+            $old_socket         = (string)$this->socket;
             $this->close();
             $this->socket       = $old_socket;
             $this->disconnected = true;
@@ -74,7 +74,7 @@ abstract class SocketClient extends Socket
             $this->read_buffer .= parent::read($length);
             $this->onRead();
         } catch (\Exception $e) {
-            $old_socket         = (int)$this->socket;
+            $old_socket         = (string)$this->socket;
             $this->close();
             $this->socket       = $old_socket;
             $this->disconnected = true;
