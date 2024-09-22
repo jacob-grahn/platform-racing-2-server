@@ -30,6 +30,7 @@ class Game extends Room
     private $campaign;
 
     private $mode = self::MODE_RACE;
+    private $hash;
     private $hatCountdownEnd = -1;
     private $hasHats = -1;
     private $ending_egg = false;
@@ -384,7 +385,9 @@ class Game extends Room
             }
 
             // remove other invalid hats from valid hats array
-            $this->valid_hats = array_values(array_diff($this->valid_hats, explode(',', $bad_hats)));
+            if (!emtpy($bad_hats)) {
+                $this->valid_hats = array_values(array_diff($this->valid_hats, explode(',', $bad_hats)));
+            }
 
             // handle hat attack mode
             if ($this->mode === self::MODE_HAT) {
