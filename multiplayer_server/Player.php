@@ -106,6 +106,10 @@ class Player
     public $super_booster = false;
     public $last_save_time = 0;
 
+    public $average_vel_x = 0;
+    public $average_vel_y = 0;
+    public $race_stats = null;
+
 
     public function __construct($socket, $login)
     {

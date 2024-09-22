@@ -16,6 +16,7 @@ class PR2Client extends \chabot\SocketServerClient
     public $process = false;
     public $ip;
     public $id;
+    public $player;
 
     public function __construct($socket)
     {

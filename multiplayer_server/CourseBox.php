@@ -237,11 +237,11 @@ class CourseBox
             $this->clearSlot($player, true);
         }
 
-        $this->slot_array = null;
         unset($this->slot_array);
 
-        $this->room->course_array[$course_id] = null;
-        unset($this->room->course_array[$course_id]);
+        if (!empty($room)) {
+            unset($this->room->course_array[$course_id]);
+        }
 
         if (!empty($room) && $fromE === false) {
             $room->maybeHighlight('remove', $page_number);
