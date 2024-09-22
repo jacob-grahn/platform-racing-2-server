@@ -23,6 +23,7 @@ namespace chabot;
 abstract class SocketServer extends Socket
 {
     protected $client_class;
+    public $disconnected   = false;
 
     public function __construct(
         $client_class,

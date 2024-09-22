@@ -58,9 +58,7 @@ abstract class SocketClient extends Socket
             $this->onWrite();
             return true;
         } catch (\Exception $e) {
-            $old_socket         = spl_object_id($this->socket);
             $this->close();
-            $this->socket       = $old_socket;
             $this->disconnected = true;
             $this->onDisconnect();
             return false;
@@ -74,9 +72,7 @@ abstract class SocketClient extends Socket
             $this->read_buffer .= parent::read($length);
             $this->onRead();
         } catch (\Exception $e) {
-            $old_socket         = spl_object_id($this->socket);
             $this->close();
-            $this->socket       = $old_socket;
             $this->disconnected = true;
             $this->onDisconnect();
         }
