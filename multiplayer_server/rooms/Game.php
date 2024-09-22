@@ -1059,6 +1059,12 @@ class Game extends Room
     }
 
 
+    protected function sortFinishArray($a, $b)
+    {
+        return $this->sortFinishArrayRace($a, $b);
+    }
+
+
     private function setFinishTime($player, $finish_time)
     {
         if (!isset($player->race_stats->finish_time)) {
