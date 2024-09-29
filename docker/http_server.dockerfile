@@ -28,6 +28,9 @@ RUN pear config-set php_ini "$PHP_INI_DIR/php.ini" \
     && pecl install apcu-5.1.23 \
     && docker-php-ext-enable apcu
 
+# Install pear extensions
+RUN pear install -a Mail
+
 # Run minute and hour cron when this service starts up to generate server and level list files
 ENTRYPOINT []
 CMD [ "/http_server_startup.sh" ]
