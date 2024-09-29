@@ -7,6 +7,7 @@ COPY functions/ /pr2/functions
 COPY http_server/ /pr2/http_server
 COPY vend/ /pr2/vend
 COPY common/env.example.php /pr2/common/env.php
+COPY docker/http_server_startup.sh /http_server_startup.sh
 
 # Copy in custom config
 COPY docker/prepend_file.ini $PHP_INI_DIR/conf.d/
@@ -26,3 +27,7 @@ RUN docker-php-ext-install pdo_mysql
 RUN pear config-set php_ini "$PHP_INI_DIR/php.ini" \
     && pecl install apcu-5.1.23 \
     && docker-php-ext-enable apcu
+
+# Run minute and hour cron when this service starts up to generate server and level list files
+ENTRYPOINT []
+CMD [ "/http_server_startup.sh" ]

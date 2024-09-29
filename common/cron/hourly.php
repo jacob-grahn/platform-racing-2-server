@@ -32,7 +32,7 @@ try {
     generate_level_list($pdo, 'best_week');
     generate_level_list($pdo, 'campaign');
     set_campaign($pdo);
-    fah_update($pdo);
+    // fah_update($pdo);
 
     // tell the command line
     output('Hourly CRON successful.');
