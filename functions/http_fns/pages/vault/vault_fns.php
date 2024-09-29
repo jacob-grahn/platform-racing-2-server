@@ -14,7 +14,11 @@ function describeVault($pdo, $user, $items_to_get = 'all')
     // get requested items
     $vault_info = file_get_contents(CACHE_DIR . '/vault.json');
     if (!$vault_info) {
-        throw new Exception('Could not retrieve vault info.');
+        regenerate_vault_items($pdo);
+        $vault_info = file_get_contents(CACHE_DIR . '/vault.json');
+        if (!$vault_info) {
+            throw new Exception('Could not retrieve vault info.');
+        }
     }
 
     // populate array
