@@ -183,7 +183,7 @@ function update_artifact($pdo)
     
     // only continue if one of these conditions are met
     // note: this won't update in the case of a usergroup change, but that can be done manually since it's rare
-    if (!arti_text) {
+    if (!$arti_text) {
         output('creating an initial lotw file');
     } elseif (isset($artifacts[1]) && $artifacts[1]->set_time <= time()) { // sched arti set_time met/exceeded
         output('Placing new artifact via scheduled update.');
