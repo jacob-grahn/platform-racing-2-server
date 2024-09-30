@@ -314,7 +314,7 @@ class ChatMessage
                         db_op('admin_action_insert', array($this->from_id, $msg, 'restart-server', $this->player->ip));
                         output("$name_str ($this->from_id) initiated a server shutdown.");
                         $this->write('systemChat`Restarting...');
-                        shutdown_server()
+                        shutdown_server();
                     }
                 } else {
                     $this->write('systemChat`This command cannot be used in levels.');
