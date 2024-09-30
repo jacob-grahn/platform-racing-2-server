@@ -492,24 +492,6 @@ function shutdown_server($socket = null, $die = true, $msg = 'The server is rest
 }
 
 
-// graceful restart
-function restart_server()
-{
-    global $server_id;
-
-    // kill socket
-    kill_socket();
-
-    // disconnect everyone
-    shutdown_server(null, false);
-
-    // start new instance of server
-    $server_id = (int) $server_id;
-    echo shell_exec('php ' . COMMON_DIR . "/manage_socket/restart_server.php $server_id");
-    die(output("The restart was successful."));
-}
-
-
 // not so graceful shutdown
 function __crashHandler($force = false)
 {

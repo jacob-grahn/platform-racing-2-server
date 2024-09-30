@@ -217,7 +217,7 @@ function create_server($pdo, $guild_id, $days_of_life)
 
             // insert and start server
             $server_id = server_insert($pdo, $life_from_now, $server_name, $SERVER_IP, $port, $guild_id);
-            start_server(PR2_ROOT . '/pr2.php', $port, $server_id, false, true);
+            # start_server(PR2_ROOT . '/pr2.php', $port, $server_id, false, true);
 
             // return data
             $ret->new_time = $life_from_now;
@@ -234,7 +234,7 @@ function create_server($pdo, $guild_id, $days_of_life)
             // update info (and activate server if applicable)
             server_update_expire_time($pdo, $life_from_expiry, $server_id);
             if (!$active) { // if it wasn't active, start the server
-                start_server(PR2_ROOT . '/pr2.php', $port, $server_id, false, true);
+                # start_server(PR2_ROOT . '/pr2.php', $port, $server_id, false, true);
             }
 
             // return data

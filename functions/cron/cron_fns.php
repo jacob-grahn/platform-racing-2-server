@@ -48,9 +48,7 @@ function run_update_cycle($pdo)
     $send_str = json_encode($send);
 
     // check servers and send the data
-    $server_list = check_servers($pdo, false);
-    output("Waiting 1 second before proceeding...\n");
-    sleep(1);
+    $server_list = servers_select($pdo);
     $servers = poll_servers($server_list, 'update_cycle`' . $send_str);
 
     // process replies
