@@ -169,7 +169,7 @@ function update_artifact($pdo)
 
     // collect data
     $artifacts = artifact_locations_select($pdo, true);
-    if (!isset($artifacts[0]) || !$arti_txt) {
+    if (!isset($artifacts[0])) {
         return;
     }
 
