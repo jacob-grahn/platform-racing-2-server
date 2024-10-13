@@ -88,7 +88,7 @@ abstract class Socket
             @socket_close($this->socket);
         }
         // $this->socket = spl_object_id($this->socket);
-        $this->is_open = false
+        $this->is_open = false;
     }
 
     public function write($buffer, $length = 4096)
