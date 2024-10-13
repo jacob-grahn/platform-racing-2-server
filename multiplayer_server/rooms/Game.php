@@ -1073,8 +1073,11 @@ class Game extends Room
         if (!isset($player->race_stats->finish_time)) {
             $player->race_stats->finish_time = $finish_time;
         }
-        $function_name = 'sortFinishArray' . ucfirst($this->mode);
-        @usort($this->finish_array, array($this, $function_name));
+
+        if (in_array($this->mode, ['hat', 'egg', 'objective', 'deathmatch', 'race'])) {
+            $function_name = 'sortFinishArray' . ucfirst($this->mode);
+            @usort($this->finish_array, array($this, $function_name));
+        }
 
         $this->broadcastFinishTimes();
 
