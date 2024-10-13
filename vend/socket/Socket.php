@@ -32,7 +32,7 @@ abstract class Socket
     public $local_port;
     public $read_buffer  = '';
     public $write_buffer = '';
-    public $is_open = true
+    public $is_open = true;
 
     public function __construct(
         $bind_address = 0,
