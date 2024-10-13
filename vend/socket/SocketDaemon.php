@@ -51,10 +51,14 @@ class SocketDaemon
     {
         $ret = array();
         foreach ($this->clients as $socket) {
-            $ret[] = $socket->socket;
+            if ($socket->is_open) {
+                $ret[] = $socket->socket;
+            }
         }
         foreach ($this->servers as $socket) {
-            $ret[] = $socket->socket;
+            if ($socket->is_open) {
+                $ret[] = $socket->socket;
+            }
         }
         return $ret;
     }
@@ -63,12 +67,12 @@ class SocketDaemon
     {
         $ret = array();
         foreach ($this->clients as $socket) {
-            if (!empty($socket->write_buffer) || $socket->connecting) {
+            if ((!empty($socket->write_buffer) || $socket->connecting) && $socket->is_open) {
                 $ret[] = $socket->socket;
             }
         }
         foreach ($this->servers as $socket) {
-            if (!empty($socket->write_buffer)) {
+            if (!empty($socket->write_buffer) && $socket->is_open) {
                 $ret[] = $socket->socket;
             }
         }
@@ -79,10 +83,14 @@ class SocketDaemon
     {
         $ret = array();
         foreach ($this->clients as $socket) {
-            $ret[] = $socket->socket;
+            if ($socket->is_open) {
+                $ret[] = $socket->socket;
+            }
         }
         foreach ($this->servers as $socket) {
-            $ret[] = $socket->socket;
+            if ($socket->is_open) {
+                $ret[] = $socket->socket;
+            }
         }
         return $ret;
     }
@@ -91,7 +99,7 @@ class SocketDaemon
     {
         # maybe could do this instead: $this->clients = array_filter($this->clients, fn($s) => !$s->disconnected && $this->socket instanceof \Socket)
         foreach ($this->clients as $socket) {
-            if ($socket->disconnected || !$socket->socket instanceof \Socket) {
+            if ($socket->disconnected || !$socket->socket instanceof \Socket || !$socket->is_open) {
                 if (isset($this->clients[$socket->id])) {
                     unset($this->clients[$socket->id]);
                 }

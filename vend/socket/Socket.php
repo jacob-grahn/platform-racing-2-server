@@ -30,8 +30,9 @@ abstract class Socket
     public $protocol;
     public $local_addr;
     public $local_port;
-    public $read_buffer    = '';
-    public $write_buffer   = '';
+    public $read_buffer  = '';
+    public $write_buffer = '';
+    public $is_open = true
 
     public function __construct(
         $bind_address = 0,
@@ -82,11 +83,12 @@ abstract class Socket
 
     public function close()
     {
-        if ($this->socket instanceof \Socket) {
+        if ($this->is_open && $this->socket instanceof \Socket) {
             @socket_shutdown($this->socket, 2);
             @socket_close($this->socket);
         }
         // $this->socket = spl_object_id($this->socket);
+        $this->is_open = false
     }
 
     public function write($buffer, $length = 4096)
