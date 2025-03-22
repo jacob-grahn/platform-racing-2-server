@@ -1,8 +1,5 @@
 <?php
 
-require 'vendor/autoload.php';
-use Mailgun\Mailgun;
-
 
 // -- SERVER -- \\
 
@@ -99,7 +96,7 @@ function require_trusted_ref($action = 'perform this action', $mod = false)
 
 // send an email to a user
 function send_email($to, $subject, $body)
-{    
+{
     global $MAILGUN_API_KEY;
 
     // Instantiate the client.

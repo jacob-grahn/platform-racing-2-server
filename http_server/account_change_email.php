@@ -2,7 +2,6 @@
 
 header("Content-type: text/plain");
 
-require_once 'Mail.php';
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
 require_once QUERIES_DIR . '/changing_emails.php';
