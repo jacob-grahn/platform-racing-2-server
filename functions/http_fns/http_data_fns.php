@@ -112,9 +112,6 @@ function send_email($to, $subject, $body)
             'text' => $body
         ]
     );
-
-    // Print the response.
-    print_r($result->getMessage());
 }
 
 
