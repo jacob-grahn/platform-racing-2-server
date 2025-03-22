@@ -1,5 +1,5 @@
 <?php
-
+use Mailgun\Mailgun;
 
 // -- SERVER -- \\
 

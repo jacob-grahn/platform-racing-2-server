@@ -2,7 +2,6 @@
 
 // mailgun
 require ROOT_DIR . '/vendor/autoload.php';
-use Mailgun\Mailgun;
 
 // some function files
 require_once COMMON_DIR . '/manage_socket/socket_manage_fns.php';
