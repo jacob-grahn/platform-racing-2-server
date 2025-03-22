@@ -1,5 +1,8 @@
 <?php
 
+require 'vendor/autoload.php';
+use Mailgun\Mailgun;
+
 
 // -- SERVER -- \\
 
@@ -95,29 +98,26 @@ function require_trusted_ref($action = 'perform this action', $mod = false)
 
 
 // send an email to a user
-function send_email($from, $to, $subject, $body)
-{
-    global $EMAIL_HOST, $EMAIL_PORT, $EMAIL_USER, $EMAIL_PASS;
+function send_email($to, $subject, $body)
+{    
+    global $MAILGUN_API_KEY;
 
-    $recipients = $to;
+    // Instantiate the client.
+    $mg = Mailgun::create($MAILGUN_API_KEY);
 
-    $headers = array();
-    $headers['From']    = $from;
-    $headers['To']      = $to;
-    $headers['Subject'] = $subject;
+    // Compose and send your message.
+    $result = $mg->messages()->send(
+        'mg.platformracing.com',
+        [
+            'from' => 'Platform Racing <postmaster@mg.platformracing.com>',
+            'to' => $to,
+            'subject' => $subject,
+            'text' => $body
+        ]
+    );
 
-    // Define SMTP Parameters
-    $params['host'] = $EMAIL_HOST;
-    $params['port'] = $EMAIL_PORT;
-    $params['auth'] = 'PLAIN';
-    $params['username'] = $EMAIL_USER;
-    $params['password'] = $EMAIL_PASS;
-
-    // Create the mail object using the Mail::factory method
-    $mail_object = Mail::factory('smtp', $params);
-
-    // Send the message
-    $mail_object->send($recipients, $headers, $body);
+    // Print the response.
+    print_r($result->getMessage());
 }
 
 

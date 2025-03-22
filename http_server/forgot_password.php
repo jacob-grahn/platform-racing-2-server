@@ -72,7 +72,6 @@ try {
     user_update_temp_pass($pdo, $user_id, to_hash($pass));
 
     // --- email them their new pass --- \\
-    $from = 'Fred the Giant Cactus <no-reply@mg.pr2hub.com>';
     $to = $user->email;
     $subject = 'A password and chocolates from PR2';
     $message = "Hi $name,\n\n"
@@ -81,7 +80,7 @@ try {
         ."Your old password will still work as long as you don't log in with this one.\n\n"
         ."All the best,\n"
         ."Fred";
-    send_email($from, $to, $subject, $message);
+    send_email($to, $subject, $message);
 
     // tell the world
     $ret->success = true;
