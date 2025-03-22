@@ -103,7 +103,7 @@ function send_email($to, $subject, $body)
     $mg = Mailgun::create($MAILGUN_API_KEY);
 
     // Compose and send your message.
-    $result = $mg->messages()->send(
+    $mg->messages()->send(
         'mg.platformracing.com',
         [
             'from' => 'Platform Racing <postmaster@mg.platformracing.com>',
