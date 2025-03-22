@@ -1,7 +1,7 @@
 <?php
 
 // mailgun
-require 'vendor/autoload.php';
+require ROOT_DIR . '/vendor/autoload.php';
 use Mailgun\Mailgun;
 
 // some function files
