@@ -201,7 +201,6 @@ try {
             
             // send a password reset email (same as forgot_password.php)
             if (!is_empty($reset_pass)) {
-                include 'Mail.php';
                 require_once HTTP_FNS . '/rand_crypt/to_hash.php';
 
                 // generate a new password

@@ -2,7 +2,6 @@
 
 header("Content-type: text/plain");
 
-include 'Mail.php';
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/to_hash.php';
 require_once QUERIES_DIR . '/users.php';
