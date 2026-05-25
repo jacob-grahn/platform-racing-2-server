@@ -2,6 +2,7 @@
 
 require_once GEN_HTTP_FNS;
 require_once FNS_DIR . '/cron/cron_fns.php';
+require_once HTTP_FNS . '/pages/vault/vault_fns.php';
 require_once QUERIES_DIR . '/changing_emails.php';
 require_once QUERIES_DIR . '/exp_today.php';
 require_once QUERIES_DIR . '/gp.php';
@@ -26,6 +27,7 @@ tokens_delete_old($pdo);
 guild_transfers_expire_old($pdo);
 changing_emails_expire_old($pdo);
 exp_today_truncate($pdo);
+regenerate_vault_items($pdo);
 poll_servers(servers_select($pdo), 'start_new_day`');
 
 // tell the command line
