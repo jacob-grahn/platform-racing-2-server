@@ -283,8 +283,15 @@ function regenerate_vault_items($pdo)
     }
     $items_out->info->updated = time();
 
+    // ensure the cache directory exists
+    if (!is_dir(CACHE_DIR) && !mkdir(CACHE_DIR, 0775, true) && !is_dir(CACHE_DIR)) {
+        throw new Exception('Could not create cache directory at ' . CACHE_DIR . '.');
+    }
+
     // save to file
     $file_link = CACHE_DIR . '/vault.json';
-    file_put_contents($file_link, json_encode($items_out, JSON_PRETTY_PRINT));
+    if (file_put_contents($file_link, json_encode($items_out, JSON_PRETTY_PRINT)) === false) {
+        throw new Exception("Could not write vault items to $file_link.");
+    }
     output("Vault items regenerated and saved to $file_link.\n");
 }
