@@ -2,7 +2,6 @@
 
 header('Content-type: text/plain');
 
-require_once 'Mail.php';
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
 require_once QUERIES_DIR . '/guild_transfers.php';
@@ -90,7 +89,6 @@ try {
     guild_transfer_insert($pdo, $guild->guild_id, $user_id, $new_user->user_id, $code, $ip);
 
     // send a confirmation email
-    $from = 'Fred the Giant Cactus <no-reply@mg.pr2hub.com>';
     $to = $user->email;
     $subject = 'PR2 Guild Transfer Confirmation';
     $body = "Howdy $safe_name,\n\nWe received a request to change the "
@@ -100,7 +98,7 @@ try {
         ."https://pr2hub.com/confirm_guild_transfer.php?code=$code\n\n"
         ."If you didn't request this change, you may need to change your password.\n\n"
         ."All the best,\nFred";
-    send_email($from, $to, $subject, $body);
+    send_email($to, $subject, $body);
 
     // tell the world
     $ret->success = true;

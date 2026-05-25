@@ -2,7 +2,6 @@
 
 header("Content-type: text/plain");
 
-require_once 'Mail.php';
 require_once GEN_HTTP_FNS;
 require_once HTTP_FNS . '/rand_crypt/Encryptor.php';
 require_once QUERIES_DIR . '/changing_emails.php';
@@ -102,7 +101,6 @@ try {
         $safe_new_email = htmlspecialchars($new_email, ENT_QUOTES);
 
         // send a confirmation email
-        $from = 'Fred the Giant Cactus <no-reply@mg.pr2hub.com>';
         $to = $old_email;
         $subject = 'PR2 Email Change Confirmation';
         $body = "Howdy $safe_user_name,\n\n"
@@ -112,7 +110,7 @@ try {
             ."If you didn't request this change, you may need to change your password.\n\n"
             ."All the best,\n"
             .'Fred';
-        send_email($from, $to, $subject, $body);
+        send_email($to, $subject, $body);
 
         // tell it to the world
         $ret->success = true;

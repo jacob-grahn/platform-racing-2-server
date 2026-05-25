@@ -19,10 +19,7 @@ $PROCESS_IP = '127.0.0.1';
 
 $COMM_PASS = 'def';
 
-$EMAIL_HOST = 'ssl://some.emailhost.com';
-$EMAIL_PORT = 'port';
-$EMAIL_USER = '2@2.com';
-$EMAIL_PASS = 'pass';
+$MAILGUN_API_KEY = 'key';
 
 $PR2_HUB_API_KEY = 'test';
 $PR2_HUB_API_ALLOWED_IPS = [

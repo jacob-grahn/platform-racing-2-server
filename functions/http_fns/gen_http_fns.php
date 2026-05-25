@@ -1,5 +1,8 @@
 <?php
 
+// mailgun
+require ROOT_DIR . '/vendor/autoload.php';
+
 // some function files
 require_once COMMON_DIR . '/manage_socket/socket_manage_fns.php';
 require_once FNS_DIR . '/common_fns.php';
