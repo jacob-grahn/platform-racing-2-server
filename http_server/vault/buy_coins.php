@@ -50,10 +50,7 @@ try {
     }
 
     // get options info
-    $coins_options = json_decode(file_get_contents(CACHE_DIR . '/coins_options.json'));
-    if ($coins_options === false) {
-        throw new Exception('Could not retrieve Coins package information.');
-    }
+    $coins_options = coins_options_get();
 
     // populate options info
     $options = $coins_options->options;

@@ -295,3 +295,23 @@ function regenerate_vault_items($pdo)
     }
     output("Vault items regenerated and saved to $file_link.\n");
 }
+
+
+// get the available Coins purchasing packages
+// NOTE: hardcoded for now; previously read from cache/coins_options.json (which was never generated)
+function coins_options_get()
+{
+    // index 0 is a placeholder and is never purchasable (skipped in the UI, rejected at checkout);
+    // it also keeps the front-end JS price/bonus arrays aligned with the 1-based radio values.
+    // coins = base Coins (price * 10), bonus = extra Coins; total awarded = coins + bonus
+    $options = [
+        (object) ['price' => 0,  'coins' => 0,   'bonus' => 0],
+        (object) ['price' => 10, 'coins' => 100, 'bonus' => 10], // $10 -> 110 Coins
+        (object) ['price' => 15, 'coins' => 150, 'bonus' => 20], // $15 -> 170 Coins
+        (object) ['price' => 25, 'coins' => 250, 'bonus' => 50], // $25 -> 300 Coins
+    ];
+
+    $coins_options = new stdClass();
+    $coins_options->options = $options;
+    return $coins_options;
+}
