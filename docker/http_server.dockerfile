@@ -39,6 +39,14 @@ RUN cd /pr2 \
     && curl -sS https://getcomposer.org/installer | php \
     && php composer.phar install --no-dev --optimize-autoloader
 
-# Run minute and hour cron when this service starts up to generate server and level list files
+# Pre-create writable directories owned by www-data so the webserver can regenerate files
+RUN mkdir -p \
+    /pr2/cache \
+    /pr2/http_server/files/lists/newest \
+    /pr2/http_server/files/lists/best \
+    /pr2/http_server/files/lists/best_week \
+    /pr2/http_server/files/lists/campaign \
+  && chown -R www-data:www-data /pr2/cache /pr2/http_server/files
+
 ENTRYPOINT []
 CMD [ "/http_server_startup.sh" ]

@@ -289,22 +289,21 @@ function client_promote_to_moderator($socket, $data)
     if ($admin->group >= 3 && $admin->server_owner === false) {
         $result = promote_to_moderator($name, $type, $admin, $promoted);
 
-        switch ($type) {
-            case 'temporary':
-                $reign_time = 'hours';
-                break;
-            case 'trial':
-                $reign_time = 'days';
-                break;
-            case 'permanent':
-                $reign_time = '1,000 years';
-                break;
-        }
-
+        $resolved_promoted = $promoted ?? db_op('user_select_by_name', array($name, true));
         if (isset($admin->chat_room) && (isset($promoted) || $type !== 'temporary') && $result === true) {
             $admin_url = userify($admin, $admin->name);
-            $promoted_url = userify($promoted, $name);
+            $promoted_url = userify($resolved_promoted, $name);
             $mod_guide = urlify('https://jiggmin2.com/forums/showthread.php?tid=12', 'moderator guidelines');
+
+            if ($type == 'temporary') {
+                $reign_time = 'hours';
+            } elseif ($type == 'trial') {
+                $reign_time = 'days';
+            } elseif ($type == 'permanent') {
+                $reign_time = '1,000 years';
+            } else { // should never be reached
+                $reign_time = 'an era';
+            }
 
             $msg = "$admin_url has promoted $promoted_url to a $type moderator! "
                 ."May they reign in $reign_time of peace and prosperity! Make sure you read the $mod_guide.";

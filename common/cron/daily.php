@@ -29,6 +29,7 @@ changing_emails_expire_old($pdo);
 exp_today_truncate($pdo);
 regenerate_vault_items($pdo);
 poll_servers(servers_select($pdo), 'start_new_day`');
+fah_update($pdo);
 
 // tell the command line
 output('Daily CRON successful.');
