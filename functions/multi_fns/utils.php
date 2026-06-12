@@ -468,18 +468,22 @@ function shutdown_server($socket = null, $die = true, $msg = 'The server is rest
 {
     global $player_array, $socket;
 
+    output('Shutting down...');
+
     // kill socket
     kill_socket();
 
     // disconnect everyone
-    output('Disconnecting all players...');
-    foreach ($player_array as $player) {
-        $player->write("message`$msg");
-        $player->remove();
+    if (isset($player_array)) {
+        output('Disconnecting all players...');
+        foreach ($player_array as $player) {
+            $player->write("message`$msg");
+            $player->remove();
+        }
+        output('All players disconnected.');
     }
 
     // tell the world
-    output('All players disconnected. Shutting down...');
     output('The shutdown was successful.');
     if (!is_null($socket)) {
         $socket->write('The shutdown was successful.');

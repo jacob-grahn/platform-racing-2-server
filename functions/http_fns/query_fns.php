@@ -143,7 +143,7 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
     rate_limit('flood-pm-'.$from_user_id, 3600, 20, $rl_msg);
     rate_limit('flood-pm-'.$ip, 3600, 20, $rl_msg);
 
-    // parse tags that can be used in PMs
+    // sanitize HTML and parse tags that can be used in PMs
     $message = message_parse_tags($pdo, $message);
 
     // add the message to the db
@@ -151,10 +151,10 @@ function send_pm($pdo, $from_user_id, $to_user_id, $message)
 }
 
 
-// parse tags that can be used in PMs
+// sanitize HTML and parse tags that can be used in PMs
 function message_parse_tags($pdo, $message)
 {
-    $new_msg = $message;
+    $new_msg = htmlspecialchars($message, ENT_QUOTES);
 
     // replace [user=power]name[/user] with [user]name[/user]
     $pat = "/(\[user=)(\d{1}(?:\,\d{1}){0,1})(\])([a-zA-Z0-9-.:;=?~!()@*,+$#% ]+)(\[\/user\])/i";
@@ -714,7 +714,7 @@ function is_staff($pdo, $user_id, $check_ref = true, $exception = false, $group 
     if ($user_id !== false && $user_id !== 0) {
         // determine power and if staff
         $power = explode(',', user_select_power($pdo, $user_id, true));
-        $is_trial = (bool) (int) $power[1];
+        $is_trial = $power[1] == 1;
         $is_mod = $power[0] >= 2;
         $is_admin = $power[0] == 3;
 

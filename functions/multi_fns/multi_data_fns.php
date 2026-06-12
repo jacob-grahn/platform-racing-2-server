@@ -14,6 +14,11 @@ function sort_chat_room_array($a, $b)
 // determine a user's display info
 function userify($player, $name)
 {
+    if (!isset($player) || $player === false) {
+        output('WARNING: userify invoked with a null $player object. Performing database lookup for missing data.');
+        $player = db_op('user_select_by_name', array($name, true));
+    }
+
     // get group
     $group = get_group_info($player);
 
