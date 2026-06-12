@@ -830,7 +830,7 @@ class Game extends Room
             $tot_exp_gain = $tot_exp_gain > 100000 ? 0 : $tot_exp_gain;
 
             // disconnect anyone trying to earn exp too quick
-            if ($player->last_exp_time >= (time() - 2)) {
+            if ($player->last_exp_time >= (time() - 2) && $tot_exp_gain >= 2) {
                 output("Botting check triggered by $player->user_id from $player->ip.");
                 if ($player->socket) {
                     $player->socket->write("message`Botting is a no-no. :(");
