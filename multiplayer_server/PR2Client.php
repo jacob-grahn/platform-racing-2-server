@@ -16,6 +16,13 @@ class PR2Client extends \chabot\SocketServerClient
     public $process = false;
     public $ip;
 
+    // transport: null until sniffed, then 'raw' or 'ws'
+    private $transport = null;
+    // websocket transport state
+    private $ws_ready = false;       // handshake completed
+    private $ws_app_buffer = '';     // decoded application bytes awaiting processing
+    private $ws_opcode = WebSocket::OP_TEXT; // opcode to mirror back to the client
+
     public function __construct($socket)
     {
         parent::__construct($socket);
@@ -24,7 +31,7 @@ class PR2Client extends \chabot\SocketServerClient
         $this->last_user_action = $time;
     }
 
-    private function handleRequest($string)
+    protected function handleRequest($string)
     {
         global $verbose;
         if ($verbose === true) {
@@ -83,6 +90,24 @@ class PR2Client extends \chabot\SocketServerClient
 
     public function onRead()
     {
+        // figure out the transport from the first bytes received
+        if ($this->transport === null) {
+            $this->transport = WebSocket::sniff($this->read_buffer);
+            if ($this->transport === null) {
+                return; // not enough bytes to decide yet
+            }
+        }
+
+        if ($this->transport === 'ws') {
+            $this->onReadWebSocket();
+        } else {
+            $this->onReadRaw();
+        }
+    }
+
+    // legacy Flash / raw socket transport
+    private function onReadRaw()
+    {
         if ($this->read_buffer === '<policy-file-request/>'.chr(0x00)) {
             $this->read_buffer = '';
             $this->write_buffer = '<cross-domain-policy>'.
@@ -91,14 +116,7 @@ class PR2Client extends \chabot\SocketServerClient
             $this->doWrite();
         }
 
-        // breaks the buffer up into distinct commands
-        $end_char = strpos($this->read_buffer, chr(0x04));
-        while ($end_char !== false) {
-            $info = substr($this->read_buffer, 0, $end_char);
-            $this->handleRequest($info);
-            $this->read_buffer = substr($this->read_buffer, $end_char+1);
-            $end_char = strpos($this->read_buffer, chr(0x04));
-        }
+        $this->processBuffer($this->read_buffer);
 
         // prevent a data attack
         if (strlen($this->read_buffer) > 5000 && !$this->process) {
@@ -106,6 +124,78 @@ class PR2Client extends \chabot\SocketServerClient
             output(" --- KILLED READ BUFFER --- ");
             $this->close();
             $this->onDisconnect();
+        }
+    }
+
+    // websocket transport: a transparent wrapper around the same protocol
+    private function onReadWebSocket()
+    {
+        if (!$this->ws_ready) {
+            $response = WebSocket::buildHandshakeResponse($this->read_buffer);
+            if ($response === null) {
+                return; // wait for the full HTTP header
+            }
+            // consume the header and send the 101 response (raw, un-framed)
+            $header_end = strpos($this->read_buffer, "\r\n\r\n") + 4;
+            $this->read_buffer = substr($this->read_buffer, $header_end);
+            $this->ws_ready = true;
+            $this->write_buffer .= $response;
+            $this->doWrite();
+        }
+
+        // decode complete frames out of the read buffer
+        $frames = WebSocket::decode($this->read_buffer, $consumed);
+        if ($consumed > 0) {
+            $this->read_buffer = substr($this->read_buffer, $consumed);
+        }
+
+        foreach ($frames as $frame) {
+            list($opcode, $payload) = $frame;
+            switch ($opcode) {
+                case WebSocket::OP_TEXT:
+                case WebSocket::OP_BINARY:
+                    $this->ws_opcode = $opcode; // mirror the client's framing
+                    $this->ws_app_buffer .= $payload;
+                    break;
+                case WebSocket::OP_CONTINUATION:
+                    $this->ws_app_buffer .= $payload;
+                    break;
+                case WebSocket::OP_PING:
+                    $this->write_buffer .= WebSocket::encode($payload, WebSocket::OP_PONG);
+                    $this->doWrite();
+                    break;
+                case WebSocket::OP_CLOSE:
+                    $this->close();
+                    $this->onDisconnect();
+                    return;
+                case WebSocket::OP_PONG:
+                default:
+                    break;
+            }
+        }
+
+        $this->processBuffer($this->ws_app_buffer);
+
+        // prevent a data attack
+        $buffered = strlen($this->ws_app_buffer) + strlen($this->read_buffer);
+        if ($buffered > 5000 && !$this->process) {
+            $this->ws_app_buffer = '';
+            $this->read_buffer = '';
+            output(" --- KILLED READ BUFFER --- ");
+            $this->close();
+            $this->onDisconnect();
+        }
+    }
+
+    // breaks a buffer up into distinct chr(0x04) delimited commands
+    private function processBuffer(&$buffer)
+    {
+        $end_char = strpos($buffer, chr(0x04));
+        while ($end_char !== false) {
+            $info = substr($buffer, 0, $end_char);
+            $this->handleRequest($info);
+            $buffer = substr($buffer, $end_char + 1);
+            $end_char = strpos($buffer, chr(0x04));
         }
     }
 
@@ -122,6 +212,9 @@ class PR2Client extends \chabot\SocketServerClient
             output('WRITE: ' . $buffer);
         }
         $buffer .= chr(0x04);
+        if ($this->transport === 'ws') {
+            $buffer = WebSocket::encode($buffer, $this->ws_opcode);
+        }
         parent::write($buffer, $length);
         $this->send_num++;
     }

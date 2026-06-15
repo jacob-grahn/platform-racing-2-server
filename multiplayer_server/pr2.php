@@ -55,6 +55,7 @@ require_once PR2_ROOT . '/HappyHour.php';
 require_once PR2_ROOT . '/Mutes.php';
 require_once PR2_ROOT . '/LoiterDetector.php';
 require_once PR2_ROOT . '/Player.php';
+require_once PR2_ROOT . '/WebSocket.php';
 require_once PR2_ROOT . '/PR2SocketServer.php';
 require_once PR2_ROOT . '/PR2Client.php';
 require_once PR2_ROOT . '/RaceStats.php';
