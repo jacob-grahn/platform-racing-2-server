@@ -6,6 +6,12 @@
 
 require_once __DIR__ . '/lib.php';
 
+if (!function_exists('output')) {
+    function output($str)
+    {
+    }
+}
+
 foreach (glob(__DIR__ . '/*Test.php') as $file) {
     require_once $file;
 }

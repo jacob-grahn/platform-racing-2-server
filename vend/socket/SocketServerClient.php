@@ -33,7 +33,7 @@ abstract class SocketServerClient extends SocketClient
         $this->socket         = $socket;
 
         try {
-            if (!$this->socket instanceof \Socket) {
+            if (!Socket::isValidSocket($this->socket)) {
                 throw new \Exception("Invalid socket or resource");
             } elseif (!socket_getsockname($this->socket, $this->local_addr, $this->local_port)) {
                 throw new \Exception(

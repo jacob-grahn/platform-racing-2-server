@@ -28,7 +28,7 @@ class PR2Client extends \chabot\SocketServerClient
     public function __construct($socket)
     {
         parent::__construct($socket);
-        $this->id = spl_object_id($socket);
+        $this->id = \chabot\Socket::id($socket);
         $time = time();
         $this->last_action = $time;
         $this->last_user_action = $time;
