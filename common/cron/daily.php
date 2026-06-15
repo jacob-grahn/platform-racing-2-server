@@ -12,6 +12,14 @@ require_once QUERIES_DIR . '/rank_token_rentals.php';
 require_once QUERIES_DIR . '/ratings.php';
 require_once QUERIES_DIR . '/servers.php';
 
+// ensure part awards
+require_once QUERIES_DIR . '/part_awards.php';
+
+// folding_at_home data select/insert/update from/into/in db, send confirmation message
+require_once QUERIES_DIR . '/folding_at_home.php';
+require_once QUERIES_DIR . '/messages.php';
+require_once QUERIES_DIR . '/rank_tokens.php';
+
 // tell the command line
 $time = date('r');
 output("Daily CRON starting at $time...");
