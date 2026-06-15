@@ -5,22 +5,13 @@ namespace pr2\tests;
 use pr2\multi\WebSocket;
 use pr2\multi\PR2Client;
 
-require_once __DIR__ . '/lib.php';
+require_once __DIR__ . '/bootstrap.php';
 
 // PR2Client::write() hashes outgoing messages with SALT; the value is irrelevant
 // to transport framing but must exist. handleRequest is overridden below so the
 // inbound hash check is never reached.
 if (!defined('SALT')) {
     define('SALT', 'test-salt');
-}
-
-// PR2Client (and its glue) call output() on errors / buffer kills. Provide a
-// quiet global stub so the real logging stack is not required.
-if (!function_exists('output')) {
-    function output($str)
-    {
-        // swallow; uncomment to debug: fwrite(STDERR, "output: $str\n");
-    }
 }
 
 require_once __DIR__ . '/../vend/socket/index.php';
@@ -143,6 +134,19 @@ Test::it('completes the handshake and replies with 101', function () {
     );
 });
 
+Test::it('waits for enough bytes before choosing websocket transport', function () {
+    list($server, $client) = make_pair();
+    client_send($client, 'GE');
+    $server->read();
+    Test::eq('', client_recv($client));
+
+    $rest = "T / HTTP/1.1\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n";
+    client_send($client, $rest);
+    $server->read();
+    $resp = client_recv($client);
+    Test::assert(strpos($resp, '101 Switching Protocols') !== false, 'got 101 after delayed sniff');
+});
+
 Test::it('decodes the same application messages as the raw transport', function () {
     list($server, $client) = make_pair();
     $req = "GET / HTTP/1.1\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n";
@@ -218,6 +222,17 @@ Test::it('responds to a ping with a pong', function () {
     $frames = WebSocket::decode($wire, $consumed);
     Test::eq(WebSocket::OP_PONG, $frames[0][0]);
     Test::eq('ping-payload', $frames[0][1]);
+});
+
+Test::it('closes the server side when a websocket close frame arrives', function () {
+    list($server, $client) = make_pair();
+    client_send($client, "GET / HTTP/1.1\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\n\r\n");
+    $server->read();
+    client_recv($client);
+
+    client_send($client, ws_client_frame('', WebSocket::OP_CLOSE));
+    $server->read();
+    Test::assert(!$server->is_open, 'server socket is closed');
 });
 
 // when run directly (not aggregated by run.php), report and set exit status

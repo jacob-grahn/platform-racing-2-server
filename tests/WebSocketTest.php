@@ -99,6 +99,14 @@ Test::it('decodes a single masked text frame', function () {
     Test::eq(strlen($buf), $consumed);
 });
 
+Test::it('decodes an unmasked frame', function () {
+    $frames = WebSocket::decode(WebSocket::encode('server-style'), $consumed);
+    Test::eq(1, count($frames));
+    Test::eq(WebSocket::OP_TEXT, $frames[0][0]);
+    Test::eq('server-style', $frames[0][1]);
+    Test::eq(strlen(WebSocket::encode('server-style')), $consumed);
+});
+
 Test::it('decodes multiple frames in one buffer', function () {
     $buf = client_frame('one') . client_frame('two') . client_frame('three');
     $frames = WebSocket::decode($buf, $consumed);
@@ -136,6 +144,18 @@ Test::it('leaves an incomplete trailing frame in the buffer', function () {
 
 Test::it('decodes nothing from a buffer with only a partial header', function () {
     $frames = WebSocket::decode("\x81", $consumed);
+    Test::eq(0, count($frames));
+    Test::eq(0, $consumed);
+});
+
+Test::it('decodes nothing from an incomplete extended length header', function () {
+    $frames = WebSocket::decode("\x81\x7e\x00", $consumed);
+    Test::eq(0, count($frames));
+    Test::eq(0, $consumed);
+});
+
+Test::it('decodes nothing from an incomplete mask key', function () {
+    $frames = WebSocket::decode("\x81\x85abc", $consumed);
     Test::eq(0, count($frames));
     Test::eq(0, $consumed);
 });
