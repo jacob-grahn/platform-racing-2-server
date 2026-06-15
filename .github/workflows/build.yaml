@@ -21,6 +21,13 @@ jobs:
           composer install
           ./vendor/bin/phpmd common,functions,http_server,multiplayer_server,policy_server text unusedcode
           ./vendor/bin/phpcs --standard=PSR2 common functions http_server multiplayer_server policy_server
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.3'
+          extensions: sockets
+      - name: Test
+        run: php tests/run.php
       - name: Build HTTP
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
