@@ -34,6 +34,19 @@ abstract class Socket
     public $write_buffer = '';
     public $is_open = true;
 
+    public static function id($socket)
+    {
+        if (is_object($socket)) {
+            return spl_object_id($socket);
+        }
+        return function_exists('get_resource_id') ? get_resource_id($socket) : (int) $socket;
+    }
+
+    public static function isValidSocket($socket)
+    {
+        return $socket instanceof \Socket || is_resource($socket);
+    }
+
     public function __construct(
         $bind_address = 0,
         $bind_port = 0,
@@ -69,7 +82,7 @@ abstract class Socket
 
     public function __destruct()
     {
-        if ($this->socket instanceof \Socket) {
+        if (self::isValidSocket($this->socket)) {
             $this->close();
         }
     }
@@ -83,7 +96,7 @@ abstract class Socket
 
     public function close()
     {
-        if ($this->is_open && $this->socket instanceof \Socket) {
+        if ($this->is_open && self::isValidSocket($this->socket)) {
             @socket_shutdown($this->socket, 2);
             @socket_close($this->socket);
         }

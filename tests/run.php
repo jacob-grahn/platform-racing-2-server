@@ -4,7 +4,7 @@
 // prints a single summary. Run with:
 //   docker run --rm -v "$PWD":/app -w /app php:7.3-cli php tests/run.php
 
-require_once __DIR__ . '/lib.php';
+require_once __DIR__ . '/bootstrap.php';
 
 foreach (glob(__DIR__ . '/*Test.php') as $file) {
     require_once $file;
