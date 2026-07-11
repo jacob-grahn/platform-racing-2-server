@@ -421,7 +421,7 @@ class Game extends Room
             }
 
             // jigg hat
-            if ($this->course_id == self::LEVEL_BUTO && $this->mode !== self::MODE_ROGUELIKE) {
+            if ($this->course_id == self::LEVEL_BUTO) {
                 $hat = $this->makeHat($this->next_hat_id++, Hats::JIGG, 0xFFFFFF, -1);
                 $this->loose_hat_array[$hat->id] = $hat;
                 $x = 13450;
@@ -431,7 +431,7 @@ class Game extends Room
             }
 
             // cheese hat
-            if ($this->course_id == self::LEVEL_CHEESE && $this->mode !== self::MODE_ROGUELIKE) {
+            if ($this->course_id == self::LEVEL_CHEESE) {
                 $hat = $this->makeHat($this->next_hat_id++, Hats::CHEESE, 0xFFD860, 0x000000);
                 $this->loose_hat_array[$hat->id] = $hat;
                 $x = 13878;
@@ -441,7 +441,7 @@ class Game extends Room
             }
 
             // place artifact hat
-            if ($this->course_id == Artifact::$level_id && $this->mode !== self::MODE_ROGUELIKE) {
+            if ($this->course_id == Artifact::$level_id) {
                 $hat = $this->makeHat($this->next_hat_id++, Hats::ARTIFACT, 0xFFFFFF, -1);
                 $this->loose_hat_array[$hat->id] = $hat;
                 $x = Artifact::$x;
@@ -1478,9 +1478,6 @@ class Game extends Room
 
     public function getHat($player, $hat_id)
     {
-        if ($this->mode === self::MODE_ROGUELIKE) {
-            return;
-        }
         $hat = @$this->loose_hat_array[$hat_id];
         if (isset($hat) && $this->isStillPlaying($player->temp_id)) {
             $this->loose_hat_array[$hat_id] = null;
