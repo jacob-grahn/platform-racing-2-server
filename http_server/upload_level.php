@@ -109,6 +109,10 @@ try {
         $type = 'o';
     } elseif ($game_mode === 'hat') {
         $type = 'h';
+    } elseif ($game_mode === 'roguelike') {
+        $type = 'l';
+        $bad_hats = implode(',', range(2, $num_hats + 1));
+        $cowboy_chance = 0;
     } else {
         $type = 'r';
     }

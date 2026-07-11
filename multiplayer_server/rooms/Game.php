@@ -13,6 +13,7 @@ class Game extends Room
     const MODE_EGG = 'egg';
     const MODE_OBJECTIVE = 'objective';
     const MODE_HAT = 'hat';
+    const MODE_ROGUELIKE = 'roguelike';
 
     const PLAYER_SIR = 5321458; // sir sirlington
     const PLAYER_CLINT = 5451130; // clint the cowboy
@@ -459,6 +460,9 @@ class Game extends Room
             if ($this->cowboy_chance === '') {
                 $this->cowboy_chance = 5;
             }
+            if ($this->mode === self::MODE_ROGUELIKE) {
+                $this->cowboy_chance = 0;
+            }
             if ($this->tournament && $this->cowboy_chance != 100) {
                 $this->cowboy_chance = 0;
             }
@@ -510,6 +514,12 @@ class Game extends Room
             // cowboy mode
             if ($this->cowboy_mode) {
                 $hat_id = 5;
+            }
+
+            // Roguelike mode never permits hats, including tournament and
+            // cowboy-mode overrides applied above.
+            if ($this->mode === self::MODE_ROGUELIKE) {
+                $hat_id = 1;
             }
 
             // change the hat to something random during hat attack if they aren't wearing a valid hat
@@ -565,7 +575,7 @@ class Game extends Room
     public function remoteFinishRace($player, $data)
     {
         if ($this->isStillPlaying($player->temp_id)) {
-            if ($this->mode == self::MODE_RACE) {
+            if ($this->mode == self::MODE_RACE || $this->mode == self::MODE_ROGUELIKE) {
                 list($finish_id, $x, $y) = explode('`', $data);
                 $this->verifyFinishPosition($x, $y, $finish_id);
             } elseif ($this->mode == self::MODE_HAT) {
@@ -956,7 +966,10 @@ class Game extends Room
                 $this->finishRace($player);
             } elseif ($this->mode === self::MODE_EGG) {
                 $this->maybeEndEgg();
-            } elseif ($this->mode === self::MODE_RACE || $this->mode === self::MODE_HAT) {
+            } elseif ($this->mode === self::MODE_RACE
+                || $this->mode === self::MODE_HAT
+                || $this->mode === self::MODE_ROGUELIKE
+            ) {
                 $player->race_stats->finished_race = true;
                 $this->setFinishTime($player, 'forfeit');
             }
@@ -1062,6 +1075,12 @@ class Game extends Room
     }
 
 
+    protected function sortFinishArrayRoguelike($a, $b)
+    {
+        return $this->sortFinishArrayRace($a, $b);
+    }
+
+
     protected function sortFinishArray($a, $b)
     {
         return $this->sortFinishArrayRace($a, $b);
@@ -1074,7 +1093,7 @@ class Game extends Room
             $player->race_stats->finish_time = $finish_time;
         }
 
-        if (in_array($this->mode, ['hat', 'egg', 'objective', 'deathmatch', 'race'])) {
+        if (in_array($this->mode, ['hat', 'egg', 'objective', 'deathmatch', 'race', 'roguelike'])) {
             $function_name = 'sortFinishArray' . ucfirst($this->mode);
             @usort($this->finish_array, array($this, $function_name));
         }
