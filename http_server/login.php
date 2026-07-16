@@ -178,7 +178,8 @@ try {
     }
 
     // sanity check: already logged into another server?
-    if ($user->server_id > 0 && $user->server_id != $server->server_id) {
+    $status_updated_recently = (int) $user->time >= time() - 10800;
+    if ($user->server_id > 0 && $user->server_id != $server->server_id && $status_updated_recently) {
         throw new Exception('This account is already logged in on a different server.');
     }
 

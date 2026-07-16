@@ -802,7 +802,8 @@ function users_reset_status($pdo)
 {
     $result = $pdo->exec('
         UPDATE users
-           SET status = "offline"
+           SET status = "offline",
+               server_id = 0
          WHERE time < UNIX_TIMESTAMP(NOW() - INTERVAL 1 DAY)
     ');
 
