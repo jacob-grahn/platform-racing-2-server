@@ -92,6 +92,17 @@ a {
     border-radius: 7px;
     width: 100%;
     text-align: center;
+    overflow-x: auto;
+}
+
+.game_holder iframe {
+    display: block;
+    margin: 0 auto;
+    border: 0;
+}
+
+.game_controls {
+    margin-top: 8px;
 }
 
 .archived {

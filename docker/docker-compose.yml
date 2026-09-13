@@ -1,10 +1,10 @@
-version: "3"
 services:
 
   web:
     build:
       context: ../
       dockerfile: docker/http_server.dockerfile
+    command: php -S 0.0.0.0:80 -t /pr2/http_server
     ports:
       - "8080:80"
     depends_on:
