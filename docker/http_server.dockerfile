@@ -10,6 +10,7 @@ COPY http_server/ /pr2/http_server
 COPY vend/ /pr2/vend
 COPY common/env.example.php /pr2/common/env.php
 COPY docker/http_server_startup.sh /http_server_startup.sh
+COPY functions/http_fns/check_local_fn_example.php /pr2/functions/http_fns/check_local_fn.php
 
 # Copy in custom config
 COPY docker/prepend_file.ini $PHP_INI_DIR/conf.d/
